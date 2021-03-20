@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
 
-    private static final Logger log = Logger.getLogger(SourceCodeDisclosureScanRule.class);
+    private static final Logger log = LogManager.getLogger(SourceCodeDisclosureScanRule.class);
 
     /**
      * a consistently ordered map of: a regular expression pattern to the Programming language
@@ -662,13 +663,12 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
             Matcher matcher = languagePattern.matcher(responsebody);
             if (matcher.find()) {
                 evidence = matcher.group();
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Passive Source Code Disclosure on pattern "
-                                    + languagePattern
-                                    + ", evidence: "
-                                    + evidence);
-                }
+
+                log.debug(
+                        "Passive Source Code Disclosure on pattern {}, evidence: {}",
+                        languagePattern,
+                        evidence);
+
                 break; // use the first match
             }
         }

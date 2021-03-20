@@ -25,7 +25,8 @@ import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -82,7 +83,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
     private static final int PLUGIN_ID = 10049;
 
-    private static final Logger logger = Logger.getLogger(CacheableScanRule.class);
+    private static final Logger logger = LogManager.getLogger(CacheableScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -99,11 +100,8 @@ public class CacheableScanRule extends PluginPassiveScanner {
 
         // TODO: standardise the logic in the case of duplicate / conflicting headers.
         try {
-            if (logger.isDebugEnabled())
-                logger.debug(
-                        "Checking URL "
-                                + msg.getRequestHeader().getURI().getURI()
-                                + " for storability");
+            logger.debug(
+                    "Checking URL {} for storability", msg.getRequestHeader().getURI().getURI());
 
             // storability: is the request method understood by the cache and defined as being
             // cacheable?
@@ -113,12 +111,10 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     || methodUpper.equals(HttpRequestHeader.HEAD)
                     || methodUpper.equals(HttpRequestHeader.POST))) {
                 // non-cacheable method ==> non-storable
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " is not storable due to the use of the non-cacheable request method '"
-                                    + method
-                                    + "'");
+                logger.debug(
+                        "{} is not storable due to the use of the non-cacheable request method '{}'",
+                        msg.getRequestHeader().getURI().getURI(),
+                        method);
                 alertNonStorable(msg, id, method + " ");
                 return;
             }
@@ -134,12 +130,10 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     && (responseClass != 3)
                     && (responseClass != 4)
                     && (responseClass != 5)) {
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " is not storable due to the use of a HTTP response class ["
-                                    + responseClass
-                                    + "] that we do not 'understand' (we 'understand' 1XX, 2XX, 3XX, 4XX, and 5XX response classes)");
+                logger.debug(
+                        "{} is not storable due to the use of a HTTP response class [{}] that we do not 'understand' (we 'understand' 1XX, 2XX, 3XX, 4XX, and 5XX response classes)",
+                        msg.getRequestHeader().getURI().getURI(),
+                        responseClass);
                 alertNonStorable(msg, id, String.valueOf(msg.getResponseHeader().getStatusCode()));
                 return;
             }
@@ -160,13 +154,11 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     // strip off any trailing comma
                     if (directiveToken.endsWith(","))
                         directiveToken = directiveToken.substring(0, directiveToken.length() - 1);
-                    if (logger.isTraceEnabled())
-                        logger.trace("Looking for 'no-store' in [" + directiveToken + "]");
+                    logger.trace("Looking for 'no-store' in [{}]", directiveToken);
                     if (directiveToken.toLowerCase().equals("no-store")) {
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " is not storable due to the use of HTTP caching directive 'no-store' in the request or response");
+                        logger.debug(
+                                "{} is not storable due to the use of HTTP caching directive 'no-store' in the request or response",
+                                msg.getRequestHeader().getURI().getURI());
                         alertNonStorable(msg, id, directiveToken);
                         return;
                     }
@@ -184,13 +176,11 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         if (directiveToken.endsWith(","))
                             directiveToken =
                                     directiveToken.substring(0, directiveToken.length() - 1);
-                        if (logger.isTraceEnabled())
-                            logger.trace("Looking for 'private' in [" + directiveToken + "]");
+                        logger.trace("Looking for 'private' in [{}]", directiveToken);
                         if (directiveToken.toLowerCase().equals("private")) {
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " is not storable due to the use of HTTP caching directive 'private' in the response");
+                            logger.debug(
+                                    "{} is not storable due to the use of HTTP caching directive 'private' in the response",
+                                    msg.getRequestHeader().getURI().getURI());
                             alertNonStorable(msg, id, directiveToken);
                             return;
                         }
@@ -222,11 +212,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             if (directiveToken.endsWith(","))
                                 directiveToken =
                                         directiveToken.substring(0, directiveToken.length() - 1);
-                            if (logger.isTraceEnabled())
-                                logger.trace(
-                                        "Looking for 'must-revalidate', 'public', 's-maxage' in ["
-                                                + directiveToken
-                                                + "]");
+                            logger.trace(
+                                    "Looking for 'must-revalidate', 'public', 's-maxage' in [{}]",
+                                    directiveToken);
                             if ((directiveToken.toLowerCase().equals("must-revalidate"))
                                     || (directiveToken.toLowerCase().equals("public"))
                                     || (directiveToken.toLowerCase().startsWith("s-maxage="))) {
@@ -238,18 +226,16 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     // is the request with an authorisation header allowed, based on the response
                     // headers?
                     if (!authorizedIsStorable) {
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response");
+                        logger.debug(
+                                "{} is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response",
+                                msg.getRequestHeader().getURI().getURI());
                         alertNonStorable(msg, id, HttpHeader.AUTHORIZATION + ":");
                         return;
                     }
                 } else {
-                    if (logger.isDebugEnabled())
-                        logger.debug(
-                                msg.getRequestHeader().getURI().getURI()
-                                        + " is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response (no 'Cache-Control' directive was noted)");
+                    logger.debug(
+                            "{} is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response (no 'Cache-Control' directive was noted)",
+                            msg.getRequestHeader().getURI().getURI());
                     alertNonStorable(msg, id, HttpHeader.AUTHORIZATION + ":");
                     return;
                 }
@@ -273,10 +259,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
             // Ho Hum.
             List<String> expires = msg.getResponseHeader().getHeaderValues("Expires");
             if (!expires.isEmpty())
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " *is* storable due to the basic checks, and the presence of the 'Expires' header in the response");
+                logger.debug(
+                        "{} *is* storable due to the basic checks, and the presence of the 'Expires' header in the response",
+                        msg.getRequestHeader().getURI().getURI());
             // grab this for later. Not needed for "storability" checks.
             List<String> dates = msg.getResponseHeader().getHeaderValues("Date");
 
@@ -288,32 +273,27 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         if (directiveToken.endsWith(","))
                             directiveToken =
                                     directiveToken.substring(0, directiveToken.length() - 1);
-                        if (logger.isTraceEnabled())
-                            logger.trace(
-                                    "Looking for 'max-age', 's-maxage', 'public' in ["
-                                            + directiveToken
-                                            + "]");
+                        logger.trace(
+                                "Looking for 'max-age', 's-maxage', 'public' in [{}]",
+                                directiveToken);
                         if (directiveToken.toLowerCase().startsWith("max-age=")) {
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " *is* storable due to the basic checks, and the presence of the 'max-age' caching directive in the response");
+                            logger.debug(
+                                    "{} *is* storable due to the basic checks, and the presence of the 'max-age' caching directive in the response",
+                                    msg.getRequestHeader().getURI().getURI());
                             maxAge = directiveToken;
                         }
                         if (directiveToken
                                 .toLowerCase()
                                 .startsWith("s-maxage=")) { // for a shared cache..
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " *is* storable due to the basic checks, and the presence of the 's-maxage' caching directive in the response");
+                            logger.debug(
+                                    "{} *is* storable due to the basic checks, and the presence of the 's-maxage' caching directive in the response",
+                                    msg.getRequestHeader().getURI().getURI());
                             sMaxAge = directiveToken;
                         }
                         if (directiveToken.toLowerCase().equals("public")) {
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " *is* storable due to the basic checks, and the presence of the 'public' caching directive in the response");
+                            logger.debug(
+                                    "{} *is* storable due to the basic checks, and the presence of the 'public' caching directive in the response",
+                                    msg.getRequestHeader().getURI().getURI());
                             publicDirective = directiveToken;
                         }
                     }
@@ -338,10 +318,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     || (response == 414)
                     || (response == 501)) {
                 statusCodeCacheable = true;
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " *is* storable due to the basic checks, and the presence of a cacheable response status code (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501)");
+                logger.debug(
+                        "{} *is* storable due to the basic checks, and the presence of a cacheable response status code (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501)",
+                        msg.getRequestHeader().getURI().getURI());
             }
 
             if (expires.isEmpty()
@@ -349,10 +328,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     && sMaxAge == null
                     && statusCodeCacheable == false
                     && publicDirective == null) {
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " is not storable due to the absence of any of an 'Expires' header, 'max-age' directive, 's-maxage' directive, 'public' directive, or cacheable response status code (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501) in the response");
+                logger.debug(
+                        "{} is not storable due to the absence of any of an 'Expires' header, 'max-age' directive, 's-maxage' directive, 'public' directive, or cacheable response status code (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501) in the response",
+                        msg.getRequestHeader().getURI().getURI());
                 // we raise the alert with the status code as evidence, because all the other
                 // conditions are "absent", rather "present" (ie, it is the only possible evidence
                 // we can show in this case).
@@ -411,8 +389,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         if (directiveToken.endsWith(","))
                             directiveToken =
                                     directiveToken.substring(0, directiveToken.length() - 1);
-                        if (logger.isTraceEnabled())
-                            logger.trace("Looking for 'no-cache' in [" + directiveToken + "]");
+                        logger.trace("Looking for 'no-cache' in [{}]", directiveToken);
                         // Note: if the directive looked like "Cache-Control: no-cache #field-name"
                         // (with the optional field name argument, with no comma separating them),
                         // then the "no-cache" directive only applies to the field name (response
@@ -420,10 +397,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         // In this case, the remainder of the contents may be served without
                         // validation.  The logic below is consistent with this requirement.
                         if (directiveToken.toLowerCase().equals("no-cache")) {
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " is not retrievable from the cache (cacheable) due to the use of the unqualified HTTP caching directive 'no-cache' in the response");
+                            logger.debug(
+                                    "{} is not retrievable from the cache (cacheable) due to the use of the unqualified HTTP caching directive 'no-cache' in the response",
+                                    msg.getRequestHeader().getURI().getURI());
                             alertStorableNonCacheable(msg, id, directiveToken);
                             return;
                         }
@@ -450,13 +426,11 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         if (directiveToken.endsWith(","))
                             directiveToken =
                                     directiveToken.substring(0, directiveToken.length() - 1);
-                        if (logger.isTraceEnabled())
-                            logger.trace("Looking for 's-maxage' in [" + directiveToken + "]");
+                        logger.trace("Looking for 's-maxage' in [{}]", directiveToken);
                         if (directiveToken.toLowerCase().startsWith("s-maxage=")) {
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " has a caching lifetime defined by an HTTP caching directive 's-maxage' ");
+                            logger.debug(
+                                    "{} has a caching lifetime defined by an HTTP caching directive 's-maxage' ",
+                                    msg.getRequestHeader().getURI().getURI());
                             lifetimeFound = true;
                             lifetimesFound++;
                             // get the portion of the string after "s-maxage="
@@ -471,10 +445,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     lifetimeFound = false;
                     lifetime = -1;
                     freshEvidence = null;
-                    if (logger.isDebugEnabled())
-                        logger.debug(
-                                msg.getRequestHeader().getURI().getURI()
-                                        + " had multiple caching lifetimes defined by an HTTP caching directive 's-maxage'. Invalidating all of these!");
+                    logger.debug(
+                            "{} had multiple caching lifetimes defined by an HTTP caching directive 's-maxage'. Invalidating all of these!",
+                            msg.getRequestHeader().getURI().getURI());
                 }
             }
 
@@ -489,13 +462,11 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             if (directiveToken.endsWith(","))
                                 directiveToken =
                                         directiveToken.substring(0, directiveToken.length() - 1);
-                            if (logger.isTraceEnabled())
-                                logger.trace("Looking for 'max-age' in [" + directiveToken + "]");
+                            logger.trace("Looking for 'max-age' in [{}]", directiveToken);
                             if (directiveToken.toLowerCase().startsWith("max-age=")) {
-                                if (logger.isDebugEnabled())
-                                    logger.debug(
-                                            msg.getRequestHeader().getURI().getURI()
-                                                    + " has a caching lifetime defined by an HTTP caching directive 'max-age' ");
+                                logger.debug(
+                                        "{} has a caching lifetime defined by an HTTP caching directive 'max-age' ",
+                                        msg.getRequestHeader().getURI().getURI());
                                 lifetimeFound = true;
                                 lifetimesFound++;
                                 // get the portion of the string after "maxage="
@@ -509,11 +480,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                                 } catch (NumberFormatException nfe) {
                                     lifetimeFound = false;
                                     lifetimesFound--;
-                                    if (logger.isDebugEnabled()) {
-                                        logger.debug(
-                                                "Could not parse max-age to establish lifetime. Perhaps the value exceeds Long.MAX_VALUE or contains non-number characters:"
-                                                        + directiveToken);
-                                    }
+                                    logger.debug(
+                                            "Could not parse max-age to establish lifetime. Perhaps the value exceeds Long.MAX_VALUE or contains non-number characters:{}",
+                                            directiveToken);
                                 }
                                 freshEvidence = directiveToken;
                             }
@@ -524,10 +493,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         lifetimeFound = false;
                         lifetime = -1;
                         freshEvidence = null;
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " had multiple caching lifetimes defined by an HTTP caching directive 'max-age'. Invalidating all of these!");
+                        logger.debug(
+                                "{} had multiple caching lifetimes defined by an HTTP caching directive 'max-age'. Invalidating all of these!",
+                                msg.getRequestHeader().getURI().getURI());
                     }
                 }
             }
@@ -544,10 +512,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     // Invalid dates are treated as "expired"
                     int expiresHeadersFound = 0;
                     for (String directive : expires) {
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " has a caching lifetime expiry defined by an HTTP response header 'Expires'");
+                        logger.debug(
+                                "{} has a caching lifetime expiry defined by an HTTP response header 'Expires'",
+                                msg.getRequestHeader().getURI().getURI());
                         expiresHeadersFound++;
                         expiresHeader = directive;
                         freshEvidence = directive;
@@ -555,10 +522,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     // if duplicates exist, the values are invalid. as per rfc7234.
                     if (expiresHeadersFound > 1) {
                         expiresHeader = null;
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " had multiple caching lifetime expirys defined by an HTTP response header 'Expires'. Invalidating all of these!");
+                        logger.debug(
+                                "{} had multiple caching lifetime expirys defined by an HTTP response header 'Expires'. Invalidating all of these!",
+                                msg.getRequestHeader().getURI().getURI());
                     } else {
                         // we now have a single "expiry".
                         // Now it is time to get the "date" for the request, so we can subtract the
@@ -566,20 +532,18 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         if (!dates.isEmpty()) {
                             int dateHeadersFound = 0;
                             for (String directive : dates) {
-                                if (logger.isDebugEnabled())
-                                    logger.debug(
-                                            msg.getRequestHeader().getURI().getURI()
-                                                    + " has a caching lifetime date defined by an HTTP response header 'Date'");
+                                logger.debug(
+                                        "{} has a caching lifetime date defined by an HTTP response header 'Date'",
+                                        msg.getRequestHeader().getURI().getURI());
                                 dateHeadersFound++;
                                 dateHeader = directive;
                             }
                             // if duplicates exist, the values are invalid. as per rfc7234.
                             if (dateHeadersFound > 1) {
                                 dateHeader = null;
-                                if (logger.isDebugEnabled())
-                                    logger.debug(
-                                            msg.getRequestHeader().getURI().getURI()
-                                                    + " had multiple caching lifetime dates defined by an HTTP response header 'Date'. Invalidating all of these!");
+                                logger.debug(
+                                        "{} had multiple caching lifetime dates defined by an HTTP response header 'Date'. Invalidating all of these!",
+                                        msg.getRequestHeader().getURI().getURI());
                             } else {
                                 // we have one expiry, and one date. Yippee.. Are they valid tough??
                                 // both dates can be invalid, or have one of 3 formats, all of which
@@ -596,26 +560,23 @@ public class CacheableScanRule extends PluginPassiveScanner {
                                         // there is multiple parts to the evidence in this case (the
                                         // Expiry, and the Date, but lets show the Expiry)
                                         freshEvidence = expiresHeader;
-                                        if (logger.isDebugEnabled())
-                                            logger.debug(
-                                                    msg.getRequestHeader().getURI().getURI()
-                                                            + " had an 'Expires' date and a 'Date' date, which were used to calculate the lifetime of the request");
+                                        logger.debug(
+                                                "{} had an 'Expires' date and a 'Date' date, which were used to calculate the lifetime of the request",
+                                                msg.getRequestHeader().getURI().getURI());
                                     } else {
                                         // the "Date" date is not valid. Treat it as "expired"
-                                        if (logger.isDebugEnabled())
-                                            logger.debug(
-                                                    msg.getRequestHeader().getURI().getURI()
-                                                            + " had an invalid caching lifetime date defined by an HTTP response header 'Date'. Ignoring the 'Expires' header for the purposes of lifetime calculation.");
+                                        logger.debug(
+                                                "{} had an invalid caching lifetime date defined by an HTTP response header 'Date'. Ignoring the 'Expires' header for the purposes of lifetime calculation.",
+                                                msg.getRequestHeader().getURI().getURI());
                                         lifetime = -1;
                                     }
                                 } else {
                                     // the expires date is not valid. Treat it as "expired"
                                     // (will not result in a "cacheable" alert, so the evidence is
                                     // not needed, in fact
-                                    if (logger.isDebugEnabled())
-                                        logger.debug(
-                                                msg.getRequestHeader().getURI().getURI()
-                                                        + " had an invalid caching lifetime expiry date defined by an HTTP response header 'Expiry'. Assuming an historic/ expired lifetime.");
+                                    logger.debug(
+                                            "{} had an invalid caching lifetime expiry date defined by an HTTP response header 'Expiry'. Assuming an historic/ expired lifetime.",
+                                            msg.getRequestHeader().getURI().getURI());
                                     lifetimeFound = true;
                                     lifetime = 0;
                                     freshEvidence = expiresHeader;
@@ -623,18 +584,16 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             }
                         } else {
                             // "Dates" is not defined. Nothing to do!
-                            if (logger.isDebugEnabled())
-                                logger.debug(
-                                        msg.getRequestHeader().getURI().getURI()
-                                                + " has a caching lifetime expiry defined by an HTTP response header 'Expires', but no 'Date' header to subtract from it");
+                            logger.debug(
+                                    "{} has a caching lifetime expiry defined by an HTTP response header 'Expires', but no 'Date' header to subtract from it",
+                                    msg.getRequestHeader().getURI().getURI());
                         }
                     }
                 } else {
                     // "Expires" is not defined. Nothing to do!
-                    if (logger.isDebugEnabled())
-                        logger.debug(
-                                msg.getRequestHeader().getURI().getURI()
-                                        + " has no caching lifetime expiry defined by an HTTP response header 'Expires'");
+                    logger.debug(
+                            "{} has no caching lifetime expiry defined by an HTTP response header 'Expires'",
+                            msg.getRequestHeader().getURI().getURI());
                 }
             }
 
@@ -643,10 +602,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
             //  for the purposes of this exercise, lets assume the cache chooses a "plausible"
             // expiration of 1 year (expressed in seconds)
             if (!lifetimeFound) {
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " has no caching lifetime expiry of any form, so assuming that it is set 'heuristically' to 1 year (as a form of worst case)");
+                logger.debug(
+                        "{} has no caching lifetime expiry of any form, so assuming that it is set 'heuristically' to 1 year (as a form of worst case)",
+                        msg.getRequestHeader().getURI().getURI());
                 lifetimeFound = true;
                 lifetime = 60 * 60 * 24 * 365;
                 // a liberal heuristic was assumed, for which no actual evidence exists
@@ -657,11 +615,10 @@ public class CacheableScanRule extends PluginPassiveScanner {
                                         + "otherinfo.liberallifetimeheuristic");
             }
 
-            if (logger.isDebugEnabled())
-                logger.debug(
-                        msg.getRequestHeader().getURI().getURI()
-                                + " has a caching lifetime of "
-                                + lifetime);
+            logger.debug(
+                    "{} has a caching lifetime of {}",
+                    msg.getRequestHeader().getURI().getURI(),
+                    lifetime);
 
             // 2: calculate the current age of the request
             //   Note that since we are not necessarily testing via a cache, the "Age" header may
@@ -681,10 +638,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
             // so after all that, is the response fresh or not?
             if (lifetime > age) {
                 // fresh, so it can be retrieved from the cache
-                if (logger.isDebugEnabled())
-                    logger.debug(
-                            msg.getRequestHeader().getURI().getURI()
-                                    + " is retrievable from the cache (cacheable), since it is fresh");
+                logger.debug(
+                        "{} is retrievable from the cache (cacheable), since it is fresh",
+                        msg.getRequestHeader().getURI().getURI());
                 alertStorableCacheable(msg, id, freshEvidence, otherInfo);
                 return;
             } else {
@@ -710,11 +666,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             if (directiveToken.endsWith(","))
                                 directiveToken =
                                         directiveToken.substring(0, directiveToken.length() - 1);
-                            if (logger.isTraceEnabled())
-                                logger.trace(
-                                        "Looking for 'must-revalidate', 'proxy-revalidate', 's-maxage', 'max-age' in ["
-                                                + directiveToken
-                                                + "]");
+                            logger.trace(
+                                    "Looking for 'must-revalidate', 'proxy-revalidate', 's-maxage', 'max-age' in [{}]",
+                                    directiveToken);
                             if ((directiveToken.toLowerCase().equals("must-revalidate"))
                                     || (directiveToken.toLowerCase().equals("proxy-revalidate"))
                                     || (directiveToken.toLowerCase().startsWith("s-maxage="))
@@ -747,9 +701,8 @@ public class CacheableScanRule extends PluginPassiveScanner {
             }
         } catch (Exception e) {
             logger.error(
-                    "An error occurred while checking a URI [ "
-                            + msg.getRequestHeader().getURI().toString()
-                            + " ] for cacheability",
+                    "An error occurred while checking a URI [{}] for cacheability",
+                    msg.getRequestHeader().getURI().toString(),
                     e);
         }
     }

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -38,7 +39,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
 
-    private static final Logger LOGGER = Logger.getLogger(InPageBannerInfoLeakScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(InPageBannerInfoLeakScanRule.class);
     private static final int PLUGIN_ID = 10009;
     private static final String MESSAGE_PREFIX = "pscanalpha.inpagebanner.";
 
@@ -71,14 +72,7 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        LOGGER.debug("\tScan of record {} took {} ms", id, (System.currentTimeMillis() - start));
     }
 
     @Override
