@@ -663,7 +663,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                 "Caught {} {} when accessing: {}",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
-                                msg1.getRequestHeader().getURI().toString());
+                                msg1.getRequestHeader().getURI());
                         continue; // Something went wrong, continue to the next prefixString in the
                         // loop
                     }
@@ -768,7 +768,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        refreshedmessage.getRequestHeader().getURI().toString());
+                        refreshedmessage.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
 
@@ -914,7 +914,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        refreshedmessage.getRequestHeader().getURI().toString());
+                        refreshedmessage.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
 
@@ -950,7 +950,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg2.getRequestHeader().getURI().toString());
+                            msg2.getRequestHeader().getURI());
                     continue; // Something went wrong, continue to the next item in the loop
                 }
                 countBooleanBasedRequests++;
@@ -995,7 +995,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                     "Caught {} {} when accessing: {}",
                                     ex.getClass().getName(),
                                     ex.getMessage(),
-                                    msg2_and_false.getRequestHeader().getURI().toString());
+                                    msg2_and_false.getRequestHeader().getURI());
                             continue; // Something went wrong, continue on to the next item in the
                             // loop
                         }
@@ -1107,7 +1107,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                         "Caught {} {} when accessing: {}",
                                         ex.getClass().getName(),
                                         ex.getMessage(),
-                                        msg2_or_true.getRequestHeader().getURI().toString());
+                                        msg2_or_true.getRequestHeader().getURI());
                                 continue; // Something went wrong, continue on to the next item in
                                 // the loop
                             }
@@ -1275,7 +1275,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg2.getRequestHeader().getURI().toString());
+                            msg2.getRequestHeader().getURI());
                     continue; // Something went wrong, continue on to the next item in the loop
                 }
                 countBooleanBasedRequests++;
@@ -1301,7 +1301,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                 "Caught {} {} when accessing: {}",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
-                                msg2_and_false.getRequestHeader().getURI().toString());
+                                msg2_and_false.getRequestHeader().getURI());
                         continue; // Something went wrong, continue on to the next item in the loop
                     }
                     countBooleanBasedRequests++;
@@ -1388,7 +1388,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg3.getRequestHeader().getURI().toString());
+                            msg3.getRequestHeader().getURI());
                     continue; // Something went wrong, continue on to the next item in the loop
                 }
                 countUnionBasedRequests++;
@@ -1456,7 +1456,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        refreshedmessage.getRequestHeader().getURI().toString());
+                        refreshedmessage.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
 
@@ -1481,7 +1481,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg5.getRequestHeader().getURI().toString());
+                            msg5.getRequestHeader().getURI());
                     return; // Something went wrong, no point continuing
                 }
                 countOrderByBasedRequests++;
@@ -1534,7 +1534,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                     "Caught {} {} when accessing: {}",
                                     ex.getClass().getName(),
                                     ex.getMessage(),
-                                    msg5Confirm.getRequestHeader().getURI().toString());
+                                    msg5Confirm.getRequestHeader().getURI());
                             continue; // Something went wrong, continue on to the next item in the
                             // loop
                         }
@@ -1796,7 +1796,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     "Caught {} {} when accessing: {}",
                     ex.getClass().getName(),
                     ex.getMessage(),
-                    msg.getRequestHeader().getURI().toString());
+                    msg.getRequestHeader().getURI());
             return; // Something went wrong, no point continuing
         }
         countExpressionBasedRequests++;
@@ -1815,7 +1815,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 log.debug(
                         "Check 4, STRIPPED html output for modified expression parameter [{}] matched (refreshed) original results for {}",
                         modifiedParamValue,
-                        refreshedmessage.getRequestHeader().getURI().toString());
+                        refreshedmessage.getRequestHeader().getURI());
                 // confirm that a different parameter value generates different output, to minimise
                 // false positives
                 // this time param value will be different to original value and mismatch is
@@ -1832,7 +1832,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msgConfirm.getRequestHeader().getURI().toString());
+                            msgConfirm.getRequestHeader().getURI());
                     return; // Something went wrong
                 }
                 countExpressionBasedRequests++;

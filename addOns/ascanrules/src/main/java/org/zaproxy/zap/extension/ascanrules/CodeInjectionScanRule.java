@@ -190,7 +190,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {}{} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI().toString());
+                            msg.getRequestHeader().getURI());
                     continue; // Advance in the PHP payload loop, no point continuing on this
                     // payload
                 }
@@ -265,7 +265,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI().toString());
+                            msg.getRequestHeader().getURI());
                     continue; // Advance in the ASP payload loop, no point continuing on this
                     // payload
                 }

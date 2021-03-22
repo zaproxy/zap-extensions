@@ -643,7 +643,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                 log.warn(
                         "A timeout occurred while checking [{}] [{}] for Proxy Disclosure.\nThe currently configured timeout is: {}",
                         trackmsg.getRequestHeader().getMethod(),
-                        trackmsg.getRequestHeader().getURI().toString(),
+                        trackmsg.getRequestHeader().getURI(),
                         Integer.toString(
                                 Model.getSingleton()
                                         .getOptionsParam()

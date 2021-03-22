@@ -142,7 +142,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        testMsg.getRequestHeader().getURI().toString());
+                        testMsg.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
 
@@ -178,7 +178,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}.\nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        intialAttackMsg.getRequestHeader().getURI().toString());
+                        intialAttackMsg.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
             if (isPage500(intialAttackMsg)) {
@@ -199,7 +199,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            verificationMsg.getRequestHeader().getURI().toString());
+                            verificationMsg.getRequestHeader().getURI());
                     return; // Something went wrong, no point continuing
                 }
                 HttpResponseBody secondAttackResponseBody = verificationMsg.getResponseBody();
@@ -254,7 +254,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                         "Caught {} {} when accessing: {}. \nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        microsoftTestMsg.getRequestHeader().getURI().toString());
+                        microsoftTestMsg.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
             if (isPage500(microsoftTestMsg)) {

@@ -227,7 +227,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                 log.debug(
                         "Scanning URL [{}] [{}], [{}] field [{}] with value [{}] for Session Fixation",
                         msg1Initial.getRequestHeader().getMethod(),
-                        msg1Initial.getRequestHeader().getURI().toString(),
+                        msg1Initial.getRequestHeader().getURI(),
                         currentHtmlParameter.getType(),
                         currentHtmlParameter.getName(),
                         currentHtmlParameter.getValue());
@@ -355,7 +355,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     if (!isPage200(msg1Final)) {
                         log.debug(
                                 "Got a non-200 response when sending [{}] with param [{}] = NULL (possibly somewhere in the redirects)",
-                                msg1Initial.getRequestHeader().getURI().toString(),
+                                msg1Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
                         continue;
                     }
@@ -507,7 +507,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         log.debug(
                                 "A session identifier in [{}] URL [{}] {} field: [{}] may be accessible to JavaScript",
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().getURI().toString(),
+                                getBaseMsg().getRequestHeader().getURI().getURI(),
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName());
                         // Note: do NOT continue to the next field at this point..
@@ -836,7 +836,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     if (!isPage200(msg2Final)) {
                         log.debug(
                                 "Got a non-200 response when sending [{}] with a borrowed cookie (or by following a redirect) for param [{}]",
-                                msg2Initial.getRequestHeader().getURI().toString(),
+                                msg2Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
                         continue; // to next parameter
                     }
@@ -948,7 +948,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     if (!isPage200(msg1Initial)) {
                         log.debug(
                                 "Got a non-200 response when sending [{}] with param [{}] = NULL (possibly somewhere in the redirects)",
-                                msg1Initial.getRequestHeader().getURI().toString(),
+                                msg1Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
                         continue;
                     }
@@ -1178,7 +1178,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     if (!isPage200(msg2Initial)) {
                         log.debug(
                                 "Got a non-200 response when sending [{}] with a borrowed session (or by following a redirect) for param [{}]",
-                                msg2Initial.getRequestHeader().getURI().toString(),
+                                msg2Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
                         continue; // next field!
                     }
@@ -1271,7 +1271,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                 currentHtmlParameter.getName(),
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().toString());
+                                getBaseMsg().getRequestHeader().getURI());
                     }
 
                     continue; // onto the next parameter

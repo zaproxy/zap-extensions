@@ -179,7 +179,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
                             msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString());
+                            msgTimeBaseline.getRequestHeader().getURI());
                     return;
                 }
                 // the second time came in within the limits. use the later timing details as the
@@ -190,7 +190,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "Scanning URL [{}] [{}], field [{}] with value [{}] for MsSQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    getBaseMsg().getRequestHeader().getURI(),
                     paramName,
                     paramValue);
 
@@ -283,7 +283,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "The Base Time Check timed out on [{}] URL [{}]",
                     msg.getRequestHeader().getMethod(),
-                    msg.getRequestHeader().getURI().toString());
+                    msg.getRequestHeader().getURI());
         }
         countTimeBasedRequests++;
         return msg.getTimeElapsedMillis();

@@ -78,7 +78,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
         try {
             log.debug(
                     "Checking message {} for Cross-Domain misconfigurations",
-                    msg.getRequestHeader().getURI().toString());
+                    msg.getRequestHeader().getURI());
 
             String corsAllowOriginValue =
                     msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);

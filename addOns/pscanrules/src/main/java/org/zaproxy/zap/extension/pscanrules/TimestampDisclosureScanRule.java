@@ -104,7 +104,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        log.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI().toString());
+        log.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
         List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
         StringBuffer filteredResponseheaders = new StringBuffer();

@@ -207,7 +207,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
         log.debug(
                 "Checking [{}] [{}], for Relative Path Confusion issues",
                 originalMsg.getRequestHeader().getMethod(),
-                originalMsg.getRequestHeader().getURI().toString());
+                originalMsg.getRequestHeader().getURI());
 
         try {
             URI baseUri = originalMsg.getRequestHeader().getURI();
@@ -223,7 +223,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
             // Confusion
             // (based on the instances of this that I've in seen in the wild, at least)
             if (fileext != null && fileext.length() > 0) {
-                log.debug("The file extension of {} is {}", baseUri.getURI().toString(), fileext);
+                log.debug("The file extension of {} is {}", baseUri, fileext);
 
                 // 1: First manipulate the URL, using a URL which is ambiguous..
                 URI originalURI = originalMsg.getRequestHeader().getURI();
@@ -622,7 +622,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
 
                 log.debug(
                         "A Relative Path Confusion issue exists on {}",
-                        getBaseMsg().getRequestHeader().getURI().toString());
+                        getBaseMsg().getRequestHeader().getURI());
                 return;
 
             } else {

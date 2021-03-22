@@ -161,7 +161,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                 LOG.warn(
                         "An error occurred while checking [{}] [{}] for {}. Caught {} {}",
                         getBaseMsg().getRequestHeader().getMethod(),
-                        getBaseMsg().getRequestHeader().getURI().toString(),
+                        getBaseMsg().getRequestHeader().getURI(),
                         getName(),
                         e.getClass().getName(),
                         e.getMessage());
@@ -188,7 +188,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         } catch (URIException e) {
             LOG.warn(
                     "An error occurred while getting Host for {}. Caught {} {}",
-                    msg.getRequestHeader().getURI().toString(),
+                    msg.getRequestHeader().getURI(),
                     e.getClass().getName(),
                     e.getMessage());
             return "";

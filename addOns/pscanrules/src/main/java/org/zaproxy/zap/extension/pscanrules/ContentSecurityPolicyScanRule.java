@@ -90,7 +90,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         boolean cspHeaderFound = false;
         int noticesRisk = Alert.RISK_INFO;
 
-        LOGGER.debug("Start {} : {}", id, msg.getRequestHeader().getURI().toString());
+        LOGGER.debug("Start {} : {}", id, msg.getRequestHeader().getURI());
 
         long start = System.currentTimeMillis();
 

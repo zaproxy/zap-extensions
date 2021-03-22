@@ -147,7 +147,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
         log.debug(
                 "Checking [{}] [{}], for Source Code Disclosure using SVN meta-data",
                 getBaseMsg().getRequestHeader().getMethod(),
-                getBaseMsg().getRequestHeader().getURI().toString());
+                getBaseMsg().getRequestHeader().getURI());
 
         try {
             URI uri = this.getBaseMsg().getRequestHeader().getURI();

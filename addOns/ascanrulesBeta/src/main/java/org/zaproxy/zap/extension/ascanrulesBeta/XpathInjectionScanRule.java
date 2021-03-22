@@ -167,7 +167,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
         log.debug(
                 "Checking [{}] [{}], parameter [{}] for XPath Injection vulnerabilities.",
                 msg.getRequestHeader().getMethod(),
-                msg.getRequestHeader().getURI().toString(),
+                msg.getRequestHeader().getURI(),
                 paramName);
 
         // Start launching evil payloads

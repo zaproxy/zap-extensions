@@ -160,9 +160,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                 boolean match2 = matcher2.matches();
 
                 if ((!responseBody.equals(responseBodyDecoded)) && (match1 || match2)) {
-                    log.debug(
-                            "Source Code Disclosure alert for: {}",
-                            originalURI.getURI().toString());
+                    log.debug("Source Code Disclosure alert for: {}", originalURI.getURI());
 
                     String sourceCode = null;
                     if (match1) {

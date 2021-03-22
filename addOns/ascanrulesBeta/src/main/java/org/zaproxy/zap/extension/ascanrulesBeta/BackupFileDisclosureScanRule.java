@@ -357,7 +357,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         log.debug(
                 "Checking [{}] [{}], for Backup File Disclosure",
                 getBaseMsg().getRequestHeader().getMethod(),
-                getBaseMsg().getRequestHeader().getURI().toString());
+                getBaseMsg().getRequestHeader().getURI());
 
         try {
             URI uri = this.getBaseMsg().getRequestHeader().getURI();
@@ -454,12 +454,12 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 gives404s = false;
                 log.debug(
                         "The server does not return a 404 status for a non-existent path: {}",
-                        nonexistfilemsg.getRequestHeader().getURI().toString());
+                        nonexistfilemsg.getRequestHeader().getURI());
             } else {
                 gives404s = true;
                 log.debug(
                         "The server gives a 404 status for a non-existent path: {}",
-                        nonexistfilemsg.getRequestHeader().getURI().toString());
+                        nonexistfilemsg.getRequestHeader().getURI());
             }
 
             // now request a different (and non-existent) parent directory,
@@ -502,12 +502,12 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                     parentgives404s = false;
                     log.debug(
                             "The server does not return a 404 status for a non-existent parent path: {}",
-                            nonexistparentmsg.getRequestHeader().getURI().toString());
+                            nonexistparentmsg.getRequestHeader().getURI());
                 } else {
                     parentgives404s = true;
                     log.debug(
                             "The server gives a 404 status for a non-existent parent path: {}",
-                            nonexistparentmsg.getRequestHeader().getURI().toString());
+                            nonexistparentmsg.getRequestHeader().getURI());
                 }
             }
 
@@ -800,7 +800,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             log.error(
                     "Some error occurred when looking for a backup file for '{}'",
-                    originalMessage.getRequestHeader().getURI().toString(),
+                    originalMessage.getRequestHeader().getURI(),
                     e);
             return;
         }

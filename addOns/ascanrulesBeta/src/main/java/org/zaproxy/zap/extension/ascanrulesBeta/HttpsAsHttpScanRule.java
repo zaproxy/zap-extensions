@@ -110,8 +110,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
         }
 
         log.debug(
-                "Checking if {} is available via HTTP.",
-                getBaseMsg().getRequestHeader().getURI().toString());
+                "Checking if {} is available via HTTP.", getBaseMsg().getRequestHeader().getURI());
 
         HttpMessage newRequest = getNewMsg();
 

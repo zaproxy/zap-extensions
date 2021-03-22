@@ -517,7 +517,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI().toString());
+                            msg.getRequestHeader().getURI());
                     continue; // Something went wrong, move to next payload iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();
@@ -603,7 +603,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI().toString());
+                            msg.getRequestHeader().getURI());
                     continue; // Something went wrong, move to next blind iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();

@@ -103,7 +103,7 @@ public class GetForPostScanRule extends AbstractAppPlugin {
             LOG.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     newRequest.getRequestHeader().getMethod(),
-                    newRequest.getRequestHeader().getURI().toString(),
+                    newRequest.getRequestHeader().getURI(),
                     getName(),
                     e.getClass().getName(),
                     e.getMessage());

@@ -126,7 +126,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
         log.debug(
                 "Checking [{}] [{}], for Source Code Disclosure using Git meta-data",
                 getBaseMsg().getRequestHeader().getMethod(),
-                getBaseMsg().getRequestHeader().getURI().toString());
+                getBaseMsg().getRequestHeader().getURI());
 
         try {
             URI uri = this.getBaseMsg().getRequestHeader().getURI();
@@ -260,7 +260,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 null,
                                 null);
                 try {
-                    log.debug("Trying for a Git index file {}", gitindexuri.getURI().toString());
+                    log.debug("Trying for a Git index file {}", gitindexuri.getURI());
 
                     if (!gitindexentrycache.isIndexCached(gitindexuri)) {
                         // The Git index is not cached, so parse it and cache it.

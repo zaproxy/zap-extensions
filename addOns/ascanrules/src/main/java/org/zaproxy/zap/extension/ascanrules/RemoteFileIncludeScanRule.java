@@ -205,7 +205,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                                 "Caught {} {} when accessing: {}",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
-                                msg.getRequestHeader().getURI().toString());
+                                msg.getRequestHeader().getURI());
                         continue; // Something went wrong, continue to the next target in the loop
                     }
 

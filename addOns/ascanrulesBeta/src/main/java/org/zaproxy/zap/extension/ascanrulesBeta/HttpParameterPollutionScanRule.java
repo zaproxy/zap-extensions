@@ -109,7 +109,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                                 "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
-                                newMsg.getRequestHeader().getURI().toString());
+                                newMsg.getRequestHeader().getURI());
                         return;
                     }
 

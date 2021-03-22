@@ -68,7 +68,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
             } else { // No location header found
                 logger.debug(
                         "Though the response had a redirect status code it did not have a Location header.\nRequested URL: {}",
-                        msg.getRequestHeader().getURI().toString());
+                        msg.getRequestHeader().getURI());
             }
 
             if (responseLocationHeaderURILength > 0) {
