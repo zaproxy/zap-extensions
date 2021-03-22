@@ -3,7 +3,7 @@ description = "Alert reports using BIRT report API"
 
 zapAddOn {
     addOnName.set("BIRT Reports")
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("Johanna Curiel And Rauf Butt")
