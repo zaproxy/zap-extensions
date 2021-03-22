@@ -24,7 +24,8 @@ import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -61,7 +62,7 @@ public class AttackThread extends Thread {
     private boolean stopAttack = false;
     private boolean useStdSpider;
 
-    private static final Logger logger = Logger.getLogger(AttackThread.class);
+    private static final Logger logger = LogManager.getLogger(AttackThread.class);
 
     public AttackThread(ExtensionQuickStart ext, boolean useStdSpider) {
         super("ZAP-QuickStart-AttackThread");
@@ -86,7 +87,7 @@ public class AttackThread extends Thread {
             SiteNode startNode = this.accessNode(this.url);
 
             if (startNode == null) {
-                logger.debug("Failed to access URL " + url);
+                logger.debug("Failed to access URL {}", url);
                 // Dont notify progress here - it will have been done where we know more about
                 // the problem
                 return;

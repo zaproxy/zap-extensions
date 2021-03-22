@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -50,7 +51,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
     public static final String NAME = "ExtensionQuickStartLaunch";
-    private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStartLaunch.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStartLaunch.class);
 
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
 

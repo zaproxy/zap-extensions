@@ -6,12 +6,12 @@ description = "Provides a tab which allows you to quickly test a target applicat
 zapAddOn {
     addOnName.set("Quick Start")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/quick-start/")
-        notBeforeVersion.set("2.10.0")
+
         extensions {
             register("org.zaproxy.zap.extension.quickstart.ajaxspider.ExtensionQuickStartAjaxSpider") {
                 classnames {
