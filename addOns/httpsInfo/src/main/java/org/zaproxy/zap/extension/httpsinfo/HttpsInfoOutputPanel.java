@@ -28,7 +28,8 @@ import com.mps.deepviolet.api.IDVX509Certificate;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -44,7 +45,7 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 
     private static final String NEWLINE = System.lineSeparator();
 
-    private static final Logger LOGGER = Logger.getLogger(HttpsInfoOutputPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpsInfoOutputPanel.class);
 
     private static final int BEAST_PLUGIN_ID = 10200;
     private static final int CRIME_PLUGIN_ID = 10201;
