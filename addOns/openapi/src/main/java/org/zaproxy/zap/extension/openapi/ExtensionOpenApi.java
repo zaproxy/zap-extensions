@@ -19,17 +19,14 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -55,8 +52,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     private static final String THREAD_PREFIX = "ZAP-Import-OpenAPI-";
 
-    private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/openapi/resources/";
-
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
     private int threadId = 1;
@@ -67,7 +62,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_TARGET_URL_IDX = 2;
 
-    private static final Logger LOG = Logger.getLogger(ExtensionOpenApi.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionOpenApi.class);
 
     public ExtensionOpenApi() {
         super(NAME);
@@ -460,19 +455,5 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     public boolean handleFile(File file) {
         // Not supported
         return false;
-    }
-
-    public static String getResourceAsString(String name) {
-        try (InputStream in = ExtensionOpenApi.class.getResourceAsStream(RESOURCES_DIR + name)) {
-            return new BufferedReader(new InputStreamReader(in))
-                            .lines()
-                            .collect(Collectors.joining("\n"))
-                    + "\n";
-        } catch (Exception e) {
-            CommandLine.error(
-                    Constant.messages.getString(
-                            "openapi.automation.error.nofile", RESOURCES_DIR + name));
-        }
-        return "";
     }
 }

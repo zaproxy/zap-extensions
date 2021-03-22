@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeaderField;
@@ -38,7 +39,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
-    private static final Logger LOG = Logger.getLogger(Requestor.class);
+    private static final Logger LOG = LogManager.getLogger(Requestor.class);
 
     public Requestor(int initiator) {
         this.initiator = initiator;

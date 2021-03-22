@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
@@ -394,8 +394,8 @@ public class BodyGeneratorUnitTest {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
         String defn =
-                FileUtils.readFileToString(
-                        new File(this.getClass().getResource(fileName).getFile()), "UTF-8");
+                IOUtils.toString(
+                        this.getClass().getResourceAsStream(fileName), StandardCharsets.UTF_8);
         return new OpenAPIV3Parser().readContents(defn, new ArrayList<>(), options).getOpenAPI();
     }
 }

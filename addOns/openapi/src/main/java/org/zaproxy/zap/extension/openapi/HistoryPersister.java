@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -32,7 +33,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = Logger.getLogger(HistoryPersister.class);
+    private static final Logger LOG = LogManager.getLogger(HistoryPersister.class);
 
     private final ExtensionHistory extHistory;
 
@@ -66,7 +67,7 @@ public class HistoryPersister implements RequesterListener {
             }
             Stats.incCounter(ExtensionOpenApi.URL_ADDED_STATS);
         } catch (Exception e) {
-            LOG.warn("Failed to persist the message: " + e.getMessage(), e);
+            LOG.warn("Failed to persist the message: {}", e.getMessage(), e);
             return;
         }
 
