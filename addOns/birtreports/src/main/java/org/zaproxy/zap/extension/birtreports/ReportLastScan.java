@@ -46,7 +46,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.EngineConfig;
@@ -91,7 +92,7 @@ public class ReportLastScan {
     private static final Path XML_REPORT =
             REPORT_DESIGN_FILES_DIR.resolve("xmloutput/xmloutputzap.xml");
 
-    private Logger logger = Logger.getLogger(ReportLastScan.class);
+    private Logger logger = LogManager.getLogger(ReportLastScan.class);
     private ResourceBundle messages = null;
     private StringBuilder sbXML;
     private int totalCount = 0;

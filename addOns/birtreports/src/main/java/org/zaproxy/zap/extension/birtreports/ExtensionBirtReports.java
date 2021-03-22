@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.birtreports;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.parosproxy.paros.Constant;
@@ -31,7 +32,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 /** The extension responsible to setup the BIRT reports. */
 public class ExtensionBirtReports extends ExtensionAdaptor {
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionBirtReports.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionBirtReports.class);
 
     private ZapMenuItem menuGeneratePdfReport;
     private ZapMenuItem menuGenerateScriptedPdfReport;
