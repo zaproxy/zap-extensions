@@ -8,4 +8,5 @@
     <mapID target="graphql" url="contents/graphql.html" />
     <mapID target="graphql.options" url="contents/options.html" />
     <mapID target="graphql.script" url="contents/script.html" />
+    <mapID target="graphql.automation" url="contents/automation.html" />
 </map>

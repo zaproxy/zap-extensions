@@ -9,6 +9,7 @@
 			<tocitem text="GraphQL Support" image="graphql-icon" target="graphql">
 				<tocitem text="Options" image="graphql-icon" target="graphql.options"/>
 				<tocitem text="Script" image="graphql-icon" target="graphql.script"/>
+				<tocitem text="Automation" image="graphql-icon" target="graphql.automation"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
