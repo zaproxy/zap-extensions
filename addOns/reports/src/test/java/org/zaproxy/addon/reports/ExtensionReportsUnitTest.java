@@ -21,17 +21,32 @@ package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
+import com.lowagie.text.DocumentException;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.I18N;
 
 public class ExtensionReportsUnitTest {
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        Constant.messages = new I18N(Locale.ENGLISH);
+    }
 
     @Test
     public void shouldExtractExpectedParams() {
@@ -249,5 +264,31 @@ public class ExtensionReportsUnitTest {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "traditional-html",
+                "traditional-html-plus",
+                "traditional-md",
+                "traditional-xml"
+            })
+    public void shouldGenerateReport(String report) throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData();
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+        reportData.setSites(Arrays.asList("test"));
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + report + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+
+        // Then
+        assertThat(r.length(), greaterThan(0L));
     }
 }
