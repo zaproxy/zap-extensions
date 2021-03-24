@@ -25,15 +25,22 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -79,14 +86,19 @@ public class ReportDialog extends StandardFieldsDialog {
     private static final String FIELD_RISK_1 = "reports.dialog.field.risk.1";
     private static final String FIELD_RISK_2 = "reports.dialog.field.risk.2";
     private static final String FIELD_RISK_3 = "reports.dialog.field.risk.3";
+    private static final String FIELD_SECTIONS = "reports.dialog.field.sections";
 
     private static final String[] TAB_LABELS = {
-        "reports.dialog.tab.scope", "reports.dialog.tab.filter", "reports.dialog.tab.options",
+        "reports.dialog.tab.scope",
+        "reports.dialog.tab.template",
+        "reports.dialog.tab.filter",
+        "reports.dialog.tab.options",
     };
 
     private static final int TAB_SCOPE = 0;
-    private static final int TAB_FILTER = 1;
-    private static final int TAB_OPTIONS = 2;
+    private static final int TAB_TEMPLATE = 1;
+    private static final int TAB_FILTER = 2;
+    private static final int TAB_OPTIONS = 3;
 
     private static final long serialVersionUID = 1L;
 
@@ -98,6 +110,8 @@ public class ReportDialog extends StandardFieldsDialog {
     private JList<Context> contextsSelector;
     private JList<String> sitesSelector;
     private String currentTemplateDir;
+    private JScrollPane sectionsPane;
+    private Map<String, JCheckBox> sectionsMap;
 
     public ReportDialog(ExtensionReports ext, Frame owner) {
         super(owner, "reports.dialog.title", DisplayUtils.getScaledDimension(600, 500), TAB_LABELS);
@@ -213,12 +227,7 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addPadding(TAB_OPTIONS);
 
         this.addTextField(TAB_SCOPE, FIELD_TITLE, reportParam.getTitle());
-        Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
-        this.addComboField(
-                TAB_SCOPE,
-                FIELD_TEMPLATE,
-                extension.getTemplateNames(),
-                defaultTemplate != null ? defaultTemplate.getDisplayName() : null);
+
         this.addTextField(TAB_SCOPE, FIELD_REPORT_NAME, "");
         this.addFileSelectField(
                 TAB_SCOPE,
@@ -234,6 +243,17 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addCheckBoxField(TAB_SCOPE, FIELD_GENERATE_ANYWAY, false);
         this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, reportParam.isDisplayReport());
 
+        Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
+        this.addComboField(
+                TAB_TEMPLATE,
+                FIELD_TEMPLATE,
+                extension.getTemplateNames(),
+                defaultTemplate != null ? defaultTemplate.getDisplayName() : null);
+
+        this.addCustomComponent(TAB_TEMPLATE, FIELD_SECTIONS, getSectionsScrollPane());
+        resetTemplateFields();
+        this.addPadding(TAB_TEMPLATE);
+
         setReportName();
         ((JComboBox<?>) this.getField(FIELD_TEMPLATE))
                 .addActionListener(
@@ -241,6 +261,7 @@ public class ReportDialog extends StandardFieldsDialog {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 setReportName();
+                                resetTemplateFields();
                             }
                         });
         getSitesSelector()
@@ -267,6 +288,45 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addPadding(TAB_FILTER);
 
         this.pack();
+    }
+
+    private JScrollPane getSectionsScrollPane() {
+        if (sectionsPane == null) {
+            sectionsPane = new JScrollPane();
+        }
+        return sectionsPane;
+    }
+
+    private void resetTemplateFields() {
+        JPanel sectionPanel = new JPanel();
+        sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
+
+        Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
+        if (template != null) {
+            List<String> sections = template.getSections();
+            sectionsMap = new HashMap<String, JCheckBox>();
+            if (sections.size() == 0) {
+                sectionPanel.add(
+                        new JLabel(
+                                Constant.messages.getString("reports.dialog.field.sections.none")));
+            } else {
+                List<Object> sectionList =
+                        extension.getReportParam().getSections(template.getConfigName());
+                for (String section : sections) {
+                    JCheckBox cb =
+                            new JCheckBox(
+                                    template.getI18nString(
+                                            "report.template.section." + section, null));
+                    cb.setSelected(
+                            sectionList == null
+                                    || sectionList.size() == 0
+                                    || sectionList.contains(section));
+                    sectionsMap.put(section, cb);
+                    sectionPanel.add(cb);
+                }
+            }
+        }
+        getSectionsScrollPane().setViewportView(sectionPanel);
     }
 
     private void setReportName() {
@@ -407,6 +467,13 @@ public class ReportDialog extends StandardFieldsDialog {
         reportData.setIncludeRisk(1, this.getBoolValue(FIELD_RISK_1));
         reportData.setIncludeRisk(2, this.getBoolValue(FIELD_RISK_2));
         reportData.setIncludeRisk(3, this.getBoolValue(FIELD_RISK_3));
+
+        for (Entry<String, JCheckBox> entry : sectionsMap.entrySet()) {
+            if (entry.getValue().isSelected()) {
+                reportData.addSection(entry.getKey());
+            }
+        }
+
         // Always do this last as it depends on the other fields
         reportData.setAlertTreeRootNode(extension.getFilteredAlertTree(reportData));
         return reportData;
@@ -436,6 +503,9 @@ public class ReportDialog extends StandardFieldsDialog {
         reportParam.setIncRisk1(this.getBoolValue(FIELD_RISK_1));
         reportParam.setIncRisk2(this.getBoolValue(FIELD_RISK_2));
         reportParam.setIncRisk3(this.getBoolValue(FIELD_RISK_3));
+
+        extension.getReportParam().setSections(template.getConfigName(), reportData.getSections());
+
         try {
             reportParam.getConfig().save();
         } catch (ConfigurationException e) {
@@ -486,10 +556,15 @@ public class ReportDialog extends StandardFieldsDialog {
             return Constant.messages.getString(
                     "reports.dialog.error.fileperms", f.getParentFile().getAbsolutePath());
         }
-        AlertNode root = extension.getFilteredAlertTree(getReportData());
+        ReportData reportData = getReportData();
+        AlertNode root = extension.getFilteredAlertTree(reportData);
         if (root.getChildCount() == 0 && !this.getBoolValue(FIELD_GENERATE_ANYWAY)) {
             return Constant.messages.getString("reports.dialog.error.noalerts");
         }
+        if (sectionsMap.size() > 0 && reportData.getSections().size() == 0) {
+            return Constant.messages.getString("reports.dialog.error.nosections");
+        }
+
         return null;
     }
 

@@ -25,13 +25,21 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.ResourceBundle;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.yaml.snakeyaml.Yaml;
 
 public class Template {
+
+    private static final Logger LOGGER = LogManager.getLogger(Template.class);
 
     private String displayName;
     private String configName;
@@ -39,6 +47,7 @@ public class Template {
     private String extension;
     private String format;
     private TemplateMode mode;
+    private List<String> sections = new ArrayList<String>();
     private ResourceBundle msgs = null;
     private Boolean hasMsgs = null;
     private URLClassLoader classloader = null;
@@ -64,6 +73,39 @@ public class Template {
                     "Cannot read " + reportTemplateFile.getAbsolutePath());
         }
         setMode(TemplateMode.parse(this.getString("mode", data, false)));
+        if (data.containsKey("sections")) {
+            Object o = data.get("sections");
+            if (o instanceof ArrayList) {
+                ArrayList<?> list = (ArrayList<?>) o;
+                for (Object l : list) {
+                    if (isValidSectionName(l)) {
+                        sections.add(l.toString());
+                    } else {
+                        LOGGER.error(
+                                "Template '{}' has invalid section: '{}' - must be alphanumeric and not start with a number",
+                                configName,
+                                l);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isValidSectionName(Object o) {
+        if (o == null) {
+            return false;
+        }
+        String str = o.toString();
+        if (str.isEmpty()) {
+            return false;
+        }
+        if (Character.isDigit(str.charAt(0))) {
+            return false;
+        }
+        if (!StringUtils.isAlphanumeric(str)) {
+            return false;
+        }
+        return true;
     }
 
     private String getString(String key, LinkedHashMap<?, ?> data, boolean optional)
@@ -129,6 +171,10 @@ public class Template {
             return null;
         }
         return new File(this.reportTemplateFile.getParentFile(), "resources");
+    }
+
+    public List<String> getSections() {
+        return Collections.unmodifiableList(sections);
     }
 
     /**

@@ -2,3 +2,8 @@ name: Traditional HTML Report with requests and responses
 format: HTML
 mode: HTML
 extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - alertdetails

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import java.io.File;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -46,6 +47,7 @@ public class ReportParam extends AbstractParam {
     private static final String PARAM_INC_RISK_1 = PARAM_BASE_KEY + ".risk.low";
     private static final String PARAM_INC_RISK_2 = PARAM_BASE_KEY + ".risk.med";
     private static final String PARAM_INC_RISK_3 = PARAM_BASE_KEY + ".risk.high";
+    private static final String PARAM_REPORT_SECTIONS_PREFIX = PARAM_BASE_KEY + ".report.sections.";
 
     private static final String DEFAULT_TEMPLATE = "traditional-html";
     public static final String DEFAULT_NAME_PATTERN = "{{yyyy-MM-dd}}-ZAP-Report-[[site]]";
@@ -280,5 +282,13 @@ public class ReportParam extends AbstractParam {
     public void setIncRisk3(boolean risk) {
         this.incRisk3 = risk;
         getConfig().setProperty(PARAM_INC_RISK_3, risk);
+    }
+
+    public void setSections(String report, List<String> sections) {
+        getConfig().setProperty(PARAM_REPORT_SECTIONS_PREFIX + report, sections);
+    }
+
+    public List<Object> getSections(String report) {
+        return getConfig().getList(PARAM_REPORT_SECTIONS_PREFIX + report);
     }
 }
