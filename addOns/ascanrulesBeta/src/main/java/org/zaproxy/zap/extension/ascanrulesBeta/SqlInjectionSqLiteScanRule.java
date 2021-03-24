@@ -316,7 +316,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                 log.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI().toString());
+                        msgTimeBaseline.getRequestHeader().getURI());
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // if the time was very slow (because JSP was being compiled on first call, for
@@ -336,7 +336,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "Base Time Check 2 timed out on [{}] URL [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString());
+                            msgTimeBaseline.getRequestHeader().getURI());
                 }
                 long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
                 if (originalTimeUsed2 > expectedDelayInMs) {
@@ -344,7 +344,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
                             msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString());
+                            msgTimeBaseline.getRequestHeader().getURI());
                     return;
                 } else {
                     // phew.  the second time came in within the limits. use the later timing
@@ -358,7 +358,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    getBaseMsg().getRequestHeader().getURI(),
                     paramName,
                     originalParamValue);
 
@@ -415,7 +415,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                         log.debug(
                                 "The time check query timed out on [{}] URL [{}] on field: [{}]",
                                 msgTimeBaseline.getRequestHeader().getMethod(),
-                                msgTimeBaseline.getRequestHeader().getURI().toString(),
+                                msgTimeBaseline.getRequestHeader().getURI(),
                                 paramName);
                     }
                     long modifiedTimeUsed = msgDelay.getTimeElapsedMillis();
@@ -446,7 +446,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                             log.debug(
                                     "A likely Error Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}], by matching for pattern [{}]",
                                     msgDelay.getRequestHeader().getMethod(),
-                                    msgDelay.getRequestHeader().getURI().toString(),
+                                    msgDelay.getRequestHeader().getURI(),
                                     paramName,
                                     errorMessagePattern.toString());
                             foundTimeBased =
@@ -588,7 +588,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                         log.debug(
                                 "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                                 detectableDelayMessage.getRequestHeader().getMethod(),
-                                detectableDelayMessage.getRequestHeader().getURI().toString(),
+                                detectableDelayMessage.getRequestHeader().getURI(),
                                 paramName);
 
                     // outta the time based loop..

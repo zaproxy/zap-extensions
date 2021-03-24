@@ -459,7 +459,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI().toString());
+                            msg.getRequestHeader().getURI());
 
                     return; // Something went wrong, no point continuing
                 }
@@ -476,7 +476,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "It is possible to check for local file Path Traversal on the url filename on [{}] [{}], [{}]",
                             msg.getRequestHeader().getMethod(),
-                            msg.getRequestHeader().getURI().toString(),
+                            msg.getRequestHeader().getURI(),
                             param);
 
                     String prefixedUrlfilename;
@@ -503,7 +503,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                                     "Caught {} {} when accessing: {}",
                                     ex.getClass().getName(),
                                     ex.getMessage(),
-                                    msg.getRequestHeader().getURI().toString());
+                                    msg.getRequestHeader().getURI());
 
                             continue; // Something went wrong, move to the next prefix in the loop
                         }
@@ -611,7 +611,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     "Caught {} {} when accessing: {}",
                     ex.getClass().getName(),
                     ex.getMessage(),
-                    msg.getRequestHeader().getURI().toString());
+                    msg.getRequestHeader().getURI());
 
             return false; // Something went wrong, no point continuing
         }

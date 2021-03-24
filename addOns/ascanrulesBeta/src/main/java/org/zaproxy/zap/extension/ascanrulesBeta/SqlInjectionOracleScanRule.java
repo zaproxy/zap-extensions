@@ -227,7 +227,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                 log.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI().toString());
+                        msgTimeBaseline.getRequestHeader().getURI());
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
@@ -238,7 +238,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "Scanning URL [{}] [{}], field [{}] with value [{}] for Oracle SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    getBaseMsg().getRequestHeader().getURI(),
                     paramName,
                     paramValue);
 
@@ -263,7 +263,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "The time check query timed out on [{}] URL [{}] on field: [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString(),
+                            msgTimeBaseline.getRequestHeader().getURI(),
                             paramName);
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
@@ -318,7 +318,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI().toString(),
+                            msgAttack.getRequestHeader().getURI(),
                             paramName);
                     return;
                 } // query took longer than the amount of time we attempted to retard it by

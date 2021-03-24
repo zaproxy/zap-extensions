@@ -231,7 +231,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             log.debug(
                     "Checking [{}] [{}], parameter [{}], with original value [{}] for Source Code Disclosure",
                     getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    getBaseMsg().getRequestHeader().getURI(),
                     paramname,
                     paramvalue);
             // the response of the original message is not populated! so populate it.

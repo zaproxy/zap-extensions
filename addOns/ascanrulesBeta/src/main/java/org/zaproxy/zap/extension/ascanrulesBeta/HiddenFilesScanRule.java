@@ -171,7 +171,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             LOG.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     testMsg.getRequestHeader().getMethod(),
-                    testMsg.getRequestHeader().getURI().toString(),
+                    testMsg.getRequestHeader().getURI(),
                     getName(),
                     e.getClass().getName(),
                     e.getMessage());

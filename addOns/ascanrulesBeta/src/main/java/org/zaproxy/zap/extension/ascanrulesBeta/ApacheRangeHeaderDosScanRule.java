@@ -118,7 +118,7 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
                 LOG.warn(
                         "An error occurred while checking [{}] [{}] for Apache Range Header DoS (CVE-2011-3192). Caught {} {}",
                         newRequest.getRequestHeader().getMethod(),
-                        newRequest.getRequestHeader().getURI().toString(),
+                        newRequest.getRequestHeader().getURI(),
                         e.getClass().getName(),
                         e.getMessage());
                 return;
@@ -144,7 +144,7 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
             LOG.warn(
                     "An error occurred while validating [{}] [{}] for Apache Range Header DoS (CVE-2011-3192) applicability. Caught {} {}",
                     chkRequest.getRequestHeader().getMethod(),
-                    chkRequest.getRequestHeader().getURI().toString(),
+                    chkRequest.getRequestHeader().getURI(),
                     e.getClass().getName(),
                     e.getMessage());
             return false;

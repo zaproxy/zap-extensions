@@ -123,7 +123,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
                 this.raiseAlert(newRequest);
             }
         } catch (Exception e) {
-            LOG.error("Error sending URL {}", newRequest.getRequestHeader().getURI().toString(), e);
+            LOG.error("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             return;
         }
     }
