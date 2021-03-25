@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,17 @@ public class TimestampDisclosureScanRuleUnitTest
     @Override
     protected TimestampDisclosureScanRule createScanner() {
         return new TimestampDisclosureScanRule();
+    }
+
+    @Test
+    public void verifyExcludedHeadersListAsExpected() {
+        // Given / When
+        List<String> ignoreList =
+                Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
+        // Then
+        assertEquals(7, ignoreList.size());
+        assertTrue(ignoreList.contains("NEL"));
+        assertTrue(ignoreList.contains("Report-To"));
     }
 
     @Test
