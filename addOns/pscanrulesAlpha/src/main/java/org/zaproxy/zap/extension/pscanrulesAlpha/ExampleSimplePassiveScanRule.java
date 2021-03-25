@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Random;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,7 +41,7 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
-    private static final Logger logger = Logger.getLogger(ExampleSimplePassiveScanRule.class);
+    private static final Logger logger = LogManager.getLogger(ExampleSimplePassiveScanRule.class);
 
     private Random rnd = new Random();
 
@@ -88,14 +89,7 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
                     .raise();
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

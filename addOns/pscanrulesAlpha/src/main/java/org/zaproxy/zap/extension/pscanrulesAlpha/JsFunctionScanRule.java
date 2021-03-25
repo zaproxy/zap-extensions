@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -47,7 +48,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
 
     public static final String FUNC_LIST_DIR = "txt";
     public static final String FUNC_LIST_FILE = "js-function-list.txt";
-    private static final Logger LOGGER = Logger.getLogger(JsFunctionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(JsFunctionScanRule.class);
     private static final int PLUGIN_ID = 10110;
 
     public static final List<String> DEFAULT_FUNCTIONS = Collections.emptyList();
@@ -144,13 +145,12 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
             }
         } catch (IOException e) {
             LOGGER.error(
-                    "Error on opening/reading js functions file: "
-                            + File.separator
-                            + FUNC_LIST_DIR
-                            + File.separator
-                            + FUNC_LIST_FILE
-                            + " Error: "
-                            + e.getMessage());
+                    "Error on opening/reading js functions file: {}{}{}{} Error: {}",
+                    File.separator,
+                    FUNC_LIST_DIR,
+                    File.separator,
+                    FUNC_LIST_FILE,
+                    e.getMessage());
         }
     }
 

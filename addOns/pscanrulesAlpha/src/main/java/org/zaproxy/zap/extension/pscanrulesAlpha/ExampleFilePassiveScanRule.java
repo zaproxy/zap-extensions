@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -47,7 +48,7 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanalpha.examplefile.";
 
     private static final String examplePscanFile = "txt/example-pscan-file.txt";
-    private static final Logger logger = Logger.getLogger(ExampleFilePassiveScanRule.class);
+    private static final Logger logger = LogManager.getLogger(ExampleFilePassiveScanRule.class);
     private List<String> strings = null;
 
     @Override
@@ -118,7 +119,7 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
         BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            logger.error("No such file: " + f.getAbsolutePath());
+            logger.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -131,13 +132,13 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
             }
         } catch (IOException e) {
             logger.error(
-                    "Error on opening/reading example error file. Error: " + e.getMessage(), e);
+                    "Error on opening/reading example error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
+                    logger.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
                 }
             }
         }
