@@ -65,6 +65,8 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String PARAM_ATTACK_IS_REGEX = "attackIsRegex";
     private static final String PARAM_EVIDENCE = "evidence";
     private static final String PARAM_EVIDENCE_IS_REGEX = "evidenceIsRegex";
+    private static final String PARAM_METHOD = "method";
+    private static final String PARAM_METHOD_IS_REGEX = "methodIsRegex";
     private static final String PARAM_ENABLED = "enabled";
 
     private ExtensionAlertFilters extension;
@@ -101,6 +103,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHOD,
+                            PARAM_METHOD_IS_REGEX,
                         });
         addAlertFilter.setDescriptionTag("alertFilters.api.action.addAlertFilter");
         this.addApiAction(addAlertFilter);
@@ -119,6 +123,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHOD,
+                            PARAM_METHOD_IS_REGEX,
                         });
         removeAlertFilter.setDescriptionTag("alertFilters.api.action.removeAlertFilter");
         this.addApiAction(removeAlertFilter);
@@ -137,6 +143,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHOD,
+                            PARAM_METHOD_IS_REGEX,
                         });
         addGlobalAlertFilter.setDescriptionTag("alertFilters.api.action.addGlobalAlertFilter");
         this.addApiAction(addGlobalAlertFilter);
@@ -155,6 +163,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHOD,
+                            PARAM_METHOD_IS_REGEX,
                         });
         removeGlobalAlertFilter.setDescriptionTag(
                 "alertFilters.api.action.removeGlobalAlertFilter");
@@ -219,6 +229,8 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                ApiUtils.getOptionalStringParam(params, PARAM_METHOD),
+                                getParam(params, PARAM_METHOD_IS_REGEX, false),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
@@ -239,6 +251,8 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                ApiUtils.getOptionalStringParam(params, PARAM_METHOD),
+                                getParam(params, PARAM_METHOD_IS_REGEX, false),
                                 getParam(params, PARAM_ENABLED, true));
                 if (extension.getContextAlertFilterManager(context.getId()).removeAlertFilter(af)) {
                     return ApiResponseElement.OK;
@@ -260,6 +274,8 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                ApiUtils.getOptionalStringParam(params, PARAM_METHOD),
+                                getParam(params, PARAM_METHOD_IS_REGEX, false),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
@@ -287,6 +303,8 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                ApiUtils.getOptionalStringParam(params, PARAM_METHOD),
+                                getParam(params, PARAM_METHOD_IS_REGEX, false),
                                 getParam(params, PARAM_ENABLED, true));
                 if (extension.getParam().removeFilter(af)) {
                     try {
@@ -324,6 +342,8 @@ public class AlertFilterAPI extends ApiImplementor {
         fields.put(PARAM_ATTACK_IS_REGEX, Boolean.toString(af.isAttackRegex()));
         fields.put(PARAM_EVIDENCE, af.getEvidence());
         fields.put(PARAM_EVIDENCE_IS_REGEX, Boolean.toString(af.isEvidenceRegex()));
+        fields.put(PARAM_METHOD, af.getMethod());
+        fields.put(PARAM_METHOD_IS_REGEX, Boolean.toString(af.isMethodRegex()));
         fields.put(PARAM_ENABLED, Boolean.toString(af.isEnabled()));
         ApiResponseSet<String> response = new ApiResponseSet<>("alertFilter", fields);
         return response;

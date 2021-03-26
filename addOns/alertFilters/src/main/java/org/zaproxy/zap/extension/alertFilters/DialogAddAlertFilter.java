@@ -74,6 +74,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JCheckBox attackRegexCheckBox;
     private ZapTextField evidenceTextField;
     private JCheckBox evidenceRegexCheckBox;
+    private ZapTextField methodTextField;
+    private JCheckBox methodRegexCheckBox;
     private JLabel scopeLabel;
     private JLabel scopeFixed;
     private JComboBox<String> scopeCombo;
@@ -150,6 +152,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             getAttackRegexCheckBox().setSelected(alertFilter.isAttackRegex());
             getEvidenceTextField().setText(alertFilter.getEvidence());
             getEvidenceRegexCheckBox().setSelected(alertFilter.isEvidenceRegex());
+            getMethodTextField().setText(alertFilter.getMethod());
+            getMethodRegexCheckBox().setSelected(alertFilter.isMethodRegex());
 
             getEnabledCheckBox().setSelected(alertFilter.isEnabled());
             setButtonStates();
@@ -212,6 +216,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                 return false;
             }
         }
+        if (this.getMethodRegexCheckBox().isSelected()) {
+            if (!regexFieldValid(
+                    this.getMethodTextField(),
+                    Constant.messages.getString("alertFilters.dialog.error.badregex.method"))) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -238,6 +249,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                 getAttackRegexCheckBox().isSelected(),
                 getEvidenceTextField().getText(),
                 getEvidenceRegexCheckBox().isSelected(),
+                getMethodTextField().getText(),
+                getMethodRegexCheckBox().isSelected(),
                 this.getEnabledCheckBox().isSelected());
     }
 
@@ -259,6 +272,9 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.evidenceTextField.setText("");
         this.evidenceTextField.discardAllEdits();
         this.evidenceRegexCheckBox.setSelected(false);
+        this.methodTextField.setText("");
+        this.methodTextField.discardAllEdits();
+        this.methodRegexCheckBox.setSelected(false);
         this.setConfirmButtonEnabled(true);
         this.testResultsLabel.setText(
                 Constant.messages.getString("alertFilters.dialog.filter.state.nottested"));
@@ -379,6 +395,22 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             evidenceRegexLabel.setLabelFor(getUrlRegexCheckBox());
             fieldsPanel.add(evidenceRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
             fieldsPanel.add(getEvidenceRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
+
+            JLabel methodLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.method"));
+            methodLabel.setLabelFor(getMethodTextField());
+            fieldsPanel.add(methodLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getMethodTextField(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
+
+            JLabel methodRegexLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.methodregex"));
+            methodRegexLabel.setLabelFor(getUrlRegexCheckBox());
+            fieldsPanel.add(methodRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getMethodRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel enabledLabel =
                     new JLabel(
@@ -533,6 +565,20 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             evidenceRegexCheckBox = new JCheckBox();
         }
         return evidenceRegexCheckBox;
+    }
+
+    protected ZapTextField getMethodTextField() {
+        if (methodTextField == null) {
+            methodTextField = new ZapTextField();
+        }
+        return methodTextField;
+    }
+
+    protected JCheckBox getMethodRegexCheckBox() {
+        if (methodRegexCheckBox == null) {
+            methodRegexCheckBox = new JCheckBox();
+        }
+        return methodRegexCheckBox;
     }
 
     protected JComboBox<String> getAlertCombo() {
