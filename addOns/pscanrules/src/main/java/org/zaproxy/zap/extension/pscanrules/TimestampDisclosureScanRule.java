@@ -70,8 +70,14 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      * ignore the following response headers for the purposes of the comparison, since they cause
      * false positives
      */
-    private static final String[] RESPONSE_HEADERS_TO_IGNORE = {
-        HttpHeader._KEEP_ALIVE, HttpHeader.CACHE_CONTROL, "ETag", "Age", "Strict-Transport-Security"
+    public static final String[] RESPONSE_HEADERS_TO_IGNORE = {
+        HttpHeader._KEEP_ALIVE,
+        HttpHeader.CACHE_CONTROL,
+        "ETag",
+        "Age",
+        "Strict-Transport-Security",
+        "Report-To",
+        "NEL"
     };
 
     /**
