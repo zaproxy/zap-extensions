@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +49,8 @@ public class AlertFilter extends Enableable {
     private boolean isAttackRegex;
     private String evidence;
     private boolean isEvidenceRegex;
+    private String method;
+    private boolean methodRegex;
 
     private static final Logger log = LogManager.getLogger(AlertFilter.class);
 
@@ -89,6 +92,38 @@ public class AlertFilter extends Enableable {
             String evidence,
             boolean isEvidenceRegex,
             boolean enabled) {
+        this(
+                contextId,
+                ruleId,
+                newRisk,
+                url,
+                isUrlRegex,
+                parameter,
+                isParameterRegex,
+                attack,
+                isAttackRegex,
+                evidence,
+                isEvidenceRegex,
+                evidence,
+                isAttackRegex,
+                enabled);
+    }
+
+    public AlertFilter(
+            int contextId,
+            int ruleId,
+            int newRisk,
+            String url,
+            boolean isUrlRegex,
+            String parameter,
+            boolean isParameterRegex,
+            String attack,
+            boolean isAttackRegex,
+            String evidence,
+            boolean isEvidenceRegex,
+            String method,
+            boolean methodRegex,
+            boolean enabled) {
         super();
         this.contextId = contextId;
         this.ruleId = ruleId;
@@ -101,6 +136,8 @@ public class AlertFilter extends Enableable {
         this.isAttackRegex = isAttackRegex;
         this.evidence = evidence;
         this.isEvidenceRegex = isEvidenceRegex;
+        this.method = method;
+        this.methodRegex = methodRegex;
         this.setEnabled(enabled);
     }
 
@@ -112,6 +149,7 @@ public class AlertFilter extends Enableable {
         this.url = alert.getUri();
         this.attack = alert.getAttack();
         this.evidence = alert.getEvidence();
+        this.method = alert.getMethod();
         this.setEnabled(true);
     }
 
@@ -224,6 +262,22 @@ public class AlertFilter extends Enableable {
         this.isEvidenceRegex = isEvidenceRegex;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public boolean isMethodRegex() {
+        return methodRegex;
+    }
+
+    public void setMethodRegex(boolean methodRegex) {
+        this.methodRegex = methodRegex;
+    }
+
     /**
      * Encodes the AlertFilter in a String. Fields that contain strings are Base64 encoded.
      *
@@ -255,6 +309,12 @@ public class AlertFilter extends Enableable {
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
+        if (alertFilter.method != null) {
+            out.append(
+                    Base64.encodeBase64String(alertFilter.method.getBytes(StandardCharsets.UTF_8)));
+        }
+        out.append(FIELD_SEPARATOR);
+        out.append(alertFilter.methodRegex).append(FIELD_SEPARATOR);
         // log.debug("Encoded AlertFilter: {}", out.toString());
         return out.toString();
     }
@@ -285,6 +345,11 @@ public class AlertFilter extends Enableable {
                 alertFilter.setAttackRegex(Boolean.parseBoolean(pieces[8]));
                 alertFilter.setEvidence(new String(Base64.decodeBase64(pieces[9])));
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
+            }
+            if (pieces.length > 11) {
+                alertFilter.setMethod(
+                        new String(Base64.decodeBase64(pieces[11]), StandardCharsets.UTF_8));
+                alertFilter.setMethodRegex(Boolean.parseBoolean(pieces[12]));
             }
         } catch (Exception ex) {
             log.error("An error occured while decoding alertFilter from: {}", encodedString, ex);
@@ -334,6 +399,9 @@ public class AlertFilter extends Enableable {
                 "Evidence", getEvidence(), isEvidenceRegex(), alert.getEvidence())) {
             return false;
         }
+        if (!matchesStringOrRegex("Method", method, methodRegex, alert.getMethod())) {
+            return false;
+        }
         return true;
     }
 
@@ -372,6 +440,8 @@ public class AlertFilter extends Enableable {
         result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
         result = prime * result + ruleId;
         result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((method == null) ? 0 : method.hashCode());
+        result = prime * result + (methodRegex ? 1231 : 1237);
         return result;
     }
 
@@ -400,6 +470,16 @@ public class AlertFilter extends Enableable {
         if (url == null) {
             if (other.url != null) return false;
         } else if (!url.equals(other.url)) return false;
+        if (method == null) {
+            if (other.method != null) {
+                return false;
+            }
+        } else if (!method.equals(other.method)) {
+            return false;
+        }
+        if (methodRegex != other.methodRegex) {
+            return false;
+        }
         return true;
     }
 }

@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 /** Unit test for {@link AlertFilter}. */
 public class AlertFilterTest {
@@ -34,10 +36,12 @@ public class AlertFilterTest {
     @BeforeEach
     public void before() throws Exception {
         alert = new Alert(1, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
-        alert.setUri("https://www.example.com");
+        String uri = "https://www.example.com";
+        alert.setUri(uri);
         alert.setParam("param");
         alert.setAttack("attack");
         alert.setEvidence("evidence");
+        alert.setMessage(new HttpMessage(new HttpRequestHeader("PATCH " + uri + " HTTP/1.1")));
     }
 
     @Test
@@ -240,6 +244,52 @@ public class AlertFilterTest {
         af.setEnabled(true);
         af.setEvidence("evil.*ce");
         af.setEvidenceRegex(true);
+        // Then
+        assertFalse(af.appliesToAlert(alert));
+    }
+
+    @Test
+    public void missingMethodFilterMatches() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        // When
+        af.setEnabled(true);
+        af.setMethod("");
+        // Then
+        assertTrue(af.appliesToAlert(alert));
+    }
+
+    @Test
+    public void differentMethodFilterDoesNotMatch() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        // When
+        af.setEnabled(true);
+        af.setMethod("NOT_PATCH");
+        // Then
+        assertFalse(af.appliesToAlert(alert));
+    }
+
+    @Test
+    public void matchingMethodRegexFilterMatches() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        // When
+        af.setEnabled(true);
+        af.setMethod("(GET|PATCH)");
+        af.setMethodRegex(true);
+        // Then
+        assertTrue(af.appliesToAlert(alert));
+    }
+
+    @Test
+    public void notMatchingMethodRegexFilterDoesNotMatch() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        // When
+        af.setEnabled(true);
+        af.setMethod("(GET|DELETE)");
+        af.setMethodRegex(true);
         // Then
         assertFalse(af.appliesToAlert(alert));
     }

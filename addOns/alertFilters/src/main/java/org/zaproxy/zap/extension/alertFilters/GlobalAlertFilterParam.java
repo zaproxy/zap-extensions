@@ -55,6 +55,8 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
     private static final String FILTER_ATTACK_IS_REGEX_KEY = "attackregex";
     private static final String FILTER_EVIDENCE_KEY = "evidence";
     private static final String FILTER_EVIDENCE_IS_REGEX_KEY = "evidenceregex";
+    private static final String FILTER_METHOD_KEY = "method";
+    private static final String FILTER_METHOD_IS_REGEX_KEY = "methodregex";
     private static final String FILTER_ENABLED_KEY = "enabled";
 
     private static final String CONFIRM_REMOVE_FILTER_KEY =
@@ -100,6 +102,10 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                     .setProperty(
                             elementBaseKey + FILTER_EVIDENCE_IS_REGEX_KEY,
                             filter.isEvidenceRegex());
+            getConfig().setProperty(elementBaseKey + FILTER_METHOD_KEY, filter.getMethod());
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + FILTER_METHOD_IS_REGEX_KEY, filter.isMethodRegex());
             getConfig().setProperty(elementBaseKey + FILTER_ENABLED_KEY, filter.isEnabled());
             i++;
         }
@@ -158,6 +164,8 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                                 sub.getBoolean(FILTER_ATTACK_IS_REGEX_KEY, false),
                                 sub.getString(FILTER_EVIDENCE_KEY, null),
                                 sub.getBoolean(FILTER_EVIDENCE_IS_REGEX_KEY, false),
+                                sub.getString(FILTER_METHOD_KEY, null),
+                                sub.getBoolean(FILTER_METHOD_IS_REGEX_KEY, false),
                                 sub.getBoolean(FILTER_ENABLED_KEY, false)));
             }
         } catch (ConversionException e) {
