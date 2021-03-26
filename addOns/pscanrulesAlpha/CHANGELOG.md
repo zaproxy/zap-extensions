@@ -208,7 +208,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Tweaked "Source Code Disclosure" scanner to reduce false positives
 - Added "Insecure Component" scanner
-- Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
+- Addressed issue 1262 (Risk & Confidence for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 - Add Big Redirect scanner (Issue 1257)
 - Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"
 - Detect Node.js source code
