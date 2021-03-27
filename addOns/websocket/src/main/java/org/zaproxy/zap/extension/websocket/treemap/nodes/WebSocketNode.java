@@ -24,15 +24,16 @@ import java.util.HashMap;
 import java.util.List;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.NodeContent;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeAbstract;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
-public class WebSocketNode extends TreeNode {
+public class WebSocketNode extends WebSocketNodeAbstract {
 
-    public WebSocketNode(TreeNode parent, NodeContent content) {
+    public WebSocketNode(WebSocketNodeInterface parent, NodeContent content) {
         super(parent, content);
     }
 
-    public WebSocketNode(TreeNode parent, int position, NodeContent content) {
+    public WebSocketNode(WebSocketNodeInterface parent, int position, NodeContent content) {
         super(parent, position, content);
     }
 
@@ -47,7 +48,7 @@ public class WebSocketNode extends TreeNode {
     }
 
     @Override
-    public TreeNode updateContent(NodeContent content) {
+    public WebSocketNodeInterface updateContent(NodeContent content) {
         this.content = this.content.update(content);
         return this;
     }
@@ -58,7 +59,7 @@ public class WebSocketNode extends TreeNode {
     }
 
     public List<WebSocketMessageDTO> getMessages() {
-        return iterateOverLeaf(this, TreeNode::getMessage, new ArrayList<>());
+        return iterateOverLeaf(this, WebSocketNodeInterface::getMessage, new ArrayList<>());
     }
 
     @Override
@@ -67,13 +68,13 @@ public class WebSocketNode extends TreeNode {
     }
 
     @Override
-    public List<TreeNode> getHostNodes(List<TreeNode> hostNodesList) {
+    public List<WebSocketNodeInterface> getHostNodes(List<WebSocketNodeInterface> hostNodesList) {
         return this.getContent().getHostNodes(this, hostNodesList);
     }
 
     @Override
-    public HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap) {
+    public HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap) {
         return this.getContent().getMessagesPerHost(this, messageMap);
     }
 }

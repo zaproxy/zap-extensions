@@ -180,4 +180,13 @@ public class WebSocketChannelDTO implements Comparable<WebSocketChannelDTO> {
         }
         return regex.toString();
     }
+
+    public void copyInto(WebSocketChannelDTO other) {
+        other.id = this.id;
+        other.host = this.host;
+        other.port = this.port;
+        other.startTimestamp = this.startTimestamp;
+        other.endTimestamp = this.endTimestamp;
+        other.historyId = this.historyId;
+    }
 }

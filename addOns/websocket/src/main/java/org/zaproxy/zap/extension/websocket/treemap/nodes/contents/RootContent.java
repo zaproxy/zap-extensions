@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 /**
  * This content is responsible for the Root node, meaning that contains the entries and the
@@ -43,7 +43,8 @@ public class RootContent extends WebSocketContent {
      * @return List with the host nodes.
      */
     @Override
-    public List<TreeNode> getHostNodes(TreeNode thisNode, List<TreeNode> hostNodesList) {
+    public List<WebSocketNodeInterface> getHostNodes(
+            WebSocketNodeInterface thisNode, List<WebSocketNodeInterface> hostNodesList) {
         thisNode.applyToChildren(t -> t.getHostNodes(hostNodesList));
         return hostNodesList;
     }
@@ -56,8 +57,9 @@ public class RootContent extends WebSocketContent {
      * @return The map with messages per host node folder.
      */
     @Override
-    public HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            TreeNode thisNode, HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap) {
+    public HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            WebSocketNodeInterface thisNode,
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap) {
         thisNode.applyToChildren(t -> t.getMessagesPerHost(messageMap));
         return messageMap;
     }

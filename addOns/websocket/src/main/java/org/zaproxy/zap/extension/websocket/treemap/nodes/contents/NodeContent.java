@@ -21,8 +21,9 @@ package org.zaproxy.zap.extension.websocket.treemap.nodes.contents;
 
 import java.util.HashMap;
 import java.util.List;
+import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 public interface NodeContent extends Comparable<NodeContent> {
 
@@ -31,6 +32,10 @@ public interface NodeContent extends Comparable<NodeContent> {
 
     /** @return the host name if need be. */
     default WebSocketMessageDTO getMessage() {
+        return null;
+    }
+
+    default WebSocketChannelDTO getChannel() {
         return null;
     }
 
@@ -46,7 +51,8 @@ public interface NodeContent extends Comparable<NodeContent> {
      * @param hostNodesList The list where it should store the Host Nodes.
      * @return The host node of this content.
      */
-    List<TreeNode> getHostNodes(TreeNode thisNode, List<TreeNode> hostNodesList);
+    List<WebSocketNodeInterface> getHostNodes(
+            WebSocketNodeInterface thisNode, List<WebSocketNodeInterface> hostNodesList);
 
     /**
      * This method is used to traverse the tree in which the contents exists. So as to get messages
@@ -58,8 +64,9 @@ public interface NodeContent extends Comparable<NodeContent> {
      * @param messageMap The map where it should store the values.
      * @return The map with the additional values.
      */
-    default HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            TreeNode thisNode, HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap) {
+    default HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            WebSocketNodeInterface thisNode,
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap) {
         return messageMap;
     }
 

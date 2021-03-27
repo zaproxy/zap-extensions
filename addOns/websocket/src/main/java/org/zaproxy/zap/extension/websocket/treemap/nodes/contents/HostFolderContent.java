@@ -28,7 +28,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.NodesUtilities;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 /**
  * This content is responsible for the Host Folder Node, meaning that stores the appropriate
@@ -38,28 +38,40 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 public class HostFolderContent extends WebSocketContent {
 
     private String host;
+    private WebSocketChannelDTO channel;
 
     public HostFolderContent(WebSocketNodeNamer namer, WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
+        this.channel = new WebSocketChannelDTO();
         this.host = NodesUtilities.getHostName(channel);
         this.name = namer.getName(this);
+        channel.copyInto(this.channel);
     }
 
     public HostFolderContent(HostFolderContent that) {
+        this.channel = new WebSocketChannelDTO();
         this.host = that.getHost();
         this.name = that.getName();
+        that.channel.copyInto(this.getChannel());
     }
 
     public HostFolderContent replaceValues(WebSocketNodeNamer namer, WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
         this.host = NodesUtilities.getHostName(channel);
         this.name = namer.getName(this);
+        channel.copyInto(this.channel);
         return this;
     }
 
     @Override
-    public HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            TreeNode thisNode, HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap) {
+    public WebSocketChannelDTO getChannel() {
+        return channel;
+    }
+
+    @Override
+    public HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            WebSocketNodeInterface thisNode,
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap) {
 
         if (thisNode.isLeaf()) return messageMap;
 
@@ -92,7 +104,8 @@ public class HostFolderContent extends WebSocketContent {
     }
 
     @Override
-    public List<TreeNode> getHostNodes(TreeNode thisNode, List<TreeNode> hostNodesList) {
+    public List<WebSocketNodeInterface> getHostNodes(
+            WebSocketNodeInterface thisNode, List<WebSocketNodeInterface> hostNodesList) {
         hostNodesList.add(thisNode);
         return hostNodesList;
     }
@@ -100,5 +113,12 @@ public class HostFolderContent extends WebSocketContent {
     @Override
     public int hashCode() {
         return Objects.hashCode(host);
+    }
+
+    @Override
+    public NodeContent update(NodeContent nodeContent) {
+        this.channel = new WebSocketChannelDTO();
+        nodeContent.getChannel().copyInto(this.channel);
+        return this;
     }
 }

@@ -22,11 +22,12 @@ package org.zaproxy.zap.extension.websocket.treemap.nodes.contents;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeAbstract;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 /**
  * This class and their sub-classes of it, stores the appropriate values, and perform the
- * appropriate functionality to be entries of a {@link TreeNode<WebSocketContent>}.
+ * appropriate functionality to be entries of a {@link WebSocketNodeAbstract <WebSocketContent>}.
  */
 public abstract class WebSocketContent implements NodeContent, Comparable<NodeContent> {
 
@@ -43,8 +44,8 @@ public abstract class WebSocketContent implements NodeContent, Comparable<NodeCo
      * @param thisNode The tree node of the content.
      * @return The host node of this content.
      */
-    TreeNode getTheHostNode(TreeNode thisNode) {
-        List<TreeNode> hostNodes = getHostNodes(thisNode, new ArrayList<>());
+    WebSocketNodeInterface getTheHostNode(WebSocketNodeInterface thisNode) {
+        List<WebSocketNodeInterface> hostNodes = getHostNodes(thisNode, new ArrayList<>());
         if (hostNodes == null || hostNodes.isEmpty()) {
             return null;
         }
