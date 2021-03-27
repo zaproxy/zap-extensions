@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML lang="en-US">
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Fuzzing API
+    </TITLE>
+</HEAD>
+<BODY>
+<H1>Fuzzing API</H1>
+<p>
+    The API has been designed to be used by people with a range of security experience, for
+    example “simpleHttpFuzzer” is a basic fuzzer which fuzzes one “Fuzz location”, extracting payloads
+    from one file, and returns the fuzzerId.
+</p>
+<h3>Homepage</h3>
+<p><a href="https://www.zaproxy.org/">https://www.zaproxy.org/</a><br><br>
+    Documentation can be found at:<br>
+    <a href="https://www.zaproxy.org/docs/api/#zap-api-fuzz">https://www.zaproxy.org/docs/api/#zap-api-fuzz</a>
+    <br>
+</p>
+<h3>Message Processors</h3>
+<p>
+    The message processors enabled by default for all requests are:
+</p>
+<ol>
+    <li>"Request Content-Length Updater": updates the content-length field according to
+        the attack payload.</li>
+    <li>"Payload Reflection Detector": reports if the payload appears in the response.</li>
+</ol>
+<p>
+    Additional script-based message processors can be added or removed through the
+    FuzzAPI. The API requires that a script has been loaded and enabled by zaproxy
+    prior to specifying it.
+</p>
+<p>
+    The default (non-script) message processors can be deleted by name using the
+    FuzzAPI, if they are not desired. Once deleted, they cannot be re-added without
+    resetting the message processor list.
+</p>
+<p>
+    The addMessageProcessor call requires three parameters, as depicted below:
+</p>
+<table border="1px solid black" border-collapse="collapse">
+    <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>scriptName</td>
+        <td>string</td>
+        <td>unexpected_responses.js</td>
+    </tr>
+    <tr>
+        <td>scriptParameters</td>
+        <td>JSON-formatted string</td>
+        <td>{"pattern": "5..", "sense": "fail"}</td>
+    </tr>
+    <tr>
+        <td>insertAt</td>
+        <td>int</td>
+        <td>-1</td>
+    </tr>
+</table>
+<p>
+    scriptParameters is used to specify all required (and any optional) parameters
+    required by the script. These will vary by script. If no parameters will be
+    supplied, use an empty string.
+</p>
+<p>
+    insertAt indicates where in the processor list the new script will be placed.
+    All processors are executed in order, sequentially. "0" means "insert at the
+    front of the list". "-1" means "insert at the end of the list". Using "1"
+    would insert the new script after the first entry but before the second (now
+    third) entry.
+</p>
+<p>
+    Note: processors changed after a fuzzer has been initialized will remain the
+    same for that fuzzer.
+</p>
+<h3>Fuzzer Options</h3>
+<p>
+    Currently these fuzzer options can be changed through the FuzzAPI but in future releases
+    more options will be added.
+</p>
+<ul>
+    <li>Retries on IO error</li>
+    <li>Max. error allowed</li>
+    <li>Payload Replacement Strategy</li>
+    <li>Concurrent scanning threads per scan</li>
+    <li>Delay when fuzzing (in milliseconds)</li>
+</ul>
+Note: options changed after the fuzzer has been initialised will remain same for that fuzzer.
+<h3>Simple Http Fuzzer</h3>
+<p>The simpleHttpFuzzer fuzzes one fuzz location, with inputs</p>
+<table border="1px solid black" border-collapse="collapse">
+    <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>messageId </td>
+        <td>int</td>
+        <td>7</td>
+    </tr>
+    <tr>
+        <td>requestLocation</td>
+        <td>string
+        </td>
+        <td>“body” or “header”</td>
+    </tr>
+    <tr>
+        <td>fuzzLocation</td>
+        <td>string (“int start: int end”)</td>
+        <td>8:15 or 12:18</td>
+    </tr>
+    <tr>
+        <td>payloadPath</td>
+        <td>string</td>
+        <td>“/home/users/payloads.txt”</td>
+    </tr>
+</table>
+<br>
+The parameter fuzzLocation is the start and end number of the character which is replaced
+by the payload.<br>
+For example:
+<pre style="font-family: 'Courier new',serif">
+    POST /cgi-bin/process.cgi HTTP/1.1
+    User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+    Host: www.example.com
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: length
+    Accept-Language: en-us
+    Accept-Encoding: gzip, deflate
+    Connection: Keep-Alive<br> <!-- Two new lines after HEADER standard -->
+    licenseID=string&amp;content=string&amp;/paramsXML=string
+</pre>
+<p>In this HTTP POST request, the top and bottom are header and body respectively.
+    <br><br>To fuzz the value of licenseID in the body the value of string needs to be replaced.
+</p>
+<p>
+    The messageId is the History Id of the message, requestLocation is body and fuzzLocation is
+    what characters should be replaced, payloadPath is the path of the file containing the payloads.
+</p>
+<h3>Multiple Payload Fuzzer</h3>
+<p>The multiple payload fuzzer as per the name fuzzes multiple fuzz Locations with multiple payload
+    types. It takes input as the message Id and a certain JSON file with a schematic to make the
+    fuzzer run.
+</p>
+
+<table border="1px solid black" border-collapse="collapse">
+    <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>messageId </td>
+        <td>int</td>
+        <td>7</td>
+    </tr>
+    <tr>
+    <td>jsonFuzzLocationsFilePath</td>
+    <td>string</td>
+    <td>“/home/users/sample.json”</td>
+    </tr>
+</table>
+<br>
+To fuzz Example 1.1 in the same way the JSON file should look like this:
+<br>
+<pre style="font-family: 'Courier new',serif">
+
+{
+  "title": "Fuzz locations and payloads to be fuzzed",
+  "version": 1.0,
+  "schema": "https://www.zaproxy.org/docs/api/#zap-api-fuzz",
+  "fuzzLocations": [
+    {
+      "requestLocation": "body",
+      "start": 10,
+      "end": 16,
+      "payloads": [
+        {
+          "payloadType": "strings",
+          "contents": ["\nasdf", "okya", "someString"]
+        },
+        {
+          "payloadType": "fileFuzzer",
+          "fileFuzzerPath": "jbrofuzz/Alphabets/Alpha Numeric"
+        }
+      ]
+    }
+  ]
+}
+
+</pre>
+<p>This way the fuzzer accepts multiple fuzz locations and multiple payload types.</p>
+<p>More of these examples and the JSON schema can be found at zap-api-docs:</p>
+<p><a href="https://www.zaproxy.org/docs/api/#zap-api-fuzz">https://www.zaproxy.org/docs/api/#zap-api-fuzz</a>/</p>
+
+</BODY>
+</HTML>

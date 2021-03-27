@@ -135,7 +135,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
     }
 
     @SuppressWarnings("unchecked")
-    private HttpFuzzer createFuzzer(
+    public HttpFuzzer createFuzzer(
             HttpMessage message,
             List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
             HttpFuzzerOptions options,

@@ -24,6 +24,10 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
         notBeforeVersion.set("2.10.0")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.fuzz.FuzzAPI")
+    }
 }
 
 dependencies {
