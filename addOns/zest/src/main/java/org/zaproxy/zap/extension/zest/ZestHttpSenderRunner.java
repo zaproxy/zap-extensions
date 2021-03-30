@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,7 +43,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     private ExtensionZest extension = null;
     private HttpSenderScriptHelper helper = null;
 
-    private Logger logger = Logger.getLogger(ZestHttpSenderRunner.class);
+    private Logger logger = LogManager.getLogger(ZestHttpSenderRunner.class);
 
     public ZestHttpSenderRunner(ExtensionZest extension, ZestScriptWrapper script) {
         super(extension, script);
@@ -53,7 +54,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void sendingRequest(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest sendingRequest script: " + this.script.getName());
+        logger.debug("Zest sendingRequest script: {}", this.script.getName());
         this.helper = helper;
         this.msg = msg;
         try {
@@ -89,7 +90,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void responseReceived(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest responseReceived script: " + this.script.getName());
+        logger.debug("Zest responseReceived script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against

@@ -26,7 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -46,7 +47,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     private JTable paramsTable = null;
     private ScriptTokensTableModel paramsModel = null;
 
-    private static final Logger logger = Logger.getLogger(ZestRunScriptWithParamsDialog.class);
+    private static final Logger logger = LogManager.getLogger(ZestRunScriptWithParamsDialog.class);
 
     public ZestRunScriptWithParamsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.run.title", dim);

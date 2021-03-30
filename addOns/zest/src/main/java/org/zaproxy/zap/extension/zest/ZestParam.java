@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
@@ -84,7 +85,7 @@ public class ZestParam extends AbstractParam {
     private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
 
     /** The Constant log. */
-    private static final Logger log = Logger.getLogger(ZestParam.class);
+    private static final Logger log = LogManager.getLogger(ZestParam.class);
 
     /** The full list of headers that can be ignored. */
     private List<String> allHeaders = new ArrayList<String>();
@@ -121,7 +122,7 @@ public class ZestParam extends AbstractParam {
             }
 
         } catch (ConversionException e) {
-            log.error("Error while parsing config file: " + e.getMessage(), e);
+            log.error("Error while parsing config file: {}", e.getMessage(), e);
             // Use the defaults
             for (String header : DEFAULT_IGNORED_HEADERS) {
                 this.ignoredHeaders.add(header);

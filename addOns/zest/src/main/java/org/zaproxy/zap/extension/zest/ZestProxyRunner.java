@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.zest;
 import java.util.HashMap;
 import java.util.Map;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -38,7 +39,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
     private HttpMessage msg = null;
     private ExtensionZest extension = null;
 
-    private Logger logger = Logger.getLogger(ZestProxyRunner.class);
+    private Logger logger = LogManager.getLogger(ZestProxyRunner.class);
 
     public ZestProxyRunner(ExtensionZest extension, ZestScriptWrapper script) {
         super(extension, script);
@@ -48,7 +49,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
     @Override
     public boolean proxyRequest(HttpMessage msg) throws ScriptException {
-        logger.debug("Zest proxyRequest script: " + this.script.getName());
+        logger.debug("Zest proxyRequest script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against
@@ -105,7 +106,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
     @Override
     public boolean proxyResponse(HttpMessage msg) {
-        logger.debug("Zest proxyResponse script: " + this.script.getName());
+        logger.debug("Zest proxyResponse script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against

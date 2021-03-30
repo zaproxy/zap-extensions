@@ -24,7 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -258,7 +259,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -4278691012245035225L;
 
-    private static final Logger logger = Logger.getLogger(ZestTreeCellRenderer.class);
+    private static final Logger logger = LogManager.getLogger(ZestTreeCellRenderer.class);
 
     public ZestTreeCellRenderer() {}
 
@@ -400,8 +401,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
                     } else {
                         logger.error(
-                                "Unrecognised element element class="
-                                        + zew.getElement().getClass().getCanonicalName());
+                                "Unrecognised element element class={}",
+                                zew.getElement().getClass().getCanonicalName());
                     }
                 }
             }

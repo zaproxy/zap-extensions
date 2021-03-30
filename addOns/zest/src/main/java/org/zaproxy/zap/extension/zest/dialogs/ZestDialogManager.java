@@ -27,7 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.event.TreeSelectionListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.SiteNode;
@@ -73,7 +74,7 @@ import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 public class ZestDialogManager extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ZestDialogManager.class);
+    private static final Logger logger = LogManager.getLogger(ZestDialogManager.class);
 
     private ExtensionZest extension = null;
     private ScriptUI scriptUI = null;
