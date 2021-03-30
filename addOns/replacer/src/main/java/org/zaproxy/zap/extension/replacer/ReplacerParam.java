@@ -159,12 +159,7 @@ public class ReplacerParam extends AbstractParam {
             }
         }
 
-        try {
-            this.confirmRemoveToken = getConfig().getBoolean(CONFIRM_REMOVE_RULE_KEY, true);
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove rule option: " + e.getMessage(), e);
-        }
+        this.confirmRemoveToken = getBoolean(CONFIRM_REMOVE_RULE_KEY, true);
     }
 
     public List<ReplacerParamRule> getRules() {

@@ -98,11 +98,7 @@ public class InvokeParam extends AbstractParam {
             logger.error("Error while loading invoke applications: {}", e.getMessage(), e);
         }
 
-        try {
-            this.confirmRemoveApp = getConfig().getBoolean(CONFIRM_REMOVE_APP_KEY, true);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the confirm remove option: {}", e.getMessage(), e);
-        }
+        this.confirmRemoveApp = getBoolean(CONFIRM_REMOVE_APP_KEY, true);
     }
 
     public List<InvokableApp> getListInvoke() {

@@ -99,9 +99,8 @@ public class ZestParam extends AbstractParam {
 
     @Override
     protected void parse() {
-        // Parse the params
+        this.includeResponses = getBoolean(INCLUDE_RESPONSES_KEY, true);
         try {
-            this.includeResponses = getConfig().getBoolean(INCLUDE_RESPONSES_KEY, true);
 
             this.allHeaders.clear();
             for (String header : ALL_HEADERS) {
