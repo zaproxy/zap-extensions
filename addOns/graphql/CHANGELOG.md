@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Fixed
 - Fix invalid query generation when query depth was reached and the deepest fields had no leaf types (Issue 6316).
+- Cope with missing Nashorn engine (Issue 6501).
 
 ## [0.2.0] - 2020-11-18
 ### Changed
