@@ -32,8 +32,7 @@ dependencies {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
     }
-    implementation(files("lib/generex-0.0.5-SNAPSHOT.jar"))
-    implementation("dk.brics.automaton:automaton:1.11-8")
+    implementation("com.github.mifmif:generex:1.0.2")
 
     testImplementation(project(":testutils"))
 }
