@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.sequence;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
@@ -41,7 +42,7 @@ import org.zaproxy.zap.model.Target;
 public class SequenceAscanPanel implements CustomScanPanel {
 
     private SequencePanel sequencePanel = null;
-    public static final Logger logger = Logger.getLogger(SequenceAscanPanel.class);
+    public static final Logger logger = LogManager.getLogger(SequenceAscanPanel.class);
 
     private final ExtensionScript extensionScript;
 
