@@ -102,9 +102,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 httpSender.sendAndReceive(originalMessage);
                 messageSent(0, message);
             } catch (IOException e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to obtain the response of original message: ", e);
-                }
+                logger.debug("Failed to obtain the response of original message: ", e);
                 increaseErrorCount(
                         0,
                         Constant.messages.getString(

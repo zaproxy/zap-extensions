@@ -27,7 +27,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -39,7 +40,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  */
 public class RegexPayloadGenerator implements StringPayloadGenerator {
 
-    private static final Logger logger = Logger.getLogger(RegexPayloadGenerator.class);
+    private static final Logger logger = LogManager.getLogger(RegexPayloadGenerator.class);
 
     /**
      * Default limit for calculation of number of generated payloads of an infinite regular

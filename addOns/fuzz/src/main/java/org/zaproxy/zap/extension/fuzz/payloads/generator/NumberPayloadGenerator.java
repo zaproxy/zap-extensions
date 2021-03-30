@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -31,16 +32,14 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 public class NumberPayloadGenerator
         implements StringPayloadGenerator, ResettableAutoCloseableIterator<DefaultPayload> {
 
-    private static final Logger LOGGER = Logger.getLogger(NumberPayloadGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(NumberPayloadGenerator.class);
     private final int fromNo;
     private final int toNo;
     private final int steps;
     private long pos;
 
     public NumberPayloadGenerator(int fromNo, int toNo, int steps) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("new NumberPayloadGenerator(%d,%d,%d", fromNo, toNo, steps));
-        }
+        LOGGER.debug("new NumberPayloadGenerator({},{},{})", fromNo, toNo, steps);
         this.fromNo = fromNo;
         this.toNo = toNo;
         this.steps = steps;
@@ -50,7 +49,7 @@ public class NumberPayloadGenerator
     @Override
     public long getNumberOfPayloads() {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of payloads = " + (toNo - fromNo) / steps);
+            LOGGER.debug("Number of payloads = {}", (toNo - fromNo) / steps);
         }
         return (toNo - fromNo) / steps;
     }
