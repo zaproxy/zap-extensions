@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Clear Zest Results Panel when new script is added.
+- Maintenance changes.
 
 ## [33] - 2020-11-27
 ### Added

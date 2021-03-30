@@ -82,17 +82,10 @@ public class BrowserViewParam extends AbstractParam {
     protected void parse() {
         updateConfigFile();
 
-        try {
-            warnOnJavaFXInitError =
-                    getConfig()
-                            .getBoolean(
-                                    PARAM_WARN_ON_JAVA_FX_INIT_ERROR,
-                                    PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE);
-        } catch (ConversionException e) {
-            LOGGER.error(
-                    "Error while loading the '{}' option: ", PARAM_WARN_ON_JAVA_FX_INIT_ERROR, e);
-            warnOnJavaFXInitError = PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE;
-        }
+        warnOnJavaFXInitError =
+                getBoolean(
+                        PARAM_WARN_ON_JAVA_FX_INIT_ERROR,
+                        PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE);
     }
 
     /**

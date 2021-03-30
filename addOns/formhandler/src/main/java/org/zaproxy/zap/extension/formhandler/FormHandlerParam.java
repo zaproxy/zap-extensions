@@ -99,12 +99,7 @@ public class FormHandlerParam extends AbstractParam {
             }
         }
 
-        try {
-            this.confirmRemoveField = getConfig().getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove field option: {}", e.getMessage(), e);
-        }
+        this.confirmRemoveField = getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
     }
 
     @ZapApiIgnore

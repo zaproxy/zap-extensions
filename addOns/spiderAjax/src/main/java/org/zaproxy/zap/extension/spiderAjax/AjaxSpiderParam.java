@@ -210,49 +210,15 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        try {
-            this.numberOfBrowsers =
-                    getConfig().getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the number of browsers: " + e.getMessage(), e);
-        }
+        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
+        this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
+        this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
+        this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
+        this.eventWait = getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
+        this.reloadWait = getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
 
-        try {
-            this.maxCrawlDepth = getConfig().getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the max crawl depth: " + e.getMessage(), e);
-        }
+        browserId = getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
 
-        try {
-            this.maxCrawlStates = getConfig().getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
-        } catch (ConversionException e) {
-            logger.error("Error while loading max crawl states: " + e.getMessage(), e);
-        }
-
-        try {
-            this.maxDuration = getConfig().getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the crawl duration: " + e.getMessage(), e);
-        }
-
-        try {
-            this.eventWait = getConfig().getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the event wait time: " + e.getMessage(), e);
-        }
-
-        try {
-            this.reloadWait = getConfig().getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the reload wait time: " + e.getMessage(), e);
-        }
-
-        try {
-            browserId = getConfig().getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the browser id: " + e.getMessage(), e);
-            browserId = DEFAULT_BROWSER_ID;
-        }
         try {
             Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
@@ -266,31 +232,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             browserId = DEFAULT_BROWSER_ID;
         }
 
-        try {
-            this.clickDefaultElems =
-                    getConfig().getBoolean(CLICK_DEFAULT_ELEMS_KEY, DEFAULT_CLICK_DEFAULT_ELEMS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the click default option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.clickElemsOnce =
-                    getConfig().getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the click once option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.randomInputs = getConfig().getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the random inputs option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.showAdvancedDialog = getConfig().getBoolean(SHOW_ADV_OPTIONS_KEY, false);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the show advanced option: " + e.getMessage(), e);
-        }
+        this.clickDefaultElems = getBoolean(CLICK_DEFAULT_ELEMS_KEY, DEFAULT_CLICK_DEFAULT_ELEMS);
+        this.clickElemsOnce = getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
+        this.randomInputs = getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
+        this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
 
         try {
             List<HierarchicalConfiguration> fields =
@@ -322,12 +267,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             }
         }
 
-        try {
-            this.confirmRemoveElem = getConfig().getBoolean(CONFIRM_REMOVE_ELEM_KEY, true);
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove element option: " + e.getMessage(), e);
-        }
+        this.confirmRemoveElem = getBoolean(CONFIRM_REMOVE_ELEM_KEY, true);
 
         try {
             List<HierarchicalConfiguration> fields =
@@ -362,16 +302,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 break;
             case 1:
                 String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
-                try {
-                    boolean crawlInDepth = getConfig().getBoolean(crawlInDepthKey, false);
-                    getConfig()
-                            .setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
-                } catch (ConversionException e) {
-                    logger.warn(
-                            "Failed to read (old) configuration '"
-                                    + crawlInDepthKey
-                                    + "', no update will be made.");
-                }
+                boolean crawlInDepth = getBoolean(crawlInDepthKey, false);
+                getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
                 getConfig().clearProperty(crawlInDepthKey);
                 // $FALL-THROUGH$
             case 2:
