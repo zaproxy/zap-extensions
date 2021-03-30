@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -28,7 +29,7 @@ public class PopupMenuItemOpenInBrowser extends PopupMenuItemHttpMessageContaine
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = Logger.getLogger(PopupMenuItemOpenInBrowser.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemOpenInBrowser.class);
     private ExtensionSelenium ext;
     private ProvidedBrowser browser;
 
