@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Update dependency (Issue 4751).
 
 ### Fixed
 - Update results panels when Look and Feel changes (Issue 6479).
