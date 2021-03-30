@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [6] - 2021-03-30
 ### Changed
 - Accept only encoded URLs.
 - Add support for the Automation Framework.
@@ -47,5 +47,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6]: https://github.com/zaproxy/zap-extensions/releases/soap-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/soap-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/soap-v4
