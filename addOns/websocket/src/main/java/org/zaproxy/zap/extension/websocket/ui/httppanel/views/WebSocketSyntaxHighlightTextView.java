@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.text.BadLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
@@ -98,7 +99,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
         private static final long serialVersionUID = -6469629120424801024L;
 
         private static final Logger LOGGER =
-                Logger.getLogger(WebSocketSyntaxHighlightTextArea.class);
+                LogManager.getLogger(WebSocketSyntaxHighlightTextArea.class);
 
         private static final String CSS =
                 Constant.messages.getString("http.panel.view.syntaxtext.syntax.css");

@@ -35,7 +35,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
@@ -54,8 +55,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 
     private static final long serialVersionUID = -5830450800029295419L;
-    //    private static final org.apache.log4j.Logger logger =
-    // org.apache.log4j.Logger.getLogger(ManualWebSocketSendEditorDialog.class);
 
     private ZapMenuItem menuItem;
 
@@ -228,7 +227,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         private static final long serialVersionUID = -3335708932021769432L;
 
         private static final Logger LOGGER =
-                Logger.getLogger(ManualWebSocketSendEditorDialog.class);
+                LogManager.getLogger(ManualWebSocketSendEditorDialog.class);
 
         private final HttpPanel messagePanel;
 

@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
@@ -31,7 +32,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 4774753835401981588L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketMessagesPopupMenuItem.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketMessagesPopupMenuItem.class);
 
     /** Will be set by {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}. */
     private WebSocketPopupHelper wsPopupHelper;

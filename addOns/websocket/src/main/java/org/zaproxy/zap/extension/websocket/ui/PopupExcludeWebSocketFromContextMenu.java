@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -38,7 +39,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
     private static final long serialVersionUID = -2345060529128495874L;
 
     private static final Logger logger =
-            Logger.getLogger(PopupExcludeWebSocketFromContextMenu.class);
+            LogManager.getLogger(PopupExcludeWebSocketFromContextMenu.class);
 
     private WebSocketPopupHelper wsPopupHelper;
     private Context context;

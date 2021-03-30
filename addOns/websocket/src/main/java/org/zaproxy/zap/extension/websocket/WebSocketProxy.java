@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
@@ -60,7 +61,7 @@ import org.zaproxy.zap.utils.Stats;
  */
 public abstract class WebSocketProxy {
 
-    private static final Logger logger = Logger.getLogger(WebSocketProxy.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketProxy.class);
 
     public static final String WEBSOCKET_OPEN_STATS = "stats.websockets.open";
     public static final String WEBSOCKET_CLOSE_STATS = "stats.websockets.close";
@@ -281,7 +282,7 @@ public abstract class WebSocketProxy {
             String subprotocol,
             Map<String, String> extensions)
             throws WebSocketException {
-        logger.debug("Create WebSockets proxy for version '" + version + "'.");
+        logger.debug("Create WebSockets proxy for version '{}'.", version);
         WebSocketProxy wsProxy = null;
 
         // TODO: provide a registry for WebSocketProxy versions
@@ -426,9 +427,7 @@ public abstract class WebSocketProxy {
             throw new WebSocketException(e);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Start listeners for channel '" + toString() + "'.");
-        }
+        logger.debug("Start listeners for channel '{}'.", this);
 
         try {
             if (!isServerMode()) {
@@ -578,7 +577,7 @@ public abstract class WebSocketProxy {
         int opcode = (frameHeader & 0x0F); // last 4 bits represent opcode
         String readableOpcode = WebSocketMessage.opcode2string(opcode);
 
-        logger.debug("Process WebSocket frame: " + opcode + " (" + readableOpcode + ")");
+        logger.debug("Process WebSocket frame: {} ({})", opcode, readableOpcode);
 
         if (WebSocketMessage.isControl(opcode)) {
             // control messages may interrupt non-control messages
@@ -709,13 +708,13 @@ public abstract class WebSocketProxy {
         if (isForwardOnly && !shouldBeForwardOnly) {
             // formerly channel was ignored - maybe the whole time
             // be sure that observers got to know this channel
-            logger.info(toString() + " is re-included in storage & UI!");
+            logger.info("{} is re-included in storage & UI!", this);
 
             isForwardOnly = false;
             notifyStateObservers(State.INCLUDED);
         } else if (!isForwardOnly && shouldBeForwardOnly) {
             // current channel is not tracked in future
-            logger.info(toString() + " is excluded from storage & UI!");
+            logger.info("{} is excluded from storage & UI!", this);
 
             isForwardOnly = true;
             notifyStateObservers(State.EXCLUDED);
@@ -952,9 +951,7 @@ public abstract class WebSocketProxy {
      */
     @Deprecated
     public void sendAndNotify(WebSocketMessageDTO msg) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         if (message.forward(getOuputStream(msg))) {
@@ -985,9 +982,7 @@ public abstract class WebSocketProxy {
      * @throws IOException
      */
     public void sendAndNotify(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);
@@ -998,18 +993,14 @@ public abstract class WebSocketProxy {
 
     @Deprecated
     public boolean send(WebSocketMessageDTO msg) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         return message.forward(getOuputStream(msg));
     }
 
     public boolean send(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);

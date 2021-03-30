@@ -28,7 +28,8 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
@@ -97,7 +98,7 @@ public class WebSocketMessageDTO implements Message {
                         SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM, Constant.getLocale());
     }
 
-    private static final Logger LOG = Logger.getLogger(WebSocketMessageDTO.class);
+    private static final Logger LOG = LogManager.getLogger(WebSocketMessageDTO.class);
 
     /** @param channel */
     public WebSocketMessageDTO(WebSocketChannelDTO channel) {

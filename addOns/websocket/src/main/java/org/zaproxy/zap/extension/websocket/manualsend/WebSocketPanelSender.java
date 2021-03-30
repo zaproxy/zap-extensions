@@ -23,7 +23,8 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
@@ -50,7 +51,7 @@ import org.zaproxy.zap.model.SessionStructure;
 /** Knows how to send {@link HttpMessage} objects. Contains a list of valid WebSocket channels. */
 public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
 
-    private static final Logger logger = Logger.getLogger(WebSocketPanelSender.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketPanelSender.class);
 
     private Map<Integer, WebSocketProxy> connectedProxies;
     private Map<Integer, WebSocketProxy> closedProxies;

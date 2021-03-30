@@ -39,7 +39,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -74,7 +75,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
     private static final long serialVersionUID = -2853099315338427006L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketPanel.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int WEBSOCKET_OBSERVING_ORDER =

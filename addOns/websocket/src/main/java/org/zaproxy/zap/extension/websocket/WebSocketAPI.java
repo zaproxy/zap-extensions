@@ -34,7 +34,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpHeader;
@@ -87,7 +88,7 @@ public class WebSocketAPI extends ApiImplementor {
     private static final String PARAM_OUTGOING = "outgoing";
     private static final String PARAM_MESSAGE = "message";
 
-    private static final Logger LOG = Logger.getLogger(WebSocketAPI.class);
+    private static final Logger LOG = LogManager.getLogger(WebSocketAPI.class);
 
     private WebSocketObserver observer;
 
@@ -142,9 +143,7 @@ public class WebSocketAPI extends ApiImplementor {
     @Override
     public String handleCallBack(HttpMessage msg) throws ApiException {
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("callback url = " + msg.getRequestHeader().getURI());
-            }
+            LOG.debug("callback url = {}", msg.getRequestHeader().getURI());
 
             String connectionHeader = msg.getRequestHeader().getHeader(HttpHeader.CONNECTION);
             String upgradeHeader = msg.getRequestHeader().getHeader("upgrade");
@@ -156,11 +155,9 @@ public class WebSocketAPI extends ApiImplementor {
                     String origin = msg.getRequestHeader().getHeader("Origin");
                     if (!API_URL.equals(origin)) {
                         LOG.warn(
-                                "Rejecting WebSocket connection, the Origin ["
-                                        + origin
-                                        + "] did not match ["
-                                        + API_URL
-                                        + "]");
+                                "Rejecting WebSocket connection, the Origin [{}] did not match [{}]",
+                                origin,
+                                API_URL);
                         msg.setResponseHeader("HTTP/1.1 403 Forbidden");
                         return "";
                     }
