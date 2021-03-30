@@ -32,7 +32,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -47,7 +48,7 @@ class PopupMenuSaveXMLMessage extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = -7217818541206464572L;
 
-    private static final Logger log = Logger.getLogger(PopupMenuSaveXMLMessage.class);
+    private static final Logger log = LogManager.getLogger(PopupMenuSaveXMLMessage.class);
 
     private static final String POPUP_MENU_LABEL =
             Constant.messages.getString("savexml.popup.option");
