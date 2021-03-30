@@ -22,13 +22,14 @@ package org.zaproxy.zap.extension.soap;
 import java.io.IOException;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.NodeList;
 
 public class SitesTreeHelper {
 
-    private static final Logger LOG = Logger.getLogger(ExtensionImportWSDL.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
 
     /**
      * Returns a node name based on the SOAP version and the operation name in the provided message.

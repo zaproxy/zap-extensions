@@ -26,7 +26,8 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -48,7 +49,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
 
-    private static final Logger LOG = Logger.getLogger(SOAPActionSpoofingActiveScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(SOAPActionSpoofingActiveScanRule.class);
 
     public enum ResponseType {
         INVALID_FORMAT,
@@ -113,11 +114,9 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
         if (soapActions == null || soapActions.isEmpty()) {
             // No actions to spoof
             LOG.info(
-                    "Ignoring "
-                            + getName()
-                            + " because no actions were found. (URL: "
-                            + originalMsg.getRequestHeader().getURI().toString()
-                            + ")");
+                    "Ignoring {} because no actions were found. (URL: {})",
+                    getName(),
+                    originalMsg.getRequestHeader().getURI());
             return;
         }
         for (SoapAction soapAction : soapActions) {
@@ -129,10 +128,9 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
             if (originalSoapAction.trim().equals(soapAction.getAction())) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
-                            "Ignoring matching actions: "
-                                    + originalSoapAction
-                                    + " : "
-                                    + soapAction.getAction());
+                            "Ignoring matching actions: {} : {}",
+                            originalSoapAction,
+                            soapAction.getAction());
                 }
                 continue;
             }
@@ -243,7 +241,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
                 return ResponseType.SOAPACTION_EXECUTED;
             }
         } catch (IOException | SOAPException e) {
-            LOG.info("Exception thrown when scanning: ", e);
+            LOG.warn("Exception thrown when scanning: ", e);
             return ResponseType.INVALID_FORMAT;
         }
     }

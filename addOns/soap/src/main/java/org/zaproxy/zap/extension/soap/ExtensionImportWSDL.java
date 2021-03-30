@@ -27,7 +27,8 @@ import java.security.InvalidParameterException;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.Database;
@@ -50,7 +51,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     public static final String NAME = "ExtensionImportWSDL";
     public static final String STATS_ADDED_URLS = "soap.urls.added";
 
-    private static final Logger LOG = Logger.getLogger(ExtensionImportWSDL.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
 
     private ZapMenuItem menuImportLocalWSDL = null;
@@ -221,10 +222,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         try {
             return ext.getEngineWrapper(engineName);
         } catch (InvalidParameterException e) {
-            LOG.warn(
-                    "The "
-                            + engineName
-                            + " engine was not found, script variant will not be added.");
+            LOG.warn("The {} engine was not found, script variant will not be added.", engineName);
         }
         return null;
     }

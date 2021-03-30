@@ -33,9 +33,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
@@ -49,11 +46,6 @@ public class WSDLCustomParserTestCase extends TestUtils {
 
     @BeforeEach
     public void setUp() throws Exception {
-        /* Simple log configuration to prevent Log4j malfunction. */
-        BasicConfigurator.configure();
-        Logger rootLogger = Logger.getRootLogger();
-        rootLogger.setLevel(Level.OFF);
-
         /* Gets test wsdl file and retrieves its content as String. */
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
