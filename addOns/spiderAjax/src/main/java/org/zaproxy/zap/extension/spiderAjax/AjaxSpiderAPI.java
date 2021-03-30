@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -58,7 +59,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 
 public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderAPI.class);
+    private static final Logger logger = LogManager.getLogger(AjaxSpiderAPI.class);
 
     private static final String PREFIX = "ajaxSpider";
 

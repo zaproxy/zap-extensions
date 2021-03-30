@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -67,7 +68,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_EVENT_WAIT = "spiderajax.options.label.eventwait";
     private static final String FIELD_RELOAD_WAIT = "spiderajax.options.label.reloadwait";
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderDialog.class);
+    private static final Logger logger = LogManager.getLogger(AjaxSpiderDialog.class);
     private static final long serialVersionUID = 1L;
 
     private ExtensionAjax extension = null;
@@ -108,7 +109,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             this.target = target;
         }
 
-        logger.debug("init " + this.target);
+        logger.debug("init {}", this.target);
         if (params == null) {
             params = this.extension.getAjaxSpiderParam();
         }

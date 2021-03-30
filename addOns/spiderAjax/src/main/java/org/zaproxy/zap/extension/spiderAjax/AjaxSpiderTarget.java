@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
@@ -31,7 +32,7 @@ import org.zaproxy.zap.users.User;
 /** A target of AJAX spider scans. */
 public final class AjaxSpiderTarget {
 
-    private static final Logger LOGGER = Logger.getLogger(AjaxSpiderTarget.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderTarget.class);
 
     private final URI startUri;
     private final boolean inScopeOnly;
@@ -122,7 +123,7 @@ public final class AjaxSpiderTarget {
                             "GET",
                             ""));
         } catch (Exception e) {
-            LOGGER.error("Failed to convert target URL " + this.getStartUri().toString(), e);
+            LOGGER.error("Failed to convert target URL {}", this.getStartUri(), e);
         }
         target.setContext(getContext());
         target.setInScopeOnly(this.isInScopeOnly());

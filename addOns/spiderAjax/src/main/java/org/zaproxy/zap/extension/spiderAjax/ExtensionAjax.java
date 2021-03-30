@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -56,7 +55,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionAjax extends ExtensionAdaptor {
 
-    private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
     public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
     public static final String NAME = "ExtensionSpiderAjax";
 

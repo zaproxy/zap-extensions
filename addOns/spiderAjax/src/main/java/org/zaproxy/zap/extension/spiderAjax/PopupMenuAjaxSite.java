@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.SiteNode;
@@ -31,7 +30,6 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 1L;
     private ExtensionAjax extension = null;
-    private static Logger logger = Logger.getLogger(PopupMenuAjaxSite.class);
 
     /** @param label */
     public PopupMenuAjaxSite(String label, ExtensionAjax extension) {
