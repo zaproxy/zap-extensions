@@ -1,4 +1,4 @@
-version = "6"
+version = "7"
 description = "Imports and scans WSDL files containing SOAP endpoints."
 
 zapAddOn {
@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("Alberto (albertov91) + ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/soap-support/")
         extensions {
             register("org.zaproxy.zap.extension.soap.automation.ExtensionSoapAutomation") {
                 classnames {
