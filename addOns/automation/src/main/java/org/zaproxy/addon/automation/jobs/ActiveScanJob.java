@@ -34,6 +34,7 @@ import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -165,6 +166,22 @@ public class ActiveScanJob extends AutomationJob {
                 break;
             }
         }
+        progress.addJobResultData(createJobResultData(scanId));
+    }
+
+    @Override
+    public List<JobResultData> getJobResultData() {
+        ActiveScan lastScan = this.getExtAScan().getLastScan();
+        if (lastScan != null) {
+            return createJobResultData(lastScan.getId());
+        }
+        return new ArrayList<JobResultData>();
+    }
+
+    private List<JobResultData> createJobResultData(int scanId) {
+        List<JobResultData> list = new ArrayList<JobResultData>();
+        list.add(new ActiveScanJobResultData(this.getName(), this.getExtAScan().getScan(scanId)));
+        return list;
     }
 
     private AttackStrength parseAttackStrength(Object o, AutomationProgress progress) {

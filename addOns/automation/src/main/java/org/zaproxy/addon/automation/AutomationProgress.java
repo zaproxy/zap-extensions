@@ -20,7 +20,10 @@
 package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.parosproxy.paros.CommandLine;
 
 public class AutomationProgress {
@@ -29,6 +32,7 @@ public class AutomationProgress {
     private List<String> warnings = new ArrayList<>();
     private List<String> infos = new ArrayList<>();
     private boolean outputToStdout = false;
+    private Map<String, JobResultData> jobResultDataMap = new HashMap<>();
 
     public void error(String error) {
         this.errors.add(error);
@@ -77,5 +81,23 @@ public class AutomationProgress {
 
     public void setOutputToStdout(boolean outputToStdout) {
         this.outputToStdout = outputToStdout;
+    }
+
+    public void addJobResultData(JobResultData data) {
+        this.jobResultDataMap.put(data.getKey(), data);
+    }
+
+    public void addJobResultData(List<JobResultData> list) {
+        for (JobResultData data : list) {
+            this.jobResultDataMap.put(data.getKey(), data);
+        }
+    }
+
+    public JobResultData getJobResultData(String key) {
+        return this.jobResultDataMap.get(key);
+    }
+
+    public Collection<JobResultData> getAllJobResultData() {
+        return this.jobResultDataMap.values();
     }
 }
