@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.simpleexample;
 
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -34,7 +35,7 @@ public class SimpleExampleAPI extends ApiImplementor {
 
     private static final String ACTION_HELLO_WORLD = "helloWorld";
 
-    private static final Logger LOGGER = Logger.getLogger(SimpleExampleAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(SimpleExampleAPI.class);
 
     public SimpleExampleAPI(ExtensionSimpleExample extension) {
         this.extension = extension;
