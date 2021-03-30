@@ -32,6 +32,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketProtocol;
 
 public final class WebSocketUtils {
     private static final Logger LOGGER = Logger.getLogger(WebSocketUtils.class);
+    private static final Random RAND = new Random();
 
     public static final String WEB_SOCKET_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -56,8 +57,7 @@ public final class WebSocketUtils {
      */
     public static String generateSecWebSocketKey() {
         byte[] random = new byte[16];
-        Random rand = new Random();
-        rand.nextBytes(random);
+        RAND.nextBytes(random);
         return Base64.getEncoder().encodeToString(random);
     }
 

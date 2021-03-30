@@ -111,10 +111,7 @@ public class ScriptsListPanel extends AbstractPanel {
     public ScriptsListPanel(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
 
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
         this.setIcon(ExtensionScriptsUI.ICON);

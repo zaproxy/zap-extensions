@@ -43,10 +43,7 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
 
     public OptionsReplacerPanel() {
         super();
-        initialize();
-    }
 
-    private void initialize() {
         this.setName(PANEL_NAME);
         this.setLayout(new GridBagLayout());
 

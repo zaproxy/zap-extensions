@@ -55,11 +55,7 @@ public class CommandPanel extends AbstractPanel {
     public CommandPanel(KeyListener listener) {
         super();
         this.listener = listener;
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName("ConsoleCommandPanel");
 
@@ -99,7 +95,7 @@ public class CommandPanel extends AbstractPanel {
     }
 
     @Override
-    public void addKeyListener(KeyListener l) {
+    public synchronized void addKeyListener(KeyListener l) {
         // Don't do anything, the (only) listener is specified through the constructor.
     }
 

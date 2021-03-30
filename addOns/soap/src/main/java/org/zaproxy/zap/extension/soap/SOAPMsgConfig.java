@@ -104,8 +104,17 @@ public class SOAPMsgConfig {
         this.bindOp = bindOp;
     }
 
-    public boolean equals(SOAPMsgConfig other) {
-        return this.getHash() == other.getHash();
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !(other instanceof SOAPMsgConfig)) {
+            return false;
+        }
+        return this.getHash() == ((SOAPMsgConfig) other).getHash();
+    }
+
+    @Override
+    public int hashCode() {
+        return getHash();
     }
 
     private int getHash() {

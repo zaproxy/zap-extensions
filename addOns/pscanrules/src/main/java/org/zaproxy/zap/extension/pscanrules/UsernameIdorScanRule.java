@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
     private static final String ADMIN = "Admin";
     private static final String ADMIN_2 = "admin";
 
-    public static final List<String> DEFAULT_USERNAMES = Arrays.asList(ADMIN, ADMIN_2);
+    public static final List<String> DEFAULT_USERNAMES =
+            Collections.unmodifiableList(Arrays.asList(ADMIN, ADMIN_2));
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_USERNAMES;
     public static final String USERNAME_IDOR_PAYLOAD_CATEGORY = "Username-Idor";

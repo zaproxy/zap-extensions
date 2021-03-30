@@ -81,8 +81,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private boolean canChangeContext;
     private int scopeYOffset;
     private Context workingContext;
+    private AlertFilter oldAlertFilter;
     private AlertFilter alertFilter;
-    private AlertFilter updatedAlertFilter;
     private JButton testButton;
     private JButton applyButton;
     private JLabel testResultsLabel;
@@ -135,23 +135,23 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     @Override
     protected void init() {
-        if (this.alertFilter != null) {
-            log.debug("Initializing add alertFilter dialog for: {}", alertFilter);
+        if (this.oldAlertFilter != null) {
+            log.debug("Initializing add alertFilter dialog for: {}", oldAlertFilter);
             getAlertCombo()
                     .setSelectedItem(
-                            ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
+                            ExtensionAlertFilters.getRuleNameForId(oldAlertFilter.getRuleId()));
             getNewLevelCombo()
-                    .setSelectedItem(AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
-            getUrlTextField().setText(alertFilter.getUrl());
-            getUrlRegexCheckBox().setSelected(alertFilter.isUrlRegex());
-            getParamTextField().setText(alertFilter.getParameter());
-            getParamRegexCheckBox().setSelected(alertFilter.isParameterRegex());
-            getAttackTextField().setText(alertFilter.getAttack());
-            getAttackRegexCheckBox().setSelected(alertFilter.isAttackRegex());
-            getEvidenceTextField().setText(alertFilter.getEvidence());
-            getEvidenceRegexCheckBox().setSelected(alertFilter.isEvidenceRegex());
+                    .setSelectedItem(AlertFilter.getNameForRisk(oldAlertFilter.getNewRisk()));
+            getUrlTextField().setText(oldAlertFilter.getUrl());
+            getUrlRegexCheckBox().setSelected(oldAlertFilter.isUrlRegex());
+            getParamTextField().setText(oldAlertFilter.getParameter());
+            getParamRegexCheckBox().setSelected(oldAlertFilter.isParameterRegex());
+            getAttackTextField().setText(oldAlertFilter.getAttack());
+            getAttackRegexCheckBox().setSelected(oldAlertFilter.isAttackRegex());
+            getEvidenceTextField().setText(oldAlertFilter.getEvidence());
+            getEvidenceRegexCheckBox().setSelected(oldAlertFilter.isEvidenceRegex());
 
-            getEnabledCheckBox().setSelected(alertFilter.isEnabled());
+            getEnabledCheckBox().setSelected(oldAlertFilter.isEnabled());
             setButtonStates();
         }
         this.setConfirmButtonEnabled(true);
@@ -217,7 +217,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     @Override
     protected void performAction() {
-        this.updatedAlertFilter = fieldsToFilter();
+        this.alertFilter = fieldsToFilter();
     }
 
     private AlertFilter fieldsToFilter() {
@@ -243,7 +243,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     @Override
     protected void clearFields() {
-        this.alertFilter = null;
+        this.oldAlertFilter = null;
         this.enabledCheckBox.setSelected(true);
         this.alertCombo.setSelectedIndex(0);
         this.newLevelCombo.setSelectedIndex(0);
@@ -267,18 +267,18 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     }
 
     public void setAlertFilter(AlertFilter alertFilter) {
-        this.alertFilter = alertFilter;
-        this.updatedAlertFilter = null;
+        this.oldAlertFilter = alertFilter;
+        this.alertFilter = null;
         setButtonStates();
     }
 
     /**
-     * Gets the alertFilter defined in the dialog, will be null if the dialog is cancelled.
+     * Gets the {@code AlertFilter} defined in the dialog, will be null if the dialog is cancelled.
      *
-     * @return the alertFilter, if correctly built or null, otherwise
+     * @return the {@code AlertFilter}, if correctly built or null otherwise
      */
     public AlertFilter getAlertFilter() {
-        return updatedAlertFilter;
+        return alertFilter;
     }
 
     @Override
@@ -399,9 +399,9 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
                         @Override
                         public void actionPerformed(ActionEvent arg0) {
-                            alertFilter = fieldsToFilter();
+                            oldAlertFilter = fieldsToFilter();
                             if (validateFields()) {
-                                int count = extension.applyAlertFilter(alertFilter, true);
+                                int count = extension.applyAlertFilter(oldAlertFilter, true);
                                 testResultsLabel.setText(
                                         Constant.messages.getString(
                                                 "alertFilters.dialog.filter.state.appliesto",
@@ -429,9 +429,9 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
                         @Override
                         public void actionPerformed(ActionEvent arg0) {
-                            alertFilter = fieldsToFilter();
+                            oldAlertFilter = fieldsToFilter();
                             if (validateFields()) {
-                                int count = extension.applyAlertFilter(alertFilter, false);
+                                int count = extension.applyAlertFilter(oldAlertFilter, false);
                                 applyResultsLabel.setText(
                                         Constant.messages.getString(
                                                 "alertFilters.dialog.filter.state.appliedto",
