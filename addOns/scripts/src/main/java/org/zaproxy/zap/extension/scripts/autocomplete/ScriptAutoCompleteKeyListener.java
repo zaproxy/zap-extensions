@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
@@ -47,7 +48,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
     private String scriptType;
     private boolean enabled = true;
 
-    private static final Logger LOG = Logger.getLogger(ScriptAutoCompleteKeyListener.class);
+    private static final Logger LOG = LogManager.getLogger(ScriptAutoCompleteKeyListener.class);
 
     public ScriptAutoCompleteKeyListener(JTextArea textInput) {
         this.textInput = textInput;
@@ -230,7 +231,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                             Map<String, String> map = this.typeToClassMaps.get(this.scriptType);
                             if (map == null) {
                                 LOG.debug(
-                                        "No autocomplete map for script type: " + this.scriptType);
+                                        "No autocomplete map for script type: {}", this.scriptType);
                             } else {
                                 // Try to match the text against a variable name
                                 String className = map.get(var);
@@ -241,7 +242,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                                                         .loadClass(className);
                                         this.showMenuForClass(c, p);
                                     } catch (ClassNotFoundException e1) {
-                                        LOG.error("Failed to find class " + className, e1);
+                                        LOG.error("Failed to find class {}", className, e1);
                                     }
                                 }
                             }

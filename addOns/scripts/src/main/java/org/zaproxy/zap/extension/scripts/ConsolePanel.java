@@ -37,7 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -88,7 +89,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     private Map<ScriptWrapper, Integer> scriptWrapperToOffset =
             new HashMap<ScriptWrapper, Integer>();
 
-    private static final Logger LOG = Logger.getLogger(ConsolePanel.class);
+    private static final Logger LOG = LogManager.getLogger(ConsolePanel.class);
 
     public ConsolePanel(ExtensionScriptsUI extension) {
         super();
