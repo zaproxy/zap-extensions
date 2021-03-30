@@ -24,14 +24,15 @@ import java.util.List;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 
 public class ReplacerParam extends AbstractParam {
 
-    private static final Logger logger = Logger.getLogger(ReplacerParam.class);
+    private static final Logger logger = LogManager.getLogger(ReplacerParam.class);
 
     private static final String REPLACER_BASE_KEY = "replacer";
 
@@ -136,8 +137,8 @@ public class ReplacerParam extends AbstractParam {
                                 initList.add(Integer.parseInt(str.trim()));
                             } catch (NumberFormatException e) {
                                 logger.error(
-                                        "Error while loading global repacement rule: "
-                                                + e.getMessage(),
+                                        "Error while loading global repacement rule: {}",
+                                        e.getMessage(),
                                         e);
                             }
                         }
@@ -149,7 +150,7 @@ public class ReplacerParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading global repacement rules: " + e.getMessage(), e);
+            logger.error("Error while loading global repacement rules: {}", e.getMessage(), e);
             this.rules = new ArrayList<>(defaultList.size());
         }
 
