@@ -25,7 +25,8 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.JsonPayloadGenerator;
@@ -43,7 +44,7 @@ public class JsonPayloadGeneratorAdapterUIHandler
                 JsonPayloadGenerator,
                 JsonPayloadGeneratorAdapterUIHandler.JsonPayloadGeneratorUI> {
     private static final Logger LOGGER =
-            Logger.getLogger(JsonPayloadGeneratorAdapterUIHandler.class);
+            LogManager.getLogger(JsonPayloadGeneratorAdapterUIHandler.class);
     private static final String PAYLOAD_GENERATOR_NAME = getString("name");
     private static final String PAYLOAD_GENERATOR_DESC = getString("description");
 

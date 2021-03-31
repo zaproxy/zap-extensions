@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -50,7 +51,7 @@ public class HttpFuzzerResultsTableModel
 
     private static final long serialVersionUID = -7711293371478878302L;
 
-    private static final Logger logger = Logger.getLogger(HttpFuzzerResultsTableModel.class);
+    private static final Logger logger = LogManager.getLogger(HttpFuzzerResultsTableModel.class);
 
     private static final Column[] COLUMNS =
             new Column[] {

@@ -42,7 +42,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.version.JBroFuzzPrefs;
 import org.parosproxy.paros.Constant;
@@ -112,7 +113,7 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 
 public class ExtensionFuzz extends ExtensionAdaptor {
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionFuzz.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionFuzz.class);
 
     private static final ImageIcon SCRIPT_PAYLOAD_GENERATOR_ICON =
             new ImageIcon(
@@ -647,8 +648,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     return fh;
                 } catch (ClassCastException e) {
                     LOGGER.warn(
-                            "FuzzerHandler not consistent with required message type: "
-                                    + fuzzerHandler.getClass().getCanonicalName());
+                            "FuzzerHandler not consistent with required message type: {}",
+                            fuzzerHandler.getClass().getCanonicalName());
                 }
             }
         }

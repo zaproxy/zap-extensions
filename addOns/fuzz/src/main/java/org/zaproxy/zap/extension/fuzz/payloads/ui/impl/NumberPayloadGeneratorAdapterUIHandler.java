@@ -28,7 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
@@ -48,7 +49,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
                 NumberPayloadGeneratorAdapterUIHandler.NumberPayloadGeneratorUI> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(NumberPayloadGeneratorAdapterUIHandler.class);
+            LogManager.getLogger(NumberPayloadGeneratorAdapterUIHandler.class);
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.numbers.name");
     private static final String PAYLOAD_GENERATOR_DESC =

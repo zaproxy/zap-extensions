@@ -29,7 +29,8 @@ import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.renderer.IconAware;
@@ -47,7 +48,7 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
 
     private static final long serialVersionUID = -1910120966638329368L;
 
-    private static final Logger LOGGER = Logger.getLogger(HttpFuzzerResultsTable.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerResultsTable.class);
 
     private final FuzzResultStateHighlighter fuzzResultStateHighlighter;
 

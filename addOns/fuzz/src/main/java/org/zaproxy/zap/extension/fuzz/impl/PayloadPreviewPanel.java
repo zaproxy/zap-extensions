@@ -34,7 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingException;
@@ -45,7 +46,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 class PayloadPreviewPanel {
 
-    private static final Logger LOGGER = Logger.getLogger(PayloadPreviewPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(PayloadPreviewPanel.class);
 
     private static final String GENERATE_PREVIEW_BUTTON_LABEL =
             Constant.messages.getString("fuzz.fuzzer.processors.button.generatePreview.label");
@@ -167,9 +168,7 @@ class PayloadPreviewPanel {
             }
             textArea.setEnabled(true);
         } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Failed to iterate the payloads: " + e.getMessage());
-            }
+            LOGGER.debug("Failed to iterate the payloads: {}", e.getMessage());
             contents.setLength(0);
             contents.append(
                     Constant.messages.getString("fuzz.fuzzer.processors.payloadsPreview.error"));
@@ -178,9 +177,7 @@ class PayloadPreviewPanel {
             try {
                 payloads.reset();
             } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to close iterator: " + e.getMessage());
-                }
+                LOGGER.debug("Failed to close iterator: {}", e.getMessage());
             }
         }
         textArea.setText(contents.toString());
