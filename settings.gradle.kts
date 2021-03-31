@@ -86,7 +86,6 @@ var addOns = listOf(
     "treetools",
     "viewstate",
     "wappalyzer",
-    "wavsepRpt",
     "webdrivers",
     "webdrivers:webdriverlinux",
     "webdrivers:webdrivermacos",
