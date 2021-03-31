@@ -26,13 +26,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 public class HttpsCallerLauncher {
 
     private static String SEP = System.getProperty("path.separator");
-    private static final Logger logger = Logger.getLogger(HttpsCallerLauncher.class);
+    private static final Logger logger = LogManager.getLogger(HttpsCallerLauncher.class);
 
     private ExtensionTlsDebug extension;
 
