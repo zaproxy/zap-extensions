@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -94,7 +95,7 @@ public class SQLiPayloadManager {
     private List<SQLiBoundary> boundaries;
     private List<SQLiTest> tests;
 
-    private static final Logger log = Logger.getLogger(SQLiPayloadManager.class);
+    private static final Logger log = LogManager.getLogger(SQLiPayloadManager.class);
 
     // Singleton variable
     private static SQLiPayloadManager instance;
@@ -139,7 +140,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + boundaries.size() + " boundary elements");
+        // log.info("Loaded {} boundary elements", boundaries.size());
         is.close();
 
         // Load all payloads from resources
@@ -152,7 +153,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + tests.size() + " payload elements");
+        // log.info("Loaded {} payload elements", tests.size());
         is.close();
     }
 
