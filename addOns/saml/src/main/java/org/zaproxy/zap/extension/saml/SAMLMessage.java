@@ -45,7 +45,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Attr;
@@ -59,7 +60,7 @@ import org.zaproxy.zap.utils.XmlUtils;
 
 public class SAMLMessage {
 
-    protected static final Logger log = Logger.getLogger(SAMLMessage.class);
+    protected static final Logger log = LogManager.getLogger(SAMLMessage.class);
     private boolean messageChanged;
     private HttpMessage httpMessage;
     private String samlMessageString;
@@ -168,7 +169,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn(attribute.getxPath() + " is not a valid XPath", e);
+                log.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
     }
@@ -220,7 +221,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn(attribute.getxPath() + " is not a valid XPath", e);
+                log.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
         if (SAMLConfiguration.getInstance().getXSWEnabled()) {
