@@ -34,7 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.tree.TreeNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
@@ -60,7 +61,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
                 AddonFilesChangedListener,
                 BruteForceListenner {
 
-    private static final Logger logger = Logger.getLogger(ExtensionBruteForce.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionBruteForce.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.
@@ -251,33 +252,33 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     boolean stopScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Stopping scan on " + target);
+            logger.debug("Stopping scan on {}", target);
             bruteForce.stopScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        logger.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean pauseScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Pausing scan on " + target);
+            logger.debug("Pausing scan on {}", target);
             bruteForce.pauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        logger.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean resumeScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Resuming scan on " + target);
+            logger.debug("Resuming scan on {}", target);
             bruteForce.unpauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        logger.debug("Failed to find scan on {}", target);
         return false;
     }
 

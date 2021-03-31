@@ -30,7 +30,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Generates a base case for a dir or file rangle that is about to be scanned
@@ -40,7 +41,7 @@ import org.apache.log4j.Logger;
 public class GenBaseCase {
 
     /* Log object for this class */
-    private static final Logger LOG = Logger.getLogger(GenBaseCase.class);
+    private static final Logger LOG = LogManager.getLogger(GenBaseCase.class);
 
     /** Creates a new instance of GenBaseCase */
     private GenBaseCase() {}
@@ -77,9 +78,7 @@ public class GenBaseCase {
             return tempBaseCase;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("URL to get baseCase for: " + url);
-        }
+        LOG.debug("URL to get baseCase for: {}", url);
 
         BaseCase baseCase = null;
         int failcode = 0;
@@ -100,9 +99,7 @@ public class GenBaseCase {
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Getting:" + failurl);
-        }
+        LOG.debug("Getting: {}", failurl);
 
         GetMethod httpget = new GetMethod(failurl.toString());
         // set the custom HTTP headers
@@ -126,9 +123,7 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
-            }
+            LOG.debug("Base case for {} came back as 200!", failurl);
 
             BufferedReader input =
                     new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
@@ -200,9 +195,7 @@ public class GenBaseCase {
                      */
                 }
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Base case was set to: " + baseResponce);
-                }
+                LOG.debug("Base case was set to: {}", baseResponce);
             }
         }
         httpget.releaseConnection();
@@ -264,9 +257,7 @@ public class GenBaseCase {
         manager.workDone();
 
         if (failcode == 200) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
-            }
+            LOG.debug("Base case for {} came back as 200!", failurl);
 
             BufferedReader input =
                     new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
@@ -281,9 +272,7 @@ public class GenBaseCase {
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Base case was set to: " + baseResponce);
-            }
+            LOG.debug("Base case was set to: {}", baseResponce);
         }
 
         httpget.releaseConnection();
@@ -328,9 +317,7 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
-            }
+            LOG.debug("Base case for {} came back as 200!", failurl);
 
             BufferedReader input =
                     new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));

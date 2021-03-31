@@ -42,7 +42,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -108,7 +109,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private TableExportButton<HistoryReferencesTable> exportButton = null;
 
-    private static Logger log = Logger.getLogger(BruteForcePanel.class);
+    private static Logger log = LogManager.getLogger(BruteForcePanel.class);
 
     /** @param bruteForceParam */
     public BruteForcePanel(ExtensionBruteForce extension, BruteForceParam bruteForceParam) {
@@ -580,7 +581,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                 }
                 File file = selectedForcedBrowseFile.getFile();
                 if (!file.exists()) {
-                    log.error("No such file: " + file.getAbsolutePath());
+                    log.error("No such file: {}", file.getAbsolutePath());
                     return;
                 }
 
@@ -701,7 +702,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         File file = selectedForcedBrowseFile.getFile();
         if (!file.exists()) {
-            log.error("No such file: " + file.getAbsolutePath());
+            log.error("No such file: {}", file.getAbsolutePath());
             return;
         }
 
