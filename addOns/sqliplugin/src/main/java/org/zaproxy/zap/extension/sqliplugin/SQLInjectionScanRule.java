@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.RedirectException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -97,7 +98,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     // Plugin internal properties
     // ---------------------------------------------------------
     // Logger instance
-    private static final Logger log = Logger.getLogger(SQLInjectionScanRule.class);
+    private static final Logger log = LogManager.getLogger(SQLInjectionScanRule.class);
 
     // Generic SQL error pattern (used for boolean based checks)
     private static final Pattern errorPattern =
@@ -349,12 +350,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                 // ----------------------------------------------------
                 if (title.contains("[CHAR]")) {
                     if (unionChar == null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "skipping test '"
-                                            + title
-                                            + "' because the user didn't provide a custom charset");
-                        }
+                        log.debug(
+                                "skipping test '{}' because the user didn't provide a custom charset",
+                                title);
 
                         continue;
 
@@ -386,12 +384,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                 // ----------------------------------------------------
                 if (test.getRequest().getColumns().equals("[COLSTART]-[COLSTOP]")) {
                     if (unionCols == null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "skipping test '"
-                                            + title
-                                            + "' because the user didn't provide a column range");
-                        }
+                        log.debug(
+                                "skipping test '{}' because the user didn't provide a column range",
+                                title);
 
                         continue;
 
@@ -445,14 +440,10 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // Skip test if it is the same SQL injection type already
             // identified by another test
             if ((injectableTechniques & (1 << test.getStype())) != 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "skipping test '"
-                                    + title
-                                    + "' because the payload for "
-                                    + SQLiPayloadManager.SQLI_TECHNIQUES.get(test.getStype())
-                                    + " has already been identified");
-                }
+                log.debug(
+                        "skipping test '{}' because the payload for {} has already been identified",
+                        title,
+                        SQLiPayloadManager.SQLI_TECHNIQUES.get(test.getStype()));
 
                 continue;
             }
@@ -460,16 +451,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // Skip test if the risk is higher than the provided (or default) value
             // Parse test's <risk>
             if (test.getRisk() > risk) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "skipping test '"
-                                    + title
-                                    + "' because the risk ("
-                                    + test.getRisk()
-                                    + ") is higher than the provided ("
-                                    + risk
-                                    + ")");
-                }
+                log.debug(
+                        "skipping test '{}' because the risk ({}) is higher than the provided ({})",
+                        title,
+                        test.getRisk(),
+                        risk);
 
                 continue;
             }
@@ -477,16 +463,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // Skip test if the level is higher than the provided (or default) value
             // Parse test's <level>
             if (test.getLevel() > level) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "skipping test '"
-                                    + title
-                                    + "' because the level ("
-                                    + test.getLevel()
-                                    + ") is higher than the provided ("
-                                    + level
-                                    + ")");
-                }
+                log.debug(
+                        "skipping test '{}' because the level ({}) is higher than the provided ({})",
+                        title,
+                        test.getLevel(),
+                        level);
 
                 continue;
             }
@@ -523,12 +504,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                 // Skip this test if the specific Dbms is not include
                 // inside the list of the allowed one
                 if (currentDbms == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "skipping test '"
-                                        + title
-                                        + "' because the db is not included in the Technology list");
-                    }
+                    log.debug(
+                            "skipping test '{}' because the db is not included in the Technology list",
+                            title);
 
                     continue;
                 }
@@ -561,22 +539,17 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // Skip test if the user provided custom character
             if ((unionChar != null)
                     && (title.contains("random number") || title.contains("(NULL)"))) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "skipping test '"
-                                    + title
-                                    + "' because the user provided a specific character, "
-                                    + unionChar);
-                }
+                log.debug(
+                        "skipping test '{}' because the user provided a specific character, {}",
+                        title,
+                        unionChar);
 
                 continue;
             }
 
             // This check is suitable to the current configuration
             // Start logging the current execution (only in debugging)
-            if (log.isDebugEnabled()) {
-                log.debug("testing '" + title + "'");
-            }
+            log.debug("testing '{}'", title);
 
             // Parse test's <request>
             currentComment =
@@ -795,17 +768,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                                     reqPayload,
                                                     cmpPayload);
 
-                                    // Do logging
-                                    if (log.isDebugEnabled()) {
-                                        log.debug(
-                                                "[BOOLEAN-BASED Injection Found] "
-                                                        + title
-                                                        + " with payload ["
-                                                        + reqPayload
-                                                        + "] on parameter '"
-                                                        + parameter
-                                                        + "'");
-                                    }
+                                    log.debug(
+                                            "[BOOLEAN-BASED Injection Found] {} with payload [{}] on parameter '{}'",
+                                            title,
+                                            reqPayload,
+                                            parameter);
 
                                     // Alert the vulnerability to the main core
                                     raiseAlert(title, parameter, reqPayload, info, tempMsg);
@@ -889,17 +856,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                                 currentDbms.getName(),
                                                 checkString);
 
-                                // Do logging
-                                if (log.isDebugEnabled()) {
-                                    log.debug(
-                                            "[ERROR-BASED Injection Found] "
-                                                    + title
-                                                    + " with payload ["
-                                                    + reqPayload
-                                                    + "] on parameter '"
-                                                    + parameter
-                                                    + "'");
-                                }
+                                log.debug(
+                                        "[ERROR-BASED Injection Found] {} with payload [{}] on parameter '{}'",
+                                        title,
+                                        reqPayload,
+                                        parameter);
 
                                 raiseAlert(title, parameter, reqPayload, info, tempMsg);
 
@@ -924,8 +885,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                 // We need some dummy requests to have a correct
                                 // deviation model for this page
                                 log.warn(
-                                        "Time-based comparison needs larger statistical model: "
-                                                + "making a few dummy requests");
+                                        "Time-based comparison needs larger statistical model: making a few dummy requests");
 
                                 do {
                                     tempMsg = sendPayload(null, null, true);
@@ -990,17 +950,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                                     payloadValue,
                                                     getResponseTimeAverage());
 
-                                    // Do logging
-                                    if (log.isDebugEnabled()) {
-                                        log.debug(
-                                                "[TIME-BASED Injection Found] "
-                                                        + title
-                                                        + " with payload ["
-                                                        + reqPayload
-                                                        + "] on parameter '"
-                                                        + parameter
-                                                        + "'");
-                                    }
+                                    log.debug(
+                                            "[TIME-BASED Injection Found] {} with payload [{}] on parameter '{}'",
+                                            title,
+                                            reqPayload,
+                                            parameter);
 
                                     raiseAlert(title, parameter, reqPayload, info, tempMsg);
 
@@ -1062,17 +1016,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                                 currentDbms.getName(),
                                                 engine.getExploitColumnsCount());
 
-                                // Do logging
-                                if (log.isDebugEnabled()) {
-                                    log.debug(
-                                            "[UNION-BASED Injection Found] "
-                                                    + title
-                                                    + " with payload ["
-                                                    + reqPayload
-                                                    + "] on parameter '"
-                                                    + parameter
-                                                    + "'");
-                                }
+                                log.debug(
+                                        "[UNION-BASED Injection Found] {} with payload [{}] on parameter '{}'",
+                                        title,
+                                        reqPayload,
+                                        parameter);
 
                                 // Alert the vulnerability to the main core
                                 raiseAlert(
@@ -1119,8 +1067,8 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
         }
 
         // check if the parameter is not injectable
-        if (injectableTechniques == 0 && log.isDebugEnabled()) {
-            log.debug("Parameter '" + parameter + "' is not injectable");
+        if (injectableTechniques == 0) {
+            log.debug("Parameter '{}' is not injectable", parameter);
         }
     }
 
@@ -1193,13 +1141,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             sendAndReceive(tempMsg, true);
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
 
-            // If debug is enabled log the entire request sent to the target
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        tempMsg.getRequestHeader().toString()
-                                + "\n"
-                                + tempMsg.getRequestBody().toString());
-            }
+            log.debug("{}\n{}", tempMsg.getRequestHeader(), tempMsg.getRequestBody());
 
             // generic SQL warning/error messages
             if (errorPattern.matcher(tempMsg.getResponseBody().toString()).find()) {
@@ -1207,17 +1149,12 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (RedirectException | URIException e) {
-            if (log.isDebugEnabled()) {
-                StringBuilder strBuilder = new StringBuilder(150);
-                strBuilder
-                        .append("SQL Injection vulnerability check failed for parameter [")
-                        .append(paramName)
-                        .append("] and payload [")
-                        .append(payload)
-                        .append("] due to: ")
-                        .append(e.getClass().getCanonicalName());
-                log.debug(strBuilder.toString(), e);
-            }
+            log.debug(
+                    "SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to: {}",
+                    paramName,
+                    payload,
+                    e.getClass().getCanonicalName(),
+                    e);
             return null;
 
         } catch (IOException ex) {
@@ -1229,11 +1166,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
             log.warn(
-                    "SQL Injection vulnerability check failed for parameter ["
-                            + paramName
-                            + "] and payload ["
-                            + payload
-                            + "] due to an I/O error",
+                    "SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                    paramName,
+                    payload,
                     ex);
         }
 
@@ -1301,12 +1236,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
             log.warn(
-                    "There is considerable lagging "
-                            + "in connection response(s) which gives a standard deviation of "
-                            + result
-                            + "ms on the sample set which is more than "
-                            + WARN_TIME_STDEV
-                            + "ms");
+                    "There is considerable lagging in connection response(s) which gives a standard deviation of {}ms on the sample set which is more than {}ms",
+                    result,
+                    WARN_TIME_STDEV);
         }
 
         return result;
@@ -1508,11 +1440,9 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
 
             if (uColsStart > uColsStop) {
                 log.warn(
-                        "Columns range has to be from lower to higher number of cols. "
-                                + "Process will continue inverting the values from "
-                                + values[1]
-                                + " to "
-                                + values[0]);
+                        "Columns range has to be from lower to higher number of cols. Process will continue inverting the values from {} to {}",
+                        values[1],
+                        values[0]);
 
                 int tmp = uColsStart;
                 uColsStart = uColsStop;
