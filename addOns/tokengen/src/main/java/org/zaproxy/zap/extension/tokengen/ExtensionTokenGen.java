@@ -29,7 +29,8 @@ import java.util.concurrent.TimeUnit;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -64,7 +65,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private CharacterFrequencyMap cfm = null;
     private boolean manuallyStopped = false;
 
-    private static Logger log = Logger.getLogger(ExtensionTokenGen.class);
+    private static Logger log = LogManager.getLogger(ExtensionTokenGen.class);
 
     /** */
     public ExtensionTokenGen() {
@@ -308,7 +309,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         }
 
         this.cfm = new CharacterFrequencyMap();
-        log.debug("startTokenGeneration " + msg.getRequestHeader().getURI() + " # " + numGen);
+        log.debug("startTokenGeneration {} # {}", msg.getRequestHeader().getURI(), numGen);
         this.getTokenPanel().scanStarted(numGen);
 
         int numThreads = this.getTokenParam().getThreadsPerScan();
@@ -333,7 +334,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
     protected void generatorStopped(TokenGenerator gen) {
         this.runningGenerators--;
-        log.debug("generatorStopped runningGenerators " + runningGenerators);
+        log.debug("generatorStopped runningGenerators {}", runningGenerators);
 
         if (this.runningGenerators <= 0) {
             log.debug("generatorStopped scanFinished");

@@ -33,7 +33,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -69,7 +70,7 @@ public class GenerateTokensDialog extends AbstractDialog {
     private Vector<String> formParams = new Vector<>();
     private Vector<String> urlParams = new Vector<>();
 
-    private static Logger log = Logger.getLogger(GenerateTokensDialog.class);
+    private static Logger log = LogManager.getLogger(GenerateTokensDialog.class);
 
     private ResourceBundle messages;
 
@@ -144,7 +145,7 @@ public class GenerateTokensDialog extends AbstractDialog {
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent arg0) {
-                            log.debug("getStartButton action " + arg0);
+                            log.debug("getStartButton action {}", arg0);
                             int numGen = -1;
                             try {
                                 numGen =

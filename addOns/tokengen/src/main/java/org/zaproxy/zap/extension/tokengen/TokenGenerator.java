@@ -24,7 +24,8 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingWorker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
@@ -44,7 +45,7 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
     private long requestDelayDuration;
     private TimeUnit requestDelayTimeUnit;
     private boolean shouldRemoveCookie = false;
-    private static Logger log = Logger.getLogger(TokenGenerator.class);
+    private static Logger log = LogManager.getLogger(TokenGenerator.class);
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
