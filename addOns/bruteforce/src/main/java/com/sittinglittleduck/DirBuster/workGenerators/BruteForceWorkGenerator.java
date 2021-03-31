@@ -35,7 +35,8 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** @author James */
 public class BruteForceWorkGenerator implements Runnable {
@@ -63,7 +64,7 @@ public class BruteForceWorkGenerator implements Runnable {
     private boolean doingDirs = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(BruteForceWorkGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(BruteForceWorkGenerator.class);
 
     // find bug UuF
     // HttpState initialState;
@@ -297,18 +298,14 @@ public class BruteForceWorkGenerator implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
-        }
+        LOG.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
 
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Total for a pure brute force = " + total);
-        }
+        LOG.debug("Total for a pure brute force = {}", total);
         manager.setTotalPass(total);
     }
 }

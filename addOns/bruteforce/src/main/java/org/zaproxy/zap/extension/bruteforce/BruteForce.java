@@ -30,7 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -61,7 +62,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     private boolean onlyUnderDirectory;
 
-    private static Logger log = Logger.getLogger(BruteForce.class);
+    private static Logger log = LogManager.getLogger(BruteForce.class);
 
     public BruteForce(
             ScanTarget target,
@@ -78,9 +79,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
         this.onlyUnderDirectory = false;
 
         this.tableModel = new BruteForceTableModel();
-        if (log.isDebugEnabled()) {
-            log.debug("BruteForce : " + target.getURI() + "/" + directory + " threads: " + threads);
-        }
+        log.debug("BruteForce: {}/{} threads: {}", target.getURI(), directory, threads);
 
         manager = new DirBusterManager(this);
 
@@ -102,10 +101,9 @@ public class BruteForce extends Thread implements BruteForceListenner {
             manager.setUseProxy(true);
             manager.setUseProxyAuth(true);
             log.debug(
-                    "BruteForce : set proxy to "
-                            + manager.getProxyHost()
-                            + ":"
-                            + manager.getProxyPort());
+                    "BruteForce : set proxy to {}:{}",
+                    manager.getProxyHost(),
+                    manager.getProxyPort());
         }
 
         if (bruteForceParam.isBrowseFiles()) {
@@ -165,11 +163,11 @@ public class BruteForce extends Thread implements BruteForceListenner {
             if (directory != null) {
                 startPoint = directory;
             }
-            log.debug("BruteForce : starting on " + targetURL + startPoint);
+            log.debug("BruteForce: starting on {}{}", targetURL, startPoint);
 
             final String fileAbsolutePath = file.getAbsolutePath();
 
-            log.debug("BruteForce : file: " + fileAbsolutePath + " recursive=" + recursive);
+            log.debug("BruteForce: file: {} recursive={}", fileAbsolutePath, recursive);
             manager.setupManager(
                     startPoint,
                     fileAbsolutePath,
@@ -219,14 +217,14 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 }
             }
         } catch (MalformedURLException ex) {
-            log.error("Failed brute forcing site " + target.getURI(), ex);
+            log.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 
         if (this.listenner != null) {
             this.listenner.scanFinshed(target);
         }
         stopScan = true;
-        log.info("BruteForce : " + target.getURI() + " finished");
+        log.info("BruteForce: {} finished", target.getURI());
     }
 
     public void stopScan() {
@@ -330,7 +328,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                     });
 
         } catch (Exception e) {
-            log.error("Failed to analyse response from " + url, e);
+            log.error("Failed to analyse response from {}", url, e);
         }
     }
 

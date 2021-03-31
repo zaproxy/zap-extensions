@@ -22,14 +22,15 @@ package org.zaproxy.zap.extension.bruteforce;
 import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.Manager;
 import java.net.URL;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DirBusterManager extends Manager {
 
     private BruteForceListenner listenner;
     private int total = 0;
     private boolean finished = false;
-    private static Logger log = Logger.getLogger(DirBusterManager.class);
+    private static Logger log = LogManager.getLogger(DirBusterManager.class);
 
     public DirBusterManager(BruteForceListenner listenner) {
         super();
@@ -46,11 +47,11 @@ public class DirBusterManager extends Manager {
             BaseCase baseCaseObj) {
         if (url.toString().endsWith("//")) {
             // For some reason DirBuster can go recursive and never finish
-            log.debug("Ignoring url " + url.toString());
+            log.debug("Ignoring url {}", url);
             return;
         }
         super.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
-        log.debug("DirBusterManager.foundDir " + url.toString() + " code:" + statusCode);
+        log.debug("DirBusterManager.foundDir {} code: {}", url, statusCode);
         listenner.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
     }
 
@@ -69,7 +70,7 @@ public class DirBusterManager extends Manager {
     @Override
     public synchronized void foundError(URL url, String reason) {
         super.foundError(url, reason);
-        log.warn("DirBusterManager.foundError " + url.toString() + " reason:" + reason);
+        log.warn("DirBusterManager.foundError {} reason: {}", url, reason);
     }
 
     @Override

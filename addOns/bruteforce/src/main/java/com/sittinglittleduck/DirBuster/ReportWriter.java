@@ -24,11 +24,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportWriter {
 
-    private static final Logger log = Logger.getLogger(ReportWriter.class);
+    private static final Logger log = LogManager.getLogger(ReportWriter.class);
 
     private final String fileToWriteTo;
     private final Manager manager;
