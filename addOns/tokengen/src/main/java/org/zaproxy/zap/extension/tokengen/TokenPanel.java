@@ -36,7 +36,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -83,7 +84,7 @@ public class TokenPanel extends AbstractPanel {
 
     private ScanStatus scanStatus = null;
 
-    private static Logger log = Logger.getLogger(TokenPanel.class);
+    private static Logger log = LogManager.getLogger(TokenPanel.class);
 
     public TokenPanel(ExtensionTokenGen extension, TokenParam tokenParam) {
         super();

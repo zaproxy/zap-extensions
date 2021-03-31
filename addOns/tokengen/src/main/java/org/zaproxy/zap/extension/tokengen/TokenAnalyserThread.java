@@ -31,7 +31,8 @@ import com.fasteasytrade.JRandTest.Tests.Count8Bits;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.tokengen.TokenAnalysisTestResult.Result;
 
 public class TokenAnalyserThread extends Thread {
@@ -43,7 +44,7 @@ public class TokenAnalyserThread extends Thread {
     private OutputDestination outputDestination = null;
     private boolean cancelled = false;
 
-    private static Logger log = Logger.getLogger(TokenAnalyserThread.class);
+    private static Logger log = LogManager.getLogger(TokenAnalyserThread.class);
 
     private ResourceBundle messages;
 
@@ -135,7 +136,7 @@ public class TokenAnalyserThread extends Thread {
     }
 
     private void notifyListenners(TokenAnalysisTestResult result) {
-        log.debug("notifyListenners " + result.getType() + " " + result.getResult().name());
+        log.debug("notifyListenners {} {}", result.getType(), result.getResult().name());
 
         for (TokenAnalyserListenner listenner : listenners) {
             listenner.notifyTestResult(result);
