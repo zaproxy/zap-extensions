@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hsqldb.jdbc.JDBCClob;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DbUtils;
@@ -43,7 +44,7 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 /** Manages writing and reading Server-Sent Event streams and events to the database. */
 public class TableEventStream extends ParosAbstractTable {
-    private static final Logger logger = Logger.getLogger(TableEventStream.class);
+    private static final Logger logger = LogManager.getLogger(TableEventStream.class);
 
     private Set<Integer> streamIds;
     private LRUMap streamCache;
@@ -172,9 +173,7 @@ public class TableEventStream extends ParosAbstractTable {
                     try {
                         psSelectStreamIds.close();
                     } catch (SQLException e) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(e.getMessage(), e);
-                        }
+                        logger.debug(e.getMessage(), e);
                     }
                 }
             }
@@ -493,9 +492,7 @@ public class TableEventStream extends ParosAbstractTable {
                         // proceed with insert
                         stmt = psInsertStream;
                         addIdOnSuccess = true;
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("insert stream: " + stream.toString());
-                        }
+                        logger.debug("insert stream: {}", stream);
                     }
 
                     Long startTs = stream.getStartTimestamp();
@@ -523,9 +520,7 @@ public class TableEventStream extends ParosAbstractTable {
                             // safely ignore this exception
                             // on shutdown, the history table is cleaned before
                             // event streams are closed and updated
-                            if (logger.isDebugEnabled()) {
-                                logger.debug(e.getMessage(), e);
-                            }
+                            logger.debug(e.getMessage(), e);
                         }
                     }
 
@@ -557,9 +552,7 @@ public class TableEventStream extends ParosAbstractTable {
                         throw new DatabaseException("stream not inserted: " + event.getStreamId());
                     }
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("insert event: " + event.toString());
-                    }
+                    logger.debug("insert event: {}", event);
 
                     psInsertEvent.setInt(1, event.getId());
                     psInsertEvent.setInt(2, event.getStreamId());

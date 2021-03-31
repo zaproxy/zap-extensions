@@ -28,14 +28,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public class EventStreamProxy {
 
-    private static final Logger logger = Logger.getLogger(EventStreamProxy.class);
+    private static final Logger logger = LogManager.getLogger(EventStreamProxy.class);
 
     private static Comparator<EventStreamObserver> observersComparator;
 
@@ -102,9 +103,7 @@ public class EventStreamProxy {
 
     public void stop() {
         try {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Close Server-Sent Events stream #" + dataStreamObject.getId());
-            }
+            logger.debug("Close Server-Sent Events stream #{}", dataStreamObject.getId());
 
             listener.close(); // closes reader
             writer.close();
@@ -112,9 +111,7 @@ public class EventStreamProxy {
             notifyStateObservers(State.CLOSED);
             dataStreamObject.setEndTimestamp(Calendar.getInstance().getTimeInMillis());
         } catch (IOException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("An exception occurred while stopping the proxy:", e);
-            }
+            logger.debug("An exception occurred while stopping the proxy:", e);
         }
         // TODO close thread also?
     }
@@ -198,9 +195,7 @@ public class EventStreamProxy {
         sse.setStreamId(dataStreamObject.getId());
         sse.finishData();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Processed Server-Sent Event" + sse.toString());
-        }
+        logger.debug("Processed Server-Sent Event {}", sse);
 
         boolean doForward = notifyObservers(sse);
         if (doForward) {
@@ -216,12 +211,7 @@ public class EventStreamProxy {
             writer.write(sse.getRawEvent() + "\n\n");
             writer.flush();
         } catch (IOException e) {
-            logger.warn(
-                    "Forwarding event "
-                            + sse.toString()
-                            + " was not possible due to: "
-                            + e.getMessage(),
-                    e);
+            logger.warn("Forwarding event {} was not possible due to: {}", sse, e.getMessage(), e);
             stop();
         }
     }
