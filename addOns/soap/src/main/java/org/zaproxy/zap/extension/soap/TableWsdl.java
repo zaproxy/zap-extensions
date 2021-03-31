@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DbUtils;
 import org.parosproxy.paros.db.paros.ParosAbstractTable;
@@ -35,7 +36,7 @@ import org.parosproxy.paros.db.paros.ParosAbstractTable;
 /** Manages reading and writing SOAP Actions to the database. */
 public class TableWsdl extends ParosAbstractTable {
 
-    private static final Logger LOG = Logger.getLogger(TableWsdl.class);
+    private static final Logger LOG = LogManager.getLogger(TableWsdl.class);
 
     private PreparedStatement psInsertSoapAction;
     private PreparedStatement psSelectSourceSoapActions;
@@ -88,9 +89,7 @@ public class TableWsdl extends ParosAbstractTable {
             }
 
             do {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("insert SOAP action: " + soapAction.getAction());
-                }
+                LOG.debug("insert SOAP action: {}", soapAction.getAction());
 
                 psInsertSoapAction.setInt(1, soapAction.getWsdlId());
                 psInsertSoapAction.setNString(2, soapAction.getAction());
