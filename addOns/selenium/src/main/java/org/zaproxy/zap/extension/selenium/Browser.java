@@ -29,7 +29,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 /** Defines the browsers supported by the add-on. */
@@ -56,7 +57,7 @@ public enum Browser {
 
     private static final String WEB_DRIVERS_DIR_NAME = "webdriver";
 
-    private static final Logger logger = Logger.getLogger(Browser.class);
+    private static final Logger logger = LogManager.getLogger(Browser.class);
 
     private static Path zapHomeDir;
 
@@ -158,7 +159,7 @@ public enum Browser {
         try {
             return Paths.get(path).startsWith(getWebDriversDir());
         } catch (InvalidPathException e) {
-            logger.warn("Failed to create path for " + path, e);
+            logger.warn("Failed to create path for {}", path, e);
             return false;
         }
     }
