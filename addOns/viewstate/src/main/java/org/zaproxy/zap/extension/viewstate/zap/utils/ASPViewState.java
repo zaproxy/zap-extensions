@@ -26,11 +26,12 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ASPViewState extends ViewState {
 
-    private static Logger logger = Logger.getLogger(ASPViewState.class);
+    private static Logger logger = LogManager.getLogger(ASPViewState.class);
     public static final String KEY = "ASP";
 
     private boolean isValid = true;
@@ -168,7 +169,7 @@ public class ASPViewState extends ViewState {
         try {
             return Base64.getDecoder().decode(base64);
         } catch (IllegalArgumentException e) {
-            logger.error("Could not decode ASPViewState: " + e.getMessage(), e);
+            logger.error("Could not decode ASPViewState: {}", e.getMessage(), e);
             return base64.getBytes();
         }
     }

@@ -26,7 +26,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Base64;
-import org.apache.log4j.Logger;
 
 /**
  * THIS CODE IS FROM THE PROJECT LOCATED AT http://code.google.com/p/embeddednode/ AND THE RIGHT HAS
@@ -45,7 +44,6 @@ import org.apache.log4j.Logger;
  */
 public class JSFViewState extends ViewState {
 
-    private static Logger logger = Logger.getLogger(JSFViewState.class);
     public static final String KEY = "JSF";
 
     public JSFViewState(String base64, String name) {

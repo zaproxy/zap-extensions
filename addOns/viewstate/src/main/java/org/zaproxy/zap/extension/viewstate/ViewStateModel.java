@@ -23,7 +23,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +31,8 @@ import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.AbstractHttpByteHttpPanelViewModel;
@@ -40,11 +40,12 @@ import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewMo
 import org.zaproxy.zap.extension.viewstate.zap.utils.ASPViewState;
 import org.zaproxy.zap.extension.viewstate.zap.utils.JSFViewState;
 import org.zaproxy.zap.extension.viewstate.zap.utils.ViewState;
+import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.model.StandardParameterParser;
 
 public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 
-    private static Logger logger = Logger.getLogger(ViewStateModel.class);
+    private static Logger logger = LogManager.getLogger(ViewStateModel.class);
     public static final int VS_ACTION_REQUEST = 1;
     public static final int VS_ACTION_RESPONSE = 2;
     private ArrayList<ViewState> viewstateParams = new ArrayList<ViewState>();
@@ -71,8 +72,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
         for (ViewState vsp : viewstateParams) {
             String val = getParamValue(body, vsp.getName());
             if (val != null) {
-                logger.debug(
-                        "Found ViewState param: " + vsp.getName() + ". Type: " + vsp.getType());
+                logger.debug("Found ViewState param: {}. Type: {}", vsp.getName(), vsp.getType());
                 if (modelAction == VS_ACTION_REQUEST) {
                     String decVal;
                     try {
@@ -110,14 +110,14 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found " + formElements.size() + " forms");
+            logger.debug("Found {} forms", formElements.size());
 
             for (Element formElement : formElements) {
                 List<Element> elements = formElement.getAllElements();
 
                 if (elements != null && elements.size() > 0) {
                     // Loop through all of the elements
-                    logger.debug("Found " + elements.size() + " inputs");
+                    logger.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
                         Attributes atts = element.getAttributes();
                         try {
@@ -144,10 +144,9 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
         if (modelAction == VS_ACTION_REQUEST) {
             String param = null;
             StandardParameterParser spp = new StandardParameterParser();
-            Map<String, String> params = spp.parse(body);
-            for (Map.Entry<String, String> p : params.entrySet()) {
-                if (p.getKey().equalsIgnoreCase(paramName)) {
-                    param = p.getValue();
+            for (NameValuePair nvp : spp.parseParameters(body)) {
+                if (nvp.getName().equalsIgnoreCase(paramName)) {
+                    param = nvp.getValue();
                 }
             }
             return param;
@@ -212,7 +211,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
                 String newViewState = new String(data);
                 // Only update if its changed
                 if (!newViewState.equalsIgnoreCase(origViewState)) {
-                    logger.info("Setting ViewState data to: " + newViewState);
+                    logger.info("Setting ViewState data to: {}", newViewState);
                     // Encode and update original HttpMessage param
                     String newEncViewState = vs.getEncodedValue(data);
                     updateParam(vs.getName(), newEncViewState);

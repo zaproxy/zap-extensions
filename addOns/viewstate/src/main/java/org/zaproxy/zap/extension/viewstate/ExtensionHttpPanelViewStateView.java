@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.viewstate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -46,7 +45,6 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
         EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    private static Logger logger = Logger.getLogger(ExtensionHttpPanelViewStateView.class);
     public static final String NAME = "ExtensionHttpPanelViewStateView";
 
     public ExtensionHttpPanelViewStateView() {

@@ -21,11 +21,12 @@ package org.zaproxy.zap.extension.viewstate.zap.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ViewState {
 
-    private static Logger logger = Logger.getLogger(ViewState.class);
+    private static Logger logger = LogManager.getLogger(ViewState.class);
 
     private String type;
     protected String value;
@@ -64,7 +65,7 @@ public class ViewState {
                 val = b.toString().getBytes();
             }
         } catch (Exception e) {
-            logger.error("Exception in getDecodedValue(): " + e.getMessage(), e);
+            logger.error("Exception in getDecodedValue(): {}", e.getMessage(), e);
         }
         return val;
     }
@@ -81,7 +82,7 @@ public class ViewState {
                 val = jvs.encode(plain);
             }
         } catch (Exception e) {
-            logger.error("Exception in getEncodedValue(): " + e.getMessage(), e);
+            logger.error("Exception in getEncodedValue(): {}", e.getMessage(), e);
         }
         return val;
     }
