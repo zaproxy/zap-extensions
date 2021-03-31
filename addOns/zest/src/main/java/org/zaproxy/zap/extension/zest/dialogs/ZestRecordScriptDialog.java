@@ -29,7 +29,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -58,7 +59,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
 
-    private static final Logger logger = Logger.getLogger(ZestRecordScriptDialog.class);
+    private static final Logger logger = LogManager.getLogger(ZestRecordScriptDialog.class);
 
     private static final long serialVersionUID = 1L;
 

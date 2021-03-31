@@ -30,7 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -78,7 +79,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private static final String FIELD_EXACT = "zest.dialog.loop.regex.exact";
     private static final String FIELD_GROUP = "zest.dialog.loop.regex.group";
 
-    private static final Logger logger = Logger.getLogger(ZestLoopDialog.class);
+    private static final Logger logger = LogManager.getLogger(ZestLoopDialog.class);
 
     public ZestLoopDialog(ExtensionZest extension, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.loop.add.title", dim);

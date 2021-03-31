@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.util.regex.Pattern;
 import javax.swing.JTree;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -47,7 +48,8 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
 
     private static final long serialVersionUID = 2282358266003940700L;
 
-    private static final Logger LOGGER = Logger.getLogger(ZestGenerateScriptFromAlertMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(ZestGenerateScriptFromAlertMenu.class);
 
     private ExtensionZest extension;
 
@@ -74,7 +76,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
         try {
             performActionImpl(msg);
         } catch (Exception e) {
-            LOGGER.error("Failer to generate script from alert menu: " + e.getMessage(), e);
+            LOGGER.error("Failer to generate script from alert menu: {}", e.getMessage(), e);
         }
     }
 

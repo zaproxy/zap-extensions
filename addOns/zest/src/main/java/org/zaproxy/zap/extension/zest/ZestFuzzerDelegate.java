@@ -31,7 +31,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
@@ -47,7 +48,7 @@ public class ZestFuzzerDelegate {
 
     public static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz / ";
 
-    private static final Logger logger = Logger.getLogger(ZestFuzzerDelegate.class);
+    private static final Logger logger = LogManager.getLogger(ZestFuzzerDelegate.class);
 
     public ZestFuzzerDelegate() {
         this.loadFiles();

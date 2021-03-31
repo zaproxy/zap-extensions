@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ActiveScript;
@@ -37,7 +38,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     private String param = null;
     private ExtensionZest extension = null;
 
-    private static Logger logger = Logger.getLogger(ZestActiveRunner.class);
+    private static Logger logger = LogManager.getLogger(ZestActiveRunner.class);
 
     public ZestActiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
         super(extension, script);
@@ -48,7 +49,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     @Override
     public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value)
             throws ScriptException {
-        logger.debug("Zest ActiveScan script: " + this.script.getName());
+        logger.debug("Zest ActiveScan script: {}", this.script.getName());
         this.sas = sas;
         this.msg = msg;
         this.param = param;

@@ -33,7 +33,8 @@ import java.util.Map;
 import javax.swing.JPopupMenu;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -102,7 +103,7 @@ public class ZestZapUtils {
 
     private static final String ZEST_VAR_VALID_CHRS = "-:.";
 
-    private static final Logger log = Logger.getLogger(ZestZapUtils.class);
+    private static final Logger log = LogManager.getLogger(ZestZapUtils.class);
 
     /**
      * A map to convert labels to calc operations.
@@ -869,7 +870,7 @@ public class ZestZapUtils {
         try {
             file = Paths.get(filePath);
         } catch (InvalidPathException e) {
-            log.warn("Failed to parse the file path: " + filePath, e);
+            log.warn("Failed to parse the file path: {}", filePath, e);
             return "";
         }
 
@@ -1102,10 +1103,9 @@ public class ZestZapUtils {
             return ((ZestElementWrapper) node.getUserObject()).getElement();
         }
         log.debug(
-                "getElement "
-                        + node.getNodeName()
-                        + " Unrecognised class: "
-                        + node.getUserObject().getClass().getCanonicalName());
+                "getElement {} Unrecognised class: {}",
+                node.getNodeName(),
+                node.getUserObject().getClass().getCanonicalName());
         return null;
     }
 
