@@ -30,7 +30,8 @@ import java.util.concurrent.Executors;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -50,7 +51,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 /** Sends a HandShake upgrade protocol request in order to establish a WebSocket connection. */
 public class ServerConnectionEstablisher {
 
-    private static final Logger LOGGER = Logger.getLogger(ServerConnectionEstablisher.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerConnectionEstablisher.class);
 
     /** Used to send HttpMessage */
     private HttpSender delegate;
@@ -75,9 +76,7 @@ public class ServerConnectionEstablisher {
         } catch (SSLException sslEx) {
             String sslExString = sslExceptionBuilder(sslEx, handshakeConfig.getHttpMessage());
             LOGGER.warn(sslExString);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(sslEx, sslEx);
-            }
+            LOGGER.debug(sslEx, sslEx);
             throw sslEx;
         }
         cleanup();
@@ -179,14 +178,7 @@ public class ServerConnectionEstablisher {
             String targetHost = requestHeader.getHostName();
             int targetPort = requestHeader.getHostPort();
 
-            if (LOGGER.isDebugEnabled()) {
-                StringBuilder logMessage =
-                        new StringBuilder(200)
-                                .append("Got WebSockets channel from ")
-                                .append(" to ");
-                logMessage.append(targetHost).append(':').append(targetPort);
-                LOGGER.debug(logMessage.toString());
-            }
+            LOGGER.debug("Got WebSockets channel to {}:{}", targetHost, targetPort);
 
             // parse HTTP handshake
             Map<String, String> wsExtensions =

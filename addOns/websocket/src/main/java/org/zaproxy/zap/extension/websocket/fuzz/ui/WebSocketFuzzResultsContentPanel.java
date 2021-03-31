@@ -26,7 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.FuzzResultsContentPanel;
@@ -42,7 +43,8 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
 
     public static final String RESULTS_PANEL_NAME = "websocketFuzzerResultsContentPanel";
 
-    private static final Logger logger = Logger.getLogger(WebSocketFuzzResultsContentPanel.class);
+    private static final Logger logger =
+            LogManager.getLogger(WebSocketFuzzResultsContentPanel.class);
 
     private static final WebSocketFuzzMessagesViewModel EMPTY_RESULTS_MODEL =
             new WebSocketFuzzMessagesViewModel(-1, null);

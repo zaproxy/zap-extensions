@@ -31,7 +31,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 import org.zaproxy.zap.extension.websocket.utility.Utf8Util;
 
@@ -42,7 +43,7 @@ import org.zaproxy.zap.extension.websocket.utility.Utf8Util;
  */
 public class WebSocketProxyV13 extends WebSocketProxy {
 
-    private static final Logger logger = Logger.getLogger(WebSocketProxyV13.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketProxyV13.class);
 
     /**
      * The payload length is determined by 63 bits -> at maximum (2^63 - 1), which can be
@@ -147,8 +148,8 @@ public class WebSocketProxyV13 extends WebSocketProxy {
                 byte frameHeader = (byte) (finishedBits | rsvBits | opcodeBits);
                 buffer.put(frameHeader);
                 logger.debug(
-                        "Frame header of newly created WebSocketFrame: "
-                                + getByteAsBitString(frameHeader));
+                        "Frame header of newly created WebSocketFrame: {}",
+                        getByteAsBitString(frameHeader));
 
                 if (payloadLength < PAYLOAD_LENGTH_16) {
                     buffer.put((byte) ((isMasked ? 0x80 : 0x00) | (payloadLength & 0x7F)));
@@ -391,12 +392,10 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 
             payloadLength = determinePayloadLength(in, payloadByte);
             logger.debug(
-                    "length of current frame payload is: "
-                            + payloadLength
-                            + "; first two bytes: "
-                            + getByteAsBitString(frameHeader)
-                            + " "
-                            + getByteAsBitString(payloadByte));
+                    "length of current frame payload is: {}; first two bytes: {} {}",
+                    payloadLength,
+                    getByteAsBitString(frameHeader),
+                    getByteAsBitString(payloadByte));
 
             if (currentFrame.isMasked()) {
                 // read 4 bytes mask
@@ -424,7 +423,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
                         // if there is a body, the first two bytes are a
                         // 2-byte unsigned integer (in network byte order)
                         closeCode = ((payload[0] & 0xFF) << 8) | (payload[1] & 0xFF);
-                        logger.debug("close code is: " + closeCode);
+                        logger.debug("close code is: {}", closeCode);
 
                         payload = getReadableCloseFramePayload(payload, closeCode);
                     }
@@ -433,8 +432,8 @@ public class WebSocketProxyV13 extends WebSocketProxy {
                         // process close message
                         try {
                             logger.debug(
-                                    "got control-payload: "
-                                            + Utf8Util.encodePayloadToUtf8(payload));
+                                    "got control-payload: {}",
+                                    Utf8Util.encodePayloadToUtf8(payload));
                         } catch (InvalidUtf8Exception e) {
                             // safely ignore utf8 error here
                         }
@@ -601,11 +600,11 @@ public class WebSocketProxyV13 extends WebSocketProxy {
         @Override
         public boolean forward(OutputStream out) throws IOException {
             if (out == null) {
-                logger.warn("No output stream to forward message #" + getMessageId());
+                logger.warn("No output stream to forward message #{}", getMessageId());
                 return false;
             }
 
-            logger.debug("forward message#" + getMessageId());
+            logger.debug("forward message#{}", getMessageId());
 
             if (hasChanged) {
                 if (opcode == OPCODE_CLOSE) {
@@ -717,10 +716,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
             } catch (InvalidUtf8Exception e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(
-                            "Unable to decode as UTF-8: "
-                                    + payload.toString()
-                                    + " "
-                                    + Arrays.toString(payload.array()),
+                            "Unable to decode as UTF-8: {} {}",
+                            payload.toString(),
+                            Arrays.toString(payload.array()),
                             e);
                 }
                 isValidUtf8Payload = false;

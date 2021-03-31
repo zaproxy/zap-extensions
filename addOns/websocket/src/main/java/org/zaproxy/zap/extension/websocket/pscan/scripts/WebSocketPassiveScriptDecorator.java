@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.websocket.pscan.scripts;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -30,7 +31,8 @@ import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelper;
 
 public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketPassiveScriptDecorator.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(WebSocketPassiveScriptDecorator.class);
 
     private ScriptWrapper scriptWrapper;
     private WebSocketPassiveScript webSocketPassiveScript;
@@ -61,15 +63,11 @@ public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
             // Zest/ECMAScript, just use the default method).
             if (e.getCause() instanceof NoSuchMethodException
                     && "getId".equals(e.getCause().getMessage())) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Script [Name="
-                                    + scriptWrapper.getName()
-                                    + ", Engine="
-                                    + scriptWrapper.getEngineName()
-                                    + "]  does not implement the optional method getId: ",
-                            e);
-                }
+                LOGGER.debug(
+                        "Script [Name={}, Engine={}]  does not implement the optional method getId: ",
+                        scriptWrapper.getName(),
+                        scriptWrapper.getEngineName(),
+                        e);
                 return ScriptsWebSocketPassiveScanner.PLUGIN_ID;
             }
             getExtension().handleScriptException(scriptWrapper, e);
@@ -91,15 +89,11 @@ public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
             // Zest/ECMAScript, jus tuse the default method).
             if (e.getCause() instanceof NoSuchMethodException
                     && "getName".equals(e.getCause().getMessage())) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Script [Name="
-                                    + scriptWrapper.getName()
-                                    + ", Engine="
-                                    + scriptWrapper.getEngineName()
-                                    + "]  does not implement the optional method getName: ",
-                            e);
-                }
+                LOGGER.debug(
+                        "Script [Name={}, Engine={}]  does not implement the optional method getName: ",
+                        scriptWrapper.getName(),
+                        scriptWrapper.getEngineName(),
+                        e);
                 return scriptWrapper.getName();
             }
             getExtension().handleScriptException(scriptWrapper, e);

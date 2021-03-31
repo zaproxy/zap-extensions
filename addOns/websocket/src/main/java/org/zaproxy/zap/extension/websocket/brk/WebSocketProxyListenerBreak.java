@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.websocket.brk;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
@@ -36,7 +37,7 @@ import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 /** Gets notified about WebSocket messages and checks if breakpoint applies. */
 public class WebSocketProxyListenerBreak implements WebSocketObserver {
 
-    private static final Logger logger = Logger.getLogger(WebSocketProxyListenerBreak.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketProxyListenerBreak.class);
 
     private BreakpointMessageHandler2 wsBrkMessageHandler;
 

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.websocket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Wrap it in a thread to listen for one end of a WebSockets connection. It does so by using
@@ -31,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class WebSocketListener implements Runnable {
 
-    private static final Logger logger = Logger.getLogger(WebSocketListener.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketListener.class);
 
     /** Listen from one side of this communication channel. */
     private final InputStream in;

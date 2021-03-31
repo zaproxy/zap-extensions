@@ -23,7 +23,7 @@ import org.apache.commons.configuration.FileConfiguration;
 import org.parosproxy.paros.common.AbstractParam;
 
 public class OptionsParamWebSocket extends AbstractParam {
-    //    private static Logger logger = Logger.getLogger(OptionsParamWebSocket.class);
+    //    private static Logger logger = LogManager.getLogger(OptionsParamWebSocket.class);
 
     public static final String FORWARD_ALL = "websocket.forwardAll";
     public static final String BREAK_ON_PING_PONG = "websocket.breakOnPingPong";
