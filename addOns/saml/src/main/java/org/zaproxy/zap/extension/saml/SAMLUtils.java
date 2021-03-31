@@ -27,7 +27,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -35,7 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class SAMLUtils {
     private static final int MAX_INFLATED_SIZE = 100000;
 
-    protected static final Logger log = Logger.getLogger(SAMLUtils.class);
+    protected static final Logger log = LogManager.getLogger(SAMLUtils.class);
 
     /** Private constructor, because this class is and Util class and the methods are static */
     private SAMLUtils() {}

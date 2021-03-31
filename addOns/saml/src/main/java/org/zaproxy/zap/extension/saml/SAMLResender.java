@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.saml;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -30,7 +31,7 @@ import org.parosproxy.paros.network.HttpSender;
 
 public class SAMLResender {
 
-    private static Logger log = Logger.getLogger(SAMLResender.class.getName());
+    private static Logger log = LogManager.getLogger(SAMLResender.class);
 
     private SAMLResender() {}
 

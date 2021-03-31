@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -27,7 +28,7 @@ public class SAMLProxyListener implements ProxyListener {
 
     private SAMLConfiguration configuration;
 
-    protected static final Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
+    protected static final Logger log = LogManager.getLogger(SAMLProxyListener.class);
 
     public SAMLProxyListener() {
         configuration = SAMLConfiguration.getInstance();
@@ -53,7 +54,7 @@ public class SAMLProxyListener implements ProxyListener {
                     boolean changed =
                             samlMessage.changeAttributeValueTo(attribute.getName(), value);
                     if (changed) {
-                        log.debug(attribute.getName() + ": value changed to " + value);
+                        log.debug("{}: value changed to {}", attribute.getName(), value);
                     }
                 }
 

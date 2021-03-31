@@ -39,7 +39,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.saml.Attribute;
 import org.zaproxy.zap.extension.saml.AttributeListener;
 import org.zaproxy.zap.extension.saml.PassiveAttributeChangeListener;
@@ -59,7 +60,7 @@ public class SamlExtentionSettingsUI extends JFrame
 
     private SAMLConfiguration configuration;
 
-    protected Logger log = Logger.getLogger(SamlExtentionSettingsUI.class.getName());
+    protected Logger log = LogManager.getLogger(SamlExtentionSettingsUI.class);
 
     /** Create the frame. */
     public SamlExtentionSettingsUI() {
