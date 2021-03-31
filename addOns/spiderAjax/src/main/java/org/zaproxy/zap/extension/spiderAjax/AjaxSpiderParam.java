@@ -26,14 +26,15 @@ import java.util.List;
 import java.util.Objects;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderParam.class);
+    private static final Logger logger = LogManager.getLogger(AjaxSpiderParam.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -223,12 +224,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
             logger.warn(
-                    "Unknow browser ["
-                            + browserId
-                            + "] using default ["
-                            + DEFAULT_BROWSER_ID
-                            + "].",
-                    e);
+                    "Unknow browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
             browserId = DEFAULT_BROWSER_ID;
         }
 
@@ -255,7 +251,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading clickable elements: " + e.getMessage(), e);
+            logger.error("Error while loading clickable elements: {}", e.getMessage(), e);
             this.elems = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
             this.enabledElemsNames = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
         }
@@ -286,7 +282,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading allowed resources: " + e.getMessage(), e);
+            logger.error("Error while loading allowed resources: {}", e.getMessage(), e);
             this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
         }
         confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);

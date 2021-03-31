@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A {@code URI} validator based on a HTTP or HTTPS {@code URI}.
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 class HttpPrefixUriValidator {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpPrefixUriValidator.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpPrefixUriValidator.class);
 
     /** The normalised form of HTTP scheme, that is, all letters lowercase. */
     private static final String HTTP_SCHEME = "http";
@@ -299,7 +300,7 @@ class HttpPrefixUriValidator {
         try {
             return host.equals(normalisedHost(uri));
         } catch (URIException e) {
-            LOGGER.warn("Failed to normalise host: " + Arrays.toString(uri.getRawHost()), e);
+            LOGGER.warn("Failed to normalise host: {}", Arrays.toString(uri.getRawHost()), e);
         }
         return false;
     }

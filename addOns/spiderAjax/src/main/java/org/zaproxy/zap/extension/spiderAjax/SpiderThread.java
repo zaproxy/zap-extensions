@@ -42,7 +42,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyListener;
@@ -72,7 +73,7 @@ public class SpiderThread implements Runnable {
     private CrawljaxRunner crawljax;
     private boolean running;
     private final Session session;
-    private static final Logger logger = Logger.getLogger(SpiderThread.class);
+    private static final Logger logger = LogManager.getLogger(SpiderThread.class);
 
     private HttpResponseHeader outOfScopeResponseHeader;
     private HttpResponseBody outOfScopeResponseBody;
@@ -238,10 +239,7 @@ public class SpiderThread implements Runnable {
     @Override
     public void run() {
         logger.info(
-                "Running Crawljax (with "
-                        + target.getOptions().getBrowserId()
-                        + "): "
-                        + displayName);
+                "Running Crawljax (with {}): {}", target.getOptions().getBrowserId(), displayName);
         this.running = true;
         notifyListenersSpiderStarted();
         SpiderEventPublisher.publishScanEvent(
@@ -252,12 +250,12 @@ public class SpiderThread implements Runnable {
 
         logger.info("Starting proxy...");
         this.proxyPort = proxy.startServer(LOCAL_PROXY_IP, 0, true);
-        logger.info("Proxy started, listening at port [" + proxyPort + "].");
+        logger.info("Proxy started, listening at port [{}].", proxyPort);
         try {
             crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
             crawljax.call();
         } catch (ProvisionException e) {
-            logger.warn("Failed to start browser " + target.getOptions().getBrowserId(), e);
+            logger.warn("Failed to start browser {}", target.getOptions().getBrowserId(), e);
             if (View.isInitialised()) {
                 ExtensionSelenium extSelenium =
                         Control.getSingleton()
@@ -277,7 +275,7 @@ public class SpiderThread implements Runnable {
             logger.info("Proxy stopped.");
             notifyListenersSpiderStoped();
             SpiderEventPublisher.publishScanEvent(ScanEventPublisher.SCAN_STOPPED_EVENT, 0);
-            logger.info("Finished Crawljax: " + displayName);
+            logger.info("Finished Crawljax: {}", displayName);
         }
     }
 
@@ -345,28 +343,26 @@ public class SpiderThread implements Runnable {
                 // Nothing to do, state already set to processed.
             } else if (httpPrefixUriValidator != null
                     && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
-                logger.debug("Excluding request [" + uri + "] not under subtree.");
+                logger.debug("Excluding request [{}] not under subtree.", uri);
                 state = ResourceState.OUT_OF_SCOPE;
             } else if (target.getContext() != null) {
                 if (!target.getContext().isInContext(uri)) {
-                    logger.debug("Excluding request [" + uri + "] not in specified context.");
+                    logger.debug("Excluding request [{}] not in specified context.", uri);
                     state = ResourceState.OUT_OF_CONTEXT;
                 }
             } else if (target.isInScopeOnly()) {
                 if (!session.isInScope(uri)) {
-                    logger.debug("Excluding request [" + uri + "] not in scope.");
+                    logger.debug("Excluding request [{}] not in scope.", uri);
                     state = ResourceState.OUT_OF_SCOPE;
                 }
             } else if (!targetHost.equalsIgnoreCase(httpMessage.getRequestHeader().getHostName())) {
-                logger.debug(
-                        "Excluding request [" + uri + "] not on target site [" + targetHost + "].");
+                logger.debug("Excluding request [{}] not on target site [{}].", uri, targetHost);
                 state = ResourceState.OUT_OF_SCOPE;
             }
             if (state == ResourceState.PROCESSED) {
                 for (String regex : exclusionList) {
                     if (Pattern.matches(regex, uri)) {
-                        logger.debug(
-                                "Excluding request [" + uri + "] matched regex [" + regex + "].");
+                        logger.debug("Excluding request [{}] matched regex [{}].", uri, regex);
                         state = ResourceState.EXCLUDED;
                     }
                 }
