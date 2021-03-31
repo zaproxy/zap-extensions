@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.simpleexample;
+package org.zaproxy.addon.simpleexample;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
