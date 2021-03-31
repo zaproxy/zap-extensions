@@ -32,7 +32,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -45,7 +46,7 @@ public class EventStreamView implements Runnable {
 
     public static final String PANEL_NAME = "sse.table";
 
-    private static final Logger logger = Logger.getLogger(EventStreamView.class);
+    private static final Logger logger = LogManager.getLogger(EventStreamView.class);
 
     protected JXTable view;
     protected EventStreamViewModel model;

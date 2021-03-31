@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.sse.ui;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
@@ -40,7 +41,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
     private static final long serialVersionUID = -5047686640383236512L;
 
-    private static final Logger logger = Logger.getLogger(EventStreamViewModel.class);
+    private static final Logger logger = LogManager.getLogger(EventStreamViewModel.class);
 
     private static final int PAYLOAD_PREVIEW_LENGTH = 150;
 

@@ -38,7 +38,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -70,7 +71,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 
     private static final long serialVersionUID = -4518225363808518571L;
 
-    private static final Logger logger = Logger.getLogger(EventStreamPanel.class);
+    private static final Logger logger = LogManager.getLogger(EventStreamPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int EVENT_STREAM_OBSERVING_ORDER =
