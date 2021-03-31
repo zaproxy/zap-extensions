@@ -52,7 +52,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -83,7 +84,7 @@ public class ScriptsListPanel extends AbstractPanel {
     public static final String TREE = "ScriptListTree";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ScriptsListPanel.class);
+    private static final Logger logger = LogManager.getLogger(ScriptsListPanel.class);
 
     private ExtensionScriptsUI extension = null;
 
