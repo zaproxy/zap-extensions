@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Cache-control scan rule no longer checks if Pragma is set or not.
 - Maintenance changes.
 - The Timestamp Disclosure scan rule now excludes values in "Report-To" or "NEL" headers (Issue 6493).
+- The Timestamp Disclosure scan rule no longer considers font type requests or responses when looking for possible timestamps (Issue 6274).
 
 ## [33] - 2021-01-29
 ### Added
