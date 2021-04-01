@@ -21,4 +21,4 @@
       requestWaitTime:                 # Int: The time between the requests sent to a server in milliseconds, default: 200
       sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
       threadCount:                     # Int: The number of spider threads, default: 2
-      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one 
+      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one

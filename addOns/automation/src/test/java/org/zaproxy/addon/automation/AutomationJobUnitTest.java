@@ -83,7 +83,7 @@ public class AutomationJobUnitTest {
     public void shouldExtractExpectedParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
 
         // When
         Map<String, String> params = job.getConfigParameters(tpc, "getTestParam");
@@ -103,7 +103,7 @@ public class AutomationJobUnitTest {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job =
-                new AutomationJobImpl() {
+                new AutomationJobImpl(tpc) {
                     @Override
                     public boolean isExcludeParam(String param) {
                         switch (param) {
@@ -132,7 +132,7 @@ public class AutomationJobUnitTest {
     public void shouldSetParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
         String stringParamValue = "a string";
         int intParamValue = 6;
@@ -150,7 +150,7 @@ public class AutomationJobUnitTest {
         map.put("enumParam", enumParamValue.toString());
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -168,7 +168,7 @@ public class AutomationJobUnitTest {
     public void shouldSetCaseInsensitiveEnum() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
         TestParam.Option enumParamValue = TestParam.Option.SECOND_OPTION;
         Map map = new HashMap();
@@ -176,7 +176,7 @@ public class AutomationJobUnitTest {
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
 
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -189,14 +189,14 @@ public class AutomationJobUnitTest {
     public void shouldWarnOnUnknownParam() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         Map map = new HashMap();
         map.put("unknownParam", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -211,14 +211,14 @@ public class AutomationJobUnitTest {
     public void shouldIgnoreNullParamValue() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         Map map = new HashMap();
         map.put("stringParam", null);
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -230,14 +230,14 @@ public class AutomationJobUnitTest {
     public void shouldFailOnBadInt() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         Map map = new HashMap();
         map.put("intParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -251,14 +251,14 @@ public class AutomationJobUnitTest {
     public void shouldFailOnBadInteger() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         Map map = new HashMap();
         map.put("integerParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -272,14 +272,14 @@ public class AutomationJobUnitTest {
     public void shouldFailOnBadBool() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
         Map map = new HashMap();
         map.put("boolParam", "Not a bool");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
 
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -293,14 +293,14 @@ public class AutomationJobUnitTest {
     public void shouldFailOnBadEnum() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
         Map map = new HashMap();
         map.put("enumParam", "Invalid enum value");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
 
         // When
-        job.applyParameters(tpc, "getTestParam", params, progress);
+        job.applyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -313,11 +313,11 @@ public class AutomationJobUnitTest {
     public void shouldIgnoreNullParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        job.applyParameters(tpc, "getTestParam", null, progress);
+        job.applyParameters(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -329,7 +329,7 @@ public class AutomationJobUnitTest {
     public void shouldFailOnBadOptionsGetterName() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl();
+        AutomationJob job = new AutomationJobImpl(tpc, "getBadTestParam");
         AutomationProgress progress = new AutomationProgress();
 
         Map map = new HashMap();
@@ -358,9 +358,8 @@ public class AutomationJobUnitTest {
                         + "      integerParam: \n"
                         + "      stringParam: \n";
 
-        AutomationJobImpl job = new AutomationJobImpl();
         TestParamContainer tpc = new TestParamContainer();
-        job.setParamMethodObject(tpc);
+        AutomationJobImpl job = new AutomationJobImpl(tpc);
 
         // When
         String data = job.getConfigFileData();
@@ -383,9 +382,8 @@ public class AutomationJobUnitTest {
                         + "      integerParam: 9\n"
                         + "      stringParam: testStr\n";
 
-        AutomationJobImpl job = new AutomationJobImpl();
         TestParamContainer tpc = new TestParamContainer();
-        job.setParamMethodObject(tpc);
+        AutomationJobImpl job = new AutomationJobImpl(tpc);
         tpc.getTestParam().setBoolParam(true);
         tpc.getTestParam().setBooleanParam(Boolean.FALSE);
         tpc.getTestParam().setIntParam(8);
@@ -566,6 +564,18 @@ public class AutomationJobUnitTest {
     private static class AutomationJobImpl extends AutomationJob {
 
         private Object paramMethodObject;
+        private String paramNameMethod = "getTestParam";
+
+        public AutomationJobImpl() {}
+
+        public AutomationJobImpl(Object paramMethodObject) {
+            this.paramMethodObject = paramMethodObject;
+        }
+
+        public AutomationJobImpl(TestParamContainer paramMethodObject, String paramNameMethod) {
+            this.paramMethodObject = paramMethodObject;
+            this.paramNameMethod = paramNameMethod;
+        }
 
         @Override
         public void runJob(
@@ -590,11 +600,7 @@ public class AutomationJobUnitTest {
 
         @Override
         public String getParamMethodName() {
-            return "getTestParam";
-        }
-
-        public void setParamMethodObject(Object o) {
-            paramMethodObject = o;
+            return paramNameMethod;
         }
     }
 }

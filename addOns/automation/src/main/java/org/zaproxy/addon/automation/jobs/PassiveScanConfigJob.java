@@ -19,13 +19,16 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class PassiveScanConfigJob extends AutomationJob {
 
@@ -49,13 +52,41 @@ public class PassiveScanConfigJob extends AutomationJob {
     @Override
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
-        Object paramsObj = jobData.get("parameters");
-        if (paramsObj != null && !(paramsObj instanceof LinkedHashMap<?, ?>)) {
-            progress.error(Constant.messages.getString("automation.error.job.data", paramsObj));
-            return;
+        // Configure any rules
+        Object o = jobData.get("rules");
+        if (o instanceof ArrayList<?>) {
+            ArrayList<?> ruleData = (ArrayList<?>) o;
+            for (Object rule : ruleData) {
+                if (rule instanceof LinkedHashMap<?, ?>) {
+                    LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                    Integer id = (Integer) ruleMap.get("id");
+                    PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
+                    if (plugin != null) {
+                        AlertThreshold pluginTh =
+                                JobUtils.parseAlertThreshold(
+                                        ruleMap.get("threshold"), this.getName(), progress);
+                        if (pluginTh != null) {
+                            plugin.setAlertThreshold(pluginTh);
+                            plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
+                            progress.info(
+                                    Constant.messages.getString(
+                                            "automation.info.pscan.rule.setthreshold",
+                                            this.getName(),
+                                            id,
+                                            pluginTh.name()));
+                        }
+                    } else {
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.pscan.rule.unknown", this.getName(), id));
+                    }
+                }
+            }
+        } else if (o != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.options.badlist", this.getName(), "rules", o));
         }
-
-        this.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
     }
 
     @Override

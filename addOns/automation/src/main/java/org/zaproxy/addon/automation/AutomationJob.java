@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.EnumUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
@@ -103,13 +104,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         if (params == null) {
             return;
         }
-        Object options = null;
+        Object options = JobUtils.getJobOptions(this, progress);
+        if (progress.hasErrors()) {
+            return;
+        }
         Map<String, Method> methodMap = null;
-        if (obj != null && optionsGetterName != null) {
+
+        if (options != null) {
             try {
-                Method method = obj.getClass().getDeclaredMethod(optionsGetterName);
-                method.setAccessible(true);
-                options = method.invoke(obj);
                 Method[] methods = options.getClass().getMethods();
                 methodMap = new HashMap<String, Method>(methods.length);
                 for (Method m : methods) {
