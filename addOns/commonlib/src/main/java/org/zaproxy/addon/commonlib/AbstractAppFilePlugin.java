@@ -165,11 +165,11 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
                     e.getMessage());
             return;
         }
-        if (isFalsePositive(newRequest)) {
-            return;
-        }
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
+            if (isFalsePositive(newRequest)) {
+                return;
+            }
             raiseAlert(newRequest, getRisk(), Alert.CONFIDENCE_MEDIUM, "");
         } else if (this.getAlertThreshold().equals(AlertThreshold.LOW)
                 && (statusCode == HttpStatusCode.UNAUTHORIZED

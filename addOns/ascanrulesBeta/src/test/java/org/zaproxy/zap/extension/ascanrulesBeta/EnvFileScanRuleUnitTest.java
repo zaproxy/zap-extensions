@@ -19,10 +19,30 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 
 /** Unit test for {@link EnvFileScanRule}. */
 public class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
+
+    private static final String RELEVANT_BODY =
+            "DB_CONNECTION=mysql\n"
+                    + "DB_HOST=gcomlnk.solutions\n"
+                    + "DB_PORT=3306\n"
+                    + "DB_DATABASE=gcom_tbot\n"
+                    + "DB_USERNAME=gcom_french\n"
+                    + "DB_PASSWORD=secure123";
+    private static final String IRRELEVANT_BODY = "<html><title>Some Page</title></html>";
 
     @Override
     protected EnvFileScanRule createScanner() {
@@ -32,5 +52,69 @@ public class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFi
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionAscanRulesBeta());
+    }
+
+    @Override
+    @Test
+    public void shouldAlertWhenRequestIsSuccessful() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, RELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(1, httpMessagesSent.size());
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_MEDIUM, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+    }
+
+    @Override
+    @Test
+    public void shouldAlertWhenRequestIsUnauthorizedAtLowThreshold() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(
+                                Response.Status.UNAUTHORIZED,
+                                NanoHTTPD.MIME_HTML,
+                                IRRELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(1, httpMessagesSent.size());
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_INFO, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_LOW, alert.getConfidence());
+    }
+
+    @Test
+    public void shouldNotAlertWhenRequestIsSuccessfulButContentNotRelevant() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 
 public class EnvFileScanRule extends AbstractAppFilePlugin {
@@ -33,5 +34,12 @@ public class EnvFileScanRule extends AbstractAppFilePlugin {
     @Override
     public int getId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public boolean isFalsePositive(HttpMessage msg) {
+        String responseBody = msg.getResponseBody().toString();
+        // It likely is a FP if the response contains neither a comment nor assignment
+        return !responseBody.contains("#") && !responseBody.contains("=");
     }
 }
