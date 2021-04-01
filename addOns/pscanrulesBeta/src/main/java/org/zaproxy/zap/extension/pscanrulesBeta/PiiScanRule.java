@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTag;
 import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -86,7 +89,11 @@ public class PiiScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        String responseBody = msg.getResponseBody().toString();
+        if (msg.getResponseHeader().isCss() || msg.getRequestHeader().isCss()) {
+            return;
+        }
+
+        String responseBody = getResponseBodyWithStylesRemoved(source);
         List<Candidate> candidates = getNumberSequences(responseBody);
         for (Candidate candidate : candidates) {
             for (CreditCard cc : CreditCard.values()) {
@@ -100,6 +107,15 @@ public class PiiScanRule extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private static String getResponseBodyWithStylesRemoved(Source source) {
+        OutputDocument outputDocument = new OutputDocument(source);
+        outputDocument.remove(source.getAllElements(HTMLElementName.STYLE));
+        for (StartTag startTag : source.getAllStartTags("style", null)) {
+            outputDocument.remove(startTag.getAttributes().get("style"));
+        }
+        return outputDocument.toString();
     }
 
     /**
