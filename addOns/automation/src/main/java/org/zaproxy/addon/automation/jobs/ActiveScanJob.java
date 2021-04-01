@@ -184,51 +184,6 @@ public class ActiveScanJob extends AutomationJob {
         return list;
     }
 
-    private AttackStrength parseAttackStrength(Object o, AutomationProgress progress) {
-        AttackStrength strength = null;
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof String) {
-            try {
-                strength = AttackStrength.valueOf(((String) o).toUpperCase());
-            } catch (Exception e) {
-                progress.warn(
-                        Constant.messages.getString(
-                                "automation.error.ascan.strength", this.getName(), o));
-            }
-        } else {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.ascan.strength", this.getName(), o));
-        }
-        return strength;
-    }
-
-    private AlertThreshold parseAlertThreshold(Object o, AutomationProgress progress) {
-        AlertThreshold threshold = null;
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof String) {
-            try {
-                threshold = AlertThreshold.valueOf(((String) o).toUpperCase());
-            } catch (Exception e) {
-                progress.warn(
-                        Constant.messages.getString(
-                                "automation.error.ascan.threshold", this.getName(), o));
-            }
-        } else if (o instanceof Boolean && (!(Boolean) o)) {
-            // This will happen if OFF is not quoted
-            threshold = AlertThreshold.OFF;
-        } else {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.ascan.threshold", this.getName(), o));
-        }
-        return threshold;
-    }
-
     protected ScanPolicy getScanPolicy(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
         if (jobData == null) {
             return null;
@@ -250,7 +205,9 @@ public class ActiveScanJob extends AutomationJob {
         ScanPolicy scanPolicy = new ScanPolicy();
 
         // Set default strength
-        AttackStrength st = parseAttackStrength(policyDefnData.get("defaultStrength"), progress);
+        AttackStrength st =
+                JobUtils.parseAttackStrength(
+                        policyDefnData.get("defaultStrength"), this.getName(), progress);
         if (st != null) {
             scanPolicy.setDefaultStrength(st);
             progress.info(
@@ -260,7 +217,9 @@ public class ActiveScanJob extends AutomationJob {
 
         // Set default threshold
         PluginFactory pluginFactory = scanPolicy.getPluginFactory();
-        AlertThreshold th = parseAlertThreshold(policyDefnData.get("defaultThreshold"), progress);
+        AlertThreshold th =
+                JobUtils.parseAlertThreshold(
+                        policyDefnData.get("defaultThreshold"), this.getName(), progress);
         if (th != null) {
             scanPolicy.setDefaultThreshold(th);
             if (th == AlertThreshold.OFF) {
@@ -286,7 +245,8 @@ public class ActiveScanJob extends AutomationJob {
                     Plugin plugin = pluginFactory.getPlugin(id);
                     if (plugin != null) {
                         AttackStrength pluginSt =
-                                parseAttackStrength(ruleMap.get("strength"), progress);
+                                JobUtils.parseAttackStrength(
+                                        ruleMap.get("strength"), this.getName(), progress);
                         if (pluginSt != null) {
                             plugin.setAttackStrength(pluginSt);
                             plugin.setEnabled(true);
@@ -298,7 +258,8 @@ public class ActiveScanJob extends AutomationJob {
                                             pluginSt.name()));
                         }
                         AlertThreshold pluginTh =
-                                parseAlertThreshold(ruleMap.get("threshold"), progress);
+                                JobUtils.parseAlertThreshold(
+                                        ruleMap.get("threshold"), this.getName(), progress);
                         if (pluginTh != null) {
                             plugin.setAlertThreshold(pluginTh);
                             plugin.setEnabled(true);

@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
- - Support for job result data
+- Support for job result data
+- Support for passive scan rule configuration
 
 ## [0.1.0] - 2021-03-24
 ### Changed

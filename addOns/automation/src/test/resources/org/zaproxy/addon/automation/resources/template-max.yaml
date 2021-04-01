@@ -22,6 +22,10 @@ jobs:
       maxAlertsPerRule: 10             # Int: Maximum number of alerts to raise per rule
       scanOnlyInScope: true            # Bool: Only scan URLs in scope (recommended)
       maxBodySizeInBytesToScan:        # Int: Maximum body size to scan, default: 0 - will scan all messages
+    rules:                             # A list of one or more passive scan rules and associated settings which override the defaults
+    - id:                              # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+      name:                            # String: The name of the rule for documentation purposes - this is not required or actually used
+      threshold:                       # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
   - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
     parameters:
       context:                         # String: Name of the context to spider, default: first context
@@ -45,13 +49,14 @@ jobs:
       requestWaitTime:                 # Int: The time between the requests sent to a server in milliseconds, default: 200
       sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
       threadCount:                     # Int: The number of spider threads, default: 2
-      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one 
+      userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one
   - type: passiveScan-wait             # Passive scan wait for the passive scanner to finish
     parameters:
       maxDuration: 5                   # Int: The max time to wait for the passive scanner, default: 0 unlimited
   - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
     parameters:
       context:                         # String: Name of the context to attack, default: first context
+      policy:                          # String: Name of the scan policy to be used, default: Default Policy
       maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
       maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
       addQueryParam:                   # Bool: If set will add an extra query parameter to requests that do not have one, default: false
@@ -61,3 +66,11 @@ jobs:
       injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
       scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
       threadPerHost:                   # Int: The max number of threads per host, default: 2
+    policyDefinition:                  # The policy definition - only used if the 'policy' is not set
+      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                          # Comment: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
