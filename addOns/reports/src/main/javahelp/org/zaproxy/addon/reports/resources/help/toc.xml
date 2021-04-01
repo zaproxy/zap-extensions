@@ -6,10 +6,11 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Report Generation" image="reports-icon" target="reports">
-				<tocitem text="Automation" target="reports.automation"/>
-				<tocitem text="Creating Reports" target="reports.create"/>
-				<tocitem text="About" target="reports.about"/>
+			<tocitem text="Report Generation" image="reports-icon"
+				target="reports">
+				<tocitem text="Automation" target="reports.automation" />
+				<tocitem text="Creating Reports" target="reports.create" />
+				<tocitem text="About" target="reports.about" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
