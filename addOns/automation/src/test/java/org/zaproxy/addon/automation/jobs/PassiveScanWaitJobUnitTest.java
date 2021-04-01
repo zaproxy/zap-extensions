@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -184,6 +185,7 @@ public class PassiveScanWaitJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getJobResultData("passiveScanData"), is(notNullValue()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -217,5 +219,6 @@ public class PassiveScanWaitJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getJobResultData("passiveScanData"), is(notNullValue()));
     }
 }

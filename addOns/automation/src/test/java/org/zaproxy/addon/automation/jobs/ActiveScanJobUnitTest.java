@@ -211,6 +211,7 @@ public class ActiveScanJobUnitTest {
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getJobResultData("activeScanData"), is(notNullValue()));
     }
 
     @Test
@@ -271,6 +272,7 @@ public class ActiveScanJobUnitTest {
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getJobResultData("activeScanData"), is(notNullValue()));
     }
 
     private static class TargetContextMatcher implements ArgumentMatcher<Target> {

@@ -19,13 +19,16 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 
 public class PassiveScanWaitJob extends AutomationJob {
@@ -41,10 +44,7 @@ public class PassiveScanWaitJob extends AutomationJob {
     @Override
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
-        ExtensionPassiveScan extPScan =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
+        ExtensionPassiveScan extPScan = getExtPassiveScan();
 
         long endTime = Long.MAX_VALUE;
         if (maxDuration > 0) {
@@ -61,6 +61,20 @@ public class PassiveScanWaitJob extends AutomationJob {
                 // Ignore
             }
         }
+        progress.addJobResultData(this.getJobResultData());
+    }
+
+    @Override
+    public List<JobResultData> getJobResultData() {
+        List<JobResultData> list = new ArrayList<JobResultData>();
+        list.add(
+                new PassiveScanJobResultData(
+                        this.getName(), getExtPassiveScan().getPluginPassiveScanners()));
+        return list;
+    }
+
+    private ExtensionPassiveScan getExtPassiveScan() {
+        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
     }
 
     @Override
