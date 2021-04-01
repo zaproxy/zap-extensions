@@ -1,3 +1,9 @@
+import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
+
+plugins {
+    id("com.diffplug.gradle.spotless")
+}
+
 version = "0.2.0"
 description = "Official ZAP Reports."
 
@@ -34,4 +40,19 @@ dependencies {
     implementation("org.snakeyaml:snakeyaml-engine:2.2.1")
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
+}
+
+spotless {
+    format("html", {
+        eclipseWtp(EclipseWtpFormatterStep.HTML)
+        target(fileTree(projectDir) {
+            include("src/**/*.html")
+        })
+    })
+    format("xml", {
+        eclipseWtp(EclipseWtpFormatterStep.XML)
+        target(fileTree(projectDir) {
+            include("src/**/*.xml")
+        })
+    })
 }
