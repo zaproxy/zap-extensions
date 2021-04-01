@@ -15,14 +15,11 @@ It also supports the <a href="automation.html">Automation Framework</a>.
 
 <H1>Generate Report Dialog</H1>
 
-<H2>Fields</H2>
-The dialog has the following fields:
+<H2>Scope Fields</H2>
+The Scope tab has the following fields:
 
 <H3>Report Title</H3>
 The title that will be used in the report.
-
-<H3>Template</H3>
-A pulldown containing all of the available templates. The template names include the format that they will be generated in, e.g. HTML, MD, PDF etc.
 
 <H3>Report Name</H3>
 The filename that will be used for the report. This name can include the following patterns:
@@ -60,11 +57,28 @@ By default the dialog will prevent you from generating a report with no alerts. 
 <H3>Display Report</H3>
 If selected then ZAP will attempt to open the report using the default program used by your operating system for that report type.
 
+<H2>Template Fields</H2>
+The Template tab has the following fields:
+
+<H3>Template</H3>
+A pulldown containing all of the available templates. The template names include the format that they will be generated in, e.g. HTML, MD, PDF etc.
+
+<H3>Sections</H3>
+Templates may optionally define 'sections' - parts of the report which can be included or excluded.
+If the selected template defines sections then a checkbox for each section will be displayed here.
+By default all checkboxes will be selected. If you unselect any of the sections then they will not be included in the report.
+
+<H2>Filter Fields</H2>
+The Filter tab has the following fields:
+
 <H3>Include Risks</H3>
 Include alerts with the selected risks.
 
 <H3>Include Confidences</H3>
 Include alerts with the selected confidences.
+
+<H2>Options Fields</H2>
+The Options tab has the following fields:
 
 <H3>Report Name Pattern</H3>
 The pattern that will be used to generate the report name.

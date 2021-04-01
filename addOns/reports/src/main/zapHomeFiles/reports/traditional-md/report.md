@@ -1,19 +1,24 @@
 # [(${reportTitle})]
 
+[#th:block th:if="${reportData.isIncludeSection('alertcount')}"]
 ## [(#{report.alerts.summary})]
 
 | [(#{report.alerts.summary.risklevel})] | [(#{report.alerts.summary.numalerts})] |
 | --- | --- |
 [#th:block th:each="i : ${#numbers.sequence(3, 0, -1)}"]| [(${helper.getRiskString(i)})] | [(${alertCounts.get(i)} ?: '0')] |
 [/th:block]
+[/th:block]
 
+[#th:block th:if="${reportData.isIncludeSection('instancecount')}"]
 ## [(#{report.alerts.list})]
 
 | [(#{report.alerts.list.name})] | [(#{report.alerts.list.risklevel})] | [(#{report.alerts.list.numinstances})] |
 | --- | --- | --- |
 [#th:block th:each="alert: ${alertTree.children}"]| [(${alert.nodeName})] | [(${helper.getRiskString(alert.risk)})] | [(${alert.childCount})] |
 [/th:block]
+[/th:block]
 
+[#th:block th:if="${reportData.isIncludeSection('alertdetails')}"]
 ## [(#{report.alerts.detail})]
 
 [#th:block th:each="alert: ${alertTree.children}"]
@@ -50,5 +55,6 @@
 [/th:block]
 [#th:block th:if="${alert.userObject.wascId > 0}"]
 #### [(#{report.alerts.detail.wascid})]: [(${alert.userObject.wascId})]
+[/th:block]
 [/th:block]
 [/th:block]

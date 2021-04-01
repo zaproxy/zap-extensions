@@ -25,6 +25,7 @@ name:        # The display name for the report
 format:      # The format, eg one of HTML, XML, MD, JSON, PDF - this is used internally but not currently exposed in ZAP
 mode:        # The Thymeleaf template mode, one of HTML, RAW, TEXT, HTML
 extension:   # The extension to use when generating the report
+sections:    # An optional list of sections - parts of the report which may be included or excluded
 </pre>
 
 <H3>report.<i>ext</i></H3>
@@ -36,8 +37,9 @@ This should have the same extension that is specified in the template.yaml file 
 The report subdirectory may also include a "Messages.properties" language file for template specific strings localised to English as well as 
 "Message_<i>locale</i>.property" files for localising the strings into other languages.<br>
 The template specific strings should all start with '<code>report.template.</code>'<br>
+If the report included sections then they must be defined in this file - the keys will automatically be prefixed by <code>report.template.section.</code>.
+Section names in the template.yaml file must just be alphanumeric strings and not start with an integer.<br>
 The language files may also override the default translations built into the reports add-on.
-
 
 <H3>Resources</H3>
 The report subdirectory may also include a "resources" directory. 

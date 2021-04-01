@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,6 +43,17 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
 public class ExtensionReportsUnitTest {
+
+    private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
+    private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
+    private static final String HTML_REPORT_ALERT_DETAIL_SECTION = "alertdetails";
+
+    private static final String HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE =
+            "!reports.report.alerts.summary!";
+    private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE =
+            "!reports.report.alerts.list!";
+    private static final String HTML_REPORT_ALERT_DETAILS_SECTION_TITLE =
+            "!reports.report.alerts.detail!";
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -266,6 +278,14 @@ public class ExtensionReportsUnitTest {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
     }
 
+    private ReportData getTestReportData() {
+        ReportData reportData = new ReportData();
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+        reportData.setSites(Arrays.asList("test"));
+        return reportData;
+    }
+
     @ParameterizedTest
     @ValueSource(
             strings = {
@@ -274,15 +294,12 @@ public class ExtensionReportsUnitTest {
                 "traditional-md",
                 "traditional-xml"
             })
-    public void shouldGenerateReport(String report) throws IOException, DocumentException {
+    public void shouldGenerateReport(String reportName) throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
-        ReportData reportData = new ReportData();
-        AlertNode root = new AlertNode(0, "Test");
-        reportData.setAlertTreeRootNode(root);
-        reportData.setSites(Arrays.asList("test"));
+        ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + report + "/template.yaml");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
         Template template = new Template(t);
 
         // When
@@ -290,5 +307,100 @@ public class ExtensionReportsUnitTest {
 
         // Then
         assertThat(r.length(), greaterThan(0L));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
+    public void shouldIncludeAllSectionsInReport(String reportName)
+            throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        reportData.addSection(HTML_REPORT_ALERT_SUMMARY_SECTION);
+        reportData.addSection(HTML_REPORT_INSTANCE_SUMMARY_SECTION);
+        reportData.addSection(HTML_REPORT_ALERT_DETAIL_SECTION);
+
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(true));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(true));
+        assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
+    public void shouldIncludeAlertSummarySectionInReport(String reportName)
+            throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        reportData.addSection(HTML_REPORT_ALERT_SUMMARY_SECTION);
+
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(true));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
+    public void shouldIncludeInstanceSummarySectionInReport(String reportName)
+            throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        reportData.addSection(HTML_REPORT_INSTANCE_SUMMARY_SECTION);
+
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report.length(), greaterThan(0));
+        assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(true));
+        assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
+    public void shouldIncludeAlertDetailsSectionInReport(String reportName)
+            throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        reportData.addSection(HTML_REPORT_ALERT_DETAIL_SECTION);
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report.length(), greaterThan(0));
+        assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(true));
     }
 }

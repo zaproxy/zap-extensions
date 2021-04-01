@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head>
-      <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <META http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
       <title th:text="${reportTitle}">Report Title</title>
       <style>
          body{
@@ -85,9 +85,6 @@
          .left-header{
          display: inline-block;
          }
-         .time-stamp{
-         float: right;
-         }
       </style>
       <script th:src="${resources + '/Chart.min.js'}" src="resources/Chart.min.js"></script>
       <script>
@@ -114,7 +111,7 @@
          <img th:src="${resources + '/zap32x32.png'}" src="resources/zap32x32.png">
          <th:block th:text="${reportTitle}">Report Title</th:block>
       </h1>
-      <p>
+      <p/>
       <th:block th:each="desc, state: ${#strings.arraySplit(description, '\n')}">
          <th:block th:text="${desc}"></th:block>
          <br th:if="${!state.last}"/>
@@ -126,12 +123,11 @@
       <th:block th:case="*" th:text="#{report.sites(${#strings.listJoin(reportData.sites, ' ')})}">Multiple sites</th:block>
       </h2>
       
-      <h3 th:text="#{report.alerts.summary}" class="left-header">Summary of Alerts</h3>
-      <h3 class="time-stamp">
+      <h3>
          <th:block th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</th:block>
       </h3>
+      <th:block th:if="${reportData.isIncludeSection('chart')}">
       <canvas id="summaryChart" width="550" height="300" style="border:1px solid"></canvas>
-      
       <script th:inline="javascript">
          /*<![CDATA[*/
          var title = /*[[#{report.template.chart}]]*/ "Alert chart";
@@ -170,6 +166,10 @@
     	    	   });
          </script>
       <p>
+      </th:block>
+      
+      <th:block th:if="${reportData.isIncludeSection('alertcount')}">
+      <h3 th:text="#{report.alerts.summary}" class="left-header">Summary of Alerts</h3>
       <table class="summary">
          <tr>
             <th th:text="#{report.alerts.summary.risklevel}" width="45%" height="24">Risk Level</th>
@@ -184,9 +184,10 @@
             </td>
          </tr>
       </table>
-
       <div class="spacer-lg"></div>
+      </th:block>
 
+      <th:block th:if="${reportData.isIncludeSection('instancecount')}">
       <h3 th:text="#{report.alerts.list}">Alerts</h3>
       <table class="alerts">
          <tr>
@@ -203,9 +204,10 @@
             <td align="center" th:text="${alert.childCount}">Count</td>
          </tr>
       </table>
-
       <div class="spacer-lg"></div>
+      </th:block>
 
+      <th:block th:if="${reportData.isIncludeSection('alertdetails')}">
       <h3 th:text="#{report.alerts.detail}">Alert Detail</h3>
       <th:block th:each="alert: ${alertTree.children}">
          <table class="results">
@@ -356,5 +358,7 @@
          </table>
          <div class="spacer"></div>
       </th:block>
+      </th:block>
+   </body>
 </html>
 

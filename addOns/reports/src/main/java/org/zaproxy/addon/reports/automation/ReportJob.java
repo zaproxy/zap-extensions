@@ -23,12 +23,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -81,8 +84,46 @@ public class ReportJob extends AutomationJob {
         }
         reportData.setTitle(this.reportTitle);
         reportData.setDescription(this.reportDesc);
-        reportData.setAlertTreeRootNode(getExtReport().getFilteredAlertTree(reportData));
         reportData.setContexts(env.getContexts());
+
+        List<String> list = getJobDataList(jobData, "risks", progress);
+        if (list.isEmpty()) {
+            reportData.setIncludeAllRisks(true);
+        } else {
+            for (String risk : list) {
+                reportData.setIncludeRisk(riskStringToInt(risk, progress), true);
+            }
+        }
+
+        list = getJobDataList(jobData, "confidences", progress);
+        if (list.isEmpty()) {
+            reportData.setIncludeAllConfidences(true);
+        } else {
+            for (String confidence : list) {
+                reportData.setIncludeConfidence(confidenceStringToInt(confidence, progress), true);
+            }
+        }
+
+        list = getJobDataList(jobData, "sections", progress);
+        if (list.isEmpty()) {
+            reportData.setSections(template.getSections());
+        } else {
+            List<String> validSections = template.getSections();
+            for (String section : list) {
+                if (validSections.contains(section)) {
+                    reportData.addSection(section);
+                } else {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "reports.automation.error.badsection",
+                                    this.getName(),
+                                    section,
+                                    template.getConfigName(),
+                                    validSections));
+                }
+            }
+        }
+        reportData.setAlertTreeRootNode(getExtReport().getFilteredAlertTree(reportData));
 
         try {
             file =
@@ -99,6 +140,64 @@ public class ReportJob extends AutomationJob {
                     Constant.messages.getString(
                             "reports.automation.error.generate", this.getName(), e.getMessage()));
         }
+    }
+
+    private int riskStringToInt(String str, AutomationProgress progress) {
+        switch (str.toLowerCase()) {
+            case "high":
+                return Alert.RISK_HIGH;
+            case "medium":
+                return Alert.RISK_MEDIUM;
+            case "low":
+                return Alert.RISK_LOW;
+            case "info":
+                return Alert.RISK_INFO;
+            case "information":
+                return Alert.RISK_INFO;
+        }
+        progress.warn(
+                Constant.messages.getString(
+                        "reports.automation.error.badrisk", this.getName(), str));
+        return -2;
+    }
+
+    private int confidenceStringToInt(String str, AutomationProgress progress) {
+        switch (str.toLowerCase()) {
+            case "high":
+                return Alert.CONFIDENCE_HIGH;
+            case "medium":
+                return Alert.CONFIDENCE_MEDIUM;
+            case "low":
+                return Alert.CONFIDENCE_LOW;
+            case "falsepositive":
+                return Alert.CONFIDENCE_FALSE_POSITIVE;
+        }
+        progress.warn(
+                Constant.messages.getString(
+                        "reports.automation.error.badrisk", this.getName(), str));
+        return -2;
+    }
+
+    private List<String> getJobDataList(
+            LinkedHashMap<?, ?> jobData, String key, AutomationProgress progress) {
+        List<String> list = new ArrayList<>();
+        Object o = jobData.get(key);
+        if (o == null) {
+            // Do nothing
+        } else if (o instanceof List) {
+            for (Object item : (List<?>) o) {
+                list.add(item.toString());
+            }
+        } else {
+            progress.warn(
+                    Constant.messages.getString(
+                            "reports.automation.error.badlist",
+                            this.getName(),
+                            key,
+                            o.getClass().getCanonicalName()));
+        }
+
+        return list;
     }
 
     private ExtensionReports getExtReport() {

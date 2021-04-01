@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class ReportData {
     private Map<String, Object> reportObjects = new HashMap<>();
     private boolean[] confidences = new boolean[Alert.MSG_CONFIDENCE.length];
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
+    private List<String> sections = new ArrayList<String>();
 
     public ReportData() {}
 
@@ -129,5 +131,29 @@ public class ReportData {
             return this.confidences[0];
         }
         return false;
+    }
+
+    public List<String> getSections() {
+        return sections;
+    }
+
+    public void addSection(String section) {
+        this.sections.add(section);
+    }
+
+    public void removeSection(String section) {
+        this.sections.remove(section);
+    }
+
+    public boolean isIncludeSection(String section) {
+        return this.sections.contains(section);
+    }
+
+    public void setSections(List<String> sections) {
+        if (sections == null) {
+            this.sections.clear();
+        } else {
+            this.sections = sections;
+        }
     }
 }
