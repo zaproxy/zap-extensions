@@ -34,6 +34,7 @@ var addOns = listOf(
     "domxss",
     "encoder",
     "exportreport",
+    "fieldenumeration",
     "formhandler",
     "frontendscanner",
     "fuzz",
