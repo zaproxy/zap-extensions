@@ -6,12 +6,11 @@ description = "Allows Ruby to be used for ZAP scripting - templates included"
 zapAddOn {
     addOnName.set("Ruby Scripting")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/ruby-scripting/")
-        notBeforeVersion.set("2.10.0")
     }
 }
 

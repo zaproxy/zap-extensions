@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update minimum ZAP version to 2.9.0.
+- Update minimum ZAP version to 2.10.0.
 - Update docker refs to use zaproxy.org instead of GitHub wiki.
 
 ## [7] - 2020-01-17
