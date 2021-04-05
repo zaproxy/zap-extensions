@@ -34,8 +34,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.apache.commons.configuration.FileConfiguration;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.encoder.Encoder;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -146,7 +146,6 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
         AmfMessageDeserializer amfDeserialiser = new AmfMessageDeserializer();
         ActionContext actioncontext = new ActionContext();
 
-        Encoder encoder = new Encoder();
         StringBuilder amfHumanReadable = new StringBuilder(350);
         amfHumanReadable.append("<html>");
 
@@ -166,7 +165,7 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                             .append("Header [")
                             .append(i)
                             .append("]: ")
-                            .append(encoder.getHTMLString(headerObject.toString()))
+                            .append(StringEscapeUtils.escapeHtml4(headerObject.toString()))
                             .append("<br />");
                 } catch (Exception exeception) {
                     amfHumanReadable.append("Header [").append(i).append("] was unparseable<br />");
@@ -187,19 +186,19 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                         .append("Body [")
                         .append(i)
                         .append("] target URI: [")
-                        .append(encoder.getHTMLString(targetURI))
+                        .append(StringEscapeUtils.escapeHtml4(targetURI))
                         .append("]<br />");
                 amfHumanReadable
                         .append("Body [")
                         .append(i)
                         .append("] response URI: [")
-                        .append(encoder.getHTMLString(responseURI))
+                        .append(StringEscapeUtils.escapeHtml4(responseURI))
                         .append("]<br />");
                 amfHumanReadable
                         .append("Body [")
                         .append(i)
                         .append("] method: [")
-                        .append(encoder.getHTMLString(method))
+                        .append(StringEscapeUtils.escapeHtml4(method))
                         .append("]<br />");
 
                 try {
@@ -212,7 +211,7 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                             .append("Body [")
                             .append(i)
                             .append("]: ")
-                            .append(encoder.getHTMLString(data))
+                            .append(StringEscapeUtils.escapeHtml4(data))
                             .append("<br />");
                 } catch (Exception e1) {
                     amfHumanReadable.append("Body [").append(i).append("] was unparseable<br />");
