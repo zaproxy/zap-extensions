@@ -87,6 +87,8 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
         ConnectionParam conParam = Model.getSingleton().getOptionsParam().getConnectionParam();
 
+        manager.setUserAgent(conParam.getDefaultUserAgent());
+
         // Set up proxy?
         if (conParam.isUseProxy(target.getHost())) {
             manager.setProxyRealm(

@@ -186,6 +186,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /* Logger object for the class */
     private static final Logger LOG = LogManager.getLogger(Manager.class);
 
+    private String userAgent;
+
     // ZAP: Changed to public to allow it to be extended
     public Manager() {
         elementsToParse.addElement(new HTMLelementToParse("a", "href"));
@@ -206,6 +208,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
          * create the httpclient
          */
         createHttpClient();
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     // set up dictionay based attack with normal start
@@ -432,7 +438,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                     .getParams()
                     .setConnectionTimeout(Config.connectionTimeout * 1000);
             httpclient.setState(initialState);
-            httpclient.getParams().setParameter("http.useragent", Config.userAgent);
+            httpclient
+                    .getParams()
+                    .setParameter(
+                            "http.useragent", userAgent != null ? userAgent : Config.userAgent);
 
             /*
              * Code to deal with http auth
