@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -80,6 +81,9 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         "NEL"
     };
 
+    private static final Pattern PATTERN_FONT_EXTENSIONS =
+            Pattern.compile("\\.ttf|\\.woff|\\.woff2|\\.otf\\z", Pattern.CASE_INSENSITIVE);
+
     /**
      * gets the name of the scanner
      *
@@ -110,6 +114,9 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().hasContentType("font") || isFontRequest(msg)) {
+            return;
+        }
         log.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
         List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
@@ -186,6 +193,18 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private static boolean isFontRequest(HttpMessage msg) {
+        try {
+            String path = msg.getRequestHeader().getURI().getPath();
+            if (path != null) {
+                return PATTERN_FONT_EXTENSIONS.matcher(path).find();
+            }
+        } catch (URIException e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**
