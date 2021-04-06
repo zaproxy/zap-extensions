@@ -31,7 +31,8 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
@@ -65,7 +66,7 @@ public class CustomPayloadsMultipleOptionsTablePanel
                     "custompayloads.options.dialog.addMultiplePayload.addPayload.button.name");
 
     private static final Logger LOG =
-            Logger.getLogger(CustomPayloadsMultipleOptionsTablePanel.class);
+            LogManager.getLogger(CustomPayloadsMultipleOptionsTablePanel.class);
 
     private JButton resetButton;
     private JButton resetButtonId;
