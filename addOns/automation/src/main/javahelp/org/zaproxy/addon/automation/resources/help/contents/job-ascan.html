@@ -13,6 +13,8 @@ This job runs the active scanner. This actively attacks your applications and sh
 <p>
 By default this job will actively scan the first context defined in the <a href="environment.html">environment</a> and so none of the parameters are mandatory.
 
+<H2>YAML</H2>
+
 <pre>
   - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
     parameters:
@@ -36,6 +38,14 @@ By default this job will actively scan the first context defined in the <a href=
         strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
         threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
 </pre>
+
+<H2>Job Data</H2>
+The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
+Note that in this case the data is from the last Active Scan, regardless of whether it was started by the Automation Framework, the UI, or the API.
+<ul>
+<li>Key: <code>activeScanData</code>
+<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/ActiveScanJobResultData.java">ActiveScanJobResultData</a>
+</ul>
 
 </BODY>
 </HTML>

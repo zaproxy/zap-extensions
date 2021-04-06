@@ -6,4 +6,5 @@ sections:
  - chart
  - alertcount
  - instancecount
+ - passingrules
  - alertdetails

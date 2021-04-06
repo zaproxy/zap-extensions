@@ -85,6 +85,8 @@ public class ExtensionReports extends ExtensionAdaptor {
     private Map<String, Template> templateMap;
     private ReportParam reportParam;
 
+    private ReportDataHandler reportDataHandler;
+
     public ExtensionReports() {
         super(NAME);
         setI18nPrefix(PREFIX);
@@ -272,8 +274,14 @@ public class ExtensionReports extends ExtensionAdaptor {
         context.setVariable("reportTitle", reportData.getTitle());
         context.setVariable("description", reportData.getDescription());
         context.setVariable("helper", new ReportHelper());
-        context.setVariable("alertCounts", getAlertCounts(reportData.getAlertTreeRootNode()));
+        context.setVariable("alertCounts", getAlertCountsByRisk(reportData.getAlertTreeRootNode()));
+        context.setVariable(
+                "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
         context.setVariable("reportData", reportData);
+
+        if (reportDataHandler != null) {
+            reportDataHandler.handle(reportData);
+        }
 
         if ("PDF".equals(template.getFormat())) {
             if (reportFilename.toLowerCase().endsWith(".pdf")) {
@@ -342,12 +350,32 @@ public class ExtensionReports extends ExtensionAdaptor {
         return file;
     }
 
-    private Map<Integer, Integer> getAlertCounts(AlertNode rootNode) {
+    public void setReportDataHandler(ReportDataHandler reportDataHandler) {
+        this.reportDataHandler = reportDataHandler;
+    }
+
+    public interface ReportDataHandler {
+        void handle(ReportData reportData);
+    }
+
+    private Map<Integer, Integer> getAlertCountsByRisk(AlertNode rootNode) {
         Map<Integer, Integer> alertCounts = new HashMap<>();
         Enumeration<?> childEnum = rootNode.children();
         while (childEnum.hasMoreElements()) {
             AlertNode child = (AlertNode) childEnum.nextElement();
             alertCounts.merge(child.getRisk(), 1, Integer::sum);
+        }
+
+        return alertCounts;
+    }
+
+    private Map<Integer, Integer> getAlertCountsByRule(AlertNode rootNode) {
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        Enumeration<?> childEnum = rootNode.children();
+        while (childEnum.hasMoreElements()) {
+            AlertNode child = (AlertNode) childEnum.nextElement();
+            alertCounts.merge(
+                    child.getUserObject().getPluginId(), child.getChildCount(), Integer::sum);
         }
 
         return alertCounts;

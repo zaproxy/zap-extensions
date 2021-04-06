@@ -23,12 +23,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -37,16 +41,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionReportsUnitTest {
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
     private static final String HTML_REPORT_ALERT_DETAIL_SECTION = "alertdetails";
+    private static final String HTML_REPORT_PASSING_RULES_SECTION = "passingrules";
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE =
             "!reports.report.alerts.summary!";
@@ -54,10 +65,18 @@ public class ExtensionReportsUnitTest {
             "!reports.report.alerts.list!";
     private static final String HTML_REPORT_ALERT_DETAILS_SECTION_TITLE =
             "!reports.report.alerts.detail!";
+    // The Passing rules section is defined in the report specific i18n file
+    private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
 
     @BeforeEach
     public void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
+
+        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        Model.setSingletonForTesting(model);
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
 
     @Test
@@ -402,5 +421,32 @@ public class ExtensionReportsUnitTest {
         assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html-plus"})
+    public void shouldIncludePassingRulesSectionInReport(String reportName)
+            throws IOException, DocumentException {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        PassiveScanJobResultData pscanData =
+                new PassiveScanJobResultData("test", new ArrayList<PluginPassiveScanner>());
+        reportData.addReportObjects(pscanData.getKey(), pscanData);
+        File f = File.createTempFile("zap.reports.test", "x");
+        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
+        Template template = new Template(t);
+
+        // When
+        reportData.addSection(HTML_REPORT_PASSING_RULES_SECTION);
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report.length(), greaterThan(0));
+        assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_PASSING_RULES_SECTION_TITLE), is(true));
     }
 }
