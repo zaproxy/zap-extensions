@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Depend on Script Console add-on, it's required to work with Zest scripts (Issue 2656).
 - Clear Zest Results Panel when new script is added.
 - Update minimum ZAP version to 2.10.0.
 

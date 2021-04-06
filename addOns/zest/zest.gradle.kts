@@ -27,6 +27,7 @@ zapAddOn {
                 register("selenium") {
                     version.set("15.*")
                 }
+                register("scripts")
             }
         }
     }
