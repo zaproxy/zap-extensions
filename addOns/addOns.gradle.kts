@@ -48,6 +48,13 @@ subprojects {
         }
     }
 
+    configurations {
+        "compileClasspath" {
+            exclude(group = "log4j")
+            exclude(group = "org.apache.logging.log4j", module = "log4j-1.2-api")
+        }
+    }
+
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.9.0"))
 
     zapAddOn {
