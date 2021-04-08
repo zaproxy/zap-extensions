@@ -23,12 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 /** A ZAP Extension to help user raise issues in bug trackers from within ZAP. */
 public class ExtensionBugTracker extends ExtensionAdaptor {
@@ -37,8 +35,6 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
     public Set<Alert> alerts = null;
 
     protected static final String PREFIX = "bugtracker";
-
-    private static final String RESOURCE = "/org/zaproxy/zap/extension/bugtracker/resources";
 
     private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
     private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
@@ -107,8 +103,6 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
                     new PopupSemiAutoIssue(
                             this, Constant.messages.getString(PREFIX + ".popup.issue.semi"));
         }
-        popupMsgRaiseSemiAuto.setExtension(
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class));
         return popupMsgRaiseSemiAuto;
     }
 

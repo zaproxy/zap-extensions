@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.util.Set;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class PopupSemiAutoIssue extends PopupMenuItemAlert {
@@ -32,7 +31,6 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
 
     private ExtensionBugTracker extBT = null;
 
-    private ExtensionAlert extension = null;
     private RaiseSemiAutoIssueDialog raiseSemiAutoIssueDialog = null;
 
     public PopupSemiAutoIssue(ExtensionBugTracker ext, String label) {
@@ -65,10 +63,6 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
     @Override
     public void performAction(Alert alert) {
         // Empty because alerts are retrieved, stored and sent to the dialogs in a list
-    }
-
-    void setExtension(ExtensionAlert extension) {
-        this.extension = extension;
     }
 
     @Override
