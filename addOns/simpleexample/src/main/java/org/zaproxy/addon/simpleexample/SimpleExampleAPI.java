@@ -31,14 +31,11 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 public class SimpleExampleAPI extends ApiImplementor {
     private static final String PREFIX = "simpleExample";
 
-    private ExtensionSimpleExample extension;
-
     private static final String ACTION_HELLO_WORLD = "helloWorld";
 
     private static final Logger LOGGER = LogManager.getLogger(SimpleExampleAPI.class);
 
-    public SimpleExampleAPI(ExtensionSimpleExample extension) {
-        this.extension = extension;
+    public SimpleExampleAPI() {
         this.addApiAction(new ApiAction(ACTION_HELLO_WORLD));
     }
 
