@@ -87,8 +87,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
 
     BeanShellConsoleFrame getBeanShellConsoleDialog() {
         if (beanShellConsoleDialog == null) {
-            beanShellConsoleDialog =
-                    new BeanShellConsoleFrame(getView().getMainFrame(), false, this);
+            beanShellConsoleDialog = new BeanShellConsoleFrame();
             beanShellConsoleDialog.setView(getView());
             beanShellConsoleDialog.setPreferredSize(new Dimension(600, 600));
             beanShellConsoleDialog.setTitle(Constant.messages.getString("beanshell.title"));
