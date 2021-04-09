@@ -81,7 +81,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        this.api = new SimpleExampleAPI(this);
+        this.api = new SimpleExampleAPI();
         extensionHook.addApiImplementor(this.api);
 
         // As long as we're not running as a daemon
