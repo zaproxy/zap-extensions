@@ -91,7 +91,6 @@ public class BugTrackerGithub extends BugTracker {
     @Override
     public void createDialogs() {
         List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
-        Set<String> collaborators = new HashSet<String>();
         List<String> configNames = new ArrayList<String>();
         for (BugTrackerGithubConfigParams config : configs) {
             configNames.add(config.getName());
