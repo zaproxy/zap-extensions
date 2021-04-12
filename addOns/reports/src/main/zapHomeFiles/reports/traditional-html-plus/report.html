@@ -245,6 +245,46 @@ td {
 		<div class="spacer-lg"></div>
 	</th:block>
 
+	<th:block th:if="${reportData.isIncludeSection('passingrules')}">
+		<h3 th:text="#{report.template.pass.list}">Passing Rules</h3>
+		<table class="alerts">
+			<tr>
+				<th th:text="#{report.alerts.list.name}" width="55%" height="24">Name</th>
+				<th th:text="#{report.template.pass.type}" width="15%"
+					align="center">Type</th>
+				<th th:text="#{report.template.pass.threshold}" width="15%"
+					align="center">Threshold</th>
+				<th th:text="#{report.template.pass.strength}" width="15%"
+					align="center">Strength</th>
+			</tr>
+			<th:block
+				th:if="${reportData.reportObjects.get('activeScanData') != null}">
+				<th:block
+					th:each="ascan : ${reportData.reportObjects.get('activeScanData').allRuleData}">
+					<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
+						<td><a th:href="'#' + ${ascan.id}" th:text="${ascan.name}"
+							href="#pluginId">Alert Name</a></td>
+						<td th:text="#{report.template.pass.type.active}" align="center">Active</td>
+						<td align="center" th:text="${ascan.threshold}">Threshold</td>
+						<td align="center" th:text="${ascan.strength}">Strength</td>
+					</tr>
+				</th:block>
+			</th:block>
+			<th:block
+				th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
+				<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
+					<td><a th:href="'#' + ${pscan.id}" th:text="${pscan.name}"
+						href="#pluginId">Alert Name</a></td>
+					<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
+					<td align="center" th:text="${pscan.threshold}">Threshold</td>
+					<td align="center">-</td>
+				</tr>
+			</th:block>
+		</table>
+		<div class="spacer-lg"></div>
+	</th:block>
+
+
 	<th:block th:if="${reportData.isIncludeSection('alertdetails')}">
 		<h3 th:text="#{report.alerts.detail}">Alert Detail</h3>
 		<th:block th:each="alert: ${alertTree.children}">

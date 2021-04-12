@@ -22,9 +22,12 @@ package org.zaproxy.addon.automation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
@@ -39,6 +42,7 @@ public class AutomationEnvironment {
     private List<Context> contexts = new ArrayList<Context>();;
     private boolean failOnError = true;
     private boolean failOnWarning = false;
+    private Map<String, Object> jobData = new HashMap<>();
 
     public AutomationEnvironment(
             LinkedHashMap<?, ?> envData, AutomationProgress progress, Session session) {
@@ -178,6 +182,18 @@ public class AutomationEnvironment {
 
     public Context getDefaultContext() {
         return contexts.get(0);
+    }
+
+    public void addJobData(String key, Object data) {
+        this.jobData.put(key, data);
+    }
+
+    public Object getJobData(String key) {
+        return this.jobData.get(key);
+    }
+
+    public Set<String> getJobDataKeys() {
+        return this.jobData.keySet();
     }
 
     public boolean isFailOnError() {

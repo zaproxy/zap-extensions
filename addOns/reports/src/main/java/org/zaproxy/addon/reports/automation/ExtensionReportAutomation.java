@@ -28,6 +28,10 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.ExtensionReports.ReportDataHandler;
+import org.zaproxy.addon.reports.ReportData;
 
 public class ExtensionReportAutomation extends ExtensionAdaptor {
 
@@ -36,6 +40,8 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     private ReportJob job;
+
+    private ReportDataHandler reportDataHandler;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
@@ -59,6 +65,11 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
         job = new ReportJob();
         extAuto.registerAutomationJob(job);
+        reportDataHandler = new ReportDataHandlerImpl(extAuto);
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionReports.class)
+                .setReportDataHandler(reportDataHandler);
     }
 
     @Override
@@ -72,6 +83,10 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
 
         extAuto.unregisterAutomationJob(job);
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionReports.class)
+                .setReportDataHandler(null);
     }
 
     @Override
@@ -87,5 +102,21 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
     @Override
     public String getUIName() {
         return Constant.messages.getString("reports.automation.name");
+    }
+
+    private static class ReportDataHandlerImpl implements ReportDataHandler {
+
+        private final ExtensionAutomation extAuto;
+
+        ReportDataHandlerImpl(ExtensionAutomation extAuto) {
+            this.extAuto = extAuto;
+        }
+
+        @Override
+        public void handle(ReportData reportData) {
+            for (JobResultData jobData : extAuto.getJobResultData()) {
+                reportData.addReportObjects(jobData.getKey(), jobData);
+            }
+        }
     }
 }

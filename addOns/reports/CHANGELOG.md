@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for template sections
 - Automation job: support risk, confidence and section configuration
+- Passing rules to traditional plus HTML report
 
 ### Changed
 - Format HTML and XML templates as part of the build
