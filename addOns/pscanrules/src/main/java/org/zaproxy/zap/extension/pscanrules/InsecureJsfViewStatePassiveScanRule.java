@@ -214,7 +214,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", viewState))
                 .setSolution(getSolution())
                 .setReference(getReference())
-                .setCweId(16) // CWE Id 16 - Configuration
+                .setCweId(642) // CWE-642: External Control of Critical State Data
                 .setWascId(14) // WASC Id - Server Misconfiguration
                 .raise();
     }

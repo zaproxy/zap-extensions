@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Update RE2/J library to latest version (1.6).
 - PII Scan Rule will now ignore CSS and style information (Issue 6288).
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - CSP Missing
+  - Insecure Form Load
+  - Insecure Form Post
+  - Strict-Transport-Security
 
 ## [24] - 2020-12-15
 ### Changed

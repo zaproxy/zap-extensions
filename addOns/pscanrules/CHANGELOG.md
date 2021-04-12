@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Timestamp Disclosure scan rule now excludes values in "Report-To" or "NEL" headers (Issue 6493).
 - The Timestamp Disclosure scan rule no longer considers font type requests or responses when looking for possible timestamps (Issue 6274).
 - X-Frame-Options scan rule CWE ID changed from 16 to 1021.
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - Character Set Mismatch
+  - Content Security Policy
+  - Cookie HttpOnly
+  - Cookie SameSite
+  - JSF ViewState
+  - MS ViewState
+  - X-Content-Type-Options
 
 ## [33] - 2021-01-29
 ### Added

@@ -110,7 +110,8 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                                     .setSolution(getString("soln"))
                                     .setReference(getString("refs"))
                                     .setEvidence(element.toString())
-                                    .setCweId(16) // CWE CATEGORY: Configuration
+                                    .setCweId(345) // CWE-345: Insufficient Verification of Data
+                                    // Authenticity
                                     .setWascId(15) // Application Misconfiguration
                                     .raise();
                         });

@@ -85,7 +85,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setDescription(var.pattern.getAlertDescription())
                 .setOtherInfo(var.getResultExtract().toString())
                 .setSolution(getSolution())
-                .setCweId(16) // CWE Id 16 - Configuration
+                .setCweId(642) // CWE-642: External Control of Critical State Data
                 .setWascId(14); // WASC Id - Server Misconfiguration
     }
 
@@ -96,7 +96,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"))
-                .setCweId(16) // CWE Id 16 - Configuration
+                .setCweId(642) // CWE-642: External Control of Critical State Data
                 .setWascId(14); // WASC Id - Server Misconfiguration
     }
 
@@ -133,7 +133,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "split.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "split.soln"))
-                .setCweId(16) // CWE Id 16 - Configuration
+                .setCweId(642) // CWE-642: External Control of Critical State Data
                 .setWascId(14); // WASC Id - Server Misconfiguration
     }
 

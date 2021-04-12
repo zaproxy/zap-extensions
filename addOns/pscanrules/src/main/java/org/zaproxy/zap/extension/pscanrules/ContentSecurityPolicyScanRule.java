@@ -416,7 +416,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                .setCweId(16) // CWE-16: Configuration
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
                 .setWascId(15) // WASC-15: Application Misconfiguration)
                 .raise();
     }

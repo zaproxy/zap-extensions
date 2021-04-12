@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - Feature Policy
+  - Site Isolation
+  - Sub Resource Integrity
 
 ## [30] - 2021-02-08
 
