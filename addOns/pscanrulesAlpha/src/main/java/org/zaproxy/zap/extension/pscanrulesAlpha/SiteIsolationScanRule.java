@@ -137,7 +137,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
                     .setDescription(getString("desc"))
                     .setSolution(getString("soln"))
                     .setReference(getString("refs"))
-                    .setCweId(16) // CWE-16: Configuration
+                    .setCweId(693) // CWE-693: Protection Mechanism Failure
                     .setWascId(14) // WASC-14: Server Misconfiguration
                     .setEvidence(evidence);
         }

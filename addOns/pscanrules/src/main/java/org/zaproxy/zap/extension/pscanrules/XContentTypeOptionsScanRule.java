@@ -88,7 +88,7 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(xContentTypeOption)
-                .setCweId(16) // CWE-16: Configuration
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
                 .setWascId(15) // WASC15: Application Misconfiguration
                 .raise();
     }

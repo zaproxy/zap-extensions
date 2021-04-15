@@ -270,7 +270,7 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
                 .setOtherInfo(getExtraInfo(firstCharset, secondCharset, currentMismatch))
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
-                .setCweId(16) // CWE-16: Configuration
+                .setCweId(436) // CWE-436: Interpretation Conflict
                 .setWascId(15) // WASC-15: Application Misconfiguration
                 .raise();
     }

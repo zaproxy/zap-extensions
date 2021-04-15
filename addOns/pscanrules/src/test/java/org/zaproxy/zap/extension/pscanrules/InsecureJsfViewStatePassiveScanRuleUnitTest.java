@@ -140,7 +140,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 
@@ -167,7 +167,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 
@@ -194,7 +194,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 
@@ -225,7 +225,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 

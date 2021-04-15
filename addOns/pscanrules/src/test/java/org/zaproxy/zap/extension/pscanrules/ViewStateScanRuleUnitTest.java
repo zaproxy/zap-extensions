@@ -120,7 +120,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(1).getName(), equalTo("Old Asp.Net Version in Use"));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(14));
-        assertThat(alertsRaised.get(1).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(1).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertSame(msg, alertsRaised.get(1).getMessage());
     }
@@ -148,7 +148,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
         assertThat(alertsRaised.get(0).getName(), equalTo("Emails Found in the Viewstate"));
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[Itest@test.com]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -171,7 +171,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
                         "The following potential IP addresses were found being serialized in the viewstate field:"));
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[127.0.0.1]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -189,7 +189,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(1).getName(), equalTo("Split Viewstate in Use"));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(14));
-        assertThat(alertsRaised.get(1).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(1).getCweId(), equalTo(642));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 

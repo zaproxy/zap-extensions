@@ -95,7 +95,7 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(16) // CWE-16: Configuration
+                .setCweId(1004) // CWE-1004: Sensitive Cookie Without 'HttpOnly' Flag
                 .setWascId(13); // WASC-13: Info leakage
     }
 
