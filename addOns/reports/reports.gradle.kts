@@ -29,6 +29,11 @@ zapAddOn {
             }
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.reports.ReportApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/reports/resources/Messages.properties"))
+    }
 }
 
 dependencies {
