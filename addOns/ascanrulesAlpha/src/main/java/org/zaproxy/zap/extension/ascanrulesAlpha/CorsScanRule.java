@@ -99,7 +99,7 @@ public class CorsScanRule extends AbstractAppPlugin {
                         || acaoVal.contains("null")
                         || (secScheme && acaoVal.contains("http:"))) {
                     // If authenticated AJAX requests are allowed, the risk is higher
-                    risk = (acacVal == "") ? Alert.RISK_MEDIUM : Alert.RISK_HIGH;
+                    risk = acacVal.isEmpty() ? Alert.RISK_MEDIUM : Alert.RISK_HIGH;
                 }
                 Matcher m =
                         Pattern.compile(

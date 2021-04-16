@@ -50,7 +50,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     @Test
     public void shouldNotAlertIfCorsNotSupported() throws Exception {
         // Given
-        nano.addHandler(new CORSResponse(null, false));
+        nano.addHandler(new CorsResponse(null, false));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
@@ -60,66 +60,66 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     @Test
-    public void shouldAlertInfoIfACAOButNotPayloads() throws Exception {
+    public void shouldAlertInfoIfAcaoButNotPayloads() throws Exception {
         // Given
-        nano.addHandler(new CORSResponse("dummyValue", false));
+        nano.addHandler(new CorsResponse("dummyValue", false));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertRisk(Alert.RISK_INFO);
+        assertExpectedAlert(Alert.RISK_INFO);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"REFLECT", "*", "null"})
-    public void shouldAlertMediumIfACAOPayloads(String origin) throws Exception {
+    public void shouldAlertMediumIfAcaoPayloads(String origin) throws Exception {
         // Given
-        nano.addHandler(new CORSResponse(origin, false));
+        nano.addHandler(new CorsResponse(origin, false));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertRisk(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"REFLECT", "null"})
-    public void shouldAlertHighIfACAOAndACACPayloads(String origin) throws Exception {
+    public void shouldAlertHighIfAcaoAndAcacPayloads(String origin) throws Exception {
         // Given
-        nano.addHandler(new CORSResponse(origin, true));
+        nano.addHandler(new CorsResponse(origin, true));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertRisk(Alert.RISK_HIGH);
+        assertExpectedAlert(Alert.RISK_HIGH);
     }
 
     @Test
-    public void shouldAlertMediumIfACAOWildcardAndACAC() throws Exception {
+    public void shouldAlertMediumIfAcaoWildcardAndAcac() throws Exception {
         // Given
-        nano.addHandler(new CORSResponse("*", true));
+        nano.addHandler(new CorsResponse("*", true));
         HttpMessage msg = this.getHttpMessage("/");
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
-        assertRisk(Alert.RISK_MEDIUM);
+        assertExpectedAlert(Alert.RISK_MEDIUM);
     }
 
-    private void assertRisk(int risk) {
+    private void assertExpectedAlert(int risk) {
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(risk, alert.getRisk());
     }
 
-    private static class CORSResponse extends NanoServerHandler {
+    private static class CorsResponse extends NanoServerHandler {
         private final String acaoBehavior;
         private final boolean isAcac;
 
-        public CORSResponse(String acaoBehavior, boolean isAcac) {
+        public CorsResponse(String acaoBehavior, boolean isAcac) {
             super("/");
             this.acaoBehavior = acaoBehavior;
             this.isAcac = isAcac;
