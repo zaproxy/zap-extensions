@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -41,6 +42,14 @@ public class TraceAxdScanRule extends AbstractAppFilePlugin {
     @Override
     public int getId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public boolean isFalsePositive(HttpMessage msg) {
+        String body = msg.getResponseBody().toString();
+        return !body.contains("Application Trace")
+                && !body.contains("Request Details")
+                && !body.contains("Trace Information");
     }
 
     @Override
