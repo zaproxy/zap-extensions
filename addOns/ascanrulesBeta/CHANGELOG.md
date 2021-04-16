@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - The .env file scan rule now performs a simple content check to reduce false positives (Issue 6099).
 - The trace.axd file scan rule now performs a content check to reduce false positives (Issue 6517).
+- XML External Entity Attack scan rule changed to detect a possible XML File Reflection Attack when XML validation is present. (Issue 6204)
 
 ## [33] - 2020-12-15
 ### Changed
