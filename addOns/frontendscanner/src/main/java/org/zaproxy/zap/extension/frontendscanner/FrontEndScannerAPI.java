@@ -25,11 +25,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -40,6 +42,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.model.StandardParameterParser;
 
 public class FrontEndScannerAPI extends ApiImplementor {
@@ -52,7 +55,7 @@ public class FrontEndScannerAPI extends ApiImplementor {
     private static final String FRONT_END_SCANNER =
             Constant.getZapHome() + "/frontendscanner/front-end-scanner.js";
     private static final String PREFIX = "frontendscanner";
-    private static final Logger LOGGER = Logger.getLogger(ExtensionFrontEndScanner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionFrontEndScanner.class);
 
     private ExtensionFrontEndScanner extension;
     private StandardParameterParser parameterParser;
@@ -76,14 +79,12 @@ public class FrontEndScannerAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.MISSING_PARAMETER, "action");
             }
 
-            Map<String, String> parameters = parameterParser.getParams(msg, HtmlParameter.Type.url);
+            List<NameValuePair> parameters =
+                    parameterParser.getParameters(msg, HtmlParameter.Type.url);
 
-            String action = parameters.get("action");
-            if (action == null) {
-                throw new ApiException(ApiException.Type.MISSING_PARAMETER, "action");
-            }
+            String action = getParamValue(parameters, "action");
 
-            LOGGER.debug("action = " + action);
+            LOGGER.debug("action = {}", action);
 
             switch (action) {
                 case "getFile":
@@ -99,6 +100,20 @@ public class FrontEndScannerAPI extends ApiImplementor {
             throw new ApiException(
                     ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
         }
+    }
+
+    private static String getParamValue(List<NameValuePair> parameters, String paramName)
+            throws ApiException {
+        Optional<NameValuePair> param =
+                parameters.stream().filter(a -> a.getName().equals(paramName)).findFirst();
+        String value = null;
+        if (param.isPresent()) {
+            value = param.get().getValue();
+        }
+        if (value != null) {
+            return value;
+        }
+        throw new ApiException(ApiException.Type.MISSING_PARAMETER, paramName);
     }
 
     private String createAlertFromMessage(HttpMessage msg) throws ApiException {
@@ -139,18 +154,12 @@ public class FrontEndScannerAPI extends ApiImplementor {
         }
     }
 
-    private String getFileFromParameters(HttpMessage msg, Map<String, String> parameters)
+    private String getFileFromParameters(HttpMessage msg, List<NameValuePair> parameters)
             throws ApiException, IOException {
-        String fileName = parameters.get("filename");
-        String historyReferenceId = parameters.get("historyReferenceId");
+        String fileName = getParamValue(parameters, "fileName");
+        String historyReferenceId = getParamValue(parameters, "historyReferenceId");
         String host = msg.getRequestHeader().getHeader("host");
 
-        if (fileName == null) {
-            throw new ApiException(ApiException.Type.MISSING_PARAMETER, "fileName");
-        }
-        if (historyReferenceId == null) {
-            throw new ApiException(ApiException.Type.MISSING_PARAMETER, "historyReferenceId");
-        }
         try {
             // Prevent injection: it will fail if `historyReferenceId` is not an integer
             Integer.parseInt(historyReferenceId);
@@ -158,8 +167,8 @@ public class FrontEndScannerAPI extends ApiImplementor {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, "historyReferenceId");
         }
 
-        LOGGER.debug("fileName = " + fileName);
-        LOGGER.debug("historyReferenceId = " + historyReferenceId);
+        LOGGER.debug("fileName = {}", fileName);
+        LOGGER.debug("historyReferenceId = {}", historyReferenceId);
 
         if (!fileName.equals("front-end-scanner.js")) {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, "fileName");

@@ -31,7 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -61,7 +62,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                 Pattern.compile("\\b[0-9]{8,10}\\b", Pattern.CASE_INSENSITIVE), "Unix");
     }
 
-    private static Logger log = Logger.getLogger(TimestampDisclosureScanRule.class);
+    private static Logger log = LogManager.getLogger(TimestampDisclosureScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.timestampdisclosure.";
@@ -70,9 +71,18 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      * ignore the following response headers for the purposes of the comparison, since they cause
      * false positives
      */
-    private static final String[] RESPONSE_HEADERS_TO_IGNORE = {
-        HttpHeader._KEEP_ALIVE, HttpHeader.CACHE_CONTROL, "ETag", "Age", "Strict-Transport-Security"
+    public static final String[] RESPONSE_HEADERS_TO_IGNORE = {
+        HttpHeader._KEEP_ALIVE,
+        HttpHeader.CACHE_CONTROL,
+        "ETag",
+        "Age",
+        "Strict-Transport-Security",
+        "Report-To",
+        "NEL"
     };
+
+    private static final Pattern PATTERN_FONT_EXTENSIONS =
+            Pattern.compile("\\.ttf|\\.woff|\\.woff2|\\.otf\\z", Pattern.CASE_INSENSITIVE);
 
     /**
      * gets the name of the scanner
@@ -104,100 +114,97 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        try {
-            if (log.isDebugEnabled())
-                log.debug(
-                        "Checking message "
-                                + msg.getRequestHeader().getURI().getURI()
-                                + " for timestamps");
+        if (msg.getResponseHeader().hasContentType("font") || isFontRequest(msg)) {
+            return;
+        }
+        log.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
-            List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
-            StringBuffer filteredResponseheaders = new StringBuffer();
-            for (HttpHeaderField responseheader : responseheaders) {
-                boolean ignoreHeader = false;
-                for (String headerToIgnore : RESPONSE_HEADERS_TO_IGNORE) {
-                    if (responseheader.getName().equalsIgnoreCase(headerToIgnore)) {
-                        if (log.isDebugEnabled())
-                            log.debug("Ignoring header " + responseheader.getName());
-                        ignoreHeader = true;
-                        break; // out of inner loop
-                    }
-                }
-                if (!ignoreHeader) {
-                    filteredResponseheaders.append("\n");
-                    filteredResponseheaders.append(
-                            responseheader.getName() + ": " + responseheader.getValue());
+        List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
+        StringBuffer filteredResponseheaders = new StringBuffer();
+        for (HttpHeaderField responseheader : responseheaders) {
+            boolean ignoreHeader = false;
+            for (String headerToIgnore : RESPONSE_HEADERS_TO_IGNORE) {
+                if (responseheader.getName().equalsIgnoreCase(headerToIgnore)) {
+                    log.debug("Ignoring header {}", responseheader.getName());
+                    ignoreHeader = true;
+                    break; // out of inner loop
                 }
             }
+            if (!ignoreHeader) {
+                filteredResponseheaders.append("\n");
+                filteredResponseheaders.append(
+                        responseheader.getName() + ": " + responseheader.getValue());
+            }
+        }
 
-            String responsebody = msg.getResponseBody().toString();
-            String[] responseparts = {filteredResponseheaders.toString(), responsebody};
+        String responsebody = msg.getResponseBody().toString();
+        String[] responseparts = {filteredResponseheaders.toString(), responsebody};
 
-            // try each of the patterns in turn against the response.
-            String timestampType = null;
-            Iterator<Pattern> patternIterator = timestampPatterns.keySet().iterator();
+        // try each of the patterns in turn against the response.
+        String timestampType = null;
+        Iterator<Pattern> patternIterator = timestampPatterns.keySet().iterator();
 
-            while (patternIterator.hasNext()) {
-                Pattern timestampPattern = patternIterator.next();
-                timestampType = timestampPatterns.get(timestampPattern);
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Trying Timestamp Pattern: "
-                                    + timestampPattern
-                                    + " for timestamp type "
-                                    + timestampType);
-                for (String haystack : responseparts) {
-                    Matcher matcher = timestampPattern.matcher(haystack);
-                    while (matcher.find()) {
-                        String evidence = matcher.group();
-                        java.util.Date timestamp = null;
-                        try {
-                            // parse the number as a Unix timestamp
-                            timestamp =
-                                    new java.util.Date((long) Integer.parseInt(evidence) * 1000);
-                        } catch (NumberFormatException nfe) {
-                            // the number is not formatted correctly to be a timestamp. Skip it.
-                            continue;
-                        }
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Found a match for timestamp type "
-                                            + timestampType
-                                            + ":"
-                                            + evidence);
+        while (patternIterator.hasNext()) {
+            Pattern timestampPattern = patternIterator.next();
+            timestampType = timestampPatterns.get(timestampPattern);
+            log.debug(
+                    "Trying Timestamp Pattern: {} for timestamp type {}",
+                    timestampPattern,
+                    timestampType);
+            for (String haystack : responseparts) {
+                Matcher matcher = timestampPattern.matcher(haystack);
+                while (matcher.find()) {
+                    String evidence = matcher.group();
+                    java.util.Date timestamp = null;
+                    try {
+                        // parse the number as a Unix timestamp
+                        timestamp = new java.util.Date((long) Integer.parseInt(evidence) * 1000);
+                    } catch (NumberFormatException nfe) {
+                        // the number is not formatted correctly to be a timestamp. Skip it.
+                        continue;
+                    }
+                    log.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
 
-                        if (evidence != null && evidence.length() > 0) {
-                            // we found something.. potentially
-                            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
-                                Instant foundInstant =
-                                        Instant.ofEpochSecond(Long.parseLong(evidence));
-                                ZonedDateTime now = ZonedDateTime.now();
-                                if (!(foundInstant.isAfter(now.minusYears(1).toInstant())
-                                        && foundInstant.isBefore(now.plusYears(1).toInstant()))) {
-                                    continue;
-                                }
+                    if (evidence != null && evidence.length() > 0) {
+                        // we found something.. potentially
+                        if (AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+                            Instant foundInstant = Instant.ofEpochSecond(Long.parseLong(evidence));
+                            ZonedDateTime now = ZonedDateTime.now();
+                            if (!(foundInstant.isAfter(now.minusYears(1).toInstant())
+                                    && foundInstant.isBefore(now.plusYears(1).toInstant()))) {
+                                continue;
                             }
-                            newAlert()
-                                    .setName(getName() + " - " + timestampType)
-                                    .setRisk(Alert.RISK_INFO)
-                                    .setConfidence(Alert.CONFIDENCE_LOW)
-                                    .setDescription(getDescription() + " - " + timestampType)
-                                    .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
-                                    .setSolution(getSolution())
-                                    .setReference(getReference())
-                                    .setEvidence(evidence)
-                                    .setCweId(200) // Information Exposure,
-                                    .setWascId(13) // Information Leakage
-                                    .raise();
-                            // do NOT break at this point.. we need to find *all* the potential
-                            // timestamps in the response..
                         }
+                        newAlert()
+                                .setName(getName() + " - " + timestampType)
+                                .setRisk(Alert.RISK_INFO)
+                                .setConfidence(Alert.CONFIDENCE_LOW)
+                                .setDescription(getDescription() + " - " + timestampType)
+                                .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
+                                .setSolution(getSolution())
+                                .setReference(getReference())
+                                .setEvidence(evidence)
+                                .setCweId(200) // Information Exposure,
+                                .setWascId(13) // Information Leakage
+                                .raise();
+                        // do NOT break at this point.. we need to find *all* the potential
+                        // timestamps in the response..
                     }
                 }
+            }
+        }
+    }
+
+    private static boolean isFontRequest(HttpMessage msg) {
+        try {
+            String path = msg.getRequestHeader().getURI().getPath();
+            if (path != null) {
+                return PATTERN_FONT_EXTENSIONS.matcher(path).find();
             }
         } catch (URIException e) {
-            log.error("An exception occurrred passively scanning for timestamps");
+            log.error(e.getMessage(), e);
         }
+        return false;
     }
 
     /**

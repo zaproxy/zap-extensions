@@ -22,13 +22,19 @@ package org.zaproxy.zap.extension.soap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class WSDLFilePassiveScanRuleTestCase {
     private HttpMessage wsdlMsg = new HttpMessage();
+
+    private static void setContentType(HttpMessage msg, String contentType) {
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+    }
 
     @BeforeEach
     public void setUp() {
@@ -57,5 +63,38 @@ public class WSDLFilePassiveScanRuleTestCase {
 
         result = scanner.isWsdl(new HttpMessage()); /* Empty response. */
         assertFalse(result);
+    }
+
+    @Test
+    public void shouldNotAlertWhenWsdlFileNotFound() throws IOException {
+        HttpMessage wsdlMsg = new HttpMessage();
+        wsdlMsg = Sample.setOriginalRequest(wsdlMsg);
+        setContentType(wsdlMsg, "text/xml");
+        wsdlMsg = Sample.setResponseBodyContent(wsdlMsg);
+        WSDLFilePassiveScanRule scanner = new WSDLFilePassiveScanRule();
+        boolean result = scanner.isWsdl(wsdlMsg);
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldAlertWhenWsdlFileFound() throws IOException {
+        HttpMessage wsdlMsg = new HttpMessage();
+        wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);
+        setContentType(wsdlMsg, "text/xml");
+        wsdlMsg = Sample.setResponseBodyContent(wsdlMsg);
+        WSDLFilePassiveScanRule scanner = new WSDLFilePassiveScanRule();
+        boolean result = scanner.isWsdl(wsdlMsg);
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldAlertWhenWsdlXmlContentTypeFound() throws IOException {
+        HttpMessage wsdlMsg = new HttpMessage();
+        wsdlMsg = Sample.setOriginalRequest(wsdlMsg);
+        setContentType(wsdlMsg, "application/wsdl+xml");
+        wsdlMsg = Sample.setResponseBodyContent(wsdlMsg);
+        WSDLFilePassiveScanRule scanner = new WSDLFilePassiveScanRule();
+        boolean result = scanner.isWsdl(wsdlMsg);
+        assertTrue(result);
     }
 }

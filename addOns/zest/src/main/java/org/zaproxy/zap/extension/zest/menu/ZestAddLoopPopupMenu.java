@@ -25,7 +25,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -49,7 +50,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 
     private ExtensionZest extension;
 
-    private static final Logger logger = Logger.getLogger(ZestAddConditionPopupMenu.class);
+    private static final Logger logger = LogManager.getLogger(ZestAddConditionPopupMenu.class);
 
     /** This method initializes */
     public ZestAddLoopPopupMenu(ExtensionZest extension) {

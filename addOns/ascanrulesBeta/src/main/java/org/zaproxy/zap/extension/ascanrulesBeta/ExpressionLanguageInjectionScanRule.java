@@ -24,7 +24,8 @@ import java.net.UnknownHostException;
 import java.util.Random;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,7 +43,8 @@ import org.parosproxy.paros.network.HttpMessage;
 public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin {
 
     // Logger object
-    private static final Logger LOG = Logger.getLogger(ExpressionLanguageInjectionScanRule.class);
+    private static final Logger LOG =
+            LogManager.getLogger(ExpressionLanguageInjectionScanRule.class);
 
     private static final int MAX_NUM_TRIES = 1000;
     private static final int DEVIATION_VALUE = 999999;
@@ -140,15 +142,11 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
                     | URIException
                     | UnknownHostException
                     | IllegalArgumentException ex) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + msg.getRequestHeader().getURI().toString()
-                                    + "\n The target may have replied with a poorly formed redirect due to our input.");
+                LOG.debug(
+                        "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msg.getRequestHeader().getURI());
                 return;
             }
             // Check if the resulting content contains the executed addition
@@ -156,11 +154,9 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
                 // We Found IT!
                 // First do logging
                 LOG.debug(
-                        "[Expression Langage Injection Found] on parameter ["
-                                + paramName
-                                + "]  with payload ["
-                                + payload
-                                + "]");
+                        "[Expression Langage Injection Found] on parameter [{}]  with payload [{}]",
+                        paramName,
+                        payload);
 
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -175,11 +171,9 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
             LOG.error(
-                    "Expression Language Injection vulnerability check failed for parameter ["
-                            + paramName
-                            + "] and payload ["
-                            + payload
-                            + "] due to an I/O error",
+                    "Expression Language Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                    paramName,
+                    payload,
                     ex);
         }
     }

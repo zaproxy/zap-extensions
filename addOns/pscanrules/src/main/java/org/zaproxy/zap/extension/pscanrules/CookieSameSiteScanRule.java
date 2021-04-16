@@ -98,7 +98,7 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), cookieHeaderValue))
-                .setCweId(16) // CWE Id 16 - Configuration
+                .setCweId(1275) // CWE-1275: Sensitive Cookie with Improper SameSite Attribute
                 .setWascId(13) // WASC Id - Info leakage
                 .raise();
     }

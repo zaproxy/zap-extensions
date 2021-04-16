@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * GitEntryCache caches Git Index Entries
@@ -38,10 +39,10 @@ public class GitIndexEntryCache {
     private Map<URI, Map<URI, String>> gitIndexMap =
             Collections.synchronizedMap(new LRUMap(20)); // max: 20 Git index files (LRU)
 
-    private static Logger log = Logger.getLogger(GitIndexEntryCache.class);
+    private static Logger log = LogManager.getLogger(GitIndexEntryCache.class);
 
     private GitIndexEntryCache() {
-        if (log.isDebugEnabled()) log.debug("Initialising the Git Index Entry Cache");
+        log.debug("Initialising the Git Index Entry Cache");
     }
 
     public static synchronized GitIndexEntryCache getSingleton() {

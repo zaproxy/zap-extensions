@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.websocket.alerts;
 import java.util.ArrayList;
 import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
@@ -33,7 +34,7 @@ import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 /** Wrapper for Alerts. This wrapper used to construct alerts for WebSocket */
 public class WebSocketAlertWrapper {
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketAlertWrapper.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketAlertWrapper.class);
 
     private Alert alert;
 
@@ -192,9 +193,8 @@ public class WebSocketAlertWrapper {
                         webSocketMessageDTO.channel.getHandshakeReference().getHttpMessage();
             } catch (Exception e) {
                 LOGGER.info(
-                        "Couldn't get the Handshake Http Message for this specific channel. "
-                                + "Channel ID:"
-                                + webSocketMessageDTO.channel.id,
+                        "Couldn't get the Handshake Http Message for this specific channel. Channel ID: {}",
+                        webSocketMessageDTO.channel.id,
                         e);
                 return this;
             }

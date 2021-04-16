@@ -24,7 +24,8 @@ import java.io.IOException;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,7 +43,7 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
 
-    private static final Logger LOG = Logger.getLogger(SOAPXMLInjectionActiveScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);
 
     @Override
     public int getId() {
@@ -158,7 +159,7 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
             }
             NodeList nodeList = soapMsg.getSOAPBody().getElementsByTagName(paramName);
             if (nodeList.getLength() == 0) {
-                LOG.debug("Not a SOAP element: " + paramName);
+                LOG.debug("Not a SOAP element: {}", paramName);
                 return null;
             }
             nodeList.item(0).setTextContent(finalValue);

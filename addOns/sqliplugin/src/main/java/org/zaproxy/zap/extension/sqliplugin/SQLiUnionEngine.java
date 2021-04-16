@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -74,7 +75,7 @@ public class SQLiUnionEngine {
     private int exploitColumnsCount;
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(SQLiUnionEngine.class);
+    private static final Logger log = LogManager.getLogger(SQLiUnionEngine.class);
 
     /** @param plugin */
     public SQLiUnionEngine(SQLInjectionScanRule plugin) {
@@ -167,11 +168,8 @@ public class SQLiUnionEngine {
 
                 if (plugin.wasLastRequestDBMSError() && count > 1) {
                     log.warn(
-                            "combined UNION/error-based SQL injection case found on column "
-                                    + (position + 1)
-                                    + "."
-                                    + "Maybe could be found a column with better characteristics "
-                                    + "using a direct testing tool");
+                            "combined UNION/error-based SQL injection case found on column {}.Maybe could be found a column with better characteristics using a direct testing tool",
+                            position + 1);
                 }
 
                 return true;
@@ -834,14 +832,8 @@ public class SQLiUnionEngine {
         int found = -1;
 
         if (orderByTest(1) && !orderByTest(Integer.parseInt(SQLiPayloadManager.randomInt()))) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "ORDER BY technique seems to be usable. "
-                                + "This should reduce the time needed "
-                                + "to find the right number "
-                                + "of query columns. Automatically extending the "
-                                + "range for current UNION query injection technique test");
-            }
+            log.debug(
+                    "ORDER BY technique seems to be usable. This should reduce the time needed to find the right number of query columns. Automatically extending the range for current UNION query injection technique test");
 
             int lowCols = 1;
             int highCols = ORDER_BY_STEP;
@@ -931,9 +923,7 @@ public class SQLiUnionEngine {
         if (lowerCount == 1) {
             int found = orderByTechnique();
             if (found >= 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("target url appears to have " + found + " column in query");
-                }
+                log.debug("target url appears to have {} column in query", found);
                 return found;
             }
         }

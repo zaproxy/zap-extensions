@@ -23,10 +23,12 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.Database;
@@ -47,8 +49,9 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionImportWSDL";
+    public static final String STATS_ADDED_URLS = "soap.urls.added";
 
-    private static final Logger LOG = Logger.getLogger(ExtensionImportWSDL.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
 
     private ZapMenuItem menuImportLocalWSDL = null;
@@ -190,7 +193,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         if (extScript != null && extScript.getScript(scriptName) == null) {
             ScriptType variantType =
                     extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
-            ScriptEngineWrapper engine = extScript.getEngineWrapper("Oracle Nashorn");
+            ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
             if (variantType != null && engine != null) {
                 File scriptPath =
                         Paths.get(
@@ -213,6 +216,15 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                 extScript.addScript(script, false);
             }
         }
+    }
+
+    private static ScriptEngineWrapper getEngine(ExtensionScript ext, String engineName) {
+        try {
+            return ext.getEngineWrapper(engineName);
+        } catch (InvalidParameterException e) {
+            LOG.warn("The {} engine was not found, script variant will not be added.", engineName);
+        }
+        return null;
     }
 
     @Override

@@ -88,11 +88,10 @@ public class DataGenerator {
                 return strValue;
             }
         }
-        if (schema instanceof StringSchema) {
-            List<String> enumValues = ((StringSchema) schema).getEnum();
-            if (enumValues != null && !enumValues.isEmpty()) {
-                return enumValues.get(0);
-            }
+
+        List<?> enumValues = schema.getEnum();
+        if (enumValues != null && !enumValues.isEmpty()) {
+            return String.valueOf(enumValues.get(0));
         }
         return null;
     }

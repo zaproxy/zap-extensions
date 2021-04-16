@@ -33,7 +33,8 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -44,7 +45,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionReveal.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionReveal.class);
 
     public static final String NAME = "ExtensionReveal";
     public static final int PROXY_LISTENER_ORDER = 10;
@@ -189,14 +190,14 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found " + formElements.size() + " forms");
+            logger.debug("Found {} forms", formElements.size());
 
             for (Element formElement : formElements) {
                 List<Element> elements = formElement.getAllElements();
 
                 if (elements != null && elements.size() > 0) {
                     // Loop through all of the elements
-                    logger.debug("Found " + elements.size() + " inputs");
+                    logger.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
                         Attributes atts = element.getAttributes();
 
@@ -209,11 +210,9 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
                                         || (ATT_TYPE.equalsIgnoreCase(att.getName())
                                                 && TYPE_HIDDEN.equalsIgnoreCase(att.getValue()))) {
                                     logger.debug(
-                                            "Removing "
-                                                    + att.getName()
-                                                    + ": "
-                                                    + response.substring(
-                                                            att.getBegin(), att.getEnd()));
+                                            "Removing {}: {}",
+                                            att.getName(),
+                                            response.substring(att.getBegin(), att.getEnd()));
                                     outputDocument.remove(att);
                                     changed = true;
                                 }

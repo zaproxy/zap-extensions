@@ -33,7 +33,8 @@ import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeCellRenderer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -83,7 +84,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
      */
     private static final String[] BUILT_IN_SCRIPTS = {"Copy as curl command menu.js"};
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionScriptsUI.class);
 
     private ScriptType extScriptType =
             new ScriptType(SCRIPT_EXT_TYPE, "scripts.type.extender", SCRIPT_EXT_ICON, true, true);
@@ -129,10 +130,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         // ExtensionAuthentication, so the Popup for using the scripts as authentication is properly
         // enabled (it needs the authentication method types to already be registered).
         this.setOrder(ExtensionScript.EXTENSION_ORDER + 1);
-        if (this.getOrder() < ExtensionAuthentication.EXTENSION_ORDER)
-            Logger.getLogger(getClass())
-                    .error(
-                            "Scripts UI extension's order is not higher than Authentication extension's");
+        if (this.getOrder() < ExtensionAuthentication.EXTENSION_ORDER) {
+            LOGGER.error(
+                    "Scripts UI extension's order is not higher than Authentication extension's");
+        }
     }
 
     @Override
@@ -225,7 +226,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             if (script != null) {
                 this.getExtScript().setEnabled(script, true);
             } else {
-                LOGGER.error("Failed to install built in script " + template.getName());
+                LOGGER.error("Failed to install built in script {}", template.getName());
             }
         }
     }
@@ -887,7 +888,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             this.installedExtenderScripts.put(script.getName(), ec);
             script.setError(false);
         } catch (Exception e) {
-            LOGGER.warn("Failed to install extender script " + script.getName(), e);
+            LOGGER.warn("Failed to install extender script {}", script.getName(), e);
             extScript.setError(script, e);
             if (script.isEnabled()) {
                 extScript.setEnabled(script, false);
@@ -901,7 +902,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             ec = this.installedExtenderScripts.remove(script.getName());
             ec.uninstall(getExtensionScriptHelper());
         } catch (Exception e) {
-            LOGGER.warn("Failed to uninstall extender script " + script.getName(), e);
+            LOGGER.warn("Failed to uninstall extender script {}", script.getName(), e);
             extScript.setError(script, e);
         }
     }

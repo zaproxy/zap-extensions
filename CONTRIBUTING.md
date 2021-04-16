@@ -12,13 +12,8 @@ The help of each add-on should be updated accordingly to the changes done. The h
 `addOns/<addOnId>/src/main/javahelp/`, only the main files (English, under `help` directory) need
 to be changed, translated files are maintained from Crowdin.
 
-## Format/Style Java Code
+## Further Contribution Guidance
 
-The Java code is formatted according to Google Java Style (AOSP variant). The build automatically checks
-that the code conforms to the style (using [Spotless], which delegates to [google-java-format]), it can
-also be used to format the code (with the Gradle task `spotlessJavaApply`) if the IDE/editor in use
-does not support it.
+For full information about contributing to ZAP repositories please read [CONTRIBUTING.md].
 
-
-[Spotless]: https://github.com/diffplug/spotless
-[google-java-format]: https://github.com/google/google-java-format
+[CONTRIBUTING.md]: https://github.com/zaproxy/zaproxy/blob/main/CONTRIBUTING.md

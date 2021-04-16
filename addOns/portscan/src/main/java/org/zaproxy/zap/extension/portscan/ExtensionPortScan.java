@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.TreeNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
@@ -44,7 +45,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 public class ExtensionPortScan extends ExtensionAdaptor
         implements SessionChangedListener, ProxyListener, SiteMapListener, XmlReporterExtension {
 
-    private static final Logger logger = Logger.getLogger(ExtensionPortScan.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionPortScan.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.

@@ -24,7 +24,8 @@ import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -100,7 +101,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     private static XxeCallbackImplementor callbackImplementor = new XxeCallbackImplementor();
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(XxeScanRule.class);
+    private static final Logger log = LogManager.getLogger(XxeScanRule.class);
 
     @Override
     public int getId() {
@@ -209,9 +210,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     // Do not try to internationalise this.. we need an error message in any event..
                     // if it's in English, it's still better than not having it at all.
                     log.warn(
-                            "XXE Injection vulnerability check failed for payload ["
-                                    + payload
-                                    + "] due to an I/O error",
+                            "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                            payload,
                             ex);
                 }
             }
@@ -274,9 +274,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             }
         } catch (IOException ex) {
             log.warn(
-                    "XXE Injection vulnerability check failed for payload ["
-                            + payload
-                            + "] due to an I/O error",
+                    "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                    payload,
                     ex);
         }
     }
@@ -321,9 +320,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
             log.warn(
-                    "XXE Injection vulnerability check failed for payload ["
-                            + payload
-                            + "] due to an I/O error",
+                    "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                    payload,
                     ex);
         }
     }

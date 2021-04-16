@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -46,7 +47,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
     };
 
     // Logger object
-    private static final Logger log = Logger.getLogger(PaddingOracleScanRule.class);
+    private static final Logger log = LogManager.getLogger(PaddingOracleScanRule.class);
 
     @Override
     public int getId() {
@@ -151,14 +152,10 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
                     if (isPage500(msg)) {
                         // We Found IT!
                         // First do logging
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "[Padding Oracle Found] on parameter ["
-                                            + paramName
-                                            + "] with payload ["
-                                            + encodedValue
-                                            + "]");
-                        }
+                        log.debug(
+                                "[Padding Oracle Found] on parameter [{}] with payload [{}]",
+                                paramName,
+                                encodedValue);
 
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -182,14 +179,10 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
 
                             // We Found IT!
                             // First do logging
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "[Padding Oracle Found] on parameter ["
-                                                + paramName
-                                                + "] with payload ["
-                                                + encodedValue
-                                                + "]");
-                            }
+                            log.debug(
+                                    "[Padding Oracle Found] on parameter [{}] with payload [{}]",
+                                    paramName,
+                                    encodedValue);
 
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -216,11 +209,9 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "Padding Oracle vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + encoder.encode(oracle)
-                                + "] due to an I/O error",
+                        "Padding Oracle vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        encoder.encode(oracle),
                         ex);
             }
         }

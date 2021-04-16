@@ -25,7 +25,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
@@ -44,7 +45,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 ScriptStringPayloadProcessorAdapterUI> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
+            LogManager.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.script.name");
@@ -219,8 +220,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                         Constant.messages.getString(
                                 "fuzz.payload.processor.script.warnNoInterface.title"),
                         JOptionPane.INFORMATION_MESSAGE);
-                LOGGER.warn(
-                        "Failed to validate '" + scriptWrapper.getName() + "': " + e.getMessage());
+                LOGGER.warn("Failed to validate '{}': {}", scriptWrapper.getName(), e.getMessage());
                 return false;
             }
             return true;

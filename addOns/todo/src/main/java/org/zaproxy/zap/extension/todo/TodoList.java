@@ -36,7 +36,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.w3c.dom.Document;
@@ -45,6 +46,8 @@ import org.w3c.dom.NodeList;
 import org.zaproxy.zap.extension.tab.Tab;
 
 public class TodoList extends AbstractPanel implements Tab {
+
+    private static final Logger logger = LogManager.getLogger(TodoList.class);
 
     private static final long serialVersionUID = 1L;
     private JPanel panel;
@@ -62,7 +65,6 @@ public class TodoList extends AbstractPanel implements Tab {
         panel.setLayout(new GridLayout(0, 1));
         // TODO : add user defined tasks
         panel.add(new JLabel(Constant.messages.getString("todo.set.sheet.label")));
-        Logger logger = Logger.getLogger(TodoList.class);
 
         try {
             NodeList sections = parseXml();

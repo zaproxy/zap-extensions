@@ -37,7 +37,8 @@ import javax.swing.ImageIcon;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -92,7 +93,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private static final String DEFAULT_NEWS_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-news-";
     private static final String DEV_NEWS_PAGE = "dev";
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStart.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStart.class);
 
     private QuickStartPanel quickStartPanel = null;
     private AttackThread attackThread = null;
@@ -209,13 +210,12 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
                     } else {
                         LOGGER.debug(
-                                "Response from "
-                                        + newsPageUrl
-                                        + " : "
-                                        + msg.getResponseHeader().getStatusCode());
+                                "Response from {} : {}",
+                                newsPageUrl,
+                                msg.getResponseHeader().getStatusCode());
                     }
                 } catch (Exception e) {
-                    LOGGER.debug("Failed to read from " + newsPageUrl + " : " + e.getMessage(), e);
+                    LOGGER.debug("Failed to read from {} : {}", newsPageUrl, e.getMessage(), e);
                 }
             }
         }.start();
@@ -245,7 +245,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 Version zapVersion = new Version(Constant.PROGRAM_VERSION);
                 page = zapVersion.getMajorVersion() + "-" + zapVersion.getMinorVersion();
             } catch (IllegalArgumentException e) {
-                LOGGER.error("Failed to parse ZAP version " + Constant.PROGRAM_VERSION, e);
+                LOGGER.error("Failed to parse ZAP version {}", Constant.PROGRAM_VERSION, e);
             }
         }
 

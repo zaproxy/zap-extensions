@@ -21,7 +21,8 @@ package com.sittinglittleduck.DirBuster;
 
 import java.util.TimerTask;
 import java.util.Vector;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ProcessChecker extends TimerTask {
 
@@ -31,7 +32,7 @@ public class ProcessChecker extends TimerTask {
     private Vector lastTen = new Vector(10, 1);
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(ProcessChecker.class);
+    private static final Logger LOG = LogManager.getLogger(ProcessChecker.class);
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
@@ -116,50 +117,31 @@ public class ProcessChecker extends TimerTask {
             if (LOG.isDebugEnabled()) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
                     LOG.debug(
-                            "Current Speed: "
-                                    + current
-                                    + " requests/sec\n"
-                                    + "Average Speed: (T) "
-                                    + average
-                                    + ", (C) "
-                                    + averageLastTen
-                                    + " requests/sec\n"
-                                    + "Total Requests: "
-                                    + currentTotal
-                                    + "/"
-                                    + totalToDo
-                                    + "\n"
-                                    + "Time To Finish: ~"
-                                    + parseQueueLength);
+                            "Current Speed: {} requests/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: ~{}",
+                            current,
+                            average,
+                            averageLastTen,
+                            currentTotal,
+                            totalToDo,
+                            parseQueueLength);
 
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
                     LOG.debug(
-                            "Current speed: "
-                                    + current
-                                    + " request/sec\n"
-                                    + "Average Speed: (T) "
-                                    + average
-                                    + ", (C) "
-                                    + averageLastTen
-                                    + " requests/sec\n"
-                                    + "Total Requests: "
-                                    + currentTotal
-                                    + "/"
-                                    + totalToDo
-                                    + "\n"
-                                    + "Time To Finish: "
-                                    + timeToCompelete
-                                    + "\n"
-                                    + parseQueueLength);
+                            "Current speed: {} request/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: {}\n{}",
+                            current,
+                            average,
+                            averageLastTen,
+                            currentTotal,
+                            totalToDo,
+                            timeToCompelete,
+                            parseQueueLength);
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("dirQ: " + manager.dirQueue.size());
-                }
+                LOG.debug("dirQ: {}", manager.dirQueue.size());
                 // System.out.println("parseQ: " + manager.parseQueue.size());
                 // manager.
             }

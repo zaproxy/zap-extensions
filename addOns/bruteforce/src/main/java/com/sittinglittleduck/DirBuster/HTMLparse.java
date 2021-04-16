@@ -29,7 +29,8 @@ import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is to paser the returned html pages and extract other dirs and files from them
@@ -45,7 +46,7 @@ public class HTMLparse extends Thread {
     private boolean continueWorking = true;
 
     /* Logging object for the class */
-    private static final Logger LOG = Logger.getLogger(HTMLparse.class);
+    private static final Logger LOG = LogManager.getLogger(HTMLparse.class);
 
     /** Creates a new instance of HTMLparse */
     public HTMLparse(Manager manager) {
@@ -77,10 +78,8 @@ public class HTMLparse extends Thread {
             if (sourceAsString != null || work != null) {
                 if (!sourceAsString.equals("")) {
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Parsing text from " + work.getWork().toString());
-                        LOG.debug("Parsed text - " + sourceAsString);
-                    }
+                    LOG.debug("Parsing text from {}", work.getWork());
+                    LOG.debug("Parsed text - {}", sourceAsString);
 
                     Vector links = new Vector(50, 10);
                     Vector imageLinks = new Vector(50, 10);

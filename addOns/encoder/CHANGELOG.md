@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+### Removed
+- Groovy default template moved to Groovy add-on.
+
+## [0.5.0] - 2021-02-08
+### Changed
 - Remove "Advanced" in help page.
 
 ## [0.4.0] - 2020-12-15
@@ -33,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version.
 
+[0.5.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.2.0

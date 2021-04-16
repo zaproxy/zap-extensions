@@ -89,7 +89,7 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
         } catch (URIException ex) {
             LOGGER.warn(
                     "Unable to get authority from URI : {}. Ignoring and moving ahead with the scanning OpenRedirect",
-                    msg.getRequestHeader().getURI().toString(),
+                    msg.getRequestHeader().getURI(),
                     ex);
         }
 

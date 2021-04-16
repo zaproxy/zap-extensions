@@ -45,7 +45,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -55,7 +56,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(DiffDialog.class);
+    private static final Logger logger = LogManager.getLogger(DiffDialog.class);
 
     private JPanel jPanel = null;
     private JTextArea txtDisplayLeft = null;

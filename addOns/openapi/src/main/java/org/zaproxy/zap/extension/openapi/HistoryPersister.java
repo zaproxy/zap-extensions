@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -27,17 +28,25 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = Logger.getLogger(HistoryPersister.class);
+    private static final Logger LOG = LogManager.getLogger(HistoryPersister.class);
 
     private final ExtensionHistory extHistory;
+
+    private OpenApiResults results;
 
     public HistoryPersister() {
         this.extHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+    }
+
+    public HistoryPersister(OpenApiResults results) {
+        this();
+        this.results = results;
     }
 
     @Override
@@ -52,8 +61,13 @@ public class HistoryPersister implements RequesterListener {
                                     ? HistoryReference.TYPE_SPIDER
                                     : HistoryReference.TYPE_ZAP_USER,
                             message);
+
+            if (results != null) {
+                results.addHistoryReference(historyRef);
+            }
+            Stats.incCounter(ExtensionOpenApi.URL_ADDED_STATS);
         } catch (Exception e) {
-            LOG.warn("Failed to persist the message: " + e.getMessage(), e);
+            LOG.warn("Failed to persist the message: {}", e.getMessage(), e);
             return;
         }
 

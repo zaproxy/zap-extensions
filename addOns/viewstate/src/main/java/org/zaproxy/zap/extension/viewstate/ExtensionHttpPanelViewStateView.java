@@ -19,34 +19,17 @@
  */
 package org.zaproxy.zap.extension.viewstate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
-import org.zaproxy.zap.extension.httppanel.view.hex.ExtensionHttpPanelHexView;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 
 public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 
-    private static final List<Class<?>> EXTENSION_DEPENDENCIES;
-
-    static {
-        // Prepare a list of Extensions on which this extension depends
-        List<Class<?>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionBreak.class);
-        dependencies.add(ExtensionHttpPanelHexView.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
-
-    private static Logger logger = Logger.getLogger(ExtensionHttpPanelViewStateView.class);
     public static final String NAME = "ExtensionHttpPanelViewStateView";
 
     public ExtensionHttpPanelViewStateView() {

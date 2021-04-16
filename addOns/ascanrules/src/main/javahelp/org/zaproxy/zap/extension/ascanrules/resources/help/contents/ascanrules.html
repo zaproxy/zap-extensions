@@ -125,6 +125,8 @@ current target file an alert is raised and the scanner returns immediately. If n
 attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
 and the scanner returns immediately.
 <p>
+Note: This scan rule has one check that is excluded at High Alert Threshold.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PathTraversalScanRule.java">PathTraversalScanRule.java</a>
 
 <H2>Remote File Include</H2>

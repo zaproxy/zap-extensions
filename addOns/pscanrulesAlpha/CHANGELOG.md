@@ -4,6 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - Feature Policy
+  - Site Isolation
+  - Sub Resource Integrity
+
+## [30] - 2021-02-08
 
 ### Changed
 - Now targeting ZAP 2.10.
@@ -204,7 +212,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Tweaked "Source Code Disclosure" scanner to reduce false positives
 - Added "Insecure Component" scanner
-- Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
+- Addressed issue 1262 (Risk & Confidence for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 - Add Big Redirect scanner (Issue 1257)
 - Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"
 - Detect Node.js source code
@@ -253,6 +261,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v27

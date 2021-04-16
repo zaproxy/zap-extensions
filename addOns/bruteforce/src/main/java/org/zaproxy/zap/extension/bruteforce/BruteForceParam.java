@@ -27,13 +27,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 
 public class BruteForceParam extends AbstractParam {
-
-    private static final Logger logger = Logger.getLogger(BruteForceParam.class);
 
     private static final String THREAD_PER_SCAN = "bruteforce.threadPerHost";
     private static final String DEFAULT_FILE = "bruteforce.defaultFile";
@@ -84,16 +80,10 @@ public class BruteForceParam extends AbstractParam {
         } catch (Exception e) {
         }
 
-        try {
-            String path = getConfig().getString(DEFAULT_FILE, "");
-            if (!"".equals(path)) {
-                this.defaultFile = new ForcedBrowseFile(new File(path));
-            } else {
-                this.defaultFile = null;
-            }
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the forced browse default file: " + e.getMessage(), e);
+        String path = getString(DEFAULT_FILE, "");
+        if (!"".equals(path)) {
+            this.defaultFile = new ForcedBrowseFile(new File(path));
+        } else {
             this.defaultFile = null;
         }
     }

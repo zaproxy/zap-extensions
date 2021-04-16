@@ -290,7 +290,11 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                     } finally {
                         // delete the temp file.
                         // this will be deleted when the VM is shut down anyway, but just in case!
-                        if (classFile != null) classFile.delete();
+                        if (classFile != null && !classFile.delete()) {
+                            log.debug(
+                                    "The temporary file {} could not be deleted.",
+                                    classFile.getAbsolutePath());
+                        }
                     }
                 }
                 // remove the class from the set to handle, and add it to the list of classes

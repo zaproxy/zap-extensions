@@ -30,7 +30,8 @@ import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -41,7 +42,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class RevisitDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(RevisitDialog.class);
+    private static final Logger logger = LogManager.getLogger(RevisitDialog.class);
 
     private JPanel jPanel;
     private JButton resetButton;
@@ -78,7 +79,7 @@ public class RevisitDialog extends AbstractDialog {
         super();
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /**
@@ -91,11 +92,11 @@ public class RevisitDialog extends AbstractDialog {
         super(arg0, arg1);
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /** This method initializes this */
-    private void initialize() {
+    private void init() {
         this.setContentPane(getJPanel());
         this.pack();
 

@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -85,7 +86,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_39");
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(XpathInjectionScanRule.class);
+    private static final Logger log = LogManager.getLogger(XpathInjectionScanRule.class);
 
     @Override
     public int getId() {
@@ -163,16 +164,11 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
         String responseContent;
 
         // Begin rule execution
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Checking ["
-                            + msg.getRequestHeader().getMethod()
-                            + "]["
-                            + msg.getRequestHeader().getURI()
-                            + "], parameter ["
-                            + paramName
-                            + "] for XPath Injection vulnerabilites");
-        }
+        log.debug(
+                "Checking [{}] [{}], parameter [{}] for XPath Injection vulnerabilities.",
+                msg.getRequestHeader().getMethod(),
+                msg.getRequestHeader().getURI(),
+                paramName);
 
         // Start launching evil payloads
         // -----------------------------
@@ -180,9 +176,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
             msg = getNewMsg();
             setParameter(msg, paramName, evilPayload);
 
-            if (log.isTraceEnabled()) {
-                log.trace("Testing [" + paramName + "] = [" + evilPayload + "]");
-            }
+            log.trace("Testing [{}] = [{}]", paramName, evilPayload);
 
             try {
                 // Send the request and retrieve the response
@@ -206,14 +200,10 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
 
                         // We Found IT!
                         // First do logging
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "[XPath Injection Found] on parameter ["
-                                            + paramName
-                                            + "] with payload ["
-                                            + evilPayload
-                                            + "]");
-                        }
+                        log.debug(
+                                "[XPath Injection Found] on parameter [{}] with payload [{}]",
+                                paramName,
+                                evilPayload);
 
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_HIGH)
@@ -232,11 +222,9 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "XPath Injection vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + evilPayload
-                                + "] due to an I/O error",
+                        "XPath Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error.",
+                        paramName,
+                        evilPayload,
                         ex);
             }
 

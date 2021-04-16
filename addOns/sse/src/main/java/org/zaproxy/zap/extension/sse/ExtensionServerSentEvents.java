@@ -33,7 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
@@ -78,7 +79,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionServerSentEvents extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionServerSentEvents.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionServerSentEvents.class);
     public static final int HANDSHAKE_LISTENER = 10;
 
     /** Name of this extension. */

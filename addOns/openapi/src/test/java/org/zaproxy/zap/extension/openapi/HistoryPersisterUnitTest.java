@@ -39,9 +39,11 @@ import static org.mockito.Mockito.withSettings;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.WriterAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -187,16 +189,27 @@ class HistoryPersisterUnitTest extends TestUtils {
     @Test
     void shouldLogWarnIfUnableToPersistMessage() throws Exception {
         // Given
-        Logger logger = Logger.getLogger(HistoryPersister.class);
-        StringAppender appender = new StringAppender();
+        Logger logger = (Logger) LogManager.getLogger(HistoryPersister.class);
+        StringWriter writer = new StringWriter();
+        WriterAppender appender =
+                WriterAppender.newBuilder()
+                        .setName("TestAppender")
+                        .setLayout(
+                                PatternLayout.newBuilder()
+                                        .withPattern(PatternLayout.TTCC_CONVERSION_PATTERN)
+                                        .build())
+                        .setTarget(writer)
+                        .build();
+        appender.start();
         try {
             logger.addAppender(appender);
+            logger.setLevel(Level.ALL);
             given(tableHistory.write(anyLong(), anyInt(), any(HttpMessage.class)))
                     .willThrow(DatabaseException.class);
             // When
             historyPersister.handleMessage(message, 1);
             // Then
-            assertThat(appender.toString(), containsString("WARN"));
+            assertThat(writer.toString(), containsString("WARN"));
         } finally {
             logger.removeAppender(appender);
         }
@@ -230,22 +243,5 @@ class HistoryPersisterUnitTest extends TestUtils {
         historyPersister.handleMessage(message, 1);
         // Then
         assertThat(synchronous.get(), is(true));
-    }
-
-    private static class StringAppender extends WriterAppender {
-
-        private final StringWriter writer;
-
-        StringAppender() {
-            super();
-            writer = new StringWriter();
-            setLayout(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN));
-            setWriter(writer);
-        }
-
-        @Override
-        public String toString() {
-            return writer.toString();
-        }
     }
 }

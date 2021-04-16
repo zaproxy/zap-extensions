@@ -25,7 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Scanner;
@@ -48,7 +49,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
-    public static final Logger logger = Logger.getLogger(ExtensionSequence.class);
+    public static final Logger logger = LogManager.getLogger(ExtensionSequence.class);
     public static final ImageIcon ICON =
             new ImageIcon(
                     ExtensionSequence.class.getResource(
@@ -189,8 +190,8 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
                     }
                 } catch (Exception e) {
                     logger.debug(
-                            "Exception occurred, while trying to fetch Included Sequence Script: "
-                                    + e.getMessage());
+                            "Exception occurred, while trying to fetch Included Sequence Script: {}",
+                            e.getMessage());
                 }
             }
         }

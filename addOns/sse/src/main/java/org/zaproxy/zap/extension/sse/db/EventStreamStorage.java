@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.sse.db;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.sse.EventStreamObserver;
 import org.zaproxy.zap.extension.sse.EventStreamProxy.State;
@@ -31,7 +32,7 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
  */
 public class EventStreamStorage implements EventStreamObserver {
 
-    private static final Logger logger = Logger.getLogger(EventStreamStorage.class);
+    private static final Logger logger = LogManager.getLogger(EventStreamStorage.class);
 
     /** Determines when events are stored in database. */
     public static final int EVENT_STREAM_OBSERVING_ORDER = 100;
@@ -68,9 +69,7 @@ public class EventStreamStorage implements EventStreamObserver {
                     table.insertOrUpdateStream(stream);
                 } else if (!state.equals(State.CLOSED)) {
                     logger.warn(
-                            "Could not update state of Server-Sent Event stream to '"
-                                    + state.toString()
-                                    + "'!");
+                            "Could not update state of Server-Sent Event stream to '{}'!", state);
                 }
             } catch (DatabaseException e) {
                 logger.error(e.getMessage(), e);

@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -79,6 +80,7 @@ public class SQLiPayloadManager {
     private static final String PAYLOAD_FILE = "resources/payloads.xml";
     private static final String TAG_BOUNDARY = "boundary";
     private static final String TAG_TEST = "test";
+    private static final Random RAND = new Random();
 
     private static final String PAYLOAD_DELIMITER = "\\x00";
     // Regular expression used for replacing non-alphanum characters
@@ -93,7 +95,7 @@ public class SQLiPayloadManager {
     private List<SQLiBoundary> boundaries;
     private List<SQLiTest> tests;
 
-    private static final Logger log = Logger.getLogger(SQLiPayloadManager.class);
+    private static final Logger log = LogManager.getLogger(SQLiPayloadManager.class);
 
     // Singleton variable
     private static SQLiPayloadManager instance;
@@ -138,7 +140,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + boundaries.size() + " boundary elements");
+        // log.info("Loaded {} boundary elements", boundaries.size());
         is.close();
 
         // Load all payloads from resources
@@ -151,7 +153,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded " + tests.size() + " payload elements");
+        // log.info("Loaded {} payload elements", tests.size());
         is.close();
     }
 
@@ -180,12 +182,11 @@ public class SQLiPayloadManager {
      * @return the integer value
      */
     public static String randomInt(int length) {
-        Random rand = new Random();
         StringBuilder result = new StringBuilder();
-        result.append((char) (rand.nextInt(9) + '1'));
+        result.append((char) (RAND.nextInt(9) + '1'));
 
         for (int i = 1; i < length; i++) {
-            result.append((char) (rand.nextInt(10) + '0'));
+            result.append((char) (RAND.nextInt(10) + '0'));
         }
 
         return result.toString();
@@ -209,7 +210,6 @@ public class SQLiPayloadManager {
      * @return a string element containing exactly "lenght" characters
      */
     public static String randomString(int length, boolean lowerCase, String alphabet) {
-        Random rand = new Random();
         StringBuilder result = new StringBuilder();
 
         if (alphabet == null) {
@@ -220,7 +220,7 @@ public class SQLiPayloadManager {
         }
 
         for (int i = 0; i < length; i++) {
-            result.append(alphabet.charAt(rand.nextInt(alphabet.length())));
+            result.append(alphabet.charAt(RAND.nextInt(alphabet.length())));
         }
 
         return result.toString();

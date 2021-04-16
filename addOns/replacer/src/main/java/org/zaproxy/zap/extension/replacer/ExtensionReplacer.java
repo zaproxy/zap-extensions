@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.replacer;
 
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -50,7 +51,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     private OptionsReplacerPanel optionsReplacerPanel;
     private ReplacerParam params;
     private ZapMenuItem replacerMenuItem;
-    private static final Logger LOGGER = Logger.getLogger(ExtensionReplacer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionReplacer.class);
 
     public ExtensionReplacer() {
         super(NAME);
@@ -151,10 +152,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                 switch (rule.getMatchType()) {
                     case REQ_HEADER:
                         LOGGER.debug(
-                                "Add in request header: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in request header: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         if (rule.getReplacement().length() == 0) {
                             // Remove the header
                             msg.getRequestHeader().setHeader(rule.getMatchString(), null);
@@ -165,10 +165,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case REQ_HEADER_STR:
                         LOGGER.debug(
-                                "Replace in request header: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in request header: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String header = msg.getRequestHeader().toString();
                         if (contains(header, rule.getMatchString(), p)) {
                             header =
@@ -186,10 +185,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case REQ_BODY_STR:
                         LOGGER.debug(
-                                "Add in request body: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in request body: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String body = msg.getRequestBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
                             body =
@@ -206,7 +204,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     case RESP_HEADER_STR:
                     case RESP_BODY_STR:
                         // Ignore response rules here
-                        LOGGER.debug("Ignore response rule " + rule.getDescription());
+                        LOGGER.debug("Ignore response rule {}", rule.getDescription());
                         break;
                 }
             }
@@ -226,14 +224,13 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     case REQ_HEADER_STR:
                     case REQ_BODY_STR:
                         // Ignore request rules here
-                        LOGGER.debug("Ignore request rule " + rule.getDescription());
+                        LOGGER.debug("Ignore request rule {}", rule.getDescription());
                         break;
                     case RESP_HEADER:
                         LOGGER.debug(
-                                "Add in response header: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in response header: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         if (rule.getReplacement().length() == 0) {
                             // Remove the header
                             msg.getResponseHeader().setHeader(rule.getMatchString(), null);
@@ -244,10 +241,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case RESP_HEADER_STR:
                         LOGGER.debug(
-                                "Replace in response header: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in response header: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String header = msg.getResponseHeader().toString();
                         if (contains(header, rule.getMatchString(), p)) {
                             header =
@@ -265,10 +261,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case RESP_BODY_STR:
                         LOGGER.debug(
-                                "Replace in response body: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in response body: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String body = msg.getResponseBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
                             body =

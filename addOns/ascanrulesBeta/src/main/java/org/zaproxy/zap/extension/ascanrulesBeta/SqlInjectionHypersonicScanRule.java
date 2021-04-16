@@ -24,7 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -103,7 +104,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
     /** Hypersonic specific time based injection strings. */
 
     // issue with "+" symbols in here:
-    // we cannot encode them here as %2B, as then the database gets them double encoded as %252B
+    // we cannot encode them here as %2B, as then the database gets them double encoded as %252Bn
     // we cannot leave them as unencoded '+' characters either, as then they are NOT encoded by the
     // HttpMessage.setGetParams (x) or by AbstractPlugin.sendAndReceive (HttpMessage)
     // and are seen by the database as spaces :(
@@ -180,10 +181,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(SqlInjectionHypersonicScanRule.class);
-
-    /** determines if we should output Debug level logging */
-    private boolean debugEnabled = log.isDebugEnabled();
+    private static Logger log = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
 
     @Override
     public int getId() {
@@ -222,16 +220,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        // DEBUG: turn on for debugging
-        // TODO: turn this off
-        // log.setLevel(org.apache.log4j.Level.DEBUG);
-        // this.debugEnabled = true;
-
-        if (this.debugEnabled) log.debug("Initialising");
-
-        // TODO: debug only
-        // this.setAttackStrength(AttackStrength.INSANE);
-
+        log.debug("Initialising");
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             doTimeBased = true;
@@ -260,12 +249,10 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15) * 1000;
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for 'rules.common.sleep': "
-                            + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        if (this.debugEnabled) {
-            log.debug("Sleep set to " + sleepInMs + " milliseconds");
-        }
+        log.debug("Sleep set to {} milliseconds", sleepInMs);
     }
 
     /**
@@ -274,11 +261,6 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
      */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-
-        // DEBUG only
-        // log.setLevel(org.apache.log4j.Level.DEBUG);
-        // this.debugEnabled = true;
-
         try {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
@@ -288,23 +270,16 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                if (this.debugEnabled)
-                    log.debug(
-                            "The Base Time Check timed out on ["
-                                    + msgTimeBaseline.getRequestHeader().getMethod()
-                                    + "] URL ["
-                                    + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                    + "]");
+                log.debug(
+                        "The Base Time Check timed out on [{}] URL [{}]",
+                        msgTimeBaseline.getRequestHeader().getMethod(),
+                        msgTimeBaseline.getRequestHeader().getURI());
             } catch (SocketException ex) {
-                if (this.debugEnabled)
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + msgTimeBaseline.getRequestHeader().getURI().toString()
-                                    + " for Base Time Check");
+                log.debug(
+                        "Caught {} {} when accessing: {} for Base Time Check",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msgTimeBaseline.getRequestHeader().getURI());
                 return; // No need to keep going
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
@@ -313,17 +288,12 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             int countUnionBasedRequests = 0;
             int countTimeBasedRequests = 0;
 
-            if (this.debugEnabled)
-                log.debug(
-                        "Scanning URL ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], field ["
-                                + paramName
-                                + "] with value ["
-                                + paramValue
-                                + "] for SQL Injection");
+            log.debug(
+                    "Scanning URL [{}] [{}], field [{}] with value [{}] for SQL Injection",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI(),
+                    paramName,
+                    paramValue);
 
             // Hypersonic specific time based SQL injection checks
             for (int timeBasedSQLindex = 0;
@@ -346,42 +316,28 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // this is to be expected, if we start sending slow queries to the database.
                     // ignore it in this case.. and just get the time.
-                    if (this.debugEnabled)
-                        log.debug(
-                                "The time check query timed out on ["
-                                        + msgTimeBaseline.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
+                    log.debug(
+                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
+                            msgTimeBaseline.getRequestHeader().getMethod(),
+                            msgTimeBaseline.getRequestHeader().getURI(),
+                            paramName);
                 } catch (SocketException ex) {
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msgTimeBaseline.getRequestHeader().getURI().toString()
-                                        + " for time check query");
+                    log.debug(
+                            "Caught {} {} when accessing: {} for time check query",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msgTimeBaseline.getRequestHeader().getURI());
                     return; // No need to keep going
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
-                if (this.debugEnabled)
-                    log.debug(
-                            "Time Based SQL Injection test: ["
-                                    + newTimeBasedInjectionValue
-                                    + "] on field: ["
-                                    + paramName
-                                    + "] with value ["
-                                    + newTimeBasedInjectionValue
-                                    + "] took "
-                                    + modifiedTimeUsed
-                                    + "ms, where the original took "
-                                    + originalTimeUsed
-                                    + "ms");
+                log.debug(
+                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
+                        newTimeBasedInjectionValue,
+                        paramName,
+                        newTimeBasedInjectionValue,
+                        modifiedTimeUsed,
+                        originalTimeUsed);
 
                 if (modifiedTimeUsed >= (originalTimeUsed + sleepInMs)) {
                     // takes more than 15 (by default) extra seconds => likely time based SQL
@@ -424,16 +380,11 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "A likely Time Based SQL Injection Vulnerability has been found with ["
-                                        + msgAttack.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgAttack.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
-                    }
+                    log.debug(
+                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
+                            msgAttack.getRequestHeader().getMethod(),
+                            msgAttack.getRequestHeader().getURI().getURI(),
+                            paramName);
                     return;
                 } // query took longer than the amount of time we attempted to retard it by
             } // for each time based SQL index

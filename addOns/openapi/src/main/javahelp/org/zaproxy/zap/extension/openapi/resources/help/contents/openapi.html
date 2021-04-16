@@ -11,6 +11,8 @@ OpenAPI Support
 This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, and 3.0.
 <br><br>
 The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
+<br><br>
+It also supports the <a href="automation.html">Automation Framework</a>.
 
 <H2>UI</H2>
 2 menu items are added to the Import menu:
@@ -57,6 +59,12 @@ Default values are used when importing OpenAPI definitions.<br>
 These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
 In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values, 
 e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+<H2>Statistics</H2>
+The add-on maintains the following statistics:
+<ul>
+    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+</ul>
 
 </BODY>
 </HTML>

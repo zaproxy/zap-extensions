@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -60,7 +61,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
 
     private static final Logger log =
-            Logger.getLogger(SourceCodeDisclosureCve20121823ScanRule.class);
+            LogManager.getLogger(SourceCodeDisclosureCve20121823ScanRule.class);
 
     @Override
     public int getId() {
@@ -159,10 +160,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                 boolean match2 = matcher2.matches();
 
                 if ((!responseBody.equals(responseBodyDecoded)) && (match1 || match2)) {
-
-                    if (log.isDebugEnabled()) {
-                        log.debug("Source Code Disclosure alert for: " + originalURI.getURI());
-                    }
+                    log.debug("Source Code Disclosure alert for: {}", originalURI.getURI());
 
                     String sourceCode = null;
                     if (match1) {
@@ -187,8 +185,8 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
             }
         } catch (Exception e) {
             log.error(
-                    "Error scanning a Host for Source Code Disclosure via CVE-2012-1823: "
-                            + e.getMessage(),
+                    "Error scanning a Host for Source Code Disclosure via CVE-2012-1823: {}",
+                    e.getMessage(),
                     e);
         }
     }
@@ -206,7 +204,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
         try {
             return new URI(uri, true);
         } catch (URIException e) {
-            log.warn("Failed to create attack URI [" + uri + "], cause: " + e.getMessage());
+            log.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
         }
         return null;
     }

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.beanshell;
 import bsh.EvalError;
 import bsh.Interpreter;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -38,9 +37,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
@@ -58,7 +57,6 @@ public class BeanShellConsoleFrame extends AbstractFrame {
     private JButton btnLoad = null;
     private JButton btnSave = null;
     private JButton btnSaveAs = null;
-    private Extension extension = null;
     private Interpreter interpreter = null;
     private String scriptsDir = System.getProperty("user.dir") + "/scripts/";
     private File currentScriptFile = null;
@@ -66,25 +64,11 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     private JPanel jPanel = null;
 
-    private static final Logger log = Logger.getLogger(BeanShellConsoleFrame.class);
+    private static final Logger log = LogManager.getLogger(BeanShellConsoleFrame.class);
 
     /** @throws HeadlessException */
     public BeanShellConsoleFrame() throws HeadlessException {
         super();
-        initialize();
-    }
-
-    /**
-     * @param parent
-     * @param modal
-     * @param extension
-     * @throws HeadlessException
-     */
-    public BeanShellConsoleFrame(Frame parent, boolean modal, Extension extension)
-            throws HeadlessException {
-        // super(parent, modal);
-        super();
-        this.extension = extension;
         initialize();
     }
 
@@ -155,9 +139,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     input.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                log.debug(e.getMessage(), e);
             }
         }
 
@@ -176,9 +158,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     output.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                log.debug(e.getMessage(), e);
             }
         }
     }
@@ -305,14 +285,6 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     });
         }
         return btnSaveAs;
-    }
-
-    public void setExtension(Extension extension) {
-        this.extension = extension;
-    }
-
-    private Extension getExtension() {
-        return extension;
     }
 
     @Override

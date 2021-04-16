@@ -26,7 +26,8 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
@@ -34,7 +35,7 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
 
     private static final long serialVersionUID = 1L;
     private ExtensionPortScan extension = null;
-    private static Logger log = Logger.getLogger(PopupMenuPortCopy.class);
+    private static Logger log = LogManager.getLogger(PopupMenuPortCopy.class);
 
     /** */
     public PopupMenuPortCopy() {

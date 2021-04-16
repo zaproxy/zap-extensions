@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.swing.SwingUtilities;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.Target;
@@ -390,6 +391,18 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
 
         public void notifyScannerRemoved() {
             fuzzerHandler.scannerRemoved(fuzzer);
+        }
+    }
+
+    void updateUiFuzzResultsContentPanels() {
+        acquireFuzzersLock();
+        try {
+            fuzzerIdsToFuzzerMap.values().stream()
+                    .map(FuzzerEntry::getResultsContentPanel)
+                    .map(FuzzResultsContentPanel::getPanel)
+                    .forEach(SwingUtilities::updateComponentTreeUI);
+        } finally {
+            releaseScanStateLock();
         }
     }
 }

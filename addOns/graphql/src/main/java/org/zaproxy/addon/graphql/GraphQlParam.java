@@ -20,7 +20,8 @@
 package org.zaproxy.addon.graphql;
 
 import java.util.Locale;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -31,6 +32,10 @@ public class GraphQlParam extends VersionedAbstractParam {
     private static final String PARAM_BASE_KEY = "graphql";
 
     private static final String PARAM_MAX_QUERY_DEPTH = PARAM_BASE_KEY + ".maxQueryDepth";
+    private static final String PARAM_LENIENT_MAX_QUERY_DEPTH =
+            PARAM_BASE_KEY + ".lenientMaxQueryDepth";
+    private static final String PARAM_MAX_ADDITIONAL_QUERY_DEPTH =
+            PARAM_BASE_KEY + ".maxAdditionalQueryDepth";
     private static final String PARAM_MAX_ARGS_DEPTH = PARAM_BASE_KEY + ".maxArgsDepth";
     private static final String PARAM_OPTIONAL_ARGS = PARAM_BASE_KEY + ".optionalArgs";
     private static final String PARAM_ARGS_TYPE = PARAM_BASE_KEY + ".argsType";
@@ -41,21 +46,25 @@ public class GraphQlParam extends VersionedAbstractParam {
      * The version of the configurations. Used to keep track of configurations changes between
      * releases, if updates are needed.
      */
-    private static final int PARAM_CURRENT_VERSION = 1;
+    private static final int PARAM_CURRENT_VERSION = 2;
 
-    private static final Logger LOG = Logger.getLogger(GraphQlParam.class);
+    private static final Logger LOG = LogManager.getLogger(GraphQlParam.class);
 
     public GraphQlParam() {}
 
     /** For unit tests. */
     public GraphQlParam(
             int maxQueryDepth,
+            boolean lenientMaxQueryDepthEnabled,
+            int maxAdditionalQueryDepth,
             int maxArgsDepth,
             boolean optionalArgsEnabled,
             ArgsTypeOption argsType,
             QuerySplitOption querySplitType,
             RequestMethodOption requestMethod) {
         this.maxQueryDepth = maxQueryDepth;
+        this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
+        this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
         this.maxArgsDepth = maxArgsDepth;
         this.optionalArgsEnabled = optionalArgsEnabled;
         this.argsType = argsType;
@@ -135,6 +144,8 @@ public class GraphQlParam extends VersionedAbstractParam {
     };
 
     private int maxQueryDepth;
+    private boolean lenientMaxQueryDepthEnabled;
+    private int maxAdditionalQueryDepth;
     private int maxArgsDepth;
     private boolean optionalArgsEnabled;
     private ArgsTypeOption argsType;
@@ -148,6 +159,24 @@ public class GraphQlParam extends VersionedAbstractParam {
     public void setMaxQueryDepth(int maxQueryDepth) {
         this.maxQueryDepth = maxQueryDepth;
         getConfig().setProperty(PARAM_MAX_QUERY_DEPTH, maxQueryDepth);
+    }
+
+    public boolean getLenientMaxQueryDepthEnabled() {
+        return lenientMaxQueryDepthEnabled;
+    }
+
+    public void setLenientMaxQueryDepthEnabled(boolean lenientMaxQueryDepthEnabled) {
+        this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
+        getConfig().setProperty(PARAM_LENIENT_MAX_QUERY_DEPTH, lenientMaxQueryDepthEnabled);
+    }
+
+    public int getMaxAdditionalQueryDepth() {
+        return maxAdditionalQueryDepth;
+    }
+
+    public void setMaxAdditionalQueryDepth(int maxAdditionalQueryDepth) {
+        this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
+        getConfig().setProperty(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, maxAdditionalQueryDepth);
     }
 
     public int getMaxArgsDepth() {
@@ -177,7 +206,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setArgsType(ArgsTypeOption.valueOf(argsType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + argsType + "\" is not a valid Arguments Specification Type.");
+            LOG.debug("'{}' is not a valid Arguments Specification Type.", argsType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -196,7 +225,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setQuerySplitType(QuerySplitOption.valueOf(querySplitType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + querySplitType + "\" is not a valid Query Split Type.");
+            LOG.debug("'{}' is not a valid Query Split Type.", querySplitType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -215,7 +244,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setRequestMethod(RequestMethodOption.valueOf(requestMethod.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + requestMethod + "\" is not a valid Request Method Option.");
+            LOG.debug("'{}' is not a valid Request Method Option.", requestMethod);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -238,6 +267,8 @@ public class GraphQlParam extends VersionedAbstractParam {
     @Override
     protected void parseImpl() {
         maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, 5);
+        lenientMaxQueryDepthEnabled = getBoolean(PARAM_LENIENT_MAX_QUERY_DEPTH, true);
+        maxAdditionalQueryDepth = getInt(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, 5);
         maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, 5);
         optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, true);
         argsType =

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.sequence;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -36,7 +37,7 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
 
     private final ExtensionScript extScript;
-    public static final Logger logger = Logger.getLogger(SequencePopupMenuItem.class);
+    public static final Logger logger = LogManager.getLogger(SequencePopupMenuItem.class);
     private ExtensionSequence extension = null;
 
     public SequencePopupMenuItem(ExtensionSequence extension, ExtensionScript extensionScript) {

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 import java.util.Objects;
 import java.util.function.Function;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
@@ -33,7 +34,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
 
-    private static final Logger LOG = Logger.getLogger(HttpFuzzerProcessorScriptProxy.class);
+    private static final Logger LOG = LogManager.getLogger(HttpFuzzerProcessorScriptProxy.class);
     private final ScriptWrapper scriptWrapper;
     private final HttpFuzzerProcessorScript script;
 
@@ -87,16 +88,12 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
         try {
             return paramsReader.apply(script);
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "An error occurred while calling '"
-                                + methodName
-                                + "' on script '"
-                                + scriptWrapper.getName()
-                                + "': "
-                                + e.getMessage(),
-                        e);
-            }
+            LOG.debug(
+                    "An error occurred while calling '{}' on script '{}': {}",
+                    methodName,
+                    scriptWrapper.getName(),
+                    e.getMessage(),
+                    e);
         }
         return HttpFuzzerProcessorScript.EMPTY_PARAMS;
     }

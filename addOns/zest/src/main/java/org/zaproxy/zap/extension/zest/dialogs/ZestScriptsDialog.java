@@ -36,7 +36,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -72,7 +73,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_DEBUG = "zest.dialog.script.label.debug";
 
-    private static final Logger logger = Logger.getLogger(ZestScriptsDialog.class);
+    private static final Logger logger = LogManager.getLogger(ZestScriptsDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -413,8 +414,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             scriptNode = extension.add(scriptWrapper, false);
             // Add any defered messages
             for (HttpMessage msg : deferedMessages) {
-                logger.debug(
-                        "Adding defered message: " + msg.getRequestHeader().getURI().toString());
+                logger.debug("Adding defered message: {}", msg.getRequestHeader().getURI());
                 extension.addToParent(scriptNode, msg, null);
             }
             deferedMessages.clear();

@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.soap;
 
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.spider.parser.SpiderParser;
@@ -29,7 +30,7 @@ public class WSDLSpider extends SpiderParser {
 
     private final WSDLCustomParser parser;
 
-    private static final Logger LOG = Logger.getLogger(WSDLSpider.class);
+    private static final Logger LOG = LogManager.getLogger(WSDLSpider.class);
 
     public WSDLSpider(WSDLCustomParser parser) {
         this.parser = parser;
@@ -65,7 +66,7 @@ public class WSDLSpider extends SpiderParser {
                 String content = message.getResponseBody().toString();
                 if (parser.canBeWSDLparsed(content)) return true;
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Content is not wsdl: " + content);
+                    LOG.debug("Content is not wsdl: {}", content);
                 }
             }
         } catch (Exception e) {

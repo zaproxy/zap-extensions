@@ -17,7 +17,7 @@ description = "A graphical security scripting language, ZAPs macro language on s
 zapAddOn {
     addOnName.set("Zest - Graphical Security Scripting Language")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -27,6 +27,7 @@ zapAddOn {
                 register("selenium") {
                     version.set("15.*")
                 }
+                register("scripts")
             }
         }
     }

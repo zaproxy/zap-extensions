@@ -22,11 +22,13 @@ package org.zaproxy.addon.graphql;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -53,7 +55,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         implements CommandLineListener, SessionChangedListener {
 
     public static final String NAME = "ExtensionGraphQl";
-    private static final Logger LOG = Logger.getLogger(ExtensionGraphQl.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionGraphQl.class);
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
@@ -173,7 +175,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         synchronized (parserThreads) {
             for (ParserThread thread : parserThreads) {
                 if (thread.isRunning()) {
-                    LOG.debug("Stopping Thread " + thread.getName());
+                    LOG.debug("Stopping Thread {}", thread.getName());
                     thread.stopParser();
                 }
             }
@@ -188,7 +190,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         if (extScript != null && extScript.getScript(scriptName) == null) {
             ScriptType variantType =
                     extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
-            ScriptEngineWrapper engine = extScript.getEngineWrapper("Oracle Nashorn");
+            ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
             if (variantType != null && engine != null) {
                 File scriptPath =
                         Paths.get(
@@ -211,6 +213,15 @@ public class ExtensionGraphQl extends ExtensionAdaptor
                 extScript.addScript(script, false);
             }
         }
+    }
+
+    private static ScriptEngineWrapper getEngine(ExtensionScript ext, String engineName) {
+        try {
+            return ext.getEngineWrapper(engineName);
+        } catch (InvalidParameterException e) {
+            LOG.warn("The {} engine was not found, script variant will not be added.", engineName);
+        }
+        return null;
     }
 
     @Override

@@ -37,7 +37,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -68,7 +69,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     TokenAnalyserThread analyserThread = null;
 
-    private static Logger log = Logger.getLogger(AnalyseTokensDialog.class);
+    private static Logger log = LogManager.getLogger(AnalyseTokensDialog.class);
 
     private ResourceBundle messages;
 
@@ -175,7 +176,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     @Override
     public void notifyTestResult(TokenAnalysisTestResult result) {
-        log.debug("notifyTestResult " + result.getType() + " " + result.getResult().name());
+        log.debug("notifyTestResult {} {}", result.getType(), result.getResult().name());
         this.getTokenAnalysisResultsTableModel().addResult(result);
         this.addDetailTitle(result.getName());
         this.addDetails(result.getDetails());

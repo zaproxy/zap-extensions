@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -36,7 +37,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class FeaturePolicyScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
-    private static final Logger LOGGER = Logger.getLogger(FeaturePolicyScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(FeaturePolicyScanRule.class);
     private static final int PLUGIN_ID = 10063;
 
     @Override
@@ -69,19 +70,12 @@ public class FeaturePolicyScanRule extends PluginPassiveScanner {
                     .setDescription(getAlertAttribute("desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("refs"))
-                    .setCweId(16) // CWE-16: Configuration
+                    .setCweId(693) // CWE-693: Protection Mechanism Failure
                     .setWascId(15) // WASC-15: Application Misconfiguration
                     .raise();
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class CustomPayloadColumns {
@@ -40,6 +41,10 @@ public final class CustomPayloadColumns {
         columns.add(createCategoryColumn().AsReadonly());
         columns.add(createPayloadColumn().AsReadonly());
         return columns;
+    }
+
+    public static List<Column<CustomPayload>> createColumnsForMultiplePayloads() {
+        return Collections.singletonList(createCategoryColumn());
     }
 
     private static EditableColumn<CustomPayload> createEnabledColumn() {

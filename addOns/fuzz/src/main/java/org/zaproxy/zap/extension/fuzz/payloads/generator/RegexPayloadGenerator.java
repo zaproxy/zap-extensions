@@ -21,10 +21,14 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
 import com.mifmif.common.regex.Generex;
 import com.mifmif.common.regex.util.Iterator;
+import dk.brics.automaton.Automaton;
+import java.lang.reflect.Field;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -35,6 +39,8 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * @see DefaultPayload
  */
 public class RegexPayloadGenerator implements StringPayloadGenerator {
+
+    private static final Logger logger = LogManager.getLogger(RegexPayloadGenerator.class);
 
     /**
      * Default limit for calculation of number of generated payloads of an infinite regular
@@ -52,6 +58,17 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
      * regular expression is considered invalid.
      */
     private static final int VALID_REGEX_MAX_SECONDS = 5;
+
+    private static Field generexAutomatonField;
+
+    static {
+        try {
+            generexAutomatonField = Generex.class.getDeclaredField("automaton");
+            generexAutomatonField.setAccessible(true);
+        } catch (Exception e) {
+            logger.error("Failed to set Generex's automaton accessible.", e);
+        }
+    }
 
     private final Generex generator;
     private final int maxPayloads;
@@ -232,7 +249,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
             return Math.max(0, limit);
         }
 
-        long max = limit;
+        int max = limit;
         if (max <= 0 || max == DEFAULT_LIMIT_CALCULATION_PAYLOADS) {
             if (isInfiniteImpl(generator, 0)) {
                 return DEFAULT_LIMIT_CALCULATION_PAYLOADS;
@@ -241,7 +258,26 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
                 max = Integer.MAX_VALUE;
             }
         }
-        return (int) generator.matchedStringsSize(max);
+
+        Automaton automaton = getAutomaton(generator);
+        if (automaton == null) {
+            // Shouldn't happen.
+            return max;
+        }
+
+        return new StateStringCounter(automaton.getInitialState(), max).count();
+    }
+
+    private static Automaton getAutomaton(Generex generex) {
+        if (generexAutomatonField == null) {
+            return null;
+        }
+        try {
+            return (Automaton) generexAutomatonField.get(generex);
+        } catch (Exception e) {
+            logger.warn("Failed to get automaton.", e);
+        }
+        return null;
     }
 
     private static class RegexIterator implements ResettableAutoCloseableIterator<DefaultPayload> {

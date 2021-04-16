@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.websocket.pscan;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArraySet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketSenderListener;
 import org.zaproxy.zap.extension.websocket.alerts.AlertManager;
@@ -37,7 +38,7 @@ import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
  */
 public class WebSocketPassiveScannerManager {
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketPassiveScannerManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketPassiveScannerManager.class);
 
     /** The background thread where the passive scans are running */
     private WebSocketPassiveScanThread passiveScanThread;
@@ -131,9 +132,8 @@ public class WebSocketPassiveScannerManager {
     private boolean addPlugin(WebSocketPassiveScannerDecorator passiveScanner) {
         if (getPassiveScannersSet().contains(passiveScanner)) {
             LOGGER.warn(
-                    "Insertion of "
-                            + passiveScanner.getName()
-                            + " is prevent in order to avoid the duplication");
+                    "Insertion of {} is prevent in order to avoid the duplication",
+                    passiveScanner.getName());
             return false;
         }
         return getPassiveScannersSet().add(passiveScanner);

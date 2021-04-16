@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -34,7 +35,7 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestRecordOnOffPopupMenu.class);
+    private static final Logger logger = LogManager.getLogger(ZestRecordOnOffPopupMenu.class);
 
     private ExtensionZest extension = null;
     private boolean record;

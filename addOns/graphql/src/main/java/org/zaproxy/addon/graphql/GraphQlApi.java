@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -39,8 +38,6 @@ public class GraphQlApi extends ApiImplementor {
     private static final String PARAM_FILE = "file";
     private static final String PARAM_URL = "url";
     private static final String PARAM_ENDPOINT = "endurl";
-
-    private static final Logger LOG = Logger.getLogger(GraphQlApi.class);
 
     public GraphQlApi() {
         this.addApiAction(

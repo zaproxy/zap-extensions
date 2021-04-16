@@ -32,7 +32,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 public class SAMLConfiguration implements AttributeListener {
@@ -44,7 +45,7 @@ public class SAMLConfiguration implements AttributeListener {
 
     private SAMLConfigData configData;
 
-    protected static final Logger log = Logger.getLogger(SAMLConfiguration.class);
+    protected static final Logger log = LogManager.getLogger(SAMLConfiguration.class);
 
     /**
      * Get the singleton configurations object

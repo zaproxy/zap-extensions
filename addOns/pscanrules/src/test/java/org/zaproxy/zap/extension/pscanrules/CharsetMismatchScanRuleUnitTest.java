@@ -148,7 +148,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACHARSET_MISMATCH));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
 
         assertThat(
@@ -156,7 +156,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
                 containsNameLoadedWithKey(NO_MISMATCH_METACONTENTTYPE_MISSING));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(1).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(1).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(15));
     }
 
@@ -182,7 +182,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
                 containsNameLoadedWithKey(NO_MISMATCH_METACONTENTTYPE_MISSING));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
     }
 
@@ -210,7 +210,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACONTENTYPE_MISMATCH));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
     }
 
@@ -239,7 +239,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACHARSET_MISMATCH));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
 
         assertThat(
@@ -247,7 +247,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
                 containsNameLoadedWithKey(NO_MISMATCH_METACONTENTTYPE_MISSING));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(1).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(1).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(15));
     }
 
@@ -278,13 +278,13 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
                 containsNameLoadedWithKey(METACONTENTTYPE_METACHARSET_MISMATCH));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
 
         assertThat(alertsRaised.get(1), containsNameLoadedWithKey(HEADER_METACHARSET_MISMATCH));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(1).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(1).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(15));
     }
 
@@ -326,7 +326,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
                 containsOtherInfoLoadedWithKey(XML_MISMATCH, "UTF-8", "ISO-123"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
+        assertThat(alertsRaised.get(0).getCweId(), equalTo(436));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(15));
     }
 }

@@ -4,7 +4,19 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
 
+## [6] - 2021-03-30
+### Changed
+- Accept only encoded URLs.
+- Add support for the Automation Framework.
+- Add support for statistics for the number of added URLs (or SOAP Actions).
+- Maintenance changes.
+
+### Fixed
+- Fix detection of WSDL files (Issue 6440).
+- Cope with missing Nashorn engine (Issue 6500).
 
 ## [5] - 2021-01-04
 ### Changed
@@ -39,5 +51,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6]: https://github.com/zaproxy/zap-extensions/releases/soap-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/soap-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/soap-v4

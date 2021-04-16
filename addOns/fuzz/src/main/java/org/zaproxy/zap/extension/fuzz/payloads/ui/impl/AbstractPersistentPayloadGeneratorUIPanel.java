@@ -35,7 +35,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
@@ -54,7 +55,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
         implements PayloadGeneratorUIPanel<T, T2, T3> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
+            LogManager.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
 
     private static final String SAVE_BUTTON_LABEL =
             Constant.messages.getString("fuzz.payloads.generators.save.button");

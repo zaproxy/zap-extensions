@@ -27,13 +27,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 public class ProcessPayloadGenerator implements StringPayloadGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(ProcessPayloadGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProcessPayloadGenerator.class);
 
     private final int numberOfInvocations;
     private final ProcessBuilder processBuilder;
@@ -178,12 +179,11 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
                                     + processBuilder.command()
                                     + "\": "
                                     + errorStringBuilder.toString());
-                } else if (LOGGER.isDebugEnabled()) {
+                } else {
                     LOGGER.debug(
-                            "Payload generator process \""
-                                    + processBuilder.command()
-                                    + "\" returned an error: "
-                                    + errorStringBuilder.toString());
+                            "Payload generator process \"{}\" returned an error: {}",
+                            processBuilder.command(),
+                            errorStringBuilder);
                 }
             }
         }
@@ -209,20 +209,17 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
                                             + "\" exit code is non-zero ["
                                             + exitCode
                                             + "], discarding any obtained content.");
-                        } else if (LOGGER.isDebugEnabled()) {
+                        } else {
                             LOGGER.debug(
-                                    "Payload generator process \""
-                                            + processBuilder.command()
-                                            + "\" exit code is non-zero: "
-                                            + exitCode);
+                                    "Payload generator process \"{}\" exit code is non-zero: {}",
+                                    processBuilder.command(),
+                                    exitCode);
                         }
                     }
                 } catch (IllegalThreadStateException e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(
-                                "Forcibly terminating payload generator process: "
-                                        + processBuilder.command());
-                    }
+                    LOGGER.debug(
+                            "Forcibly terminating payload generator process: {}",
+                            processBuilder.command());
                     process.destroy();
                 }
             }

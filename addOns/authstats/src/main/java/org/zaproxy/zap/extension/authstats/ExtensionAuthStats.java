@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.authstats;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -44,7 +45,7 @@ import org.zaproxy.zap.utils.Stats;
  */
 public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderListener {
 
-    private static final Logger log = Logger.getLogger(ExtensionAuthStats.class);
+    private static final Logger log = LogManager.getLogger(ExtensionAuthStats.class);
 
     @Override
     public void hook(ExtensionHook extensionHook) {

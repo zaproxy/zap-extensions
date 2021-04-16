@@ -202,7 +202,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for LDAP Injection",
                     originalmsg.getRequestHeader().getMethod(),
-                    originalmsg.getRequestHeader().getURI().toString(),
+                    originalmsg.getRequestHeader().getURI(),
                     paramname,
                     paramvalue);
 
@@ -532,7 +532,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                 + "on parameter [{2}], using [{3}] to simulate a logically "
                                 + "equivalent condition, and using [{4}] to simulate a FALSE condition.",
                         msg.getRequestHeader().getMethod(),
-                        msg.getRequestHeader().getURI().toString(),
+                        msg.getRequestHeader().getURI(),
                         parameterName,
                         attack,
                         falseAttack);

@@ -31,7 +31,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.zaproxy.zap.model.Context;
@@ -58,7 +59,7 @@ public class PortScan extends ScanThread implements ScanListenner {
     private boolean useProxy = true;
     private List<PortScan> subThreads = new ArrayList<>();
 
-    private static Logger log = Logger.getLogger(PortScan.class);
+    private static Logger log = LogManager.getLogger(PortScan.class);
 
     public PortScan(String site, ScanListenner listenner, PortScanParam portScanParam) {
         super(site, listenner);
@@ -69,7 +70,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         this.timeout = portScanParam.getTimeoutInMs();
         this.useProxy = portScanParam.isUseProxy();
 
-        log.debug("PortScan : " + site + " threads: " + threads);
+        log.debug("PortScan : {} threads: {}", site, threads);
     }
 
     private PortScan(
@@ -87,7 +88,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         this.threadIndex = threadIndex;
 
         this.resultsTableModel = resultsTableModel;
-        log.debug("PortScan : " + site + " threads: " + threads + " threadIndex: " + threadIndex);
+        log.debug("PortScan : {} threads: {} threadIndex: {}", site, threads, threadIndex);
     }
 
     @Override
@@ -109,7 +110,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         // Do the scan
         // If there are multiple sub threads then they will start at a different point
         Date start = new Date();
-        log.debug("Starting scan on " + site + " at " + start);
+        log.debug("Starting scan on {} at {}", site, start);
         reset();
 
         stopScan = false;
@@ -188,7 +189,7 @@ public class PortScan extends ScanThread implements ScanListenner {
                         s.connect(new InetSocketAddress(site, port), timeout);
                     }
                 }
-                log.debug("Site : " + site + " open port: " + port);
+                log.debug("Site : {} open port: {}", site, port);
 
                 addResult(port);
             } catch (IOException ex) {
@@ -196,8 +197,8 @@ public class PortScan extends ScanThread implements ScanListenner {
             }
         }
         Date stop = new Date();
-        log.debug("Finished scan on " + site + " at " + stop);
-        log.debug("Took " + ((stop.getTime() - start.getTime()) / 60000) + " mins ");
+        log.debug("Finished scan on {} at {}", site, stop);
+        log.debug("Took {} mins", ((stop.getTime() - start.getTime()) / 60000));
     }
 
     private void addResult(final int port) {

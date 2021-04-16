@@ -32,7 +32,8 @@ import java.util.TreeSet;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -52,7 +53,7 @@ import org.zaproxy.zap.view.table.HistoryReferencesTable;
  */
 public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(SpiderPanel.class);
+    private static final Logger logger = LogManager.getLogger(SpiderPanel.class);
 
     private javax.swing.JScrollPane scrollLog = null;
     private javax.swing.JPanel AJAXSpiderPanel = null;

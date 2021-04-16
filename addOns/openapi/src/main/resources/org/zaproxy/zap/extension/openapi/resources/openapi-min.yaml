@@ -1,0 +1,5 @@
+  - type: openapi                      # OpenAPI definition import
+    parameters:
+      apiFile:                         # String: Local file containing the OpenAPI definition, default: null, no definition will be imported
+      apiUrl:                          # String: URL containing the OpenAPI definition, default: null, no definition will be imported
+      targetUrl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overriden

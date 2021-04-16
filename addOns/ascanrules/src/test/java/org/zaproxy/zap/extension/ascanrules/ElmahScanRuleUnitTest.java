@@ -34,11 +34,11 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.AbstractHostFilePluginUnitTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ElmahScanRule}. */
-public class ElmahScanRuleUnitTest extends ActiveScannerTest<ElmahScanRule> {
+public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule> {
 
     private static final String URL = "/elmah.axd";
     private static final String RESPONSE_WITHOUT_EVIDENCE =
@@ -53,10 +53,13 @@ public class ElmahScanRuleUnitTest extends ActiveScannerTest<ElmahScanRule> {
                     + "</body></html>";
 
     @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionAscanRules());
+    }
+
+    @Override
     protected ElmahScanRule createScanner() {
-        ElmahScanRule rule = new ElmahScanRule();
-        rule.setConfig(new ZapXmlConfiguration());
-        return rule;
+        return new ElmahScanRule();
     }
 
     @Override
@@ -84,6 +87,22 @@ public class ElmahScanRuleUnitTest extends ActiveScannerTest<ElmahScanRule> {
         // Given
         nano.addHandler(new OkResponseWithEvidence("/"));
         HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+    }
+
+    @Test
+    public void shouldAlertIfElmahFileFoundNonRootInitialUrl() throws Exception {
+        // Given
+        String path = "/foo/bar/";
+        nano.addHandler(new OkResponseWithoutEvidence(path));
+        nano.addHandler(new OkResponseWithEvidence(URL));
+        HttpMessage message = getHttpMessage(path);
         rule.init(message, parent);
         // When
         rule.scan();

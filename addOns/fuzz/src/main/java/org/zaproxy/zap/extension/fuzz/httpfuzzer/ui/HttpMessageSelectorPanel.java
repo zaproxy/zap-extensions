@@ -27,7 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -41,7 +42,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessage> {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpMessageSelectorPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpMessageSelectorPanel.class);
 
     private final JPanel panel;
     private final JTree messagesTree;

@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
@@ -29,7 +30,7 @@ import org.zaproxy.zap.extension.fuzz.AbstractFuzzerTask;
 
 public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpFuzzerTask.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerTask.class);
 
     private final HttpFuzzerOptions options;
 
@@ -73,9 +74,7 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
         int maxRetries = options.getRetriesOnIOError();
         for (int retryCount = 0; ; ) {
             if (getParent().isStopped()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Message not send, fuzzer is stooped.");
-                }
+                LOGGER.debug("Message not send, fuzzer is stooped.");
                 return null;
             }
 
@@ -91,10 +90,9 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
                                     ? ""
                                     : " After retry " + retryCount + " of " + maxRetries + ".";
                     LOGGER.warn(
-                            "Failed to send a fuzzed message: '"
-                                    + e.getMessage()
-                                    + "'."
-                                    + retriesInfo);
+                            "Failed to send a fuzzed message: '{}'.{}",
+                            e.getMessage(),
+                            retriesInfo);
 
                     getParent()
                             .increaseErrorCount(
@@ -106,16 +104,11 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
                     return null;
                 }
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Failed to send HTTP fuzzed message '"
-                                    + e.getMessage()
-                                    + "'. Send retry "
-                                    + retryCount
-                                    + " of "
-                                    + maxRetries
-                                    + ".");
-                }
+                LOGGER.debug(
+                        "Failed to send HTTP fuzzed message '{}'. Send retry {} of {}.",
+                        e.getMessage(),
+                        retryCount,
+                        maxRetries);
             }
         }
     }

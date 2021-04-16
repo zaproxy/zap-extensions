@@ -30,7 +30,8 @@ import org.apache.commons.httpclient.CircularRedirectException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.DocumentType;
@@ -54,7 +55,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class RelativePathConfusionScanRule extends AbstractAppPlugin {
 
     /** the logger object */
-    private static Logger log = Logger.getLogger(RelativePathConfusionScanRule.class);
+    private static Logger log = LogManager.getLogger(RelativePathConfusionScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.relativepathconfusion.";
@@ -202,15 +203,11 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
         // get the base message. What else did you think this line of code might do??
         HttpMessage originalMsg = getBaseMsg();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
-            log.debug(
-                    "Checking ["
-                            + originalMsg.getRequestHeader().getMethod()
-                            + "] ["
-                            + originalMsg.getRequestHeader().getURI()
-                            + "], for Relative Path Confusion issues");
-        }
+        log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+        log.debug(
+                "Checking [{}] [{}], for Relative Path Confusion issues",
+                originalMsg.getRequestHeader().getMethod(),
+                originalMsg.getRequestHeader().getURI());
 
         try {
             URI baseUri = originalMsg.getRequestHeader().getURI();
@@ -226,8 +223,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
             // Confusion
             // (based on the instances of this that I've in seen in the wild, at least)
             if (fileext != null && fileext.length() > 0) {
-                if (log.isDebugEnabled())
-                    log.debug("The file extension of " + baseUri.getURI() + " is " + fileext);
+                log.debug("The file extension of {} is {}", baseUri, fileext);
 
                 // 1: First manipulate the URL, using a URL which is ambiguous..
                 URI originalURI = originalMsg.getRequestHeader().getURI();
@@ -247,12 +243,12 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 try {
                     hackedMessage.setCookieParams(originalMsg.getCookieParams());
                 } catch (Exception e) {
-                    log.warn("Could not set the cookies from the base request:" + e);
+                    log.warn("Could not set the cookies from the base request: {}", e);
                 }
                 try {
                     sendAndReceive(hackedMessage, true); // follow redirects
                 } catch (CircularRedirectException e) {
-                    log.warn("Ignoring a CircularRedirectException" + e);
+                    log.warn("Ignoring a CircularRedirectException {}", e);
                 }
 
                 // get ready to parse the HTML
@@ -268,25 +264,22 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 Elements baseHrefInstances = doc.select("html > head > base[href]");
                 if (!baseHrefInstances.isEmpty() && baseHrefInstances.size() == 1) {
                     // a single base was specified, in line with HTTP spec
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "A base was specified, so there should be no confusion over relative paths (unless the User Agent is completely broken)");
+                    log.debug(
+                            "A base was specified, so there should be no confusion over relative paths (unless the User Agent is completely broken)");
                     return;
                 } else {
                     if (!baseHrefInstances.isEmpty() && baseHrefInstances.size() > 1) {
                         extraInfo =
                                 Constant.messages.getString(
                                         MESSAGE_PREFIX + "extrainfo.morethanonebasetag");
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "There more than one base (which is not valid HTML) specified for the page");
+                        log.debug(
+                                "There more than one base (which is not valid HTML) specified for the page");
                     } else {
                         if (extraInfo == null)
                             extraInfo =
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "extrainfo.nobasetag");
-                        if (log.isDebugEnabled())
-                            log.debug("There is no base specified for the page");
+                        log.debug("There is no base specified for the page");
                     }
                 }
 
@@ -328,27 +321,21 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                             if (tag.toUpperCase().equals("STYLE")) {
                                 // for the style tag, look at the entire body, not an attribute..
                                 String styleBody = tagInstance.data();
-                                if (log.isDebugEnabled())
-                                    log.debug("Got <style> data: " + styleBody);
+                                log.debug("Got <style> data: {}", styleBody);
                                 Matcher matcher = STYLE_URL_LOAD.matcher(styleBody);
                                 if (matcher.find()) {
                                     relativeReferenceFound = true;
                                     relativeReferenceEvidence = matcher.group();
-                                    if (log.isDebugEnabled())
-                                        log.debug(
-                                                "Got relative STYLE reference in a style tag. Evidence: "
-                                                        + relativeReferenceEvidence);
+                                    log.debug(
+                                            "Got relative STYLE reference in a style tag. Evidence: {}",
+                                            relativeReferenceEvidence);
                                 }
                             } else {
                                 // it's not the style tag, so look at the named attribute.
                                 String attributeValue = tagInstance.attr(loadingHtmlAttribute);
 
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "Got "
-                                                    + attributeValue
-                                                    + " for statement "
-                                                    + selectStatement);
+                                log.debug(
+                                        "Got {} for statement {}", attributeValue, selectStatement);
 
                                 // is it a relative reference?
                                 String attributeUpper = attributeValue.toUpperCase().trim();
@@ -374,14 +361,11 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                         // loadingHtmlAttribute + "=\"" + attributeValue + "\"";
                                         relativeReferenceEvidence = tagInstance.outerHtml();
 
-                                        if (log.isDebugEnabled())
-                                            log.debug(
-                                                    "Got relative reference: "
-                                                            + attributeValue
-                                                            + " for statement "
-                                                            + selectStatement
-                                                            + ". Evidence: "
-                                                            + relativeReferenceEvidence);
+                                        log.debug(
+                                                "Got relative reference: {} for statement {}. Evidence: {}",
+                                                attributeValue,
+                                                selectStatement,
+                                                relativeReferenceEvidence);
                                     }
                                 } else {
                                     // for the style attribute (on various tags), look for a pattern
@@ -391,16 +375,12 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                         relativeReferenceFound = true;
                                         relativeReferenceEvidence =
                                                 attributeValue; // matcher.group();
-                                        if (log.isDebugEnabled())
-                                            log.debug(
-                                                    "Got relative STYLE reference: "
-                                                            + attributeValue
-                                                            + " for "
-                                                            + tag
-                                                            + "."
-                                                            + loadingHtmlAttribute
-                                                            + ". Evidence: "
-                                                            + relativeReferenceEvidence);
+                                        log.debug(
+                                                "Got relative STYLE reference: {} for {}. {}. Evidence: {}",
+                                                attributeValue,
+                                                tag,
+                                                loadingHtmlAttribute,
+                                                relativeReferenceEvidence);
                                     }
                                 }
                             }
@@ -411,9 +391,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 // if there are no relative references in the response, bale out, because there is
                 // nothing to worry about
                 if (!relativeReferenceFound) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "No relative references were found in the original response, so there is no possibility for confusion over relative path references)");
+                    log.debug(
+                            "No relative references were found in the original response, so there is no possibility for confusion over relative path references)");
                     return;
                 }
 
@@ -441,9 +420,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                         hackedMessage.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
                 if (contentType != null) {
 
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Content Type is set, so we need to see if there is a way to bypass it");
+                    log.debug(
+                            "Content Type is set, so we need to see if there is a way to bypass it");
                     boolean quirksMode = false;
                     if (extraInfo == null)
                         extraInfo =
@@ -476,20 +454,17 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                         String httpEquivAttributeValue = e.attr("http-equiv");
                         String contentAttributeValue = e.attr("content");
 
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Got "
-                                            + httpEquivAttributeValue
-                                            + " for html > head > meta[http-equiv]");
+                        log.debug(
+                                "Got {} for html > head > meta[http-equiv]",
+                                httpEquivAttributeValue);
                         if (httpEquivAttributeValue.toUpperCase().trim().equals("X-UA-COMPATIBLE")
                                 && !contentAttributeValue.toUpperCase().trim().equals("IE=EDGE")) {
                             // Quirks mode is already enabled!
                             // Note: if this is present, it overrides any "<!doctype html>" that
                             // would otherwise set the page to HTML5 mode
                             quirksMode = true;
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "Quirks mode is explicitly enabled via <meta http-equiv=\"x-ua-compatible\" (which overrides any \"<!doctype html>\" HTML 5 directive) ... This allows the specified Content Type to be bypassed");
+                            log.debug(
+                                    "Quirks mode is explicitly enabled via <meta http-equiv=\"x-ua-compatible\" (which overrides any \"<!doctype html>\" HTML 5 directive) ... This allows the specified Content Type to be bypassed");
                             if (extraInfo == null)
                                 extraInfo =
                                         Constant.messages.getString(
@@ -524,11 +499,9 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                         // this doctype is know to trigger quirks mode in some
                                         // browsers..
                                         quirksMode = true;
-                                        if (log.isDebugEnabled())
-                                            log.debug(
-                                                    "Quirks mode is implicitly triggered via the use of old doctype "
-                                                            + docTypePublicId
-                                                            + ". This allows the specified Content Type to be bypassed");
+                                        log.debug(
+                                                "Quirks mode is implicitly triggered via the use of old doctype {}. This allows the specified Content Type to be bypassed",
+                                                docTypePublicId);
                                         if (extraInfo == null)
                                             extraInfo =
                                                     Constant.messages.getString(
@@ -545,19 +518,16 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                         break;
                                     }
                                 }
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "DocType public id: "
-                                                    + docTypePublicId
-                                                    + ". Entire thing: "
-                                                    + documentType);
+                                log.debug(
+                                        "DocType public id: {}. Entire thing: {}",
+                                        docTypePublicId,
+                                        documentType);
                             }
                         }
                         if (!docTypeSpecified) {
                             quirksMode = true;
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "Quirks mode is implicitly enabled via the absence of a doctype... This allows the specified Content Type to be bypassed");
+                            log.debug(
+                                    "Quirks mode is implicitly enabled via the absence of a doctype... This allows the specified Content Type to be bypassed");
                             if (extraInfo == null)
                                 extraInfo =
                                         Constant.messages.getString(
@@ -587,23 +557,20 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 // a dozy web browser that doesn't understand "X-FRAME-OPTIONS:
                                 // DENY")
                                 framingAttackPossible = false;
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "\"X-FRAME-OPTIONS: DENY\" rules out a framing attack, unless a really old browser is used (IE < 8.0, for instance)");
+                                log.debug(
+                                        "\"X-FRAME-OPTIONS: DENY\" rules out a framing attack, unless a really old browser is used (IE < 8.0, for instance)");
                             } else if (frameHeader.toUpperCase().equals("SAMEORIGIN")) {
                                 // let's say this rules it out (unless the attacker has a persistent
                                 // XSS, or already owns the site)
                                 framingAttackPossible = false;
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "\"X-FRAME-OPTIONS: SAMEORIGIN\" rules out a framing attack, unless a really old browser is used (IE < 8.0, for instance)");
+                                log.debug(
+                                        "\"X-FRAME-OPTIONS: SAMEORIGIN\" rules out a framing attack, unless a really old browser is used (IE < 8.0, for instance)");
                             } else if (frameHeader.toUpperCase().startsWith("ALLOW-FROM")) {
                                 // let's say this rules it out (unless the attacker has a persistent
                                 // XSS, or already owns the site)
                                 framingAttackPossible = false;
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "\"X-FRAME-OPTIONS: ALLOW-FROM\" probably rules out a framing attack, unless the attacker owns the website in the ALLOW-FROM, which is generally very unlikely");
+                                log.debug(
+                                        "\"X-FRAME-OPTIONS: ALLOW-FROM\" probably rules out a framing attack, unless the attacker owns the website in the ALLOW-FROM, which is generally very unlikely");
                             }
                         } else {
                             // no framing headers were specified, so a framing attack is possible to
@@ -625,16 +592,13 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                     // if quirks mode is off, and a framing attack is not possible, we can't "break
                     // out" of the content type.. boo hoo..
                     if ((!quirksMode) && (!framingAttackPossible)) {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Can't see a way to break out of the Content-Type, since Quirks mode is off (both explicit and implicit), and the page cannot be framed.");
+                        log.debug(
+                                "Can't see a way to break out of the Content-Type, since Quirks mode is off (both explicit and implicit), and the page cannot be framed.");
                         return;
                     }
                 } else {
                     // happy days. Content type is not set, so no hacks required to bypass it.
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Content Type is not set, so no hacks are required to bypass it!");
+                    log.debug("Content Type is not set, so no hacks are required to bypass it!");
                     if (extraInfo == null)
                         extraInfo =
                                 Constant.messages.getString(
@@ -656,21 +620,18 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                         .setMessage(hackedMessage)
                         .raise();
 
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "A Relative Path Confusion issue exists on "
-                                    + getBaseMsg().getRequestHeader().getURI().getURI());
-                }
+                log.debug(
+                        "A Relative Path Confusion issue exists on {}",
+                        getBaseMsg().getRequestHeader().getURI());
                 return;
 
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "The URI has no filename component, so there is unlikely to be any ambiguity over any relative paths");
-                }
+                log.debug(
+                        "The URI has no filename component, so there is unlikely to be any ambiguity over any relative paths");
             }
         } catch (Exception e) {
-            log.error("Error scanning a request for Relative Path confusion: " + e.getMessage(), e);
+            log.error(
+                    "Error scanning a request for Relative Path confusion: {}", e.getMessage(), e);
         }
     }
 

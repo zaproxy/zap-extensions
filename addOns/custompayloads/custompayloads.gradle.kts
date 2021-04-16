@@ -3,7 +3,7 @@ description = "Ability to add, edit or remove payloads that are used i.e. by act
 
 zapAddOn {
     addOnName.set("Custom Payloads")
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")

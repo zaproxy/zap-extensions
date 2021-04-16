@@ -5,4 +5,5 @@
 
 <index version="2.0">
 	<indexitem text="soap" target="soap" />
+	<indexitem text="soap automation" target="soap.automation" />
 </index>

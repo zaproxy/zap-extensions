@@ -25,7 +25,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -37,7 +38,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  */
 public class FileStringPayloadGenerator implements StringPayloadGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(FileStringPayloadGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(FileStringPayloadGenerator.class);
 
     public static final String DEFAULT_COMMENT_TOKEN = "#";
 
@@ -122,10 +123,8 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
                                 ignoreTrimmedEmptyLines,
                                 ignoreFirstLine);
             } catch (IOException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Failed to calculate the number of payloads from the file " + file, e);
-                }
+                LOGGER.debug(
+                        "Failed to calculate the number of payloads from the file {}", file, e);
             }
             this.numberOfPayloads = calculatedNumberOfPayloads;
         }
@@ -296,9 +295,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             try {
                 reader.close();
             } catch (IOException ignore) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to close file " + file, ignore);
-                }
+                LOGGER.debug("Failed to close file {}", file, ignore);
             }
         }
     }

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,12 +44,13 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.usernameidor.";
     private static final int PLUGIN_ID = 10057;
 
-    private static final Logger LOGGER = Logger.getLogger(UsernameIdorScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(UsernameIdorScanRule.class);
 
     private static final String ADMIN = "Admin";
     private static final String ADMIN_2 = "admin";
 
-    public static final List<String> DEFAULT_USERNAMES = Arrays.asList(ADMIN, ADMIN_2);
+    public static final List<String> DEFAULT_USERNAMES =
+            Collections.unmodifiableList(Arrays.asList(ADMIN, ADMIN_2));
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_USERNAMES;
     public static final String USERNAME_IDOR_PAYLOAD_CATEGORY = "Username-Idor";
@@ -79,9 +82,7 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         List<User> scanUsers = getUsers();
         if (scanUsers.isEmpty()) { // Should continue if not empty
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("There does not appear to be any contexts with configured users.");
-            }
+            LOGGER.debug("There does not appear to be any contexts with configured users.");
             return;
         }
 
@@ -107,14 +108,7 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     private void raiseAlert(

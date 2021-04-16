@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.websocket.pscan;
 
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
@@ -40,7 +41,7 @@ public class WebSocketPassiveScanThread extends Thread
 
     public static final String WEBSOCKET_PSCAN_STATS_PREFIX = "stats.websockets.pscan.";
 
-    private static final Logger LOGGER = Logger.getLogger(WebSocketPassiveScanThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketPassiveScanThread.class);
 
     private static final int WEBSOCKET_OBSERVING_ORDER =
             WebSocketStorage.WEBSOCKET_OBSERVING_ORDER + 10;

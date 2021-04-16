@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
@@ -42,7 +43,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 
     private static final long serialVersionUID = -5047686640383236512L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketMessagesViewModel.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketMessagesViewModel.class);
 
     private static final int PAYLOAD_PREVIEW_LENGTH = 150;
 

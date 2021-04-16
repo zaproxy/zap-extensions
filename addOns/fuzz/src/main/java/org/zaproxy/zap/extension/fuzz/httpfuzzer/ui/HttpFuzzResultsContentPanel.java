@@ -41,7 +41,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -60,7 +61,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
     public static final String RESULTS_PANEL_NAME = "fuzz.httpfuzzerResultsContentPanel";
     public static final String ERRORS_PANEL_NAME = "fuzz.httpfuzzerErrorsContentPanel";
 
-    private static final Logger logger = Logger.getLogger(HttpFuzzResultsContentPanel.class);
+    private static final Logger logger = LogManager.getLogger(HttpFuzzResultsContentPanel.class);
     private static final String CSV_EXTENSION = ".csv";
 
     private static final HttpFuzzerResultsTableModel EMPTY_RESULTS_MODEL =
@@ -225,7 +226,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
                                                         "fuzz.httpfuzzer.results.toolbar.button.export.showMessageError")
                                                 + "\n"
                                                 + ex.getLocalizedMessage());
-                                logger.error("Export Failed: " + ex);
+                                logger.error("Export Failed: {}", ex);
                             }
                             // Delay the presentation of success message, to ensure all the data was
                             // already flushed.

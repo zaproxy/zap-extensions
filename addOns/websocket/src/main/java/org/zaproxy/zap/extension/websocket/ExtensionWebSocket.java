@@ -40,7 +40,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -126,7 +127,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 public class ExtensionWebSocket extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener, SiteMapListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionWebSocket.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionWebSocket.class);
 
     /**
      * The script icon.
@@ -869,10 +870,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 }
             }
             logger.error(
-                    "Adding WebSockets channel failed due to: '"
-                            + e.getClass()
-                            + "' "
-                            + e.getMessage(),
+                    "Adding WebSockets channel failed due to: '{}' {}",
+                    e.getClass(),
+                    e.getMessage(),
                     e);
             return;
         }

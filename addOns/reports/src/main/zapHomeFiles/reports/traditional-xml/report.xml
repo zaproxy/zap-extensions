@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<OWASPZAPReport version="Dev Build"
+	generated="Thu, 11 Feb 2021 09:59:35">
+	<generated
+		th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</generated>
+	<th:block th:each="site: ${reportData.sites}">
+		<site th:name="${site}">
+			<alerts>
+				<th:block th:each="alert: ${alertTree.children}">
+					<th:block th:if="${alert.userObject.uri.startsWith(site)}">
+						<alertitem>
+							<pluginid th:text="${alert.userObject.pluginId}"></pluginid>
+							<alertref th:text="${alert.userObject.alertRef}"></alertref>
+							<name th:text="${alert.nodeName}"></name>
+							<riskcode th:text="${alert.userObject.risk}"></riskcode>
+							<confidence th:text="${alert.userObject.confidence}"></confidence>
+							<riskdesc th:text="${helper.getRiskString(alert.risk)}"></riskdesc>
+							<confidencedesc
+								th:text="${helper.getConfidenceString(alert.userObject.confidence)}"></confidencedesc>
+							<desc th:text="${alert.userObject.description}"></desc>
+							<instances>
+								<th:block th:each="instance: ${alert.children}">
+									<instance>
+										<uri th:text="${instance.userObject.uri}"></uri>
+										<method th:text="${instance.userObject.method}"></method>
+										<evidence th:text="${instance.userObject.evidence}"></evidence>
+									</instance>
+								</th:block>
+							</instances>
+							<count th:text="${alert.childCount}"></count>
+							<solution th:text="${alert.userObject.solution}"></solution>
+							<otherinfo th:text="${alert.userObject.otherinfo}"></otherinfo>
+							<reference th:text="${alert.userObject.reference}"></reference>
+							<cweid th:text="${alert.userObject.cweid}"></cweid>
+							<wascid th:text="${alert.userObject.wascid}"></wascid>
+							<sourceid th:text="${alert.userObject.sourceHistoryId}"></sourceid>
+						</alertitem>
+					</th:block>
+				</th:block>
+			</alerts>
+		</site>
+	</th:block>
+</OWASPZAPReport>

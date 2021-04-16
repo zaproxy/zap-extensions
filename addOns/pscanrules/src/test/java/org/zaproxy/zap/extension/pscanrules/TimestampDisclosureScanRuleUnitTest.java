@@ -24,10 +24,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
@@ -37,6 +42,17 @@ public class TimestampDisclosureScanRuleUnitTest
     @Override
     protected TimestampDisclosureScanRule createScanner() {
         return new TimestampDisclosureScanRule();
+    }
+
+    @Test
+    public void verifyExcludedHeadersListAsExpected() {
+        // Given / When
+        List<String> ignoreList =
+                Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
+        // Then
+        assertEquals(7, ignoreList.size());
+        assertTrue(ignoreList.contains("NEL"));
+        assertTrue(ignoreList.contains("Report-To"));
     }
 
     @Test
@@ -307,6 +323,36 @@ public class TimestampDisclosureScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate2));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"font.woff", "font.woff2", "font.ttf", "font.otf"})
+    public void shouldNotRaiseAlertOnValidTimeStampInFontUrlRequest(String fileName)
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getRequestHeader().setURI(new URI("http://example.com/" + fileName, false));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
+    public void shouldNotRaiseAlertOnValidTimeStampWhenInFontResponse(String type)
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
     }
 
     private static HttpMessage createMessage(String timestamp) throws URIException {

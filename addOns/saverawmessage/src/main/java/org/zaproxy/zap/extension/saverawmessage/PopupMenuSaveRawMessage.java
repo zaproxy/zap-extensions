@@ -28,7 +28,8 @@ import java.text.MessageFormat;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.filechooser.FileFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,7 +42,7 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = -7217818541206464572L;
 
-    private static final Logger log = Logger.getLogger(PopupMenuSaveRawMessage.class);
+    private static final Logger log = LogManager.getLogger(PopupMenuSaveRawMessage.class);
 
     private static final String POPUP_MENU_LABEL =
             Constant.messages.getString("saveraw.popup.option");

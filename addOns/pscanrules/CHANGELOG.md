@@ -4,11 +4,25 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Cache-control scan rule no longer checks if Pragma is set or not.
+- Maintenance changes.
+- The Timestamp Disclosure scan rule now excludes values in "Report-To" or "NEL" headers (Issue 6493).
+- The Timestamp Disclosure scan rule no longer considers font type requests or responses when looking for possible timestamps (Issue 6274).
+- X-Frame-Options scan rule CWE ID changed from 16 to 1021.
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - Character Set Mismatch
+  - Content Security Policy
+  - Cookie HttpOnly
+  - Cookie SameSite
+  - JSF ViewState
+  - MS ViewState
+  - X-Content-Type-Options
 
 ## [33] - 2021-01-29
 ### Added
 - Added Express error string pattern (Issue 6412).
+- Added sort to form field names that are displayed in Anti-CSRF alert other info field, duplicate names (arrays) are combined and not repeated.
 
 ### Changed
 - X-Frame-Options (XFO) scan rule no longer suggests the use of "ALLOW-FROM", and also includes CSP "frame-ancestors" as an alternative.

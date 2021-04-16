@@ -26,12 +26,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketProtocol;
 
 public final class WebSocketUtils {
-    private static final Logger LOGGER = Logger.getLogger(WebSocketUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketUtils.class);
+    private static final Random RAND = new Random();
 
     public static final String WEB_SOCKET_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -56,8 +58,7 @@ public final class WebSocketUtils {
      */
     public static String generateSecWebSocketKey() {
         byte[] random = new byte[16];
-        Random rand = new Random();
-        rand.nextBytes(random);
+        RAND.nextBytes(random);
         return Base64.getEncoder().encodeToString(random);
     }
 
@@ -161,9 +162,8 @@ public final class WebSocketUtils {
             if (version == null) {
                 // default to version 13 if non is given, for whatever reason
                 LOGGER.debug(
-                        "No "
-                                + WebSocketProtocol.HEADER_VERSION
-                                + " header was provided - try version 13");
+                        "No {} header was provided - try version 13",
+                        WebSocketProtocol.HEADER_VERSION);
                 version = "13";
             }
         }

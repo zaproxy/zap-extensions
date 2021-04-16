@@ -23,15 +23,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 
 /** Unit test for {@link PiiScanRule}. */
 public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
@@ -150,6 +153,72 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnCssRequest() throws Exception {
+        // Given
+        String content = "margin-left:85.36370249136206%";
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody(
+                "body {background-color: powderblue;}\n"
+                        + "h1 {color: blue;}\n"
+                        + "p {color: red;"
+                        + content
+                        + "}");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/styles.css", true));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnCssResponse() throws Exception {
+        // Given
+        String content = "margin-left:85.36370249136206%";
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody(
+                "body {background-color: powderblue;}\n"
+                        + "h1 {color: blue;}\n"
+                        + "p {color: red;"
+                        + content
+                        + "}");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/styles", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/css");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnResponseContainingCcLikeStyleAttribute() throws Exception {
+        // Given
+        String content = "margin-left:85.36370249136206%";
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody("<h1 style=\"color:blue;" + content + "\">A Blue Heading</h1>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnResponseContainingCcStringInAdditionToCcLikeStyleAttribute()
+            throws Exception {
+        // Given
+        String content = "margin-left:85.36370249136206%";
+        HttpMessage msg = createMsg("");
+        msg.setResponseBody(
+                "<h1 style=\"color:blue;"
+                        + content
+                        + "\">A Blue Heading</h1>\r\nCC: 4111111111111111");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertEquals("4111111111111111", alertsRaised.get(0).getEvidence());
     }
 
     private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {

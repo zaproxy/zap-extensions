@@ -17,12 +17,11 @@ tasks.withType<JavaCompile> {
 zapAddOn {
     addOnName.set("Fuzzer")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
-        notBeforeVersion.set("2.10.0")
     }
 }
 
@@ -32,8 +31,7 @@ dependencies {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
     }
-    implementation(files("lib/generex-0.0.5-SNAPSHOT.jar"))
-    implementation("dk.brics.automaton:automaton:1.11-8")
+    implementation("com.github.mifmif:generex:1.0.2")
 
     testImplementation(project(":testutils"))
 }

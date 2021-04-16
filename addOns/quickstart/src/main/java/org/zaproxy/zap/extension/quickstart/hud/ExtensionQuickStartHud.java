@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.quickstart.hud;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -37,7 +38,7 @@ import org.zaproxy.zap.extension.quickstart.PlugableHud;
 public class ExtensionQuickStartHud extends ExtensionAdaptor implements PlugableHud {
 
     public static final String NAME = "ExtensionQuickStartHud";
-    private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStartHud.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStartHud.class);
 
     private static final String EXTENSION_HUD_CLASSNAME =
             "org.zaproxy.zap.extension.hud.ExtensionHUD";

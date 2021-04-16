@@ -30,13 +30,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BodyGenerator {
 
     private Generators generators;
     private DataGenerator dataGenerator;
-    private static final Logger LOG = Logger.getLogger(BodyGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(BodyGenerator.class);
 
     public BodyGenerator(Generators generators) {
         this.generators = generators;
@@ -74,9 +75,7 @@ public class BodyGenerator {
         }
 
         boolean isArray = schema instanceof ArraySchema;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Generate body for object " + schema.getName());
-        }
+        LOG.debug("Generate body for object {}", schema.getName());
 
         if (isArray) {
             return generateFromArraySchema((ArraySchema) schema);
@@ -177,7 +176,7 @@ public class BodyGenerator {
             return schema.getAnyOf().get(0);
         }
         // Should not be reached, allOf schema is resolved by the parser
-        LOG.error("Unknown composed schema type: " + schema);
+        LOG.error("Unknown composed schema type: {}", schema);
         return null;
     }
 

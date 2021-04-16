@@ -43,7 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
@@ -55,7 +56,7 @@ public class SwaggerConverter implements Converter {
     /** The base key for internationalised messages. */
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
 
-    private static Logger LOG = Logger.getLogger(SwaggerConverter.class);
+    private static Logger LOG = LogManager.getLogger(SwaggerConverter.class);
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
     private String defn;
@@ -340,13 +341,10 @@ public class SwaggerConverter implements Converter {
             try {
                 UriBuilder uriBuilder = UriBuilder.parse(url);
                 if (!hasSupportedScheme(uriBuilder)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Ignoring server URL "
-                                        + url
-                                        + " because of unsupported scheme: "
-                                        + uriBuilder.getScheme());
-                    }
+                    LOG.debug(
+                            "Ignoring server URL {} because of unsupported scheme: {}",
+                            url,
+                            uriBuilder.getScheme());
                     continue;
                 }
                 if (!uriBuilder.isEmpty()) {
@@ -355,7 +353,7 @@ public class SwaggerConverter implements Converter {
 
                 urls.add(uriBuilder.merge(definitionUriBuilder));
             } catch (IllegalArgumentException e) {
-                LOG.warn("Failed to create server URL from: " + url, e);
+                LOG.warn("Failed to create server URL from: {}", url, e);
             }
         }
         return urls;

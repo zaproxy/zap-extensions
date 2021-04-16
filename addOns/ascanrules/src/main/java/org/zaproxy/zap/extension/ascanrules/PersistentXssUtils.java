@@ -36,8 +36,8 @@ import org.parosproxy.paros.network.HttpMessage;
 public class PersistentXssUtils {
 
     private static int uniqueIndex;
-    public static String PXSS_PREFIX = "zApPX";
-    public static String PXSS_POSTFIX = "sS";
+    public static final String PXSS_PREFIX = "zApPX";
+    public static final String PXSS_POSTFIX = "sS";
     private static Map<String, UserDataSource> map;
     private static Map<String, HashSet<Integer>> sourceToSinks;
     /**

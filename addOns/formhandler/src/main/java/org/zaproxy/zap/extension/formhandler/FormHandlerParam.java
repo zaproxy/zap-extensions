@@ -26,13 +26,14 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class FormHandlerParam extends AbstractParam {
 
-    private static final Logger logger = Logger.getLogger(FormHandlerParam.class);
+    private static final Logger logger = LogManager.getLogger(FormHandlerParam.class);
 
     private static final String FORM_HANDLER_BASE_KEY = "formhandler";
 
@@ -82,7 +83,7 @@ public class FormHandlerParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading key-value pair fields: " + e.getMessage(), e);
+            logger.error("Error while loading key-value pair fields: {}", e.getMessage(), e);
             this.fields = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
             this.enabledFieldsNames = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
         }
@@ -98,12 +99,7 @@ public class FormHandlerParam extends AbstractParam {
             }
         }
 
-        try {
-            this.confirmRemoveField = getConfig().getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove field option: " + e.getMessage(), e);
-        }
+        this.confirmRemoveField = getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
     }
 
     @ZapApiIgnore

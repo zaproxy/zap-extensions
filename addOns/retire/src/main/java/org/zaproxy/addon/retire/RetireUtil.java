@@ -24,11 +24,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RetireUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(RetireUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(RetireUtil.class);
 
     /*
      * This utility function computes the SHA 1 hash input string

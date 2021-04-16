@@ -286,7 +286,7 @@ public abstract class AbstractAppFilePluginUnitTest<T extends AbstractAppFilePlu
         assertEquals(Alert.CONFIDENCE_LOW, alert.getConfidence());
     }
 
-    private static NanoServerHandler createHandler(String path, Response response) {
+    protected static NanoServerHandler createHandler(String path, Response response) {
         return new NanoServerHandler(path) {
             @Override
             protected Response serve(IHTTPSession session) {

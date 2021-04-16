@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.invoke;
 
 import java.io.File;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -34,7 +35,7 @@ public class PopupMenuItemInvoke extends PopupMenuItemHttpMessageContainer {
     private boolean captureOutput = true;
     private boolean outputNote = false;
 
-    private Logger logger = Logger.getLogger(PopupMenuItemInvoke.class);
+    private Logger logger = LogManager.getLogger(PopupMenuItemInvoke.class);
 
     /** @param label */
     public PopupMenuItemInvoke(String label) {

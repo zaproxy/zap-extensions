@@ -101,7 +101,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
                 .setSolution(getAlertElement(currentVT, "soln"))
                 .setReference(getAlertElement(currentVT, "refs"))
                 .setEvidence(evidence)
-                .setCweId(16) // CWE-16: Configuration
+                .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(15) // WASC-15: Application Misconfiguration
                 .raise();
     }

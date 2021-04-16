@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Always use enum values when defined (Issue 6489).
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Automation parameters are now in camelCase. This is a breaking change, and older automation configurations containing all-lowercase openapi parameters will stop working.
+
+## [18] - 2021-03-09
+### Added
+- Support for the Automation Framework
+- Support for statistics (number of URLs added) 
+
+### Changed
 - Maintenance changes.
 
 ## [17] - 2020-12-15
@@ -117,6 +127,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[18]: https://github.com/zaproxy/zap-extensions/releases/openapi-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/openapi-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/openapi-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/openapi-v15

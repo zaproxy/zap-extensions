@@ -21,14 +21,15 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** A wrapper around the core ValueGenerator class */
 public class ValueGenerator {
 
     private org.zaproxy.zap.model.ValueGenerator coreValGen;
 
-    private static final Logger LOG = Logger.getLogger(ValueGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(ValueGenerator.class);
 
     public ValueGenerator(org.zaproxy.zap.model.ValueGenerator coreValGen) {
         this.coreValGen = coreValGen;
@@ -39,16 +40,11 @@ public class ValueGenerator {
             defaultValue = "";
         }
         if (coreValGen == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "Name : "
-                                + name
-                                + " Type : "
-                                + type
-                                + " Default : "
-                                + defaultValue
-                                + " Returning default value");
-            }
+            LOG.debug(
+                    "Name : {} Type : {} Default : {} Returning default value",
+                    name,
+                    type,
+                    defaultValue);
             return defaultValue;
         }
 
@@ -64,17 +60,8 @@ public class ValueGenerator {
                         Collections.<String, String>emptyMap(),
                         fieldAtts);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(
-                    "Name : "
-                            + name
-                            + " Type : "
-                            + type
-                            + " Default : "
-                            + defaultValue
-                            + " Returning : "
-                            + value);
-        }
+        LOG.debug(
+                "Name : {} Type : {} Default : {} Returning : {}", name, type, defaultValue, value);
 
         return value;
     }

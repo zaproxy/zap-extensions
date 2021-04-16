@@ -22,15 +22,11 @@ package org.zaproxy.zap.extension.fuzz;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
 
 public class FuzzOptions extends VersionedAbstractParam {
-
-    private static final Logger LOGGER = Logger.getLogger(FuzzOptions.class);
 
     public static final int MAX_THREADS_PER_FUZZER = Constant.MAX_THREADS_PER_SCAN;
 
@@ -101,84 +97,27 @@ public class FuzzOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        try {
-            customCategory = getConfig().getBoolean(IS_CUSTOM_DEFAULT_CATEGORY_KEY, false);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + IS_CUSTOM_DEFAULT_CATEGORY_KEY + "':", e);
-        }
-
-        try {
-            defaultCategoryName = getConfig().getString(DEFAULT_CATEGORY_NAME_KEY, "");
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + DEFAULT_CATEGORY_NAME_KEY + "':", e);
-        }
-
-        try {
-            customFuzzerLastSelectedDirectory =
-                    Paths.get(getConfig().getString(CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY, ""));
-        } catch (ConversionException e) {
-            LOGGER.error(
-                    "Error while loading '" + CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY + "':", e);
-        }
-
-        try {
-            maxFinishedFuzzersInUI =
-                    getConfig().getInt(MAX_FINISHED_FUZZERS_IN_UI_KEY, DEFAULT_MAX_FUZZERS_IN_UI);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + MAX_FINISHED_FUZZERS_IN_UI_KEY + "':", e);
-        }
-
-        try {
-            promptToClearFinishedFuzzers =
-                    getConfig()
-                            .getBoolean(
-                                    PROMPT_TO_CLEAR_FINISHED_FUZZERS_KEY,
-                                    DEFAULT_PROMPT_TO_CLEAR_FINISHED_SCANS);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + PROMPT_TO_CLEAR_FINISHED_FUZZERS_KEY + "':", e);
-        }
-
-        try {
-            defaultRetriesOnIOError =
-                    getConfig()
-                            .getInt(DEFAULT_RETRIES_ON_IO_ERROR_KEY, DEFAULT_RETRIES_ON_IO_ERROR);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + DEFAULT_RETRIES_ON_IO_ERROR_KEY + "':", e);
-        }
-
-        try {
-            defaultMaxErrorsAllowed =
-                    getConfig().getInt(DEFAULT_MAX_ERRORS_ALLOWED_KEY, DEFAULT_MAX_ERRORS_ALLOWED);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + DEFAULT_MAX_ERRORS_ALLOWED_KEY + "':", e);
-        }
-
-        try {
-            defaultPayloadReplacementStrategy =
-                    MessageLocationsReplacementStrategy.getValue(
-                            getConfig()
-                                    .getString(
-                                            DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
-                                            MessageLocationsReplacementStrategy.DEPTH_FIRST
-                                                    .getConfigId()));
-        } catch (ConversionException e) {
-            LOGGER.error(
-                    "Error while loading '" + DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY + "':", e);
-        }
-
-        try {
-            defaultThreadsPerFuzzer =
-                    getConfig().getInt(DEFAULT_THREADS_PER_FUZZER_KEY, DEFAULT_THREADS_PER_FUZZER);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + DEFAULT_THREADS_PER_FUZZER_KEY + "':", e);
-        }
-
-        try {
-            defaultFuzzDelayInMs =
-                    getConfig().getInt(DEFAULT_FUZZ_DELAY_IN_MS_KEY, DEFAULT_FUZZ_DELAY_IN_MS);
-        } catch (ConversionException e) {
-            LOGGER.error("Error while loading '" + DEFAULT_FUZZ_DELAY_IN_MS_KEY + "':", e);
-        }
+        customCategory = getBoolean(IS_CUSTOM_DEFAULT_CATEGORY_KEY, false);
+        defaultCategoryName = getString(DEFAULT_CATEGORY_NAME_KEY, "");
+        customFuzzerLastSelectedDirectory =
+                Paths.get(getString(CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY, ""));
+        maxFinishedFuzzersInUI = getInt(MAX_FINISHED_FUZZERS_IN_UI_KEY, DEFAULT_MAX_FUZZERS_IN_UI);
+        promptToClearFinishedFuzzers =
+                getBoolean(
+                        PROMPT_TO_CLEAR_FINISHED_FUZZERS_KEY,
+                        DEFAULT_PROMPT_TO_CLEAR_FINISHED_SCANS);
+        defaultRetriesOnIOError =
+                getInt(DEFAULT_RETRIES_ON_IO_ERROR_KEY, DEFAULT_RETRIES_ON_IO_ERROR);
+        defaultMaxErrorsAllowed =
+                getInt(DEFAULT_MAX_ERRORS_ALLOWED_KEY, DEFAULT_MAX_ERRORS_ALLOWED);
+        defaultPayloadReplacementStrategy =
+                MessageLocationsReplacementStrategy.getValue(
+                        getString(
+                                DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
+                                MessageLocationsReplacementStrategy.DEPTH_FIRST.getConfigId()));
+        defaultThreadsPerFuzzer =
+                getInt(DEFAULT_THREADS_PER_FUZZER_KEY, DEFAULT_THREADS_PER_FUZZER);
+        defaultFuzzDelayInMs = getInt(DEFAULT_FUZZ_DELAY_IN_MS_KEY, DEFAULT_FUZZ_DELAY_IN_MS);
     }
 
     @Override
@@ -187,60 +126,27 @@ public class FuzzOptions extends VersionedAbstractParam {
             case NO_CONFIG_VERSION:
                 // Previously in core. Normalise the name of old options.
                 String threadPerScanKey = "fuzzer.threadPerScan";
-                try {
-                    int oldThreadPerScan =
-                            getConfig().getInt(threadPerScanKey, DEFAULT_THREADS_PER_FUZZER);
-                    getConfig()
-                            .setProperty(
-                                    DEFAULT_THREADS_PER_FUZZER_KEY,
-                                    Integer.valueOf(oldThreadPerScan));
-                } catch (ConversionException e) {
-                    LOGGER.warn(
-                            "Failed to read (old) configuration '"
-                                    + threadPerScanKey
-                                    + "', no update will be made.");
-                }
+                int oldThreadPerScan = getInt(threadPerScanKey, DEFAULT_THREADS_PER_FUZZER);
+                getConfig()
+                        .setProperty(
+                                DEFAULT_THREADS_PER_FUZZER_KEY, Integer.valueOf(oldThreadPerScan));
                 getConfig().clearProperty(threadPerScanKey);
 
                 String defaultCategoryKey = "fuzzer.defaultCategory";
-                try {
-                    String defaultCategory = getConfig().getString(defaultCategoryKey, "");
-                    getConfig().setProperty(DEFAULT_CATEGORY_NAME_KEY, defaultCategory);
-                } catch (ConversionException e) {
-                    LOGGER.warn(
-                            "Failed to read (old) configuration '"
-                                    + defaultCategoryKey
-                                    + "', no update will be made.");
-                }
+                String defaultCategory = getString(defaultCategoryKey, "");
+                getConfig().setProperty(DEFAULT_CATEGORY_NAME_KEY, defaultCategory);
                 getConfig().clearProperty(defaultCategoryKey);
 
                 String dealyInMsKey = "fuzzer.delayInMs";
-                try {
-                    int delayInMs = getConfig().getInt(dealyInMsKey, DEFAULT_FUZZ_DELAY_IN_MS);
-                    getConfig()
-                            .setProperty(DEFAULT_FUZZ_DELAY_IN_MS_KEY, Integer.valueOf(delayInMs));
-                } catch (ConversionException e) {
-                    LOGGER.warn(
-                            "Failed to read (old) configuration '"
-                                    + dealyInMsKey
-                                    + "', no update will be made.");
-                }
+                int delayInMs = getInt(dealyInMsKey, DEFAULT_FUZZ_DELAY_IN_MS);
+                getConfig().setProperty(DEFAULT_FUZZ_DELAY_IN_MS_KEY, Integer.valueOf(delayInMs));
                 getConfig().clearProperty(dealyInMsKey);
 
                 String lastSelectedDirectoryKey = "fuzzer.lastSelectedDirectoryAddCustomFile";
-                try {
-                    String lastSelectedDirectory =
-                            getConfig().getString(lastSelectedDirectoryKey, "");
-                    getConfig()
-                            .setProperty(
-                                    CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY,
-                                    lastSelectedDirectory);
-                } catch (ConversionException e) {
-                    LOGGER.warn(
-                            "Failed to read (old) configuration '"
-                                    + lastSelectedDirectoryKey
-                                    + "', no update will be made.");
-                }
+                String lastSelectedDirectory = getString(lastSelectedDirectoryKey, "");
+                getConfig()
+                        .setProperty(
+                                CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY, lastSelectedDirectory);
                 getConfig().clearProperty(lastSelectedDirectoryKey);
         }
     }

@@ -35,7 +35,8 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -53,7 +54,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     public static final String suspiciousCommentsListDir = "xml";
     public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
     private static final Logger logger =
-            Logger.getLogger(InformationDisclosureSuspiciousCommentsScanRule.class);
+            LogManager.getLogger(InformationDisclosureSuspiciousCommentsScanRule.class);
 
     private static List<Pattern> patterns = null;
 
@@ -207,13 +208,12 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 }
             } catch (IOException e) {
                 logger.error(
-                        "Error on opening/reading suspicious comments file: "
-                                + File.separator
-                                + suspiciousCommentsListDir
-                                + File.separator
-                                + suspiciousCommentsListFile
-                                + " Error: "
-                                + e.getMessage());
+                        "Error on opening/reading suspicious comments file: {}{}{}{} Error: {}",
+                        File.separator,
+                        suspiciousCommentsListDir,
+                        File.separator,
+                        suspiciousCommentsListFile,
+                        e.getMessage());
             }
         }
         return patterns;

@@ -36,7 +36,8 @@ import java.util.ListIterator;
 import java.util.Queue;
 import java.util.Set;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hsqldb.jdbc.JDBCBlob;
 import org.hsqldb.jdbc.JDBCClob;
 import org.parosproxy.paros.db.DatabaseException;
@@ -51,7 +52,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 
 /** Manages writing and reading WebSocket messages to the database. */
 public class TableWebSocket extends ParosAbstractTable {
-    private static final Logger logger = Logger.getLogger(TableWebSocket.class);
+    private static final Logger logger = LogManager.getLogger(TableWebSocket.class);
 
     private Set<Integer> channelIds;
     private LRUMap channelCache;
@@ -214,9 +215,7 @@ public class TableWebSocket extends ParosAbstractTable {
                     try {
                         psSelectChannelIds.close();
                     } catch (SQLException e) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(e.getMessage(), e);
-                        }
+                        logger.debug(e.getMessage(), e);
                     }
                 }
             }
@@ -736,14 +735,10 @@ public class TableWebSocket extends ParosAbstractTable {
                         // proceed with insert
                         stmt = psInsertChannel;
                         addIdOnSuccess = true;
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("insert channel: " + channel.toString());
-                        }
+                        logger.debug("insert channel: {}", channel);
                     }
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("url (length " + channel.url.length() + "):" + channel.url);
-                    }
+                    logger.debug("url (length {}): {}", channel.url.length(), channel.url);
 
                     stmt.setString(1, channel.host);
                     stmt.setInt(2, channel.port);
@@ -775,9 +770,7 @@ public class TableWebSocket extends ParosAbstractTable {
                             // safely ignore this exception
                             // on shutdown, the history table is cleaned before
                             // WebSocket channels are closed and updated
-                            if (logger.isDebugEnabled()) {
-                                logger.debug(e.getMessage(), e);
-                            }
+                            logger.debug(e.getMessage(), e);
                         }
                     }
 
@@ -808,9 +801,7 @@ public class TableWebSocket extends ParosAbstractTable {
                         throw new SQLException("channel not inserted: " + message.channel.id);
                     }
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("insert message: " + message.toString());
-                    }
+                    logger.debug("insert message: {}", message);
 
                     psInsertMessage.setInt(1, message.id);
                     psInsertMessage.setInt(2, message.channel.id);

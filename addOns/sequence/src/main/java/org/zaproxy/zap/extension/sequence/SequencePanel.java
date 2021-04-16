@@ -61,7 +61,7 @@ public class SequencePanel extends AbstractParamPanel {
     private static final String TBLSEQHEADER1 =
             Constant.messages.getString("sequence.custom.tab.inc.header");
 
-    private static final String HELPSTRING = "ui.dialogs.sequence";
+    private static final String HELPSTRING = "sequence";
 
     private JButton btnInclude = null;
     private JButton btnHelp = null;
@@ -134,8 +134,7 @@ public class SequencePanel extends AbstractParamPanel {
         tblSequence.getColumnModel().getColumn(1).setMinWidth(100);
         scrollPane.setViewportView(tblSequence);
 
-        // TODO no help available yet
-        // add(getHelpButton());
+        add(getHelpButton());
     }
 
     private JButton getHelpButton() {
@@ -180,9 +179,7 @@ public class SequencePanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        // TODO no help available yet
-        // return HELPSTRING;
-        return null;
+        return HELPSTRING;
     }
 
     private static class SequenceScriptsTableModel extends AbstractTableModel {

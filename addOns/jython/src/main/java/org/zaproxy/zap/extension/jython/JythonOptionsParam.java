@@ -19,13 +19,9 @@
  */
 package org.zaproxy.zap.extension.jython;
 
-import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class JythonOptionsParam extends VersionedAbstractParam {
-
-    private static final Logger logger = Logger.getLogger(JythonOptionsParam.class);
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -54,11 +50,7 @@ public class JythonOptionsParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        try {
-            this.modulePath = super.getConfig().getString(MODULE_PATH_PROPERTY, "");
-        } catch (ConversionException e) {
-            logger.error("Error while loading '" + MODULE_PATH_PROPERTY + "':", e);
-        }
+        this.modulePath = getString(MODULE_PATH_PROPERTY, "");
     }
 
     @Override

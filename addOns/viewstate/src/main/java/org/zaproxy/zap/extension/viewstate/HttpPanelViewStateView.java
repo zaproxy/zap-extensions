@@ -30,7 +30,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import org.apache.commons.configuration.FileConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractByteHttpPanelViewModel;
@@ -52,7 +53,7 @@ public class HttpPanelViewStateView
     public static final String NAME = "HttpPanelViewStateView";
     private static final String CAPTION_NAME =
             Constant.messages.getString("viewstate.panel.caption");
-    private static Logger logger = Logger.getLogger(ExtensionHttpPanelViewStateView.class);
+    private static Logger logger = LogManager.getLogger(ExtensionHttpPanelViewStateView.class);
     private HttpPanelHexModel httpPanelHexModel = null;
     private JTable hexTableBody = null;
     private JPanel container = null;
@@ -217,7 +218,7 @@ public class HttpPanelViewStateView
     public void viewStateUpdated(ViewState vs) {
         if (vs != null) {
             String info = "";
-            logger.debug("ViewState updated: " + vs.getType() + " :: " + vs.getValue());
+            logger.debug("ViewState updated: {} :: {}", vs.getType(), vs.getValue());
             if (vs.getType().equalsIgnoreCase(JSFViewState.KEY)) {
                 if (vs.getDecodedValue() != null) {
                     info = Constant.messages.getString("viewstate.en.type") + ": " + vs.getType();

@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -113,6 +114,57 @@ public class CsrfCountermeasuresScanRuleUnitTest
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getWascId(), 9);
         assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"no_csrf_token\">");
+    }
+
+    @Test
+    public void shouldRaiseAlertWithSortedFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
+        // Given
+        msg.setResponseBody(
+                "<html><head></head><body>"
+                        + "<form id=\"no_csrf_token\">"
+                        + "    <input type=\"text\" id=\"Cat\"/>"
+                        + "    <input type=\"text\" id=\"car\"/>"
+                        + "    <input type=\"text\" id=\"Bat\"/>"
+                        + "    <input type=\"text\" id=\"bar\"/>"
+                        + "    <input type=\"text\" id=\"art\"/>"
+                        + "    <input type=\"submit\"/>"
+                        + "</form></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getOtherInfo()
+                        .contains("\"art\" \"bar\" \"Bat\" \"car\" \"Cat\""));
+    }
+
+    @Test
+    public void shouldRaiseAlertWithSortedUniqueFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
+        // Given
+        msg.setResponseBody(
+                "<html><head></head><body>"
+                        + "<form id=\"no_csrf_token\">"
+                        + "    <input type=\"text\" id=\"Id\"/>"
+                        + "    <input type=\"text\" id=\"username\"/>"
+                        + "    <input type=\"text\" id=\"Key\"/>"
+                        + "    <input type=\"text\" id=\"group\"/>"
+                        + "    <input type=\"text\" id=\"group\"/>"
+                        + "    <input type=\"text\" id=\"group\"/>"
+                        + "    <input type=\"text\" id=\"group\"/>"
+                        + "    <input type=\"text\" id=\"group\"/>"
+                        + "    <input type=\"submit\"/>"
+                        + "</form></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getOtherInfo()
+                        .contains("\"group\" \"Id\" \"Key\" \"username\""));
     }
 
     @Test

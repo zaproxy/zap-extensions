@@ -233,7 +233,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(alert.getReference(), is(getLocalisedString(key + "refs")));
         assertThat(alert.getSolution(), is(getLocalisedString("soln")));
         assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_HIGH));
-        assertThat(alert.getCweId(), is(16));
+        assertThat(alert.getCweId(), is(693));
         assertThat(alert.getWascId(), is(15));
         assertThat(alert.getUri(), is(URI));
     }

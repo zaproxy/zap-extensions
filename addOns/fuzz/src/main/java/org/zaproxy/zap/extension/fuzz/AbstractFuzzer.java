@@ -32,7 +32,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacementGenerator;
@@ -60,7 +61,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         FINISHED
     }
 
-    protected final Logger logger = Logger.getLogger(getClass());
+    protected final Logger logger = LogManager.getLogger(getClass());
 
     private int fuzzerScanId;
     private String fuzzerScanName;
@@ -223,11 +224,9 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         } catch (RejectedExecutionException e) {
             postTaskExecution(task.getId(), false);
             logger.warn(
-                    "Submitted task was rejected, fuzzer state: [stopped="
-                            + isStopped()
-                            + ", terminated="
-                            + fuzzerTaskExecutor.isTerminated()
-                            + "].");
+                    "Submitted task was rejected, fuzzer state: [stopped={}, terminated={}].",
+                    isStopped(),
+                    fuzzerTaskExecutor.isTerminated());
         }
         return false;
     }
@@ -555,9 +554,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                 try {
                     multipleMessageLocationsReplacer.close();
                 } catch (Exception e) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Failed to close the message locations replacer:", e);
-                    }
+                    logger.debug("Failed to close the message locations replacer:", e);
                 }
 
                 if (fuzzerTaskExecutor != null) {

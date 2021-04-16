@@ -53,7 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -69,10 +70,11 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.utils.Stats;
 
 public class WSDLCustomParser {
 
-    private static final Logger LOG = Logger.getLogger(WSDLCustomParser.class);
+    private static final Logger LOG = LogManager.getLogger(WSDLCustomParser.class);
     private static int keyIndex = -1;
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
     private final TableWsdl table;
@@ -85,7 +87,7 @@ public class WSDLCustomParser {
     /* Method called from external classes to import a WSDL file from an URL. */
     public void extUrlWSDLImport(final String url, final String threadName) {
         if (url == null || url.trim().length() <= 0) return;
-        // LOG.debug("Importing WSDL file from URL: "+url);
+        // LOG.debug("Importing WSDL file from URL: {}", url);
         Thread t =
                 new Thread() {
                     @Override
@@ -194,7 +196,7 @@ public class WSDLCustomParser {
                 }
             }
             /* Sends a request to retrieve remote WSDL file's content. */
-            HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(url, true));
             HttpSender sender =
                     new HttpSender(
                             Model.getSingleton().getOptionsParam().getConnectionParam(),
@@ -209,7 +211,7 @@ public class WSDLCustomParser {
 
             String content = httpRequest.getResponseBody().toString();
             if (content.trim().isEmpty()) {
-                LOG.debug("Response from WSDL file request has no body content, url: " + url);
+                LOG.debug("Response from WSDL file request has no body content, url: {}", url);
             } else {
                 parseWSDLContent(content);
             }
@@ -423,9 +425,8 @@ public class WSDLCustomParser {
             return formParams;
         } catch (Exception e) {
             LOG.warn(
-                    "There was an error when trying to parse element "
-                            + element.getName()
-                            + " from WSDL file.",
+                    "There was an error when trying to parse element {} from WSDL file.",
+                    element.getName(),
                     e);
         }
         return formParams;
@@ -434,7 +435,7 @@ public class WSDLCustomParser {
     protected HashMap<String, String> addParameter(
             String path, String paramType, String name, String value) {
         HashMap<String, String> formParams = new HashMap<>();
-        LOG.debug("Detected parameter: " + path);
+        LOG.debug("Detected parameter: {}", path);
         if (paramType.contains(":")) {
             String[] stringParts = paramType.split(":");
             paramType = stringParts[stringParts.length - 1];
@@ -526,10 +527,10 @@ public class WSDLCustomParser {
             creator.createRequest(
                     binding.getPortType().getName(), bindOp.getName(), binding.getName());
 
-            // LOG.info("[ExtensionImportWSDL] "+writerSOAPReq);
+            // LOG.info("[ExtensionImportWSDL] {}", writerSOAPReq);
             /* HTTP Request. */
             String endpointLocation = port.getAddress().getLocation();
-            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, true));
             /* Body. */
             HttpRequestBody httpReqBody = httpRequest.getRequestBody();
             /* [MARK] Not sure if all servers would handle this encoding type. */
@@ -555,10 +556,9 @@ public class WSDLCustomParser {
             return httpRequest;
         } catch (Exception e) {
             LOG.error(
-                    "Unable to generate request for operation '"
-                            + bindOp.getName()
-                            + "'\n"
-                            + e.getMessage(),
+                    "Unable to generate request for operation '{}' : {}",
+                    bindOp.getName(),
+                    e.getMessage(),
                     e);
             return null;
         }
@@ -583,8 +583,7 @@ public class WSDLCustomParser {
         try {
             sender.sendAndReceive(httpRequest, true);
         } catch (IOException e) {
-            LOG.error("Unable to communicate with SOAP server. Server may be not available.");
-            LOG.debug("Trace:", e);
+            LOG.error("Unable to communicate with SOAP server. Server may be not available.", e);
         }
         persistMessage(httpRequest);
         if (sb != null)
@@ -618,6 +617,7 @@ public class WSDLCustomParser {
                                 .getSession()
                                 .getSiteTree()
                                 .addPath(historyRef, message);
+                        Stats.incCounter(ExtensionImportWSDL.STATS_ADDED_URLS);
                     });
         }
     }

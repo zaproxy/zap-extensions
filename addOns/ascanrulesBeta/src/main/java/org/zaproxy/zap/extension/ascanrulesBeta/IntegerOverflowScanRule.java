@@ -23,7 +23,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -38,7 +39,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.integeroverflow.";
 
     private static final int PLUGIN_ID = 30003;
-    private static final Logger log = Logger.getLogger(IntegerOverflowScanRule.class);
+    private static final Logger log = LogManager.getLogger(IntegerOverflowScanRule.class);
 
     @Override
     public int getId() {
@@ -174,9 +175,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
 
     private boolean checkStop() {
         if (this.isStop()) { // Check if the user stopped things
-            if (log.isDebugEnabled()) {
-                log.debug("Scan rule " + this.getName() + " Stopping.");
-            }
+            log.debug("Scan rule {} stopping.", getName());
             return true; // Stop!
         }
         return false;

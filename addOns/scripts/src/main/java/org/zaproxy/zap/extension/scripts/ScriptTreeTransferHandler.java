@@ -33,13 +33,14 @@ import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
 public class ScriptTreeTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ScriptTreeTransferHandler.class);
+    private static final Logger logger = LogManager.getLogger(ScriptTreeTransferHandler.class);
 
     DefaultMutableTreeNode[] nodesToRemove;
     DataFlavor nodesFlavor;
@@ -48,19 +49,19 @@ public class ScriptTreeTransferHandler extends TransferHandler {
     private Map<Class<?>, TransferHandler> htMap = new HashMap<>();
 
     public void addTransferHandler(Class<?> c, TransferHandler th) {
-        logger.debug("addTransferHandler " + c.getCanonicalName());
+        logger.debug("addTransferHandler {}", c.getCanonicalName());
         this.htMap.put(c, th);
     }
 
     public void removeTransferHandler(Class<?> c) {
-        logger.debug("removeTransferHandler " + c.getCanonicalName());
+        logger.debug("removeTransferHandler {}", c.getCanonicalName());
         this.htMap.remove(c);
     }
 
     private TransferHandler getTransferHandlerForSelection(Component c) {
         if (!(c instanceof JTree)) {
             logger.debug(
-                    "getTransferHandlerForSelection not jtree " + c.getClass().getCanonicalName());
+                    "getTransferHandlerForSelection not jtree {}", c.getClass().getCanonicalName());
             return null;
         }
         JTree tree = (JTree) c;
@@ -75,7 +76,7 @@ public class ScriptTreeTransferHandler extends TransferHandler {
                 Object uo = ((ScriptNode) tp.getLastPathComponent()).getUserObject();
                 if (uo == null) {
                     // One of the selection doesnt have a user object
-                    // logger.debug("getTransferHandlerForSelection no user object for " + tp);
+                    // logger.debug("getTransferHandlerForSelection no user object for {}", tp);
                     return null;
                 }
                 TransferHandler th2 = this.htMap.get(uo.getClass());
@@ -97,7 +98,7 @@ public class ScriptTreeTransferHandler extends TransferHandler {
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
-        logger.debug("canImport " + support.getComponent().getClass().getCanonicalName());
+        logger.debug("canImport {}", support.getComponent().getClass().getCanonicalName());
         TransferHandler th = getTransferHandlerForSelection(support.getComponent());
         if (th != null) {
             return th.canImport(support);
@@ -149,7 +150,7 @@ public class ScriptTreeTransferHandler extends TransferHandler {
 
     @Override
     public int getSourceActions(JComponent c) {
-        logger.debug("getSourceActions " + c.getClass().getCanonicalName());
+        logger.debug("getSourceActions {}", c.getClass().getCanonicalName());
         TransferHandler th = getTransferHandlerForSelection(c);
         if (th != null) {
             return th.getSourceActions(c);
@@ -159,7 +160,7 @@ public class ScriptTreeTransferHandler extends TransferHandler {
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
-        logger.debug("importData " + support.getComponent().getClass().getCanonicalName());
+        logger.debug("importData {}", support.getComponent().getClass().getCanonicalName());
         TransferHandler th = getTransferHandlerForSelection(support.getComponent());
         if (th != null) {
             return th.importData(support);

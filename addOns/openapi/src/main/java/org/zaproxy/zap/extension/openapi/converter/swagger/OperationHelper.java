@@ -22,12 +22,13 @@ package org.zaproxy.zap.extension.openapi.converter.swagger;
 import io.swagger.v3.oas.models.PathItem;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 
 public class OperationHelper {
 
-    private static final Logger log = Logger.getLogger(OperationHelper.class);
+    private static final Logger log = LogManager.getLogger(OperationHelper.class);
 
     public List<OperationModel> getAllOperations(PathItem path, String url) {
         List<OperationModel> operations = new LinkedList<OperationModel>();
@@ -54,7 +55,7 @@ public class OperationHelper {
             operations.add(new OperationModel(url, path.getPatch(), RequestMethod.PATCH));
         }
         if (operations.isEmpty()) {
-            log.debug("Failed to find any operations for url=" + url + " path=" + path);
+            log.debug("Failed to find any operations for url={} path={}", url, path);
         }
 
         return operations;

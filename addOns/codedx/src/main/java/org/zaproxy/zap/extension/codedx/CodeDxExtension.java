@@ -27,7 +27,8 @@ import java.security.GeneralSecurityException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -43,7 +44,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class CodeDxExtension extends ExtensionAdaptor {
 
-    private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
+    private static final Logger LOGGER = LogManager.getLogger(CodeDxExtension.class);
 
     private CodeDxAPI cdxAPIImpl;
 

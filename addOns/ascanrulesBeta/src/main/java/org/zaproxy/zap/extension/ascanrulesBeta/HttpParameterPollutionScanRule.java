@@ -29,7 +29,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,7 +43,7 @@ import org.parosproxy.paros.network.HttpMessage;
  */
 public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
 
-    private static Logger log = Logger.getLogger(HttpParameterPollutionScanRule.class);
+    private static Logger log = LogManager.getLogger(HttpParameterPollutionScanRule.class);
     private final String payload = "%26zap%3Dzaproxy";
 
     @Override
@@ -83,7 +84,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
     public void scan() {
 
         try {
-            log.debug("Targeting " + getBaseMsg().getRequestHeader().getURI());
+            log.debug("Targeting {}", getBaseMsg().getRequestHeader().getURI());
 
             // pages are not vulnerable if not proved otherwise
             List<String> vulnLinks = new ArrayList<String>();
@@ -104,15 +105,11 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                     try {
                         sendAndReceive(newMsg);
                     } catch (IllegalStateException | UnknownHostException ex) {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Caught "
-                                            + ex.getClass().getName()
-                                            + " "
-                                            + ex.getMessage()
-                                            + " when accessing: "
-                                            + newMsg.getRequestHeader().getURI().toString()
-                                            + "\n The target may have replied with a poorly formed redirect due to our input.");
+                        log.debug(
+                                "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                newMsg.getRequestHeader().getURI());
                         return;
                     }
 
@@ -133,9 +130,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 log.debug("Page not vulnerable to HPP attacks");
             }
         } catch (URIException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
-            }
+            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -157,10 +152,9 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 if (map.get(tag.getAttributeValue("name")) != null) {
                     if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
                         log.debug(
-                                "Found Vulnerable Parameter in a link with the injected payload: "
-                                        + tag.getAttributeValue("name")
-                                        + ", "
-                                        + map.get(tag.getAttributeValue("name")));
+                                "Found Vulnerable Parameter in a link with the injected payload: {}, {}",
+                                tag.getAttributeValue("name"),
+                                map.get(tag.getAttributeValue("name")));
                         vulnLinks.add(
                                 tag.getAttributeValue("name")
                                         + ", "
@@ -177,10 +171,9 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 if (map.get(tag.getAttributeValue("name")) != null) {
                     if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
                         log.debug(
-                                "Found Vulnerable Parameter in a form with the injected payload: "
-                                        + tag.getAttributeValue("name")
-                                        + ", "
-                                        + map.get(tag.getAttributeValue("name")));
+                                "Found Vulnerable Parameter in a form with the injected payload: {}, {}",
+                                tag.getAttributeValue("name"),
+                                map.get(tag.getAttributeValue("name")));
                         vulnLinks.add(
                                 tag.getAttributeValue("name")
                                         + ", "
@@ -208,7 +201,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                         new HtmlParameter(
                                 HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
                 log.debug("The following form parameters have been found:");
-                log.debug("Input Tag: " + p.getName() + ", " + p.getValue());
+                log.debug("Input Tag: {}, {}", p.getName(), p.getValue());
             }
         }
         for (HtmlParameter p : getBaseMsg().getUrlParams()) {
@@ -217,7 +210,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                         new HtmlParameter(
                                 HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
                 log.debug("The following url parameters have been found:");
-                log.debug("Input Tag: " + p.getName() + ", " + p.getValue());
+                log.debug("Input Tag: {}, {}", p.getName(), p.getValue());
             }
         }
         for (Element element : inputTags) {
@@ -230,10 +223,9 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                                 element.getAttributeValue("value") + this.payload));
                 log.debug("The following input parameters have been found:");
                 log.debug(
-                        "Input Tag: "
-                                + element.getAttributeValue("name")
-                                + ", "
-                                + element.getAttributeValue("value"));
+                        "Input Tag: {}, {}",
+                        element.getAttributeValue("name"),
+                        element.getAttributeValue("value"));
             }
         }
         return tags;

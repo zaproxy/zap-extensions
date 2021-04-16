@@ -127,7 +127,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                     "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                     ex.getClass().getName(),
                     ex.getMessage(),
-                    normalMsg.getRequestHeader().getURI().toString());
+                    normalMsg.getRequestHeader().getURI());
             return; // Something went wrong, no point continuing
         } catch (Exception e) {
             // ZAP: Log exceptions
@@ -162,7 +162,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            testMsg.getRequestHeader().getURI().toString());
+                            testMsg.getRequestHeader().getURI());
                     continue; // Something went wrong, move on to the next item in the PARAM_LIST
                 }
                 if (checkResult(testMsg, param, attack, normalMsg.getResponseBody().toString())) {

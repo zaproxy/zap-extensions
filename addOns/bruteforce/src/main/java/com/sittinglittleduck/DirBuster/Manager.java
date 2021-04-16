@@ -39,7 +39,8 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Manager implements ProcessChecker.ProcessUpdate {
 
@@ -183,7 +184,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private boolean onlyUnderStartPoint = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(Manager.class);
+    private static final Logger LOG = LogManager.getLogger(Manager.class);
+
+    private String userAgent;
 
     // ZAP: Changed to public to allow it to be extended
     public Manager() {
@@ -205,6 +208,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
          * create the httpclient
          */
         createHttpClient();
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     // set up dictionay based attack with normal start
@@ -431,7 +438,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                     .getParams()
                     .setConnectionTimeout(Config.connectionTimeout * 1000);
             httpclient.setState(initialState);
-            httpclient.getParams().setParameter("http.useragent", Config.userAgent);
+            httpclient
+                    .getParams()
+                    .setParameter(
+                            "http.useragent", userAgent != null ? userAgent : Config.userAgent);
 
             /*
              * Code to deal with http auth
@@ -665,9 +675,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                 }
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dir found: " + url.getFile() + " - " + statusCode);
-            }
+            LOG.debug("Dir found: {} - {}", url.getFile(), statusCode);
 
             // add to list of items that have already processed
             addParsedLink(url.getPath());
@@ -697,9 +705,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String rawResponce,
             BaseCase baseCaseObj) {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("File found: " + url.getFile() + " - " + statusCode);
-        }
+        LOG.debug("File found: {} - {}", url.getFile(), statusCode);
 
         addParsedLink(url.getPath());
 
@@ -710,7 +716,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public synchronized void foundError(URL url, String reason) {
         headlessResult.addElement(
                 new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
-        LOG.warn(url.toString() + " - " + reason);
+        LOG.warn("{} - {}", url, reason);
     }
 
     public String getInputFile() {
@@ -926,7 +932,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     totalDirsFound--;
                 } else {
-                    LOG.warn("Failed to remove " + processWork + " from dir queue");
+                    LOG.warn("Failed to remove {} from dir queue", processWork);
                 }
             }
         }

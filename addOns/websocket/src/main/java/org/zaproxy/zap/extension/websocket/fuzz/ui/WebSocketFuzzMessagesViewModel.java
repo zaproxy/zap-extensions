@@ -23,7 +23,8 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     private static final long serialVersionUID = 5435325545219552543L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketFuzzMessagesViewModel.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketFuzzMessagesViewModel.class);
 
     /** Names of new columns. */
     private static final String[] COLUMN_NAMES = {

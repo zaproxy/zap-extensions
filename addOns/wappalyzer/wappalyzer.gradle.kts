@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "21.1.0"
+version = "21.2.0"
 description = "Technology detection using Wappalyzer: wappalyzer.com"
 
 zapAddOn {
@@ -20,7 +20,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.5")
+    implementation("com.google.re2j:re2j:1.6")
 
     val batikVersion = "1.13"
     implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")

@@ -174,54 +174,6 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsGoodPragmaCacheRequest() throws HttpMalformedHeaderException {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Cache-Control: no-cache, no-store, must-revalidate\r\n"
-                        + "Pragma: no-cache\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        given(passiveScanData.isClientError(any())).willReturn(false);
-        given(passiveScanData.isServerError(any())).willReturn(false);
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    public void httpsBadPragmaCacheRequest() throws HttpMalformedHeaderException {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Cache-Control: no-cache, no-store, must-revalidate\r\n"
-                        + "Pragma: cache\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        given(passiveScanData.isClientError(any())).willReturn(false);
-        given(passiveScanData.isServerError(any())).willReturn(false);
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.PRAGMA));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("cache"));
-    }
-
-    @Test
     public void httpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);

@@ -22,9 +22,7 @@ package org.zaproxy.zap.extension.selenium;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -44,8 +42,6 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  * </ul>
  */
 public class SeleniumOptions extends VersionedAbstractParam {
-
-    private static final Logger LOGGER = Logger.getLogger(SeleniumOptions.class);
 
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY =
             ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
@@ -180,14 +176,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private String readSystemPropertyWithOptionFallback(String systemProperty, String optionKey) {
         String value = System.getProperty(systemProperty);
         if (value == null) {
-            try {
-                value = getConfig().getString(optionKey, "");
-                if (!value.isEmpty()) {
-                    System.setProperty(systemProperty, value);
-                }
-            } catch (ConversionException e) {
-                LOGGER.error("Failed to read '" + optionKey + "'", e);
-                value = "";
+            value = getString(optionKey, "");
+            if (!value.isEmpty()) {
+                System.setProperty(systemProperty, value);
             }
         } else {
             getConfig().setProperty(optionKey, value);

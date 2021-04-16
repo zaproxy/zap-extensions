@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.callgraph;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.paros.ParosDatabase;
 import org.parosproxy.paros.model.Model;
@@ -38,7 +39,7 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = -237315557930044572L;
 
-    private static final Logger log = Logger.getLogger(PopupMenuCallGraph.class);
+    private static final Logger log = LogManager.getLogger(PopupMenuCallGraph.class);
 
     private static final String POPUP_MENU_LABEL =
             Constant.messages.getString("callgraph.popup.option");
@@ -126,12 +127,12 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 
             switch (nodeType) {
                 case ALL_SITES:
-                    log.debug("Doing stuff for the entire site, given message: " + uri);
+                    log.debug("Doing stuff for the entire site, given message: {}", uri);
                     sitePattern = ".*";
                     title = POPUP_MENU_ALL_SITES;
                     break;
                 case ONE_SITE:
-                    log.debug("Doing stuff for the subtree, given message: " + uri);
+                    log.debug("Doing stuff for the subtree, given message: {}", uri);
                     // parse out the scheme and authority, which is what we will use to filter
                     // requests for a single site.
                     try {
@@ -148,8 +149,7 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
                     break;
             }
             // now create the frame and display it.
-            if (log.isDebugEnabled())
-                log.debug("Creating regular expression based on ^" + sitePattern + "$");
+            log.debug("Creating regular expression based on ^{}$", sitePattern);
             Pattern urlPattern = Pattern.compile("^" + sitePattern + "$", Pattern.CASE_INSENSITIVE);
 
             CallGraphFrame dialog = getCallGraphFrame(title, urlPattern);

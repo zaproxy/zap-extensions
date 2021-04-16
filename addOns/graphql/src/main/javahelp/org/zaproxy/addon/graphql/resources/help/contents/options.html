@@ -13,6 +13,17 @@
 	
 	The maximum depth of a generated query.
 
+	<h2> Lenient Maximum Query Depth </h2>
+
+	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
+	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
+
+	<h2> Additional Query Depth </h2>
+
+	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
+	The maximum additional depth used to search for leaf-type fields.
+	If a leaf type is not found, the generated query may be invalid and a message is logged.
+
 	<h2>Maximum Arguments Depth</h2>
 	
 	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
@@ -61,6 +72,11 @@
 			<td><a href="script.html">GraphQL Script</a></td>
 			<td>for information about the bundled script.</td>
 		</tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><a href="automation.html">GraphQL Automation</a></td>
+            <td>for information about the automation framework support.</td>
+        </tr>
 	</table>
 
 </BODY>

@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -45,7 +46,7 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
 
     private static final int PLUGIN_ID = 10053;
 
-    private static final Logger LOG = Logger.getLogger(ApacheRangeHeaderDosScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(ApacheRangeHeaderDosScanRule.class);
 
     @Override
     public int getId() {
@@ -103,9 +104,7 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
         // Check if the user stopped things. One request per URL so check before
         // sending the request
         if (isStop()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scan rule " + getName() + " Stopping.");
-            }
+            LOG.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -117,15 +116,11 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
                 sendAndReceive(newRequest, false);
             } catch (IOException e) {
                 LOG.warn(
-                        "An error occurred while checking ["
-                                + newRequest.getRequestHeader().getMethod()
-                                + "] ["
-                                + newRequest.getRequestHeader().getURI()
-                                + "] for Apache Range Header DoS (CVE-2011-3192)."
-                                + "Caught "
-                                + e.getClass().getName()
-                                + " "
-                                + e.getMessage());
+                        "An error occurred while checking [{}] [{}] for Apache Range Header DoS (CVE-2011-3192). Caught {} {}",
+                        newRequest.getRequestHeader().getMethod(),
+                        newRequest.getRequestHeader().getURI(),
+                        e.getClass().getName(),
+                        e.getMessage());
                 return;
             }
 
@@ -147,15 +142,11 @@ public class ApacheRangeHeaderDosScanRule extends AbstractAppPlugin {
             sendAndReceive(chkRequest, false);
         } catch (IOException e) {
             LOG.warn(
-                    "An error occurred while validating ["
-                            + chkRequest.getRequestHeader().getMethod()
-                            + "] ["
-                            + chkRequest.getRequestHeader().getURI()
-                            + "] for Apache Range Header DoS (CVE-2011-3192) applicability."
-                            + "Caught "
-                            + e.getClass().getName()
-                            + " "
-                            + e.getMessage());
+                    "An error occurred while validating [{}] [{}] for Apache Range Header DoS (CVE-2011-3192) applicability. Caught {} {}",
+                    chkRequest.getRequestHeader().getMethod(),
+                    chkRequest.getRequestHeader().getURI(),
+                    e.getClass().getName(),
+                    e.getMessage());
             return false;
         }
 

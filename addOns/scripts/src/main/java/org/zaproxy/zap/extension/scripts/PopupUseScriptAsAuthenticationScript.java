@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.text.MessageFormat;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -47,7 +48,8 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
  */
 public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem {
 
-    private static final Logger log = Logger.getLogger(PopupUseScriptAsAuthenticationScript.class);
+    private static final Logger log =
+            LogManager.getLogger(PopupUseScriptAsAuthenticationScript.class);
     private static final long serialVersionUID = -9073920896139520588L;
 
     /** The Constant menu name. */
@@ -181,8 +183,8 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
         // Do the work/changes on the UI shared context
         if (uiSharedContext.getAuthenticationMethod() instanceof ScriptBasedAuthenticationMethod) {
             log.info(
-                    "Selected Authentication script via popup menu. Changing existing Script-Based Authentication instance for Context "
-                            + contextId);
+                    "Selected Authentication script via popup menu. Changing existing Script-Based Authentication instance for Context {}",
+                    contextId);
             ScriptBasedAuthenticationMethod method =
                     (ScriptBasedAuthenticationMethod) uiSharedContext.getAuthenticationMethod();
             try {
@@ -205,8 +207,8 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                             false);
         } else {
             log.info(
-                    "Selected Authentication script via popup menu. Creating new Script-Based Authentication instance for Context "
-                            + this.contextId);
+                    "Selected Authentication script via popup menu. Creating new Script-Based Authentication instance for Context {}",
+                    this.contextId);
             ScriptBasedAuthenticationMethod method =
                     new ScriptBasedAuthenticationMethodType().createAuthenticationMethod(contextId);
 
