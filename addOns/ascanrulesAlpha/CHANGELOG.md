@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Target 2.10 core and use new logging infrastructure (Log4j 2.x).
 
 ### Added
+- CORS active scan rule.
 - Forbidden (403) Bypass scan rule.
 
 ## [30] - 2020-11-26
