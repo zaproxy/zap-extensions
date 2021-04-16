@@ -180,7 +180,9 @@ public class CorsScanRule extends AbstractAppPlugin {
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         for (int i = Alert.RISK_INFO; i < Alert.RISK_HIGH; i++) {
-            alerts.add(buildAlert(i).build());
+            if (i != Alert.RISK_LOW) {
+                alerts.add(buildAlert(i).build());
+            }
         }
         return alerts;
     }
