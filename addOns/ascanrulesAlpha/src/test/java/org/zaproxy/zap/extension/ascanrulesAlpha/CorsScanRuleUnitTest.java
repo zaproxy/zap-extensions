@@ -48,7 +48,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     @Test
-    public void shouldNotAlertIfCORSNotSupported() throws Exception {
+    public void shouldNotAlertIfCorsNotSupported() throws Exception {
         // Given
         nano.addHandler(new CORSResponse(null, false));
         HttpMessage msg = this.getHttpMessage("/");

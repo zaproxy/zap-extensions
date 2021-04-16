@@ -121,13 +121,12 @@ public class CorsScanRule extends AbstractAppPlugin {
                         .raise();
                 return;
             } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                LOG.warn(e.getMessage(), e);
             }
         }
     }
 
     private AlertBuilder buildAlert(int risk) {
-
         return newAlert()
                 .setName(risk == Alert.RISK_INFO ? getName() : getConstantStr("vuln.name"))
                 .setRisk(risk)
@@ -180,9 +179,12 @@ public class CorsScanRule extends AbstractAppPlugin {
         return 14;
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<Alert>();
-        for (int i = Alert.RISK_INFO; i < Alert.RISK_HIGH; i++) alerts.add(buildAlert(i).build());
+        List<Alert> alerts = new ArrayList<>();
+        for (int i = Alert.RISK_INFO; i < Alert.RISK_HIGH; i++) {
+            alerts.add(buildAlert(i).build());
+        }
         return alerts;
     }
 }
