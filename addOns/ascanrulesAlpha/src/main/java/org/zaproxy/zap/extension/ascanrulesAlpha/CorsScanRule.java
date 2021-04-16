@@ -89,18 +89,15 @@ public class CorsScanRule extends AbstractAppPlugin {
                 }
 
                 int risk = Alert.RISK_INFO;
-                boolean vuln = false;
                 String acacVal = respHead.getHeader(ACAC);
                 acacVal = acacVal == null ? "" : acacVal;
 
                 // Evaluates the risk for this alert
                 if (acaoVal.contains("*")) {
-                    vuln = true;
                     risk = Alert.RISK_MEDIUM;
                 } else if (acaoVal.contains(RANDOM_NAME)
                         || acaoVal.contains("null")
                         || (secScheme && acaoVal.contains("http:"))) {
-                    vuln = true;
                     // If authenticated AJAX requests are allowed, the risk is higher
                     risk = (acacVal == "") ? Alert.RISK_MEDIUM : Alert.RISK_HIGH;
                 }
