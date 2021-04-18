@@ -48,6 +48,8 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
             String messagePrefix, String fileExtension, ContentWriter writer) {
         super(Constant.messages.getString(messagePrefix + "popup.option"));
 
+        String fileDescription = Constant.messages.getString(messagePrefix + "file.description");
+
         String popupMenuAll = Constant.messages.getString("exim.popup.option.all");
         String popupMenuBody = Constant.messages.getString("exim.popup.option.body");
         String popupMenuHeader = Constant.messages.getString("exim.popup.option.header");
@@ -59,33 +61,57 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
         JMenu request = new SaveMessagePopupMenu(popupMenuRequest, MessageComponent.REQUEST);
         SaveMessagePopupMenuItem requestHeader =
                 new SaveMessagePopupMenuItem(
-                        popupMenuHeader, MessageComponent.REQUEST_HEADER, fileExtension, writer);
+                        popupMenuHeader,
+                        MessageComponent.REQUEST_HEADER,
+                        fileExtension,
+                        fileDescription,
+                        writer);
 
         request.add(requestHeader);
         SaveMessagePopupMenuItem requestBody =
                 new SaveMessagePopupMenuItem(
-                        popupMenuBody, MessageComponent.REQUEST_BODY, fileExtension, writer);
+                        popupMenuBody,
+                        MessageComponent.REQUEST_BODY,
+                        fileExtension,
+                        fileDescription,
+                        writer);
         request.add(requestBody);
         request.addSeparator();
         SaveMessagePopupMenuItem requestAll =
                 new SaveMessagePopupMenuItem(
-                        popupMenuAll, MessageComponent.REQUEST, fileExtension, writer);
+                        popupMenuAll,
+                        MessageComponent.REQUEST,
+                        fileExtension,
+                        fileDescription,
+                        writer);
         request.add(requestAll);
         add(request);
 
         JMenu response = new SaveMessagePopupMenu(popupMenuResponse, MessageComponent.RESPONSE);
         SaveMessagePopupMenuItem responseHeader =
                 new SaveMessagePopupMenuItem(
-                        popupMenuHeader, MessageComponent.RESPONSE_HEADER, fileExtension, writer);
+                        popupMenuHeader,
+                        MessageComponent.RESPONSE_HEADER,
+                        fileExtension,
+                        fileDescription,
+                        writer);
         response.add(responseHeader);
         SaveMessagePopupMenuItem responseBody =
                 new SaveMessagePopupMenuItem(
-                        popupMenuBody, MessageComponent.RESPONSE_BODY, fileExtension, writer);
+                        popupMenuBody,
+                        MessageComponent.RESPONSE_BODY,
+                        fileExtension,
+                        fileDescription,
+                        writer);
         response.add(responseBody);
         response.addSeparator();
         SaveMessagePopupMenuItem responseAll =
                 new SaveMessagePopupMenuItem(
-                        popupMenuAll, MessageComponent.RESPONSE, fileExtension, writer);
+                        popupMenuAll,
+                        MessageComponent.RESPONSE,
+                        fileExtension,
+                        fileDescription,
+                        writer);
         response.add(responseAll);
         add(response);
     }
@@ -151,12 +177,13 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
                 String label,
                 MessageComponent messageComponent,
                 String fileExtension,
+                String fileDescription,
                 ContentWriter writer) {
             super(label);
 
             this.messageComponent = messageComponent;
             this.fileExtension = fileExtension;
-            this.fileDescription = fileExtension;
+            this.fileDescription = fileDescription;
             this.writer = writer;
         }
 

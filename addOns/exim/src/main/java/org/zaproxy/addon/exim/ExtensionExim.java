@@ -21,6 +21,9 @@ package org.zaproxy.addon.exim;
 
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.exim.har.ImportHarApi;
+import org.zaproxy.addon.exim.har.MenuImportHar;
+import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 
 public class ExtensionExim extends ExtensionAdaptor {
 
@@ -37,7 +40,11 @@ public class ExtensionExim extends ExtensionAdaptor {
         if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXmlMessage());
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuItemSaveHarMessage());
+
+            extensionHook.getHookMenu().addImportMenuItem(new MenuImportHar());
         }
+        extensionHook.addApiImplementor(new ImportHarApi());
     }
 
     @Override
