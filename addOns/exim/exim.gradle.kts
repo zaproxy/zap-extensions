@@ -9,7 +9,7 @@ zapAddOn {
     zapVersion.set("2.10.0")
 
     manifest {
-        author.set("ZAP Dev Team")
+        author.set("ZAP Dev Team & thatsn0tmysite")
         url.set("https://www.zaproxy.org/docs/desktop/addons/import-export/")
 
         helpSet {
