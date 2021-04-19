@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.har;
+package org.zaproxy.addon.exim.har;
 
 import edu.umass.cs.benchlab.har.HarContent;
 import edu.umass.cs.benchlab.har.HarEntries;
@@ -25,17 +25,29 @@ import edu.umass.cs.benchlab.har.HarEntry;
 import edu.umass.cs.benchlab.har.HarHeader;
 import edu.umass.cs.benchlab.har.HarLog;
 import edu.umass.cs.benchlab.har.HarResponse;
+import edu.umass.cs.benchlab.har.tools.HarFileReader;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.parosproxy.paros.db.DatabaseException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.HarUtils;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HarImporter {
+
+    private static final Logger LOG = LogManager.getLogger(HarImporter.class);
+
+    private static ExtensionHistory extHistory;
 
     public static List<HttpMessage> getHttpMessages(HarLog log)
             throws HttpMalformedHeaderException {
@@ -51,25 +63,7 @@ public class HarImporter {
             throws HttpMalformedHeaderException {
         HttpMessage result = HarUtils.createHttpMessage(harEntry.getRequest());
         setHttpResponse(harEntry.getResponse(), result);
-        setHistoryReference(harEntry, result);
         return result;
-    }
-
-    private static void setHistoryReference(HarEntry harEntry, HttpMessage httpMessage) {
-        if (harEntry.getCustomFields().getCustomFieldValue(HarUtils.MESSAGE_ID_CUSTOM_FIELD)
-                == null) {
-            return;
-        }
-
-        Integer historyId =
-                Integer.valueOf(
-                        harEntry.getCustomFields()
-                                .getCustomFieldValue(HarUtils.MESSAGE_ID_CUSTOM_FIELD));
-        try {
-            httpMessage.setHistoryRef(new HistoryReference(historyId.intValue()));
-        } catch (DatabaseException | HttpMalformedHeaderException e) {
-            // Ignore.
-        }
     }
 
     private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
@@ -103,5 +97,55 @@ public class HarImporter {
         if (harContent != null) {
             message.setResponseBody(new HttpResponseBody(harContent.getText()));
         }
+    }
+
+    public static boolean importHarFile(File file) {
+        try {
+            processMessages(file);
+            return true;
+        } catch (IOException e) {
+            LOG.error(e);
+            return false;
+        }
+    }
+
+    public static void processMessages(File file) throws IOException {
+        List<HttpMessage> messages =
+                HarImporter.getHttpMessages(new HarFileReader().readHarFile(file));
+        messages.forEach(HarImporter::persistMessage);
+    }
+
+    private static void persistMessage(HttpMessage message) {
+        HistoryReference historyRef;
+
+        try {
+            historyRef =
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_ZAP_USER,
+                            message);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return;
+        }
+
+        if (getExtensionHistory() != null) {
+            ThreadUtils.invokeAndWaitHandled(() -> addMessage(historyRef, message));
+        }
+    }
+
+    private static ExtensionHistory getExtensionHistory() {
+        if (extHistory == null) {
+            extHistory =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionHistory.class);
+        }
+        return extHistory;
+    }
+
+    private static void addMessage(HistoryReference historyRef, HttpMessage message) {
+        getExtensionHistory().addHistory(historyRef);
+        Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
     }
 }

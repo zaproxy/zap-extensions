@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.har;
+package org.zaproxy.addon.exim.har;
 
 import edu.umass.cs.benchlab.har.HarEntries;
 import edu.umass.cs.benchlab.har.HarLog;
@@ -46,14 +46,21 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
 
     private static final Logger LOG = LogManager.getLogger(PopupMenuItemSaveHarMessage.class);
 
-    private static final String POPUP_MENU_LABEL = Constant.messages.getString("har.popup.option");
+    private static final String POPUP_MENU_LABEL =
+            Constant.messages.getString("exim.har.popup.option");
     private static final String HAR_FILE_EXTENSION = ".har";
     private static final String FILE_DESCRIPTION =
-            Constant.messages.getString("har.file.description");
-    private static final String ERROR_SAVE = Constant.messages.getString("har.file.save.error");
+            Constant.messages.getString("exim.har.file.description");
+    private static final String ERROR_SAVE =
+            Constant.messages.getString("exim.har.file.save.error");
 
     public PopupMenuItemSaveHarMessage() {
         super(POPUP_MENU_LABEL, true);
+    }
+
+    @Override
+    public boolean precedeWithSeparator() {
+        return true;
     }
 
     @Override

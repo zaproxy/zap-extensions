@@ -17,13 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.har;
+package org.zaproxy.addon.exim;
 
 import java.io.File;
-import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.exim.har.HarImporter;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -32,27 +32,16 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.utils.ApiUtils;
 
-/** The API for importing URLs from a file. */
-public class HarAPI extends ApiImplementor {
+/** The API for importing data from a file. */
+public class ImportExportApi extends ApiImplementor {
 
-    private static final Logger LOG = LogManager.getLogger(HarAPI.class);
-
-    private static final String PREFIX = "har";
-
+    private static final Logger LOG = LogManager.getLogger(ImportExportApi.class);
+    private static final String PREFIX = "exim";
     private static final String ACTION_IMPORTHAR = "importhar";
-
     private static final String PARAM_FILE_PATH = "filePath";
 
-    private ExtensionHar extension;
-
-    /** Provided only for API client generator usage. */
-    public HarAPI() {
-        this(null);
-    }
-
-    public HarAPI(ExtensionHar extension) {
+    public ImportExportApi() {
         super();
-        this.extension = extension;
         this.addApiAction(new ApiAction(ACTION_IMPORTHAR, new String[] {PARAM_FILE_PATH}));
     }
 
@@ -65,17 +54,17 @@ public class HarAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         LOG.debug("handleApiAction {} {}", name, params);
 
-        try {
-            switch (name) {
-                case ACTION_IMPORTHAR:
-                    extension.importHarFile(
-                            new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH)));
+        switch (name) {
+            case ACTION_IMPORTHAR:
+                File file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                boolean success = HarImporter.importHarFile(file);
+                if (success) {
                     return ApiResponseElement.OK;
-                default:
-                    throw new ApiException(Type.BAD_ACTION);
-            }
-        } catch (IOException e) {
-            throw new ApiException(Type.ILLEGAL_PARAMETER, e);
+                } else {
+                    throw new ApiException(Type.BAD_EXTERNAL_DATA, file.getAbsolutePath());
+                }
+            default:
+                throw new ApiException(Type.BAD_ACTION);
         }
     }
 }
