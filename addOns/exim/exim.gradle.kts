@@ -18,3 +18,7 @@ zapAddOn {
         }
     }
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}
