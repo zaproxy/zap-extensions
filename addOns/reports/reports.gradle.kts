@@ -1,7 +1,7 @@
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 
 plugins {
-    id("com.diffplug.gradle.spotless")
+    id("com.diffplug.spotless")
 }
 
 version = "0.3.0"

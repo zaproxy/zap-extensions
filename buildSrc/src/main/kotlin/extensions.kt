@@ -1,41 +1,30 @@
-import com.diffplug.gradle.spotless.FormatExtension
-import com.diffplug.gradle.spotless.GradleProvisioner
+import com.diffplug.gradle.spotless.JavaExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.diffplug.spotless.java.GoogleJavaFormatStep
 import org.gradle.api.Project
 
 /**
  * Configures the java extension with all Java files except the given ones and configures
- * a format extension with Google Java Format (AOSP) step for the given files.
+ * a format with Google Java Format (AOSP) for the given files.
  */
 fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<String>) {
-    java({
+    java {
         target(project.fileTree(project.projectDir) {
-            include("**/*.java")
+            include("src/**/*.java")
             exclude(files)
         })
-    })
-    format3rdParty(project, files)
-}
+    }
 
-/**
- * Adds a custom format for the given files with Google Java Format (AOSP) step.
- */
-fun SpotlessExtension.format3rdParty(project: Project, files: List<String>): Unit =
-    this.format("3rdParty", {
+    format("3rdParty", JavaExtension::class.java, {
         target(project.fileTree(project.projectDir) {
             include(files)
         })
 
-        googleJavaFormatAosp(project)
+        googleJavaFormatAosp()
     })
+}
 
 /**
- * Adds the Google Java Format (AOSP) step to the format extension.
+ * Configures the Google Java Format (AOSP).
  */
-fun FormatExtension.googleJavaFormatAosp(project: Project): Unit =
-    this.addStep(GoogleJavaFormatStep.create(
-            GoogleJavaFormatStep.defaultVersion(),
-            "AOSP",
-            GradleProvisioner.fromProject(project)
-    ))
+fun JavaExtension.googleJavaFormatAosp(): Unit =
+    googleJavaFormat("1.7").aosp()

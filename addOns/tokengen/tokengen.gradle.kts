@@ -25,9 +25,9 @@ dependencies {
 spotless {
     java {
         target(fileTree(projectDir) {
-            include("**/*.java")
+            include("src/**/*.java")
             // 3rd-party code.
-            exclude("**/com/fasteasytrade/**/*.java")
+            exclude("src/**/com/fasteasytrade/**/*.java")
         })
     }
 }

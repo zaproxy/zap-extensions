@@ -34,10 +34,10 @@ dependencies {
 
 spotless {
     javaWith3rdPartyFormatted(project, listOf(
-        "**/BufferOverflowScanRule.java",
-        "**/CrlfInjectionScanRule.java",
-        "**/DirectoryBrowsingScanRule.java",
-        "**/FormatStringScanRule.java",
-        "**/ParameterTamperScanRule.java",
-        "**/ServerSideIncludeScanRule.java"))
+        "src/**/BufferOverflowScanRule.java",
+        "src/**/CrlfInjectionScanRule.java",
+        "src/**/DirectoryBrowsingScanRule.java",
+        "src/**/FormatStringScanRule.java",
+        "src/**/ParameterTamperScanRule.java",
+        "src/**/ServerSideIncludeScanRule.java"))
 }
