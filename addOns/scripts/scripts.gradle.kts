@@ -17,9 +17,9 @@ zapAddOn {
 spotless {
     java {
         target(fileTree(projectDir) {
-            include("**/*.java")
+            include("src/**/*.java")
             // 3rd-party code.
-            exclude("**/JScrollPopupMenu.java")
+            exclude("src/**/JScrollPopupMenu.java")
         })
     }
 }

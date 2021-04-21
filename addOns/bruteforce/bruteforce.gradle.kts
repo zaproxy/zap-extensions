@@ -23,5 +23,5 @@ dependencies {
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf("**/main/java/com/sittinglittleduck/**/*.java"))
+    javaWith3rdPartyFormatted(project, listOf("src/main/java/com/sittinglittleduck/**/*.java"))
 }

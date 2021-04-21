@@ -21,9 +21,9 @@ dependencies {
 spotless {
     java {
         target(fileTree(projectDir) {
-            include("**/*.java")
+            include("src/**/*.java")
             // Ignore 3rd-party code.
-            exclude("**/diff_match_patch.java", "**/ZapDiffRowGenerator.java")
+            exclude("src/**/diff_match_patch.java", "src/**/ZapDiffRowGenerator.java")
         })
     }
 }

@@ -25,13 +25,13 @@ dependencies {
 
 spotless {
     javaWith3rdPartyFormatted(project, listOf(
-        "**/DBMSHelper.java",
-        "**/SQLiBoundary.java",
-        "**/SQLInjectionScanRule.java",
-        "**/SQLiPayloadManager.java",
-        "**/SQLiTest.java",
-        "**/SQLiTestDetails.java",
-        "**/SQLiTestRequest.java",
-        "**/SQLiTestResponse.java",
-        "**/SQLiUnionEngine.java"))
+        "src/**/DBMSHelper.java",
+        "src/**/SQLiBoundary.java",
+        "src/**/SQLInjectionScanRule.java",
+        "src/**/SQLiPayloadManager.java",
+        "src/**/SQLiTest.java",
+        "src/**/SQLiTestDetails.java",
+        "src/**/SQLiTestRequest.java",
+        "src/**/SQLiTestResponse.java",
+        "src/**/SQLiUnionEngine.java"))
 }
