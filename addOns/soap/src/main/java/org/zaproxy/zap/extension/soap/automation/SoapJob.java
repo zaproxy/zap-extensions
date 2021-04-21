@@ -91,14 +91,14 @@ public class SoapJob extends AutomationJob {
             if (!file.exists() || !file.canRead()) {
                 progress.error(Constant.messages.getString("soap.automation.error.file", wsdlFile));
             } else {
-                getExtSoap().fileUrlWSDLImport(file);
+                getExtSoap().syncImportWsdlFile(file);
             }
         }
 
         if (wsdlUrl != null && !wsdlUrl.isEmpty()) {
             try {
                 new URI(wsdlUrl, true);
-                getExtSoap().extUrlWSDLImport(wsdlUrl);
+                getExtSoap().syncImportWsdlUrl(wsdlUrl);
             } catch (Exception e) {
                 progress.error(Constant.messages.getString("soap.automation.error.url", wsdlUrl));
             }
