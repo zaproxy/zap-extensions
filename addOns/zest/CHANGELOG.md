@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [34] - 2021-04-22
 ### Changed
 - Depend on Script Console add-on, it's required to work with Zest scripts (Issue 2656).
 - Clear Zest Results Panel when new script is added.
@@ -246,6 +246,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/zest-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/zest-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/zest-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/zest-v31
