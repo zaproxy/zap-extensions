@@ -44,6 +44,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
     private ScriptWrapper original = null;
     private boolean debug = false;
     private boolean recording = false;
+    private int zestModCount;
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -170,7 +171,16 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
     @Override
     public void setContents(String script) {
-        // Do nothing - its all handled elsewhere
+        incModCount();
+    }
+
+    void incModCount() {
+        zestModCount++;
+    }
+
+    @Override
+    public int getModCount() {
+        return zestModCount;
     }
 
     @Override
