@@ -71,6 +71,7 @@ import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class WSDLCustomParser {
 
@@ -82,6 +83,16 @@ public class WSDLCustomParser {
 
     public WSDLCustomParser(TableWsdl table) {
         this.table = table;
+    }
+
+    /* Import a WSDL document from a URL synchronously. */
+    public void syncImportWsdlUrl(final String url) {
+        parseWSDLUrl(url);
+    }
+
+    /* Import a WSDL document from a local file synchronously. */
+    public void syncImportWsdlFile(final File file) {
+        parseWSDLFile(file);
     }
 
     /* Method called from external classes to import a WSDL file from an URL. */
@@ -109,11 +120,6 @@ public class WSDLCustomParser {
 
     public boolean extContentWSDLImport(final String content, final boolean sendMessages) {
         return parseWSDLContent(content, sendMessages);
-    }
-
-    /* Method called from external classes to import a WSDL file from an URL. */
-    public void extUrlWSDLImport(final String url) {
-        parseWSDLUrl(url);
     }
 
     /*
@@ -610,7 +616,7 @@ public class WSDLCustomParser {
         final ExtensionHistory extHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
         if (extHistory != null) {
-            EventQueue.invokeLater(
+            ThreadUtils.invokeAndWaitHandled(
                     () -> {
                         extHistory.addHistory(historyRef);
                         Model.getSingleton()
