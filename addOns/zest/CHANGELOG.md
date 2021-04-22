@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Clear Zest Results Panel when new script is added.
 - Update minimum ZAP version to 2.10.0.
 
+### Fixed
+- Track modifications done to the scripts to refresh the cached ones (Issue 6558).
+
 ## [33] - 2020-11-27
 ### Added
 - Allow to create a screenshot from the browser, using the context menu `Add Zest Client` > `Screenshot`.

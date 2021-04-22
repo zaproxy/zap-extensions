@@ -576,6 +576,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         logger.debug("Updated node={}", node.getNodeName());
         this.getZestTreeModel().update(node);
         ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
+        sw.incModCount();
         sw.setChanged(true);
 
         if (this.getExtScript().getScriptUI() != null
