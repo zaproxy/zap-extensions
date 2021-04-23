@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "19"
+version = "20"
 description = "Imports and spiders OpenAPI definitions."
 
 zapAddOn {

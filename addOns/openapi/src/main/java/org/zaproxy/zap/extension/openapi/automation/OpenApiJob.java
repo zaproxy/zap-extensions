@@ -98,7 +98,7 @@ public class OpenApiJob extends AutomationJob {
             File file = new File(apiFile);
             if (file.exists() && file.canRead()) {
                 OpenApiResults results =
-                        getExtOpenApi().importOpenApiDefinitionV2(file, targetUrl, false);
+                        getExtOpenApi().importOpenApiDefinitionResults(file, targetUrl, false, -1);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
@@ -122,7 +122,7 @@ public class OpenApiJob extends AutomationJob {
             try {
                 URI uri = new URI(this.apiUrl, true);
                 OpenApiResults results =
-                        getExtOpenApi().importOpenApiDefinitionV2(uri, targetUrl, false);
+                        getExtOpenApi().importOpenApiDefinitionResults(uri, targetUrl, false, -1);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {

@@ -3,7 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [19] - 2021-04-26
+### Changed
+- Add support for detecting data-driven nodes from schema
+- Additional api route exposes DDN structural modifiers
+
+## [19] - 2021-04-26
 ### Changed
 - Always use enum values when defined (Issue 6489).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
@@ -127,6 +132,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/openapi-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/openapi-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/openapi-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/openapi-v16

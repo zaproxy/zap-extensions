@@ -92,7 +92,7 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
         }
 
         try {
-            caller.importOpenApiDefinition(file, getTargetField().getText(), true);
+            caller.importOpenApiDefinition(file, getTargetField().getText(), true, -1);
         } catch (InvalidUrlException e) {
             showWarningInvalidUrl(e.getUrl());
             return false;
