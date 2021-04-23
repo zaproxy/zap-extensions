@@ -75,7 +75,9 @@ public class BodyGenerator {
         }
 
         boolean isArray = schema instanceof ArraySchema;
-        LOG.debug("Generate body for object {}", schema.getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Generate body for object " + schema.getName());
+        }
 
         if (isArray) {
             return generateFromArraySchema((ArraySchema) schema);
@@ -176,7 +178,7 @@ public class BodyGenerator {
             return schema.getAnyOf().get(0);
         }
         // Should not be reached, allOf schema is resolved by the parser
-        LOG.error("Unknown composed schema type: {}", schema);
+        LOG.error("Unknown composed schema type: " + schema);
         return null;
     }
 

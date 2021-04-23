@@ -1,0 +1,94 @@
+openapi: 3.0.1
+info:
+  title: Swagger Petstore
+  description: 'This is a sample server Petstore server.  You can find out more about     Swagger
+    at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For
+    this sample, you can use the api key `special-key` to test the authorization     filters.'
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore.swagger.io/v2
+  - url: http://petstore.swagger.io/v2
+tags:
+  - name: pet
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: store
+    description: Access to Petstore orders
+  - name: user
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: http://swagger.io
+paths:
+  /pet:
+    $ref: 'pet.api.yaml#/pet'
+  /pet/findByStatus:
+    $ref: 'pet.api.yaml#/pet-findByStatus'
+  /pet/findByTags:
+    $ref: 'pet.api.yaml#/pet-findByTags'
+  /pet/{petId}:
+    $ref: 'pet.api.yaml#/pet-petId'
+  /pet/{petId}/uploadImage:
+    $ref: 'pet.api.yaml#/pet-petId-uploadImage'
+
+  /store/inventory:
+    $ref: 'store.api.yaml#/store-inventory'
+  /store/order:
+    $ref: 'store.api.yaml#/store-order'
+  /store/order/{orderId}:
+    $ref: 'store.api.yaml#/store-order-orderId'
+
+  /user:
+    $ref: 'user.api.yaml#/user'
+  /user/createWithArray:
+    $ref: 'user.api.yaml#/user-createWithArray'
+  /user/createWithList:
+    $ref: 'user.api.yaml#/user-createWithList'
+  /user/login:
+    $ref: 'user.api.yaml#/user-login'
+  /user/logout:
+    $ref: 'user.api.yaml#/user-logout'
+  /user/{username}:
+    $ref: 'user.api.yaml#/user-username'
+
+components:
+  schemas:
+    Order:
+      $ref: 'store.model.yaml#/Order'
+
+    User:
+      $ref: 'user.model.yaml#/User'
+
+    Tag:
+      $ref: 'pet.model.yaml#/Tag'
+    Category:
+      $ref: 'pet.model.yaml#/Category'
+    Pet:
+      $ref: 'pet.model.yaml#/Pet'
+    ApiResponse:
+      $ref: 'pet.model.yaml#/ApiResponse'
+
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://petstore.swagger.io/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

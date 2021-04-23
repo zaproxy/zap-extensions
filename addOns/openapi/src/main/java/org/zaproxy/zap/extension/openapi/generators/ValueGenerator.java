@@ -40,11 +40,16 @@ public class ValueGenerator {
             defaultValue = "";
         }
         if (coreValGen == null) {
-            LOG.debug(
-                    "Name : {} Type : {} Default : {} Returning default value",
-                    name,
-                    type,
-                    defaultValue);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(
+                        "Name : "
+                                + name
+                                + " Type : "
+                                + type
+                                + " Default : "
+                                + defaultValue
+                                + " Returning default value");
+            }
             return defaultValue;
         }
 
@@ -60,8 +65,17 @@ public class ValueGenerator {
                         Collections.<String, String>emptyMap(),
                         fieldAtts);
 
-        LOG.debug(
-                "Name : {} Type : {} Default : {} Returning : {}", name, type, defaultValue, value);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                    "Name : "
+                            + name
+                            + " Type : "
+                            + type
+                            + " Default : "
+                            + defaultValue
+                            + " Returning : "
+                            + value);
+        }
 
         return value;
     }

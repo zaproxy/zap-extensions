@@ -1,0 +1,274 @@
+pet:
+  put:
+    tags:
+      - pet
+    summary: Update an existing pet
+    operationId: updatePet
+    requestBody:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: 'pet.model.yaml#/Pet'
+        application/xml:
+          schema:
+            $ref: 'pet.model.yaml#/Pet'
+      required: true
+    responses:
+      400:
+        description: Invalid ID supplied
+        content: {}
+      404:
+        description: Pet not found
+        content: {}
+      405:
+        description: Validation exception
+        content: {}
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+    x-codegen-request-body-name: body
+  post:
+    tags:
+      - pet
+    summary: Add a new pet to the store
+    operationId: addPet
+    requestBody:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: 'pet.model.yaml#/Pet'
+        application/xml:
+          schema:
+            $ref: 'pet.model.yaml#/Pet'
+      required: true
+    responses:
+      405:
+        description: Invalid input
+        content: {}
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+    x-codegen-request-body-name: body
+
+pet-petId:
+  get:
+    tags:
+      - pet
+    summary: Find pet by ID
+    description: Returns a single pet
+    operationId: getPetById
+    parameters:
+      - name: petId
+        in: path
+        description: ID of pet to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/xml:
+            schema:
+              $ref: 'pet.model.yaml#/Pet'
+          application/json:
+            schema:
+              $ref: 'pet.model.yaml#/Pet'
+      400:
+        description: Invalid ID supplied
+        content: {}
+      404:
+        description: Pet not found
+        content: {}
+    security:
+      - api_key: []
+  post:
+    tags:
+      - pet
+    summary: Updates a pet in the store with form data
+    operationId: updatePetWithForm
+    parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+    requestBody:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            properties:
+              name:
+                type: string
+                description: Updated name of the pet
+              status:
+                type: string
+                description: Updated status of the pet
+    responses:
+      405:
+        description: Invalid input
+        content: {}
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+  delete:
+    tags:
+      - pet
+    summary: Deletes a pet
+    operationId: deletePet
+    parameters:
+      - name: api_key
+        in: header
+        schema:
+          type: string
+      - name: petId
+        in: path
+        description: Pet id to delete
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      400:
+        description: Invalid ID supplied
+        content: {}
+      404:
+        description: Pet not found
+        content: {}
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+
+pet-findByStatus:
+  get:
+    tags:
+      - pet
+    summary: Finds Pets by status
+    description: Multiple status values can be provided with comma separated strings
+    operationId: findPetsByStatus
+    parameters:
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            default: available
+            enum:
+              - available
+              - pending
+              - sold
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/xml:
+            schema:
+              type: array
+              items:
+                $ref: 'pet.model.yaml#/Pet'
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'pet.model.yaml#/Pet'
+      400:
+        description: Invalid status value
+        content: {}
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+
+pet-findByTags:
+  get:
+    tags:
+      - pet
+    summary: Finds Pets by tags
+    description: Muliple tags can be provided with comma separated strings. Use         tag1,
+      tag2, tag3 for testing.
+    operationId: findPetsByTags
+    parameters:
+      - name: tags
+        in: query
+        description: Tags to filter by
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/xml:
+            schema:
+              type: array
+              items:
+                $ref: 'pet.model.yaml#/Pet'
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'pet.model.yaml#/Pet'
+      400:
+        description: Invalid tag value
+        content: {}
+    deprecated: true
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets
+
+pet-petId-uploadImage:
+  post:
+    tags:
+      - pet
+    summary: uploads an image
+    operationId: uploadFile
+    parameters:
+      - name: petId
+        in: path
+        description: ID of pet to update
+        required: true
+        schema:
+          type: integer
+          format: int64
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            properties:
+              additionalMetadata:
+                type: string
+                description: Additional data to pass to server
+              file:
+                type: string
+                description: file to upload
+                format: binary
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: 'pet.model.yaml#/ApiResponse'
+    security:
+      - petstore_auth:
+          - write:pets
+          - read:pets

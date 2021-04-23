@@ -42,6 +42,7 @@ import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
+import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -475,6 +476,39 @@ public class OpenApiUnitTest extends AbstractServerTest {
         requestor.run(converter.getRequestModels());
 
         checkRequestContentTypeHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    @Test
+    public void shouldGenerateJsonRequestsBody()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/VAmPI/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new OpenApiUnitTest.DefnServerHandler(test, defnName, "VAmPI_defn.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        requestor.addListener(
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestHeader().getHeader("Accept"));
+                });
+        requestor.run(converter.getRequestModels());
+
+        for (RequestModel requestModel : converter.getRequestModels()) {
+            requestModel.getHeaders().stream()
+                    .filter(header -> header.getName().equals("Content-Type"))
+                    .forEach(type -> System.out.println(type.getValue()));
+        }
     }
 
     private void checkRequestContentTypeHeaders(Map<String, String> accessedUrls, String host) {

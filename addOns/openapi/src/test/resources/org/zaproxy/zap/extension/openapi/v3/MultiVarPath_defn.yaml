@@ -1,0 +1,90 @@
+openapi: 3.0.1
+info:
+  title: Thing API
+  description: OpenAPI v3 specs for Thing
+  version: "0.1"
+servers:
+  - url: /
+components: {}
+paths:
+  /api/stuff/static:
+    get:
+      tags:
+        - static
+      responses:
+        200:
+          description: Successfully display thing1
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    val1:
+                      type: string
+                    val2:
+                      type: string
+        404:
+          description: static not found
+          content: { }
+  /api/stuff/{thingid}:
+    get:
+      tags:
+        - thingid
+      parameters:
+        - name: thingid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully display thing1
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    val1:
+                      type: string
+                    val2:
+                      type: string
+        404:
+          description: thing1 not found
+          content: { }
+  /api/stuff/{thingid}/subthing/{thingid2}:
+    get:
+      tags:
+        - thingconn
+      parameters:
+        - name: thingid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: thingid2
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Successfully display thing conn
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    val1:
+                      type: string
+                    val2:
+                      type: string
+        404:
+          description: thing1 not found
+          content: { }
