@@ -439,7 +439,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                     .setParam(paramName)
                                     .setAttack(newTimeBasedInjectionValue)
                                     .setOtherInfo(extraInfo)
-                                    .setEvidence(errorMessagePattern.toString())
+                                    .setEvidence(matcher.group())
                                     .setMessage(msgDelay)
                                     .raise();
 

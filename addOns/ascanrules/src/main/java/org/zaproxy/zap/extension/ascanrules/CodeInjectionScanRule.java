@@ -209,6 +209,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
                             .setParam(paramName)
                             .setAttack(phpPayload)
+                            .setEvidence(PHP_CONTROL_TOKEN)
                             .setMessage(msg)
                             .raise();
 
@@ -286,6 +287,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
                             .setParam(paramName)
                             .setAttack(aspPayload)
+                            .setEvidence(PHP_CONTROL_TOKEN)
                             .setMessage(msg)
                             .raise();
                     return true;
