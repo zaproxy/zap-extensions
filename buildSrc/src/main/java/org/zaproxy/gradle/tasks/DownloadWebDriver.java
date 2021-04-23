@@ -27,9 +27,11 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -157,6 +159,13 @@ public abstract class DownloadWebDriver extends DefaultTask {
 
             FirefoxDriverManagerCustom() {
                 instanceMap.put(DriverManagerType.FIREFOX, this);
+            }
+
+            @Override
+            protected List<URL> getDrivers() throws IOException {
+                List<URL> urls = super.getDrivers();
+                urls.removeIf(url -> url.toString().contains("aarch64"));
+                return urls;
             }
 
             @Override
