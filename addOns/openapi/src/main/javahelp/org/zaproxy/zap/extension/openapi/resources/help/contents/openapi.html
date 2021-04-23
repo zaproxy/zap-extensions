@@ -42,8 +42,35 @@ The following operations are added to the API:
 </ul>
 Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
 
-The definitions will be imported synchronously and any warnings will be returned. 
+The definitions will be imported synchronously and any warnings will be returned.
 
+<H3>Data Driven Nodes</H3>
+<span style="white-space: pre;">
+When the OpenAPI schema contains path params the plugin will automatically generate data driven nodes in either the default context or for the context from the provided <code>contextId</code>.
+
+For example, the following OpenAPI definition will result in at least one data driven node.
+
+<strong>openapi.yml</strong>
+<code >
+    ...
+    /users/v1/{username}/email:
+      ...
+      parameters:
+        - name: username
+        in: path
+        description: username to update email
+        required: true
+        schema:
+          type: string
+    ...
+</code>
+
+<strong>Default Context > Structure > Structural Modifiers</strong>
+<code>
+    DDN0: (/)(.+?)(/.*)
+    DDN1: (/users/v1/)(.+?)(/.*)
+</code>
+</span>
 <H2>Command Line</H2>
 The following Command Line options are added:
 <ul>
@@ -57,7 +84,7 @@ The definitions will be imported synchronously and any warnings will be displaye
 <H2>User Specified Values</H2>
 Default values are used when importing OpenAPI definitions.<br>
 These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
-In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values, 
+In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
 e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
 
 <H2>Statistics</H2>

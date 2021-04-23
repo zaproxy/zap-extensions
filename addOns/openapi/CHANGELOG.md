@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support multi-file schema format.
+- Generate Data Driven Nodes with schema import.
 
 ## [19] - 2021-06-29
 ### Added
