@@ -32,9 +32,15 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
-    implementation("com.predic8:soa-model-core:1.6.0")
+    implementation("com.predic8:soa-model-core:1.6.3")
+    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.3")
     implementation("jakarta.xml.soap:jakarta.xml.soap-api:1.4.2")
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.2")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1") {
+        // Provided by ZAP.
+        exclude(group = "org.apache.logging.log4j")
+    }
+    // Dependency of "com.predic8:soa-model-core:1.6.3".
+    implementation("org.codehaus.groovy:groovy:3.0.8")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))

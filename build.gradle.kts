@@ -1,21 +1,14 @@
 plugins {
-    id("com.diffplug.gradle.spotless")
-    id("com.github.ben-manes.versions") version "0.27.0"
-    id("org.sonarqube") version "3.0"
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
+    id("com.diffplug.spotless")
+    id("com.github.ben-manes.versions") version "0.38.0"
+    id("org.sonarqube") version "3.1.1"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
 apply(from = "$rootDir/gradle/lgtm.gradle.kts")
 
 allprojects {
-    apply(plugin = "com.diffplug.gradle.spotless")
+    apply(plugin = "com.diffplug.spotless")
     apply(plugin = "com.github.ben-manes.versions")
 
     repositories {
@@ -30,7 +23,7 @@ allprojects {
         project.plugins.withType(JavaPlugin::class) {
             java {
                 licenseHeaderFile("$rootDir/gradle/spotless/license.java")
-                googleJavaFormatAosp(project)
+                googleJavaFormatAosp()
             }
         }
     }

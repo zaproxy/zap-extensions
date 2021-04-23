@@ -177,6 +177,14 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         return menuImportUrlWSDL;
     }
 
+    public void syncImportWsdlUrl(final String url) {
+        parser.syncImportWsdlUrl(url);
+    }
+
+    public void syncImportWsdlFile(final File file) {
+        parser.syncImportWsdlFile(file);
+    }
+
     /* Called from external classes in a threaded mode. */
     public void extUrlWSDLImport(final String url) {
         parser.extUrlWSDLImport(url, THREAD_PREFIX + threadId++);

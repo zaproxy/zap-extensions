@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.gradle.spotless") version "3.28.1"
+    id("com.diffplug.spotless") version "5.12.1"
 }
 
 repositories {
@@ -10,7 +10,11 @@ repositories {
 spotless {
     java {
         licenseHeaderFile(file("../gradle/spotless/license.java"))
-        googleJavaFormat().aosp()
+        googleJavaFormat("1.7").aosp()
+    }
+
+    kotlin {
+        ktlint()
     }
 
     kotlinGradle {
@@ -25,7 +29,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:3.7.1")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:3.28.1")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.12.1")
 }
 
 java {

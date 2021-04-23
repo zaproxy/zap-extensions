@@ -24,25 +24,29 @@ import io.github.bonigarcia.wdm.DriverManagerType;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperatingSystem;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.workers.IsolationMode;
+import org.gradle.workers.WorkAction;
+import org.gradle.workers.WorkParameters;
+import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
-public class DownloadWebDriver extends DefaultTask {
+public abstract class DownloadWebDriver extends DefaultTask {
 
     public enum Browser {
         CHROME,
@@ -60,61 +64,36 @@ public class DownloadWebDriver extends DefaultTask {
         X64
     }
 
-    private final WorkerExecutor workerExecutor;
-    private final Property<Browser> browser;
-    private final Property<String> version;
-    private final Property<OS> os;
-    private final Property<Arch> arch;
-    private final RegularFileProperty outputFile;
-
-    @Inject
-    public DownloadWebDriver(WorkerExecutor workerExecutor) {
-        this.workerExecutor = workerExecutor;
-        ObjectFactory objects = getProject().getObjects();
-        this.browser = objects.property(Browser.class);
-        this.version = objects.property(String.class);
-        this.os = objects.property(OS.class);
-        this.arch = objects.property(Arch.class);
-        this.outputFile = objects.fileProperty();
-    }
+    @Input
+    public abstract Property<Browser> getBrowser();
 
     @Input
-    public Property<Browser> getBrowser() {
-        return browser;
-    }
+    public abstract Property<String> getVersion();
 
     @Input
-    public Property<String> getVersion() {
-        return version;
-    }
+    public abstract Property<OS> getOs();
 
     @Input
-    public Property<OS> getOs() {
-        return os;
-    }
-
-    @Input
-    public Property<Arch> getArch() {
-        return arch;
-    }
+    public abstract Property<Arch> getArch();
 
     @OutputFile
-    public RegularFileProperty getOutputFile() {
-        return outputFile;
-    }
+    public abstract RegularFileProperty getOutputFile();
+
+    @Inject
+    public abstract WorkerExecutor getWorkerExecutor();
 
     @TaskAction
     public void download() {
-        workerExecutor.submit(
+        WorkQueue workQueue = getWorkerExecutor().classLoaderIsolation();
+
+        workQueue.submit(
                 Download.class,
-                config -> {
-                    config.setIsolationMode(IsolationMode.CLASSLOADER);
-                    config.params(
-                            DriverManagerType.valueOf(toUpperCase(browser)),
-                            version.get(),
-                            OperatingSystem.valueOf(toUpperCase(os)),
-                            Architecture.valueOf(toUpperCase(arch)),
-                            outputFile.get().getAsFile().getAbsolutePath());
+                params -> {
+                    params.getBrowser().set(DriverManagerType.valueOf(toUpperCase(getBrowser())));
+                    params.getWdVersion().set(getVersion().get());
+                    params.getOs().set(OperatingSystem.valueOf(toUpperCase(getOs())));
+                    params.getArch().set(Architecture.valueOf(toUpperCase(getArch())));
+                    params.getOutputFile().set(getOutputFile());
                 });
     }
 
@@ -122,44 +101,37 @@ public class DownloadWebDriver extends DefaultTask {
         return property.get().name().toUpperCase(Locale.ROOT);
     }
 
-    public static class Download implements Runnable {
+    public interface DownloadWorkParameters extends WorkParameters {
+        Property<DriverManagerType> getBrowser();
 
-        private final DriverManagerType browser;
-        private final String wdVersion;
-        private final OperatingSystem os;
-        private final Architecture arch;
-        private final String outputFile;
+        Property<String> getWdVersion();
 
-        @Inject
-        public Download(
-                DriverManagerType browser,
-                String wdVersion,
-                OperatingSystem os,
-                Architecture arch,
-                String outputFile) {
-            this.browser = browser;
-            this.wdVersion = wdVersion;
-            this.os = os;
-            this.arch = arch;
-            this.outputFile = outputFile;
-        }
+        Property<OperatingSystem> getOs();
+
+        Property<Architecture> getArch();
+
+        RegularFileProperty getOutputFile();
+    }
+
+    public abstract static class Download implements WorkAction<DownloadWorkParameters> {
 
         @Override
-        public void run() {
-            WebDriverManager wdm = getInstance(browser);
+        public void execute() {
+            WebDriverManager wdm = getInstance(getParameters().getBrowser().get());
             wdm.forceCache()
                     .avoidPreferences()
                     .avoidExport()
                     .avoidAutoVersion()
-                    .version(wdVersion)
-                    .operatingSystem(os)
-                    .architecture(arch)
+                    .version(getParameters().getWdVersion().get())
+                    .operatingSystem(getParameters().getOs().get())
+                    .architecture(getParameters().getArch().get())
                     .setup();
 
+            File outputFile = getParameters().getOutputFile().get().getAsFile();
             try {
                 Files.copy(
                         Paths.get(wdm.getBinaryPath()),
-                        Paths.get(outputFile),
+                        outputFile.toPath(),
                         StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new UncheckedIOException(
@@ -187,6 +159,13 @@ public class DownloadWebDriver extends DefaultTask {
 
             FirefoxDriverManagerCustom() {
                 instanceMap.put(DriverManagerType.FIREFOX, this);
+            }
+
+            @Override
+            protected List<URL> getDrivers() throws IOException {
+                List<URL> urls = super.getDrivers();
+                urls.removeIf(url -> url.toString().contains("aarch64"));
+                return urls;
             }
 
             @Override

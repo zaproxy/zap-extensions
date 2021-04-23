@@ -10,7 +10,7 @@ import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
 
 plugins {
     jacoco
-    id("org.zaproxy.add-on") version "0.4.0" apply false
+    id("org.zaproxy.add-on") version "0.5.0" apply false
 }
 
 description = "Common configuration of the add-ons."

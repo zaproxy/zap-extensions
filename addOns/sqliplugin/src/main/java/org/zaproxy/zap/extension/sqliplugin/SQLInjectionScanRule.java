@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.RedirectException;
-import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1148,7 +1147,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                 lastErrorPageUID = lastRequestUID;
             }
 
-        } catch (RedirectException | URIException e) {
+        } catch (HttpException e) {
             log.debug(
                     "SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to: {}",
                     paramName,

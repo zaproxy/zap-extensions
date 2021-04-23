@@ -61,7 +61,7 @@ public class SoapAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
-            extension.fileUrlWSDLImport(file);
+            extension.syncImportWsdlFile(file);
 
             return ApiResponseElement.OK;
 
@@ -74,7 +74,7 @@ public class SoapAPI extends ApiImplementor {
             }
 
             try {
-                extension.extUrlWSDLImport(url);
+                extension.syncImportWsdlUrl(url);
                 return ApiResponseElement.OK;
             } catch (Exception e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);

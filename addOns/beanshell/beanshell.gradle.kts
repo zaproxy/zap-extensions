@@ -22,6 +22,6 @@ spotless {
     java {
         // Don't enforce the license, just the format.
         clearSteps()
-        googleJavaFormatAosp(project)
+        googleJavaFormatAosp()
     }
 }
