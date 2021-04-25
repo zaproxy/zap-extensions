@@ -1,0 +1,10 @@
+name: 10. Skyline [Dark / Pink]
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails

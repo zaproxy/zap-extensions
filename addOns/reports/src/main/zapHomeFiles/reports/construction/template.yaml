@@ -1,0 +1,10 @@
+name: 03. Construction [Light / Orange]
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails

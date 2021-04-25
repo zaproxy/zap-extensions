@@ -1,0 +1,10 @@
+name: 08. Nature [Light / Green]
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails

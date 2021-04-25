@@ -1,0 +1,10 @@
+name: 04. Corporate [Light / Blue]
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails

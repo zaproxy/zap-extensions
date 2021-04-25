@@ -1,0 +1,10 @@
+name: 05. Technology [Dark / Red]
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails
