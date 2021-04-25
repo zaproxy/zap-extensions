@@ -15,7 +15,7 @@ body {
 	margin: 0; padding: 0 0 6em 0;
 }
 * { box-sizing: border-box; }
-.container { width: 100%; max-width: 1500px; margin: 0 auto; }
+.container { width: 100%; max-width: 1500px; margin: 0 auto; padding-left: 1em; padding-right: 1em; }
 
 a { color: #006699; text-decoration-skip-ink: auto; text-decoration-style: dotted; }
 
@@ -106,8 +106,8 @@ tr:nth-child(odd) td { background-color: #fafafa; }
 	color: #0c5460 !important;
 }
 
-.summaryChartWrapper { display: block; background: #fff; border: 1px solid #D8F4EF; padding: 2em; width: 100%; }
-#summaryChart { display: block; background: #fff; margin: 0 auto; }
+.summaryChartWrapper { display: block; padding: 2em; width: 100%; max-width: 800px; margin: 0 auto; }
+#summaryChart { display: block; margin: 0 auto; }
 
 .summary {
 	width: 100%;
@@ -128,6 +128,8 @@ tr:nth-child(odd) td { background-color: #fafafa; }
 .left-header {
 	display: inline-block;
 }
+
+footer { padding: 3em 3em; text-align: center; font-size: 0.9em; }
 
 </style>
 <script th:src="${resources + '/Chart.min.js'}"
@@ -159,7 +161,7 @@ tr:nth-child(odd) td { background-color: #fafafa; }
 			src="resources/zap32x32.png" alt="">
 		<th:block th:text="${reportTitle}">Report Title</th:block>
 	</h1>
-	<p />
+
 	<th:block
 		th:each="desc, state: ${#strings.arraySplit(description, '\n')}">
 		<th:block th:text="${desc}"></th:block>
@@ -196,31 +198,34 @@ tr:nth-child(odd) td { background-color: #fafafa; }
             /*[[${alertCounts.get(1)}]]*/1,
             /*[[${alertCounts.get(0)}]]*/0 ];
             /*]]>*/
-            new Chart(document.getElementById("summaryChart"),
-                    {
-                        "type" : "bar",
-                        "data" : {
-                            "labels" : labels,
-                            "datasets" : [ {
-                                "label" : title,
-                                "data" : data,
-                                "fill" : false,
-                                "backgroundColor" : [ "#f8d7da", "#fdeccc",
-                                        "#f9fdcc", "#d1ecf1" ],
-                                "borderWidth" : 1
-                            } ]
-                        },
-                        "options" : {
-                            "scales" : {
-                                "yAxes" : [ {
-                                    "ticks" : {
-                                        "beginAtZero" : true
-                                    }
-                                } ]
-                            },
-                            responsive : false
-                        }
-                    });
+					
+			var options = {
+				responsive : true,
+				legend: {
+					position: 'bottom',
+					labels: {
+						fontColor: '#006699',
+						padding: 30
+					}
+				}
+			}
+			
+			new Chart(document.getElementById("summaryChart"),
+			{
+				type : "doughnut",
+				data : {
+					labels : labels,
+					datasets : [{
+						label : title,
+						data : data,
+						fill : false,
+						backgroundColor : [ "#f8d7da", "#fdeccc", "#f9fdcc", "#d1ecf1" ],
+						borderWidth : 0
+					}]
+				},
+				options : options
+			});						
+					
         </script>
 		<p></p>
 	</th:block>
@@ -480,6 +485,9 @@ tr:nth-child(odd) td { background-color: #fafafa; }
 			<div class="spacer"></div>
 		</th:block>
 	</th:block>
+	
+		<footer>Report by <a href="https://www.zaproxy.org/" target="_blank">ZAP</a></footer>	
+	
 	</div>
 
 </body>
