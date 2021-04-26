@@ -52,7 +52,9 @@ public class EditScriptDialog extends StandardFieldsDialog {
         if (script != null) {
             this.removeAllFields();
             this.addTextField(FIELD_NAME, script.getName());
-            this.addTextFieldReadOnly(FIELD_ENGINE, getScriptEngineName());
+            if (script.getEngine() == null || script.getEngine().isVisible()) {
+                this.addTextFieldReadOnly(FIELD_ENGINE, getScriptEngineName());
+            }
             this.addTextFieldReadOnly(FIELD_FILE, "");
             this.addMultilineField(FIELD_DESC, script.getDescription());
             this.addCheckBoxField(FIELD_LOAD, script.isLoadOnStart());
