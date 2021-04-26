@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Correct logging of dependency.
 
+### Fixed
+- Do not rely on default encoding when creating the reports, use UTF-8 always (Issue 6561).
+
 ## [0.2.0] - 2021-04-12
 
 ### Added
