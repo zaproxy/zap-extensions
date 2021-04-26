@@ -29,13 +29,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.Inflater;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
  * parse Git metadata to the degree necessary to extract source code from it
@@ -144,7 +144,7 @@ public class GitMetadata {
         MessageCache messagecache = MessageCache.getSingleton(parent);
         HttpMessage msg = messagecache.getMessage(uri, basemsg, false);
 
-        if (msg.getResponseHeader().getStatusCode() != HttpStatus.SC_OK) {
+        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
             throw new FileNotFoundException(uri.getURI());
         }
         // record the URI if it came back with a 200 (see the condition above)
