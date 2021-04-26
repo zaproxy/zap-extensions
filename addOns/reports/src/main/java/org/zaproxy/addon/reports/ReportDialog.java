@@ -523,8 +523,8 @@ public class ReportDialog extends StandardFieldsDialog {
                             Constant.messages.getString(
                                     "reports.dialog.error.generate", e.getMessage()));
             LOGGER.error(
-                    "Failed to generate a report using template "
-                            + extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE)),
+                    "Failed to generate a report using template {}",
+                    extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE)),
                     e);
         }
     }

@@ -309,10 +309,9 @@ public class ExtensionReports extends ExtensionAdaptor {
                 subDir = new File(subDirName + i);
             }
             LOGGER.debug(
-                    "Copying resources from "
-                            + resourcesDir.getAbsolutePath()
-                            + " to "
-                            + subDir.getAbsolutePath());
+                    "Copying resources from {} to {}",
+                    resourcesDir.getAbsolutePath(),
+                    subDir.getAbsolutePath());
             FileUtils.copyDirectory(resourcesDir, subDir);
             context.setVariable("resources", subDir.getName());
         }
@@ -335,12 +334,12 @@ public class ExtensionReports extends ExtensionAdaptor {
                 renderer.createPDF(outputStream);
             }
             if (!file.delete()) {
-                LOGGER.debug("Failed to delete interim report " + file.getAbsolutePath());
+                LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
             }
             file = pdfFile;
         }
 
-        LOGGER.debug("Generated report " + file.getAbsolutePath());
+        LOGGER.debug("Generated report {}", file.getAbsolutePath());
         if (display) {
             if ("HTML".equals(template.getFormat())) {
                 DesktopUtils.openUrlInBrowser(file.toURI());
@@ -417,8 +416,8 @@ public class ExtensionReports extends ExtensionAdaptor {
                         templateMap.put(template.getDisplayName(), template);
                     } catch (IOException e) {
                         LOGGER.error(
-                                "Failed to access template definition "
-                                        + templateYaml.getAbsolutePath());
+                                "Failed to access template definition {}",
+                                templateYaml.getAbsolutePath());
                     }
                 }
             }
