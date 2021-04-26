@@ -19,13 +19,18 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link BufferOverflowScanRule}. */
 public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOverflowScanRule> {
@@ -53,5 +58,37 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
         boolean targets = rule.targets(techSet);
         // Then
         assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldCreateAlert() throws Exception {
+        String test = "/shouldReportBufferOverflowIssue/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (name != null && name.length() > 1000) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                                            NanoHTTPD.MIME_HTML,
+                                            "500 error handling request");
+                            response.addHeader("Connection", "close");
+                            return response;
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=xxx");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Connection: close"));
     }
 }

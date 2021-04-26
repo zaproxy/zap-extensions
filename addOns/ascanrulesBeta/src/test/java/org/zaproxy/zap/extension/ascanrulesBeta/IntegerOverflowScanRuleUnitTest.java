@@ -19,16 +19,19 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import fi.iki.elonen.NanoHTTPD;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link IntegerOverflowScanRule}. */
 public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowScanRule> {
@@ -90,5 +93,41 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
         rule.scan();
         // Then
         assertThat(httpMessagesSent, is(empty()));
+    }
+
+    @Test
+    public void shouldCreateAlertsWithPrimeHeaderAsEvidence() throws Exception {
+        String test = "/shouldReportIntegerOverflowIssue/";
+        int INT_MAX = 2147483647;
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String years = getFirstParamValue(session, "years");
+                        Double number = null;
+                        try {
+                            number = Double.parseDouble(years);
+                        } catch (NumberFormatException nfe) {
+                        }
+                        if (number != null && number > INT_MAX) {
+                            return newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                                    NanoHTTPD.MIME_HTML,
+                                    "500 error handling request");
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?years=1");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(), equalTo("HTTP/1.1 500 Internal Server Error "));
     }
 }
