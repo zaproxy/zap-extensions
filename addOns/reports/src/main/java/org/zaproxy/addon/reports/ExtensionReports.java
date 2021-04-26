@@ -23,10 +23,12 @@ import com.lowagie.text.DocumentException;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -316,9 +318,9 @@ public class ExtensionReports extends ExtensionAdaptor {
         }
 
         File file = new File(reportFilename);
-        try (FileWriter fileWriter = new FileWriter(file)) {
+        try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             templateEngine.process(
-                    template.getReportTemplateFile().getAbsolutePath(), context, fileWriter);
+                    template.getReportTemplateFile().getAbsolutePath(), context, writer);
         }
 
         if ("PDF".equals(template.getFormat())) {
