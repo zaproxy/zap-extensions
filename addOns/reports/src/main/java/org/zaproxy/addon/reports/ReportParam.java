@@ -80,8 +80,8 @@ public class ReportParam extends AbstractParam {
         File dir = new File(templateDirectory);
         if (!dir.exists() || !dir.isDirectory()) {
             LOGGER.error(
-                    "Reports template directory cannot be read or is not a directory: "
-                            + dir.getAbsolutePath());
+                    "Reports template directory cannot be read or is not a directory: {}",
+                    dir.getAbsolutePath());
             templateDirectory = Constant.getZapHome() + "/reports/";
         }
 
