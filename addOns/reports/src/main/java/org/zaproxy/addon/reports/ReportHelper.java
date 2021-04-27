@@ -31,4 +31,26 @@ public class ReportHelper {
         return Constant.messages.getString(
                 ExtensionReports.PREFIX + ".report.confidence." + confidence);
     }
+
+    public static String getHostForSite(String site) {
+        String[] schemeHostPort = site.split(":");
+        // http://www.example.com:8080 - the host will start with //
+        return schemeHostPort[1].substring(2);
+    }
+
+    public static int getPortForSite(String site) {
+        String[] schemeHostPort = site.split(":");
+        if (schemeHostPort.length == 3) {
+            return Integer.parseInt(schemeHostPort[2]);
+        }
+        if (schemeHostPort[0].equalsIgnoreCase("https")) {
+            return 443;
+        }
+        return 80;
+    }
+
+    public boolean isSslSite(String site) {
+        String[] schemeHostPort = site.split(":");
+        return schemeHostPort[0].equalsIgnoreCase("https");
+    }
 }

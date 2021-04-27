@@ -80,6 +80,8 @@ public class ExtensionReports extends ExtensionAdaptor {
     private static final String SITE_PATTERN = "[[site]]";
     private static final String DATETIME_REGEX = "\\{\\{(.*)\\}\\}";
     private static final Pattern DATETIME_PATTERN = Pattern.compile(DATETIME_REGEX);
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
+            new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private ZapMenuItem reportMenu;
     private JButton reportButton;
@@ -280,6 +282,12 @@ public class ExtensionReports extends ExtensionAdaptor {
         context.setVariable(
                 "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
         context.setVariable("reportData", reportData);
+
+        synchronized (SIMPLE_DATE_FORMAT) {
+            context.setVariable(
+                    "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
+        }
+        context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
 
         if (reportDataHandler != null) {
             reportDataHandler.handle(reportData);

@@ -52,12 +52,14 @@ spotless {
         eclipseWtp(EclipseWtpFormatterStep.HTML)
         target(fileTree(projectDir) {
             include("src/**/*.html")
+            exclude("src/test/**/*.html")
         })
     })
     format("xml", {
         eclipseWtp(EclipseWtpFormatterStep.XML)
         target(fileTree(projectDir) {
             include("src/**/*.xml")
+            exclude("src/test/**/*.xml")
         })
     })
 }
