@@ -29,6 +29,7 @@ format:      # The format, eg one of HTML, XML, MD, JSON, PDF - this is used int
 mode:        # The Thymeleaf template mode, one of HTML, RAW, TEXT, HTML
 extension:   # The extension to use when generating the report
 sections:    # An optional list of sections - parts of the report which may be included or excluded
+themes:      # An optional list of themes - different colours and styles which apply to the same content
 </pre>
 
 	<H3>
@@ -52,6 +53,11 @@ sections:    # An optional list of sections - parts of the report which may be i
 	this file - the keys will automatically be prefixed by
 	<code>report.template.section.</code>
 	. Section names in the template.yaml file must just be alphanumeric
+	strings and not start with an integer.
+	<br>If a report includes themes then they must be defined in this
+	file - the keys will automatically be prefixed by
+	<code>report.template.theme.</code>
+	. Theme names in the template.yaml file must just be alphanumeric
 	strings and not start with an integer.
 	<br> The language files may also override the default translations
 	built into the reports add-on.

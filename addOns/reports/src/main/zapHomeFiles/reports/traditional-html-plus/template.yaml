@@ -8,3 +8,6 @@ sections:
  - instancecount
  - passingrules
  - alertdetails
+themes:
+ - light
+ - dark
