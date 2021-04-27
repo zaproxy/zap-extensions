@@ -48,6 +48,7 @@ public class ReportParam extends AbstractParam {
     private static final String PARAM_INC_RISK_2 = PARAM_BASE_KEY + ".risk.med";
     private static final String PARAM_INC_RISK_3 = PARAM_BASE_KEY + ".risk.high";
     private static final String PARAM_REPORT_SECTIONS_PREFIX = PARAM_BASE_KEY + ".report.sections.";
+    private static final String PARAM_REPORT_THEME_PREFIX = PARAM_BASE_KEY + ".report.theme.";
 
     private static final String DEFAULT_TEMPLATE = "traditional-html";
     public static final String DEFAULT_NAME_PATTERN = "{{yyyy-MM-dd}}-ZAP-Report-[[site]]";
@@ -251,5 +252,13 @@ public class ReportParam extends AbstractParam {
 
     public List<Object> getSections(String report) {
         return getConfig().getList(PARAM_REPORT_SECTIONS_PREFIX + report);
+    }
+
+    public void setTheme(String report, String theme) {
+        getConfig().setProperty(PARAM_REPORT_THEME_PREFIX + report, theme);
+    }
+
+    public String getTheme(String report) {
+        return getConfig().getString(PARAM_REPORT_THEME_PREFIX + report, null);
     }
 }

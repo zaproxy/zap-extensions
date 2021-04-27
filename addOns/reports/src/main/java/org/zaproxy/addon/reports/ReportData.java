@@ -39,6 +39,7 @@ public class ReportData {
     private boolean[] confidences = new boolean[Alert.MSG_CONFIDENCE.length];
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
     private List<String> sections = new ArrayList<String>();
+    private String theme;
 
     public ReportData() {}
 
@@ -155,5 +156,13 @@ public class ReportData {
         } else {
             this.sections = sections;
         }
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 }
