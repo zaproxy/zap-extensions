@@ -98,6 +98,7 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner {
                 .setOtherInfo(getExtraInfoMessage(msg, formElement))
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
+                .setEvidence(formElement.getAttributeValue("action").trim())
                 .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(15) // WASC-15: Application Misconfiguration
                 .raise();
