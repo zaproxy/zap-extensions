@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - The Path Traversal scan rule should now be less False Positive prone at High Threshold, one of it's checks will now be excluded at High Threshold (Issues: 4209, 6030, 6219, 6372, and 6380).
   - The Other info field of Alerts will now include a reference indicating which check the triggered alert is caused by, in order to assist in future user inquiries.
-- Add and improve alerts evidences
+- Add and improve alerts evidence for some scan rules.
 
 ### Fixed
 - Fix XSS false positive (Issue 5958).

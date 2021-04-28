@@ -91,8 +91,8 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldFindPHPInjection() throws Exception {
-        String test = "/shouldFindPHPInjection.php";
+    public void shouldFindPhpInjection() throws Exception {
+        String test = "/shouldFindPhpInjection.php";
         String PHP_ENCODED_TOKEN =
                 "chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110)";
         String PHP_PAYLOAD = "print(" + PHP_ENCODED_TOKEN + ")";
@@ -121,8 +121,8 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldFindASPInjection() throws Exception {
-        String test = "/shouldFindASPInjection";
+    public void shouldFindAspInjection() throws Exception {
+        String test = "/shouldFindAspInjection";
         List<String> evaluationResults = new ArrayList<>();
 
         this.nano.addHandler(

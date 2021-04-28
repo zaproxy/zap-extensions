@@ -56,8 +56,8 @@ public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjecti
     }
 
     @Test
-    public void shouldFindCRLFInjection() throws Exception {
-        String test = "/shouldFindCRLFInjection.php";
+    public void shouldFindCrLfInjection() throws Exception {
+        String test = "/shouldFindCrLfInjection.php";
         ArrayList<String> tamperedHeaders = new ArrayList<>();
 
         this.nano.addHandler(
