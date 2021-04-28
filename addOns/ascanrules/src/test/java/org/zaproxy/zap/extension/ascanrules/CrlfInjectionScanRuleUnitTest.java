@@ -57,6 +57,7 @@ public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjecti
 
     @Test
     public void shouldFindCrLfInjection() throws Exception {
+        // Given
         String test = "/shouldFindCrLfInjection.php";
         ArrayList<String> tamperedHeaders = new ArrayList<>();
 
@@ -83,11 +84,11 @@ public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjecti
                         return newFixedLengthResponse("<html><body></body></html>");
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?years=1");
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         boolean evidenceContainsOneOfTheTamperedHeaders = false;

@@ -62,6 +62,7 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
 
     @Test
     public void shouldCreateAlert() throws Exception {
+        // Given
         String test = "/shouldReportBufferOverflowIssue/";
 
         this.nano.addHandler(
@@ -82,11 +83,11 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
                         return newFixedLengthResponse(response);
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=xxx");
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Connection: close"));

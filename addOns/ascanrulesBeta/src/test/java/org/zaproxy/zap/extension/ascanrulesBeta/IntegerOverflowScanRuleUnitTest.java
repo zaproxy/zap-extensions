@@ -97,6 +97,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
 
     @Test
     public void shouldCreateAlertsWithPrimeHeaderAsEvidence() throws Exception {
+        // Given
         String test = "/shouldReportIntegerOverflowIssue/";
         int INT_MAX = 2147483647;
 
@@ -120,11 +121,11 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
                         return newFixedLengthResponse(response);
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?years=1");
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         assertThat(

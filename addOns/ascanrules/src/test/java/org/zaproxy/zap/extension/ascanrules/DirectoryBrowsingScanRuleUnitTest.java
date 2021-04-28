@@ -41,8 +41,8 @@ public class DirectoryBrowsingScanRuleUnitTest
 
     @Test
     public void shouldFindDirectoryListing() throws Exception {
+        // Given
         String test = "/";
-
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -51,11 +51,11 @@ public class DirectoryBrowsingScanRuleUnitTest
                         return newFixedLengthResponse(html);
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test);
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Parent Directory"));
     }

@@ -92,6 +92,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
 
     @Test
     public void shouldFindPhpInjection() throws Exception {
+        // Given
         String test = "/shouldFindPhpInjection.php";
         String PHP_ENCODED_TOKEN =
                 "chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110)";
@@ -110,11 +111,11 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
                         return newFixedLengthResponse("<html><body></body></html>");
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?years=1");
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(PHP_CONTROL_TOKEN));
@@ -122,6 +123,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
 
     @Test
     public void shouldFindAspInjection() throws Exception {
+        // Given
         String test = "/shouldFindAspInjection";
         List<String> evaluationResults = new ArrayList<>();
 
@@ -147,11 +149,11 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
                         return newFixedLengthResponse("<html><body>years</body></html>");
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?years=1");
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         boolean evidenceOnEvaluationResults = false;
