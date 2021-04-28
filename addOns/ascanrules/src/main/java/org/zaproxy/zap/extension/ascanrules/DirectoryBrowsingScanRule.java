@@ -137,7 +137,7 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
         if (result) {
             newAlert()
                     .setConfidence(confidence)
-                    .setAttack(msg.getRequestHeader().getPrimeHeader())
+                    .setAttack(msg.getRequestHeader().getURI().toString())
                     .setEvidence(evidence.toString())
                     .setMessage(msg)
                     .raise();

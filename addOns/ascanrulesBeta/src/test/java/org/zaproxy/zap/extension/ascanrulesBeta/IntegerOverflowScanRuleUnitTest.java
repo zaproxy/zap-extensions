@@ -99,7 +99,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     public void shouldCreateAlertsWithPrimeHeaderAsEvidence() throws Exception {
         // Given
         String test = "/shouldReportIntegerOverflowIssue/";
-        int INT_MAX = 2147483647;
+        int INT_MAX = 2147483647; // From c/c++
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
