@@ -8,8 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correct logging of dependency.
 - Inconsistencies between traditional reports and the 'old' core ones
-
-### Fixed
 - Do not rely on default encoding when creating the reports, use UTF-8 always (Issue 6561).
 
 ## [0.2.0] - 2021-04-12
