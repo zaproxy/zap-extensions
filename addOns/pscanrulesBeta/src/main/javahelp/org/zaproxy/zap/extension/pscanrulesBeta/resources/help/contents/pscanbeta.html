@@ -40,7 +40,9 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 
 <H2>Hash Disclosure</H2>
 Passively scans for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
+<br>
+<strong>Note:</strong> This scan rule will only analyze JavaScript responses on LOW Threshold. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 
