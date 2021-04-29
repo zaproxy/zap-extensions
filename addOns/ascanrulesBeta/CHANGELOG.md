@@ -9,7 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The .env file scan rule now performs a simple content check to reduce false positives (Issue 6099).
 - The trace.axd file scan rule now performs a content check to reduce false positives (Issue 6517).
 - XML External Entity Attack scan rule changed to detect a possible XML File Reflection Attack when XML validation is present. (Issue 6204)
-- Add and improve alerts evidence for some scan rules.
+- Added/updated the details of some alerts (some changes might break Alert Filters)
+  - Integer Overflow
+    - Added evidence
+  - SQLi SQLite
+    - Evidence is now the string that was matched in the response
+  - XPath Injection
+    - Added evidence
 
 ## [33] - 2020-12-15
 ### Changed
