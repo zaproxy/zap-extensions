@@ -244,7 +244,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
                 } catch (Exception e) {
                     // Its an older version, so just dont try to use it
-                    e.printStackTrace();
+                    logger.debug(e);
                 }
             }
         }

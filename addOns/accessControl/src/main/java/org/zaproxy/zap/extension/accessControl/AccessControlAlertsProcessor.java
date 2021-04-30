@@ -88,7 +88,7 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            e.printStackTrace();
+            log.debug(e);
         }
         // @formatter:off
         alert.setDetail(
@@ -120,7 +120,7 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            e.printStackTrace();
+            log.debug(e);
         }
         // @formatter:off
         alert.setDetail(

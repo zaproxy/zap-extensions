@@ -260,7 +260,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             } catch (Exception e) {
                 // Its an older version, so just dont try to use it
-                e.printStackTrace();
+                logger.debug(e);
             }
         }
     }
