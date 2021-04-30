@@ -110,6 +110,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("https://example.com/processform"));
     }
 
     @Test

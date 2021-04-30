@@ -127,7 +127,8 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
                         .setParam(param)
-                        .setEvidence(msg.getRequestHeader().toString())
+                        .setAttack(returnAttack)
+                        .setEvidence(checkStringHeader1)
                         .setOtherInfo(getOther())
                         .setMessage(msg)
                         .raise();

@@ -122,8 +122,8 @@ public class CrlfInjectionScanRule extends AbstractAppParamPlugin {
             newAlert()
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
                     .setParam(param)
-                    .setAttack(matcher.group())
-                    .setOtherInfo(attack)
+                    .setAttack(attack)
+                    .setEvidence(matcher.group())
                     .setMessage(msg)
                     .raise();
             return true;
