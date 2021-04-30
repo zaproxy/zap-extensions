@@ -44,12 +44,12 @@ import org.zaproxy.addon.graphql.ExtensionGraphQl;
 import org.zaproxy.addon.graphql.GraphQlParam;
 import org.zaproxy.zap.utils.I18N;
 
-public class GraphQlJobUnitTest {
+class GraphQlJobUnitTest {
 
     private ExtensionGraphQl extGraphQl;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -60,7 +60,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given / When
         GraphQlJob job = new GraphQlJob();
 
@@ -73,7 +73,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         GraphQlJob job = new GraphQlJob();
 
@@ -88,7 +88,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         GraphQlJob job = new GraphQlJob();
         String endpoint = "https://example.com/graphql/";
@@ -107,7 +107,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldReturnConfigParams() {
+    void shouldReturnConfigParams() {
         // Given
         GraphQlJob job = new GraphQlJob();
 
@@ -135,7 +135,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfEmptyEndpoint() {
+    void shouldFailIfEmptyEndpoint() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -156,7 +156,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidEndpoint() {
+    void shouldFailIfInvalidEndpoint() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -175,7 +175,7 @@ public class GraphQlJobUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", "https://example.com/test file.graphql"})
-    public void shouldFailIfInvalidSchemaUrl(String schemaUrl) {
+    void shouldFailIfInvalidSchemaUrl(String schemaUrl) {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -194,7 +194,7 @@ public class GraphQlJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidSchemaFile() {
+    void shouldFailIfInvalidSchemaFile() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);

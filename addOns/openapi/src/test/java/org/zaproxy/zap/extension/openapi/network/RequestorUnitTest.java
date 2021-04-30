@@ -39,10 +39,10 @@ import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link Requestor}. */
-public class RequestorUnitTest extends AbstractServerTest {
+class RequestorUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldNotifyAllRedirectsFollowed() {
+    void shouldNotifyAllRedirectsFollowed() {
         // Given
         String baseUrl = "http://localhost:" + nano.getListeningPort() + "/";
         this.nano.addHandler(

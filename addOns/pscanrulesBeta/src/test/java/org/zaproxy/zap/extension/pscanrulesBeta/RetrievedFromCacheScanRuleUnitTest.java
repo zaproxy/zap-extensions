@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class RetrievedFromCacheScanRuleUnitTest
-        extends PassiveScannerTest<RetrievedFromCacheScanRule> {
+class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFromCacheScanRule> {
 
     private static final String X_CACHE = "X-Cache";
     private static final String AGE = "Age";
@@ -49,7 +48,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void scannerNameShouldMatch() {
+    void scannerNameShouldMatch() {
         // Quick test to verify scan rule name which is used in the policy dialog but not
         // alerts
 
@@ -60,7 +59,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -70,7 +69,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfXCacheWasMiss() throws URIException {
+    void shouldNotRaiseAlertIfXCacheWasMiss() throws URIException {
         // Given
         String xCacheValue = "MISS";
         HttpMessage msg = createMessage();
@@ -82,7 +81,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfXCacheWasEmpty() throws URIException {
+    void shouldNotRaiseAlertIfXCacheWasEmpty() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, "");
@@ -93,7 +92,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfXCacheWasHit() throws URIException {
+    void shouldRaiseAlertIfXCacheWasHit() throws URIException {
         // Given
         String xCacheValue = "HIT";
         HttpMessage msg = createMessage();
@@ -106,7 +105,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfXCacheWasHitWithServerDetails() throws URIException {
+    void shouldRaiseAlertIfXCacheWasHitWithServerDetails() throws URIException {
         // Given
         String xCacheValue = "HIT from cache.kolich.local";
         HttpMessage msg = createMessage();
@@ -119,7 +118,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfXCacheWasHitWithMultipleServerDetails() throws URIException {
+    void shouldRaiseAlertIfXCacheWasHitWithMultipleServerDetails() throws URIException {
         // Given
         String xCacheValue = "HIT from proxy.domain.tld, MISS from proxy.local";
         HttpMessage msg = createMessage();
@@ -132,7 +131,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfAgeWasEmpty() throws URIException {
+    void shouldNotRaiseAlertIfAgeWasEmpty() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(AGE, "");
@@ -143,7 +142,7 @@ public class RetrievedFromCacheScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfAgePresentWithValue() throws URIException {
+    void shouldRaiseAlertIfAgePresentWithValue() throws URIException {
         // Given
         String ageValue = "24";
         HttpMessage msg = createMessage();

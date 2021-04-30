@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 /* All test-cases should raise storeable and cacheable alerts
  * or should verfiy the absence of exceptions.
  */
-public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
+class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 
     private HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -73,7 +73,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void scannerNameShouldMatch() {
+    void scannerNameShouldMatch() {
         // Quick test to verify scan rule name which is used in the policy dialog but not
         // alerts
 
@@ -84,7 +84,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldNotCauseExceptionWhenExpiresHeaderHasZeroValue()
+    void shouldNotCauseExceptionWhenExpiresHeaderHasZeroValue()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -105,7 +105,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndExpiryDateGiven()
+    void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndExpiryDateGiven()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -121,7 +121,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndCacheIsPublic()
+    void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndCacheIsPublic()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -133,7 +133,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndMaxAgeGiven()
+    void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndMaxAgeGiven()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -145,7 +145,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndS_MaxAgeGiven()
+    void shouldRaiseAlertStoreAndCacheableWhenStatusNonCacheableByDefaultAndS_MaxAgeGiven()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -157,7 +157,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault()
+    void shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault()
             throws URIException, HttpMalformedHeaderException {
         shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("200");
         shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("203");
@@ -187,7 +187,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndCacheMustRevalidated()
+    void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndCacheMustRevalidated()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessageBasicAuthorization();
@@ -199,7 +199,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndCacheIsPublic()
+    void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndCacheIsPublic()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessageBasicAuthorization();
@@ -211,7 +211,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndS_MaxAgeCacheGiven()
+    void shouldRaiseAlertStoreAndCacheableWhenAuthorizationNeededAndS_MaxAgeCacheGiven()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessageBasicAuthorization();
@@ -223,7 +223,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndS_MaxAgeDirectiveIsSet()
+    void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndS_MaxAgeDirectiveIsSet()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -237,7 +237,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndMaxAgeDirectiveIsSet()
+    void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndMaxAgeDirectiveIsSet()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -251,7 +251,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndExpirySpecified()
+    void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndExpirySpecified()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -269,7 +269,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableCacheIsFreshWhenNoLifetimeSpecified()
+    void shouldRaiseAlertStoreAndCacheableCacheIsFreshWhenNoLifetimeSpecified()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -288,7 +288,7 @@ public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanR
     }
 
     @Test
-    public void shouldRaiseAlertStoreAndCacheableWhenStaleRetrieveAllowed()
+    void shouldRaiseAlertStoreAndCacheableWhenStaleRetrieveAllowed()
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();

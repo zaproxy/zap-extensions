@@ -37,7 +37,7 @@ import org.zaproxy.zap.extension.httpsessions.HttpSessionToken;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdUrlScanRule> {
+class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdUrlScanRule> {
 
     private HttpMessage msg;
     private static final String BODY = "Some text in the response, doesn't matter.\nLine 2\n";
@@ -70,7 +70,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void noAlertOnIDSmallerThanMinimum() throws HttpMalformedHeaderException, URIException {
+    void noAlertOnIDSmallerThanMinimum() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "http://example.com/foo?jsessionid=1A53063";
@@ -85,8 +85,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void containsSessionIdAsUrlParameter()
-            throws HttpMalformedHeaderException, URIException {
+    void containsSessionIdAsUrlParameter() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "http://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -101,7 +100,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void containsSessionIdAsUrlParameterInHTTPS()
+    void containsSessionIdAsUrlParameterInHTTPS()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -117,7 +116,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void noSessionIdInURL() throws HttpMalformedHeaderException, URIException {
+    void noSessionIdInURL() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/";
@@ -132,7 +131,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void noSessionIDAsUrlParameter() throws HttpMalformedHeaderException, URIException {
+    void noSessionIDAsUrlParameter() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/session/foo?session=false";
@@ -147,7 +146,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void containsSessionIdAsUrlParameterInHTTPSOnCustomPort()
+    void containsSessionIdAsUrlParameterInHTTPSOnCustomPort()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -164,7 +163,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void containsJsessionIdInUrlPathBeforeParams()
+    void containsJsessionIdInUrlPathBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -180,8 +179,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void alertsWithoutJSessionidInOptions()
-            throws HttpMalformedHeaderException, URIException {
+    void alertsWithoutJSessionidInOptions() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "http://tld.gtld/fred;JSESSIONID=asdfasdfasdf1234?foo=bar";
@@ -202,7 +200,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void containsCFIDAsUrlParameter() throws HttpMalformedHeaderException, URIException {
+    void containsCFIDAsUrlParameter() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "http://example.com/foo?CFiD=1A530637289A03B07199A44E8D531427";
@@ -218,8 +216,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
 
     @Test
     @Disabled(value = "Scanner does not look for session IDs in the response embedded in HREFs")
-    public void containsSessionIdInResponseHREFParams()
-            throws HttpMalformedHeaderException, URIException {
+    void containsSessionIdInResponseHREFParams() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "http://tld.gtld/fred?foo=bar";
@@ -242,7 +239,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     @Disabled(
             value =
                     "Scanner does not look for session IDs in the response embedded in HREFs before the parameters")
-    public void containsCFIDInResponseHREFBeforeParams()
+    void containsCFIDInResponseHREFBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -263,7 +260,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void detectExposureTo3rdPartyInHREF() throws HttpMalformedHeaderException, URIException {
+    void detectExposureTo3rdPartyInHREF() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -284,7 +281,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void detectExposureTo3rdPartyInHREFwCustomPort()
+    void detectExposureTo3rdPartyInHREFwCustomPort()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -306,8 +303,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void detectExposureTo3rdPartyUnquotedHREF()
-            throws HttpMalformedHeaderException, URIException {
+    void detectExposureTo3rdPartyUnquotedHREF() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -327,7 +323,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void detectExposureTo3rdPartyInSRC() throws HttpMalformedHeaderException, URIException {
+    void detectExposureTo3rdPartyInSRC() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -349,7 +345,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void ignoreExposureToSelf() throws HttpMalformedHeaderException, URIException {
+    void ignoreExposureToSelf() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -372,8 +368,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void ignoreExposureToSelfRelativeLink()
-            throws HttpMalformedHeaderException, URIException {
+    void ignoreExposureToSelfRelativeLink() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -397,7 +392,7 @@ public class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSes
     }
 
     @Test
-    public void ignoreExposureToBookmark() throws HttpMalformedHeaderException, URIException {
+    void ignoreExposureToBookmark() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";

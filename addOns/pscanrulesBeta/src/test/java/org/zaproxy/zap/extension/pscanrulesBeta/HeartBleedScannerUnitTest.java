@@ -29,7 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
+class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
 
     private static final String URI = "https://www.example.com/test/";
     private static final String SAFE_OPENSSL_VERSION = "OpenSSL/1.1.1";
@@ -40,7 +40,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenNoServerHeaderThenNoAlertRaised() throws IOException {
+    void givenNoServerHeaderThenNoAlertRaised() throws IOException {
         // Given
         HttpMessage msg = createMsg();
 
@@ -52,7 +52,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithSafeOpenSSLThenNoAlertRaised() throws IOException {
+    void givenServerHeaderWithSafeOpenSSLThenNoAlertRaised() throws IOException {
         // Given
         HttpMessage msg = createMsg("Apache/2.4.1 (" + SAFE_OPENSSL_VERSION + ")");
 
@@ -64,7 +64,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithoutOpenSSLThenNoAlertRaised() throws IOException {
+    void givenServerHeaderWithoutOpenSSLThenNoAlertRaised() throws IOException {
         // Given
         HttpMessage msg = createMsg("Apache/2.4.1");
 
@@ -76,8 +76,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithVulnerableLowercaseOpenSSLThenAlertRaised()
-            throws IOException {
+    void givenServerHeaderWithVulnerableLowercaseOpenSSLThenAlertRaised() throws IOException {
         // Given
         String opensslVersion = "openssl/1.0.1-beta1";
         HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (%s)", opensslVersion));
@@ -91,7 +90,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithVulnerableOpenSSLThenAlertRaised() throws IOException {
+    void givenServerHeaderWithVulnerableOpenSSLThenAlertRaised() throws IOException {
         for (String version : HeartBleedScanRule.openSSLvulnerableVersions) {
             // Given
             alertsRaised.clear();
@@ -108,8 +107,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithVulnerableAndSafeOpenSSLVersionsThenAlertRaised()
-            throws IOException {
+    void givenServerHeaderWithVulnerableAndSafeOpenSSLVersionsThenAlertRaised() throws IOException {
         // Given
         String vulnerableVersion = "openssl/1.0.1";
         HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (%s)", vulnerableVersion));
@@ -124,8 +122,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
     }
 
     @Test
-    public void givenServerHeaderWithSafeAndVulnerableOpenSSLVersionsThenAlertRaised()
-            throws IOException {
+    void givenServerHeaderWithSafeAndVulnerableOpenSSLVersionsThenAlertRaised() throws IOException {
         // Given
         String vulnerableVersion = "openssl/1.0.1";
         HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (%s)", SAFE_OPENSSL_VERSION));

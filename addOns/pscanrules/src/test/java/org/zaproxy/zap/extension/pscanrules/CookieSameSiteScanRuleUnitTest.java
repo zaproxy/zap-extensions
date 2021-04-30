@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteScanRule> {
+class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteScanRule> {
 
     private Model model;
 
@@ -54,7 +54,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void noSameSiteAttribute() throws HttpMalformedHeaderException {
+    void noSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -76,7 +76,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void noCookie() throws HttpMalformedHeaderException {
+    void noCookie() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -95,7 +95,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void laxSameSiteAttribute() throws HttpMalformedHeaderException {
+    void laxSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -115,7 +115,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void strictSameSiteAttribute() throws HttpMalformedHeaderException {
+    void strictSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -135,7 +135,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void secondCookieNoSameSiteAttribute() throws HttpMalformedHeaderException {
+    void secondCookieNoSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -158,7 +158,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void badValSameSiteAttribute() throws HttpMalformedHeaderException {
+    void badValSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -180,7 +180,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void noValSameSiteAttribute() throws HttpMalformedHeaderException {
+    void noValSameSiteAttribute() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -202,7 +202,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -222,7 +222,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -242,7 +242,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
+    void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -273,7 +273,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
+    void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -304,7 +304,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void secondCookieNoSameSiteAttributeFirstExpired() throws HttpMalformedHeaderException {
+    void secondCookieNoSameSiteAttributeFirstExpired() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
 
@@ -326,7 +326,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
+    void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         model.getOptionsParam()
                 .getConfig()
@@ -353,7 +353,7 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+    void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         model.getOptionsParam()
                 .getConfig()

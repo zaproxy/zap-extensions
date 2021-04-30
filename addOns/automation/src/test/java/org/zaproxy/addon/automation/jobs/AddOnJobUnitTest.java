@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -49,15 +50,15 @@ import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class AddOnJobUnitTest {
+class AddOnJobUnitTest {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given / When
         AddOnJob job = new AddOnJob();
 
@@ -70,7 +71,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         AddOnJob job = new AddOnJob();
 
@@ -84,7 +85,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         AddOnJob job = new AddOnJob();
 
@@ -96,17 +97,17 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldIgnoreUnknownCustomConfigParams() {
+    void shouldIgnoreUnknownCustomConfigParams() {
         // Given
         AddOnJob job = new AddOnJob();
 
         // When / Than
-        job.applyCustomParameter("test", "test");
+        assertFalse(job.applyCustomParameter("test", "test"));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldApplyParams() {
+    void shouldApplyParams() {
         // Given
         AddOnJob job = new AddOnJob();
         AutomationProgress progress = new AutomationProgress();
@@ -125,7 +126,7 @@ public class AddOnJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldWarnOnUnknownParams() {
+    void shouldWarnOnUnknownParams() {
         // Given
         AddOnJob job = new AddOnJob();
         AutomationProgress progress = new AutomationProgress();
@@ -146,7 +147,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldReturnFileConfigData() {
+    void shouldReturnFileConfigData() {
         // Given
         AddOnJob job = new AddOnJob();
 
@@ -158,7 +159,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldCheckForUpdatesByDefault() {
+    void shouldCheckForUpdatesByDefault() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -191,7 +192,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldPassIfNothingToDo() {
+    void shouldPassIfNothingToDo() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -220,7 +221,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldTryToInstallAddOns() {
+    void shouldTryToInstallAddOns() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -250,7 +251,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldReportInstallAddOnsFailure() {
+    void shouldReportInstallAddOnsFailure() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -283,7 +284,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldTryToUninstallAddOns() {
+    void shouldTryToUninstallAddOns() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -313,7 +314,7 @@ public class AddOnJobUnitTest {
     }
 
     @Test
-    public void shouldReportUninstallAddOnsFailure() {
+    void shouldReportUninstallAddOnsFailure() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);

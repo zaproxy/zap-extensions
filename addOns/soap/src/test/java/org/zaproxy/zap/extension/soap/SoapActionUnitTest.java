@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class SoapActionUnitTest {
+class SoapActionUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com/", "", "\"ZAP\""})
@@ -60,7 +60,7 @@ public class SoapActionUnitTest {
     }
 
     @Test
-    public void getSoapActionShouldReturnEmptyStringForSoapV2MessageWithOmittedAction() {
+    void getSoapActionShouldReturnEmptyStringForSoapV2MessageWithOmittedAction() {
         HttpMessage soapMsg = new HttpMessage();
         String contentType = "application/soap+xml;charset=utf-8";
         soapMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
@@ -68,7 +68,7 @@ public class SoapActionUnitTest {
     }
 
     @Test
-    public void getSoapActionShouldReturnNullForInvalidSoapMessage() {
+    void getSoapActionShouldReturnNullForInvalidSoapMessage() {
         HttpMessage msg = new HttpMessage();
         msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
         assertThat(SoapAction.extractFrom(msg), is(nullValue()));

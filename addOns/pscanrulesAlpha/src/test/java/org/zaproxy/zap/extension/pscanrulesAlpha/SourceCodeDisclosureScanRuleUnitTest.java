@@ -29,7 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class SourceCodeDisclosureScanRuleUnitTest
+class SourceCodeDisclosureScanRuleUnitTest
         extends PassiveScannerTest<SourceCodeDisclosureScanRule> {
 
     private static final String CODE_SQL = "insert into vulnerabilities values(";
@@ -45,20 +45,20 @@ public class SourceCodeDisclosureScanRuleUnitTest
     }
 
     @BeforeEach
-    public void createHttpMessage() throws IOException {
+    void createHttpMessage() throws IOException {
         msg = new HttpMessage();
         msg.setRequestHeader("GET " + URI + " HTTP/1.1");
     }
 
     @Test
-    public void scannerNameShouldMatch() {
+    void scannerNameShouldMatch() {
         // Quick test to verify scan rule name which is used in the policy dialog but not
         // alone in alerts
         assertThat(rule.getName(), is(getLocalisedString("name")));
     }
 
     @Test
-    public void givenJustHtmlBodyThenNoAlertRaised() {
+    void givenJustHtmlBodyThenNoAlertRaised() {
         // Given
         msg.setResponseBody(CODE_HTML);
 
@@ -70,7 +70,7 @@ public class SourceCodeDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void givenPHPCodeThenAlertRaised() {
+    void givenPHPCodeThenAlertRaised() {
         // Given
         msg.setResponseBody(wrapWithHTML(CODE_PHP));
 
@@ -83,7 +83,7 @@ public class SourceCodeDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void givenSQLCodeThenAlertRaised() {
+    void givenSQLCodeThenAlertRaised() {
         // Given
         msg.setResponseBody(wrapWithHTML(CODE_SQL));
 
@@ -96,7 +96,7 @@ public class SourceCodeDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void givenSQLAndPhpCodeThenOnlyOneAlertRaised() {
+    void givenSQLAndPhpCodeThenOnlyOneAlertRaised() {
         // Given
         msg.setResponseBody(wrapWithHTML(CODE_SQL + CODE_PHP));
 

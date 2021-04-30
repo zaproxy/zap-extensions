@@ -32,13 +32,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link BrowsersComboBoxModel}. */
-public class BrowsersComboBoxModelUnitTest {
+class BrowsersComboBoxModelUnitTest {
 
     private static BrowserUI FIREFOX;
     private static List<BrowserUI> browsers;
 
     @BeforeAll
-    public static void setUp() throws Exception {
+    static void setUp() throws Exception {
         FIREFOX = new BrowserUI("Firefox", Browser.FIREFOX);
 
         browsers = new ArrayList<>(3);
@@ -48,7 +48,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithNullList() {
+    void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithNullList() {
         // Given
         List<BrowserUI> browsers = null;
         // When / Then
@@ -56,7 +56,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithEmptyList() {
+    void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithEmptyList() {
         // Given
         List<BrowserUI> browsers = Collections.emptyList();
         // When / Then
@@ -64,12 +64,12 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldCreateBrowsersComboBoxModelWithNonEmptyList() {
+    void shouldCreateBrowsersComboBoxModelWithNonEmptyList() {
         assertDoesNotThrow(() -> new BrowsersComboBoxModel(browsers));
     }
 
     @Test
-    public void shouldGetSizeAsNumberOfBrowsersPassedInConstructor() {
+    void shouldGetSizeAsNumberOfBrowsersPassedInConstructor() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When
@@ -79,7 +79,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldGetElementsAtSamePositionAsBrowsersPassedInConstructor() {
+    void shouldGetElementsAtSamePositionAsBrowsersPassedInConstructor() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         for (int index = 0; index < browsers.size(); index++) {
@@ -91,7 +91,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldGetFirstItemSelectedAfterConstruction() {
+    void shouldGetFirstItemSelectedAfterConstruction() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When
@@ -101,7 +101,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldNotBeAffectedByModificationsOfListPassedInConstructor() {
+    void shouldNotBeAffectedByModificationsOfListPassedInConstructor() {
         // Given
         List<BrowserUI> mutableList = new ArrayList<>(browsers);
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(mutableList);
@@ -115,7 +115,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSelectingItemWithNonBrowserUIObject() {
+    void shouldThrowExceptionWhenSelectingItemWithNonBrowserUIObject() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When / Then
@@ -125,7 +125,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldSetSelectedItemWithBrowserUI() {
+    void shouldSetSelectedItemWithBrowserUI() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When
@@ -135,7 +135,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldNotChangeSelectionWhenSettingNonContainedBrowserUI() {
+    void shouldNotChangeSelectionWhenSettingNonContainedBrowserUI() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedItem(FIREFOX);
@@ -146,7 +146,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSelectingItemWithEmptyBrowserId() {
+    void shouldThrowExceptionWhenSelectingItemWithEmptyBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When / Then
@@ -154,7 +154,7 @@ public class BrowsersComboBoxModelUnitTest {
                 IllegalArgumentException.class, () -> browsersComboBoxModel.setSelectedBrowser(""));
     }
 
-    public void shouldSetSelectedItemWithBrowserId() {
+    void shouldSetSelectedItemWithBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When
@@ -164,7 +164,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldNotChangeSelectionWhenSettingNonContainedBrowserId() {
+    void shouldNotChangeSelectionWhenSettingNonContainedBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedItem(FIREFOX);
@@ -175,7 +175,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldNotChangeSelectionWhenUsingNonExistentBrowserId() {
+    void shouldNotChangeSelectionWhenUsingNonExistentBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedItem(FIREFOX);
@@ -186,7 +186,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldSetSelectedItemWithBrowser() {
+    void shouldSetSelectedItemWithBrowser() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         // When
@@ -196,7 +196,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldNotChangeSelectionWhenSettingNonContainedBrowser() {
+    void shouldNotChangeSelectionWhenSettingNonContainedBrowser() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedItem(FIREFOX);
@@ -207,7 +207,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldClearSelectionWhenSettingNullBrowserId() {
+    void shouldClearSelectionWhenSettingNullBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedBrowser(Browser.FIREFOX);
@@ -218,7 +218,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldClearSelectionWhenSettingNullBrowser() {
+    void shouldClearSelectionWhenSettingNullBrowser() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedBrowser(Browser.FIREFOX);
@@ -229,7 +229,7 @@ public class BrowsersComboBoxModelUnitTest {
     }
 
     @Test
-    public void shouldClearSelectionWhenSettingNullItem() {
+    void shouldClearSelectionWhenSettingNullItem() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedBrowser(Browser.FIREFOX);

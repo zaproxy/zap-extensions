@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledJavascriptEventScanRuleUnitTest
+class UserControlledJavascriptEventScanRuleUnitTest
         extends PassiveScannerTest<UserControlledJavascriptEventScanRule> {
 
     @Override
@@ -57,7 +57,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
+    void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
@@ -69,7 +69,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotHtml() {
+    void shouldNotRaiseAlertIfResponseIsNotHtml() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
@@ -81,7 +81,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponsehasNoContentType() {
+    void shouldNotRaiseAlertIfResponsehasNoContentType() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
@@ -94,7 +94,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+    void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -105,7 +105,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
@@ -117,7 +117,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInJsEvent() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamValuesNotUsedInJsEvent() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -131,7 +131,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasUnknownJsEvent() throws Exception {
+    void shouldNotRaiseAlertIfResponseHasUnknownJsEvent() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -145,7 +145,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamValuesUsedInJsEvent() throws Exception {
+    void shouldRaiseAlertIfRequestParamValuesUsedInJsEvent() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()

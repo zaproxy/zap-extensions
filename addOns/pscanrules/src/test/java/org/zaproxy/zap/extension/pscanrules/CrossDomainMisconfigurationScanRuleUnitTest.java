@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CrossDomainMisconfigurationScanRuleUnitTest
+class CrossDomainMisconfigurationScanRuleUnitTest
         extends PassiveScannerTest<CrossDomainMisconfigurationScanRule> {
 
     private static final String URI = "http://example.com/";
@@ -41,7 +41,7 @@ public class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCorsAllowOriginHeaderIsMissing() {
+    void shouldNotRaiseAlertIfCorsAllowOriginHeaderIsMissing() {
         // Given
         HttpMessage msg = createResponse(URI, null);
         // When
@@ -51,7 +51,7 @@ public class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCorsAllowOriginHeaderIsEmpty() {
+    void shouldNotRaiseAlertIfCorsAllowOriginHeaderIsEmpty() {
         // Given
         HttpMessage msg = createResponse(URI, "");
         // When
@@ -61,7 +61,7 @@ public class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCorsAllowOriginHeaderContainsUnrecognisedValue() {
+    void shouldNotRaiseAlertIfCorsAllowOriginHeaderContainsUnrecognisedValue() {
         // Given
         HttpMessage msg = createResponse(URI, "UnrecognisedValue");
         // When
@@ -71,7 +71,7 @@ public class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfCorsAllowOriginHeaderIsTooPermissive() {
+    void shouldRaiseAlertIfCorsAllowOriginHeaderIsTooPermissive() {
         // Given
         HttpMessage msg = createResponse(URI, "*");
         // When
@@ -87,7 +87,7 @@ public class CrossDomainMisconfigurationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfCorsAllowOriginHeaderWithDifferentCaseIsTooPermissive() {
+    void shouldRaiseAlertIfCorsAllowOriginHeaderWithDifferentCaseIsTooPermissive() {
         // Given
         HttpMessage msg = createResponse(URI, null);
         msg.getResponseHeader()

@@ -33,14 +33,14 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRule> {
+class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRule> {
     private static final String URI = "http://example.com";
     private static final int ALLOWABLE_BODY_SIZE = URI.length() + 300;
 
     private HttpMessage msg;
 
     @BeforeEach
-    public void createHttpMessage() throws IOException {
+    void createHttpMessage() throws IOException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI(URI, false));
 
@@ -54,7 +54,7 @@ public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirect
     }
 
     @Test
-    public void givenRedirectWithSmallBodyThenItRaisesNoAlert() {
+    void givenRedirectWithSmallBodyThenItRaisesNoAlert() {
         // Given
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, URI);
@@ -68,7 +68,7 @@ public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirect
     }
 
     @Test
-    public void givenRedirectHeadersWithLargeBodyThenAlertRaised() {
+    void givenRedirectHeadersWithLargeBodyThenAlertRaised() {
         // Given
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, URI);
@@ -83,7 +83,7 @@ public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirect
     }
 
     @Test
-    public void givenNotModifiedStatusCodeWithLargeBodyThenNoAlertRaised() {
+    void givenNotModifiedStatusCodeWithLargeBodyThenNoAlertRaised() {
         // Given
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_MODIFIED);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, URI);
@@ -97,7 +97,7 @@ public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirect
     }
 
     @Test
-    public void givenNotFoundStatusCodeWithLargeBodyThenNoAlertRaised() {
+    void givenNotFoundStatusCodeWithLargeBodyThenNoAlertRaised() {
         // Given
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_FOUND);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, URI);
@@ -111,7 +111,7 @@ public class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirect
     }
 
     @Test
-    public void givenRedirectStatusCodeWithoutLocationHeaderThenNoAlertRaised() {
+    void givenRedirectStatusCodeWithoutLocationHeaderThenNoAlertRaised() {
         // Given
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE + 1]);

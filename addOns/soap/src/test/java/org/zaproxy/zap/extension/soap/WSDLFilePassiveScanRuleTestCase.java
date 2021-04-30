@@ -49,7 +49,7 @@ public class WSDLFilePassiveScanRuleTestCase {
     }
 
     @Test
-    public void isWsdlTest()
+    void isWsdlTest()
             throws NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
         WSDLFilePassiveScanRule scanner = new WSDLFilePassiveScanRule();
@@ -66,7 +66,7 @@ public class WSDLFilePassiveScanRuleTestCase {
     }
 
     @Test
-    public void shouldNotAlertWhenWsdlFileNotFound() throws IOException {
+    void shouldNotAlertWhenWsdlFileNotFound() throws IOException {
         HttpMessage wsdlMsg = new HttpMessage();
         wsdlMsg = Sample.setOriginalRequest(wsdlMsg);
         setContentType(wsdlMsg, "text/xml");
@@ -77,7 +77,7 @@ public class WSDLFilePassiveScanRuleTestCase {
     }
 
     @Test
-    public void shouldAlertWhenWsdlFileFound() throws IOException {
+    void shouldAlertWhenWsdlFileFound() throws IOException {
         HttpMessage wsdlMsg = new HttpMessage();
         wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);
         setContentType(wsdlMsg, "text/xml");
@@ -88,7 +88,7 @@ public class WSDLFilePassiveScanRuleTestCase {
     }
 
     @Test
-    public void shouldAlertWhenWsdlXmlContentTypeFound() throws IOException {
+    void shouldAlertWhenWsdlXmlContentTypeFound() throws IOException {
         HttpMessage wsdlMsg = new HttpMessage();
         wsdlMsg = Sample.setOriginalRequest(wsdlMsg);
         setContentType(wsdlMsg, "application/wsdl+xml");

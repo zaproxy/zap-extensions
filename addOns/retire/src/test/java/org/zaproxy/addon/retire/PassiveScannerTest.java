@@ -22,8 +22,7 @@ package org.zaproxy.addon.retire;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public abstract class PassiveScannerTest<T extends PassiveScanner>
-        extends PassiveScannerTestUtils<T> {
+abstract class PassiveScannerTest<T extends PassiveScanner> extends PassiveScannerTestUtils<T> {
 
     @Override
     protected void setUpMessages() {

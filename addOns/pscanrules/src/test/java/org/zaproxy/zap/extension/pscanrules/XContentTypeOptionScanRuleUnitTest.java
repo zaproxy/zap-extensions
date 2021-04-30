@@ -31,8 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XContentTypeOptionScanRuleUnitTest
-        extends PassiveScannerTest<XContentTypeOptionsScanRule> {
+class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentTypeOptionsScanRule> {
 
     @Override
     protected XContentTypeOptionsScanRule createScanner() {
@@ -40,7 +39,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsPresent() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsPresent() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -62,8 +61,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHeaderValueHasDifferentCase()
-            throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfHeaderValueHasDifferentCase() throws HttpMalformedHeaderException {
         Locale defaultLocale = Locale.getDefault();
         try {
             // Given
@@ -90,7 +88,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsAbsent() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsAbsent() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -113,7 +111,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsBad() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsBad() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -137,7 +135,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsAbsentRedirectLow() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsAbsentRedirectLow() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -162,7 +160,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsAbsentRedirectMed() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsAbsentRedirectMed() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -185,7 +183,7 @@ public class XContentTypeOptionScanRuleUnitTest
     }
 
     @Test
-    public void xContentTypeOptionsAbsentRedirectHigh() throws HttpMalformedHeaderException {
+    void xContentTypeOptionsAbsentRedirectHigh() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();

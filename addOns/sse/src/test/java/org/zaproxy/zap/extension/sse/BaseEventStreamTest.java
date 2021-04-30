@@ -31,10 +31,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.utils.I18N;
 
-public abstract class BaseEventStreamTest {
+abstract class BaseEventStreamTest {
 
     @BeforeAll
-    public static void beforeClass() {
+    static void beforeClass() {
         // ServerSentEvent relies on this attribute to be initialized
         Constant.messages = mock(I18N.class);
     }

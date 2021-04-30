@@ -28,7 +28,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link FormatStringScanRule}. */
-public class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRule> {
+class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRule> {
 
     @Override
     protected FormatStringScanRule createScanner() {
@@ -36,7 +36,7 @@ public class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatString
     }
 
     @Test
-    public void shouldTargetCTech() {
+    void shouldTargetCTech() {
         // Given
         TechSet techSet = techSet(Tech.C);
         // When
@@ -46,7 +46,7 @@ public class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatString
     }
 
     @Test
-    public void shouldNotTargetNonCTechs() {
+    void shouldNotTargetNonCTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.C);
         // When

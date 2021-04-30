@@ -30,7 +30,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class ServerHeaderInfoLeakScanRuleUnitTest
+class ServerHeaderInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<ServerHeaderInfoLeakScanRule> {
 
     private static final String SERVER = "Server";
@@ -50,7 +50,7 @@ public class ServerHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void scannerNameShouldMatch() {
+    void scannerNameShouldMatch() {
         // Quick test to verify scan rule name which is used in the policy dialog but not
         // alerts
 
@@ -61,7 +61,7 @@ public class ServerHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -71,7 +71,7 @@ public class ServerHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasRelevantHeader() throws URIException {
+    void shouldRaiseAlertIfResponseHasRelevantHeader() throws URIException {
         // Given
         String apacheHeader = "Apache/2.4.1 (Unix)";
         HttpMessage msg = createMessage();
@@ -84,7 +84,7 @@ public class ServerHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasRelevantContentButNoVersion() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasRelevantContentButNoVersion() throws URIException {
         // Given - Default threshold (MEDIUM)
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(SERVER, "Apache");
@@ -95,7 +95,7 @@ public class ServerHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentButNoVersion()
+    void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentButNoVersion()
             throws URIException {
         // Given
         String bareApacheHeader = "Apache";

@@ -22,8 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
-public abstract class ActiveScannerTest<T extends AbstractPlugin>
-        extends ActiveScannerTestUtils<T> {
+abstract class ActiveScannerTest<T extends AbstractPlugin> extends ActiveScannerTestUtils<T> {
 
     @Override
     protected void setUpMessages() {

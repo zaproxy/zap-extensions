@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.users.User;
 
-public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRule> {
+class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRule> {
 
     private HttpMessage msg;
 
@@ -46,7 +46,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     private static final String FOOBAR_MD2 = "3af4bb69e03489fc4ceebe50151d3e1a";
 
     @BeforeEach
-    public void before() throws URIException {
+    void before() throws URIException {
 
         when(passiveScanData.getUsers()).thenReturn(Arrays.asList(new User(1, "guest")));
 
@@ -64,7 +64,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoRelevantContent() {
+    void shouldNotRaiseAlertIfResponseHasNoRelevantContent() {
         // Given
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
         // When
@@ -74,7 +74,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseContainsIrrelevantHash() {
+    void shouldNotRaiseAlertIfResponseContainsIrrelevantHash() {
         // Given - "Guest" with a leading cap
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><i>adb831a7fdd83dd1e2a309ce7591dff8</i>");
@@ -85,7 +85,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsRelevantMd5Hash() {
+    void shouldRaiseAlertIfResponseContainsRelevantMd5Hash() {
         // Given - Mixed case hash
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><i>084E0343A0486fF05530DF6C705C8Bb4</i>");
@@ -97,7 +97,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsRelevantSha1Hash() {
+    void shouldRaiseAlertIfResponseContainsRelevantSha1Hash() {
         // Given
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><b>84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec</b>");
@@ -109,7 +109,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseMultipleAlertsIfResponseContainsMultipleRelevantHashes() {
+    void shouldRaiseMultipleAlertsIfResponseContainsMultipleRelevantHashes() {
         // Given
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><b>"
@@ -128,7 +128,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsRelevantHashInHeader() {
+    void shouldRaiseAlertIfResponseContainsRelevantHashInHeader() {
         // Given
         msg.getResponseHeader().setHeader("X-Test-Thing", GUEST_MD5);
         msg.setResponseBody(
@@ -144,7 +144,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasHashOfDefaultPayload() {
+    void shouldRaiseAlertIfResponseHasHashOfDefaultPayload() {
         // Given
         msg.getResponseHeader().setHeader("X-Test-Thing", ADMIN_MD5);
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
@@ -156,7 +156,7 @@ public class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdo
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasHashOfCustomPayload() {
+    void shouldRaiseAlertIfResponseHasHashOfCustomPayload() {
         // Given
         msg.getResponseHeader().setHeader("X-Test-Thing", FOOBAR_MD2);
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");

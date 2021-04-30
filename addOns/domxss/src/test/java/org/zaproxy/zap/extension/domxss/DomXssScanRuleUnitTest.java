@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
+class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
     @BeforeAll
     static void setup() {
@@ -69,7 +69,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     }
 
     @Test
-    public void shouldUseDefaultWhenUnsupportedBrowser() throws IOException {
+    void shouldUseDefaultWhenUnsupportedBrowser() throws IOException {
         // Given
         HttpMessage msg = this.getHttpMessage("");
         this.rule.getConfig().setProperty("rules.domxss.browserid", "opera");
@@ -80,7 +80,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     }
 
     @Test
-    public void shouldUseDefaultWhenUnknownBrowser() throws IOException {
+    void shouldUseDefaultWhenUnknownBrowser() throws IOException {
         // Given
         HttpMessage msg = this.getHttpMessage("");
         this.rule.getConfig().setProperty("rules.domxss.browserid", "invalid");
@@ -92,7 +92,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
 
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldUseCorrectBrowser(String browser) throws IOException {
+    void shouldUseCorrectBrowser(String browser) throws IOException {
         // Given
         HttpMessage msg = this.getHttpMessage("");
         this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
@@ -105,7 +105,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/assign */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashAssign(String browser)
+    void shouldReportXssInLocationHashAssign(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashAssign/";
@@ -141,7 +141,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/eval */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashEval(String browser)
+    void shouldReportXssInLocationHashEval(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashEval/";
@@ -162,7 +162,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/replace */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashReplace(String browser)
+    void shouldReportXssInLocationHashReplace(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashReplace/";
@@ -183,7 +183,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/setTimeout */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashSetTimeout(String browser)
+    void shouldReportXssInLocationHashSetTimeout(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashSetTimeout/";
@@ -204,7 +204,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test to trigger XSS after cancel button is clicked */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssWhenCancelButtonIsClicked(String browser)
+    void shouldReportXssWhenCancelButtonIsClicked(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssWhenCancelButtonIsClicked/";
@@ -226,7 +226,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/function */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashFunction(String browser)
+    void shouldReportXssInLocationHashFunction(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashFunction/";
@@ -247,7 +247,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/jshref */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashInlineEvent(String browser)
+    void shouldReportXssInLocationHashInlineEvent(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashInlineEvent/";
@@ -268,7 +268,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/formaction */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInLocationHashFormAction(String browser)
+    void shouldReportXssInLocationHashFormAction(String browser)
             throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInLocationHashFormAction/";
@@ -292,7 +292,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
      * Note that this only works in Firefox, not Chrome.
      */
     @Test
-    public void shouldReportXssInEventInnerHtmlFirefox() throws NullPointerException, IOException {
+    void shouldReportXssInEventInnerHtmlFirefox() throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInEventInnerHtml/";
 
@@ -317,8 +317,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
      */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInTypingInnerHtml(String browser)
-            throws NullPointerException, IOException {
+    void shouldReportXssInTypingInnerHtml(String browser) throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInTypingInnerHtml/";
 
@@ -341,8 +340,7 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
      */
     @ParameterizedTest
     @MethodSource("testBrowsers")
-    public void shouldReportXssInDomPropagation(String browser)
-            throws NullPointerException, IOException {
+    void shouldReportXssInDomPropagation(String browser) throws NullPointerException, IOException {
         // Given
         String test = "/shouldReportXssInDomPropagation/";
 

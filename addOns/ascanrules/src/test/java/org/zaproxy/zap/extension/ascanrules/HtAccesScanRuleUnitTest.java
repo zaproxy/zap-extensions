@@ -35,7 +35,7 @@ import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link HtAccessScanRule}. */
-public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessScanRule> {
+class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessScanRule> {
 
     private static final String URL = "/.htaccess";
     private static final String HTACCESS_BODY = "order allow,deny";
@@ -53,7 +53,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.setBody(HTACCESS_BODY);
     }
 
@@ -63,7 +63,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
     }
 
     @Test
-    public void shouldNotAlertIfNonHtaccessFileFoundStdThreshold() throws Exception {
+    void shouldNotAlertIfNonHtaccessFileFoundStdThreshold() throws Exception {
         // Given
         nano.addHandler(new MiscOkResponse());
         HttpMessage message = getHttpMessage(URL);
@@ -75,7 +75,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
     }
 
     @Test
-    public void shouldNotAlertIfNonHtaccessFileFoundLowThreshold() throws Exception {
+    void shouldNotAlertIfNonHtaccessFileFoundLowThreshold() throws Exception {
         // Given
         nano.addHandler(new MiscOkResponse());
         HttpMessage message = getHttpMessage(URL);
@@ -89,7 +89,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
 
     @ParameterizedTest
     @ValueSource(strings = {"application/json", "application/xml"})
-    public void shouldNotAlertIfResponseIsJsonOrXml(String contentType) throws Exception {
+    void shouldNotAlertIfResponseIsJsonOrXml(String contentType) throws Exception {
         // Given
         nano.addHandler(new MiscOkResponse(URL, contentType));
         HttpMessage message = getHttpMessage(URL);
@@ -101,7 +101,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
     }
 
     @Test
-    public void shouldNotAlertIfResponseIsEmpty() throws Exception {
+    void shouldNotAlertIfResponseIsEmpty() throws Exception {
         // Given
         nano.addHandler(new MiscOkResponse(""));
         HttpMessage message = getHttpMessage(URL);

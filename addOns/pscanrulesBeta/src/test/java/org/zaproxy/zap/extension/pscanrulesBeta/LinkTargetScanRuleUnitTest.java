@@ -39,7 +39,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link LinkTargetScanRule}. */
-public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> {
+class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> {
 
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
@@ -51,7 +51,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     Session session;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(session.getContextsForUrl(anyString())).thenReturn(Collections.emptyList());
         when(model.getSession()).thenReturn(session);
         rule.setModel(model);
@@ -75,7 +75,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenNoLinks() throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenNoLinks() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -88,7 +88,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkNoTarget() throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenOneLinkNoTarget() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -101,8 +101,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetSameDomain()
-            throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenOneLinkWithBlankTargetSameDomain() throws HttpMalformedHeaderException {
         // Given
         Context context1 = new Context(session, 0);
         context1.addIncludeInContextRegex("https://www.example.com.*");
@@ -120,7 +119,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetTrustedDomain()
+    void dontRaiseIssueWhenOneLinkWithBlankTargetTrustedDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -138,8 +137,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenOneLinkWithBlankTargetUntrustedDomain()
-            throws HttpMalformedHeaderException {
+    void raiseIssueWhenOneLinkWithBlankTargetUntrustedDomain() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -159,8 +157,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenOneLinkWithBlankTargetDifferentDomain()
-            throws HttpMalformedHeaderException {
+    void raiseIssueWhenOneLinkWithBlankTargetDifferentDomain() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -177,7 +174,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenOneLinkWithOtherTarget() throws HttpMalformedHeaderException {
+    void raiseIssueWhenOneLinkWithOtherTarget() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -194,7 +191,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithOtherTargetHighThreshold()
+    void dontRaiseIssueWhenOneLinkWithOtherTargetHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -210,8 +207,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenAreaWithBlankTargetDifferentDomain()
-            throws HttpMalformedHeaderException {
+    void raiseIssueWhenAreaWithBlankTargetDifferentDomain() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -235,7 +231,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenAreaWithOtherTarget() throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenAreaWithOtherTarget() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -254,7 +250,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenManyLinksWithBlankTargetSameDomain()
+    void dontRaiseIssueWhenManyLinksWithBlankTargetSameDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -276,7 +272,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenManyLinksWithBlankTargetDifferentDomain()
+    void raiseIssueWhenManyLinksWithBlankTargetDifferentDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -301,7 +297,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoopenerNoReferrer()
+    void dontRaiseIssueWhenOneLinkWithBlankTargetNoopenerNoReferrer()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -316,7 +312,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoreferrerNoopener()
+    void dontRaiseIssueWhenOneLinkWithBlankTargetNoreferrerNoopener()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -331,7 +327,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenManyLinksWithOneBlankTargetSameDomain()
+    void dontRaiseIssueWhenManyLinksWithOneBlankTargetSameDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -353,7 +349,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenManyLinksWithOneBlankTargetDifferentDomain()
+    void raiseIssueWhenManyLinksWithOneBlankTargetDifferentDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -378,8 +374,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetNonHtml()
-            throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenOneLinkWithBlankTargetNonHtml() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -393,8 +388,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetInContext()
-            throws HttpMalformedHeaderException {
+    void dontRaiseIssueWhenOneLinkWithBlankTargetInContext() throws HttpMalformedHeaderException {
         // Given
         Context context = new Context(session, 0);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -412,8 +406,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void raiseIssueWhenOneLinkWithBlankTargetNotInContext()
-            throws HttpMalformedHeaderException {
+    void raiseIssueWhenOneLinkWithBlankTargetNotInContext() throws HttpMalformedHeaderException {
         // Given
         Context context = new Context(session, 0);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -434,7 +427,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void shouldNotFailIfLinkOrAreaDoesNotHaveHref() throws Exception {
+    void shouldNotFailIfLinkOrAreaDoesNotHaveHref() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -445,7 +438,7 @@ public class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetSca
     }
 
     @Test
-    public void shouldNotFailIfInvalidRegex() throws Exception {
+    void shouldNotFailIfInvalidRegex() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

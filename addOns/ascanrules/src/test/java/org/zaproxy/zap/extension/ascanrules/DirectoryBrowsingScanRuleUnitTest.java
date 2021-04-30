@@ -29,8 +29,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link DirectoryBrowsingScanRule}. */
-public class DirectoryBrowsingScanRuleUnitTest
-        extends ActiveScannerTest<DirectoryBrowsingScanRule> {
+class DirectoryBrowsingScanRuleUnitTest extends ActiveScannerTest<DirectoryBrowsingScanRule> {
     private static final String RESOURCES_FOLDER =
             "/org/zaproxy/zap/extension/ascanrules/directorybrowsingscanrule/";
 
@@ -40,7 +39,7 @@ public class DirectoryBrowsingScanRuleUnitTest
     }
 
     @Test
-    public void shouldFindDirectoryListing() throws Exception {
+    void shouldFindDirectoryListing() throws Exception {
         // Given
         String test = "/";
         this.nano.addHandler(

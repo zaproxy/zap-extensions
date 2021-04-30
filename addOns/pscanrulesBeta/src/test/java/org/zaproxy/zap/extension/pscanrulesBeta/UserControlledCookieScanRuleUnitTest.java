@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledCookieScanRuleUnitTest
+class UserControlledCookieScanRuleUnitTest
         extends PassiveScannerTest<UserControlledCookieScanRule> {
 
     @Override
@@ -57,7 +57,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseDoesntSetCookie() {
+    void shouldNotRaiseAlertIfResponseDoesntSetCookie() {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -67,7 +67,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+    void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
         // WHen
@@ -77,7 +77,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasCookiesButRequestHasNoParams() {
+    void shouldNotRaiseAlertIfResponseHasCookiesButRequestHasNoParams() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
@@ -89,7 +89,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
@@ -102,7 +102,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCookieHasNoValue() throws Exception {
+    void shouldNotRaiseAlertIfCookieHasNoValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
@@ -115,7 +115,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCookieIsEmpty() throws Exception {
+    void shouldNotRaiseAlertIfCookieIsEmpty() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
@@ -127,7 +127,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamsAppearAsCookieValue() throws Exception {
+    void shouldRaiseAlertIfRequestParamsAppearAsCookieValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
@@ -141,7 +141,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamsAppearWithinCookieValue() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamsAppearWithinCookieValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
@@ -154,7 +154,7 @@ public class UserControlledCookieScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfCookieBasedOnGetParamDuringPost() throws Exception {
+    void shouldRaiseAlertIfCookieBasedOnGetParamDuringPost() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=evil", false));

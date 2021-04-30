@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class RetireUtilUnitTest {
+class RetireUtilUnitTest {
 
     @Test
-    public void versions_should_be_above() {
+    void versions_should_be_above() {
         assertTrue(RetireUtil.isAtOrAbove("0.0.1", "0.0.0"));
         assertTrue(RetireUtil.isAtOrAbove("0.1.0", "0.0.9"));
         assertTrue(RetireUtil.isAtOrAbove("0.10.1", "0.9.0"));
@@ -40,14 +40,14 @@ public class RetireUtilUnitTest {
     }
 
     @Test
-    public void versions_should_be_at() {
+    void versions_should_be_at() {
         assertTrue(RetireUtil.isAtOrAbove("0.0.1", "0.0.1"));
         assertTrue(RetireUtil.isAtOrAbove("0.1.1", "0.1.1"));
         assertTrue(RetireUtil.isAtOrAbove("0.1.0", "0.1"));
     }
 
     @Test
-    public void versions_should_not_be_above() {
+    void versions_should_not_be_above() {
         assertFalse(RetireUtil.isAtOrAbove("0.0.1", "0.0.2"));
         assertFalse(RetireUtil.isAtOrAbove("0.0.9", "0.0.10"));
         assertFalse(RetireUtil.isAtOrAbove("0.1.1", "0.1.2"));

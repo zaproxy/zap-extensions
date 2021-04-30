@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** @author Vahid Rafiei (@vahid_r) */
-public class XPoweredByHeaderInfoLeakScanRuleUnitTest
+class XPoweredByHeaderInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<XPoweredByHeaderInfoLeakScanRule> {
 
     @Override
@@ -36,7 +36,7 @@ public class XPoweredByHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThereIsNoXPoweredBy() throws Exception {
+    void shouldNotRaiseAlertIfThereIsNoXPoweredBy() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -50,7 +50,7 @@ public class XPoweredByHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAnAlertIfFindsXPoweredBy() throws Exception {
+    void shouldRaiseAnAlertIfFindsXPoweredBy() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -68,7 +68,7 @@ public class XPoweredByHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseOnlyOneAlertWithOneEvidenceAndOtherInfoIfFindsMultipleXPoweredBy()
+    void shouldRaiseOnlyOneAlertWithOneEvidenceAndOtherInfoIfFindsMultipleXPoweredBy()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -91,7 +91,7 @@ public class XPoweredByHeaderInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldBeCaseSensitiveWhenShowingHeadersInEvidenceAndOtherInfo() throws Exception {
+    void shouldBeCaseSensitiveWhenShowingHeadersInEvidenceAndOtherInfo() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

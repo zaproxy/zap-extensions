@@ -42,16 +42,16 @@ import org.zaproxy.zap.utils.I18N;
  * http://www.w3.org/TR/eventsource/#processField}.
  */
 @ExtendWith(MockitoExtension.class)
-public class EventStreamProxyUnitTest extends BaseEventStreamTest {
+class EventStreamProxyUnitTest extends BaseEventStreamTest {
 
     @BeforeAll
-    public static void beforeClass() {
+    static void beforeClass() {
         // ServerSentEvent relies on this attribute to be initialized
         Constant.messages = mock(I18N.class);
     }
 
     @Test
-    public void shouldForwardEventWhenAllObserversReturnTrue() throws IOException {
+    void shouldForwardEventWhenAllObserversReturnTrue() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
         EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
@@ -69,7 +69,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldNotForwardEventWhenAtLeastOneObserverReturnsFalse() throws IOException {
+    void shouldNotForwardEventWhenAtLeastOneObserverReturnsFalse() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
         EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
@@ -87,7 +87,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldForwardEventWithoutObservers() throws IOException {
+    void shouldForwardEventWithoutObservers() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
         EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
@@ -100,7 +100,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldInformObserversWithRightObjectFromSingleEventLine() throws IOException {
+    void shouldInformObserversWithRightObjectFromSingleEventLine() throws IOException {
         // Given
         final String data = "blub";
         final String eventStream = "data:" + data;
@@ -118,7 +118,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldInformObserversWithRightObjectFromMultipleEventLines() throws IOException {
+    void shouldInformObserversWithRightObjectFromMultipleEventLines() throws IOException {
         // Given
         final String eventStream = "data: YHOO\ndata: +2\ndata: 10";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -132,7 +132,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldNotIgnoreCommentsButForwardInContrastToSpecification() throws IOException {
+    void shouldNotIgnoreCommentsButForwardInContrastToSpecification() throws IOException {
         // Given
         final String eventStream = ": test stream";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -146,7 +146,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldProcessLastEventId() throws IOException {
+    void shouldProcessLastEventId() throws IOException {
         // Given
         final String eventStream = "data: first event\nid: 2";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -162,7 +162,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldProcessEmptyLastEventId() throws IOException {
+    void shouldProcessEmptyLastEventId() throws IOException {
         // Given
         final String eventStream = "data:second event\nid";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -177,7 +177,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldRemoveFirstWhitespaceFromLineAfterColon() throws IOException {
+    void shouldRemoveFirstWhitespaceFromLineAfterColon() throws IOException {
         // Given
         final String eventStream = "data:  third event";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -191,7 +191,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldReturnEmptyObjectWhenCalledWithEmptyData() throws IOException {
+    void shouldReturnEmptyObjectWhenCalledWithEmptyData() throws IOException {
         // Given
         final String eventStream = "data";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -206,7 +206,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldReturnANewlineOfData() throws IOException {
+    void shouldReturnANewlineOfData() throws IOException {
         // Given
         final String eventStream = "data\ndata";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -221,7 +221,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldExtractEventType() throws IOException {
+    void shouldExtractEventType() throws IOException {
         // Given
         final String eventStream = "event: server-time\ndata: 1357651178";
         BufferedWriter writer = mock(BufferedWriter.class);
@@ -236,7 +236,7 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
-    public void shouldExtractRetryTime() throws IOException {
+    void shouldExtractRetryTime() throws IOException {
         // Given
         final String eventStream = "retry: 10000";
         BufferedWriter writer = mock(BufferedWriter.class);

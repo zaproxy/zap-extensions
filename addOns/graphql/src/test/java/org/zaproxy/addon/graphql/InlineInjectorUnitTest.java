@@ -20,103 +20,102 @@
 package org.zaproxy.addon.graphql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class InlineInjectorUnitTest extends TestUtils {
+class InlineInjectorUnitTest extends TestUtils {
     InlineInjector injector = new InlineInjector();
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
     }
 
     // Extraction Tests
 
     @Test
-    public void noArguments() throws Exception {
+    void noArguments() throws Exception {
         String query = "query { name id age height human }";
         HashMap<String, String> arguments = new HashMap<>();
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void operationName() throws Exception {
+    void operationName() throws Exception {
         String query = "query sample { chemical (name: \"Hydrochloric Acid\") }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("sample.chemical.name", "\"Hydrochloric Acid\"");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void scalarArguments() throws Exception {
+    void scalarArguments() throws Exception {
         String query =
                 "query { polygon (sides: 1, regular: true, colour: \"blue\") { perimeter area } }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("polygon.sides", "1");
         arguments.put("polygon.regular", "true");
         arguments.put("polygon.colour", "\"blue\"");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void listAsArgument() throws Exception {
+    void listAsArgument() throws Exception {
         String query = "query { sum (numbers: [3.14, 3.14, 3.14]) }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("sum.numbers", "[3.14,3.14,3.14]");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void inputObjectArgument() throws Exception {
+    void inputObjectArgument() throws Exception {
         String query = "query { plot (point: { x: 3.14, y: 3.14 }) }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("plot.point", "{x:3.14,y:3.14}");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void inlineFragmentArguments() throws Exception {
+    void inlineFragmentArguments() throws Exception {
         String query = "query { ... on field1 { name (id: 1) } }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("field1.name.id", "1");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void fragmentSpreadArguments() throws Exception {
+    void fragmentSpreadArguments() throws Exception {
         String query =
                 "query { ...spread }  fragment spread on fragment1 {field1 { name (id: 1) } }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("spread.field1.name.id", "1");
-        assertTrue(arguments.equals(injector.extract(query)));
+        assertEquals(arguments, injector.extract(query));
     }
 
     @Test
-    public void mutationArguments() throws Exception {
+    void mutationArguments() throws Exception {
         String mutation = "mutation { createStudent (id: 1, name: \"ZAP\") }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("createStudent.id", "1");
         arguments.put("createStudent.name", "\"ZAP\"");
-        assertTrue(arguments.equals(injector.extract(mutation)));
+        assertEquals(arguments, injector.extract(mutation));
     }
 
     @Test
-    public void subscriptionArguments() throws Exception {
+    void subscriptionArguments() throws Exception {
         String subscription = "subscription { newMessage (roomId: 1) { sender text } }";
         HashMap<String, String> arguments = new HashMap<>();
         arguments.put("newMessage.roomId", "1");
-        assertTrue(arguments.equals(injector.extract(subscription)));
+        assertEquals(arguments, injector.extract(subscription));
     }
 
     // Injection Tests
 
     @Test
-    public void injectOperationName() throws Exception {
+    void injectOperationName() throws Exception {
         String query = "query sample { chemical (name: \"Hydrochloric Acid\") }";
         String expectedQuery = "query sample {chemical(name:\"Sulphuric Acid\")}";
         assertEquals(
@@ -125,7 +124,7 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectScalarArguments() throws Exception {
+    void injectScalarArguments() throws Exception {
         String query =
                 "query { polygon (sides: 1, regular: true, colour: \"blue\") { perimeter area } }";
         String expectedQuery =
@@ -134,28 +133,28 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectListAsArgument() throws Exception {
+    void injectListAsArgument() throws Exception {
         String query = "query { sum (numbers: [3.14, 3.14, 3.14]) }";
         String expectedQuery = "query {sum(numbers:[0, 1, 2])}";
         assertEquals(expectedQuery, injector.inject(query, "sum.numbers", "[0, 1, 2]"));
     }
 
     @Test
-    public void injectInputObjectArgument() throws Exception {
+    void injectInputObjectArgument() throws Exception {
         String query = "query { plot (point: { x: 3.14, y: 3.14 }) }";
         String expectedQuery = "query {plot(point:{x: 1.414 , y: 1.732})}";
         assertEquals(expectedQuery, injector.inject(query, "plot.point", "{x: 1.414 , y: 1.732}"));
     }
 
     @Test
-    public void injectInlineFragmentArguments() throws Exception {
+    void injectInlineFragmentArguments() throws Exception {
         String query = "query { ... on field1 { name (id: 1) } }";
         String expectedQuery = "query {... on field1 {name(id:55)}}";
         assertEquals(expectedQuery, injector.inject(query, "field1.name.id", "55"));
     }
 
     @Test
-    public void injectFragmentSpreadArguments() throws Exception {
+    void injectFragmentSpreadArguments() throws Exception {
         String query =
                 "query { ...spread }  fragment spread on fragment1 {field1 { name (id: 1) } }";
         String expectedQuery =
@@ -164,14 +163,14 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectMutationArguments() throws Exception {
+    void injectMutationArguments() throws Exception {
         String mutation = "mutation { createStudent (id: 1, name: \"ZAP\") }";
         String expectedMutation = "mutation {createStudent(id:42,name:\"ZAP\")}";
         assertEquals(expectedMutation, injector.inject(mutation, "createStudent.id", "42"));
     }
 
     @Test
-    public void injectSubscriptionArguments() throws Exception {
+    void injectSubscriptionArguments() throws Exception {
         String subscription = "subscription { newMessage (roomId: 1) { sender text } }";
         String expectedSubscription = "subscription {newMessage(roomId:121) {sender text}}";
         assertEquals(
@@ -179,7 +178,7 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectReplaceSingleVariable() throws Exception {
+    void injectReplaceSingleVariable() throws Exception {
         String query =
                 "query ($location_direction: Direction) { location (direction: $location_direction) }";
         String expectedQuery = "query {location(direction:WEST)}";
@@ -187,7 +186,7 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectReplaceFirstVariable() throws Exception {
+    void injectReplaceFirstVariable() throws Exception {
         String query =
                 "query ($name_height_id: ID, $name_age_id: ID, $name_id: ID) { name (id: $name_id) "
                         + "{ age (id: $name_age_id) height (id: $name_height_id) } }";
@@ -197,7 +196,7 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectReplaceMiddleVariable() throws Exception {
+    void injectReplaceMiddleVariable() throws Exception {
         String query =
                 "query ($name_height_id: ID, $name_age_id: ID, $name_id: ID) { name (id: $name_id) "
                         + "{ age (id: $name_age_id) height (id: $name_height_id) } }";
@@ -207,7 +206,7 @@ public class InlineInjectorUnitTest extends TestUtils {
     }
 
     @Test
-    public void injectReplaceLastVariable() throws Exception {
+    void injectReplaceLastVariable() throws Exception {
         String query =
                 "query ($name_height_id: ID, $name_age_id: ID, $name_id: ID) { name (id: $name_id) "
                         + "{ age (id: $name_age_id) height (id: $name_height_id) } }";
@@ -220,42 +219,42 @@ public class InlineInjectorUnitTest extends TestUtils {
     // Query Node Name Tests
 
     @Test
-    public void nodeNameSimpleQuery() throws Exception {
+    void nodeNameSimpleQuery() throws Exception {
         String query = "query { name (id: 1) }";
         String expectedQuery = "(0) query {name}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
 
     @Test
-    public void nodeNameNestedFields() throws Exception {
+    void nodeNameNestedFields() throws Exception {
         String query = "query { name (id: 1) { age (id: 1) { height (id: 1) } } }";
         String expectedQuery = "(0) query {name {age {height}}}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
 
     @Test
-    public void nodeNameInputObjectArgument() throws Exception {
+    void nodeNameInputObjectArgument() throws Exception {
         String query = "query { plot (point: { x: 3.14, y: 3.14 }) }";
         String expectedQuery = "(0) query {plot}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
 
     @Test
-    public void nodeNameMultipleOperations() throws Exception {
+    void nodeNameMultipleOperations() throws Exception {
         String query = "query { name (id: 1) } mutation { change_name (id: 1, name: \"ZAP\") }";
         String expectedQuery = "(00) query {name} mutation {change_name}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
 
     @Test
-    public void nodeNameVariables() throws Exception {
+    void nodeNameVariables() throws Exception {
         String query = "mutation ($id: ID!, $name: String) { change_name (id: $id, name: $name) }";
         String expectedQuery = "(1) mutation {change_name}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
 
     @Test
-    public void nodeNameMultipleOperationsVariables() throws Exception {
+    void nodeNameMultipleOperationsVariables() throws Exception {
         String query =
                 "query ($id: ID!) { name (id: $id) } mutation ($id: ID!, $name: String) "
                         + "{ change_name (id: $id, name: $name) } subscription { newMessage (roomId: 1) { sender } }";

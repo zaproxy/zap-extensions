@@ -56,29 +56,29 @@ import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ExtentionAutomationUnitTest extends TestUtils {
+class ExtentionAutomationUnitTest extends TestUtils {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
     }
 
     @Test
-    public void shouldReturnDefaultData() {
+    void shouldReturnDefaultData() {
         // Given / When
         ExtensionAutomation extAuto = new ExtensionAutomation();
 
@@ -89,7 +89,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldRegisterBuiltInJobs() {
+    void shouldRegisterBuiltInJobs() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
 
@@ -106,7 +106,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldRegisterNewJob() {
+    void shouldRegisterNewJob() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         String jobName = "testjob";
@@ -134,7 +134,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldUnregisterExistingJob() {
+    void shouldUnregisterExistingJob() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
 
@@ -149,7 +149,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldCreateMinTemplateFile() throws Exception {
+    void shouldCreateMinTemplateFile() throws Exception {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         Path filePath = getResourcePath("resources/template-min.yaml");
@@ -168,7 +168,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldCreateMaxTemplateFile() throws Exception {
+    void shouldCreateMaxTemplateFile() throws Exception {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         Path filePath = getResourcePath("resources/template-max.yaml");
@@ -187,7 +187,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldCreateConfigTemplateFile() throws Exception {
+    void shouldCreateConfigTemplateFile() throws Exception {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -217,7 +217,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldRunPlan() {
+    void shouldRunPlan() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         String job1Name = "job1";
@@ -278,7 +278,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldFailPlanOnError() {
+    void shouldFailPlanOnError() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         String job1Name = "job1";
@@ -324,7 +324,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldReturnCmdLineArgs() {
+    void shouldReturnCmdLineArgs() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
 
@@ -344,7 +344,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldRunPlanWithWarnings() {
+    void shouldRunPlanWithWarnings() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         String job1Name = "job1";
@@ -409,7 +409,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldFailPlanOnErrorApplyingParameters() {
+    void shouldFailPlanOnErrorApplyingParameters() {
         // Given
         AutomationJobImpl job =
                 new AutomationJobImpl() {
@@ -450,7 +450,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldFailPlanOnWarningApplyingParameters() {
+    void shouldFailPlanOnWarningApplyingParameters() {
         // Given
         AutomationJobImpl job =
                 new AutomationJobImpl() {

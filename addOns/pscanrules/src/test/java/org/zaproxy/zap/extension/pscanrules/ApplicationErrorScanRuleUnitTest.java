@@ -41,7 +41,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErrorScanRule> {
+class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErrorScanRule> {
     private static final String URI = "https://www.example.com/test/";
     private static final String REQUEST_HEADER = format("GET %s HTTP/1.1", URI);
 
@@ -69,7 +69,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow()
+    void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -90,7 +90,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorMed()
+    void shouldRaiseAlertIfResponseCodeIsInternalServerErrorMed()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -111,7 +111,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeIsInternalServerErrorHigh()
+    void shouldNotRaiseAlertIfResponseCodeIsInternalServerErrorHigh()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -126,7 +126,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeIsNotFound() throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfResponseCodeIsNotFound() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -140,8 +140,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeOkAndEmptyBody()
-            throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfResponseCodeOkAndEmptyBody() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -155,7 +154,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeOkAndNoEvidenceDetected()
+    void shouldNotRaiseAlertIfResponseCodeOkAndNoEvidenceDetected()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -172,7 +171,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndStringEvidenceDetected()
+    void shouldRaiseAlertForResponseCodeOkAndStringEvidenceDetected()
             throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
@@ -192,7 +191,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndEvidenceDetectedWithMatcher()
+    void shouldRaiseAlertForResponseCodeOkAndEvidenceDetectedWithMatcher()
             throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "Line 1024: Incorrect syntax near 'login'";
@@ -212,7 +211,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndCustomPayloadDetected()
+    void shouldRaiseAlertForResponseCodeOkAndCustomPayloadDetected()
             throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "customPayloadString";
@@ -233,7 +232,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldNotRaiseAlertForResponseCodeOkAndCustomPayloadNotDetected()
+    void shouldNotRaiseAlertForResponseCodeOkAndCustomPayloadNotDetected()
             throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "customPayloadString";
@@ -251,7 +250,7 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndFilePayloadDetected()
+    void shouldRaiseAlertForResponseCodeOkAndFilePayloadDetected()
             throws HttpMalformedHeaderException {
         // Given
         // String from standard XML file
@@ -273,9 +272,8 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
     }
 
     @Test
-    public void
-            shouldNotRaiseAlertForResponseCodeOkAndContentTypeWebAssemblyWhenFilePayloadPresent()
-                    throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertForResponseCodeOkAndContentTypeWebAssemblyWhenFilePayloadPresent()
+            throws HttpMalformedHeaderException {
         // Given
         // String from standard XML file
         String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";

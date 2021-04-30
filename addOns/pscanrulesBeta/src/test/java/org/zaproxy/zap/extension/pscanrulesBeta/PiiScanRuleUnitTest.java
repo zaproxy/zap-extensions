@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 
 /** Unit test for {@link PiiScanRule}. */
-public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
+class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
 
     @Override
     protected PiiScanRule createScanner() {
@@ -60,7 +60,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("cardData")
-    public void shouldRaiseAlertWhenCreditCardIsDetected(String cardName, String cardNumber)
+    void shouldRaiseAlertWhenCreditCardIsDetected(String cardName, String cardNumber)
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -78,8 +78,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotFailWithStackOverflowErrorWhenScanningResponseWithManyNumbers()
-            throws Exception {
+    void shouldNotFailWithStackOverflowErrorWhenScanningResponseWithManyNumbers() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -89,7 +88,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenNumberDoesntHaveWordBoundaries() throws Exception {
+    void shouldNotRaiseAlertWhenNumberDoesntHaveWordBoundaries() throws Exception {
         // Given
         String cardNumber = "8.46786664623715e-47";
         HttpMessage msg = createMsg(cardNumber);
@@ -100,7 +99,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertInLeadingLongExponentNumbers() throws Exception {
+    void shouldNotRaiseAlertInLeadingLongExponentNumbers() throws Exception {
         // Given
         String content =
                 "2.14111111111111111e-2"; // Visa - Extra digit before card number (after decimal)
@@ -112,7 +111,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertInTrailingLongNegativeExponentNumbers() throws Exception {
+    void shouldNotRaiseAlertInTrailingLongNegativeExponentNumbers() throws Exception {
         // Given
         String content = "2.41111111111111111e-2"; // Visa - Extra digit before e
         HttpMessage msg = createMsg(content);
@@ -123,7 +122,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertInTrailingLongPositiveExponentNumbers() throws Exception {
+    void shouldNotRaiseAlertInTrailingLongPositiveExponentNumbers() throws Exception {
         // Given
         String content = "2.41111111111111111e2"; // Visa - Extra digit before e
         HttpMessage msg = createMsg(content);
@@ -134,7 +133,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertInPositiveExponentNumbers() throws Exception {
+    void shouldNotRaiseAlertInPositiveExponentNumbers() throws Exception {
         // Given
         String content = "2.4111111111111111e2"; // Visa - Valid ahead of exponent
         HttpMessage msg = createMsg(content);
@@ -145,7 +144,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldRaiseAlertInPlausiblePeriodDelimitedContent() throws Exception {
+    void shouldRaiseAlertInPlausiblePeriodDelimitedContent() throws Exception {
         // Given
         String content = "1121.4111111111111111.John Smith.808"; // Visa
         HttpMessage msg = createMsg(content);
@@ -156,7 +155,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertOnCssRequest() throws Exception {
+    void shouldNotRaiseAlertOnCssRequest() throws Exception {
         // Given
         String content = "margin-left:85.36370249136206%";
         HttpMessage msg = createMsg("");
@@ -174,7 +173,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertOnCssResponse() throws Exception {
+    void shouldNotRaiseAlertOnCssResponse() throws Exception {
         // Given
         String content = "margin-left:85.36370249136206%";
         HttpMessage msg = createMsg("");
@@ -193,7 +192,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldNotRaiseAlertOnResponseContainingCcLikeStyleAttribute() throws Exception {
+    void shouldNotRaiseAlertOnResponseContainingCcLikeStyleAttribute() throws Exception {
         // Given
         String content = "margin-left:85.36370249136206%";
         HttpMessage msg = createMsg("");
@@ -205,7 +204,7 @@ public class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
-    public void shouldRaiseAlertOnResponseContainingCcStringInAdditionToCcLikeStyleAttribute()
+    void shouldRaiseAlertOnResponseContainingCcStringInAdditionToCcLikeStyleAttribute()
             throws Exception {
         // Given
         String content = "margin-left:85.36370249136206%";

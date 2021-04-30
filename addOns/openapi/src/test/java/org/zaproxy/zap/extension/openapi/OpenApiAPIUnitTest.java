@@ -42,20 +42,20 @@ import org.zaproxy.zap.model.DefaultNameValuePair;
 import org.zaproxy.zap.model.NameValuePair;
 
 /** Unit test for {@link OpenApiAPI}. */
-public class OpenApiAPIUnitTest extends AbstractServerTest {
+class OpenApiAPIUnitTest extends AbstractServerTest {
 
     private ExtensionOpenApi extension;
 
     private OpenApiAPI openApiAPI;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         extension = mock(ExtensionOpenApi.class);
         openApiAPI = new OpenApiAPI(extension);
     }
 
     @Test
-    public void shouldThrowBadActionIfActionUnknown() {
+    void shouldThrowBadActionIfActionUnknown() {
         // Given
         String actionName = "_NotKnownAction_";
         // When / Then
@@ -71,7 +71,7 @@ public class OpenApiAPIUnitTest extends AbstractServerTest {
         private static final String ACTION = "importUrl";
 
         @Test
-        public void shouldThrowIllegalParameterIfFailedToAccessTarget() {
+        void shouldThrowIllegalParameterIfFailedToAccessTarget() {
             // Given
             JSONObject params = params(param("url", "http://not-reachable.example.com"));
             given(extension.importOpenApiDefinition(any(URI.class), eq(""), eq(false)))

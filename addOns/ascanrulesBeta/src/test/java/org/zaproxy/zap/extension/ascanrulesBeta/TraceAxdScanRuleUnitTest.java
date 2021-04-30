@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 
 /** Unit test for {@link TraceAxdScanRule}. */
-public class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdScanRule> {
+class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdScanRule> {
 
     private static final String RELEVANT_BODY = "<html><H1>Application Trace</H1></html>";
     private static final String IRRELEVANT_BODY = "<html><title>Some Page</title></html>";
@@ -96,7 +96,7 @@ public class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<Trac
     }
 
     @Test
-    public void shouldNotAlertWhenRequestIsSuccessfulButContentNotRelevant() throws Exception {
+    void shouldNotAlertWhenRequestIsSuccessfulButContentNotRelevant() throws Exception {
         // Given
         String path = "/trace.axd";
         this.nano.addHandler(

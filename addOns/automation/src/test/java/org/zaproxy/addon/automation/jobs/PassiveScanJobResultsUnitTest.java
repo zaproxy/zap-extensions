@@ -50,27 +50,27 @@ import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class PassiveScanJobResultsUnitTest {
+class PassiveScanJobResultsUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @Test
-    public void shouldReturnJobData() {
+    void shouldReturnJobData() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);

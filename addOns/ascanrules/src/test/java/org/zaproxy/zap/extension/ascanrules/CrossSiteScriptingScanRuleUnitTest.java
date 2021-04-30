@@ -46,8 +46,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CrossSiteScriptingScanRuleUnitTest
-        extends ActiveScannerTest<CrossSiteScriptingScanRule> {
+class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScriptingScanRule> {
 
     @Override
     protected CrossSiteScriptingScanRule createScanner() {
@@ -55,7 +54,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInParagraph() throws NullPointerException, IOException {
+    void shouldReportXssInParagraph() throws NullPointerException, IOException {
         String test = "/shouldReportXssInParagraph/";
 
         this.nano.addHandler(
@@ -91,7 +90,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInParagraphForNullBytePayloadInjection()
+    void shouldReportXssInParagraphForNullBytePayloadInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInParagraphForNullByteInjection/";
         // Given
@@ -135,7 +134,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotReportXssInFilteredParagraph() throws NullPointerException, IOException {
+    void shouldNotReportXssInFilteredParagraph() throws NullPointerException, IOException {
         String test = "/shouldNotReportXssInFilteredParagraph/";
 
         this.nano.addHandler(
@@ -172,7 +171,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInComment() throws NullPointerException, IOException {
+    void shouldReportXssInComment() throws NullPointerException, IOException {
         String test = "/shouldReportXssInComment/";
 
         this.nano.addHandler(
@@ -206,7 +205,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInCommentForNullBytePayloadInjection()
+    void shouldReportXssInCommentForNullBytePayloadInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInCommentForNullBytePayloadInjection/";
         // Given
@@ -248,8 +247,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInCommentWithFilteredScripts()
-            throws NullPointerException, IOException {
+    void shouldReportXssInCommentWithFilteredScripts() throws NullPointerException, IOException {
         String test = "/shouldReportXssInCommentWithFilteredScripts/";
 
         this.nano.addHandler(
@@ -289,7 +287,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotReportXssInFilteredComment() throws NullPointerException, IOException {
+    void shouldNotReportXssInFilteredComment() throws NullPointerException, IOException {
         String test = "/shouldNotReportXssInFilteredComment/";
 
         this.nano.addHandler(
@@ -324,7 +322,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInBody() throws NullPointerException, IOException {
+    void shouldReportXssInBody() throws NullPointerException, IOException {
         String test = "/shouldReportXssInBody/";
 
         this.nano.addHandler(
@@ -357,7 +355,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInBodyForNullByteBasedInjectionPayload()
+    void shouldReportXssInBodyForNullByteBasedInjectionPayload()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyForNullByteBasedInjectionPayload/";
         // Given
@@ -397,7 +395,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInSpanContent() throws NullPointerException, IOException {
+    void shouldReportXssInSpanContent() throws NullPointerException, IOException {
         String test = "/shouldReportXssInSpanContent/";
 
         this.nano.addHandler(
@@ -434,7 +432,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInSpanContentForNullByteInjectionPayload()
+    void shouldReportXssInSpanContentForNullByteInjectionPayload()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInSpanContentForNullByteInjectionPayload/";
         // Given
@@ -473,7 +471,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssOutsideOfTags() throws NullPointerException, IOException {
+    void shouldReportXssOutsideOfTags() throws NullPointerException, IOException {
         String test = "/shouldReportXssOutsideOfTags/";
 
         this.nano.addHandler(
@@ -506,7 +504,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssOutsideOfHtmlTags() throws NullPointerException, IOException {
+    void shouldReportXssOutsideOfHtmlTags() throws NullPointerException, IOException {
         String test = "/shouldReportXssOutsideOfHtmlTags/";
 
         this.nano.addHandler(
@@ -542,7 +540,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection()
+    void shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection/";
         // Given
@@ -582,7 +580,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInBodyWithFilteredScript() throws NullPointerException, IOException {
+    void shouldReportXssInBodyWithFilteredScript() throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
         this.nano.addHandler(
@@ -617,7 +615,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotReportXssInFilteredBody() throws NullPointerException, IOException {
+    void shouldNotReportXssInFilteredBody() throws NullPointerException, IOException {
         String test = "/shouldNotReportXssInFilteredBody/";
 
         this.nano.addHandler(
@@ -651,7 +649,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInAttribute() throws NullPointerException, IOException {
+    void shouldReportXssInAttribute() throws NullPointerException, IOException {
         String test = "/shouldReportXssInAttribute/";
 
         this.nano.addHandler(
@@ -689,7 +687,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotReportXssInFilteredAttribute() throws NullPointerException, IOException {
+    void shouldNotReportXssInFilteredAttribute() throws NullPointerException, IOException {
         String test = "/shouldNotReportXssInFilteredAttribute/";
 
         this.nano.addHandler(
@@ -727,7 +725,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInAttributeScriptTag() throws NullPointerException, IOException {
+    void shouldReportXssInAttributeScriptTag() throws NullPointerException, IOException {
         String test = "/shouldReportXssInAttributeScriptTag/";
 
         this.nano.addHandler(
@@ -765,7 +763,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInFrameSrcTag() throws NullPointerException, IOException {
+    void shouldReportXssInFrameSrcTag() throws NullPointerException, IOException {
         String test = "/shouldReportXssInFrameSrcTag/";
 
         this.nano.addHandler(
@@ -803,7 +801,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInScriptIdTag() throws NullPointerException, IOException {
+    void shouldReportXssInScriptIdTag() throws NullPointerException, IOException {
         String test = "/shouldReportXssInScriptIdTag/";
 
         this.nano.addHandler(
@@ -841,7 +839,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInReflectedUrl() throws NullPointerException, IOException {
+    void shouldReportXssInReflectedUrl() throws NullPointerException, IOException {
         String test = "/shouldReportXssInReflectedUrl";
 
         NanoServerHandler handler =
@@ -886,8 +884,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTestWhenMethodIsPutAndThresholdMedium()
-            throws HttpMalformedHeaderException {
+    void shouldNotTestWhenMethodIsPutAndThresholdMedium() throws HttpMalformedHeaderException {
         // Given
         String test = "/shouldReportXssInReflectedUrl";
 
@@ -929,7 +926,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldTestWhenMethodIsPutAndThresholdLow() throws HttpMalformedHeaderException {
+    void shouldTestWhenMethodIsPutAndThresholdLow() throws HttpMalformedHeaderException {
         // Given
         String test = "/shouldReportXssInReflectedUrl";
 
@@ -971,7 +968,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssWeaknessInJsonResponse() throws NullPointerException, IOException {
+    void shouldReportXssWeaknessInJsonResponse() throws NullPointerException, IOException {
         String test = "/shouldReportXssInJsonReponse/";
 
         this.nano.addHandler(
@@ -1004,8 +1001,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInsideDivWithFilteredScript()
-            throws NullPointerException, IOException {
+    void shouldReportXssInsideDivWithFilteredScript() throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
         this.nano.addHandler(
@@ -1042,7 +1038,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaUrlParam()
+    void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaUrlParam()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
@@ -1088,7 +1084,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertXssInBodyWithDoubleDecodedFilteredInjectionPointViaHeaderParam()
+    void shouldNotAlertXssInBodyWithDoubleDecodedFilteredInjectionPointViaHeaderParam()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
@@ -1127,7 +1123,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaPostParam()
+    void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaPostParam()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
@@ -1184,7 +1180,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertXssInJsVariableWithEncoding() throws HttpMalformedHeaderException {
+    void shouldNotAlertXssInJsVariableWithEncoding() throws HttpMalformedHeaderException {
         // Given
         String path = "/user/search";
         this.nano.addHandler(
@@ -1216,7 +1212,7 @@ public class CrossSiteScriptingScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertOnceWithMultipleContexts() throws HttpMalformedHeaderException {
+    void shouldAlertOnceWithMultipleContexts() throws HttpMalformedHeaderException {
         // Given
         String path = "/api/search";
         this.nano.addHandler(

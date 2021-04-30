@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 
 /** Unit test for {@link XsltInjectionScanRule}. */
-public class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanRule> {
+class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanRule> {
 
     @Override
     protected XsltInjectionScanRule createScanner() {
@@ -38,7 +38,7 @@ public class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjecti
     }
 
     @Test
-    public void shouldNotAlertIfResponseDoesNotContainRelevantContent() throws Exception {
+    void shouldNotAlertIfResponseDoesNotContainRelevantContent() throws Exception {
         // Given
         String path = "/shouldNotAlert";
 
@@ -56,7 +56,7 @@ public class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjecti
     }
 
     @Test
-    public void shouldAlertIfResponseContainsRelevantErrorString() throws Exception {
+    void shouldAlertIfResponseContainsRelevantErrorString() throws Exception {
         // Given
         String path = "/shouldReportError";
         String errorString = "XSLT compile error";
@@ -77,7 +77,7 @@ public class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjecti
     }
 
     @Test
-    public void shouldAlertIfResponseContainsVendorString() throws Exception {
+    void shouldAlertIfResponseContainsVendorString() throws Exception {
         // Given
         String path = "/shouldReportVendor";
         String vendorString = "Saxon-CE 1.1 from Saxonica";

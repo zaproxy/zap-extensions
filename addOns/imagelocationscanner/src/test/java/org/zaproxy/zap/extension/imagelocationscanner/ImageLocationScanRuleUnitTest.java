@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<ImageLocationScanRule> {
+class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<ImageLocationScanRule> {
     private static final int PLUGIN_ID = ImageLocationScanRule.PLUGIN_ID;
     private static final String URI = "https://www.example.com/";
 
@@ -47,7 +47,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
     }
 
     @Test
-    public void passesIfExifLocationDetected() throws HttpMalformedHeaderException, IOException {
+    void passesIfExifLocationDetected() throws HttpMalformedHeaderException, IOException {
         HttpMessage msg;
         String fname;
 
@@ -65,7 +65,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
     }
 
     @Test
-    public void passesIfNoIssuesDetected() throws HttpMalformedHeaderException, IOException {
+    void passesIfNoIssuesDetected() throws HttpMalformedHeaderException, IOException {
         HttpMessage msg;
         String fname;
 
@@ -92,7 +92,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
     }
 
     @Test
-    public void passesIfPrivacyExposureDetected() throws HttpMalformedHeaderException, IOException {
+    void passesIfPrivacyExposureDetected() throws HttpMalformedHeaderException, IOException {
         HttpMessage msg;
         String fname;
 
@@ -110,7 +110,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
     }
 
     @Test
-    public void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
+    void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
         // the method should do nothing (test just for code coverage)
         rule.scanHttpRequestSend(null, -1);
         assertThat(alertsRaised.size(), equalTo(0));

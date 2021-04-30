@@ -30,19 +30,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Unit test for {@link TokenRandomStream}. */
 @ExtendWith(MockitoExtension.class)
-public class TokenRandomStreamUnitTest {
+class TokenRandomStreamUnitTest {
 
     @Mock CharacterFrequencyMap characterFrequencyMap;
 
     TokenRandomStream stream;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         stream = new TokenRandomStream(characterFrequencyMap);
     }
 
     @Test
-    public void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
+    void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
         // Given
         stream.closeInputStream();
         // When/Then

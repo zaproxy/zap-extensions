@@ -44,7 +44,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
+class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
 
     @Override
     protected CsrfTokenScanRule createScanner() {
@@ -55,7 +55,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldInitWithConfig() throws Exception {
+    void shouldInitWithConfig() throws Exception {
         // Given
         CsrfTokenScanRule rule = new CsrfTokenScanRule();
         rule.setConfig(new ZapXmlConfiguration());
@@ -64,15 +64,16 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldFailToInitWithoutConfig() throws Exception {
+    void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         CsrfTokenScanRule rule = new CsrfTokenScanRule();
+        HttpMessage msg = getHttpMessage("");
         // When / Then
-        assertThrows(NullPointerException.class, () -> rule.init(getHttpMessage(""), parent));
+        assertThrows(NullPointerException.class, () -> rule.init(msg, parent));
     }
 
     @Test
-    public void shouldHaveSessionIdsInConfig() throws Exception {
+    void shouldHaveSessionIdsInConfig() throws Exception {
         // Given
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
@@ -83,7 +84,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldNotProcessWithoutForm() throws Exception {
+    void shouldNotProcessWithoutForm() throws Exception {
         // Given
         HttpMessage msg =
                 getHttpMessage(
@@ -100,7 +101,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldNotProcessNonHtml() throws Exception {
+    void shouldNotProcessNonHtml() throws Exception {
         // Given
         HttpMessage msg =
                 getHttpMessage(
@@ -121,7 +122,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessWithoutCookie() throws Exception {
+    void shouldProcessWithoutCookie() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
         rule.init(msg, parent);
@@ -133,7 +134,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessWithOneSessionCookie() throws Exception {
+    void shouldProcessWithOneSessionCookie() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
         TreeSet<HtmlParameter> cookies = new TreeSet<>();
@@ -148,7 +149,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessWithTwoSessionCookies() throws Exception {
+    void shouldProcessWithTwoSessionCookies() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
         TreeSet<HtmlParameter> cookies = new TreeSet<>();
@@ -164,7 +165,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessWithOtherCookie() throws Exception {
+    void shouldProcessWithOtherCookie() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
         TreeSet<HtmlParameter> cookies = new TreeSet<>();
@@ -179,7 +180,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessWithTwoSessionCookiesAndOtherCookie() throws Exception {
+    void shouldProcessWithTwoSessionCookiesAndOtherCookie() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
         TreeSet<HtmlParameter> cookies = new TreeSet<>();
@@ -196,7 +197,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldNotProcessAtHighThresholdAndOutOfScope()
+    void shouldNotProcessAtHighThresholdAndOutOfScope()
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
@@ -211,7 +212,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessAtHighThresholdAndInScope()
+    void shouldProcessAtHighThresholdAndInScope()
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
@@ -226,7 +227,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessAtMediumThresholdAndOutOfScope()
+    void shouldProcessAtMediumThresholdAndOutOfScope()
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
@@ -241,7 +242,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessAtMediumThresholdAndInScope()
+    void shouldProcessAtMediumThresholdAndInScope()
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
@@ -256,7 +257,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessAtLowThresholdAndOutOfScope()
+    void shouldProcessAtLowThresholdAndOutOfScope()
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
@@ -271,8 +272,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
     }
 
     @Test
-    public void shouldProcessAtLowThresholdAndInScope()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldProcessAtLowThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
         rule.setConfig(new ZapXmlConfiguration());

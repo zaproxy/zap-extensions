@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class XChromeLoggerDataInfoLeakScanRuleUnitTest
+class XChromeLoggerDataInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<XChromeLoggerDataInfoLeakScanRule> {
 
     private static final String XCLD = "X-ChromeLogger-Data";
@@ -62,7 +62,7 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
@@ -73,7 +73,7 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasRelevantHeader() throws IOException {
+    void shouldRaiseAlertIfResponseHasRelevantHeader() throws IOException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XCLD, XCLD_VALUE);
@@ -90,7 +90,7 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasAlternateRelevantHeader() throws IOException {
+    void shouldRaiseAlertIfResponseHasAlternateRelevantHeader() throws IOException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XCPD, XCLD_VALUE);
@@ -107,7 +107,7 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasAlternateRelevantHeaderEvenWithInvalidEncoding()
+    void shouldRaiseAlertIfResponseHasAlternateRelevantHeaderEvenWithInvalidEncoding()
             throws IOException {
         // Given
         HttpMessage msg = createMessage();

@@ -40,17 +40,17 @@ import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link RequestContentLengthUpdaterProcessor}. */
-public class RequestContentLengthUpdaterProcessorUnitTest {
+class RequestContentLengthUpdaterProcessorUnitTest {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         I18N i18n = mock(I18N.class);
         given(i18n.getString(any())).willReturn("");
         Constant.messages = i18n;
     }
 
     @Test
-    public void shouldReturnANonNullInstance() {
+    void shouldReturnANonNullInstance() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 RequestContentLengthUpdaterProcessor.getInstance();
@@ -59,7 +59,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldReturnsAlwaysSameInstance() {
+    void shouldReturnsAlwaysSameInstance() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 RequestContentLengthUpdaterProcessor.getInstance();
@@ -70,7 +70,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldHaveANonNullName() {
+    void shouldHaveANonNullName() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         // When
@@ -80,7 +80,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldCreateProcessorWithUndefinedMethod() {
+    void shouldCreateProcessorWithUndefinedMethod() {
         // Given
         String undefinedMethod = null;
         // When / Then
@@ -88,18 +88,19 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldFailToProcessAnUndefinedMessage() {
+    void shouldFailToProcessAnUndefinedMessage() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         HttpMessage undefinedMessage = null;
+        HttpFuzzerTaskProcessorUtils utils = createUtils();
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> processor.processMessage(createUtils(), undefinedMessage));
+                () -> processor.processMessage(utils, undefinedMessage));
     }
 
     @Test
-    public void shouldNotRequireUtilsToProcessMessage() {
+    void shouldNotRequireUtilsToProcessMessage() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         // When / Then
@@ -107,7 +108,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldReturnSameMessageWhenProcessing() {
+    void shouldReturnSameMessageWhenProcessing() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         HttpMessage message = new HttpMessage();
@@ -118,7 +119,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldNotAddContentLengthIfEmptyBody() {
+    void shouldNotAddContentLengthIfEmptyBody() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 new RequestContentLengthUpdaterProcessor("POST");
@@ -132,7 +133,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldAddContentLengthIfNotEmptyBody() {
+    void shouldAddContentLengthIfNotEmptyBody() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 new RequestContentLengthUpdaterProcessor("POST");
@@ -146,7 +147,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldUpdateExistingContentLengthIfEmptyBody() {
+    void shouldUpdateExistingContentLengthIfEmptyBody() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 new RequestContentLengthUpdaterProcessor("POST");
@@ -160,7 +161,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldUpdateContentLengthForAnyMethodWhenNoMethodIsSpecified() {
+    void shouldUpdateContentLengthForAnyMethodWhenNoMethodIsSpecified() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         String body = "RequestBody";
@@ -184,7 +185,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldUpdateContentLengthForAnyMethodWithInstance() {
+    void shouldUpdateContentLengthForAnyMethodWithInstance() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 RequestContentLengthUpdaterProcessor.getInstance();
@@ -209,7 +210,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldUpdateContentLengthForSpecifiedMethodOnly() {
+    void shouldUpdateContentLengthForSpecifiedMethodOnly() {
         // Given
         RequestContentLengthUpdaterProcessor processor =
                 new RequestContentLengthUpdaterProcessor("POST");
@@ -234,7 +235,7 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     }
 
     @Test
-    public void shouldAcceptResultsAlways() {
+    void shouldAcceptResultsAlways() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         // When

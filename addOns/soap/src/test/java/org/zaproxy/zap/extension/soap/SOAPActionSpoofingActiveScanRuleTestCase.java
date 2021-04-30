@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,27 +44,27 @@ public class SOAPActionSpoofingActiveScanRuleTestCase {
     }
 
     @Test
-    public void scanResponseTest() throws Exception {
+    void scanResponseTest() throws Exception {
         SOAPActionSpoofingActiveScanRule scanner = new SOAPActionSpoofingActiveScanRule();
 
         /* Positive cases. */
         ResponseType result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == ResponseType.SOAPACTION_EXECUTED);
+        assertEquals(ResponseType.SOAPACTION_EXECUTED, result);
 
         Sample.setOriginalResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == ResponseType.SOAPACTION_IGNORED);
+        assertEquals(ResponseType.SOAPACTION_IGNORED, result);
 
         /* Negative cases. */
         result = scanner.scanResponse(new HttpMessage(), originalMsg);
-        assertTrue(result == ResponseType.EMPTY_RESPONSE);
+        assertEquals(ResponseType.EMPTY_RESPONSE, result);
 
         Sample.setEmptyBodyResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == ResponseType.EMPTY_RESPONSE);
+        assertEquals(ResponseType.EMPTY_RESPONSE, result);
 
         Sample.setInvalidFormatResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == ResponseType.INVALID_FORMAT);
+        assertEquals(ResponseType.INVALID_FORMAT, result);
     }
 }

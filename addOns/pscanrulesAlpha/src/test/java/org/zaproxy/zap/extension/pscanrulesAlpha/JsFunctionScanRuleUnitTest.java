@@ -38,7 +38,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> {
+class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> {
 
     @Override
     protected JsFunctionScanRule createScanner() {
@@ -57,7 +57,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertGivenFunctionInJavaScriptResponse()
+    void shouldAlertGivenFunctionInJavaScriptResponse()
             throws HttpMalformedHeaderException, URIException {
         // Given
         String body = "Some text <script>$eval()</script>\nLine 2\n";
@@ -72,7 +72,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertGivenFunctionInHtmlScriptElements()
+    void shouldAlertGivenFunctionInHtmlScriptElements()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -90,7 +90,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldNotAlertGivenNoMatch() throws URIException, HttpMalformedHeaderException {
+    void shouldNotAlertGivenNoMatch() throws URIException, HttpMalformedHeaderException {
         // Given
         String body = "Some text <script>innocentFunction()</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
@@ -103,7 +103,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldNotAlertGivenEmptyBody() throws HttpMalformedHeaderException, URIException {
+    void shouldNotAlertGivenEmptyBody() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String body = "";
@@ -117,7 +117,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertGivenCustomPayloadFunctionMatch()
+    void shouldAlertGivenCustomPayloadFunctionMatch()
             throws HttpMalformedHeaderException, URIException {
         // Given
         String body = "Some text <script>$badFunction()</script>\nLine 2\n";
@@ -134,8 +134,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldNotAlertGivenMatchOutsideScript()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldNotAlertGivenMatchOutsideScript() throws HttpMalformedHeaderException, URIException {
         // Given
         String body =
                 "<h1>Some text <script>Something innocent happening here</script></h1>\n"
@@ -150,8 +149,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertGivenMatchInSecondScript()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldAlertGivenMatchInSecondScript() throws HttpMalformedHeaderException, URIException {
         // Given
         String body =
                 "<h1>Some text <script>Something innocent happening here</script></h1>\n"
@@ -168,7 +166,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertOnceGivenMultipleMatchesHTML()
+    void shouldAlertOnceGivenMultipleMatchesHTML()
             throws HttpMalformedHeaderException, URIException {
         // Given
         String body =
@@ -186,8 +184,7 @@ public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionSca
     }
 
     @Test
-    public void shouldAlertOnceGivenMultipleMatchesJS()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldAlertOnceGivenMultipleMatchesJS() throws HttpMalformedHeaderException, URIException {
         // Given
         String body = "Some text <script>eval()</script>\n" + "bypassSecurityTrustHtml()\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");

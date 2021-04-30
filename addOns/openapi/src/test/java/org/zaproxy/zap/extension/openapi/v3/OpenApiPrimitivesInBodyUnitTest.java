@@ -37,10 +37,10 @@ import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
+class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldExploreBodiesWithPrimitiveValues()
+    void shouldExploreBodiesWithPrimitiveValues()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/OpenApi_defn_body_with_primitives/";
 

@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 /* All test-cases should raise either non-storeable alerts
  * or storeable and non-cacheable alerts.
  */
-public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
+class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 
     private void assertNonStoreable(String expectedEvidence) {
         assertThat(alertsRaised.size(), equalTo(1));
@@ -55,8 +55,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWhenHttpMethodInvalid()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertNonStoreableWhenHttpMethodInvalid() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("PUT / HTTP/1.1");
@@ -68,8 +67,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWithHttpStatusCode600()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertNonStoreableWithHttpStatusCode600() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -83,7 +81,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWithCacheControlNoStoreDirectiveInRequestHeader()
+    void shouldRaiseAlertNonStoreableWithCacheControlNoStoreDirectiveInRequestHeader()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -98,7 +96,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWithPragmaNoStoreDirectiveInRequestHeader()
+    void shouldRaiseAlertNonStoreableWithPragmaNoStoreDirectiveInRequestHeader()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -113,7 +111,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWithCacheControlNoStoreDirectiveInResponseHeader()
+    void shouldRaiseAlertNonStoreableWithCacheControlNoStoreDirectiveInResponseHeader()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -128,7 +126,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWithPragmaNoStoreDirectiveInResponseHeader()
+    void shouldRaiseAlertNonStoreableWithPragmaNoStoreDirectiveInResponseHeader()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -143,7 +141,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWhenCacheControlIsPrivate()
+    void shouldRaiseAlertNonStoreableWhenCacheControlIsPrivate()
             throws HttpMalformedHeaderException {
 
         // Given
@@ -159,9 +157,8 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void
-            shouldRaiseAlertNonStoreableWhenAuthorizationHeaderWithWrongCacheControlDirectiveUsed()
-                    throws HttpMalformedHeaderException {
+    void shouldRaiseAlertNonStoreableWhenAuthorizationHeaderWithWrongCacheControlDirectiveUsed()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1\r\n" + "Authorization: basic\r\n");
@@ -178,7 +175,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertNonStoreableWhenAuthorizationHeaderWithoutCacheControlUsed()
+    void shouldRaiseAlertNonStoreableWhenAuthorizationHeaderWithoutCacheControlUsed()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -193,7 +190,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void
+    void
             shouldRaiseAlertNonStoreableWhenExpiresMaxAgeAndPublicDirectiveMissingAndStatusNonCacheableByDefault()
                     throws HttpMalformedHeaderException {
         // Given
@@ -208,7 +205,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertStoreableNonCacheableWhenNoCacheDirectiveGiven()
+    void shouldRaiseAlertStoreableNonCacheableWhenNoCacheDirectiveGiven()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -225,7 +222,7 @@ public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<Cacheabl
     }
 
     @Test
-    public void shouldRaiseAlertStoreableNonCacheableWhenStaleRetrieveProhibited()
+    void shouldRaiseAlertStoreableNonCacheableWhenStaleRetrieveProhibited()
             throws HttpMalformedHeaderException {
         shouldRaiseAlertStoreableNonCacheableWhenStaleRetrieveProhibited("must-revalidate");
         shouldRaiseAlertStoreableNonCacheableWhenStaleRetrieveProhibited("proxy-revalidate");

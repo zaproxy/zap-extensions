@@ -29,7 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class ContentSecurityPolicyMissingScanRuleUnitTest
+class ContentSecurityPolicyMissingScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyMissingScanRule> {
     private static final String URI = "https://www.example.com";
     private static final String HEADER_HTML = "Content-Type: text/html";
@@ -45,7 +45,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenMissingCspHeaderThenAlertRaised() throws Exception {
+    void givenMissingCspHeaderThenAlertRaised() throws Exception {
         // Given
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML);
 
@@ -57,8 +57,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenMissingCspHeaderInRedirectAtMediumAlertThresholdThenNoAlertRaised()
-            throws Exception {
+    void givenMissingCspHeaderInRedirectAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
@@ -71,8 +70,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenMissingCspHeaderInRedirectAtLowAlertThresholdThenAlertRaised()
-            throws Exception {
+    void givenMissingCspHeaderInRedirectAtLowAlertThresholdThenAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
@@ -85,7 +83,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenCspHeaderAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenCspHeaderAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
@@ -98,7 +96,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenCspHeaderAtLowAlertThresholdThenAlertRaised() throws Exception {
+    void givenCspHeaderAtLowAlertThresholdThenAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
@@ -111,7 +109,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenAllCspHeadersButXCspAtLowAlertThresholdThenAlertRaised() throws Exception {
+    void givenAllCspHeadersButXCspAtLowAlertThresholdThenAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_WEBKIT_CSP);
@@ -124,8 +122,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenAllCspHeadersButWebkitCspAtLowAlertThresholdThenAlertRaised()
-            throws Exception {
+    void givenAllCspHeadersButWebkitCspAtLowAlertThresholdThenAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_X_CSP);
@@ -138,7 +135,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenAllCspHeadersAtLowAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenAllCspHeadersAtLowAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         String[] headers = {HEADER_HTML, HEADER_CSP, HEADER_X_CSP, HEADER_WEBKIT_CSP};
@@ -152,7 +149,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenTextContentTypeAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenTextContentTypeAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_TEXT);
@@ -165,7 +162,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenTextContentTypeAtLowAlertThresholdThenAlertRaised() throws Exception {
+    void givenTextContentTypeAtLowAlertThresholdThenAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_TEXT);
@@ -178,8 +175,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenTextContentTypeWithCspHeadersAtLowAlertThresholdThenNoAlertRaised()
-            throws Exception {
+    void givenTextContentTypeWithCspHeadersAtLowAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         String[] headers = {HEADER_TEXT, HEADER_CSP, HEADER_X_CSP, HEADER_WEBKIT_CSP};
@@ -193,7 +189,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenReportOnlyCspThenInfoAlertRaised() throws Exception {
+    void givenReportOnlyCspThenInfoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_REPORT_ONLY);
@@ -208,7 +204,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    public void givenReportOnlyAndCspHeadersThenInfoAlertRaised() throws Exception {
+    void givenReportOnlyAndCspHeadersThenInfoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_REPORT_ONLY, HEADER_CSP);

@@ -33,7 +33,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link BufferOverflowScanRule}. */
-public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOverflowScanRule> {
+class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOverflowScanRule> {
 
     @Override
     protected BufferOverflowScanRule createScanner() {
@@ -41,7 +41,7 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
     }
 
     @Test
-    public void shouldTargetCTech() {
+    void shouldTargetCTech() {
         // Given
         TechSet techSet = techSet(Tech.C);
         // When
@@ -51,7 +51,7 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
     }
 
     @Test
-    public void shouldNotTargetNonCTechs() {
+    void shouldNotTargetNonCTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.C);
         // When
@@ -61,7 +61,7 @@ public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOver
     }
 
     @Test
-    public void shouldCreateAlert() throws Exception {
+    void shouldCreateAlert() throws Exception {
         // Given
         String test = "/shouldReportBufferOverflowIssue/";
 

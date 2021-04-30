@@ -35,7 +35,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link RemoteCodeExecutionCve20121823ScanRule}. */
-public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
+class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         extends ActiveScannerTest<RemoteCodeExecutionCve20121823ScanRule> {
 
     @Override
@@ -44,7 +44,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetPhpTech() throws Exception {
+    void shouldTargetPhpTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.PHP);
         // When
@@ -54,7 +54,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonPhpTechs() throws Exception {
+    void shouldNotTargetNonPhpTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.PHP);
         // When
@@ -64,7 +64,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanUrlsWithoutPath() throws Exception {
+    void shouldScanUrlsWithoutPath() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("");
         rule.init(message, parent);
@@ -75,7 +75,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
+    void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
         // Given
         String test = "/shouldScanUrlsWithEncodedCharsInPath/";
         nano.addHandler(
@@ -96,7 +96,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotScanUrlsIfWinAndNixTechIsNotIncluded() throws Exception {
+    void shouldNotScanUrlsIfWinAndNixTechIsNotIncluded() throws Exception {
         // Given
         String test = "/shouldNotScanUrlsIfWinAndNixTechIsNotIncluded/";
         HttpMessage message = getHttpMessage(test);
@@ -109,7 +109,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfTheAttackIsNotEchoedInTheResponse() throws Exception {
+    void shouldNotAlertIfTheAttackIsNotEchoedInTheResponse() throws Exception {
         // Given
         String test = "/shouldNotAlertIfTheAttackIsNotEchoedInTheResponse/";
         nano.addHandler(
@@ -130,7 +130,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertEvenIfAttackResponseBodyHasBiggerSize() throws Exception {
+    void shouldNotAlertEvenIfAttackResponseBodyHasBiggerSize() throws Exception {
         // Given
         String test = "/shouldNotAlertEvenIfResponseBodyHasBiggerSize/";
         nano.addHandler(
@@ -156,7 +156,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
+    void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
         // Given
         final String body =
                 RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
@@ -184,7 +184,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
+    void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
         // Given
         final String body =
                 RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
@@ -202,7 +202,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
+    void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
         final String body =
                 RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
@@ -230,7 +230,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotDoNixAttackIfNixTechsAreNotIncluded() throws Exception {
+    void shouldNotDoNixAttackIfNixTechsAreNotIncluded() throws Exception {
         // Given
         String test = "/shouldNotDoNixAttackIfNixTechsAreNotIncluded/";
         nano.addHandler(
