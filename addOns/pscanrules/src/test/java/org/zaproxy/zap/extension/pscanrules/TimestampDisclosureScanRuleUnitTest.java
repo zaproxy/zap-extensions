@@ -340,6 +340,15 @@ public class TimestampDisclosureScanRuleUnitTest
         assertEquals(0, alertsRaised.size());
     }
 
+    @Test
+    public void patternFontExtensionShouldNotFindSubString() {
+        // Given / When
+        boolean result =
+                TimestampDisclosureScanRule.PATTERN_FONT_EXTENSIONS.matcher("/font.woffL").find();
+        // Then
+        assertEquals(false, result);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
     public void shouldNotRaiseAlertOnValidTimeStampWhenInFontResponse(String type)
