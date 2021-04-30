@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -50,6 +52,7 @@ import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 
 public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = -5847208243296422433L;
+    private static final Logger LOGGER = LogManager.getLogger(ZestSurroundWithPopupMenu.class);
     private ExtensionZest extension;
 
     /** This method initializes */
@@ -132,7 +135,7 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
             try {
                 createPopupAddActionMenu(parent, children, new ZestLoopFile());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.debug(e);
             }
             createPopupAddActionMenu(parent, children, new ZestLoopInteger());
             createPopupAddActionMenu(parent, children, new ZestConditional(new ZestExpressionOr()));

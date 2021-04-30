@@ -286,7 +286,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                         && script.getTypeName()
                                 .equals(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.debug(e);
             }
         }
         return false;
