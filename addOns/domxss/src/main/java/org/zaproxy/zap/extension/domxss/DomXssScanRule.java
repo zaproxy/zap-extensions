@@ -223,7 +223,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                 // target before sending
                                 sendAndReceive(msg);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                log.debug(e);
                             }
                             return true;
                         }

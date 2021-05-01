@@ -24,6 +24,9 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -80,6 +83,37 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - MD4 / MD5"));
         assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+    }
+
+    @Test
+    public void shouldRaiseAlertWhenResponseContainsOsxSha1AtLowThreshold() throws Exception {
+        // Given
+        String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - Mac OSX salted SHA-1"));
+        assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"HIGH", "MEDIUM"})
+    public void shouldNotRaiseAlertWhenResponseContainsOsxSha1InJsAtNonLowThreshold(
+            AlertThreshold threshold) throws Exception {
+        // Given
+        String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test

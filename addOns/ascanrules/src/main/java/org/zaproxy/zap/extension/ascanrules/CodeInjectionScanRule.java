@@ -209,6 +209,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
                             .setParam(paramName)
                             .setAttack(phpPayload)
+                            .setEvidence(PHP_CONTROL_TOKEN)
                             .setMessage(msg)
                             .raise();
 
@@ -271,9 +272,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 }
 
                 // Check if the injected content has been evaluated and printed
-                if (msg.getResponseBody()
-                        .toString()
-                        .contains(Integer.toString(bignum1 * bignum2))) {
+                String evidence = Integer.toString(bignum1 * bignum2);
+                if (msg.getResponseBody().toString().contains(evidence)) {
                     // We Found IT!
                     // First do logging
                     log.debug(
@@ -286,6 +286,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                             .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
                             .setParam(paramName)
                             .setAttack(aspPayload)
+                            .setEvidence(evidence)
                             .setMessage(msg)
                             .raise();
                     return true;

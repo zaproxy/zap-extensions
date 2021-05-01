@@ -209,6 +209,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
                                 .setConfidence(Alert.CONFIDENCE_HIGH)
                                 .setParam(paramName)
                                 .setAttack(evilPayload)
+                                .setEvidence(errorString)
                                 .setMessage(msg)
                                 .raise();
 

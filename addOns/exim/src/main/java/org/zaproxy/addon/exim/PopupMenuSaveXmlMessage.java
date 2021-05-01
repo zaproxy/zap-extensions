@@ -22,7 +22,6 @@ package org.zaproxy.addon.exim;
 import java.io.File;
 import java.util.Base64;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -35,6 +34,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.zaproxy.zap.utils.XmlUtils;
 
 public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
 
@@ -87,8 +87,8 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
     private static void writeToFile(File file, byte[] headersContent, byte[] bodyContent) {
         try {
 
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            DocumentBuilder docBuilder =
+                    XmlUtils.newXxeDisabledDocumentBuilderFactory().newDocumentBuilder();
 
             Document doc = docBuilder.newDocument();
             Element rootElement = doc.createElement("Message");

@@ -252,41 +252,33 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
      *     attack payload.
      */
     private void localFileReflectionAttack(HttpMessage msg) {
-        String payload = null;
-        try {
-            // First replace the values in all the Elements by the Attack Entity
-            String originalRequestBody = msg.getRequestBody().toString();
-            String requestBody = createLfrPayload(originalRequestBody);
-            if (localFileReflectionTest(msg, requestBody, payload)) {
+        // First replace the values in all the Elements by the Attack Entity
+        String originalRequestBody = msg.getRequestBody().toString();
+        String requestBody = createLfrPayload(originalRequestBody);
+        if (localFileReflectionTest(msg, requestBody)) {
+            return;
+        }
+        // Now if no issue is found yet, then we replace the values one at a time. Do this for a
+        // fixed number of Elements, depending on the strength at which the rule is used.
+
+        // Remove original xml header
+        Matcher headerMatcher = xmlHeaderPattern.matcher(originalRequestBody);
+        String headerlessRequestBody = headerMatcher.replaceAll("");
+        int maxValuesChanged = 0;
+
+        if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+            maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
+        } else if (this.getAttackStrength() == AttackStrength.HIGH) {
+            maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
+        } else if (this.getAttackStrength() == AttackStrength.INSANE) {
+            maxValuesChanged = Integer.MAX_VALUE;
+        }
+        Matcher tagMatcher = tagPattern.matcher(headerlessRequestBody);
+        for (int tagIdx = 1; (tagIdx <= maxValuesChanged) && tagMatcher.find(); tagIdx++) {
+            requestBody = createTagSpecificLfrPayload(headerlessRequestBody, tagMatcher);
+            if (localFileReflectionTest(msg, requestBody)) {
                 return;
             }
-            // Now if no issue is found yet, then we replace the values one at a time. Do this for a
-            // fixed number of Elements, depending on the strength at which the rule is used.
-
-            // Remove original xml header
-            Matcher headerMatcher = xmlHeaderPattern.matcher(originalRequestBody);
-            String headerlessRequestBody = headerMatcher.replaceAll("");
-            int maxValuesChanged = 0;
-
-            if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-                maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
-            } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-                maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
-            } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-                maxValuesChanged = Integer.MAX_VALUE;
-            }
-            Matcher tagMatcher = tagPattern.matcher(headerlessRequestBody);
-            for (int tagIdx = 1; (tagIdx <= maxValuesChanged) && tagMatcher.find(); tagIdx++) {
-                requestBody = createTagSpecificLfrPayload(headerlessRequestBody, tagMatcher);
-                if (localFileReflectionTest(msg, requestBody, payload)) {
-                    return;
-                }
-            }
-        } catch (IOException ex) {
-            log.warn(
-                    "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
-                    payload,
-                    ex);
         }
     }
 
@@ -416,13 +408,20 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         return sb.toString();
     }
 
-    private boolean localFileReflectionTest(HttpMessage msg, String requestBody, String payload)
-            throws IOException {
+    private boolean localFileReflectionTest(HttpMessage msg, String requestBody) {
         for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
             String localFile = LOCAL_FILE_TARGETS[idx];
-            payload = MessageFormat.format(requestBody, localFile);
+            String payload = MessageFormat.format(requestBody, localFile);
             msg.setRequestBody(payload);
-            sendAndReceive(msg);
+            try {
+                sendAndReceive(msg);
+            } catch (IOException ex) {
+                log.warn(
+                        "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                        payload,
+                        ex);
+                return true;
+            }
             String response = msg.getResponseBody().toString();
             Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
             if (matcher.find()) {
