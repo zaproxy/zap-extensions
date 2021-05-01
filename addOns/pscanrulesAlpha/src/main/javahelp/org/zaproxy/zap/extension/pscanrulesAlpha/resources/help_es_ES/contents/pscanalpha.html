@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Reglas de escaneo pasivo - Alpha
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Reglas de Escaneo pasivo - Alpha</h1>
+En este complemento se incluyen las siguientes reglas de escaneo pasivo de calidad alpha:
+
+<h2>Revelación ViewState ASP.NET</h2>
+Un ViewState ASP.NET fue revelado por el servidor de la aplicación o el servidor web
+
+<h2>Integridad ViewState ASP.NET</h2>
+La aplicación no usa un Código de Autenticación de Mensajes (MAC) para proteger la integridad del ViewState ASP.NET, que puede ser manipulado por un cliente malintencionado
+
+<h2>Base64 Disclosure</h2>
+Los datos codificados en Base64 fueron revelador por el servidor de la aplicación o el servidor web
+
+<h2>Encabezado Content Security Policy faltante</h2>
+Esto comprueba los encabezados de respuesta HTML para la presencia de un encabezado Content Security Policy.<br>
+Por defecto esta regla comprueba la presencia del encabezado "Content-Security-Policy" header", y también comprueba en el umbral bajo los encabezados "X-Content-Security-Policy" y "X-WebKit-CSP".
+<p>
+Si se encuentra un encabezado "Content-Security-Policy-Report-Only" en una respuesta, aparece una alerta INFO. Esto puede representar un esfuerzo de ejecución que esta siendo activamente refinado o desarrollado, o alguno que sea solo parcialmente implementado.
+
+<h2>Envenenamiento de cookie</h2> Esta comprobación observa la entrada suministrada por el usuario en los parámetros de cadena de consulta y datos POST para identificar donde se pueden controlar los parámetros de cookie. Esto se llama ataque de envenenamiento de cookie, y se vuelve vulnerable cuando un atacante puede manipular la cookie de varias maneras. En algunos casos esto no será vulnerable, sin embargo, permitir que los parámetros URL configuren valores de cookie se considera generalmente un error.
+
+<h2>Cookie sin atributo SameSite</h2> Esto informa cualquier cookie que no tenga el atributo SameSite y que no tenga un valor válido reconocido para ese atributo.
+
+<h2>Cross Domain Misconfiguration</h2> Escanea pasivamente las respuestas de Cross Domain MisConfigurations, lo cual le quita presión a Same Origin Policy en el navegador web.<br>
+La implementación actual observa los encabezados CORS excesivamente permisivos.
+
+<h2>Navegación de Directorio</h2>
+Escanea pasivamente las respuestas de firmas que indican que la navegación por el escritorio es posible.
+
+<h2>Ejemplo de un escáner pasivo de archivos</h2>
+Esto implementa un ejemplo de la regla de escaneo pasivo que carga cadenas de un archivo que puede ser editado por el usuario.<br> Para mas detalles, visite: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Ejemplo de un escáner pasivo simple</h2>
+Esto implementa un ejemplo muy simple de la regla de escaneo pasivo.<br> Para mas detalles, visite: For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Revelación de Hash</h2>
+Escanea pasivamente hashes de contraseñas reveladas por el servidor web. <br>Se incluyen varios formatos, como MD4, MD5, y SHA*, que se utilizan a veces para otros propósitos distintos a contener los hashes de contraseñas. 
+
+<h2>HeartBleed</h2>Escanea pasivamente las respuestas de encabezado HTTP que pudieran indicar que el servidor está vulnerable a la vulnerabilidad HeartBleed OpenSSL. 
+
+<h2>HTTP a transición insegura HTTPS en formulario POST</h2> Esto comprueba las páginas HTTP inseguras que albergan formas HTTPS. El problema es que una página HTTP insegura puede ser fácilmente secuestrada a través de MITM y la forma segura HTTPS puede ser reemplazada o burlada.
+
+<h2>HTTPS a transición insegura HTTP en formulario POST</h2> Esto comprueba las páginas HTTPS inseguras que albergan formas HTTP inseguras. El problema es que una página segura hace la transición a una página insegura cuando los datos son cargados a través de un formulario. El usuario podría pensar que están enviando datos a una página segura cuando en realidad no es así.
+
+<h2>Componente de inseguridad</h2> Escanea pasivamente la respuesta del servidor, el contenido generador de cuerpo y encabezado para versiones de productos que luego son referencias cruzadas de una lista de versiones del producto conocidas por ser vulnerables a varios CVEs. 
+Una lista clasificada de puntuaciones de severidad CVEs y CVSS es resultado de cada producto marcado para ser vulnerable. 
+Actualmente, los siguientes productos del lado del servidor son soportados: <br>Apache Tomcat application server (funcionalidad limitada debido a la filtración de información limitada por TomCat)<br>
+ Apache web server<br>
+módulo mod_auth_radius Apache <br>
+módulo mod_fcgid Apache<br>
+módulo mod_imap Apache<br>
+módulo mod_jk Apache <br>
+módulo mod_perl Apache <br>
+módulo mod_python Apache <br>
+módulo mod_ssl Apache <br>
+módulo OpenSSL Apache <br>
+módulo Perl Apache <br>
+módulo Python Apache<br>
+Servidor IBM HTTP <br>
+Servidor JBoss application <br>
+Servidor web o aplicación web Jetty <br>
+Servidor web LiteSpeed <br>
+Servidor web Lighttpd <br>
+Servidor web Microsoft IIS <br>
+Servidor web Netscape Enterprise <br>
+Servidor web Nginx <br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+PHP<br>
+Phusion_Passenger<br>
+Servidor proxy Squid <br>
+Servidor web Sun One r<br>
+Servidor web Sun Java System <br>
+Servidor web TornadoServer <br>
+WordPress<br>
+<p>Escanea pasivamente la ubicación GPS expuesta en imágenes durante evaluaciones normales de seguridad de sitios web.  El escáner de ubicación de imagen ayuda en situaciones donde los usuarios finales pueden publicar imágenes de perfil y posiblemente dar su ubicación de casa, por ejemplo un sitio de citas o el chat de niños.  Un documento sobre esto puede encontrarse en http://veggiespam.com/ils/</p>
+
+<p>Nota: para que este plug-in pueda operar, ZAP debe configurarse para recibir y procesar imágenes.  Para hacer esto, vaya al panel de Opciones ZAP (Herramientas&rarr; Opciones), elija mostrar, y habilite la casilla "Procesar imágenes en solicitudes/respuestas HTTP".  Además, las imágenes ZAP no pueden ser filtradas a través de las configuraciones "Global Exclude URL" o las Propiedades de Sesión para "Excluir del Proxy". </p>
+
+<h2>Redicrección Abierta</h2>
+Las redirecciones abiertas en encuentran en el Top 10 de vulnerabilidades de OWASP 2010. Esta comprobación observa la entrada generada por el usuario en cuánto a los parámetros de cadena de consulta y datos tipo POST, para identificar donde pueden ser posibles las redirecciones abiertas. Las redirecciones abiertas ocurren cuando una aplicación permite entradas suministradas por el usuario (por ejmplo: http://nottrusted.com) para controlar una dirección una redirección fuera de sitio. Esta es generalmente una manera bastante eficaz para encontrar donde 301 o 302 redirecciones podrán ser explotadas por los spammers o de los atacantes al momento de pescar
+
+<h2>Escanee de respuesta de encabezado HTTP</h2>
+Esto comprueba los encabezados de respuesta ante la presencia de un encabezado de servidor que contiene detalles de la versión.
+En Low Treshold se activará una alerta basada en la presencia de un encabezado de cambio, siendo o no un string de la version detectada.
+
+<h2>Divulgación de Código Fuente</h2>
+La aplicación del Código Fuente fue divulgada por un servidor web
+
+<h2>Escáner de encabezado estricto de seguridad de transporte</h2>
+Éste escáner comprueba las respuestas HTTPS por la presencia de un escáner de encabezado estricto de seguridad y transporte:
+<ul>
+ <li><b> encabezado de seguridad estricta del transporte No establece: </b>si la respuesta es HTTPS y el encabezado se encuentra completamente extraviado.</li>
+ <li><b>Seguridad estricta de transporte desactivada: </b> si la respuesta es HTTPS y el valor máximo para la edad se encuentra establecido en cero, restableciendo así la información del navegador HSTS para el sitio.</li>
+ <li><b>Múltiples entradas de encabezado de Seguridad y transporte estricta. (no conforme con especificaciones):</b> si la respuesta es HTTPS y exíste mas de una cabecera HSTS en la respuesta.</li>
+ <li><b>-Seguridad de transporte estricta, falta de edad máxima (no conforme con especifiaciones): </b>Si la respuesta es HTTPS, un encabezado HSTS es especificado pero el valor del máximo de edad no contiene un número.</li>
+ <li><b> Seguridad de transporte estricta definida por la META (no conforme con especificaciones): </b> Si el cuerpo de respuesta incluye una etiqueta META que trata de definir una HSTS.</li>
+ <li><b>Encabezado de seguridad de transporte estricta en una respuesta HTTP simple: </b>si la respuesta es HTTP y en encabezado HSTS se encuentra presente.</li>
+ <li><b>Seguridad de transporte estricta, máximo de edad malformado (no conforme con especificaciones):</b> Si la respuesta es del tipo HTTPS y el encabezado HSTS se encuentra presente, pero existen citas anteriores a la directiva de máxima edad (las citas se encuentran permitidas alrededor del valor de máxima edad, pero no alrededor de la directiva como tal).</li>
+ <li><b>Seguridad de transporte estricta, contenido malformado (no conforme con las especificaciones):</b> Si se tiene una respuesta HTTPS y un encabezado HSTS presente, pero hay algún contenido inesperado (como las citas rizadas). La expectativa es que el contenido sea imprimible según la ASCII.</li>
+</ul>
+
+<h2>Revelación de la marca de hora</h2>
+Una marca de hora fue divulgada o revelada por la aplicación o servidor web
+
+<h2>Atributo de un elemento HTML controlable por el usuario (con potencial XSS)</h2>
+Esta comprobación observa a la entrada generada por usuarios en cuanto a parámetros de cadena oculta y datos POST para identificar a donde ciertos atributos HTML pueden ser controlados. Esto proporciona detección de punto caliente para los XSS (cross-site scripting) que requerirá futuras revisiones por parte de analistas de seguridad en orden de determinar la explotabilidad.
+
+<h2>Juego de caracteres controlado por el usuario</h2>
+Esta comprobación observa la entrada generada por el usuario en una línea de código script y los datos tipo POST para identificar a donde el tipo de contenido o las declaraciones de forma de juego de caracteres podrían ser controlados por el usuario directamente. Estas declaraciones sobre juegos de caracteres deben ser declaradas siempre con la aplicación. Si un atacante puede controlar los juegos de caracteres, ellos podrían manioular el HTML para producir así XSS. u otros ataques.
+
+<h2>Evento de Javascript controlado por el usuario (XSS)</h2>
+Esta comprobación observa las entradas generadas por el usuario en parámetros curvos y datos POST para encontrar donde están siendo controlados. Esto proporciona detección de punto caliente para los XSS (cross-site scripting) requerirá de análisis futuros para determinar la explotabilidad.            
+
+<h2>Propiedad de Javascript controlable con el usuario (XSS)</h2>
+Esta comprobación observa las entradas generadas por los usuarios en los parámetros de cadena ocultos y los datos POST para identificar donde pueden ser controladas ciertas propiedades de las URL en javascript (por ejemplo createElement src). Esto proporciona detección de punto caliente para los XXS (cross-site scripting) la cual requerirá de futuras revisiones de parte de un analista de seguridad para determinar su explotabilidad.            
+
+<h2>Hash de nombre de usuario encontrado</h2>
+Si cualquier contexto contiene usuarios definidos, este escaner comprueba todas las respuestas para la presencia de valores tipo hash representados en esos nombres de usuario.
+El descubrimiento de cualquiera de esos valores puede representar una vulnerabilidad por una referencia insegura de objeto directo (IDOR). Las alertas son sólo planteadas como elementos informacionales, ya que se requiere de más pruebas para poder confirmar con certeza y evaluar su impacto. 
+
+<h2>Fuga de información de encabezado por X-Powered</h2>
+Esto comprueba las cabeceras de respuesta para la presencia de detalles W-Powered.
+
+<h2>Fu. ga de información de encabezado y se la está aplicando globalmente,</h2>
+Esto comprueba los encabezados de respuesta para la presencia de detalles de X-Backend-serve.
+
+<h2>Redirección de grandes</h2>
+Éste clic predice el tamaño de varias respuestas de tipo redirecto y genera una alerta si la respuesta es mejor que el tamaño predicho. 
+Una larga respuesta redireccionada grande puede indicar que se ha producido una redirección, la página actualmente contiene contenido (que puede revelar información sensible, PII, etc).
+
+<h2>Fuga de información del encabezado de los datos de X-ChromeLogger</h2>
+Esto comprueba las cabeceras de las respuesta en busqueda de la presencia datos de X-ChromeLogger o de detalles de los datos X-ChromePhp.
+
+<h2>Fuga de información de la X-Depuración-Token</h2>
+Esto comprueba encabezados de las respuestas de la presencia de un X-Token-depurar y de los detalles de X-Debug-Token-enlace.
+Lo cual indica el uso o desuso del Symfony´s Profiler. Las Symfony´s Profiler proveen acceso a una cantidad significativa de información de interes para los individuales y a los probadores de seguridad.
+
+<h2>Fuga de información del encabezado de la Versión X-AspNet-Version/X-AspNetMvc-</h2>
+Esto comprueba la respuesta a los encabezados en búsqueda de la presencia de X-AspNet-Version/X-AspNetMvc- en ésta versión.
+
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="automation-icon" url="contents/images/robot.png" />
+    <mapID target="automation" url="contents/automation.html" />
+    <mapID target="automation.env" url="contents/environment.html" />
+    <mapID target="automation.addons" url="contents/job-addons.html" />
+    <mapID target="automation.pscanconf" url="contents/job-pscanconf.html" />
+    <mapID target="automation.pscanwait" url="contents/job-pscanwait.html" />
+    <mapID target="automation.spider" url="contents/job-spider.html" />
+    <mapID target="automation.ascan" url="contents/job-ascan.html" />
+    <mapID target="automation.about" url="contents/about.html" />
+</map>

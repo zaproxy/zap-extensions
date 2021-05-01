@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Code Dx
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Code Dx</H1>
+The Code Dx add-on allows you to generate compatible reports and upload them to a Code Dx server. There are two options under the Report menu.
+<p>
+Contributed by <a href="https://www.codedx.com/">https://www.codedx.com/</a>
+
+<H2>Code Dx: Upload Report</H2>
+This option will generate a report for you and upload it to a Code Dx server. Selecting it will prompt you for the Server URL and API Key. After populating the fields, click the refresh button to get a list of projects available to the API Key. Then click the Upload button to send results to the Code Dx server.
+
+<H2>Code Dx: Generate XML Report</H2>
+This option will generate a standard XML report that includes the HTTP request and response data.
+
+<H1>API</H1>
+<H2>Actions</H2>
+
+<H3>uploadReport</H3>
+Uploads a report to Code Dx. Note that uploading an empty report with no alerts will cause an Exception to be thrown as Code Dx won't be able to read it and will return a non-200 response.
+<br><br>
+<I>Parameters</I>
+<UL>
+    <LI>filePath: Absolute path to the report file</LI>
+    <LI>serverUrl: Code Dx server URL</LI>
+    <LI>codeDxApiKey: Code Dx API Key</LI>
+    <LI>projectId: Code Dx Project ID</LI>
+    <LI>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
+    <LI>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</LI>
+</UL>
+<I>Returns</I>
+<br>
+"OK" if the report is uploaded successfully.
+
+<H3>generateAndUpload</H3>
+Generates a Code Dx report, saves it to a temporary file, uploads to Code Dx, then deletes the file.
+<br><br>
+<I>Parameters</I>
+<UL>
+    <LI>serverUrl: Code Dx server URL</LI>
+    <LI>codeDxApiKey: Code Dx API Key</LI>
+    <LI>projectId: Code Dx Project ID</LI>
+    <LI>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
+    <LI>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</LI>
+</UL>
+<I>Returns</I>
+<br>
+"OK" if the report is uploaded successfully.
+<br>
+"EMPTY" if the generated report is empty. The report will not be uploaded to Code Dx.
+
+<H2>Views</H2>
+<H3>generateReport</H3>
+Generates an XML report with request and response data.
+<br><br>
+<I>Returns</I>
+<br>
+An XML report String.
+</BODY>
+</HTML>

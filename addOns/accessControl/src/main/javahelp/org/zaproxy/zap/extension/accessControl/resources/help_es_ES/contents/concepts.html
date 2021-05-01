@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Pruebas de Control de acceso
+    </title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Prueba de control de acceso</h1>
+
+<p>
+    Este complemento permite a los usuarios comparar qué partes de una aplicación web se encuentran disponibles a algunos usuarios, realizar pruebas de control de acceso     e identificar problemas potenciales de control de acceso. Permite la configuracion de las reglas de acceso y realiza un ataque completo con el objetivo de ayudar a identificar las secciones de una aplicación web que son accesibles por los clientes no autorizados.
+</p>
+
+<p>
+    Hay dos conceptos principales relacionados con este complemento que debe ser explicado: las <b>Reglas de acceso</b> y el <b>procedimiento de prueba</b>.
+</p>
+
+<h3>Reglas de Acceso</h3>
+
+<p>
+    Para identificar posibles problemas de control de acceso, ZAP necesita saber cuáles partes de la aplicación web son supuestamente accedidas por el usuario. En ZAP, el nombre para estas reglas es: <i>Reglas de Acceso</i> y generalmente tiene el significado: "<i>La página A debe/no debe ser accedida por Usuario X</i>".
+</p>
+
+<p>Las reglas se configuran para un contexto y por cada usuario de ese contexto, cada nodo del sitio (página web) se asociará a uno de los siguientes valores:</p>
+<ul>
+    <li><b>Allowed</b> - el recurso <b>puede</b> puede ser accedido por el usuario al cual se refiere la regla</li>
+    <li><b>Denied</b> - el recurso <b>no debe</b> ser accedido por el usuario al cual se refiere la regla</li>
+    <li><b>Unknown</b> - no hay <b>información</b> con respecto a si el recurso debe o no debe ser accesible al usuario al cual se refiere la regla
+    </li>
+</ul>
+
+<p>
+    Para simplificar el proceso de definición de las reglas de acceso, ZAP hace uso de una estructura de URLs en forma de árbol.
+    Cuando se analizan las reglas, un algoritmo de inferencia se utiliza para detectar las reglas correspondientes a cada nodo basado en el nodo principal en el URL si no hay reglas particulares definidas. Esto significa que, cuando se configura las reglas de acceso, solo 1 regla necesita estar configurada explícitamente para todo un sub-árbol, mientras que para los otros nodos las reglas son inferidas. Sobre esto hay más detalles en la página de ayuda de Control de Acceso <a href="contextOptions.html">Context options</a>.</td>
+</p>
+
+<h3>Procedimiento de prueba</h3>
+
+<p> Como un todo, con el fin de realizar por completo la prueba de control de acceso para una aplicación web, se debe seguir los siguientes pasos:</p>
+<ul>
+    <li>el evaluador define el conjunto de usuarios y cómo son autenticados;
+    </li>
+    <li>el evaluador define cómo ZAP puede identificar solicitudes no autorizadas (a través del panel de Autorizacion en las Propiedades de Sesión);
+    </li>
+    <li>la aplicación web es explorada ya sea manualmente o mediante el Spider;</li>
+    <li>el evaluador define las Reglas de Acceso para cada usuario asociado al contexto, básicamente dejando que ZAP sepa cuáles partes de la aplicación web serán supuestamente accedidas por cuál usuario;
+    </li>
+    <li>un "ataque" es realizado por ZAP al tratar de acceder cada URL de la aplicación web desde la perspectiva de cada usuario;
+    </li>
+    <li>en la pestaña de Status correspondiente, se muestran los resultados que demuestran cuáles páginas fueron accedidas con éxito por cuál usuario y marca los casos donde no se siguieron las reglas de acceso.
+    </li>
+</ul>
+
+<h2>Vease también</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Access Control Testing Tab</a></td>
+        <td>para una descripción de la pestaña de estado por el complemento</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Access Control Context options</a></td>
+        <td>para conocer sobre las opciones relacionadas al contexto</td>
+    </tr>
+</table>
+
+</body>
+</html>

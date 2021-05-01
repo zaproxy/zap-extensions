@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Replacer
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Reemplazador</h1>
+El reemplazador es una manera fácil de reemplazar cadenas en las solicitudes y respuestas.
+<p>
+Es accesible a través de las Opciones y por defecto puede ser accedida a través de la tecla de acceso rápido"&lt;ctrl&gt;R".
+<p>
+El panel de Opciones del Reemplazador permite definir tantas reglas reemplazadas como sean necesarios. <br>Cada regla se define por los siguientes campos:
+<h3>Descripción</h3>
+Una descripción que permite identificar la regla.
+
+<h3>Tipo de coincidencia</h3> Puede ser uno de: <h4>Encabezado de solicitud (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" será tratada como un nombre de encabezado. 
+Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
+Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
+Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
+
+<h4>Cadena de encabezado de solicitud</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el encabezado de solicitud, será reemplazado por el texto de reemplazo.
+
+<h4>Cadena de cuerpo de solicitud</h4>
+En este caso la "Cadena de coincidencia" se tratara como una cadena o una expresión regex.
+Si está presente en el cuerpo de solicitud será reemplazada por el texto de reemplazo.
+
+<h4>Encabezado de respuesta (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" se considerará como un nombre de encabezado. 
+Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
+Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
+Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
+
+<h4>Cadena de encabezado de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el encabezado de respuesta, será reemplazado por el texto de reemplazo.
+
+<h4>Cadena de cuerpo de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el cuerpo de respuesta, será reemplazado por el texto de reemplazo.
+
+<h3>Cadena de coincidencia</h3>
+La cadena que se utilizará para identificar lo que debe ser reemplazado. Para más detalles vea Tipo de coincidencia.
+
+<h3>Coincidencia Regex</h3>
+Si se configura entonces la cadena de coincidencia se tratará como una expresión regex.
+Esta opción está deshabilitada al coincidir con encabezados reales.
+
+<h3>Cadena de reemplazo</h3> La nueva cadena que reemplazará la selección especificada.
+
+<h3>Habilitar</h3>
+Si no está establecido, entonces la regla no aplicará.
+
+<h3>Avanzado</h3> Si se configura aparecerá una pestaña adicional que permite especificar a cuales "iniciadores" se debe aplicar la regla.
+Cada componente ZAP que puede enviar y recibir mensajes en un iniciador separado, esto da un control detallado sobre cuando exactamente debe aplicarse la regla.
+
+<p>
+Si se necesita aún mas control sobre cuándo y cómo el texto debe ser reemplazado, se puede utilizar la consola de script ZAP que ofrece un control completo sobre los mensajes ZAP.
+
+</body>
+</html>

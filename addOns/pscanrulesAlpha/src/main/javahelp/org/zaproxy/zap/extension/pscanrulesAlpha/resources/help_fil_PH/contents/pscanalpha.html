@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Mga Passive na Iskan Rule - Alpha
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Mga patakaran ng passive iskan-alpha</h1>
+Ang mga sumosonod na alituntonin ay kalidad ng alpha passive iskan ay kasama sa add-on na ito:
+
+<h2>Asp. net viewstate pagbubunyag</h2>
+Ang isang ASP.NET ViewState ay isiwalat ng aplikasyon / web server
+
+<h2>ASP.NET ViewState integridad</h2>
+Ang aplikasyon ay hindi gumagamit ng Code Authentication Code (MAC) upang maprotektahan ang integridad ng ASP.NET ViewState, na maaaring binago ng isang malisyosong client
+
+<h2>Ang Pagsisiwalat ng Base64</h2>
+Ang naka-encode na data sa Base64 ay isiwalat ng aplikasyon / web server
+
+<h2>Nawawala ang nilalaman ng seguridad sa patakarang ng header</h2>
+Ito ay pagsusuri ng HTML sa tugon ng mga header para sa presensiya ng nilalaman ayon sa siguridad at patakaran ng header.<br>
+Sapamamagitan ng default ay sinosuri ang alituntunin ng "nilalaman-siguridad-patakaran ng header, at sa Mababang threshold ay nag susuri din para sa" x-nilalaman-patakaran-siguridad " at "X-WebKit-CSP" ng mga header.
+<p>
+Kung ang "Content-Security-Policy-Report-Only" ang header ay matatagpun sa tugon ng isang INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o na kung saan isa lamang ang bahagyang ipinatutupad.
+
+<h2>nakaka lason na cookie</h2>
+Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query string parametro at ang post sa data upang tukuyin kung saan maaaring kuntrolin ang mga parametro cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. At sa isang Banda Hindi ito mapag sasamantalahan kung ang URL parameters ay papayag na ang halaga ng cookie ay mailagay bilang isang bug.
+
+<h2>Cookie Without SameSite Attribute</h2>
+Inuulat ang anuma cookie na walang samesite attribute o wala itong kinikilalang anuman halaga para sa attribute na ito.
+
+<h2>Cross Domain Misconfiguration</h2> passively suriin ang mga tugon ng cross domain misconfiguration, para mapahinga ang parehong pinagmula ng patakaran sa web browser, halimbawa <br> ang kasalukuyang nag papatupad ay labis na tumitingen sa pagpapahintulot ng CORS headers.
+
+<h2>Directory Browsing</h2> 
+passively suriin ang mga tugon para sa mga lumagda na nagpapahiwatig na ang directory browsing ay maaari.
+
+<h2>Halimbawa ng Dokumento sa Passive iskaner</h2>
+Ipinatupad ito na isang halimbawa ng passive iskan rule na naglo-load ng mga string mula sa isang dokumento na maaaring ayusin ng isang gumagamit.<br>
+Para sa iba pang detalye na makikita: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+
+<h2>Halimbawa ng Simpleng passive Eskaner</h2>
+Ipinatupad ito ng isang halimbawa ng passive eskan rule.<br>
+Para sa iba pang detalye tignan ang: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Hash Disclosure</h2>
+Passively iskan para sa password na mga sumira ng nagsabi sa pamamagitan ng web server. <br>
+Kabilang ang iba't ibang ayos, kabilang ang ilang mga porma tulad ng MD4, MD5, and SHA*, kung saan minsan gamit ito para sa mga layunin maliban sa naglalaman ng mga hashes ng password. 
+
+<h2>HeartBleed</h2>
+Passively iskan para sa HTTP header ng mga tugon na maaaring mag pahiwatig na ang server ay mahina sa mga kritikal na HeartBleed OpenSSL ng kahinaan. 
+
+<h2>HTTP sa HTTPS Walang kasiguraduhan ang pagliligtas sa form ng post</h2> itong pagsusuri ay tumitingen sa walang kasiguraduhan ng HTTP sa pahina ng mga form host HTTPS. Ang isyu ay ang isang hindi secure na pahina ng HTTP na pweding madaling ma hijack gamit ang MITM at ang secure na HTTPS form ay pweding mapalitan o ma spoofed.
+
+<h2>HTTPS sa HTTP hindi secure na pagbabago sa form ng post</h2> ang pagsusuring ito ay nakikilala ng secure na pahina sa HTTPS ang host ay walang secure sa mga form ng HTTP. Ang isyung ito ay para sa isang secure na pahina paglipat sa isang hindi secure na pahina kung ang data ay ililipat sa isang form. Iniisip ng gumagamit na sila ay nag sasabmit ng datos sa seguridad na pahina ngunit ang katunayan ay hindi.
+
+<h2>hindi secure na Component</h2>
+Passively ma iskan ang tugon ng server sa mga header at ng body generator content para sa producto ng mga bersyon, na kung saan ang krus-referenced ay laban sa listahan ng mga bersyon produto nalalaman na ito ay mahina sa various CVEs. 
+Ang listahan ng mga niraranguhan sa CVEs at CVSS matindi ang iskor sa output ng bawat isang producto na nabangit na mahina. 
+Sa katunayan, ang mga sumosunod na producto ay nasa panig ng server na sumosuporta:<br> Apache Tomcat aplikasyon server (limitadong functionality dahil sapagtagas ng limitadong inpormasyon sa tomcat)<br> Apache web server<br> mod_auth_radius Apache modue<br>
+ mod_fcgid Apache module<br>
+ mod_imap Apache module<br>
+mod_jk Apache module<br>
+mod_perl Apache module<br>
+mod_python Apache module<br>
+mod_ssl Apache module<br>
+OpenSSL Apache module<br>
+Perl Apache module<br>
+Python Apache module<br>
+IBM HTTP Server<br>
+JBoss aplikasyon server<br>
+Jetty web server / aplikasyon server<br>
+LiteSpeed web server<br>
+Lighttpd web server<br>
+Microsoft IIS web server<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Aplikasyon server<br>
+Oracle Web Cache<br>
+PHP<br>
+Phusion_Passenger<br>
+Phusion_Passenger<br>
+Squid proxy server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+TornadoServer web server<br>
+WordPress
+
+<h2>Image lokasyon eskaner</h2>
+<p>Mga passively eskan para sa lokaayon ng GPS pag lantad ng image sa panahon ng normal ang seguridad ng
+mga assessment sa mga website.  Image lokasyon eskaner tumotulong sa sitwasyon kung saan maaaring magpaskil ng mga larawan sa propayl ang end user at posibleng ipamigay ang kanilang lokasyon sa bahay
+e.g. a dating site or children's chatroom.  Ang isang whitepaper na ito ay matatagpuan sa http://veggiespam.com/ils/</p>
+
+<p>Tandaan: ang pagkakasunod sunod ng plug-in na ito para magamit sa, ZAP kaylangan isaayos para makatangap at maproseso ang mga image.  Upang gawin ito, pumunta sa opsiyon ng ZAP panel (Tools &rarr; Opsiyon), pumili ng display, at paganahin ang checkbox para sa "pagpaprases ng mga image sa HTTP requests/responses".  Para sa pagdadagdag, ng mga image sa ZAP ay hindi masasala sa pamamagitan ng mga setting "Global Exclude URL" o ang sesiyon prapertis para sa "Exclude from
+Proxy". </p>
+
+<h2>Buksan na Redirect</h2>
+Ang mga bukas na redirect ay isa mga top ten vulnerabilities ng OWASP 2010. Ang pagsusuring ito ay tumitingen sa user-supplied input ng mga query string parameter at post data para matukoy kung saan posibleng bukas ang mga redirect. Ang mga bukas na redirect ay mangyayari kapag ang isang aplikasyon ay pinahintulotan ang user-supplied input (e.g. http://nottrusted.com) na makuntrol ang isang offsite redirect. Ito ay pangkaraniwan isang tumpak na paraan para mahanap ang 301 o 302 mga redirect na maaaring pagsamantalahan ng mga spammer o ng pag-atake sa phishing
+
+<h2>HTTP server ay tumugon sa header eskaner</h2>
+Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng isang server header na naglalaman ng mga detalye ng bersiyon.
+Sa mahinang Threshold ay mataas ang alerto batay sa presensiya ng header field kung nakita o hindi ang bersyon ng string.
+
+<h2>Pagsiwalat sa Source Code</h2>
+Ang aplikasyon Source Code ay siniwalat ng web server
+
+<h2>Istiktong Siguridad ng transport sa header eskaner</h2>
+Itong eskaner ay sinusuri ang mga tugon ng HTTPS para sa presensiya ng Striktong Seguridad ng Transport HTTP (HSTS) header at pagsubok sa iba't ibang suliranin,
+Maging alerto kung natagpuan na ito.
+Mga alertong generated:
+<ul>
+ <li><b>Strict-Transport-Security Header Not Set:
+</b> kung ang tugon ay HTTPS at ang header ay ganap na nawawala.</li>
+ <li><b>Strikto-Transport-Seguridad Disabled: </b> kung ang tugon ay HTTPS at ang halaga ng max-age ay naka-set sa zero, gayon pagnireset ang mga browser ang impormasiyon ng HSTS para sa site.</li>
+ <li><b>Strikto-Transport-Security maraming entre ang header (Hindi sumusunod sa Spec):</b> kung ang tugon ay HTTPS at meron higit sa isang HSTS header sa mga tumugon.</li>
+ <li><b>Stricto-Transport-Seguridad Nawawalang Max-Age (hindi-sumusunod sa Spec): </b> kung ang tugon ay HTTPS, isang HSTS header ay tiyak pero ang max-age value ay hindi naglalaman ng numero.</li>
+ <li><b>Strikto-Transport-Segutidad ay tinukoy sa pamamagitan ng META (Hindi sumosunod sa Spec): </b> kung ang response body ay kabilang sa META tag sino ang susubok tukuyin ang HSTS.</li>
+ <li><b>Strikto-Transport-Seguridad ang Header ay nasa plain sa tugon ng HTTP: </b> Kung ang tugon ay HTTP at ang HSTS header ay kasalukuyan.</li>
+ <li><b>Strikto-Transport-Seguridad Max-Age malformed (Hindi sumusunod sa Spec) </b> kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga quote na nauuna ang max-age directiba(ang mga quote ay pinapayagan sa paligid ng max-age value, ngunit hindi sa paligid ng directibang ito).</li>
+ <li><b>Stikto-Transport-Seguridad Malformed Nilalaman(hindi sumusunod sa Spec): </b>kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga hindi inaasahang nilalaman(tulad ng mga buhol buhol na quote). Ang inaasahan ay maipi-print ang nilalaman ng ASCII.</li>
+</ul>
+
+<h2>Pagsisiwalat ng Timestamp</h2>
+Ang timestamp ay isiniwalat sa pamamagitan ng aplikasyon/web server
+
+<h2>Ang gumagamit ay nakukuntrol ang katangian ng elemento sa HTML (potensyal XSS)</h2>
+Ang pagsusuring ito ay tumitingen sa supplied ng gumagamit na nakapasok sa query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolado. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.
+
+<h2>Ang Gumagamit ay Nakukuntrol ang Charset</h2>
+Ang pagsusuring ito ay tumitingen sa user-suplied input sa mga query string parameter at POST data upang makilala kung saan ang uri ng nilalaman o meta tag charser ang mga deklarasyon ay maaaring kontrolado ng gumagamit. Ang naturang mga deklarasyon ng charset ay dapat palaging ideklara ng aplikasyon. Kung ang umatake ay kayang kontrolin ang tugon ng charset maaari niyang manipulahin ang HTML para mag perporm sa XSS o iba pang mga pag atake.
+
+<h2>User Kontrolable Javascript Event (XSS)</h2>
+Ang pag susuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolin. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.            
+
+<h2>Ang gumagamit ay nakukuntrol ang pag aari ng Javasript (XSS)</h2>
+Ang pagsusuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para makilala kung saan ang URL's ay tiyak ang mga katangian ng javascript (e.g.createElement src) maaaring becontrolled. Ito ay nagbibigay pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagan pagsusuri ng isang manunuri sa siguridad upang matukoy ang pagsasamantala.            
+
+<h2>Ang Username ng Hash ay natagpuan</h2>
+Kung anuman ang nilalaman ng kongteksto na tinutukoy ng mga gumagamit itong iskaner ay sinusuri ang lahat ng mga tugon para sa presensiya ng hashed values na kumakatawan sa mga username.
+Pagkatuklas ng anumang naturang halaga ay maaaring kumakatawan sa isang Insecure Direct Object Reference (IDOR) na kahinaan. Ang alerto ay itataas lamang bilang inpormasyon aytem bilang further ang manu-manong pagsusuri ay kinakaylangan upang makompirma at masuri ang impact. 
+
+<h2>X-Powered-By Header impormasyon Leak</h2>
+Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng X-Powed-By detalye.
+
+<h2>X-Backend-Server Header impormasyon Leak</h2>
+Ang pagsusuring ito ay tugon ng mga header para sa presensiya ng X-Backend-Server sa mga detalye.
+
+<h2>Malaking Redirect</h2>
+Ang pagsusuring ito ay para mahulaan ang size ng variuos redirect uri ng mga tugon at bumubuo ng alerto kung ang tugon ay masmataas pa kesa sa nahulaan size. 
+Ang malaking tugon ng redirect ay maaaring mag pahiwatig na bagama't ang isang redirect ay naganap ang pahina ay talagang nag lalaman ng nilalaman(na kung saan maaaring mabunyag ang sinsitibong impormasyon, PII, atbp).
+
+<h2>X-ChromeLogger-Data Header impormasyon Leak</h2>
+Ito ay nagsusuri sa mga tugon ng header para sa presensiya ng X-Chromelogger-Data o X-ChromePhp-Data detalye.
+
+<h2>X-Debug-Token impormasyon Leak</h2>
+Ito ay nagsusuri sa tugon ng mga header para sa presensiya ng X-Debug-Token at sa detalye ng X-Debug-Token-Link.
+Na nagpapahiwatig ng paggamit/pagkakalantad sa propayl ng Synfony. Ang symfony profiler ay nag bibigay ng akses sa isang makabuluhang halaga ng impormasyon ng interes para sa mga malisyosung indibidwal at seguridad ng mga Tester.
+
+<h2>X-AspNet-Bersiyon/X-AspNetMvc-Bersiyon ng Header impormasyon Leak</h2>
+Ang mga pagsusuring ito ay tugon ng mga header para sa presensiya ng X-AspNet-Bersiyon/X-AspNetMvc-Mga ditalye ng Bersiyon.
+
+
+</body>
+</html>

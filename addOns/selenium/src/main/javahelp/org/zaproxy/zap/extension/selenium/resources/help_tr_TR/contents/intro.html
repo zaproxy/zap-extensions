@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Selenyum</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Selenyum</h1>
+
+	<p>Selenyum eklentisi WebDrivers'ı diğer eklentiler için web tarayıcılarını çağırıp uzaktan kontrol etmeyi sağlar. Aynı zamanda, kafasız bir Java tabanlı web tarayıcısı olan HtmlUnit web tarayıcısı da paketlenmiştir.
+	<p>Eklenti, seçilen URL'yi desteklenen tarayıcılardan herhangi birinde açmanıza izin veren URL'leri (Geçmiş ve Siteler ağacında olduğu gibi) listeleyen ZAP panellerine sağ tıklama seçeneğini de ekliyor.
+
+	<h2>Desteklenen Tarayıcılar</h2>
+
+	
+	<p>Aşağıdaki web tarayıcıları desteklenmektedir:
+	<table border="2">
+		<tr>
+			<th>İsim</th>
+			<th>Kimlik</th>
+			<th>Gereksinimler/Notlar</th>
+		</tr>
+		<tr>
+			<td>Chrome</td>
+			<td>chrome</td>
+			<td>Aşağıdaki sürümlerin çalıştığı bilinmektedir: 59 ve 60 (eski sürümler de işe yarayabilir). ChromeDriver gerektiriyor, eğer sistem yolunda yoksa, Seçenekler içinde ayarlanabilir. ChromeDriver ve onu nasıl elde edeceğiniz hakkında daha fazla bilgi için <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver websitesine</a> bakın.
+			</td>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>firefox</td>
+			<td>Şu sürümlerin çalıştığı bilinmektedir: 45 (ESR), 46, 47.0.1, 54 ve 55 (daha eski sürümler de çalışabilir). Bazı sürümlerin çalışmadığı bilinmektedir, örneğin, 47.0. Daha yeni sürümler (&ge; 48) geckodriver gerektirir, seçeneklerden ayarlanabilir. geckodriver hakkında daha fazla bilgi ve onu nasıl elde edebileceğiniz için lütfen <a
+				href="https://github.com/mozilla/geckodriver">geckodriver web sitesine</a> (geckodriver kullanım ihtarları için lütfen footer notuna bakın) gidin.
+			</td>
+		</tr>
+		<tr>
+			<td>HtmlUnit</td>
+			<td>htmlunit</td>
+			<td>Birlikte verilen tarayıcının, hiçbir gereksinimi yoktur.</td>
+		</tr>
+		<tr>
+			<td>Internet Explorer</td>
+			<td>ie</td>
+			<td>Yandaki sürümün çalıştığı bilinmektedir: 11 (eski sürümler de çalışabilir).
+				IEDriverServer gerektirir, sistemin PATH' inde yoksa, seçeneklerden ayarlanabilir.
+				IEDriverServer hakkında daha fazla bilgi için <a
+				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer websitesine</a> başvurun ( Internet Explorer'ı kullanırken uyarı için altbilgi metnine göz atın).
+			</td>
+		</tr>
+		<tr>
+			<td>Opera</td>
+			<td>opera</td>
+			<td>Geçici olarak çalışmıyor.</td>
+		</tr>
+		<tr>
+			<td>PhantomJS</td>
+			<td>phantomjs</td>
+			<td>Bu sürümlerin çalıştığı bilinmektedir: 2.1.1 (eski sürümler de işe yarayabilir).
+				PhantomJS ikili sayma sistemi gerektirir, sistemin YOL'unda değilse, seçeneklerden ayarlanabilir.
+				PhantomJS ve nasıl edinileceği hakkında daha fazla bilgi için <a
+				href="http://phantomjs.org/">PhantomJS web sitesine</a> bakın (PhantomJS kullanırken uyarı için altbilgi notuna bakın).
+			</td>
+		</tr>
+		<tr>
+			<td>Safari</td>
+			<td>safari</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	<p>Firefox, Chrome, Internet Explorer, Opera, PhantomJS ve Safari'yi kullanmak için, bunları sisteminize yüklemeniz gerekir. Tarayıcının kimliği, ZAP'ı komut satırı aracılığıyla yapılandırırken veya ZAP API'sini kullanırken tarayıcıyı seçmek için kullanılabilir (örneğin, AJAX Spider'ı bir veya başka bir tarayıcı kullanacak şekilde ayarlamak için).
+	<p>
+		Tarayıcıların bazı gereksinimleri (örn. WebDrivers) <a
+			href="options.html">Seçenekler Selenium ekranında</a> yapılandırılabilir.
+
+	<h2>Birlikte verilen WebDriverlar</h2>
+ZAP WebDriverlar ile eklentiler sağlar, o eklentiler yüklendiğinde ZAP varsayılan olarak birlikte verilen WebDriverları kullanmayı deneyecektir. Bazı OS'lerde tarayıcıların bazıları için bir WebDriver'ı olmayabilir, bu durumda ZAP seçenekleri panelinde kullanılabilir bir WebDriver'ın mevcut olmadığını bildirecektir. Donanımla birlikte gelen WebDrivers 'Bundled' düğmesi ile (tekrar) ayarlanabilir (örneğin başka bir WebDriver elle ayarlanmışsa). Tüm tarayıcı sürümleri donanımla gelen WebDrivers ile desteklenmez, mümkün olduğunda tarayıcıların daha yeni/en son sürümlerinin kullanılması önerilir.
+
+	<p>
+		<strong>Not:</strong> ZAP eklentileri ek tarayıcılar ekleyebilir.
+
+	<p>
+		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>)
+HTTPS sitelerinin sürümlerde kullanılmasını önler &ge; 48 and &lt; 52.
+	<p>
+		<strong>PhantomJS Notu:</strong>Bir sorun var (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Sorun #11342</a>) ZAP ile vekillendirilmekle, 127.0.0.1::1 localhost'ta sitelere engel oluyor. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. Geçici çözüm olarak, bir <code>ana makine</code> dosyasında, yerel adresle eşleşen bir domain adı tanımlayabilir ve bunun yerine bu domain adını kullanabilir.
+	<p>
+		<strong>İnternet Explorer Notu:</strong> Internet Explorer'ın tüm sürümleri kutudan çıkmaz, bkz <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer Web sitesi</a> bunları yapılandırma hakkında daha fazla bilgi için.
+
+	<h2>Ayrıca Bakınız</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Selenyum Seçenekler ekranı</a></td>
+			<td>Selenyum Seçeneklerinin genel bir görünümü için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">API</a></td>
+			<td>Selenyum API' nın genel bir görünümü için</td>
+		</tr>
+	</table>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Forced Browse tab</TITLE>
+</HEAD>
+<BODY>
+	<H1>Forced Browse tab</H1>
+
+	The Forced Browse tab allows you to perform a
+	<a href="concepts.html">Forced Browse</a> scan on any of the sites that have been
+	accessed.
+	<br>
+	<br> Sites can be selected via the toolbar or the
+	<i>Sites tab</i>.
+	<br> Any sites that have have been are are currently being scanned are marked in
+	bold in the toolbar Sites pulldown control.
+	<br> The toolbar provides a set of buttons which allow you to start, stop, pause and
+	resume the scan.
+	<br> A progress bar shows how far the scan of the selected site has progressed.
+	<br> The 'Current scans' value shows how many scans are currently active - hovering
+	over this value will show a list of the sites being scanned in a popup.
+	<br> The toolbar also includes a button to export the displayed content as CSV.
+
+	<H2>Right click menu</H2>
+	Right clicking on one or more rows will bring up a menu which will allow you to:
+
+	<H3>Exclude from</H3>
+	This menu has the following submenus:
+
+	<H4>Proxy</H4>
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Session Properties</i> dialog
+
+	<H4>Scanner</H4>
+	This will prevent the selected notes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Session Properties</i> dialog
+
+	<H4>Spider</H4>
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Session Properties</i> dialog
+
+	<H3>Copy</H3>
+	This will copy the selected URLs to the clipboard.
+
+	<H3>Resend...</H3>
+	This will bring up the
+	<i>Resend dialog</i> which allows you to resend the request after making any changes to
+	it that you want to.
+
+	<H3>New Alert...</H3>
+	This will bring up the
+	<i>Add Alert dialog</i> which allows you to manually record a new
+	<i>alert</i> against this request.
+
+	<H3>Open URL in Browser</H3>
+	This will open the URL of the selected node in your default browser.
+
+	<H3>Generate anti CSRF test form</H3>
+	This will open a URL which will give you a generated form for testing for CSRF issues.
+	<br> It will only be enabled for POST requests, if the API is enabled and if Java
+	supports the opening of URLs in a browser on your platform.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Options Forced Browse screen</a></td>
+			<td>for details of the forced browse configuration</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

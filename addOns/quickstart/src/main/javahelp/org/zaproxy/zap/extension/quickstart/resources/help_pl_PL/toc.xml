@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="Szybki Start" image="icon147" target="quickstart">
+				<tocitem text="Wiersz polecenia"  target="quickstart.cmdline" />
+				<tocitem text="Launch Options"  target="quickstart.launch.options" />
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

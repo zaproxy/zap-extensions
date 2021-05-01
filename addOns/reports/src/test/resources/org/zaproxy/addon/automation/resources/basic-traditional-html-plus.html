@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Test Title</title>
+<link href="basic-traditional-html-plus/common.css"
+	rel="stylesheet" type="text/css">
+<link href="basic-traditional-html-plus/null.css" rel="stylesheet" type="text/css">
+<script src="basic-traditional-html-plus/Chart.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function showHide(id) {
+        showHideElement(id + "reqh");
+        showHideElement(id + "reqb");
+        showHideElement(id + "resph");
+        showHideElement(id + "respb");
+    }
+    function showHideElement(id) {
+        var x = document.getElementById(id);
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+<link rel="stylesheet" href="basic-traditional-html-plus/Chart.min.css">
+</head>
+<body>
+	<h1>
+		<!-- The ZAP Logo -->
+		<img src="basic-traditional-html-plus/zap32x32.png" alt="">
+		Test Title
+	</h1>
+	<p />
+	
+		Test Description
+		
+	
+
+	<h2>
+		
+		!reports.report.site!
+		
+	</h2>
+
+	<h3>
+		!reports.report.generated!
+	</h3>
+	
+		<canvas id="summaryChart" width="550" height="300"
+			style="border: 1px solid"></canvas>
+		<script type="text/javascript">
+            /*<![CDATA[*/
+            var title = "Alert Chart";
+            var labels = [
+            "!reports.report.risk.3!",
+            "!reports.report.risk.2!",
+            "!reports.report.risk.1!",
+            "!reports.report.risk.0!"];
+            var data = [
+            1,
+            null,
+            null,
+            null];
+            /*]]>*/
+            new Chart(document.getElementById("summaryChart"),
+                    {
+                        "type" : "bar",
+                        "data" : {
+                            "labels" : labels,
+                            "datasets" : [ {
+                                "label" : title,
+                                "data" : data,
+                                "fill" : false,
+                                "backgroundColor" : [ "red", "orange",
+                                        "yellow", "blue" ],
+                                "borderWidth" : 1
+                            } ]
+                        },
+                        "options" : {
+                            "scales" : {
+                                "yAxes" : [ {
+                                    "ticks" : {
+                                        "beginAtZero" : true
+                                    }
+                                } ]
+                            },
+                            responsive : false
+                        }
+                    });
+        </script>
+		<p></p>
+	
+
+	
+		<h3 class="left-header">!reports.report.alerts.summary!</h3>
+		<table class="summary">
+			<tr>
+				<th width="45%"
+					height="24">!reports.report.alerts.summary.risklevel!</th>
+				<th width="55%"
+					align="center">!reports.report.alerts.summary.numalerts!</th>
+			</tr>
+			<tr>
+				<td class="risk-3">
+					<div>!reports.report.risk.3!</div>
+				</td>
+				<td align="center">
+					<div>1</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="risk-2">
+					<div>!reports.report.risk.2!</div>
+				</td>
+				<td align="center">
+					<div>0</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="risk-1">
+					<div>!reports.report.risk.1!</div>
+				</td>
+				<td align="center">
+					<div>0</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="risk-0">
+					<div>!reports.report.risk.0!</div>
+				</td>
+				<td align="center">
+					<div>0</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="risk--1">
+					<div>!reports.report.risk.-1!</div>
+				</td>
+				<td align="center">
+					<div>0</div>
+				</td>
+			</tr>
+		</table>
+		<div class="spacer-lg"></div>
+	
+
+	
+		<h3>!reports.report.alerts.list!</h3>
+		<table class="alerts">
+			<tr>
+				<th width="60%" height="24">!reports.report.alerts.list.name!</th>
+				<th width="20%"
+					align="center">!reports.report.alerts.list.risklevel!</th>
+				<th width="20%"
+					align="center">!reports.report.alerts.list.numinstances!</th>
+			</tr>
+			<tr>
+				<td><a href="#1">XSS</a></td>
+				<td align="center" class="risk-3">!reports.report.risk.3!</td>
+				<td align="center">1</td>
+			</tr>
+		</table>
+		<div class="spacer-lg"></div>
+	
+
+	
+		<h3>Passing Rules</h3>
+		<table class="alerts">
+			<tr>
+				<th width="55%" height="24">!reports.report.alerts.list.name!</th>
+				<th width="15%"
+					align="center">Rule Type</th>
+				<th width="15%"
+					align="center">Threshold</th>
+				<th width="15%"
+					align="center">Strength</th>
+			</tr>
+			
+			
+		</table>
+		<div class="spacer-lg"></div>
+	
+
+
+	
+		<h3>!reports.report.alerts.detail!</h3>
+		
+			<table class="results">
+				<tr height="24">
+					<th width="20%" class="risk-3"><a
+						id="1"></a>
+						<div>!reports.report.risk.3!</div></th>
+					<th class="risk-3">XSS</th>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.description!</td>
+					<td width="80%">
+							<div>XSS Description</div>
+							
+						</td>
+				</tr>
+				<TR vAlign="top">
+					<TD colspan="2"></TD>
+				</TR>
+				
+					<tr>
+						<td width="20%"
+							class="indent1">!reports.report.alerts.detail.url!</td>
+						<td width="80%"><a href="http://example.com/example_3">http://example.com/example_3</a></td>
+					</tr>
+					<tr>
+						<td width="20%"
+							class="indent2">!reports.report.alerts.detail.method!</td>
+						<td width="80%">GET</td>
+					</tr>
+					<tr>
+						<td width="20%"
+							class="indent2">!reports.report.alerts.detail.param!</td>
+						<td width="80%">Test Param</td>
+					</tr>
+					<tr>
+						<td width="20%"
+							class="indent2">!reports.report.alerts.detail.attack!</td>
+						<td width="80%">Test Attack</td>
+					</tr>
+					<tr>
+						<td width="20%"
+							class="indent2">!reports.report.alerts.detail.evidence!</td>
+						<td width="80%">Test Evidence</td>
+					</tr>
+					<tr>
+						<td width="20%" class="indent2">
+							<div id="-1">
+								<a
+									onclick="showHide(&#39;-1&#39;);"
+									href="#-1">!reports.report.alerts.detail.showhide!</a>
+							</div>
+						</td>
+						<td width="80%"></td>
+					</tr>
+					<tr>
+						<td width="20%" class="indent2">!reports.report.alerts.detail.request.header!
+							!reports.report.size!
+						</td>
+						<td width="80%">
+							<div id="-1reqh"
+								style="display: none;">
+								
+									GET http://example.com/example_3 HTTP/1.1
+									<br />
+								
+									Host: example.com
+									<br />
+								
+									User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0
+									<br />
+								
+									Pragma: no-cache
+									<br />
+								
+									Cache-Control: no-cache
+									<br />
+								
+									Content-Length: 0
+									<br />
+								
+									
+									
+								
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%" class="indent2">!reports.report.alerts.detail.request.body!
+							!reports.report.size!
+						</td>
+						<td width="80%">
+							<div id="-1reqb"
+								style="display: none;">
+								
+									Test Request Body
+									
+								
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%" class="indent2">!reports.report.alerts.detail.response.header!
+							!reports.report.size!
+						</td>
+						<td width="80%">
+							<div id="-1resph"
+								style="display: none;">
+								
+									HTTP/1.0 0
+									<br />
+								
+									
+									
+								
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%" class="indent2">!reports.report.alerts.detail.response.body!
+							!reports.report.size!
+						</td>
+						<td width="80%">
+							<div id="-1respb"
+								style="display: none;">
+								
+									Test Response Body
+									
+								
+							</div>
+						</td>
+					</tr>
+				
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.instances!</td>
+					<td width="80%">1</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.solution!</td>
+					<td width="80%">
+							<div>Test Solution</div>
+							
+						</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.reference!</td>
+					<td width="80%">
+							<a href="Test Reference">Test Reference</a>
+							
+						</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.cweid!</td>
+					<td width="80%"><a
+						href="https://cwe.mitre.org/data/definitions/123.html">123</a></td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.wascid!</td>
+					<td width="80%">456</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.pluginid!</td>
+					<td width="80%"><a
+						href="https://www.zaproxy.org/docs/alerts/1/">1</a></td>
+				</tr>
+			</table>
+			<div class="spacer"></div>
+		
+	
+</body>
+</html>
+

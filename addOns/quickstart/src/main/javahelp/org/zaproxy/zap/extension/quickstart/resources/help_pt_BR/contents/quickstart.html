@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Início Rápido
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Início Rápido</h1>
+<p>
+	A aba de início rápido fornece uma maneira fácil de testar rapidamente um aplicativo da web.
+</p>
+<p>
+	Digite a URL do seu aplicativo de destino e pressione o botão de 'Ataque'.
+</p>
+<p>
+	O ZAP irá vasculhar o alvo e então atacá-lo com a varredura ativa.
+</p>
+<p>
+	Para um teste de mais profundidade você deve explorar seu aplicativo usando o seu navegador ou testes de regressão automatizada, fazendo proxy através do ZAP.
+</p>
+<h2>Launch Browser</h2>
+As long as you have the Selenium add-on installed then you will see an option to launch browsers.<br>
+Select the browser you want from the pull-down and press the 'Launch Browser' button.<br>
+Browsers launched this way will be configured to proxy via ZAP and will ignore certificate errors,
+so you will not need to import the ZAP Root CA Certificate.<br>
+ZAP will remember the last browser you chose when you restart it.<br><br>
+Note that launched browsers will stop working if you change the address or port that ZAP is listening on.
+
+<h2>Plug-n-Hack</h2>
+If you have the Plug-n-Hack add-on installed then you will see a button for configuring Firefox with Plug-n-Hack.<br>
+This automatically configures Firefox to proxy via ZAP and will import and trust the ZAP Root CA.
+
+
+<h2>See also</h2>
+<table>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="cmdline.html">Linha de comando</a></td>
+		<td>Descrição dos argumentos de linha de comando</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="launchoptions.html">Launch Options</a></td>
+		<td>the Quick Start Launch Options</td>
+	</tr>
+</table>
+
+</body>
+</html>

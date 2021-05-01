@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga Processor ng Mensahe ng HTTP
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Mga Processor ng Mensahe ng HTTP</h1>
+Ang mga processor ng mensahe ng HTTP ay maaaring mag-access at magbago sa mga mensahe ng HTTP na naging fuzz, makontrol ang mga proseso ng pagpa-fuzz at makipag-ugnayan sa ZAP UI.
+<p>
+Ang mga built-in na mga processor ng mensahe ng HTTP ay kinabibilangan ng:
+
+<h3>Anti-CSRF Token Refresher</h3>
+Nagpapahintulot upang i-refresh ang mga token ng anti-CSRF na nakapaloob sa kahilingan. Ang mga token ng anti-CSRF ay dapat maayos na natukoy ng ZAP para magawang magamit ang processor na ito.<br>
+Para sa karagdagang impormasyon, konsultahin ang pahina ng tulong na "Pagsisimula" > "Mga Tampok" > "Anti CSRF Tokens".<br>
+<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor, kapag ang mga token ng anti-CSRF ay natukoy.
+
+<h3>Fuzzer HTTP Processor (Script)</h3>
+Nagpapahintulot na pumili ng gumaganang script ng Fuzzer HTTP Processor. Ang script na ito ay nagpapahintulot sa iyo na:
+<ul>
+<li>Kumuha ng listahan ng mga kargamento</li>
+<li>Ihinto ang pagpa-fuzz</li>
+<li>Lakihan ang bilang ng kamalian</li>
+<li>Magpadala ng mga bagong mensahe</li>
+<li>Magdagdag ng mga mensahe sa tab ng mga Resulta</li>
+<li>Itakda ang pasadyang mensahe ng 'estado' sa <a href="tab.html">tab ng Fuzzer</a></li>
+<li>Magtaas ng mga alerto</li>
+</ul>
+
+<h3>Detektor ng Panganganinag ng Kargamento</h3>
+Ipinapahiwatig sa kulumna ng Estado ng talahanayan ng mga resulta kapag ang isa sa mga itinurok na mga kargamento ay nahap sa tugon, gamit ang<img src="images/reflected_icon.png"> Naisalarawan".<br>
+<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor.
+
+<h3>Taga-update ng haba ng nilalaman ng kahilingan</h3>
+Nag-a-update (o nagdadagdag, kapag hndi pa naroon) ang <code>Haba ng nilalaman</code> ng header ng kahilingan gamit ang haba ng laman ng kahilingan, para sa lahat ng mga paraan ng kahilingan. Walang pagbabago ang gagawin kapag ang laki ng laman ng kahilingan ay zero at ang header ay hindi pa naroon.<br>
+<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor.
+
+<h3>Tagapaglikha ng Tag</h3>
+Nagpapahintulot sa iyo na magdagdag ng pasadyang 'tags', batay sa mga nilalaman ng tugon, sa kulumna ng Estado ng talahanayan ng mga resulta
+
+<h3>Processor ng Mensahe ng Gumagamit</h3>
+Nagpapahintulot na i-fuzz bilang gumagamit, gamit ang isa sa mga tinukoy ng mga gumagamit sa mga konteksto na kinabibilangan ng mensahe ng HTTP na naging fuzz. Ang mga gumagamit ay dapat umiiral upang makapili at makadagdag sa processor na ito.
+
+<p>
+Ang ibang mga add-on ay maaaring magtukoy ng karagdagang processor ng mga mensahe ng HTTP.
+
+<h2>Na-access sa pamamagitan ng</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Diyalogo ng Fuzzer</a> sa ilalim ng tab ng Processor ng Mensahe</td></tr>
+</table>
+
+<h2>Tingnan din</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Mga konsepto ng Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

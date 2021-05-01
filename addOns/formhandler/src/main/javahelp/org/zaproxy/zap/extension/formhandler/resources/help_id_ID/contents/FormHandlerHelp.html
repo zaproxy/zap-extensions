@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+	<head>
+		<title> Form Handler </title>
+	</head>
+	<body bgcolor="#ffffff">
+
+		<h1>Bentuk Handler</h1>
+			<p>
+				Ekstensi bentuk handler ini memungkinkan untuk konfigurasi khusus untuk nilai yang digunakan dalam bentuk yang berdasarkan nama bidang.
+			</p>
+
+		<h2>Deskripsi</h2>
+			<p>
+				Dengan add-on ini pengguna dapat membuat bidang baru untuk masing-masing bidang yang mereka ingin mengatur nilai. Selain itu, pengguna dapat memodifikasi setiap nama bidang yang ada dan nilai yang sesuai dengan bidang yang mereka mencoba untuk mengatur. Bidang apapun juga dapat dinonaktifkan atau dihapus oleh pengguna sehingga nilai-nilai adat 
+tidak digunakan. Nama bidang, nilai-nilai dan diaktifkan status akan disimpan bahkan setelah ZAP sesi 
+menyimpulkan.
+			</p>
+			<p>
+				Add-on ini menyediakan satu set default nama bidang yang dapat ditemukan pada formulir yang sesuai nilai default untuk masing-masing bidang. Nilai default ini dapat dinonaktifkan, diubah dan dihapus jika keinginan pengguna.
+			</p>
+
+		<h2>Menggunakan Form Handler</h2>
+			<p>
+				Bentuk Handler dapat ditemukan dalam Pilihan. Memilih tab Bentuk Handler akan menampilkan tabel dengan semua nilai yang ada yang saat ini didefinisikan. Contoh ditunjukkan di bawah ini.
+			</p>
+			<img src="../contents/images/formHandlerTable.PNG" alt="Gambar Tidak Tersedia"/>
+
+		<h3>Menambahkan Bidang Baru</h3>
+			<p>
+				Untuk menentukan nilai bidang tambahan <b>Tambahkan</b> tombol yang dapat diklik. Ini akan memunculkan dialog bagi pengguna untuk memberikan bidang informasi.
+			</p>
+
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Gambar Tidak Tersedia"/>
+
+			<p>
+				Harap perhatikan berikut ini saat menambahkan bidang baru:
+				<ul>
+					<li>Nama bidang harus di sediakan.</li>
+					<li>Nama bidang tidak ada di tabel atau peringatan kesalahan akan terjadi.</li>
+					<li>Nama bidang yang disediakan untuk Bentuk Handler harus sesuai dengan bidang ID pada bentuk yang anda inginkan untuk mendefinisikan.</li>
+					<li>Nama bidang bukan hal sensitif.</li>
+					<li>Nilai tidak harus disediakan. Ini akan berdampak pada string kosong yang digunakan.</li>
+					<li>Bidang nilai adalah hal sensitif, dan akan terlihat di POSTINGAN.</li>
+				</ul>
+			</p>
+
+		<h3>Memodifikasi Bidang yang ada</h3>
+			<p>
+				Ekstensi ini memungkinkan pengguna untuk mengubah nilai dan nama bidang yang ada. Hal ini dapat dilakukan dengan memilih bidang yang ingin anda ubah dan klik pada <b>Ubah</b> tombol.
+			</p>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="Gambar Tedak Tersedia"/>
+
+			<p>
+				Saat memodifikasi bidang pengguna dibatasi oleh aturan yang sama seperti membuat yang baru. Kendala yang paling umum ketika memodifikasi sebuah bidang adalah nama yang tidak bisa sama dengan bidang yang ada.
+				(yaitu bukan bidang duplikat)
+			<p>
+ 
+		<h3>Menghapus Bidang</h3>
+			<p>
+				Pengguna dapat menghapus bidang kapan saja. Untuk melakukannya cukup pilih bidang yang ingin anda hapus dan klik pada tombol <b>Hapus</b>. <i> Harap dicatat bahwa anda akan diminta untuk mengkonfirmasi penghapusan sebelum 
+melanjutkan kecuali kotak <b>Hapus tanpa Konfirmasi</b> dicentang.</i> 
+			</p>
+
+		<h2>Bentuk Bidang Yang Tidak Didefinisikan</h2>
+			<p>
+				Pengguna mungkin menemukan bahwa mereka tidak ingin untuk mendefinisikan setiap bidang dalam suatu bentuk, tetapi lebih menentukan beberapa pilihan dalam bentuk.
+			</p>
+			<p>
+				Setiap bidang yang tidak didefinisikan dalam bentuk handler add-on ini akan menggunakan nilai default ZAP yang dihasilkan untuk menyesuaikan pertandingan masing-masing jenis bidang.(Misalnya: bidang teks akan memiliki nilai "ZAP")
+			</p>
+
+	</body>
+</html>

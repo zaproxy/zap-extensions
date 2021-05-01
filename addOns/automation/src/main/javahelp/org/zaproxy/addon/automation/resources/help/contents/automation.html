@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework</H1>
+This add-on provides a framework that allows ZAP to be automated in an easy and flexible way.
+<p>
+It provides the following command line options:
+<ul>
+<li>-autorun &lt;filename&gt;		Run the automation jobs specified in the file.
+<li>-autogenmin &lt;filename&gt;	Generate template automation file with the key parameters.
+<li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
+<li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
+</ul>
+
+To use the automation framework:
+<ol>
+<li>Generate a template automation file using one of the <code>-autogen*</code> command line options
+<li>Edit the file to match your requirements
+<li>Run the file using the <code>-autorun</code> commandline option
+</ol>
+
+In all cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
+and ZAP exits as soon as it has finished generating or running the jobs defined in the file.
+
+<H2>Environment</H2>
+The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
+
+<H2>Jobs</H2>
+The following automation jobs are supported by this add-on:
+<ul>
+<li><a href="job-addons.html">addOns</a> - add-on management</li>
+<li><a href="job-pscanconf.html">passiveScan-config</a> - passive scan configuration</li>
+<li><a href="job-pscanwait.html">passiveScan-wait</a> - waits for the passive scanner to finish processing the current queue</li>
+<li><a href="job-spider.html">spider</a> - runs the traditional spider</li>
+<li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
+</ul>
+
+This framework is plugable and so other add-ons may add support for other jobs.
+<p>
+The 'min' and 'max' templates include comments giving more information about the fields.
+</BODY>
+</HTML>
+

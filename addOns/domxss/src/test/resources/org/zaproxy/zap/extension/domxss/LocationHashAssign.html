@@ -1,0 +1,9 @@
+<html>
+  <head><title>Address based DOM XSS</title></head>
+  <body>
+    <script>
+      var payload = window.location.hash.substr(1);window.location.assign(payload);
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+type Query {
+    jellyBean: [Bugs]
+    marshmallow: [Bugs!]
+    nougat: [Bugs]!
+    pie: [Bugs!]!
+}
+
+type Bugs {
+    count: Int
+}

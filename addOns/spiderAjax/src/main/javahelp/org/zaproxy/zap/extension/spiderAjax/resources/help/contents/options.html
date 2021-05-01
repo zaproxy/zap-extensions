@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Options AJAX Spider screen</TITLE>
+</HEAD>
+<BODY>
+	<H1>Options AJAX Spider screen</H1>
+
+	This screen allows you to configure the
+	<a href="concepts.html">AJAX Spider</a> options. The AJAX Spider is an add-on for a
+	crawler called Crawljax. The add-on sets up a local proxy in ZAP to talk to Crawljax.
+	The AJAX Spider allows you to crawl web applications written in AJAX in far more depth than
+	the native Spider. Use the AJAX Spider if you may have web applications written in AJAX. You should also use
+	the native Spider as well for complete coverage of a web application (e.g., to cover HTML comments). 
+    <br/>
+    <br/>
+    <h2>Configuration Options</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+		</tr>
+		<tr>
+			<td>Browser</td>
+			<td>AJAX Spider relies on an external browser to crawl the targeted site. You can
+				specify which one you want to use. For more details on supported browsers refer to
+				"Selenium" add-on help pages.</td>
+			<td align="center">Firefox Headless</td>
+		</tr>
+		<tr>
+			<td>Number of Browser Windows to Open</td>
+			<td>You can configure the number of windows to be used by AJAX Spider.
+				 The more windows, the faster the process will be.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Maximum Crawl Depth</td>
+			<td>The maximum depth that the crawler can reach. Zero means unlimited depth.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Maximum Crawl States</td>
+			<td>The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. </td>
+			<td align = "center"> 0 (unlimited)</td>
+		</tr>
+		<tr>
+			<td>Maximum Duration</td>
+			<td>The maximum time that the crawler is allowed to run. Zero means unlimited running time.</td>
+			<td align = "center">60 minutes</td>
+		</tr>
+		<tr>
+			<td>Event Wait Time</td>
+			<td>The time to wait after a client side event is fired.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Reload Wait Time</td>
+			<td>The time to wait after URL is loaded.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Click Elements Once</td>
+			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Use Random Values in Form Fields</td>
+			<td>When enabled, inserts random values into form fields. Otherwise, it uses empty values.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Click Default Elements Only</td>
+			<td>When enabled, only elements "a", "button" and "input" will be clicked during crawl. Otherwise, it uses the table below to determine which elements will be clicked.  For more in depth analysis, disable this and configure the clickable elements in the table.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Select elements to click during crawl (table)</td>
+			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
+			<td align = "center">All enabled</td>
+		</tr>
+		<tr>
+			<td>Allowed Resources (table)</td>
+			<td>The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.</td>
+			<td align = "center"></td>
+		</tr>
+		
+	</table>
+	
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Spider tab</a></td>
+			<td>for an overview of the AJAX Spider Tab</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
+			<td>for an overview of the AJAX Spider Dialog</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

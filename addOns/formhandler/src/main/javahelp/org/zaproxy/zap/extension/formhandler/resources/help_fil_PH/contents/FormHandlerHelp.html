@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+	<head>
+		<title> Tagapamahala ng Form </title>
+	</head>
+	<body bgcolor="#ffffff">
+
+		<h1>Tagapamahala ng Form</h1>
+			<p>
+				Ang ekstensyong sa Tagapamahala ng Form ay magpapahintulot para sa mga kustom na kompigurasyon ng mga balyu na ginagamit sa mga form base sa mga pangalan ng field.
+			</p>
+
+		<h2>Deskripsyon</h2>
+			<p>
+				Gamit ang add-on na ito ang tagagamit ay maaring makalikha ng bagong mga field para sa bawat indibiduwal na field na gusto nilang matalaga na
+balyu. Bukod dito, ang tagagamit ay maaring makabago ng kahit anong umiiral na pangalan ng field at balyu na akma sa field 
+na sinusubukan nilang i-set. Ang kahit anong mga field ay maaring hindi mapagana o maalis ng tagagamit upang ang mga kustom na balyu 
+ay hindi magamit. Ang mga pangalan ng field, mga balyu at pinaganang mga estado ay matatago kahit matapos ang sesyon ng ZAP.
+			</p>
+			<p>
+				Ang add-on na ito ay nagbibigay ng mga pangkat na default na mga pangalan ng field na maaring mahanap sa isang form at ng kaukulan 
+				na balyu para sa bawat default na field. Ang mga default na balyung ito ay maaring hindi mapagana, mabago at mabura kung ang 
+				tagagamit ay maghahangad nito.
+			</p>
+
+		<h2>Paggamit sa Tagapamahala ng Form</h2>
+			<p>
+				Ang Tagapalamahal ng Form ay maaring makita sa Mga Pagpipilian. Ang pagpili ng tab sa Tagapamahala ng Form ay magpapakita ng isang talaan 
+				na may lahat ng umiiral na mga balyu na kasalukuyang binigyan ng kahulugan. Ang halimbawa ay makikita sa ibabaw.
+			</p>
+			<img src="../contents/images/formHandlerTable.PNG" alt="Hindi Mapapakita Ang Imahe"/>
+
+		<h3>Pagdagdag Ng Isang Bagong Field</h3>
+			<p>
+				Upang mabigyang ng kahulugan ang karagdagang mga balyu ng field ang <b>Magdagdag</b> na button ay maaring mapindot. Ito ay magdadala palabas ng isang dialogo 
+				para sa manggagamit na magbigay ng impormasyon sa field.
+			</p>
+
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Hindi Mapapakita Ang Imahe"/>
+
+			<p>
+				Mangyari lamang na tandaan ang mga sumusunod kapag magdadagdag ng isang bagong field:
+				<ul>
+					<li>Ang pangalan ng field ay kinakailangang malagyan.</li>
+					<li>Ang pangalan ng field ay hindi maaring umiral sa loob ng talaan o ang babalang error ay magpapakita.</li>
+					<li>Ang pangalan ng field na inilagay sa Tagapamahala ng Form ay kinakailangan magtugma sa ID ng field sa form na gusto mong 
+						bigyan ng kahulugan.</li>
+					<li>Ang pangalan ng field ay hindi sensitibo sa laki ng letra.</li>
+					<li>Ang balyu ay hindi kinakailangang malagay. Ito ay magreresulta ng isang string na walang laman na magagamit.</li>
+					<li>Ang balyu ng field ay sensitibo sa laki ng letra, at makikita sa POST.</li>
+				</ul>
+			</p>
+
+		<h3>Pagbabago Ng Umiiral Na Field</h3>
+			<p>
+				Ang ekstensyon ay magpapahintulot sa tagagamit na baguhin ang mga balyu at pangalan ng umiiral na mga field. Ito ay maaring magawa 
+				sa pamamagitan ng pagpili ng field na gusto mong baguhin at pagpindot sa <b>Baguhin</b> na button.
+			</p>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="Hindi Mapapakita Ang Imahe"/>
+
+			<p>
+				Kapag nagbabago ng field ang tagagamit ay mapipilit sa parehong mga patakaran sa paggawa ng isang bago. Ang pinaka
+				karaniwang pagpipilit kapag nagbabago ng field ay ang pangalan na hindi maaring maging pareho sa isang umiiral na field.
+				(i.e Walang dobleng mga field)
+			<p>
+ 
+		<h3>Pag-aalis ng mga Field</h3>
+			<p>
+				Ang taggagamit ay maaring mag-alis ng mga field sa kahit anong oras. Upang magawa ito simpleng pumili ng field na gusto mong itanggal at 
+				pindutin sa <b>Tanggalin</b> na button. <i> Mangyari lamang na tandaan na ikaw ay mauudyok na ikompirma ang pag-alis bago 
+				magpatuloy hanggang sa ang <b>Pagtanggal ng walang Kompirmasyon</b> na kahon ay naka-tsek.</i> 
+			</p>
+
+		<h2>Mga Field Ng Form Na Hindi Binigyan Ng Kahulugan</h2>
+			<p>
+				Ang taggagamit ay maaring makatanto na hindi nila gustong magbigay ng kahulugan sa kada field sa loob ng isang form, sa halip ay magbibigay kahulugan sa iilang mga napili sa loob ng 
+				form.
+			</p>
+			<p>
+				Ang kahit anong field na hindi nabigyan ng kahulugan sa loob ng tagapamahala ng form na add-on ay gagamit ng default na balyu ng ZAP na nalikha upang matugma 
+				ang bawat uri ng field.(Halimbawa: Ang tekstong field ay magkakaroon ng balyu "ZAP")
+			</p>
+
+	</body>
+</html>

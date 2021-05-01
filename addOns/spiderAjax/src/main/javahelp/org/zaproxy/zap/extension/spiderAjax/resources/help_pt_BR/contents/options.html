@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Tela de opções do AJAX Spider</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Tela de opções do AJAX Spider</h1>
+
+	Esta tela permite que você configure opções do
+	<a href="concepts.html">AJAX Spider</a> . O Spider AJAX é um complemento para um rastreador chamado Crawljax. O complemento configura um proxy local no ZAP falar com o Crawljax.
+	O spider AJAX permite a você percorrer aplicações web escritas em AJAX em muito mais profundidade do que o spider nativo. Use o spider AJAX se você estiver testando aplicativos web escritos em AJAX. Você também deve usar o spider nativo para uma cobertura completa de um aplicativo da web (por exemplo, para abranger comentários do HTML). 
+    <br/>
+    <br/>
+    <h2>Explicação das opções de configuração</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th colspan = "3"><br>Opções de configuração</th>
+		</tr>
+		<tr>
+			<th>Campo</th>
+			<th>Detalhes</th>
+			<th>Padrão</th>
+		</tr>
+		<tr>
+			<td>Navegador</td>
+			<td>O spider AJAX se baseia em um navegador externo para rastrear o site alvo. Você pode especificar qual dos dois você deseja usar. Para mais detalhes sobre navegadores suportados consulte páginas de ajuda da extensão "Selenium".</td>
+			<td align="center">Firefox</td>
+		</tr>
+		<tr>
+			<td>Número de janelas do navegador para abrir</td>
+			<td>Você pode configurar o número de janelas para ser usado pelo spider AJAX. Quanto mais janelas, mais rápido o processo será.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Profundidade máxima de rastreamento</td>
+			<td>A profundidade máxima que o rastreador pode chegar. Zero significa profundidade ilimitada.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Máximo de estados de navegação</td>
+			<td>O número máximo de Estados que o rastreador deve percorrer. Zero significa ilimitado. </td>
+			<td align = "center"> 0 (ilimitado)</td>
+		</tr>
+		<tr>
+			<td>Duração máxima</td>
+			<td>O tempo máximo que o rastreador pode ser executado. Zero significa ilimitado tempo de execução.</td>
+			<td align = "center">60 minutos</td>
+		</tr>
+		<tr>
+			<td>Tempo de espera do evento</td>
+			<td>O tempo de espera após um evento de lado do cliente é disparado.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Tempo de espera de recarga</td>
+			<td>O tempo de espera depois que URL é carregada.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Clicar em elementos uma vez</td>
+			<td>Quando habilitado, o rastreador tenta interagir com cada elemento (por exemplo, clicando) apenas uma vez.  Se isso não for definido, o rastreador tentará clicar várias vezes. Desativar esta opção representa mais rigor, mas a varredura pode levar consideravelmente mais tempo.</td>
+			<td align = "center">Verdadeiro</td>
+		</tr>
+		<tr>
+			<td>Usar valores aleatórios em campos de formulário</td>
+			<td>Quando habilitado, insere valores aleatórios para campos de formulário. Caso contrário, ele deixa o valor vazio.</td>
+			<td align = "center">Verdadeiro</td>
+		</tr>
+		<tr>
+			<td>Clicar somente em elementos padrão</td>
+			<td>Quando habilitado, só os elementos "a", "botão" e "entrada" serão clicados durante a varredura. Caso contrário, ele usa a tabela abaixo para determinar quais elementos irão ser clicados.  Para obter análise aprofundada, desative isso e configure os elementos clicáveis na tabela.</td>
+			<td align = "center">Verdadeiro</td>
+		</tr>
+		<tr>
+			<td>Selecionar elementos a clicar durante o rastreamento (tabela)</td>
+			<td>A lista de elementos a percorrer.  Esta tabela aplica-se somente quando "clicar somente em elementos padrão" não está habilitado.  Use "habilitar tudo" para análise mais aprofundada, que pode demorar um pouco mais.</td>
+			<td align = "center">Tudo habilitado</td>
+		</tr>
+		
+	</table>
+	
+	<h2>Veja também</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>para uma visão geral do AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">Aba do Spider Ajax</a></td>
+			<td>para uma visão geral do AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">Diálogo do Spider Ajax</a></td>
+			<td>para uma visão geral do Diálogo do Spider AJAX</td>
+		</tr>
+	</table>
+
+</body>
+</html>

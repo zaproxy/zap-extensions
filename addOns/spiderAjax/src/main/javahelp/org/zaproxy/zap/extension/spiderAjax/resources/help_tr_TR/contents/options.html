@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>AJAX Ağ Ekran Seçenekleri</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>AJAX Ağ Ekran Seçenekleri</h1>
+
+	Bu ekran şunu yapılandırmanızı sağlar
+	<a href="concepts.html">AJAX Ağ</a> seçenekler. AJAX Örümcek Crawljax adlı bir tarayıcı için eklentidir. Eklenti, Zraw'da Crawljax ile konuşmak için yerel bir proxy ayarlar.
+	AJAX Spider, AJAX ile yazılmış web uygulamalarını, yerli Spider'dan çok daha derin bir şekilde taramanızı sağlar. AJAX ile yazılmış web uygulamalarınız varsa AJAX Spider'ı kullanın. Ayrıca, bir web uygulamasının tümüyle kapsanması için (ör., HTML yorumlarını kapsamak için) yerli Spider'i de kullanmalısınız. 
+    <br/>
+    <br/>
+    <h2>Yapılandırma seçeneği açıklaması</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th colspan = "3"><br>Yapılandırma Seçenekler</th>
+		</tr>
+		<tr>
+			<th>Alan</th>
+			<th>Ayrıntılar</th>
+			<th>Varsayılan</th>
+		</tr>
+		<tr>
+			<td>Tarayıcı</td>
+			<td>AJAX Örümcek, hedeflenen siteyi taramak için harici bir tarayıcıya güvenir. Hangisini kullanmak istediğinizi belirtebilirsiniz. Desteklenen tarayıcılar hakkında daha fazla bilgi için "Selenium" eklentisi yardım sayfalarına bakınız.</td>
+			<td align="center">Firefox</td>
+		</tr>
+		<tr>
+			<td>Açılacak tarayıcı pencereleri sayısı</td>
+			<td>AJAX Spider tarafından kullanılacak pencere sayısını yapılandırabilirsiniz. Pencere sayısı arttıkça işlem de o kadar hızlı olur.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Maksimum tarama derinliği</td>
+			<td>Tarayıcının erişebileceği maksimum derinlik. Sıfır sınırsız derinlik anlamına gelir.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Maksimum tarama durumu</td>
+			<td>Tarayıcının taraması gereken maksimum durum sayısı. Sıfır sınırsız ilerleme durumu anlamına gelir. </td>
+			<td align = "center"> 0 (sınırsız)</td>
+		</tr>
+		<tr>
+			<td>Maksimum süre</td>
+			<td>Tarayıcıya çalışması için izin verilen maksimum süre. Sıfır, sınırsız çalışma süresi anlamına gelir.</td>
+			<td align = "center">60 dakika</td>
+		</tr>
+		<tr>
+			<td>Olay bekleme süresi</td>
+			<td>Bir istemci tarafındaki olay tetiklendikten sonra beklenilecek süre.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Yeniden yükleme bekleme süresi</td>
+			<td>URL yüklendikten sonra beklenilecek süre.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Öğelere bir kez tıklama</td>
+			<td>Etkinleştirildiğinde, tarayıcı her öğe ile yalnızca bir kez iletişime girişir (örneğin, tıklayarak).  Eğer bu ayarlanmamışsa, tarayıcı defalarca tıklamaya çalışacaktır. Bu seçeneğin ayarlanmaması daha sağlamdır fakat epeyce fazla zaman alabilir.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Form alanlarında rastgele değerler kullan</td>
+			<td>Etkinleştirildiğinde form alanlarına rastgele değerler ekler. Aksi takdirde boş değerler kullanır.</td>
+			<td align = "center">Doğru</td>
+		</tr>
+		<tr>
+			<td>Yalnızca varsayılan öğelere tıkla</td>
+			<td>Etkinleştirildiğinde, tarama sırasında yalnızca "a", "buton" ve "girdi" öğeleri tıklanacak. Aksi halde, hangi öğelerin tıklanacağına karar vermek için aşağıdaki tabloyu kullanır.  Derinlik analizinde daha fazlası için, bunu devre dışı bırakın ve tıklanabilir öğeleri tabloda yapılandırın.</td>
+			<td align = "center">Doğru</td>
+		</tr>
+		<tr>
+			<td>Tarama sırasında tıklanacak öğeleri seç (tablo)</td>
+			<td>Taranacak öğelerin listesi. Bu tablo yalnızca "yalnızca varsayılan öğelere tıkla" etkinleştirilmediğinde uygulanır. Biraz daha fazla zaman alsa da, derinlik analizinde daha  fazlası için "tümünü etkinleştir" kullanın.</td>
+			<td align = "center">Tümü etkin</td>
+		</tr>
+		
+	</table>
+	
+	<h2>Ayrıca bakınız</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Örümcek</a></td>
+			<td>AJAX Örümceüe genel bir bakış için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Ağ sekmesi</a></td>
+			<td>AJAX Ağ sekmesinin genel bir görünümü için</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Ağ penceresi</a></td>
+			<td>AJAX Ağ penceresinin genel bir görünümü için</td>
+		</tr>
+	</table>
+
+</body>
+</html>

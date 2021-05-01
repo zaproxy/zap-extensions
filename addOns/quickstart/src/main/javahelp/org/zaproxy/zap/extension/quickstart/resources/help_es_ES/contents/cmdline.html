@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Command Line</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Línea de comando</h1>
+	El complemento Quick Start admite las siguientes opciones de línea de comando:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Especifica la URL de la aplicación  destino que será atacada.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>Especifica el archivo para escribir el reporte XML. Si no está configurado en 'en línea', 
+				los modos daemon y el informe se escriben en la secuencia de salida predeterminada.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Mostrar barras de progreso ascii, si se inició con el indicador -cmd.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Ejemplos:
+	<ul>
+		<li>Inicie ZAP en modo 'en línea' con barras de progreso ascii, ataque la aplicación de destinohttp://example.com/
+			y escribir el informe en la secuencia de salida predeterminada: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>Comience ZAP con UI, ataque la aplicación de destino http://example.com/y guarda
+el informe a un archivo: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Vease también</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Inicio Rápido</a></td>
+			<td>the introduction to Quick Start</td>
+		</tr>
+	</table>
+
+</body>
+</html>

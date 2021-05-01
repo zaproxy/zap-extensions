@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Reglas de escaneo pasivo
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Reglas de escaneo pasivo</h1>
+En el siguiente lanzamiento se incluyen reglas de escaneo pasivo de calidad en este complemento:
+
+<h2>Error de Aplicaciones</h2>        
+ Verifica las respuestas del servidor buscando una respuesta del tipo HTTP 500 - Internal Server Error o aquellas que contengan una cadena de error conocida.
+ 
+<h2>Control de Caché</h2>
+Compara encabezados de respuestas tipo "Cache-Control" y "Pragma" con las mejores prácticas de la industria para la protección de información confidencial.<br>
+Con los umbrales MEDIO y ALTO solo se consideran respuestas de texto que no sean de errores o redirecciones (omitiendo JavaScript).<br>
+Con el umbral en BAJO todas las respuestas sin incluir imagenes y CSS son consideradas incluyendo errores y redirecciones.
+
+<h2>Falta de tipo de contenido</h2>
+Genera una alerta si la respuesta carece de un encabezado Content-Type o si existe el encabezado pero el valor está vacío.
+
+<h2>Cookies HttpOnly</h2>
+Se asegura de que las cookies al ser fijadas sean marcadas HttpOnly. La Marca HttpOnly indica a los navegadores que la cookie que se establece sea utilizada solo por el scripts del lado del cliente (como JavaScript).
+
+<h2>Marca de cookie seguro</h2>
+Busca cookies establecidos durante las sesiones HTTPS, activa una alerta para aquellos que estén establecidos pero que no incluyan la marca de seguridad.
+Un cookie establecido que posea la marca de seguridad no será enviado durante una sesión HTTP sin formato.
+
+<h2>Inclusión de Scripts Entre Dominios</h2>
+Valida si los scripts son incluidos desde dominios diferentes al dominio host del contenido.
+Inspeccionar el atributo "src" de las etiquetas "script" en la respuesta.<br>
+Scripts de dominios cruzados permitido:  
+<ul>
+<li>Cualquier script que no tenga el atributo de "integridad" vacío es ignorado, el valor integridad no será evaluado ya que este es evaluado por el navegador</li>
+<li>En los umbrales MEDIO y ALTO si el URL de un script se encuentra en el contexto que también incluye el URL del mensaje base, no se activarán alertas.</li>
+</ul> 
+
+<h2>Protección de XSS de encabezado</h2>
+Verifica la existencia y el valor/configuración del la protección XSS del encabezado. Este encabezado de respuesta puede ser utilizado para configurar la protección reflectiva XSS incorporada en un agente de usuario.<br>
+En los umbrales MEDIO y ALTO solo se consideran las respuestas HTML que no sean de error o de redirección.<br>
+Con el umbral BAJO todas las respuestas de texto son consideradas incluyendo errores y redirecciones.
+
+<h2>Contenido mixto</h2>
+Analiza todos los atributos src en la respuestas en busca de aquellos que hayan provenido de HTTP sin formato, para contenido proporcionado a través de HTTP.
+
+<h2>Autocompletado de contraseña</h2>
+Busca campos de entrada del tipo "password" y verifica si tienen la configuración "autocomplete=off".
+
+<h2>Divulgación de dirección privada</h2>
+Verifica el contenido de la respuesta en busca de la inclusión de direcciones RFC 1918 IPv4 así como
+nombres de host privados Amazon EC2 (por ejemplo, ip-10-0-56-78). Esta información le puede proporcionar a un atacante información útil acerca del esquema de dirección de IP de la red interna, y pdoría ser útil para ataques posteriores dirigidos a sistemas internos.
+
+<h2>Id de sesión en la reescritura de URL</h2>
+Este escáner verifica la existencia de parámetros de tipo de token de sesión que estén siendo reescritos a la URL. 
+Para ayudar a reducir los falsos positivos el escáner comprueba la longitud del valor del token, si el valor del parámetro no es mayor a 8 caracteres de longitud entonces el parámetro es ignorado (Por ejemplo: encuesta? sId = 5 no se marcaría como vulnerable).
+
+<h2>X-Content-Type-Options</h2>
+Este escáner verifica la existencia de encabezado Anti-MIME-Sniffing X-Content-Type-Options y se asegura que esté puesto como "nosniff".<br>
+En los umbrales MEDIO y ALTO este escáner no alerta sobre redirecciones o respuestas de error de servidor o cliente.<br> 
+Con el umbral BAJO alertará sobre todas las respuestas incluyendo errores y redirecciones.<br>
+ 
+<h2>Escaneo de encabezado de X-Frame-Options</h2>
+Este escáner verifica la existencia y validez de la cabecera X-Frame-Options.<br> 
+En los umbrales MEDIO y ALTO esto sólo busca respuestas HTML que no sean de error o redirección.<br>
+Con el umbral BAJO buscará todas las respuestas de texto incluyendo errores y redirecciones.<br>
+Una alerta pueden ocasionar las siguientes condiciones:
+<ul> 
+ <li><b>Encabezado X-Frame-Options no establecido:</b> si el encabezado X-Frame-Options no aparece en la respuesta.</li>
+ <li><b>Múltiples entradas de encabezado X-Frame-Options:</b> Cuando se detecta más de un encabezado X-Frame-Options en la respuesta.</li>
+ <li><b>X-Frame-Options definido a través de META(No compatible con las especificaciones):</b> Se encontró una entrada "http-equiv" en la entrada que intenta definir X-Frame-Options, lo que no es soportado por las especificaciones.</li>
+ <li><b>Ajuste de X-Frame-Options deforme: </b> El encabezado está, pero sin valor asignado, o el valor no es el que se espera (ejemplo: un valor distinto a "DENY", "SAMEORIGIN", o "ALLOW-FROM").</li>
+</ul>
+Por defecto no se activará alertas en la respuesta que incluyan un elemento de "frame-ancestors" de Content-Security-Policy (CSP) ya que este tiene prioridad sobre el encabezado X-Frame-Options.
+Sin embargo, en un umbral bajo, los problemas mencionados anteriormente serán reportados igualmente pero a un bajo riesgo. 
+
+</body>
+</html>

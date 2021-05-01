@@ -1,0 +1,40 @@
+# Gradle
+#-------
+.gradle
+/build
+/buildSrc/build
+/addOns/**/build
+/testutils/build
+/sharedutils/build
+
+# IDEA
+# ----
+.idea
+.shelf
+/*.iml
+/*.ipr
+/*.iws
+/buildSrc/*.iml
+/buildSrc/*.ipr
+/buildSrc/*.iws
+/buildSrc/out
+/out
+/addOns/**/out
+/testutils/out
+/sharedutils/out
+
+# Eclipse
+# -------
+*.classpath
+*.project
+*.settings
+/bin
+/buildSrc/bin
+/addOns/**/bin
+/testutils/bin
+/sharedutils/bin
+
+# NetBeans
+# --------
+.nb-gradle
+.nb-gradle-properties

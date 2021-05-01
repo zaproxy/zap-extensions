@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Selenium</TITLE>
+</HEAD>
+<BODY>
+	<H1>Selenium</H1>
+
+	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
+		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
+		web browser.
+		
+	<p>It adds a 'Selenium' script type - these scripts are invoked whenever selenium launches a browser,
+	for example for the Ajax Spider or for manual browsing. 
+	
+	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
+	which allows you to open the selected URL in any of the supported browsers. The Selenium scripts have access to the 
+	launched browser and can interact with it, for example, run JavaScript scripts, access URLs, fill forms, click buttons...
+	<br><strong>Note:</strong> The Selenium scripts are executed synchronously for the AJAX Spider, to prevent interferences
+	with the crawler later, it's up to the scripts to access the required URLs.
+
+	<h2>Supported Browsers</h2>
+
+	
+	<p>The following web browsers are supported:
+	<table border="2">
+		<tr>
+			<th>Name</th>
+			<th>ID</th>
+			<th>Requirements/Notes</th>
+		</tr>
+		<tr>
+			<td>Chrome</td>
+			<td>chrome</td>
+			<td>The following versions are known to work: 59 and 60 (older versions might work
+				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on ChromeDriver and how to obtain it refer to the <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+			</td>
+		</tr>
+		<tr>
+			<td>Chrome Headless</td>
+			<td>chrome-headless</td>
+			<td>Starts Chrome without GUI.</td>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>firefox</td>
+			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
+				versions might work too). Some versions are known to not work, for example, 47.0. Newer
+				versions (&ge; 48) require geckodriver, it can be set in the options. For more
+				information on geckodriver and how to obtain it refer to the <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
+				for caveat when using geckodriver).
+			</td>
+		</tr>
+		<tr>
+			<td>Firefox Headless</td>
+			<td>firefox-headless</td>
+			<td>Starts Firefox without GUI.</td>
+		</tr>
+		<tr>
+			<td>HtmlUnit</td>
+			<td>htmlunit</td>
+			<td>Bundled browser, does not have any requirement.</td>
+		</tr>
+		<tr>
+			<td>Opera</td>
+			<td>opera</td>
+			<td>Temporarily not working.</td>
+		</tr>
+		<tr>
+			<td>PhantomJS</td>
+			<td>phantomjs</td>
+			<td>The following version is known to work: 2.1.1 (older versions might work too).
+				Requires PhantomJS binary, if not on the system's PATH, it can be set in the options.
+				For more information on PhantomJS and how to obtain it refer to the <a
+				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
+				using PhantomJS).
+			</td>
+		</tr>
+		<tr>
+			<td>Safari</td>
+			<td>safari</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	<p>To use Firefox, Chrome, Opera, PhantomJS and Safari, you must
+		have them installed in your system. The ID of the browser can be used to choose the
+		browser when configuring ZAP through the command line or using the ZAP API (for example,
+		to set the AJAX Spider to use one or other browser).
+	<p>
+		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
+			href="options.html">Options Selenium screen</a>.
+
+	<h2>Bundled WebDrivers</h2>
+	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
+	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
+	for some of the browsers, in those cases ZAP will inform, in the options panel, that
+	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
+	browser versions are supported with the bundled WebDrivers, it's recommended that
+	newer/latest versions of the browsers be used whenever possible.
+
+	<p>
+		<strong>Note:</strong> ZAP add-ons can add additional browsers.
+
+	<p>
+		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
+		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
+	<p>
+		<strong>PhantomJS Note:</strong> There's an issue (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
+		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
+		available is advised to not use it in those cases. Some add-ons might choose to show
+		warning message when that happens. As workaround one could define, in the <code>hosts</code>
+		file, a domain name mapping to the local address and use that domain name instead.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Options Selenium screen</a></td>
+			<td>for an overview of the Selenium Options</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">API</a></td>
+			<td>for an overview of the Selenium API</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

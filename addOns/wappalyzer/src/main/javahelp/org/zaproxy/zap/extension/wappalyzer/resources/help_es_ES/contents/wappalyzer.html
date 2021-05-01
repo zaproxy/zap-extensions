@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Technology Detection</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Technology Detection Using Wappalyzer</h1>
+<p>
+El complemento Technology Detection utiliza las reglas de Wappalyzer (http://wappalyzer.com/) para detectar las tecnologias utilizadas por las aplicaciones.<p>
+Funciona de forma muy similar a los complementos del navegador Wappalyzer con las siguientes excepciones:
+<ul>
+<li>No utiliza las "Variables JavaScript Globales" debido a que son difíciles de probar sin un navegador "completo"</li>
+<li>No muestra las versiones - todavía esta por hacer</li>
+<li>It does not not show the confidence - this is still todo</li>
+<li>Permite ver la "evidencia" utilizada para detectar las tecnologias</li>
+</ul>
+<h2>La pestaña Tecnología</h2>
+Esta pestaña muestra todas las tecnologías detectadas en el sitio seleccionado.<br>
+Hacer clic derecho en una tecnología mostrara un menú "Mostrar evidencia" debajo del cual están todos los regexes utilizados para detectarlo.<br>
+Seleccionar un regex cambiará la pestaña "Buscar" y buscará en el historial ese regex.
+
+<h2>Enlaces externos</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
+	<td>The Wappalyzer Repository</td>
+</tr>
+</table>
+
+</body>
+</html>

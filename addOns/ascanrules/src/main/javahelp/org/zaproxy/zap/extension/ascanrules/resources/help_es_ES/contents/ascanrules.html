@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Reglas de Escaneo Activa
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Active Scan reglas</h1> El siguiente lanzamiento calidad exploración activa reglas se incluyen en este add-on: <h2>Desbordamiento de búfer</h2> busca indicadores de desbordamiento del búfer en el código compilado.  Esto logra poniendo a grandes cadenas de texto de entrada y buscar código accidente y cierre de sesión anormales.
+
+<h2>Inyección de código</h2> Esta regla presenta ataque PHP y ASP cadenas como parámetros de URL en una solicitud y analiza la respuesta para ver si esos valores han sido evaluados por el servidor. En primer lugar, las solicitudes se construyen y enviadas con inyectado instrucciones PHP para imprimir un símbolo (token). En caso de un partido entre el símbolo y el contenido del cuerpo de la respuesta, el explorador genera una alerta y vuelve inmediatamente.
+Si no hay ninguna acerca de los partidos, el lector construirá solicitudes con varias secuencias ASP inyectados que el servidor escribir el producto de dos enteros generados al azar en la respuesta. Si el cuerpo de la respuesta coincide con el producto, se produce una alerta.
+
+<h2>Inyección de comandos</h2> Esta regla presenta * NIX y Windows OS comandos como valores de parámetro de dirección URL para determinar si o no la aplicación web está pasando la entrada del usuario sin marcar directamente al sistema operativo subyacente. Las cadenas de inyección consisten en meta caracteres que pueden ser interpretados por el sistema operativo como comandos de combinación junto con una carga útil que debe generar una salida en la respuesta si la aplicación es vulnerable. Si el contenido de un cuerpo de la respuesta coincide con la carga útil, el explorador genera una alerta y vuelve inmediatamente. En caso de que ninguno de la correspondencia basada en el error de los intentos de retorno salida en la respuesta, el explorador intentará un ataque de inyección ciega por presentar instrucciones de sueño como la carga útil y comparar el tiempo transcurrido entre la solicitud de envío y recepción de la respuesta frente a un límite más bajo de retraso de tiempo heurístico. Si el tiempo transcurrido es superior a este límite, una alerta se eleva con confianza media y el explorador devuelve inmediatamente.
+<br>Post 2.5.0 puede cambiar la longitud de tiempo utilizado para el ataque de inyección ciega cambiando el parámetro <code>rules.common.sleep</code> mediante el panel de 'Configuración de la regla' de opciones.
+
+<h2>Cache de navegador cliente</h2> Esta regla comprueba las cabeceras de páginas seguras y reporta una alerta si permite que un navegador para la página en caché.
+
+<h2>Cross Site Scripting (reflejada)</h2> Esta regla comienza por presentar un valor 'seguro' y análisis de todos los lugares en los que este valor se produce en la respuesta (si existe). <br>It realiza una serie de ataques dirigidos específicamente a la situación en la que cada uno de los casos se produce, incluyendo atributos de etiqueta, URL atributos, atributos en las etiquetas que soportan atributos de fuente, html comentarios etcetera. 
+
+<h2>Cross Site Scripting (persistente)</h2> Esta regla se inicia mediante la presentación de un único valor 'seguro' y luego las arañas toda la aplicación para encontrar todos los lugares en los que el valor ocurre. <br>Entonces realiza una serie de ataques de la misma manera que la versión 'refleja' pero en este caso comprueba todas las ubicaciones de destino en otras páginas. 
+
+<h2>Inyección de CRLF</h2> Esta regla presenta diversos caracteres especiales CRLF anterior un encabezado de "Set-Cookie" inyectado como un parámetro al servidor. Si la respuesta contiene un encabezado Set-Cookie idéntico, se levanta una alerta y el explorador devuelve inmediatamente.
+
+
+<h2>Directorio de navegación</h2> Esta regla comprueba si una solicitud le proporcionará acceso a un directorio listado examinando el cuerpo de la respuesta patrones con Apache, IIS y otros software de servidor web.
+
+<h2>Redireccionamiento externo</h2> Esta regla presenta una variedad de cadenas de redirección de URL como valores de los parámetros en una solicitud, luego examina las cabeceras y las respuestas para determinar si o no una redirección ocurrió y de qué tipo. La causa de la redirección es buscada en los campos de encabezado "Ubicación" y "Actualizar", así como de etiquetas meta HTML y Javascript en el cuerpo de la respuesta. Se genera una alerta que incluye el tipo de redirección y el escáner regresa inmediatamente.
+
+<h2>Error de cadena de formato</h2> Busca indicadores de la cadena de formato, manejo de errores en el código compilado.  Esto logra poniendo a cadenas de texto de entrada basado en caracteres código C compilado anticipa para producir resultados formateados y buscar código accidente y cierres de sesión anormales.
+
+
+<h2>Alteración de parámetros</h2> Esta regla presenta las solicitudes con valores de los parámetros reconocidos como causantes de errores que se mostrará al usuario si manipulada incorrectamente. Las respuestas se verifican para asegurarse de que regresen
+un código de estado de error del servidor, luego se compara con una respuesta HTTP normal para asegurarse de que no genera una alerta si el parámetro incorrecto no tiene efecto en la salida. Finalmente, el contenido
+del cuerpo de la respuesta se compara con varios patrones que se pueden encontrar en los errores del servlet de Java, Microsoft VBScript, OLE DB, JET, PHP y Tomcat. Si se encuentra una coincidencia, se levanta una alerta y el explorador devuelve inmediatamente.
+
+<h2>Recorrido de la ruta</h2> Esta regla intenta tener acceso a archivos y directorios fuera de la raíz de documentos web mediante la construcción de varias combinaciones de prefijos de nombre de ruta y los objetivos del archivo local para Windows y * NIX sistemas así como de servlets de Java. Si el cuerpo de la respuesta coincide con un patrón correspondiente al actual archivo de destino una alerta es elevado y el explorador devuelve inmediatamente. Si ninguno de los destinos comunes de archivos locales tiene éxito, el recorrido de ruta es
+intenté usar el nombre del archivo en la URL. Como enviar un nombre de archivo arbitrario no devuelve un código de estado OK pero el nombre real lo hace, se produce una alerta y el explorador devuelve inmediatamente.
+
+<h2>Incluir archivos remotos</h2> Esta regla presenta una serie de peticiones con direcciones URL externas como valores de parámetro y busca un partido entre el el cuerpo de la respuesta y el título de la página alojada en las URLs. Si hay una coincidencia entre la cadena esperada y el cuerpo de la respuesta, y la cabecera devolvió un código de estado de 200, se levanta una alerta y el explorador devuelve inmediatamente.
+
+<h2> Lado del servidor incluye </>
+
+Esta regla verifica en qué sistema operativo se está ejecutando el servidor y luego envía las solicitudes con una directiva HTML SSI correspondiente como valor de parámetro. Si el cuerpo de respuesta coincide
+un patrón que indica que el SSI fue exitoso, se genera una alerta y el escáner regresa inmediatamente.
+
+<h2>Inyección de SQL</h2> Este escáner escanea vulnerabilidades de inyección SQL en forma independiente de RDBMS, atacando a parámetros de url y formulario con fragmentos de sintaxis SQL válidas e inválidas, con errores de base, booleano basado, Unión base y apilados consulta SQL Injection técnicas. <br>Este escáner puede ser capaz el RDBMS la huella digital si la aplicación lanza un mensaje de error SQL conocido que se específica RDBMS. <br>Este escáner no explotar las técnicas específicas de cualquier RDBMS, y así es el mejor escáner de inyección de SQL a utilizar como punto de partida. 
+
+</body>
+</html>

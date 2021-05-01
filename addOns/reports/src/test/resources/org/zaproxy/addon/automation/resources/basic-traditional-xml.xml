@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<OWASPZAPReport version="Dev Build" generated="Wed, 21 Apr 2021 13:32:55">
+	
+		<site name="http://example.com" host="example.com" port="80" ssl="false">
+			<alerts>
+				
+					
+						<alertitem>
+							<pluginid>1</pluginid>
+							<alertRef>1</alertRef>
+							<name>XSS</name>
+							<riskcode>3</riskcode>
+							<confidence>2</confidence>
+							<riskdesc>!reports.report.risk.3! (!reports.report.confidence.2!)</riskdesc>
+							<confidencedesc>!reports.report.confidence.2!</confidencedesc>
+							<desc>XSS Description</desc>
+							<instances>
+								
+									<instance>
+										<uri>http://example.com/example_3</uri>
+										<method>GET</method>
+										<param>Test Param</param>
+										<attack>Test Attack</attack>
+										<evidence>Test Evidence</evidence>
+									</instance>
+								
+							</instances>
+							<count>1</count>
+							<solution>Test Solution</solution>
+							<otherinfo>Test Other</otherinfo>
+							<reference>Test Reference</reference>
+							<cweid>123</cweid>
+							<wascid>456</wascid>
+							<sourceid>0</sourceid>
+						</alertitem>
+					
+				
+			</alerts>
+		</site>
+	
+</OWASPZAPReport>

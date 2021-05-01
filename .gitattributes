@@ -1,0 +1,32 @@
+* text=auto eol=lf
+
+*.css text
+*.gradle text
+*.gradle.kts text
+*.hs text
+*.htm text
+*.html text
+*.java text
+*.jhm text
+*.js text
+*.md text
+*.properties text
+*.py text
+*.rb text
+*.rptdesign text
+*.svg text
+*.txt text
+*.xml text
+*.xsl text
+*.wsdl text
+*.yml text
+*.zst text
+
+*.bat eol=crlf
+*.sh text
+gradlew text
+
+*.jbrf binary
+*.pdf binary
+*.png binary
+*.jar binary

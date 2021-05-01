@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="Guia do Usuário ZAP" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
+			<tocitem text="Testes de controle de acesso" image="accessControl.icon" target="accessControl.concepts" >
+				<tocitem text="Aba" target="accessControl.tab"/>
+				<tocitem text="Opções de contexto" target="accessControl.contextOptions"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

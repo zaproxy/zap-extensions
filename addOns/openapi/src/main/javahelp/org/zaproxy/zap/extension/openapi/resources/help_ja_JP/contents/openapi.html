@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Open API Specification Support
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Open API Specification Support</h1>
+This add-on allows you to spider and import OpenAPI (Swagger) definitions (versions 1.2 and 2.0).
+<br><br>
+The add-on will automatically detect any Open API definitions and spider them as long as they are in scope.
+
+<h2>UI</h2>
+2 menu items are added to the Tools menu:
+<ul>
+<li>Import an Open API definition from the local file system</li>
+<li>Import an Open API definition from a URL</li>
+</ul>
+The URL Import dialog supports an optional additional field that allows you to override the Host (and port) in the
+definition with an alternative one that you supply.<br>
+This option is not provided for the file import as it's easy to change a local file to use a different host.
+
+<h2>API</h2>
+The following operations are added to the API:
+<ul>
+<li>ACTION importFile (file)</li>
+<li>ACTION importUrl (url, hostOverride)</li>
+</ul>
+
+The definitions will be imported synchronously and any warnings will be returned. 
+
+<h2>Command Line</h2>
+The following Command Line options are added:
+<ul>
+<li>-openapifile &lt;filename&gt;  : Import an Open API definition from the specified file name</li>
+<li>-openapiurl &lt;url&gt;  : Import an Open API definition from the specified URL</li>
+</ul>
+
+The definitions will be imported synchronously and any warnings will be displayed on the command line.
+
+<h2>User Specified Values</h2>
+Default values are used when importing Open API definitions.<br>
+These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
+In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values, 
+e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+</body>
+</html>

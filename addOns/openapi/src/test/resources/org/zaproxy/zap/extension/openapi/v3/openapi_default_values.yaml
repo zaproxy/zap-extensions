@@ -1,0 +1,99 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/path/{Name}/:
+    get:
+      operationId: parameters/path
+      parameters:
+      - in: path
+        name: Name
+        schema:
+          type: string
+          default: DefaultValue
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/query:
+    get:
+      operationId: parameters/query
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: string
+          default: DefaultValue
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/header:
+    get:
+      operationId: parameters/header
+      parameters:
+      - in: header
+        name: Name
+        schema:
+          type: string
+          default: DefaultValue
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/cookie:
+    post:
+      operationId: parameters/cookie
+      parameters:
+      - in: cookie
+        name: Name
+        schema:
+          type: string
+          default: DefaultValue
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /body/x-www-form-urlencoded:
+    post:
+      operationId: body/x-www-form-urlencoded
+      requestBody:
+        content:
+          'application/x-www-form-urlencoded':
+            schema:
+              properties:
+                NameA:
+                  type: string
+                  default: DefaultValue
+                NameB:
+                  type: boolean
+                  default: true
+                NameC:
+                  type: integer
+                  default: 2
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /body/json/object:
+    post:
+      operationId: body/json
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                NameA:
+                  type: string
+                  default: DefaultValue
+                NameB:
+                  type: boolean
+                  default: true
+                NameC:
+                  type: integer
+                  default: 2
+      responses:
+        default:
+          content:
+            text/plain: {}
+

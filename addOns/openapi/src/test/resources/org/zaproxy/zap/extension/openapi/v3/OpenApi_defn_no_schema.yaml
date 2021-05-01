@@ -1,0 +1,11 @@
+openapi: 3.0.0
+paths:
+  /media-type-no-schema:
+    post:
+      operationId: mediaTypeNoSchema
+      requestBody:
+        content:
+          '*/*': {}
+      responses:
+        '200':
+          description: OK

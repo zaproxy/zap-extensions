@@ -1,0 +1,49 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /parameters/integer:
+    get:
+      operationId: parameters/integer
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: integer
+          enum:
+            - 123
+            - 456
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/number:
+    get:
+      operationId: parameters/number
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: number
+          enum:
+            - 12.3
+            - 45.6
+      responses:
+        default:
+          content:
+            text/plain: {}
+  /parameters/string:
+    get:
+      operationId: parameters/string
+      parameters:
+      - in: query
+        name: Name
+        schema:
+          type: string
+          enum:
+            - "123"
+            - "456"
+      responses:
+        default:
+          content:
+            text/plain: {}

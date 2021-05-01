@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+SOAP Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>SOAP Support</H1>
+This add-on imports and scans WSDL files containing SOAP endpoints.
+<br><br>
+It also supports the <a href="automation.html">Automation Framework</a>.
+
+<h2>Importing</H2>
+The add-on will automatically detect any SOAP definitions and spider them as long as they are in scope.
+<br><br>
+2 menu items are also added to the Import menu:
+<ul>
+<li>Import a WSDL file from local file system</li>
+<li>Import a WSDL file from a URL</li>
+</ul>
+These operations are also available via the API.
+<br><br>
+<b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
+
+<h3>Form Handler Add-on Support</h3>
+The SOAP add-on supports overriding default parameter values based on field names via the Form Handler add-on.
+For example,
+<br>
+<img src="images/formHandlerExample.png" alt="Form Handler Example" width="300">
+
+<h2>Scanning</H2>
+The scan rules added by this add-on are:
+<ul>
+<li>Action Spoofing : <a href="http://www.ws-attacks.org/index.php/SOAPAction_Spoofing">http://www.ws-attacks.org/index.php/SOAPAction_Spoofing</a></li>
+<li>XML Injection : <a href="http://www.ws-attacks.org/index.php/XML_Injection">http://www.ws-attacks.org/index.php/XML_Injection</a></li>
+</ul>
+
+<H2>Statistics</H2>
+This add-on maintains the following statistics:
+<ul>
+    <li>soap.urls.added: The total number of URLs (or SOAP Actions) added from imported WSDL files.</li>
+</ul>
+
+</BODY>
+</HTML>

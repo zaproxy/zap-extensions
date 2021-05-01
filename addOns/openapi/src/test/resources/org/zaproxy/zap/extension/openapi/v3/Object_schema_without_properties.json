@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1",
+    "description": "API for test"
+  },
+  "paths": {
+    "/petStore/newUSer": {
+      "post": {
+        "summary": "Create new User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "$ref" :"#/components/schemas/credentials"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "credentials": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "object"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

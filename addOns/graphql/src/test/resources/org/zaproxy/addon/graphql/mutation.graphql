@@ -1,0 +1,18 @@
+type Query {
+  student(id: ID): Student
+}
+
+type Mutation {
+  createStudent(id: ID, name: String): Student
+}
+
+type College {
+  name: String
+  location: String
+}
+
+type Student {
+  id: ID
+  name: String
+  college: College
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+İçerik Uyarı Filtreleri
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>İçerik Uyarı Filtreleri</h1>
+<p>
+Bağlam Uyarısı Filtreleri, bağlam içindeki etkin ve pasif tarama kuralları tarafından ortaya çıkan tüm uyarıların risk düzeylerini otomatik olarak geçersiz kılmanıza izin verir.
+</p>
+<p>
+Bu eklenti, bağlamlar iletişim kutusuna bir 'Uyarı Filtreleri' paneli ekler.<br>
+Panelde, Uyarı filtrelerinin hepsinin bir listesinin yanı sıra bunları ekleme, 
+kaldırma ve silmek için butonlar gösterilmektedir.
+</p>
+<p>
+Bu eklentiyi kullanmak için ihtiyaç duyacaklarınız:
+<ul>
+<li>Uygulamanızı bir bağlama ekleyin</li>
+<li>Oturum Özellikleri penceresini açın (içeriğe çift tıklayarak)</li>
+<li>İçeriğin 'Uyarı filtreleri' panelini seçin</li>
+<li>'Ekle'ye tıklayın ve geçersiz kılmak istediğiniz her uyarının bilgilerini yazın</li>
+</ul>
+Not: Uyarı filtreleri sadece yeni uyarılara uygulanacaktır, filtre oluşturulduğunda zaten mevcut olan hiçbir uyarıya uygulanmayacaktır. 
+</p>
+<p>
+'Ekle' ve 'değiştir' diyalog kutularında aşağıdaki alanlar bulunur: 
+
+<h3>Uyarı</h3>
+Halihazırda kurulu olan tüm etkin ve pasif uyarı kurallarını içeren içeriği aşağı doğru çekin.
+
+<h3>Yeni Risk Düzeyi</h3>
+Kural tarafından tanımlanmış kritere uyan, gösterilen tüm uyarılara atanacak yeni risk düzeyi.
+ 
+<h3>Bağlantı adresi</h3>
+Opsiyonel bağlantı adresi.<br>
+Bağlantı belirtilmişse, bağlantı, alarma girmiş bağlantı ile eşleşirse bu kural uygulanır.<br>
+
+<h3>Bağlantı Regex mi?</h3>
+Ayarlanmışsa ve bir bağlantı belirtilmişse, uyarı bağlantısı ile karşılaştırıldığında bağlantı, bir normal ifade olarak kabul edilir.<br>
+Belirlenmezse, belirtilen herhangi bir bağlantı, uyarı bağlantısı ile tam olarak eşleşmelidir.
+
+<h3>Parametre</h3>
+İsteğe bağlı bir parametre.<br>
+Eğer belirtilmişse, o zaman bu kural eğer gösterilen uyarının parametresi tam olarak bu parametreyle eşleşirse uygulanacaktır.<br>
+
+<h3>Etkin</h3>
+Eğer ayarlanmışsa, verilen içeriğe karşı gösterilen tüm uyarılara bu kural uygulanacaktır.
+
+</body>
+</html>

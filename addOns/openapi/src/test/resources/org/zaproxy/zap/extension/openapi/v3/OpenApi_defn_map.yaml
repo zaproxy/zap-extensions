@@ -1,0 +1,153 @@
+---
+openapi: 3.0.0
+info:
+  title: Generated API
+  version: "1.0"
+paths:
+  /v3/openapi/mapBoolean:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPetMapBoolean'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetMapBoolean'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetMapBoolean'
+  /v3/openapi/mapNumber:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPetMapNumber'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetMapNumber'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetMapNumber'
+  /v3/openapi/mapObject:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPetMapObject'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetMapObject'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetMapObject'
+  /v3/openapi/mapString:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPetMapString'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetMapString'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetMapString'
+components:
+  schemas:
+    PetMapBoolean:
+      type: object
+      properties:
+        name:
+          type: string
+        params:
+          $ref: '#/components/schemas/MapStringBoolean'
+    ListPetMapBoolean:
+      $ref: '#/components/schemas/ListPetMapBoolean'
+    MapStringBoolean:
+      type: object
+      additionalProperties:
+        type: boolean
+    PetMapNumber:
+      type: object
+      properties:
+        name:
+          type: string
+        params:
+          $ref: '#/components/schemas/MapStringNumber'
+    ListPetMapNumber:
+      $ref: '#/components/schemas/ListPetMapNumber'
+    MapStringNumber:
+      type: object
+      additionalProperties:
+        type: number
+    PetMapString:
+      type: object
+      properties:
+        name:
+          type: string
+        params:
+          $ref: '#/components/schemas/MapStringString'
+    ListPetMapString:
+      $ref: '#/components/schemas/ListPetMapString'
+    MapStringString:
+      type: object
+      additionalProperties:
+        type: string
+    PetMapObject:
+      type: object
+      properties:
+        name:
+          type: string
+        params:
+          $ref: '#/components/schemas/MapStringPetType'
+    ListPetMapObject:
+      $ref: '#/components/schemas/ListPetMapObject'
+    PetType:
+      type: object
+      properties:
+        name:
+          type: string
+    MapStringPetType:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/PetType'

@@ -1,0 +1,10 @@
+type Query {
+  sum (numbers: [Float]): Float
+  concat (words: [String!]!): String
+  compare (objects: [Object]): Int
+}
+
+input Object {
+  size: Int
+  colour: String
+}

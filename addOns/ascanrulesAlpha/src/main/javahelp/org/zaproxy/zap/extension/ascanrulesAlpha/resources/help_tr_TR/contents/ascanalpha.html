@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Aktif Tarama Kuralları - alfa
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Aktif tarama kurallar - Alfa</h1>
+Aşağıdaki alfa kalitesi etkin tarama kuralları bu eklentiye dahil edilmiştir:
+<h2>Apache Aralığı Üstbilgisi DoS (CVE-2011-3192)</h2>
+Sunucunun, on bir (11) farklı bayt aralığı isteyerek, sunucunun Apache Menzil Başlığı Hizmet Reddi'ne karşı savunmasız 
+olup olmadığını sınar. Eleven mesafeleri yamalı / sabit sunucular tarafından kabul edilenden daha fazladır.
+
+<h2> Çerez Yavaşlama Dedektörü </>
+Çerezler atlandığında yanıt boyutunda herhangi bir etkisi olup olmadığını tespit etmek için çerezleri test eder, özellikle de "session" veya "userid" adını içeren çerezler,.
+<h2> ELMAH Tarayıcı </>
+Hata Günlüğü Modülleri ve İşleyicileri (elmah.axd) HTTP Modülünün mevcut olup olmadığını test eder. Bu modül, geliştiriciler ve diğer menfaat sahipleri için kullanışlı olmasına rağmen, bir güvenlik analistinin veya kötü amaçlı bir şahsın ilgisini çekebilecek önemli miktarda bilgiyi de sızdırıyor. <br> <br>
+ELMAH tarayıcı, Microsoft tabanlı teknolojileri hedefler: IIS, Windows, ASP ve MSSQL.
+
+<h2>Örnek Aktif Dosya Tarayıcı</h2>
+Bu, kullanıcıların düzenleyebileceği bir dosyadan dizeleri yükleyen örnek bir etkin tarama kuralı uygular.<br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+
+<h2>Örnek basit Aktif tarayıcı</h2>
+Bu, çok basit bir örnek etkin tarama kuralını uygular. <br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+
+<h2>İfade Dili Enjeksiyonu</h2>
+Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. Spring 3.0.5 ve önceki sürümlerin bazılarında, İfade Dili etiketlerinin iki kez değerlendirileceği ve herhangi bir uygulamayı etkili bir şekilde EL enjeksiyonuna maruz bırakan bir güvenlik açığı (CVE-2011-2730) mevcuttu. Ancak daha sonraki sürümler için bile, bu zayıflık konfigürasyona bağlı olarak hala mümkündür.
+
+<h2> POST Tarayıcı için GET </>
+Bu tarayıcı <code> application / x-www-form-urlencoded </> POST isteklerini alır, parametreleri POST'dan GET olarak değiştirir ve isteği yeniden gönderir. 
+GET yanıtı orijinal POST yanıtıyla aynı ise, o zaman bir uyarı ortaya çıkar. Bu, kendine özgü bir güvenlik zayıflığını temsil etmese de, diğer saldırı veya zayıflıkların genişletilebileceğini veya basitleştirilebileceğini gösterebilir.
+(Örneğin Siteler Arası Betik Çalıştırma (XSS) saldırısına göre GET'e değiştirilen bir POST)
+
+<h2>Sadece HTTP Sitesi</h2>
+Bu aktif tarayıcı bir HTTP sitesinin HTTPS altında çalışıp çalışmadığını kontrol eder.
+
+<h2>Httpoxy</h2>
+Bu aktif tarayıcı, sitenin istekte belirtildiği üzere bir HTTP Proxy üstbilgisi taşıyıp taşımadığını kontrol eder.<br>
+Bu, tüm arayüzleri rastgele atanmış serbest bir porttan dinleyen bir HTTP proxy kurar.
+Ardından, HTTP Sunucusu üstbilgisi, kullanılabilir IP adreslerinin ve dinlediği bağlantı noktasının her birine ayarlanmış olarak, hedef sunucuya bir dizi istek gönderir.
+Yeni bağlantı noktasından bir istek gelirse, sunucu çok savunmasızdır. <br>
+<b> ÖNEMLİ </> - ZAP'ın çalıştığı bilgisayar, gelen istekleri rasgele bağlantı noktalarından kabul etmelidir -
+eğer bir güvenlik duvarı gelen bağlantıları engelliyorsa o zaman bu kural çalışmaz. 
+
+<h2>HTTP Tarayıcı olarak HTTPS</h2>
+Bu aktif tarayıcı, asıl olarak HTTP ile erişilmiş içeriğe HTTPS (SSL/TLS) ile erişmeyi dener.
+
+<h2>LDAP Enjeksiyonu</h2>
+LDAP enjeksiyonu olabilir. Bir saldırganın kimlik doğrulama denetimlerini atlayıp LDAP dizinindeki rasgele verileri görüntülemek ve değiştirmek mümkün olabilir.
+
+<h2> SQL Enjeksiyonu - MsSQL </>
+Bu aktif tarayıcı, MsSQL'ye özgü uyku komutlarını parametre değerlerine enjekte etmeye çalışır ve sunucudaki uyku etkin bir şekilde yürütülüp yürütülmediğini görmek için sunucunun yanıt süresini analiz eder (başarılı bir SQL enjeksiyon saldırısı olduğunu gösterir).
+
+<h2>Kaynak Kod Ortaya Çıkarma - Dosya Dahil Etme</h2>
+Web sunucusunda kaynak kod içeren dosyaları taramak için yerel dosya dahil etme tekniklerini kullanır.
+
+<h2>Kaynak Kod Ortaya Çıkarma - Git</h2>
+Web sunucusunda kaynak kod içeren dosyaları taramak için Git kaynak kodu depo meta verisini kullanır.
+
+<h2> Trace.axd Tarayıcı </>
+Trace Viewer'ın (trace.axd) mevcut olup olmadığını test eder. Bu bileşen, geliştiriciler ve diğer hissedarlar için uygun olduğu halde, bir güvenlik analistinin veya kötü amaçlı bir kişinin ilgisini çekebilecek önemli miktarda bilginin sızdırılması da olasıdır.<br><br> Trace.axd tarayıcısı, IIS, Windows, ASP ve MSSQL gibi Microsoft tabanlı teknolojileri hedef alır.
+
+<h2>Kullanıcı Aracısı Fuzzer'ı</h2>
+Bu aktif tarayıcı fuzzed Kullanıcı Aracısı'nı baz alarak yanıttaki farklılıkları kontrol eder (örneğin, mobil siteler, Search Engine Crawler olarak eriş). Tarayıcı, yanıt statuscode'u ve yanıt gövdesinin hashcode'unu orijinal yanıt ile karşılaştırır.
+
+</body>
+</html>

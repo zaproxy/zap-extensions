@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Procesadores de mensajes
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Procesadores de mensajes HTTP</h1>
+Los procesadores de mensajes HTTP pueden acceder y cambiar los mensajes HTTP que se están difuminando, controlar el proceso de fuzzing e interactuar con la interfaz de usuario de ZAP.
+<p>
+Los procesadores de mensajes HTTP incorporados incluyen:
+
+<h3>Actualización de Token Anti-CSRF</h3>
+Permite actualizar los tokens anti-CSRF contenidos en la solicitud. Los tokens anti-CSRF deben ser detectados correctamente por ZAP para poder usar este procesador.<br>
+Para obtener más información, consulte la página de ayuda "Cómo empezar"> "Funciones"> "Fichas antis de CSRF".<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores, si se detectaron tokens anti-CSRF.
+
+<h3>Procesador (Script) Fuzzer HTTP</h3>
+Permite seleccionar las secuencias de comandos del procesador Fuzzer HTTP habilitadas. Los scripts le permiten:
+<ul>
+<li>Obtener la lista de cargas útiles</li>
+<li>Detener el fuzzing</li>
+<li>Aumenta el recuento de errores</li>
+<li>Enviando mensajes nuevos</li>
+<li>Agregar mensajes a la pestaña de resultados</li>
+<li>Establezca mensajes de estado personalizados en la pestaña <a href="tab.html"> Fuzzer </ 0></li>
+<li>Levantar alertas</li>
+</ul>
+
+<h3>Detector de reflexión de carga útil</h3>
+Indica en la columna Estado de la tabla de resultados si una de las cargas útiles de inyección encontró en la respuesta, utilizando "<img src="images/reflected_icon.png"> Reflejado".<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
+
+<h3>Solicitud de actualización de longitud de contenido</h3>
+Actualizaciones (o añadir, si no está presente) el <code>Largo del contenido</code> encabezado de solicitud con la longitud del cuerpo de la solicitud
+para todos los métodos de solicitud. No se realiza ningún cambio si el tamaño del cuerpo de la solicitud es cero y el encabezado aún no está presente.<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
+
+<h3>Creador de etiqueta</h3>
+Permite agregar 'etiquetas' personalizadas, basadas en el contenido de la respuesta, a la columna Estado de la tabla de resultados
+
+<h3>Procesador de mensajes del usuario</h3>
+Permite buscar fuzz como usuario, utilizando uno de los usuarios definidos en los contextos que incluyen el mensaje HTTP que se difumina. Los usuarios deben
+existen para poder seleccionar y agregar este procesador.
+
+<p>
+Otros complementos pueden definir procesadores de mensajes HTTP adicionales.
+
+<h2>Acceso a través de</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Diálogo Fuzzer </ 0> en la pestaña Procesadores de mensajes</td></tr>
+</table>
+
+<h2>Véase también</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

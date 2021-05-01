@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Schnellstart
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Schnellstart</h1>
+<p>
+	The Quick Start tab provides you with an easy way to quickly test a web application.
+</p>
+<p>
+	Enter the URL of your target application and press the 'Attack' button.
+</p>
+<p>
+	ZAP will spider the target and then attack it with the active scanner.
+</p>
+<p>
+	For a more in depth test you should explore your application using your browser or 
+	automated regression tests while proxying through ZAP.
+</p>
+<h2>Launch Browser</h2>
+As long as you have the Selenium add-on installed then you will see an option to launch browsers.<br>
+Select the browser you want from the pull-down and press the 'Launch Browser' button.<br>
+Browsers launched this way will be configured to proxy via ZAP and will ignore certificate errors,
+so you will not need to import the ZAP Root CA Certificate.<br>
+ZAP will remember the last browser you chose when you restart it.<br><br>
+Note that launched browsers will stop working if you change the address or port that ZAP is listening on.
+
+<h2>Plug-n-Hack</h2>
+If you have the Plug-n-Hack add-on installed then you will see a button for configuring Firefox with Plug-n-Hack.<br>
+This automatically configures Firefox to proxy via ZAP and will import and trust the ZAP Root CA.
+
+
+<h2>See also</h2>
+<table>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="cmdline.html">Command Line</a></td>
+		<td>description of command line arguments</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="launchoptions.html">Launch Options</a></td>
+		<td>the Quick Start Launch Options</td>
+	</tr>
+</table>
+
+</body>
+</html>

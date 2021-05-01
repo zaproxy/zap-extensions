@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Passive Scan Rules - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Passive Scan Rules - Beta</h1>
+The following beta quality passive scan rules are included in this add-on:
+
+<h2>Charset Mismatch</h2>
+<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. Sekiranya terdapat ketidakcocokan aksara antara header HTTP dan badan kandungan, penyemak imbas Web mungkin dipaksa ke mod sniffing kandungan yang tidak diingini untuk menentukan set aksara kandungan yang betul.</p>
+<p>Pengimbas mengendalikan pelbagai keadaan bergantung pada ambang yang diberikan kepada pengimbas, seperti berikut:</p>
+<ul>
+  <li>All Thresholds:
+    <ul>
+      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
+      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+    </ul>
+  </li>
+  <li>Low Threshold:
+    <ul>
+      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+    </ul>
+  </li>
+</ul>
+Further reference:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
+<h2>Cookie - Loosely Scoped</h2>
+Cookies can be scoped by domain or path. Pemeriksaan ini hanya berkaitan dengan liputan domain. Skop domain yang diterapkan pada cookie menentukan domain yang boleh mengaksesnya. Sebagai contoh, cookie boleh dipasangkan dengan ketat kepada subdomain misalnya. www.nottrusted.com, atau disebat dengan longgar ke domain induk misalnya. nottrusted.com. Dalam kes yang kedua, subdomain nottrusted.com boleh mengakses kuki. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+
+<h2>CSRF Countermeasures</h2>
+The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
+countermeasures in pages with forms.<br>
+Post 2.5.0 you can specify a comma separated list of identifiers in the 
+<code>rules.csrf.ignorelist</code> parameter melalui panel konfigurasi 'Pilihan'.
+Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+Gunakan saja ciri ini untuk mengabaikan FORM yang mungkin anda tahu aman, misalnya borang carian.
+
+
+<h2>Information Disclosure: Debug Errors</h2>
+This passive scanner checks the content of web responses for known Debug Error message fragments.
+Akses kepada butir sedemikian boleh memberikan orang jahat cara untuk lebih menyalahgunakan laman web.
+Mereka juga boleh mendedahkan data yang tidak dimaksudkan secara khusus untuk penggunaan pengguna akhir.
+
+<h2>Information Disclosure: In URL</h2>
+Attempts to identify the existence of sensitive details within the visited URIs themselves 
+(this may include parameters, document names, directory names, etc.).
+
+<h2>Information Disclosure: Referrer</h2>
+Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
+(this may include parameters, document names, directory names, etc.).
+
+<h2>Information Disclosure: Suspicious Comments</h2>
+Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
+further attack or exposure of unintended data.
+
+<h2>Insecure Authentication</h2>
+HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
+
+<h2>Insecure JSF ViewState</h2>
+The response at the following URL contains a ViewState value that has no cryptographic protections.
+
+<h2>Servlet Parameter Pollution</h2>
+Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
+Java Servlet spec calls for aggregation of query string and post data elements which may result in 
+unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+
+<h2>VIEWSTATE</h2>
+Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
+measures such as: 
+<ul>
+	<li>Those based on ASP.NET 1.0 and 1.1.</li>
+	<li>VIEWSTATE Lacking signature.</li>
+	<li>Split VIEWSTATE.</li>
+	<li>VIEWSTATE containing email or IP patterns.</li>
+</ul>
+
+</body>
+</html>

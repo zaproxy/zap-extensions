@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Zest</h1>
+<p>
+Zest, Mozilla güvenlik ekibi tarafından geliştirilmiş deneysel bir özelleştirilmiş kodlama dilidir (alana özgü dil olarak da bilinir) ve web'e yönelik güvenlik araçlarında kullanması amaçlanmaktadır.
+<p>
+ZAP ile birlikte varsayılan olarak dahildir.<br>
+
+<h2>Zest Komut Dosyaları Oluşturma</h2>
+
+Zest komut dosyaları oluşturmanın çeşitli yolları vardır:
+
+<h3>Yeni bir Zest komut dosyası kaydet Butonu</h3>
+<ul>
+<li>Ana araç çubuğunda 'Yeni bir Zest komut dosyası kaydet' butonuna basın</li>
+<li>'Bir Zest Komut Dosyası Ekle' iletişim kutusunda komut dosyanız için uygun bir isim girin</li>
+<li>İstekleri kaydetmek istediğiniz bir önek seçin, veya tüm istekleri kaydetmek için boş bırakın</li>
+<li>'Kaydet' butonuna basın</li>
+<li>'Yeni bir Zest komut dosyası kaydet' butonu basılı kalacak, 'Yeni bir Zest komut dosyası kaydediliyor' olarak değişecek ve kırmızı bir simge gösterecek.</li>
+</ul>
+Yeni Zest komut dosyası, Komut Dosyaları sekmesinde kırmızı bir 'kaydetme' simgesi ile gösterilecektir.<br>
+Belirtilen önekin altında yaptığınız tüm istekler komut dosyasına eklenecektir.<br>
+Kaydetme isteklerini durdurmak için 'Yeni bir Zest komut dosyası kaydediliyor' butonuna tekrar basın.<br>
+Bu yöntemle yalnızca 'Bağımsız' Zest komut dosyalarını kaydedebileceğinizi unutmayın. Zest komut dosyalarının diğer türlerini oluşturmak isterseniz diğer yöntemleri kullanmalısınız.
+<br><br>
+Ayrıca herhangi bir Bağımsız Zest komut dosyasına sağ tıklayabilir ve 'Kaydı başlat' ve 'Kaydı durdur' butonlarını kullanabilirsiniz. 
+
+<h3>Yeni Komut Dosyası Butonu</h3>
+<ul>
+<li>Komut Dosyaları ağacı sekmesine gelin</li>
+<li>'Yeni Komut Dosyası...' butonuna basın</li>
+<li>'Yeni Komut Dosyası' iletişim kutusunda komut dosyanız için uygun bir isim girin</li>
+<li>Komut dosyası türünü seçin (Daha fazla bilgi için Komut dosyaları eklentisi yardım sayfasına bakınız)</li>
+<li>Zest komut dosyası aracını seçin</li>
+<li>Şablonların birini seçin (uygun ise)</li>
+<li>'Kaydet' butonuna basın</li>
+</ul>
+Bu yöntemle herhangi türde Zest komut dosyası oluşturulabilir.
+
+<h3>Bir Zest şablonuna sağ tıklama</h3>
+<ul>
+<li>Komut Dosyaları ağacı sekmesine gelin</li>
+<li>'Şablonlar' düğümünü genişletin ve kullanmak istediğiniz bir şablon bulun</li>
+<li>Şablona sağ tıklayın ve 'Yeni Komut Dosyası...' seçin</li>
+<li>'Kaydet' butonuna basın</li>
+</ul>
+Bu yöntemle herhangi türde Zest komut dosyası oluşturulabilir.
+
+<h3>Sağ tıklama istekleri</h3>
+<ul>
+<li>Geçmiş sekmesi gibi, istekleri gösteren herhangi bir sekmeye gelin</li>
+<li>Bir veya daha fazla istek seçin</li>
+<li>Sağ tıklayın</li>
+<li>Mevcut bir Bağımsız komut dosyası seçmenizi veya yeni bir tane oluşturmanızı sağlayan 'Zest Komut Dosyasına Ekle' menüsünü seçin</li>
+</ul>
+Yalnızca 'Bağımsız' Zest komut dosyalarına istek ekleyebileceğinizi unutmayın.
+
+<h3>Plug-n-Hack</h3>
+Eğer Firefox'un yeni bir sürümünü kullanıyorsanız, Zest komut dosyalarını tarayıcınızla oluşturabilirsiniz.<br>
+<ul>
+<li>ZAP 'Hızlı Başlangıç' sekmesindeki 'Plug-n-Hack' butonuna basın</li>
+<li>Plug-n-Hack Firefox eklentisini yükleyin ve tüm iletileri kabul edin</li>
+<li>Geliştirici Araç Çubuğuna erişmek için Firefox'ta 'Shift F2' tuşuna basın</li>
+<li>Yeni bir Zest komut dosyasını kaydetmeye başlamak için 'zap record on global' yazın</li>
+<li>ZAP vasıtasıyla yaptığınız tüm istekler komut dosyasına eklenecek</li>
+<li>Komut dosyası kaydını durdurmak için 'zap record off global' yazın</li>
+</ul>
+Bu yöntemle yalnızca 'Bağımsız' Zest komut dosyalarını kaydedebileceğinizi unutmayın. Eğer diğer Zest komut dosyası türlerini oluşturmak istiyorsanız diğer yöntemleri kullanmalısınız.
+
+<h2>Zest komut dosyalarını düzenleme</h2>
+Zest komut dosyaları, Komut Dosyaları ağacı sekmesinde grafiksel olarak düzenlenir.<br>
+Her ifade ağaçtaki bir düğümdür - ifade özelliklerini düzenlemek için düğümlere çift tıklayın.<br>
+Zest düğümlerine sağ tıklayarak ifadeleri ekleyebilir, taşıyabilir ve kaldırabilirsiniz.<br>
+Ayrıca diğer sekmelerin herhangi birindeki isteklere sağ tıklayarak, istekleri 'Bağımsız' Zest komut dosyalarına ekleyebilirsiniz.<br>
+Ayrıca, İstek veya Yanıt sekmelerindeki metni seçtiğinizde bazı sağ tık seçenekleri de mevcuttur.<br>
+<br>
+Zest hem bir grup 'yerleşik' değişkenler içerir hem de size kendinizinkileri bildirmenize olanak verir.<br>
+Kullanılabilir değişken isimlerinden herhangi birini yapıştırmanızı sağlamak için düzenleme pencerelerinde bir sağ tık menüsü (ilgili yerlerde) sağlanmıştır.<br>
+
+<h2>Dış bağlantılar</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a></td>
+	<td>Zest genel bakış</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/mozilla/zest">https://github.com/mozilla/zest</a></td>
+	<td>Dil ayrıntılarını içeren Zest github deposu</td>
+</tr>
+</table>
+
+</body>
+</html>

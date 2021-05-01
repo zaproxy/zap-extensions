@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Open API Specification Desteği
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Open API Specification Desteği</h1>
+Bu eklenti OpenAPI (Swagger) tanımlamalarını (1.2 ve 2.0 versiyonları) spider'lamanızı ve içe aktarmanızı sağlar.
+<br><br>
+Bu eklenti, kapsamda oldukları sürece otomatik olarak herhangi bir Open API tanımlamasını algılayacak ve spider'layacaktır.
+
+<h2>Kullanıcı Arayüzü</h2>
+Araçlar menüsüne 2 menü öğresi eklenir:
+<ul>
+<li>Yerel dosya sisteminden bir Open API tanımlaması içe aktar</li>
+<li>Bir URL'den Open API tanımlaması içe aktar</li>
+</ul>
+URL İçe Aktarma iletişim kutusu, tanımdaki Ana Bilgisayarı (ve bağlantı noktasını) sizin sağladığınız alternatif bir sunucu ile geçersiz kılmanıza izin veren isteğe bağlı bir ek alanı destekler.<br>
+Yerel bir dosyayı farklı bir host kullanmak için değiştirmek kolay olduğundan bu seçenek dosya içe aktarımı için sağlanmaz.
+
+<h2>API</h2>
+API'ya aşağıdaki işlemler eklenir:
+<ul>
+<li>EYLEM importFile (file)</li>
+<li>EYLEM importUrl (url, hostOverride)</li>
+</ul>
+
+Tanımlamalar eş zamanlı olarak içe aktarılacaktır ve tüm uyarılar döndürülecektir. 
+
+<h2>Komut Satırı</h2>
+Aşağıdaki Komut Satırı seçenekleri eklenir:
+<ul>
+<li>-openapifile &lt;filename&gt;  : Belirtilen dosya isminden bir Open API tanımlaması içe aktar</li>
+<li>-openapiurl &lt;url&gt;  : Belirtilen URL'den bir Open API tanımlaması içe aktar</li>
+</ul>
+
+Tanımlar eşzamanlı olarak içe aktarılacak ve uyarılar komut satırında görüntülenecektir.
+
+<h2>Kullanıcı Belirli Değerler</h2>
+Varsayılan değerler açık API tanımlarını içe aktarırken kullanılır.<br>
+Bu, kendi değerlerinizi belirtmenizi sağlayan Form Handler eklentisi kullanarak override edilebilir.<br>
+Çoğu durumda bunlar basit değerler (string ve tam sayılar gibi) olacaktır ama bazı durumlarda yapılandırılmış değerler belirtmeniz gerekebilir,
+örneğin <pre>{ "id": 0, "name": "Freda" }</pre>
+
+</body>
+</html>

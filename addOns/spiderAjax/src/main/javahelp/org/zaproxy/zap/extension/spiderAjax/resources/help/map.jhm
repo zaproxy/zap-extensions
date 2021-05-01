@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="addon.spiderajax.icon" url="contents/images/spiderAjax.png" />
+
+    <mapID target="addon.spiderajax.concepts" url="contents/concepts.html" />
+    <mapID target="addon.spiderajax.automate" url="contents/automation.html" />
+    <mapID target="addon.spiderajax.dialog" url="contents/scandialog.html" />
+    <mapID target="addon.spiderajax.tab" url="contents/tab.html" />
+    <mapID target="addon.spiderajax.options" url="contents/options.html"/>
+</map>

@@ -1,0 +1,10 @@
+type Query {
+    location (direction: Direction): String
+}
+
+enum Direction {
+    NORTH
+    EAST
+    SOUTH
+    WEST
+}

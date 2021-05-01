@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Правила Пассивного Сканирования - Alpha
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Правила Пассивного Сканирования - Alpha</h1>
+В эту надстройку включены следующие правила пассивного сканирования Альфа-качества:
+
+<h2>ASP.NET раскрытие информации ViewState</h2>
+В ASP.NET состояние вида была раскрыта приложения/веб-сервер
+
+<h2>ASP.NET целостность viewstate в</h2>
+Приложение не использовать код проверки подлинности Сообщения (MAC), чтобы защитить целостность ASP.NET состояние вида, который может быть подделан злоумышленниками клиента
+
+<h2>Base64 Раскрытие Информации</h2>
+Кодированные данные Base64 были раскрыты приложением/веб-сервером
+
+<h2>Отсутствует Заголовок Политики Безопасности Содержимого</h2>
+Это проверяет заголовки ответов HTML на наличие заголовка политики безопасности содержимого.<br>
+По умолчанию это правило проверяет наличие заголовка " Content-Security-Policy, 
+и на низкий порог также проверяет на "Х-Контента-безопасность-политики" и "Х-в WebKit-ЦСП" заголовки.
+<p>
+Если "Контент-безопасности-политика-доклад-только" Заголовок на ответ предупреждение ИНФОРМАЦИЯ будет поднята. Это может представлять собой усилия по обеспечению соблюдения 
+это активно уточняется или разрабатывается, или тот, который осуществляется лишь частично.
+
+<h2>Отравление Печеньем</h2>
+Эта проверка просматривает введенные пользователем входные данные в параметрах строки запроса и публикует данные, чтобы определить, где параметры cookie могут управляться. Это называется атакой отравления печеньем и становится пригодным для использования, когда злоумышленник может управлять cookie различными способами. В некоторых случаях это не будет, однако, использоваться,, что позволяет URL-адрес параметры для задания значений cookie, как правило, считается ошибкой.
+
+<h2>Печенье Без SameSite Атрибут</h2>
+Это сообщает о любых куки, которые не имеют атрибута SameSite или которые не имеют признанного допустимого значения для этого атрибута.
+
+<h2>Междоменное Неправильной</h2>
+Пассивно сканировать ответы на ошибки между доменами, которые ослабляют ту же политику источника в веб-браузере, например.<br>
+Текущая реализация смотрит на чрезмерно разрешающие заголовки CORS.
+
+<h2>Просмотр Каталогов</h2>
+Пассивное сканирование ответов на наличие подписей, указывающих на возможность просмотра каталогов.
+
+<h2>Пример Файла Пассивного Сканера</h2>
+В этом примере реализуется правило пассивного сканирования, которое загружает строки из файла, который пользователь может редактировать.<br>
+Для получения более подробной информации см.: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Пример Простого Пассивного Сканера</h2>
+Это реализует очень простой пример правила пассивного сканирования.<br>
+Для получения более подробной информации см.: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Раскрытие Хэша</h2>
+Пассивное сканирование хэшей паролей, раскрываемых веб-сервером. <br>
+Различные форматы включают в себя, в том числе некоторые форматы, такие как MD4, MD5 и SHA*, которые иногда используются для целей, отличных от содержат хэши паролей. 
+
+<h2>разработки</h2>
+Пассивное сканирование ответов заголовка HTTP, которые могут указывать на Уязвимость сервера к критической уязвимости HeartBleed OpenSSL. 
+
+<h2>http на https Небезопасного перехода в формы</h2>
+Эта проверка ищет небезопасные HTTP-страницы, на которых размещаются HTTPS-формы. Проблема в том, что небезопасная страница HTTP может быть легко захвачена через MITM, а защищенная форма HTTPS может быть заменена или подделана.
+
+<h2>https на http небезопасный переход в форму после</h2>
+Эта проверка определяет безопасные страницы HTTPS, которые размещают небезопасные формы HTTP. Проблема заключается в том, что защищенная страница переходит на небезопасную страницу, когда данные загружаются через форму. Пользователь может думать, что они отправляют данные на защищенную страницу, когда на самом деле они не являются.
+
+<h2>Небезопасный Компонент</h2>
+Пассивно сканирует заголовки ответа сервера и содержимое генератора тела для версий продукта, которые затем сопоставляются со списком версий продукта, которые, как известно, уязвимы для различных Cve. 
+Список ранжированных CVEs и CVSS оценки серьезности выводятся для каждого продукта, отмеченного как уязвимый. 
+В настоящее время поддерживаются следующие продукты на стороне сервера:<br>
+Сервер приложений Apache Tomcat (ограниченная функциональность из-за ограниченной утечки информации Tomcat)<br>
+Веб-сервер Apache<br>
+модуль Mod_auth_radius Apache<br>
+модуль для Apache mod_fcgid<br>
+модуль Mod_imap Apache<br>
+модуль Mod_jk Apache<br>
+модулем mod_perl для Apache<br>
+модуля mod_python для Apache<br>
+модуль расширением mod_ssl Apache с<br>
+Openssl Apache модуль<br>
+Модуль Perl для Apache<br>
+Python Apache module<br>
+В IBM http-сервер<br>
+Jboss сервер приложений<br>
+Jetty web server / сервер приложений<br>
+LiteSpeed web server<br>
+Конфигурационный файл lighttpd веб-сервер<br>
+Корпорация Microsoft IIS веб-сервер<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+Для PHP<br>
+Phusion_Passenger<br>
+Squid proxy server<br>
+Солнце один веб-сервер<br>
+Sun Java System Web Server<br>
+Веб-сервер TornadoServer<br>
+WordPress<br>
+
+<h2>Сканер Расположения Изображений</h2>
+<p>Пассивное сканирование для обнаружения местоположения GPS на изображениях при нормальной безопасности
+оценки веб-сайтов.  Сканер местоположения изображения помогает в ситуациях, когда
+конечные пользователи могут размещать изображения профиля и, возможно, отдавать свое домашнее местоположение,
+например, сайт знакомств или детский чат.  В документе об этом можно прочитать
+в http://veggiespam.com/ils/</p>
+
+<p>Примечание: для этого плагина для работы, ZAP должен быть настроен к
+получение и обработка изображений.  Чтобы сделать это, перейдите в панель зап вариантов (инструментов
+&rarr; Опционы), выберите "показать" и установите флажок " обрабатывать изображения в
+HTTP запросы/ответы".  Кроме того, изображения ZAP не могут быть отфильтрованы с помощью
+настройки "глобальных исключений URL" или свойства сеанса для "исключить из
+Полномочие". </p>
+
+<h2>Открыть Перенаправление</h2>
+Открытые перенаправления - одна из десяти основных уязвимостей OWASP 2010. Этот чек смотрит на потребитель-поставленный ввод параметров строки запроса ПОСТ данные для определения того, где могут быть возможны открытые перенаправления. Открытые перенаправления возникают, когда приложение разрешает Ввод данных пользователем (например, http://nottrusted.com) для управления удаленным перенаправлением. Это, как правило, довольно точный способ найти, где 301 или 302 перенаправления могут быть использованы спамеров или фишинговых атак
+
+<h2>Сканер заголовков ответов HTTP-сервера</h2>
+При этом заголовки ответов проверяются на наличие заголовка сервера, содержащего сведения о версии.
+На НИЗКИЙ Порог вызовет предупреждение на основе наличия поля заголовка, независимо от того, обнаружена ли строка версии.
+
+<h2>Раскрытие Исходного Кода</h2>
+Исходный код приложения был раскрыт веб-сервером
+
+<h2>Строгий Блок Развертки Заголовка Безопасностью Перехода</h2>
+Этот сканер проверяет ПРОТОКОЛ HTTPS ответы на наличие HTTP Строгое транспортной безопасности (ЭСТС) заголовок и тестов для различных проблем реализации, 
+оповещение, если они найдены.
+
+Предупреждений:
+<ul>
+ <li><b>Strict-Transport-Security Header Not Set: </b> If the response is HTTPS and the header is completely missing.</li>
+ <li><b>Strict-Transport-Security Disabled: </b> If the response is HTTPS and the max-age value is set to zero, thus resetting the browser's HSTS information for the site.</li>
+ <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> If the response is HTTPS and there is more than one HSTS header on the response.</li>
+ <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> If the response is HTTPS, a HSTS header is specified but the max-age value does not contain a number.</li>
+ <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec): </b> If the response body includes a META tag which attempts to define HSTS.</li>
+ <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> If the response is HTTP and the HSTS header is present.</li>
+ <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec): </b> If the response is HTTPS and the HSTS header is present, but there are quotes preceding the max-age directive (quotes are allowed around the max-age value, but not around the directive itself).</li>
+ <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
+</ul>
+
+<h2>Timestamp Disclosure</h2>
+A timestamp was disclosed by the application/web server
+
+<h2>Пользователь управляемых атрибутов HTML-элемента (потенциальные уязвимости XSS)</h2>
+Эта проверка просматривает входные данные пользователя в параметрах строки запроса и ПОСТ данные для определения того, где можно управлять определенными значениями атрибутов HTML. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+
+<h2>Пользователь Controllable Charset</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Такие объявления кодировки должны всегда объявляться приложением. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+
+<h2>Управляемое пользователем событие Javascript (XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+
+<h2>User Controllable Javascript Property (XSS)</h2>
+Эта проверка просматривает предоставленные пользователем входные данные в параметрах строки запроса и публикует данные, чтобы определить, где URL-адреса в определенных свойствах javascript (например, createelement src) могут быть вызваны. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+
+<h2>Хэш Имени Пользователя Найден</h2>
+Если какой-либо контекст содержит определенных пользователей, этот сканер проверяет все ответы на наличие хэшированных значений, представляющих эти имена пользователей.
+Открытие подобных значений может представлять собой Небезопасные прямые ссылки на объект (ИДОР) уязвимости. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
+
+<h2>X-Powered-By Header Information Leak</h2>
+Это проверяет заголовки ответа на наличие X-Powered-By деталей.
+
+<h2>X-Backend-Server Header Information Leak</h2>
+Это проверяет заголовки ответов на наличие сведений о X-Backend-сервере.
+
+<h2>Big Redirect</h2>
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+
+<h2>X-ChromeLogger-Data Header Information Leak</h2>
+This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+
+<h2>X-Debug-Token Information Leak</h2>
+This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
+Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
+
+<h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
+This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
+
+
+</body>
+</html>

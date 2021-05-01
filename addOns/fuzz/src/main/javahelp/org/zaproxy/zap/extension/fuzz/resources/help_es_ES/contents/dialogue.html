@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Diálogo Fuzzer
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Diálogo Fuzzer</h1>
+Esto le permite seleccionar los fuzzers para usar cuando <a href="concepts.html">fuzzing </a> haga una solicitud. 
+
+<h3>Pestaña de ubicaciones de Fuzz</h3>
+Para configurar el fuzzing:<br/>
+<ul>
+<li>Resalte una cadena que desee difuminar en la pestaña de Ubicaciones de Fuzz</li>
+<li>Haga clic en el botón 'Agregar...' para abrir el <a href="payloads.html"> cuadro de diálogo</></li>
+<li>Agregue las cargas útiles que desea usar</li>
+<li>Haga clic en el botón 'Procesadores...' para abrir el <a href="locations.html"> diálogo de Procesadores de Ubicación </> (si es necesario)</li>
+<li>Haga clic en el botón 'Comenzar Fuzzer' para iniciar el fuzzing</li>
+<li>Los resultados se mostrarán en la pestaña <a href="tab.html"> Fuzzer </> y los seleccionarán para ver las solicitudes y respuestas completas.</li>
+</ul>
+También puede buscar cadenas en los resultados de fuzz usando la 'pestaña Buscar'.
+
+<h3>Pestaña de opciones
+</h3>
+Esta pestaña le permite configurar las opciones que se utilizarán cuando fuzzing.
+
+<h3>Pestaña de Procesadores de mensajes</h3>
+Los procesadores de mensajes pueden acceder y cambiar los mensajes que se están enviando, controlar el proceso de fuzzing e interactuar con la interfaz de usuario de ZAP.<br>
+Los procesadores de mensajes disponibles dependen del tipo de mensaje que se está difuminando, este complemento incluye los <a href="httpmessageprocessors.html">procesadores de mensajes HTTP predeterminados</a>.
+
+<p>
+Los complementos también pueden definir generadores de carga adicionales.
+
+
+<h2>Acceso a través de</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Pestaña de solicitud</td><td>'Fuzz...' haga clic en el elemento derecho del menú</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Pestaña de sitios e historial</td><td>Ataque> Fuzz... elementos del menú</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Menú de herramientas </td><td>Ataque> Fuzz... elemento del menú</td></tr>
+</table>
+
+<h2>Vease también</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
+</table>
+
+</body>
+</html>

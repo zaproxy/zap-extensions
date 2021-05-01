@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:samlConfigData xmlns:ns2="org.zaproxy.zap.extension.saml">
+    <autoChangerEnabled>true</autoChangerEnabled>
+    <deflateOnSendEnabled>true</deflateOnSendEnabled>
+    <xswEnabled>false</xswEnabled>
+    <AutoChangeAttributes/>
+    <AllAttributes>
+        <Attribute>
+            <name>Auth_ACS_URL</name>
+            <valueType>String</valueType>
+            <viewName>Auth:ACS URL</viewName>
+            <xPath>/AuthnRequest/@AssertionConsumerServiceURL</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_ID</name>
+            <valueType>Integer</valueType>
+            <viewName>Auth:Req. ID</viewName>
+            <xPath>/AuthnRequest/@ID</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_ACS_Index</name>
+            <valueType>String</valueType>
+            <viewName>Auth:ACS Index</viewName>
+            <xPath>/AuthnRequest/@AttributeConsumingServiceIndex</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_Req_IssueInstant</name>
+            <valueType>TimeStamp</valueType>
+            <viewName>Auth:Req. IssueInstant</viewName>
+            <xPath>/AuthnRequest/@IssueInstant</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_Req_ProtocolBinding</name>
+            <valueType>String</valueType>
+            <viewName>Auth:Req. ProtocolBinding</viewName>
+            <xPath>/AuthnRequest/@ProtocolBinding</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_Req_Version</name>
+            <valueType>String</valueType>
+            <viewName>Auth:Req. Version</viewName>
+            <xPath>/AuthnRequest/@Version</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Auth_Issuer</name>
+            <valueType>String</valueType>
+            <viewName>Auth:Issuer</viewName>
+            <xPath>/AuthnRequest/Issuer</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_ID</name>
+            <valueType>String</valueType>
+            <viewName>Resp:ID</viewName>
+            <xPath>/Response/@ID</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_StatusCode</name>
+            <valueType>String</valueType>
+            <viewName>Resp:Status Code</viewName>
+            <xPath>/Response/Status/StatusCode/@Value</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_Assertion_ID</name>
+            <valueType>String</valueType>
+            <viewName>Resp:Assertion ID</viewName>
+            <xPath>/Response/Assertion/@ID</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_Assertion_Version</name>
+            <valueType>String</valueType>
+            <viewName>Resp:Assertion Ver.</viewName>
+            <xPath>/Response/Assertion/@Version</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_Issuer</name>
+            <valueType>String</valueType>
+            <viewName>Resp:Issuer</viewName>
+            <xPath>/Response/Assertion/Issuer</xPath>
+        </Attribute>
+        <Attribute>
+            <name>Resp_Subject_NameID</name>
+            <valueType>String</valueType>
+            <viewName>Resp:Subject_NameID</viewName>
+            <xPath>/Response/Assertion/Subject/NameID</xPath>
+        </Attribute>
+    </AllAttributes>
+</ns2:samlConfigData>

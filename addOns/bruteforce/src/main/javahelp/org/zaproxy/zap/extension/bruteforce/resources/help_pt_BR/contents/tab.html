@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Guia de navegação forçada</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Aba de navegação forçada</h1>
+
+	A aba de navegação forçada permite que você execute uma varredura com
+	<a href="concepts.html">Navegação Forçada</a> em qualquer dos sites acessados.
+	<br>
+	<br> Os sites podem ser selecionados através da barra de ferramentas ou pela
+	<i>Aba de Sites</i>.
+	<br> Quaisquer sites que foram ou estão sendo escaneados são marcados em negrito no menu pulldown de Sites da barra de ferramentas.
+	<br> A barra de ferramentas fornece um conjunto de botões que permitem iniciar, parar, pausar e continuar a verificação.
+	<br> Uma barra de progresso mostra o quanto progrediu a verificação do site selecionado.
+	<br> O indicador 'Varreduras em andamento' mostra quantas varreduras estão ativas - passar o cursor sobre esse valor irá mostrar num pop-up uma lista dos sites que estão sendo examinados.
+
+	<h2>Menu do botão direito</h2>
+	Clique com o botão direito em uma ou mais linhas, e aparecerá um menu que lhe permitirá:
+
+	<h3>Excluir de</h3>
+	Este menu possui os seguintes submenus:
+
+	<h4>Proxy</h4>
+	Isto irá excluir do proxy os nós selecionados. Eles ainda passarão pelo ZAP, mas não serão exibidos em qualquer uma das guias.
+	<br /> Isto pode ser usado para ignorar URLs que você sabe que não são relevantes para o sistema que você está testando.
+	<br /> Os nós podem ser incluídos novamente através do diálogo
+	<i>Propriedades da Sessão</i> .
+
+	<h4>Scanner</h4>
+	Isto irá impedir que os nós selecionados entrem na varredura ativa.
+	<br /> Os nós podem ser incluídos novamente através do diálogo
+	<i>Propriedades da Sessão</i> .
+
+	<h4>Spider</h4>
+	Isto irá impedir que os nós selecionados sejam percorridos pelo spider.
+	<br /> Os nós podem ser incluídos novamente através do diálogo
+	<i>Propriedades da Sessão</i> .
+
+	<h3>Copiar</h3>
+	Isso irá copiar as URLs selecionadas para a área de transferência.
+
+	<h3>Reenviar...</h3>
+	Isso irá abrir o
+	<i>Diálogo de reenvio</i> que lhe permite reenviar o request depois de fazer quaisquer alterações que você deseja.
+
+	<h3>Novo Alerta...</h3>
+	Isso irá abrir o
+	<i>diálogo Acrescentar Alerta</i> que permite a você registrar manualmente um novo
+	<i>alerta</i> para este request.
+
+	<h3>Ver no Navegador</h3>
+	Isto irá abrir a URL do nó selecionado em seu navegador padrão.
+
+	<h3>Gerar formulário de teste anti CSRF</h3>
+	Isto irá abrir a URL de um formulário destinado à detecção de problemas de CSRF.
+	<br> Ele só vai ser habilitado para solicitações POST - caso o API esteja habilitado e se o Java suportar a abertura de URLs em um navegador na sua plataforma.
+
+	<h2>Veja também</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Tela de opções de navegação forçada</a></td>
+			<td>para detalhes da configuração de navegação forçada</td>
+		</tr>
+	</table>
+
+</body>
+</html>

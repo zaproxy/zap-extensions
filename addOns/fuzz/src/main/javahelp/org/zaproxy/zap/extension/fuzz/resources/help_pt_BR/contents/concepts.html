@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Fuzzing ou Difusão</h1>
+<p>
+A difusão ou fuzzing é uma técnica que envia muitos dados inválidos ou inesperados para um alvo.
+</p>
+<p>
+O ZAP permite fuzz e, qualquer solicitação usando também:
+<ul>
+<li>Um conjunto de payloads pré configurado</li>
+<li>Payloads definidos pelos complementos opcionais</li>
+<li>Scripts personalizados</li>
+</ul>
+</p>
+Para acesso ao <a href="dialogue.html">diálogo do difusor/fuzzer</a> você pode:
+<ul>
+<li>usar no botão direito do mouse um request em uma das abas do ZAP (como Histórico ou Sites) e selecionar "Ataque / Fuzz...."</li>
+<li>Destacar uma seqüência de caracteres na guia de solicitação, clicar com o botão direito e selecionar "Fuzz..."</li>
+<li>Selecionar o item de menu "Ferramentas / Fuzz...." e a solicitação que você deseja em fuzz</li>
+</ul>
+
+<h3>Geradores de payload</h3>
+Geradores de carga/payload geram os ataques que o difusor envia para o aplicativo de destino.
+<br><br>
+Eles são gerenciados por meio do <a href="payloads.html">diálogo de cargas/payloads</a>
+
+<h3>Processadores de carga</h3>
+Processadores de carga podem ser usados para alterar as cargas específicas antes de serem enviadas.
+<br><br>
+Eles são gerenciados por meio do <a href="processors.html">diálogo de processadores de carga</a>
+
+<h3>Processadores locais de Fuzz</h3>
+Processadores locais de fuzz podem ser usados para alterar todas as cargas antes de serem enviadas.
+<br><br>
+Eles são gerenciados por meio do <a href="locations.html">diálogo de processadores locais</a>
+
+<h3>Processadores de mensagem</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+<br><br>
+Eles são gerenciados por meio da aba <a href="dialogue.html">'Processadores de Mensagem' no</a> diálogo Fuzzer.
+
+<p>
+Essa funcionalidade é baseada no código do projeto OWASP JBroFuzz e inclui os arquivos do projeto fuzzdb. <br/> Note que alguns arquivos do fuzzdb foram deixados de fora já que eles fazem alguns anti-vírus sinalizarem como contendo vírus. <br/> Você pode substituí-los (e atualizar fuzzdb) baixando a versão mais recente do fuzzdb para expandí-lo na biblioteca 'fuzzers'.
+</p>
+
+
+<h2>Veja também</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Tela de opções do difusor/fuzzer</a></td></tr>
+</table>
+
+
+
+</body>
+</html>

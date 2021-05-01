@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Pilihan layar Spider AJAX</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Pilihan layar Spider AJAX</h1>
+
+	Layar ini memungkinkan anda untuk mengkonfigurasi
+	<a href="concepts.html">Laba-laba AJAX</a> pilihan. Spider AJAX adalah add-on untuk sebuah crawler yang disebut Crawljax. Add-on mendirikan sebuah proxy lokal di ZAP untuk berbicara dengan Crawljax.
+	Spider AJAX memungkinkan anda untuk menjelajahi aplikasi web yang tertulis di AJAX jauh lebih mendalam daripada Spider yang asli. Gunakan Spider AJAX jika anda mungkin memiliki aplikasi web yang tertulis dalam AJAX. Anda juga harus menggunakan Spider yang asli serta untuk liputan lengkap aplikasi web (misalnya, untuk menutupi komentar HTML). 
+    <br/>
+    <br/>
+    <h2>Penjelasan pilihan konfigurasi</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th colspan = "3"><br>Pilihan Konfigurasi</th>
+		</tr>
+		<tr>
+			<th>Bidang</th>
+			<th>Rincian</th>
+			<th>Default</th>
+		</tr>
+		<tr>
+			<td>Browser</td>
+			<td>Spider AJAX bergantung pada browser eksternal untuk menjelajahi situs yang ditargetkan. Anda bisa menentukan mana yang ingin anda gunakan. Untuk rincian yang lebih lanjut tentang peramban yang didukung lihat halaman bantuan add-on "Selenium".</td>
+			<td align="center">Firefox</td>
+		</tr>
+		<tr>
+			<td>Jumlah jendela browser yang terbuka</td>
+			<td>Anda dapat mengonfigurasikan jumlah jendela yang akan digunakan oleh AJAX Spider. Semakin banyak jendela, semakin cepat prosesnya.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Kedalaman penjelajahan maksimum</td>
+			<td>Kedalaman maksimum yang dapat dijangkau penjelajah. Nol berarti kedalaman yang tak terbatas.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Penjelajah maksimum negara bagian</td>
+			<td>Jumlah maksimum negara bagian yang penjelajahnya harus dijelajahi. Nol berarti negara yang penjelajah tidak terbatas. </td>
+			<td align = "center"> 0 (tidak terbatas)</td>
+		</tr>
+		<tr>
+			<td>Durasi maksimum</td>
+			<td>Waktu maksimum yang diizinkan penjelajah untuk menjalankannya. Nol berarti waktu yang berjalan tidak terbatas.</td>
+			<td align = "center">60 menit</td>
+		</tr>
+		<tr>
+			<td>Waktu tunggu acara</td>
+			<td>Waktu untuk menunggu setelah sebuah acara sisi klien yang dipecat.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Muat ulang waktu tunggu</td>
+			<td>Waktu untuk menunggu setelah URL dimuat.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Klik elemen sekali</td>
+			<td>Ketika diaktifkan, penjelajah mencoba untuk berinteraksi dengan setiap elemen (misalnya, dengan mengeklik) hanya sekali.  Jika ini tidak diatur, penjelajah akan mencoba untuk mengklik beberapa kali. Mengimbangi pilihan ini lebih ketat tapi mungkin membutuhkan waktu yang lebih lama.</td>
+			<td align = "center">Benar</td>
+		</tr>
+		<tr>
+			<td>Gunakan nilai acak dalam kolom formulir</td>
+			<td>Ketika diaktifkan, sisipkan nilai yang acak ke dalam kolom formulir. Jika tidak, ia menggunakan nilai yang kosong.</td>
+			<td align = "center">Benar</td>
+		</tr>
+		<tr>
+			<td>Klik elemen standar saja</td>
+			<td>Ketika diaktifkan, hanya unsur elemen "a", "tombol" dan "masukan" yang akan diklik selama menjelajah. Jika tidak, ia menggunakan tabel di bawah ini untuk menentukan unsur-unsur mana yang akan diklik.  Untuk analisis yang lebih mendalam, nonaktifkan ini dan konfigurasikan unsur-unsur yang dapat diklik pada tabel.</td>
+			<td align = "center">Benar</td>
+		</tr>
+		<tr>
+			<td>Pilih unsur-unsur yang akan diklik selama menjelajahi (tabel)</td>
+			<td>Daftar unsur-unsur untuk dijelajahi. Tabel ini hanya berlaku ketika "klik unsur-unsur default saja" tidak diaktifkan. Gunakan "mengaktifkan semua" untuk analisis yang lebih mendalam, meskipun mungkin butuh waktu yang lebih lama.</td>
+			<td align = "center">Semua diaktifkan</td>
+		</tr>
+		
+	</table>
+	
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">Laba-laba AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">Tab Spider AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari Tab Spider AJAX</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">Dialog Spider AJAX</a></td>
+			<td>untuk sebuah ikhtisar dari AJAX Spider Dialog</td>
+		</tr>
+	</table>
+
+</body>
+</html>

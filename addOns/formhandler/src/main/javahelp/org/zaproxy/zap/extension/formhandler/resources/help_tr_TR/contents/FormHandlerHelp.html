@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+	<head>
+		<title> Form İşleyici </title>
+	</head>
+	<body bgcolor="#ffffff">
+
+		<h1>Form İşleyici</h1>
+			<p>
+				Form işleyici uzantısı, alan adlarına dayalı formlarda kullanılan değerlerin özel olarak yapılandırılmasına izin verir.
+			</p>
+
+		<h2>Açıklama</h2>
+			<p>
+				Kullanıcı bu eklenti ile değerini ayarlamak istedikleri her bir alan için yeni alanlar oluşturabilir. Ek olarak, Kullanıcı var olan alan ismini ve ayarlamaya çalıştıkları alana sığan değeri değiştirebilir. Herhangi bir alan kullanıcı tarafından silinebilir ya da devre dışı bırakılabilir. Böylece özel değerler kullanılmaz. Alan adları, değerler ve etkin olan durumlar ZAP oturumu bittikten sonra bile kaydedilecektir.
+			</p>
+			<p>
+				Eklenti, bir formda bulunabilecek ve her varsayılan alana karşılık gelen bir değer olan bir dizi varsayılan alan adları sağlar. Kullanıcı arzu ederse varsayılan değerler, devre dışı bırakılabilir, değiştirilebilir ve silinebilir.
+			</p>
+
+		<h2>Form İşleyiciyi Kullanmak</h2>
+			<p>
+				Form İşleyici Seçenekler'de bulunabilir. Form İşleyici sekmesinin seçilmesi, şu anda tanımlanmış
+ tüm varolan değerleri içeren bir tablo görüntüler. Aşağıda bir örnek gösterilmiştir.
+			</p>
+			<img src="../contents/images/formHandlerTable.PNG" alt="Görüntü mevcut değil"/>
+
+		<h3>Yeni Bir Alan Eklemek</h3>
+			<p>
+				Ek alan değerleri tanımlamak için <b>Ekle</b> butonuna tıklanabilir. Bu, kullanıcının alan bilgisi girebilmesi için bir pencere açar.
+			</p>
+
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Görüntü mevcut değil"/>
+
+			<p>
+				Yeni bir alan eklerken lütfen aşağıdakileri dikkate alın:
+				<ul>
+					<li>Bir alan adı sağlanmalı.</li>
+					<li>Alan adı zaten tabloda yok yada bir uyarı hatası oluşacak.</li>
+					<li>Form İşleyicisine verilen alan adı, tanımlamak istediğiniz formdaki alan kimliği ile eşleşmelidir.</li>
+					<li>Alan adı büyük/küçük harflere duyarlı değil.</li>
+					<li>Bir değerin sağlanması gerekmez. Bu boş bir satırın kullanılmasına neden olur.</li>
+					<li>Değer alanı büyük ve küçük harfe duyarlıdır, ve POST'a gözükecektir.</li>
+				</ul>
+			</p>
+
+		<h3>Var Olan Alanı Değiştirmek</h3>
+			<p>
+				Uzantı kullanıcıların var olan alanların değerlerini ve adlarını değiştirmesine izin verir. Bu değiştirmek istediğiniz alanı seçip <b>değiştir</b> butonuna tıklanarak yapılabilir.
+			</p>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="Görüntü Mevcut Değil"/>
+
+			<p>
+				Bir alanı değiştirirken kullanıcı yeni bir tane oluşturmak için aynı kurallarla sınırlandırılmıştır. Bir alanı değiştirirken en yaygın sınırlandırma, isim var olan bir alanla aynı olamaz.
+				(yani çoğaltma alanı yok)
+			<p>
+ 
+		<h3>Alanları Kaldırmak</h3>
+			<p>
+				Kullanıcı her zaman alanları kaldırabilir. Bunu yapmak için sadece kaldırmak istediğiniz alanı seçin ve <b>Kaldır</b> butonuna basın. <i><b>Onay Olmadan Kaldır</b> kutusu işaretlenmedikçe, devam etmeden önce kaldırma işlemini onaylamanız istenir.</i> 
+			</p>
+
+		<h2>Tanımlı Olmayan Form Alanları</h2>
+			<p>
+				Bir kullanıcı, bir formdaki her alanı tanımlamak istemediğini ancak formda bir kaç seçimi tanımlamak istediği kararına varabilir.
+			</p>
+			<p>
+				Form işleyicisi eklentisinde tanımlanmamış herhangi bir alan, her bir alan türüne uyacak şekilde oluşturulmuş bir ZAP varsayılan değerini kullanır(Örnek: Bir metin belgesi ''ZAP'' değerine sahip olacaktır)
+			</p>
+
+	</body>
+</html>

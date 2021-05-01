@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aturan Pindai Pasif
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Aturan pindai pasif</h1>
+Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
+
+<h2>Info aplikasi</h2>        
+ Periksa respon server HTTP 500 - Internal Server Error jenis tanggapan yang mendukung tali kesalahan.
+ 
+<h2>Cache kontrol</h2>
+Memeriksa ''Cache-Kontrol'' dan ''Pragma'' Header respon terhadap industri umum pengaturan praktek terbaik untuk perlindungan konten sensitif.<br>
+Diambang menengah dan tinggi dianggap hanya bebas-kesalahan atau non-redirect teks tanggapan (tidak termasuk JavaScript).<br>
+Di ambang rendah semua tanggapan dari gambar dan CSS dianggap termasuk dan pengalihan.
+
+<h2>Jenis konten yang hilang</h2>
+Menimbulkan suatu peringatan jika respon tersebut tidak memiliki jenis konten atau jika headernya ada namun nilainya kosong.
+
+<h2>Cookie HttpOnly</h2>
+Memastikan bahwa saat cookie ditetapkan, mereka diberi label HttpOnly, Flag HtppOnly menunjukkan ke pencarianbahwa cookie tersebut sedang diatur dan harus segara ditindaklanjuti oleh script sisi klien (seperti JavaScript).
+
+<h2>Bendera aman cookie</h2>
+Mencaro cookie yang di set selama sesi HTPPS, menimbulkan peringatan bagi mereka yang ditetapkan tetapi tidak menyertakan bendera aman. Cookie ditetapkan dengan bendera yang aman tidak akan dikirim selama sesi HTTP polos.
+
+<h2>Penyisipan Script lintas Domain</h2>
+Memvalidasi apakahscript disertakan dalam domain selain domain yang memhosting konten.
+Dengan melihat ''src'' atribut ''src'' dari tag dalam tanggapan.<br>
+Script memungkinksn Cross-Domain:  
+<ul>
+<li>Setiap scrip dengan atribut '' integritas'' tidak diabaikan - nilai integritas tidak dicentang karena ini kan diperiksa oleh browser</li>
+<li>Diambang menengah dan tinggi jika URL scrip yang jatuh dalam konteks yang juga mencakup URL dasar pesan peringatan tidak akan dibangkitkan.</li>
+</ul> 
+
+<h2>Header XSS perlindungan</h2>
+Cek untuk keberadaan dan nilai/pengaturan header X-XSS-perlindungan. 
+Header respon ini dapat digunkan untuk mengkonfigurasi agen pengguna built-in perlindungan XSS reflektif.<br>
+Pada ambang menengah dan tinggi hanya tanggapan HTML bebas-kesalahan atau non-redirect yang dipertimbangkan.<br>
+Pada ambang batas rendah semua tanggpan teks dipertimbangkantermasuk kesalahan dan pengalihan.
+
+<h2>Kontenb Campuran</h2>
+Untuk konten yang ditayangkan melalui HTTPS Nmenganalisis semua src atribut dalam respon mencari orang-orang yang bersumber melalui HTTP polos.
+
+<h2>Perlengkapan kata sandi otomatis</h2>
+Mencari ''kata sandi'' tipe ladang input dan memeriksa pengaturan ''aotucomplete=mati''.
+
+<h2>Pengungkapan Alamat Pribadi</h2>
+Cek isi respon untuk dimasukkan alamat IPv4 1918 serta Amazon EC2 pribadi hostname (misalnya, ip-10-0-56-78). Informasi ini dapat memberikan penyerangan informasi yang berguna tentang skema alamat IP dari jaringan internal, dan mungkin bisa membantu untuk lebih lanjut serangan penargetan sitem internal.
+
+<h2>Sidang ID di URl Menulis Kembali</h2>
+Pemindai ini memeriksa adanya parameter jenis token sesi yang ditulis ulang ke URL. 
+Untuk membantui mengurangi keslahan positif pemandaian cek panjang nilai token, jika nilai parameter tidak lebih dari 8 karakter panjangnya maka parameter akan diabaikan ( yaitu: Survei? sld = 5 akan ditandai sebagai rentan).
+
+<h2>X-Konten-Tipe-Pilihan</h2>
+Pemeriksaan pemindai ini untuk header Anti-MIME-Sniffing header X-Konten-Tipe-Pilihsn dan memastikiannya disetel ke 'nosnif'.<br>
+Di ambang menengah dan tinggi pemindai ini tidak akan waspada pada klien atau server tanggapan kesalahan atau pengalihan.<br> 
+Pada ambang abtas rendah semua tanggapan teks dipertimbangkan dan pengalihan.<br>
+ 
+<h2>X-Bingkai-Pilihan Header Pemindai</h2>
+Pemindai ini memeriksa keberadaan dan validitas header X-Bingkai-Pilihan.<br> 
+Di amabng menengah dan tinggi ini hanaya terlihat kesalahan di bebas-kesalahan atau non-redirect HTML tanggapan.<br>
+Pada ambang batas rendah semua tanggapan teks dipertimbangkan dan pengalihan.<br>
+Kondisi tersebut dapat mengakibatkan peringatan:
+<ul> 
+ <li><b>X-Bingkaio-Pilihan Header tidak set: </b> jika header X-Bingkai-Pilihan hilang dari respon sepenuhnya.</li>
+ <li><b>Beberapa entri X-Bingkai-Pilihan header: </b> Bila lebih dari satu header X-Bingkai-Pilhan terdeteksi pada respon.</li>
+ <li><b>X-Bingkai-Pilihan Ditetapkan melalui META (Non-compliant dengan Spec): </b> A ''http-equiv'' ditemukan dalam respon yang mencoba mendefenisikan X-Bingkai-Pilihan, yang tidak didukung oleh spesifikasi.</li>
+ <li><b>X-Bingkai-Pilihan pengaturan Malformed: </b> Header hadir dengan nilai tidak ada, atau nilai adalah tidak seperti yang diharapkan (yaitu: 'Tolak''. ''SAMEORIGIN''. atau ''IZINKAN-DARI'').</li>
+</ul>
+Secara default lansiran tidak akan dibangkitkan dalam respon termasuk kebijakan konten keamanan 'frame-leluhur' elemen seperti ini diutamakan daripada header X-Bingkai_pilihan.
+Namun di ambang rendah berbagai persoalan diatas masih akan dilaporkan tetapi pada rendah resiko. 
+
+</body>
+</html>

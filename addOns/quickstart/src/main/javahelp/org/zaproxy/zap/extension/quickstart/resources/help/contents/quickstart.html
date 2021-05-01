@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Quick Start
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Quick Start</H1>
+
+<p>
+	The Quick Start tab provides you with an easy way to quickly test a web application.<br>
+	The top screen shows 3 buttons that take you to the following screens.
+</p>
+
+<H2>Automated Scan</H2>
+
+The Automated Scan screen allows you to launch an automated scan against an application - just enter its URL below and press 'Attack'.
+<br>
+Please be aware that you should only attack applications that you have been specifically been given permission to test.
+
+<H3>URL to attack</H3>
+
+This is the URL of the application you wish to attack, starting with 'http://' or 'https://'.<br>
+ZAP must be able to access this URL for the attack to proceed.
+
+<H3>Use traditional spider</H3>
+
+The traditional spider explores the application by finding links in HTML pages. 
+It is very fast but cannot handle applications which make heavy use of JavaScript. 
+
+<H3>Use ajax spider</H3>
+
+The ajax spider explores the application by launching the browser you have chosen and clicking on the links it finds. 
+Is is slower than the traditional spider but handles JavaScript well.<br>
+This option is only shown if the ajax spider add-on is installed. 
+If it is not available then you can download and install it for free from the ZAP Marketplace.
+
+<H2>Manual Explore</H2>
+
+The Manual Explore screen allows you to launch the browser of your choice so that you can explore your application while proxying through ZAP.
+Select the browser you want from the pull-down and press the 'Launch Browser' button.<br>
+Browsers launched this way will be configured to proxy via ZAP and will ignore certificate errors,
+so you will not need to import the ZAP Root CA Certificate.<br>
+ZAP will remember the last browser you chose when you restart it.<br><br>
+A button will also be added to the toolbar which will launch the latest browser chosen. 
+The icon will change to represent the relevant browser <br><br> 
+Note that launched browsers will stop working if you change the address or port that ZAP is listening on.
+<p>
+If you do not have selenium add-on installed then you will see instructions for configuring your browser 
+to proxy via ZAP manually.
+
+<H3>URL to explore</H3>
+
+This is the URL of the application you wish to explore, starting with 'http://' or 'https://'.<br>
+ZAP must be able to access this URL.
+
+<H3>Enable HUD</H3>
+
+The ZAP Heads Up Display (HUD) brings all of the essential ZAP functionality into your browser. 
+It is ideal for people new to web security and also allows experienced penetration testers to focus on an application's 
+features while providing key security information and functionality. <br>
+This option is enabled if the HUD add-on is installed. 
+If it is not available then you can download and install it for free from the ZAP Marketplace.
+
+<H2>Learn More</H2>
+
+The Learn More screen provides links to local and online resources for you to learn more about ZAP.
+
+<H2>News</H2>
+
+Occasional news items will be displayed underneath the 3 buttons. Clicking on the red 'x' will hide the current news item.
+
+<H2>See also</H2>
+<table>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="cmdline.html">Command Line</a></td>
+		<td>description of command line arguments</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="launchoptions.html">Launch Options</a></td>
+		<td>the Quick Start Launch Options</td>
+	</tr>
+</table>
+
+</BODY>
+</HTML>

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Fuzzing</h1>
+<p>
+Fuzzing adalah teknik mengirimkan banyak yang tidak valid atau data yang tak terduga untuk target.
+</p>
+<p>
+ZAP memungkinkan anda untuk fuzz apapun permintaan masih menggunakan:
+<ul>
+<li>Membangun di set muatan</li>
+<li>Muatan yang didefinisikan oleh opsional add-ons</li>
+<li>Skrip kustom</li>
+</ul>
+</p>
+Untuk mengakses <a href="dialogue.html">Dialog fuzzer</a> anda juga dapat:
+<ul>
+<li>Klik kanan permintaan di salah satu tab ZAP (seperti Sejarah atau Situs) dan pilih "Serangan / Fuzz..."</li>
+<li>Sorot sebuah string dalam tab Permintaan, klik kanan dan pilih "Fuzz..."</li>
+<li>Pilih item menu "Tools / Fuzz..." lalu pilih permintaan yang ingin Anda ubah</li>
+</ul>
+
+<h3>Generator Payload</h3>
+Muatan Generator menghasilkan baku serangan yang telah mengirimkan hasil pengeditan. mengajukan untuk aplikasi target.
+<br><br>
+Mereka berhasil melalui <a href="payloads.html">Payloads dialog</a>
+
+<h3>Prosesor Payload</h3>
+Muatan Prosesor dapat digunakan untuk mengubah muatan tertentu sebelum mereka diserahkan.
+<br><br>
+Mereka berhasil melalui <a href="processors.html">Dialog Prosesor Payload</a>
+
+<h3>Lokasi Prosesor Fuzz</h3>
+Fuzz Lokasi Prosesor dapat digunakan untuk mengubah semua muatan sebelum mereka diserahkan.
+<br><br>
+Mereka berhasil melalui <a href="locations.html">Lokasi Prosesor dialog</a>
+
+<h3>Prosesor Pesan</h3>
+Pesan Prosesor dapat mengakses dan mengubah pesan menjadi fuzzed, mengontrol fuzzing proses dan berinteraksi dengan ZAP UI.
+<br><br>
+Mereka berhasil melalui <a href="dialogue.html">Dialog fuzzer</a> 'Pesan Prosessor' tab.
+
+<p>
+Fungsi ini berdasarkan dari kode proyek OWASP JBroFuzz dan termasuk berkas berkas dari proyek fuzzdb.<br/>
+Perhatikan bahwa beberapa berkas fuzzdb telah ditinggalkan karena menyebabkan pemindai antivirus umum untuk menandai virus tersebut karena mengandung virus.<br/>
+Anda dapat menggantinya ( dan meng-upgrade fuzzdb) dengan mendownload fuzzdb versi terbaru dan memperluasnya di 'fuzzer' library.
+</p>
+
+
+<h2>Lihat juga</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Telah mengirimkan hasil pengeditan pilihan layar</a></td></tr>
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga Passive Scan Rules
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Mga Passive Scan Rules</h1>
+Kabilang sa mga sumusunod na kalidad ng passive scan na mga tuntunin ang add-on na ito:
+
+<h2>Mga Error sa Application</h2>        
+ Suriin ang mga tugon ng server para sa HTTP 500 - Mag-type ng Mga Error sa Internal Server ang mga tugon o ang mga naglalaman ng isang kilalang string ng error.
+ 
+<h2>Control ng Cache</h2>
+Sinusuri ang mga header ng sagot na "Cache-Control" at "Pragma" laban sa pangkalahatang mga setting ng pinakamahusay na kasanayan sa industriya para sa proteksyon ng sensitibong nilalaman.<br>
+Sa MEDIUM at HIGH thresholds tanging di-error o hindi-redirect na mga tugon ng teksto (hindi kasama ang JavaScript) ay isinasaalang-alang.<br>
+Sa LOW threshold ang lahat ng mga sagot bukod sa mga imahe at CSS ay isinasaalang-alang kasama ang mga error at pag-redirect.
+
+<h2>Nawala ang Uri ng Nilalaman</h2>
+Itataas ang isang alerto kung ang tugon ay kulang ng isang header ng Nilalaman-Uri o kung ang header ay umiiral ngunit ang halaga ay walang laman.
+
+<h2>Cookie HttpOnly</h2>
+Tinitiyak na bilang mga cookies ay nakatakda sila ay na-flag HttpOnly. Ang HttpOnly na bandila ay nagpapahiwatig sa mga browser na ang cookie
+ang pag-set ay dapat na kumilos sa pamamagitan ng client side script (tulad ng JavaScript).
+
+<h2>Cookie Secure Flag</h2>
+Ang hitsura para sa mga cookie na itinakda sa panahon ng mga sesyon ng HTTPS, ay nagpapataas ng alerto para sa mga naitakda ngunit hindi kasama ang secure na bandila.
+Ang isang hanay ng cookie na may secure na bandila ay hindi ipapadala sa isang plain HTTP session.
+
+<h2>Pagsasama ng Cross Domain Script</h2>
+Nagpapatunay kung o hindi ang mga script ay kasama mula sa mga domain maliban sa domain na nagho-host ng nilalaman.
+Sa pamamagitan ng pagtingin sa mga "src" na mga katangian ng mga tag na "script" sa tugon.<br>
+Pinayagan Cross-Domain script:  
+<ul>
+<li>Ang anumang script na may isang hindi-walang laman na "integridad" na katangian ay hindi pinansin - ang halaga ng integridad ay hindi naka-check dahil ito ay mai-check sa pamamagitan ng browser</li>
+<li>Sa MEDIUM at HIGH thresholds kung ang URL ng script ay bumaba sa loob ng isang konteksto na kinabibilangan din ng URL ng mensahe ng base walang mga alerto ay itataas.</li>
+</ul> 
+
+<h2>Header XSS Protection</h2>
+Mga tseke para sa pagkakaroon at halaga / setting ng X-XSS-Protection header.
+Ang header ng sagot na ito ay maaaring magamit upang i-configure ang built-in na reflective XSS protection ng user-agent.<br>
+Sa MEDIUM at HIGH thresholds lamang ang di-error o di-redirect HTML tugon ay isinasaalang-alang.<br>
+Sa limitasyon ng LOW lahat ng mga tugon ng teksto ay isinasaalang-alang kasama ang mga error at mga pag-redirect.
+
+<h2>Mixed Content</h2>
+Para sa nilalamang pinaglilingkuran sa pamamagitan ng HTTPS pag-aralan ang lahat ng mga katangian ng src sa tugon na naghahanap para sa mga inaning
+sa pamamagitan ng plain HTTP.
+
+<h2>Autocomplete ng Password</h2>
+Tumingin para sa mga field ng input ng "password" at mga tseke para sa setting na "autocomplete = off".
+
+<h2>Pribadong Address Pagbubunyag</h2>
+Sinusuri ang nilalaman ng sagot para sa pagsasama ng mga address ng RFC 1918 IPv4 pati na rin
+Mga pribadong hostname ng Amazon EC2 (halimbawa, ip-10-0-56-78). Ang impormasyong ito ay maaaring magbigay ng isang magsasalakay
+kapaki-pakinabang na impormasyon tungkol sa scheme ng IP address ng panloob na network, at maaaring makatulong para sa
+karagdagang pag-atake sa pag-target sa mga panloob na sistema.
+
+<h2>Session Id sa URL Rewrite</h2>
+Ang mga tseke ng scanner na ito para sa pagkakaroon ng mga parameter ng parameter na token ng session na muling isinusulat sa URL. 
+Upang makatulong na mabawasan ang mga maling positibo ang scanner ay sumusuri sa haba ng halaga ng token, kung ang halaga ng parameter
+ay hindi mas malaki kaysa sa 8 character ang haba pagkatapos ang parameter ay hindi pinansin
+(i.e.: survey? sId = 5 ay hindi mai-flag bilang masusugatan).
+
+<h2>X-Content-Type-Options</h2>
+Suriin ang scanner na ito para sa header ng Anti-MIME-Sniffing X-Content-Type-Options at tinitiyak na naka-set ito sa 'nosniff'.<br>
+Sa MEDIUM at HIGH thresholds ang scanner na ito ay hindi nag-alerto sa mga tugon ng client o server error o pag-redirect.<br> 
+Sa limitasyon ng LOW ito ay mag-alerto sa lahat ng mga tugon kabilang ang mga error at mga pag-redirect.<br>
+ 
+<h2>X-Frame-Opsyon Header Scanner</h2>
+Ang mga tseke ng scanner para sa pagkakaroon at bisa ng header ng X-Frame-Options.<br> 
+Sa MEDIUM at HIGH threshold na ito ay tumitingin lamang sa mga di-error o di-pag-redirect ng mga tugon sa HTML.<br>
+Sa LOW threshold tinitingnan nito ang lahat ng mga tugon ng teksto kabilang ang mga error at mga pag-redirect.<br>
+Ang mga sumusunod na kondisyon ay maaaring magresulta sa isang alerto:
+<ul> 
+ <li><b> Hindi Itakda ang Header ng X-Frame-Mga Pagpipilian: </> Kung ang X-Frame-Options header ay nawawala mula sa ganap na tugon.</li>
+ <li><b> Maramihang X-Frame-Opsyon Header Entries: </> Kapag higit sa isang X-Frame-Options header ay nakita sa tugon.</li>
+ <li><b> X-Frame-Options Tinukoy sa pamamagitan ng META (Hindi sumusunod sa Spec): Ang entry na "http-equiv" ay natagpuan sa tugon na sumusubok na tukuyin ang X-Frame-Options, na hindi sinusuportahan ng ang detalye.</li>
+ <li><b> Ang Pagpipilian sa Pagpipilian sa X-Frame-Nangyayari Malformed: </> Ang header ay naroroon na walang halaga, o ang halaga ay hindi tulad ng inaasahan (ibig sabihin: maliban sa "DENY", "SAMEORIGIN", o "PINAGKAKA-MULA").</li>
+</ul>
+Sa pamamagitan ng default, walang mga alerto ang itataas sa sagot ay may kasamang elemento ng frame ng mga ninuno sa Nilalaman-Seguridad na ito bilang pangunahin sa header ng X-Frame-Options.
+Gayunpaman sa limitadong LOW ang mga isyu sa itaas ay isusulat pa rin ngunit sa isang MABUBONG panganib. 
+
+</body>
+</html>

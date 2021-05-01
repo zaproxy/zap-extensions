@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<OWASPZAPReport
+	th:attr="version=${zapVersion}, generated=${generatedString}">
+	<th:block th:each="site: ${reportData.sites}">
+		<site th:name="${site}"
+			th:attr="host=${helper.getHostForSite(site)}, port=${helper.getPortForSite(site)}, ssl=${helper.isSslSite(site)}">
+			<alerts>
+				<th:block th:each="alert: ${alertTree.children}">
+					<th:block th:if="${alert.userObject.uri.startsWith(site)}">
+						<alertitem>
+							<pluginid th:text="${alert.userObject.pluginId}"></pluginid>
+							<alertRef th:text="${alert.userObject.alertRef}"></alertRef>
+							<name th:text="${alert.nodeName}"></name>
+							<riskcode th:text="${alert.userObject.risk}"></riskcode>
+							<confidence th:text="${alert.userObject.confidence}"></confidence>
+							<riskdesc
+								th:text="${helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.userObject.confidence) + ')'}"></riskdesc>
+							<confidencedesc
+								th:text="${helper.getConfidenceString(alert.userObject.confidence)}"></confidencedesc>
+							<desc th:text="${alert.userObject.description}"></desc>
+							<instances>
+								<th:block th:each="instance: ${alert.children}">
+									<instance>
+										<uri th:text="${instance.userObject.uri}"></uri>
+										<method th:text="${instance.userObject.method}"></method>
+										<param th:text="${instance.userObject.param}"></param>
+										<attack th:text="${instance.userObject.attack}"></attack>
+										<evidence th:text="${instance.userObject.evidence}"></evidence>
+									</instance>
+								</th:block>
+							</instances>
+							<count th:text="${alert.childCount}"></count>
+							<solution th:text="${alert.userObject.solution}"></solution>
+							<otherinfo th:text="${alert.userObject.otherinfo}"></otherinfo>
+							<reference th:text="${alert.userObject.reference}"></reference>
+							<cweid th:text="${alert.userObject.cweid}"></cweid>
+							<wascid th:text="${alert.userObject.wascid}"></wascid>
+							<sourceid th:text="${alert.userObject.sourceHistoryId}"></sourceid>
+						</alertitem>
+					</th:block>
+				</th:block>
+			</alerts>
+		</site>
+	</th:block>
+</OWASPZAPReport>

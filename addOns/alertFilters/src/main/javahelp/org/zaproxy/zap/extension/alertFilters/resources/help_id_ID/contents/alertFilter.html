@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Filter Peringatan Sinyal
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Filter Peringatan Sinyal</h1>
+<p>
+Filter Peringatan Konteks memungkinkan Anda untuk secara otomatis mengganti tingkat risiko
+dari setiap peringatan yang diajukan oleh aturan pemindaian aktif dan pasif dalam konteks tertentu.
+</p>
+<p>
+Add-on ini menambahkan panel 'Alert Filters' ke dialog konteks.<br>
+Panel menampilkan daftar semua filter Lansiran beserta tombol untuknya
+menambahkan, menghapus, dan menghapusnya.
+</p>
+<p>
+Untuk menggunakan add-on ini Anda perlu:
+<ul>
+<li>Tambahkan aplikasi Anda ke suatu konteks</li>
+<li>Membuka Sesi dialog Properti (misalnya dengan mengklik ganda pada konteks)</li>
+<li>Pilih panel 'Alert panel' konteks</li>
+<li>Klik 'Add' dan isi rincian untuk setiap peringatan yang ingin Anda timpa</li>
+</ul>
+Catatan: Filter peringatan hanya akan diterapkan ke lansiran baru, bukan untuk lansiran apa pun
+sudah hadir saat filter dibuat. 
+</p>
+<p>
+Dialog 'menambahkan' dan 'modifikasi' memiliki bidang berikut:
+
+<h3>Lansiran</h3>
+Tarik ke bawah yang berisi semua peraturan peringatan aktif dan pasif yang saat ini terpasang.
+
+<h3>Tingkat Risiko Baru</h3>
+Tingkat risiko baru yang akan diberikan pada peringatan yang diajukan sesuai dengan kriteria yang ditentukan oleh peraturan tersebut.
+ 
+<h3>URL</h3>
+URL opsional.<br>
+Jika ditentukan maka aturan ini akan diterapkan jika URL sesuai dengan URL peringatan yang dinaikkan.<br>
+
+<h3>URL adalah regex?</h3>
+Jika ditetapkan dan URL ditentukan maka URL akan diperlakukan sebagai ekspresi regresi bila dibandingkan dengan URL lansiran.<br>
+Jika tidak disetel, maka URL tertentu harus sama persis dengan URL lansiran.
+
+<h3>Parameter</h3>
+Parameter opsional.<br>
+Jika ditentukan maka aturan ini akan diterapkan jika parameter sama persis dengan parameter peringatan yang dinaikkan.<br>
+
+<h3>Diaktifkan</h3>
+Jika ditetapkan maka aturan ini akan diterapkan pada semua peringatan yang muncul terhadap konteks yang diberikan.
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Silinyum</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Silinyum</h1>
+
+	<p>Ang Silinyum na add-on ay mga nagbibigay ng mga WebDriver, para sa ibang mga karagdagan, upang manawagan at makontrol ng malayo sa mga web browser. Ito rin ay nagbubuklod ng HtmlUnit ng web browser, isang headless na Java na nakabase sa web browser.
+	<p>Ang add-on ay nagdagdag din ng isang pagpindot sa kanan na pagpipilian sa mga panel na listahan ng mga URL (tulad sa kasaysayan at puno ng mga site) kung saan pinapayagan ka na buksan ang piniling URL sa kahit na anong suportadong browser.
+
+	<h2>Suportado ang mga browser</h2>
+
+	
+	<p>Ang mga sumusunod na mga web browser ay suportado:
+	<table border="2">
+		<tr>
+			<th>Pangalan</th>
+			<th>ID</th>
+			<th>Mga Kinakailangan/Mga Nakatala</th>
+		</tr>
+		<tr>
+			<td>Kromo</td>
+			<td>kromo</td>
+			<td>Ang mga sumusunod na mga bersyon ay kilala sa pag-gawa: 59 at 60 (ang lumang mga bersyon ay maaari pa rin gumana). Mga kinakailangan ng ChromeDriver, kung wala ito sa PATH na sistema, maaari itong itakda sa mga pagpipilian. Para sa mga karagdagang impormasyon sa ChromeDriver at kung paano ito makuha sa pagsangguni sa <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">Chromedriver website</a>.
+			</td>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>firefox</td>
+			<td>Ang mga sumusunod na mga bersyon ay kilala sa pag-gawa: 45 (ESR), 46, 47.0.1, 54, at 55 (ang lumang mga bersyon ay maaari pa rin gumana). Ang ilang mga bersyon ay kilala sa hindi pag-gawa, halimbawa, 47.0. Mas bagong mga bersyon (&ge; 48) kailangan ng geckodriver, maaari itong itakda sa mga pagpipilian. Para sa mga karagdagang impormasyon sa geckodriver at kung paano ito makuha sa pagsangguni sa <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (tingnan ang mataas na talaan para sa caveat habang gumagamit ng geckodriver).
+			</td>
+		</tr>
+		<tr>
+			<td>HtmlUnit</td>
+			<td>htmlunit</td>
+			<td>Magkasamang browser, ay walang anumang kailangan.</td>
+		</tr>
+		<tr>
+			<td>Pagsisiyasat sa Internet</td>
+			<td>ie</td>
+			<td>Ang mga sumusunod na bersyon ay kilala sa pag-gawa: 11 (ang mga lumang bersyon ay maari pa rin gumana).
+				Mga kinakailangan ng IEDriverServer, kung wala sa PATH na sistema, maaari itong itakda sa mga pagpipilian.
+				Para sa mga karagdagan impormasyon sa IEDriver ay isangguni ito sa <a
+				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverserver website</a> (tingnan ang mataas na talaan para sa caveat habang ginagamit ang pasisiyasat sa Internet).
+			</td>
+		</tr>
+		<tr>
+			<td>Opera</td>
+			<td>opera</td>
+			<td>Pansamantalang hindi gumagana.</td>
+		</tr>
+		<tr>
+			<td>PhantomJS</td>
+			<td>phantomjs</td>
+			<td>Ang mga sumusunod na bersyon ay kilalang sa pag-gawa: 2.1.1 (ang mga lumang bersyon ay maaari pa rin gumana).
+				Mga kinakailangan ng PhantomJS, kung wala sa PATH na sistema, maaari itong itakda sa mga pagpipilian.
+				Para sa mga karagdagang impormasyon sa PhantomJS at kung paano ito makuha sa pagsangguni sa <a
+				href="http://phantomjs.org/">PhantomJS website</a> (tingnan ang mataas na talaan para sa caveat habang ginagamit ang PhantomJS).
+			</td>
+		</tr>
+		<tr>
+			<td>Safari</td>
+			<td>safari</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	<p>Para sa pag-famit ng Firefox, Kromo, Pagsisiyasat sa Internet, Opera, PhantomJS at Safari, ay kailngan mayroon ka nitong isinalin sa iyong sistema. Ang ID ng browser ay maaaring ginamit sa pagpili ng browser habang kinukumpigura ang ZAP sa pamamagitan ng linya na naatasan o sa pag gamit ng ZAP API (Halimbawa, sa pagtakda ng AJAX Ispayder sa pag gamit ng isa o ibang browser).
+	<p>
+		Ang ibang mga kailangan (hal. mga WebDriver) sa mga browser na maaaring makumpigura sa <a
+			href="options.html">mga pagpipilian ng silinyum iskrin</a>.
+
+	<h2>Magkasamang mga WebDriver</h2> Ang ZAP ay naglaan ng mga add-on kasama ang mga WebDriver, sa pamamagitan ng mga add-on na naisaling ZAP ay maaaring magtangka na gumamit ng magkasamang mga WebDriver bilang default. Ilan sa mga OS ay maaring walang WebDriver para sa ilang mga browser, doon sa mga kaso ng ZAP ay ipapaalam, sa mga pagpipilian ng panel, ay merong walang magkasamang webDriver na magagamit. Ang magkasamang mga WebDriver ay maaari ring i- (re) set sa pindutan na 'Magkasama' (hal. kung sa ibang WebDriver ay minamanwal ang pagtakda). Hindi lahat ng mga bersyon ng mga browser ay suportado kasama ang mga webDrivers na magkasama, ito ay nirerekomenda sa mas bago/pinakabagong mga browser na gagamitin kahit saan man ay posible.
+
+	<p>
+		<strong>Talaan:</strong> ang mga add-on ng ZAP ay maaaring magdagdag ng mga browser.
+
+	<p>
+		<strong>Firefox/geckodriver na Talaan:</strong> Merong mga isyu (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) ay maaaring mapigilan ang mga site ng HTTPS mula sa pag gamit sa mga bersyon &ge; 48 at &lt; 52.
+	<p>
+		<strong>PhantomJS na talaan:</strong> Merong isang isyu (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Isyu #11342</a> ay maaaring mapigilan ang mga site at localhost, 127.0.0.1 at ::1 mula sa pagiging kinatawan sa pamamagitan ng ZAP. Hanggang sa maaari ng gamitin ang pag aayos sa inabisong hindi ito gagamitin sa ganitong mga kaso. Ang ilan sa mga add-on ay maaaring pagpilian para makita ang mga mensaheng nagbababala habang ito ay mga nangyayari. Bilang workaround ang isa ay maaaring tumukoy, sa may <code>mga host</code> ng payl, ang isang dominyon na pangalan ay nagma-mapping sa adres na lokal at sa halip gagamitin ang pangalan ng dominyon.
+	<p>
+		<strong>Ang talaan ng pagsisiyasat sa internet:</strong> Hindi lahat ng mga bersyon ng Pagsisiyasat sa Internet ay gumagana sa kahon, sumangguni sa <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer website</a> para sa mga detalye kung paano makumpigura ang mga ito.
+
+	<h2>Maaari ring tingnan ito</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Mga pagpipilian sa Silinyum Iskrin</a></td>
+			<td>para sa pangkalahatang ideya ng mga pagpipilian ng Silinyum</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="api.html">API</a></td>
+			<td>para sa pangkalahatang ideya ng mga pagpipilian ng Silinyum</td>
+		</tr>
+	</table>
+
+</body>
+</html>

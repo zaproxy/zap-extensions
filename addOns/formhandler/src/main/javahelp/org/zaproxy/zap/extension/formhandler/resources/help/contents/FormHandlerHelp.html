@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+	<HEAD>
+		<TITLE> Form Handler </TITLE>
+	</HEAD>
+	<BODY>
+
+		<H1>Form Handler</H1>
+			<p>
+				This Form Handler extension allows for the custom configuration of values used in forms based on field names.
+			</p>
+
+		<H2>Description</H2>
+			<p>
+				With this add-on the user can create new fields for each individual field that they wish to set the 
+				value of. Additionally, the user can modify any existing field's name and value to fit the field that 
+				they are trying to set. Any field can also be disabled or removed by the user so that the custom values 
+				are not used. Field names, values and enabled status will be stored even after a ZAP session has 
+				concluded.
+			</p>
+			<p>
+				The add-on provides a set of default field names that may be found on a form and a corresponding 
+				value for each default field. These default values can be disabled, modified and deleted if the 
+				user desires.
+			</p>
+
+		<H2>Using The Form Handler</H2>
+			<p>
+				The Form Handler can be found in the Options. Selecting the Form Handler tab will display a table 
+				with all existing values that are currently defined. An example is shown below.
+			</p>
+			<img src="../contents/images/formHandlerTable.PNG" alt="Image Not Available"/>
+
+		<H3>Adding A New Field</H3>
+			<p>
+				To define additional field values the <b>Add</b> button can be clicked. This will bring up a dialog 
+				for the user to provide field information.
+			</p>
+
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Image Not Available"/>
+
+			<p>
+				Please take note of the following when adding a new field:
+				<ul>
+					<li>A field name must be provided.</li>
+					<li>The field name cannot already exist in the table or a warning error will occur.</li>
+					<li>The field name supplied to the Form Handler must match the field ID on the form that you wish 
+						to define.</li>
+					<li>The field name is not case sensitive.</li>
+					<li>A value does not have to be provided. This will result in an empty string being used.</li>
+					<li>The value field is case sensitive, and will be seen in the POST.</li>
+				</ul>
+			</p>
+
+		<H3>Modifying An Existing Field</H3>
+			<p>
+				The extension allows the user to modify the values and names of existing fields. This can be done 
+				by selecting the field that you wish to modify and clicking on the <b>Modify</b> button.
+			</p>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="Image Not Available"/>
+
+			<p>
+				When modifying a field the user is constrained by the same rules as creating a new one. The most
+				common constraint when modifying a field is that the name cannot be the same as an existing field.
+				(i.e. No duplicate fields)
+			<p>
+ 
+		<H3>Removing Fields</H3>
+			<p>
+				The user can remove fields at any time. To do so simply select the field that you wish to remove and 
+				click on the <b>Remove</b> button. <i> Please note that you will be prompted to confirm removal before 
+				proceeding unless the <b>Remove without Confirmation</b> box is checked.</i> 
+			</p>
+
+		<H2>Form Fields That Are Not Defined</H2>
+			<p>
+				A user may find that they do not want to define every field in a form, but rather define a select few within 
+				the form.
+			</p>
+			<p>
+				Any field that is not defined in the form handler add-on will use a ZAP default value that is generated to match 
+				each field type.(For example: A text field will have the value "ZAP")
+			</p>
+
+	</BODY>
+</HTML>

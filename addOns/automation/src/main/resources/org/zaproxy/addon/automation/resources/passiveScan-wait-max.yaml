@@ -1,0 +1,3 @@
+  - type: passiveScan-wait             # Passive scan wait for the passive scanner to finish
+    parameters:
+      maxDuration: 5                   # Int: The max time to wait for the passive scanner, default: 0 unlimited

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="addon.fuzzer.icon" url="contents/images/fuzzer.png" />
+    <mapID target="addon.fuzzer.concepts" url="contents/concepts.html" />
+    <mapID target="addon.fuzzer.dialogue" url="contents/dialogue.html" />
+    <mapID target="addon.fuzzer.locations" url="contents/locations.html" />
+    <mapID target="addon.fuzzer.httpmessageprocessors" url="contents/httpmessageprocessors.html" />
+    <mapID target="addon.fuzzer.payloads" url="contents/payloads.html" />
+    <mapID target="addon.fuzzer.processors" url="contents/processors.html" />
+    <mapID target="addon.fuzzer.options" url="contents/options.html" />
+    <mapID target="addon.fuzzer.tab" url="contents/tab.html" />
+</map>

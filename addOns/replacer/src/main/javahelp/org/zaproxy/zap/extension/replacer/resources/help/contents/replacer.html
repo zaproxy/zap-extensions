@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Replacer
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Replacer</H1>
+The replacer is an easy way to replace strings in requests and responses.
+<p>
+It is accessible via the Options and by default it can be quickly accessed via the '&lt;ctrl&gt; R' hotkey.
+<p>
+The Replacer Options panel allows you to define as many replacement rules as you need.<br>
+Each rule is defined by the following fields:
+<h3>Description</h3>
+A description that allows you to identify the rule.
+
+<h3>Match Type</h3>
+May be one of:
+
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
+
+<h4>Request Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
+
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
+
+<h4>Response Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
+
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
+
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
+
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
+
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
+
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
+
+<h3>Enable</h3>
+If not set then the rule will not apply.
+
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
+
+<p>
+If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
+gives you complete control over the ZAP messages.
+
+</BODY>
+</HTML>

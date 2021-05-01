@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="groovy.icon" url="contents/images/groovy.png" />
+    <mapID target="groovy.intro" url="contents/intro.html" />
+    <mapID target="groovy.about" url="contents/about.html" />
+</map>

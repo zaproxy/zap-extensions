@@ -1,0 +1,8 @@
+type Query {
+    polygon (sides: Int, regular: Boolean): Polygon
+}
+
+type Polygon {
+    perimeter: Float
+    area: Float
+}

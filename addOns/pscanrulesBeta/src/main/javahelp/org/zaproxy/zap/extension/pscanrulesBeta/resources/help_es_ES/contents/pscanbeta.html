@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Reglas de Escaneo pasivo - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Reglas de Escaneo pasivo - Beta</h1>
+En este complemento se incluyen las siguientes reglas de escaneo pasivo de calidad beta:
+
+<h2>Incompatibilidad de caracteres</h2>
+<p>Esto comprobación identifica respuestas donde el encabezado HTTP Content-Type declara un conjunto de caracteres distinto al conjunto de caracteres definido por el cuerpo del HTML o XML. Cuando hay una incompatibilidad de caracteres entre el encabezado HTTP y el cuerpo del contenido, los navegadores web son forzados a determinar en un modo de rastreo de contenido indeseable el conjunto de caracteres correcto del contenido.</p>
+<p>Este escáner maneja varias condiciones dependiendo del umbral configurado para el escáner:</p>
+<ul>
+  <li>Todos los umbrales:
+    <ul>
+      <li>Header Versus Meta Content-Type Charset - La declaración del encabezado HTTP Content-Type no coincide con lo que está declarado en la etiqueta META Content-Type.</li>
+      <li>Header Versus Meta Charset - La declaración en el encabezado HTTP Content-Type no coincide con lo que esta declarado en la etiqueta META Charset.</li>
+    </ul>
+  </li>
+  <li>Umbral bajo:
+    <ul>
+      <li>Meta Content-Type Charset Missing - La respuesta no contiene una declaración META Content-Type, lo cual que podría pasar por alto clientes más antiguos.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - La respuesta contiene tanto una declaración META Content-Type y una declaración META Charset, y no coinciden.</li>
+    </ul>
+  </li>
+</ul>
+Para más referencias:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
+<h2>Cookie - Rastreado de forma imprecisa</h2>
+Las cookies pueden ser exploraras por un dominio o ruta. Esta comprobación solo se ocupa del rastreo del dominio. El rastreo de dominio aplicado a la cookie determina cuáles dominios pueden acceder a ella. Por ejemplo, una cookie puede ser rastreada estrictamente a un subdominio, por ejemplo www.nottrusted.com, o ser rastreado de forma imprecisaun dominio principal e.g. nottrusted.com. En este último caso, cualquier subdominio de nottrusted.com puede acceder la cookie. Las cookies rastreadas de forma imprecisa son comunes en mega-aplicaciones como google.com y live.com.
+
+<h2>CSRF Countermeasures</h2>
+El plugin CSRFCountermeasures identifica las vulnerabilidades "potenciales" con la falta de conocimiento de las contramedidas CSRF en las páginas con formularios.<br>
+Post 2.5.0 puede especificar una lista de identificadores separada por coma en el parámetro 
+<code>rules.csrf.ignorelist</code> a través el panel de Opciones "Configuracion de Reglas".
+Cualquier FORMULARIO con un nombre o ID que coincida con uno de estos identificadores será ignorado cuando se escaneen tokens Anti-CSRF faltantes.
+Solo utilice esta función para ignorar formularios que se sabe que son seguros, por ejemplo formularios de búsqueda.
+
+
+<h2>Revelación de información: errores de depuración</h2>
+Este escáner pasivo comprueba el contenido de las respuestas web de fragmentos de mensaje de error de depuración.
+El acceso a tales detalles puede proporcionarle los recursos a un individuo malicioso para abusar del sitio web.
+También puede filtrar información no destinada específicamente para el consumo del usuario final.
+
+<h2>Revelación de Información: en URL</h2>
+Los intentos de identificar la existencia de detalles sensibles dentro de los mismos URLs visitados (puede incluir parámetros, nombres de documentos, nombres de directorio, etc.).
+
+<h2>Revelación de Información: Referente</h2>
+Identifica la existencia de detalles sensibles dentro del campo del encabezado Referrer de solicitudes HTTP (puede incluir parámetros, nombres de documentos, nombres de directorio, etc.).
+
+<h2>Revelación de Información: Comentarios sospechosos</h2>
+Analiza el contenido web para identificar comentarios que contengan detalles potencialmente sensibles. Lo cual puede conducir a ataques futuros o la revelación de información no deseada.
+
+<h2>Autenticación insegura</h2>
+El HTTP básico o autenticación de texto ha sido utilizado en una conexión insegura. Las credenciales pueden ser leídas y luego reutilizadas por alguien con acceso a la red.
+
+<h2>JSF ViewState inseguro</h2>
+La respuesta a la siguiente dirección URL contiene un valor ViewState que no posee ninguna protección criptográfica.
+
+<h2>Servlet Parameter Pollution</h2>
+Busca el contenido de respuesta de formularios HTML que no especifique un elemento de acción. Version 3 of the 
+Java Servlet spec calls for aggregation of query string and post data elements which may result in 
+unintended handling of user controlled data. Esto puede afectar otros marcos de trabajo y también tecnologías.
+
+<h2>VIEWSTATE</h2>
+Intenta identificar parámetros VIEWSTATE y analiza dichos parámetros para las mejores y variadas prácticas o medidas de protección como: 
+<ul>
+	<li>Aquellas basadas ASP.NET 1.0 and 1.1.</li>
+	<li>La firma faltante VIEWSTATE.</li>
+	<li>Dividir VIEWSTATE.</li>
+	<li>VIEWSTATE que contienen patrones IP o correo electrónico.</li>
+</ul>
+
+</body>
+</html>

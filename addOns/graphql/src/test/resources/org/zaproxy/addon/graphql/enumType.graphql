@@ -1,0 +1,10 @@
+type Query {
+    direction: Direction
+}
+
+enum Direction {
+  NORTH
+  EAST
+  SOUTH
+  WEST
+}

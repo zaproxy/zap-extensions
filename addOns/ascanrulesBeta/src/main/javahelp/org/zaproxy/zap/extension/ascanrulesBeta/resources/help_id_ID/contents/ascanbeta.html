@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aturan Pemindai Aktif - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Active Scan Rules - Beta</h1>
+Berikut beta kualitas active scan aturan termasuk dalam hal ini add-on:
+
+<h2>Backup File Disclosure</h2>
+Scan untuk umum bernama salinan cadangan dari file pada web server, yang dapat mengungkapkan informasi sensitif.
+
+<h2>Cross-Domain Misconfiguration</h2>
+Memeriksa apakah web server dikonfigurasi untuk memungkinkan akses Domain Lintas, dari yang berbahaya layanan pihak ketiga, misalnya. Saat ini pemeriksaan untuk wildcard di Adobe crossdomain.xml, dan di
+SilverLight ini clientaccesspolicy.xml. 
+
+<h2>Token CSRF</h2>
+Memindai keberadaan token anti-CSRF. <br>
+Peringatan atas permintaan yang tampaknya tidak mengandung token anti-CSRF. <br>
+Pos 2.5.0 kamu dapat menentukan daftar pengenal yang dipisahkan dengan tanda koma di parameter <code>rules.csrf.ignorelist</code> melalui panel 'konfigurasi aturan' pilihan.
+FORM mana pun dengan nama atau ID yang cocok dengan salah satu pengidentifikasi ini akan diabaikan saat memindai bukti kontra-CSRF yang hilang.
+Hanya gunakan fitur ini untuk mengabaikan FORMs yang anda tahu adalah aman, misalnya bentuk-bentuk pencarian.
+
+<h2>Injeksi Ekspresi Bahasa</h2>
+Periksa jika web aplikasi adalah subjek untuk penyerangan injeksi Ekspresi Bahasa (EL), yang terjadi ketika sebuah aplikasi gagal untuk menetralkan secara cukup elemen-elemen khusus yang dapat memodifikasi pernyataan EL dimaksudkan sebelum di jalankan.
+
+<h2>Kerentanan membukaSSL</h2>
+Mendeteksi apakah server web rentan terhadap kerentanan membukaSSL yang terkejut, dengan memanfaatkannya.
+Untuk keterangan lebih lanjut lihat CVE-2014-0160.
+
+<h2>Parameter polusi HTTP (HPP)</h2>
+Menyediakan duplikat atau banyak parameter HTTP dengan nama yang sama dapat menyebabkan aplikasi atau situs web untuk menafsirkan nilai dengan cara yang tidak disengaja. Dengan memanfaatkan efek ini, berbahaya individu
+mungkin bisa bypass validasi input, memicu kesalahan atau memodifikasi internal nilai-nilai variabel. 
+Ada perbedaan perlakuan dari duplikat parameter berdampak baik klien (browser) dan server.
+
+<h2>Metode HTTP tidak aman </h2>
+Mendeteksi (dan eksploitasi, tergantung pada pengaturan pindaian) metode HTTP yang dikenal tidak aman yang diaktifkan untuk URL.
+
+<h2>Integer Overflow Error</h2>
+Terlihat untuk indikator integer overflow dalam menyusun kode yang menyebabkan web server crash.  Itu tidak 
+ini dengan menempatkan beberapa string bilangan bulat yang dirancang untuk mencoba dan merangsang buruk tanggapan.
+
+<h2>Padding Oracle</h2>
+Scanner ini upaya untuk memanipulasi padding dienkripsi string untuk memicu respon kesalahan 
+menunjukkan kemungkinan padding oracle kerentanan. 
+Kerentanan tersebut dapat mempengaruhi setiap aplikasi atau framework yang menggunakan enkripsi tidak benar, seperti 
+beberapa versi ASP.net Java Server Faces, dan Mono.
+
+<h2>Eksekusi Kode jarak Jauh - CVE-2012-1823</h2>
+Mendeteksi CVE-2012-1823 untuk melakukan Eksekusi Kode jarak Jauh pada PHP-CGI web berbasis server.
+
+<h2>Sesi Fiksasi</h2>
+Sesi Fiksasi mungkin menjadi mungkin. Jika masalah ini terjadi dengan masuk URL (di mana pengguna mengotentikasi diri mereka sendiri untuk aplikasi), maka URL yang dapat diberikan oleh seorang penyerang, selain tetap session id, untuk korban, untuk kemudian mengasumsikan identitas korban menggunakan diberikan session id. Jika terjadi masalah dengan non-masuk halaman, URL dan tetap session id hanya dapat digunakan oleh penyerang untuk melacak aplikasi yang tidak berkepentingan tindakan pengguna. Jika terjadi kerentanan pada cookie bidang atau bentuk lapangan (POST parameter) bukan pada URL (GET) parameter, maka beberapa kerentanan juga mungkin diperlukan dalam rangka untuk mengatur cookie lapangan pada browser korban, untuk memungkinkan kerentanan yang dapat dimanfaatkan.
+
+<h2>ShellShock - CVE-2014-6271</h2>
+
+Scanner ini melakukan 2 serangan untuk mendeteksi server rentan terhadap CVE-2014-6271 alias ShellShock.<br>
+Yang pertama adalah sederhana tercermin serangan dan yang kedua adalah berdasarkan waktu serangan.<br>
+<br>
+Posting 2.5.0 anda dapat mengubah panjang dari waktu yang digunakan untuk serangan dengan mengubah <code>aturan.umum.tidur</code> parameter melalui Pilihan 'Aturan konfigurasi' panel.
+
+<h2>Pengungkapan sumber kode - CVE-2012-1823</h2>
+Eksploitasi CVE-2012-1823 untuk mengungkapkan kode sumber PHP sisi server pada server web berbasis PHP-CGI.<br> Hanya analisis tanggapan yang berbasis teks (HTML, JS, JSON, XML, dll), untuk menghindari kesalahan positif yang mungkin terjadi pada gambar atau konten biner lainnya.
+
+<h2>Pengungkapan sumber kode - SVN</h2>
+Menggunakan metadata repositori kode sumber subversi untuk memindai berkas yang berisi kode sumber pada server web.
+
+<h2>Pengungkapan sumber kode - /WEB-INF</h2>
+Mengeksploitasi kehadiran folder / WEB-INF yang tidak dilindungi untuk mendownload dan mendekompilasi kelas Java, untuk mengungkapkan kode sumber Java.
+
+<h2>SQL injeksi - Hipersonik (berbasis waktu)</h2>
+
+Pemindai ini menggunakan sintaks SQL spesifik Hipersonik untuk mencoba menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br> 
+Jika kueri yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan kueri yang dimodifikasi dapat dikendalikan, ini adalah indikasi kerentanan SQL injeksi berbasis waktu dalam database SQL hipersonik. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas
+kerentanan injeksi dalam database hipersonik yang dicurigai. <br>
+Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
+Tes pemindaian hanya untuk waktu dasar kerentanan injeksi SQL<br>
+<br>
+Pos 2.5.0 Anda dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah
+<code>rules.common.sleep</code> parameter melalui pilihan panel 'konfigurasi pengaturan'.
+
+<h2>SQL Injeksi - MySQL (Berbasis Waktu)</h2>
+
+Pemindai ini menggunakan MySQL-spesifik SQL syntax untuk mencoba untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injeksi berbasis waktu dalam database MySQL. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas kerentanan injeksi dalam database MySQL yang dicurigai. <br>
+Untuk alasan ini, jumlah rangkaian pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, 
+untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh 
+penundaan beban bukan dengan penundaan injeksi SQL. <br>
+Scanner tes hanya untuk waktu-based SQL injection vulnerabilities.<br>
+<br>
+Posting 2.5.0 anda dapat mengubah panjang dari waktu yang digunakan untuk serangan dengan mengubah <code>aturan.umum.tidur</code> parameter melalui Pilihan 'Aturan konfigurasi' panel.
+
+<h2>SQL Injeksi - ramalan (Berbasis Waktu)</h2>
+
+Pemindai ini menggunakan sintaks SQL ramalan-spesifik untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injection berbasis waktu dalam database ramalan SQL. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas 
+kerentanan injeksi dalam ramalan database yang dicurigai. <br>
+Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
+Percobaan pemindai hanya untuk injeksi SQL berbasis waktu.<br>
+<br>
+Perhatikan bahwa peraturan ini saat ini tidak memungkinkan Anda mengubah jangka waktu yang digunakan untuk serangan waktu karena penundaan. 
+
+<h2>SQL Injeksi - PostrgreSQL (Berbasis Waktu)</h2>
+
+Pemindai ini menggunakan sintaks SQL spesifik-PostgreSQL untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injection berbasis waktu di database PostgreSQL. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas 
+kerentanan injeksi dalam database PostgreSQL dicurigai. <br>
+Untuk alasan ini, jumlah rangkaian pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, 
+untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh 
+penundaan beban bukan dengan penundaan injeksi SQL. <br>
+Percobaan pemindai hanya untuk injeksi SQL berbasis waktu. <br>
+<br>
+Pos 2.5.0 kamu dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah parameter <code>aturan.umum.tidur</code> melalui panel 'Konfigurasi aturan opsi'.
+
+<h2>Penghitungan nama pengguna</h2>
+Ada kemungkinan untuk menghitung nama pengguna, berdasarkan tanggapan HTTP yang berbeda saat nama pengguna yang sah dan tidak sah disediakan. Ini akan sangat meningkatkan kemungkinan keberhasilan password brute-forcing serangan terhadap sistem. Catatan yang positif palsu kadang-kadang dapat diminimalisir dengan meningkatkan 'Attack Strength' Pilihan di ZAP.  Silahkan periksa bidang 'Info Lainnya' secara manual untuk mengkonfirmasi jika ini sebenarnya sebuah masalah.
+Scanner ini dilewati jika tidak ada konteks yang didefinisikan yang menggunakan Otentikasi berbasis Bentuk, dan hanya berjalan melawan URL diidentifikasi sebagai masuk URL dari konteks.
+
+<h2>Injeksi XPath</h2>
+Seperti yang dijelaskan oleh OWASP: "Serangan injeksi XPath terjadi saat situs web menggunakan informasi yang dipasok pengguna untuk kueri XPath untuk data XML. Dengan mengirimkan informasi yang salah secara sengaja ke dalam situs web, penyerang bisa mengetahui bagaimana data XML disusun, atau mengakses data yang biasanya tidak bisa diakses. Malahan dia bisa meningkatkan keunggulannya pada situs web jika data XML digunakan untuk otentikasi (seperti berkas pengguna berbasis XML) atau otorisasi." Pemindai ini berusaha untuk mengidentifikasi kelemahan tersebut.
+
+<h2>XXE</h2>
+Komponen ini mencoba untuk mengidentifikasi aplikasi yang dapat XML Entitas eksternal (XXE) serangan.
+Aplikasi yang parse XML masukan yang mungkin dapat XXE ketika lemah atau buruk dikonfigurasi parsers 
+menangani masukan XML yang berisi referensi untuk sebuah entitas eksternal seperti file lokal, permintaan HTTP untuk 
+internal atau tersier sistem, dll.<br>
+<br>
+Hal ini membutuhkan Callback ekstensi, sehingga tidak akan bekerja jika ekstensi ini dinonaktifkan atau dihapus. 
+Hal ini juga dianjurkan bahwa anda menguji bahwa Callback ekstensi adalah dikonfigurasi dengan benar untuk situs target.
+Jika sistem target tidak dapat terhubung ke Callback Alamat kemudian beberapa XXE kerentanan tidak akan terdeteksi.
+
+</body>
+</html>

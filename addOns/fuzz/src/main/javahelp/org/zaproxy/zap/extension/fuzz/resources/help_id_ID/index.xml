@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <indexitem text="Konsep Fuzzer" target="addon.fuzzer.concepts" />
+    <indexitem text="Dialog Fuzzer" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Telah Mengirimkan Hasil Pengeditan. Lokasi Prosesor Dialog" target="addon.fuzzer.locations"/>
+    <indexitem text="Telah mengirimkan hasil pengeditan. HTTP Prosesor Pesan" target="addon.fuzzer.httpmessageprocessors"/>
+    <indexitem text="Telah Mengirimkan Hasil Pengeditan. Muatan Dialog" target="addon.fuzzer.payloads"/>
+    <indexitem text="Telah Mengirimkan Hasil Pengeditan. Muatan Prosesor Dialog" target="addon.fuzzer.processors"/>
+    <indexitem text="Fuzzer opsi" target="addon.fuzzer.options"/>
+    <indexitem text="Fuzzer Tab" target="addon.fuzzer.tab"/>
+</index>

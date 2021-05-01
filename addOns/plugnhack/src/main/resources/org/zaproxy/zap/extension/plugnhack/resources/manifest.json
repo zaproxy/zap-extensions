@@ -1,0 +1,20 @@
+{
+  "toolName":"OWASP ZAP",
+  "protocolVersion":"0.2",
+  "features":{
+    "proxy":{
+      "PAC":"{{ROOT}}/proxy.pac/?apinonce={{APINONCE_/proxy.pac/}}",
+      "CACert":"{{ROOT}}/OTHER/core/other/rootcert/?apinonce={{APINONCE_/OTHER/core/other/rootcert/}}"
+    },
+    "commands":{
+      "prefix":"zap",
+      "manifest":"{{ROOT}}/OTHER/pnh/other/service/?apinonce={{APINONCE_/OTHER/pnh/other/service/}}"
+    },
+    "probe":{
+      "transport":"HTTPMessageTransport",
+      "endpoint":"{{ROOT}}/JSON/pnh/action/monitor/?apinonce={{APINONCE_/JSON/pnh/action/monitor/}}&",
+      "oracle":"{{ROOT}}/JSON/pnh/action/oracle/?apinonce={{APINONCE_/JSON/pnh/action/oracle/}}&id=",
+      "endpointName":"ZAP"
+    }
+  }
+}

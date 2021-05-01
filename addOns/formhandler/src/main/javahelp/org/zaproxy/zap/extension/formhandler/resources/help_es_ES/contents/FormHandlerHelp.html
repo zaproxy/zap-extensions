@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+	<head>
+		<title> Controlador de Forma </title>
+	</head>
+	<body bgcolor="#ffffff">
+
+		<h1>Manejador de Formas</h1>
+			<p>
+				Esta extensión del Controlador de Formas permite la configuración personalizada de valores usados en formas basadas en nombres de campo.
+			</p>
+
+		<h2>Descripción</h2>
+			<p>
+				Con este complemento el usuario puede crear nuevos campos para cada campo individual al que desee configurar un valor. Adicionalmente, el usuario puede modificar cualquier nombre o valor de un campo existente para que se ajuste al campo que está tratando de configurar. Cualquier campo también puede ser desactivado o removido por el usuario para que los valores personalizados no sean usados. Los nombres de los campos, valores y los estatus habilitados serán almacenados incluso después de que una sesión ZAP haya concluido.
+			</p>
+			<p>
+				Los complementos proporcionan un arreglo de nombres de campo predeterminados que pueden ser encontrados en una forma, y un valor correspondiente para cada campo predeterminado. Estos valores predeterminados pueden ser desactivados, modificados o eliminados si el usuario así lo desea.
+			</p>
+
+		<h2>Usando el Controlador de Formas</h2>
+			<p>
+				El Controlador de Formas puede ser encontrado en las Opciones. Seleccionando la pestaña de Controlador de Forma se mostrará una tabla con todos los valores existentes que se encuentran actualmente definidos. Se muestra un ejemplo a continuación.
+			</p>
+			<img src="../contents/images/formHandlerTable.PNG" alt="Imágen no disponible"/>
+
+		<h3>Añadiendo un campo nuevo</h3>
+			<p>
+				Para definir valores de campo adicionales puede hacer clic en el botón <b>Añadir</b>. Esto generará un cuadro de diálogo para que el usuario pueda proporcionar información sobre el campo.
+			</p>
+
+			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Imágen no disponible"/>
+
+			<p>
+				Favor tomar nota de lo siguiente al añadir un nuevo campo:
+				<ul>
+					<li>Un nombre para el campo debe ser proporcionado.</li>
+					<li>Este nombre de campo no puede ya existir en la tabla, de lo contrario ocurrirá un error de advertencia.</li>
+					<li>El nombre de campo suministrado al Controlador de Forma debe coincidir con la identificación del campo en la forma que usted desee definir.</li>
+					<li>El nombre de campo no es sensible al uso de mayúsculas o minúsculas.</li>
+					<li>Un valor no debe ser provisto. Esto resultará en el uso de una cadena vacía.</li>
+					<li>El valor del campo sí es sensible ante el uso de mayúsculas y será visto en la Publicación.</li>
+				</ul>
+			</p>
+
+		<h3>Modificando un Campo Existente</h3>
+			<p>
+				La extensión le permite al usuario modificar valores de campos existentes. Esto se puede hacer al seleccionar el campo que usted desea modificar y haciendo clic en el botón de <b>Modificar</b>.
+			</p>
+			<img src="../contents/images/formHandlerModDialog.PNG" alt="Imágen no disponible"/>
+
+			<p>
+				Al modificar un campo, el usuario se encuentra limitado por las mismas reglas que al crear uno nuevo. La más común de las restricciones al modificar un campo es que el nombre no puede ser el mismo que el de un campo previamente existente.
+				(es decir, no se permiten campos duplicados)
+			<p>
+ 
+		<h3>Removiendo campos</h3>
+			<p>
+				El usuario puede remover campos en cualquier momento. Para hacerlo, simplemente seleccione el campo que se desea remover y haga clic en el botón <b>Remover</b>. <i> Tome en consideración que se le pedirá confirmar la eliminación del campo antes de proceder, a menos que la casilla <b>Remover sin confirmación</b> se encuentre seleccionada.</i> 
+			</p>
+
+		<h2>Campos de Forma que no se encuentran definidos</h2>
+			<p>
+				Un usuario podría encontrarse con que no desea definir cada campo en una forma, sino más bien querer definir unos pocos dentro de la forma.
+			</p>
+			<p>
+				Cualquier campo que no se encuentre definido en el complemento del Controlador de Forma usará un valor ZAP predeterminado que será generado para cada tipo de campo. (Por ejemplo: un campo de texto tendrá como valor "ZAP")
+			</p>
+
+	</body>
+</html>

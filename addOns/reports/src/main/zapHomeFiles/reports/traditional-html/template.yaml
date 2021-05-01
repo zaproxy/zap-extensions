@@ -1,0 +1,8 @@
+name: Traditional HTML Report
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - alertcount
+ - instancecount
+ - alertdetails

@@ -1,0 +1,15 @@
+type Query {
+    gymName: String
+    dumbbell: Dumbbell
+    treadmill: Treadmill
+}
+
+type Dumbbell {
+    fixedWeight: Boolean
+    weight: Int
+}
+
+type Treadmill {
+    maxSpeed: Float
+    manufacturer: String
+}

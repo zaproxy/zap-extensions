@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>コマンドライン</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>コマンドライン</h1>
+	クイックスタートアドオンは、次のコマンドラインオプションをサポートしています。
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>攻撃対象のURLを指定します。</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>XMLレポートを書き込むファイルを指定します。「インライン」かつデーモンモードで設定されていない場合、レポートは規定の出力ストリームに書き込まれます。</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>-cmd で開始されている場合、ascii進捗バーを表示します。</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>例:
+	<ul>
+		<li>「インライン」モードのZAPとascii進捗バーを起動し、ターゲットアプリケーション[http://example.com/]を攻撃後、レポートをデフォルトの出力ストリームに書き込みます： <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>ZAPをUIにて開始、対象アプリケーション「http://example.com/」を攻撃、ファイルにレポートを書き込む。 <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>関連情報</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">クイック スタート</a></td>
+			<td>クイックスタートのご紹介</td>
+		</tr>
+	</table>
+
+</body>
+</html>
