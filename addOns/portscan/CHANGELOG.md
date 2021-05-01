@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.10.0.
 - Update default values in the options to match the ones in the default configuration file.
+- Maintenance changes.
 
 ## 8 - 2017-11-24
 

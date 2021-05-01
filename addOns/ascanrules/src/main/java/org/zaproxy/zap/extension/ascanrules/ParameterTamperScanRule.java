@@ -62,7 +62,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     private static Pattern patternErrorJava2 =
             Pattern.compile("invoke.+exception|exception.+invoke", PATTERN_PARAM);
     private static Pattern patternErrorVBScript =
-            Pattern.compile("Microsoft(\\s+|&nbsp)*VBScript(\\s+|&nbsp)+error", PATTERN_PARAM);
+            Pattern.compile("Microsoft(?:\\s|&nbsp)+VBScript(?:\\s|&nbsp)+error", PATTERN_PARAM);
     private static Pattern patternErrorODBC1 =
             Pattern.compile("Microsoft OLE DB Provider for ODBC Drivers.*error", PATTERN_PARAM);
     private static Pattern patternErrorODBC2 =

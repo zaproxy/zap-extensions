@@ -47,15 +47,11 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
 
     public OptionsPortScanPanel() {
         super();
-        initialize();
-    }
-
-    /** This method initializes this */
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("ports.options.title"));
         this.add(getPanelPortScan(), getPanelPortScan().getName());
     }
+
     /**
      * This method initializes panelPortScan
      *
