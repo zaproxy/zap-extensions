@@ -30,10 +30,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.DiceMatcher;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
-import org.zaproxy.zap.utils.HirshbergMatcher;
 
 /**
  * a scan rule that looks for application source code disclosure using path traversal techniques
@@ -108,12 +108,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     /** the logger object */
     private static Logger log =
             LogManager.getLogger(SourceCodeDisclosureFileInclusionScanRule.class);
-
-    /**
-     * Hirshberg class for longest common substring calculation. Damn you John McKenna and your
-     * dynamic programming techniques!
-     */
-    HirshbergMatcher hirshberg = new HirshbergMatcher();
 
     /**
      * the threshold for whether 2 responses match. depends on the alert threshold set in the GUI.
@@ -245,7 +239,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             sendAndReceive(randomfileattackmsg, false); // do not follow redirects
 
             int originalversusrandommatchpercentage =
-                    calcMatchPercentage(
+                    DiceMatcher.getMatchPercentage(
                             originalmsg.getResponseBody().toString(),
                             randomfileattackmsg.getResponseBody().toString());
             if (originalversusrandommatchpercentage > this.thresholdPercentage) {
@@ -304,7 +298,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     sendAndReceive(sourceattackmsg, false); // do not follow redirects
 
                     int randomversussourcefilenamematchpercentage =
-                            calcMatchPercentage(
+                            DiceMatcher.getMatchPercentage(
                                     randomfileattackmsg.getResponseBody().toString(),
                                     sourceattackmsg.getResponseBody().toString());
                     if (randomversussourcefilenamematchpercentage > this.thresholdPercentage) {
@@ -524,25 +518,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
         return 33; // Path Traversal
     }
 
-    /**
-     * calculate the percentage length of similarity between 2 strings. TODO: this method is also in
-     * LDAPInjection. consider re-factoring out this class up the hierarchy, or into a helper class.
-     *
-     * @param a
-     * @param b
-     * @return
-     */
-    private int calcMatchPercentage(String a, String b) {
-        log.debug("About to get LCS for [{}] and [{}]", a, b);
-        if (a == null && b == null) return 100;
-        if (a == null || b == null) return 0;
-        if (a.length() == 0 && b.length() == 0) return 100;
-        if (a.length() == 0 || b.length() == 0) return 0;
-        String lcs = hirshberg.getLCS(a, b);
-        log.debug("Got LCS: {}", lcs);
-        // get the percentage match against the longer of the 2 strings
-        return (int) ((((double) lcs.length()) / Math.max(a.length(), b.length())) * 100);
-    }
     /**
      * calculate the percentage length between the 2 strings.
      *
