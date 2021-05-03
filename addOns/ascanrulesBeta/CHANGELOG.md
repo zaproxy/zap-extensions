@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Source Code Disclosure - File Inclusion scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
 - Maintenance changes.
 
+### Fixed
+- Add missing file, used by Hidden File Finder scan rule.
+
 ## [33] - 2020-12-15
 ### Changed
 - Now targeting ZAP 2.10.

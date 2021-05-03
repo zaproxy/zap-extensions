@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CORS active scan rule.
 - Forbidden (403) Bypass scan rule.
 
+### Removed
+- Unused file, it was used by promoted scan rule.
+
 ## [30] - 2020-11-26
 ### Changed
 - 'Hidden File Finder' ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).
