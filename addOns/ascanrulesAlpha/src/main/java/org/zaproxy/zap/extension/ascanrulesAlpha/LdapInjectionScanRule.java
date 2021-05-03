@@ -37,7 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.utils.HirshbergMatcher;
+import org.zaproxy.addon.commonlib.DiceMatcher;
 
 /**
  * The LdapInjectionScanRule scan rule identifies LDAP injection vulnerabilities with LDAP based
@@ -100,9 +100,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             }
         }
     }
-
-    // use Hirshberg to calculate longest common substring between two strings.
-    private static final HirshbergMatcher hirshberg = new HirshbergMatcher();
 
     @Override
     public int getId() {
@@ -243,7 +240,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             HttpMessage repeatMsg = getNewMsg();
             sendAndReceive(repeatMsg);
             int repeatMatch =
-                    this.calcMatchPercentage(
+                    DiceMatcher.getMatchPercentage(
                             originalmsg.getResponseBody().toString(),
                             repeatMsg.getResponseBody().toString());
             log.debug("Got percentage for repeat: {}", repeatMatch);
@@ -283,7 +280,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             sendAndReceive(randomParamMsg2);
 
             int randomVersusRandomMatch =
-                    this.calcMatchPercentage(
+                    DiceMatcher.getMatchPercentage(
                             randomParamMsg1.getResponseBody().toString(),
                             randomParamMsg2.getResponseBody().toString());
             log.debug(
@@ -299,7 +296,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
             // now check the random against the original, to make sure the output is different
             int randomVersusOriginalMatch =
-                    this.calcMatchPercentage(
+                    DiceMatcher.getMatchPercentage(
                             randomParamMsg1.getResponseBody().toString(),
                             originalmsg.getResponseBody().toString());
             log.debug(
@@ -343,7 +340,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 sendAndReceive(appendTrueMsg);
 
                 int appendTrueVersusOriginalMatch =
-                        this.calcMatchPercentage(
+                        DiceMatcher.getMatchPercentage(
                                 appendTrueMsg.getResponseBody().toString(),
                                 originalmsg.getResponseBody().toString());
                 log.debug(
@@ -443,7 +440,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 sendAndReceive(hopefullyTrueMsg);
 
                 int hopefullyTrueVersusOriginalMatch =
-                        this.calcMatchPercentage(
+                        DiceMatcher.getMatchPercentage(
                                 hopefullyTrueMsg.getResponseBody().toString(),
                                 originalmsg.getResponseBody().toString());
                 log.debug(
@@ -537,25 +534,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                         attack,
                         falseAttack);
         log.debug(logMessage);
-    }
-
-    /**
-     * calculate the percentage length of similarity between 2 strings.
-     *
-     * @param a
-     * @param b
-     * @return
-     */
-    private int calcMatchPercentage(String a, String b) {
-        // log.debug("About to get LCS for [{}] and [{}]", a, b);
-        if (a == null && b == null) return 100;
-        if (a == null || b == null) return 0;
-        if (a.length() == 0 && b.length() == 0) return 100;
-        if (a.length() == 0 || b.length() == 0) return 0;
-        String lcs = hirshberg.getLCS(a, b);
-        // log.debug("Got LCS: {}", lcs);
-        // get the percentage match against the longer of the 2 strings
-        return (int) ((((double) lcs.length()) / Math.max(a.length(), b.length())) * 100);
     }
 
     /**

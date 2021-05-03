@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added AbstractHostFilePlugin for use with ElmahScanRule and other future Host level file scan rules (Issue 6133).
 - Maintenance changes (Issue 6376 & Issue 6099).
+- Added DiceMatcher, which implements the Dice algorithm to calculate the percentage similarity between two strings.
 
 ## [1.2.0] - 2020-12-15
 ### Changed
