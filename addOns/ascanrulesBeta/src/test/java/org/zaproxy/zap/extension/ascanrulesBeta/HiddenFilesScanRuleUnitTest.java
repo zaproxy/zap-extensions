@@ -21,12 +21,15 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,6 +65,16 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     @AfterEach
     void after() {
         HiddenFilesScanRule.setPayloadProvider(null);
+    }
+
+    @Test
+    void shouldHavePayloadsFile() {
+        // Given
+        String filePath = "/" + HiddenFilesScanRule.PAYLOADS_FILE_PATH;
+        // When
+        URL url = HiddenFilesScanRule.class.getResource(filePath);
+        // Then
+        assertThat(url, is(notNullValue()));
     }
 
     @Test

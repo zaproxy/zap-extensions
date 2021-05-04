@@ -63,7 +63,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     private static final int PLUGIN_ID = 40035;
     private static final Logger LOG = LogManager.getLogger(HiddenFilesScanRule.class);
 
-    private static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
+    static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
 
     public static final List<String> HIDDEN_FILES = new ArrayList<>();
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> HIDDEN_FILES;
