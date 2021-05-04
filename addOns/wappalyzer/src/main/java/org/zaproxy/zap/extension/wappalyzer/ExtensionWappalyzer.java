@@ -89,7 +89,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private WappalyzerAPI api;
 
     /**
-     * TODO Implementaion Version handling Confidence handling - need to test for daemon mode (esp
+     * TODO implement Version handling Confidence handling - need to test for daemon mode (esp
      * revisits) Issues Handle load session - store tech in db? Sites pull down not populated if no
      * tech found - is this actually a problem? One pattern still fails to compile
      */
