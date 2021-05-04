@@ -48,6 +48,7 @@ public class Template {
     private String format;
     private TemplateMode mode;
     private List<String> sections = new ArrayList<String>();
+    private List<String> themes = new ArrayList<String>();
     private ResourceBundle msgs = null;
     private Boolean hasMsgs = null;
     private URLClassLoader classloader = null;
@@ -78,7 +79,7 @@ public class Template {
             if (o instanceof ArrayList) {
                 ArrayList<?> list = (ArrayList<?>) o;
                 for (Object l : list) {
-                    if (isValidSectionName(l)) {
+                    if (isValidComponentName(l)) {
                         sections.add(l.toString());
                     } else {
                         LOGGER.error(
@@ -89,9 +90,25 @@ public class Template {
                 }
             }
         }
+        if (data.containsKey("themes")) {
+            Object o = data.get("themes");
+            if (o instanceof ArrayList) {
+                ArrayList<?> list = (ArrayList<?>) o;
+                for (Object l : list) {
+                    if (isValidComponentName(l)) {
+                        themes.add(l.toString());
+                    } else {
+                        LOGGER.error(
+                                "Template '{}' has invalid theme: '{}' - must be alphanumeric and not start with a number",
+                                configName,
+                                l);
+                    }
+                }
+            }
+        }
     }
 
-    private static boolean isValidSectionName(Object o) {
+    private static boolean isValidComponentName(Object o) {
         if (o == null) {
             return false;
         }
@@ -175,6 +192,37 @@ public class Template {
 
     public List<String> getSections() {
         return Collections.unmodifiableList(sections);
+    }
+
+    public List<String> getThemes() {
+        return Collections.unmodifiableList(themes);
+    }
+
+    public List<String> getThemeNames() {
+        List<String> themeNames = new ArrayList<>(themes.size());
+        for (String theme : themes) {
+            themeNames.add(getThemeName(theme));
+        }
+        return themeNames;
+    }
+
+    public String getThemeForName(String name) {
+        if (name == null) {
+            return null;
+        }
+        for (String theme : themes) {
+            if (name.equals(getThemeName(theme))) {
+                return theme;
+            }
+        }
+        return null;
+    }
+
+    public String getThemeName(String theme) {
+        if (theme == null) {
+            return null;
+        }
+        return getI18nString("report.template.theme." + theme, null);
     }
 
     /**

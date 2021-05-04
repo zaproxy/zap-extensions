@@ -27,12 +27,12 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 
 /** Unit test for {@link AlertFilter}. */
-public class AlertFilterTest {
+class AlertFilterTest {
 
     private Alert alert;
 
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         alert = new Alert(1, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
         alert.setUri("https://www.example.com");
         alert.setParam("param");
@@ -41,7 +41,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void defaultEnabledFilterMatches() {
+    void defaultEnabledFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -51,7 +51,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void defaultDisabledFilterDoesNotMatch() {
+    void defaultDisabledFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -61,7 +61,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void missingUriFilterMatches() {
+    void missingUriFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -72,7 +72,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void differentUriFilterDoesNotMatch() {
+    void differentUriFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -83,7 +83,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void matchingUriRegexFilterMatches() {
+    void matchingUriRegexFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -95,7 +95,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void notMatchingUriRegexFilterDoesNotMatch() {
+    void notMatchingUriRegexFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -107,7 +107,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void missingParameterFilterMatches() {
+    void missingParameterFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -118,7 +118,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void differentParameterFilterDoesNotMatch() {
+    void differentParameterFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -129,7 +129,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void matchingParameterRegexFilterMatches() {
+    void matchingParameterRegexFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -141,7 +141,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void notMatchingParameterRegexFilterDoesNotMatch() {
+    void notMatchingParameterRegexFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -153,7 +153,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void missingAttackFilterMatches() {
+    void missingAttackFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -164,7 +164,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void differentAttackFilterDoesNotMatch() {
+    void differentAttackFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -175,7 +175,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void matchingAttackRegexFilterMatches() {
+    void matchingAttackRegexFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -187,7 +187,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void notMatchingAttackRegexFilterDoesNotMatch() {
+    void notMatchingAttackRegexFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -199,7 +199,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void missingEvidenceFilterMatches() {
+    void missingEvidenceFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -210,7 +210,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void differentEvidenceFilterDoesNotMatch() {
+    void differentEvidenceFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -221,7 +221,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void matchingEvidenceRegexFilterMatches() {
+    void matchingEvidenceRegexFilterMatches() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When
@@ -233,7 +233,7 @@ public class AlertFilterTest {
     }
 
     @Test
-    public void notMatchingEvidenceRegexFilterDoesNotMatch() {
+    void notMatchingEvidenceRegexFilterDoesNotMatch() {
         // Given
         AlertFilter af = new AlertFilter(-1, alert);
         // When

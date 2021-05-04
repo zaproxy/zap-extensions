@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CorsScanRule}. */
-public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
+class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     private static final String ACAC = "Access-Control-Allow-Credentials";
     private static final String GENERIC_RESPONSE =
             "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
@@ -48,7 +48,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     @Test
-    public void shouldNotAlertIfCorsNotSupported() throws Exception {
+    void shouldNotAlertIfCorsNotSupported() throws Exception {
         // Given
         nano.addHandler(new CorsResponse(null, false));
         HttpMessage msg = this.getHttpMessage("/");
@@ -60,7 +60,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     @Test
-    public void shouldAlertInfoIfAcaoButNotPayloads() throws Exception {
+    void shouldAlertInfoIfAcaoButNotPayloads() throws Exception {
         // Given
         nano.addHandler(new CorsResponse("dummyValue", false));
         HttpMessage msg = this.getHttpMessage("/");
@@ -73,7 +73,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
 
     @ParameterizedTest
     @ValueSource(strings = {"REFLECT", "*", "null"})
-    public void shouldAlertMediumIfAcaoPayloads(String origin) throws Exception {
+    void shouldAlertMediumIfAcaoPayloads(String origin) throws Exception {
         // Given
         nano.addHandler(new CorsResponse(origin, false));
         HttpMessage msg = this.getHttpMessage("/");
@@ -86,7 +86,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
 
     @ParameterizedTest
     @ValueSource(strings = {"REFLECT", "null"})
-    public void shouldAlertHighIfAcaoAndAcacPayloads(String origin) throws Exception {
+    void shouldAlertHighIfAcaoAndAcacPayloads(String origin) throws Exception {
         // Given
         nano.addHandler(new CorsResponse(origin, true));
         HttpMessage msg = this.getHttpMessage("/");
@@ -98,7 +98,7 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
     }
 
     @Test
-    public void shouldAlertMediumIfAcaoWildcardAndAcac() throws Exception {
+    void shouldAlertMediumIfAcaoWildcardAndAcac() throws Exception {
         // Given
         nano.addHandler(new CorsResponse("*", true));
         HttpMessage msg = this.getHttpMessage("/");

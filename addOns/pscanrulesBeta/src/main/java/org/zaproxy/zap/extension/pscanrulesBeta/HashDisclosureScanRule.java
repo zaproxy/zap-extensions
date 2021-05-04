@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -189,7 +190,10 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
+        if (msg.getResponseHeader().isJavaScript()
+                && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            return;
+        }
         log.debug("Checking response of message {} for Hashes", msg);
 
         // get the response contents as an array of Strings, so we can match against them

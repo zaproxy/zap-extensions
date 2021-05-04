@@ -36,12 +36,12 @@ public class ExtensionImportWSDLTestCase extends TestUtils {
     }
 
     @Test
-    public void getAuthorTest() {
+    void getAuthorTest() {
         assertNotNull(extension.getAuthor());
     }
 
     @Test
-    public void getDescriptionTest() {
+    void getDescriptionTest() {
         assertNotNull(extension.getDescription());
     }
 }

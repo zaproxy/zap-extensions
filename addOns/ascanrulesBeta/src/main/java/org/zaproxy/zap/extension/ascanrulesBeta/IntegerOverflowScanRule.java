@@ -198,6 +198,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
                         .setParam(param)
                         .setAttack(returnAttack)
                         .setOtherInfo(this.getError(type))
+                        .setEvidence(msg.getResponseHeader().getPrimeHeader())
                         .setMessage(msg)
                         .raise();
                 return true;

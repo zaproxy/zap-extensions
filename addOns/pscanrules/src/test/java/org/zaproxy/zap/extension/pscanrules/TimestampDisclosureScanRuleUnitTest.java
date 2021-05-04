@@ -36,8 +36,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class TimestampDisclosureScanRuleUnitTest
-        extends PassiveScannerTest<TimestampDisclosureScanRule> {
+class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDisclosureScanRule> {
 
     @Override
     protected TimestampDisclosureScanRule createScanner() {
@@ -45,7 +44,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void verifyExcludedHeadersListAsExpected() {
+    void verifyExcludedHeadersListAsExpected() {
         // Given / When
         List<String> ignoreList =
                 Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
@@ -56,7 +55,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertOnSTSHeader() throws Exception {
+    void shouldNotRaiseAlertOnSTSHeader() throws Exception {
         // Given
         HttpMessage msg = createMessage("");
         msg.setResponseHeader(
@@ -70,7 +69,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertOnValidCurrentTimestamp() throws Exception {
+    void shouldRaiseAlertOnValidCurrentTimestamp() throws Exception {
         // Given
         String now =
                 String.valueOf(System.currentTimeMillis()).substring(0, 10); // 10 Digit precision
@@ -79,11 +78,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(now));
+        assertEquals(now, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnValidCurrentTimestampAtHighThreshold() throws Exception {
+    void shouldRaiseAlertOnValidCurrentTimestampAtHighThreshold() throws Exception {
         // Given
         String now =
                 String.valueOf(System.currentTimeMillis()).substring(0, 10); // 10 Digit precision
@@ -93,11 +92,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(now));
+        assertEquals(now, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenWithinPastYear() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenWithinPastYear() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -106,11 +105,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenWithinPastYearAtHighThreshold() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenWithinPastYearAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -120,11 +119,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenWithinNextYear() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenWithinNextYear() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -133,11 +132,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenWithinNextYearAtHighThreshold() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenWithinNextYearAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -147,11 +146,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenThreeYearsAgo() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenThreeYearsAgo() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusYears(3).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -160,11 +159,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldNotRaiseAlertOnTimeStampWhenThreeYearsAgoAtHighThreshold() throws Exception {
+    void shouldNotRaiseAlertOnTimeStampWhenThreeYearsAgoAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusYears(3).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -177,7 +176,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenThreeYearsFromNow() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenThreeYearsFromNow() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusYears(3).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -186,12 +185,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldNotRaiseAlertOnTimeStampWhenThreeYearsFromNowAtHighThreshold()
-            throws Exception {
+    void shouldNotRaiseAlertOnTimeStampWhenThreeYearsFromNowAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusYears(3).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -204,7 +202,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenFarInThePast() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenFarInThePast() throws Exception {
         // Given
         String strTestDate = String.valueOf(33333333);
         HttpMessage msg = createMessage(strTestDate);
@@ -212,11 +210,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldNotRaiseAlertOnTimeStampWhenFarInThePastAtHighThreshold() throws Exception {
+    void shouldNotRaiseAlertOnTimeStampWhenFarInThePastAtHighThreshold() throws Exception {
         // Given
         String strTestDate = String.valueOf(33333333);
         HttpMessage msg = createMessage(strTestDate);
@@ -228,7 +226,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertOnTimeStampWhenFarInTheFuture() throws Exception {
+    void shouldRaiseAlertOnTimeStampWhenFarInTheFuture() throws Exception {
         // Given
         String strTestDate = String.valueOf(2147483647);
         HttpMessage msg = createMessage(strTestDate);
@@ -236,11 +234,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldNotRaiseAlertOnTimeStampWhenFarInTheFutureAtHighThreshold() throws Exception {
+    void shouldNotRaiseAlertOnTimeStampWhenFarInTheFutureAtHighThreshold() throws Exception {
         // Given
         String strTestDate = String.valueOf(2147483647);
         HttpMessage msg = createMessage(strTestDate);
@@ -252,7 +250,7 @@ public class TimestampDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinNextYear() throws Exception {
+    void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinNextYear() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
         Instant testDate2 = ZonedDateTime.now().plusMonths(18).toInstant();
@@ -265,13 +263,12 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
-        assertTrue(alertsRaised.get(1).getEvidence().equals(strTestDate2));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
+        assertEquals(strTestDate2, alertsRaised.get(1).getEvidence());
     }
 
     @Test
-    public void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinNextYearAtHighThreshold()
-            throws Exception {
+    void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinNextYearAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
         Instant testDate2 = ZonedDateTime.now().plusMonths(18).toInstant();
@@ -285,11 +282,11 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
     }
 
     @Test
-    public void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinPastYear() throws Exception {
+    void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinPastYear() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(18).toInstant();
         Instant testDate2 = ZonedDateTime.now().minusMonths(6).toInstant();
@@ -302,13 +299,12 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
-        assertTrue(alertsRaised.get(1).getEvidence().equals(strTestDate2));
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
+        assertEquals(strTestDate2, alertsRaised.get(1).getEvidence());
     }
 
     @Test
-    public void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinPastYearAtHighThreshold()
-            throws Exception {
+    void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinPastYearAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(18).toInstant();
         Instant testDate2 = ZonedDateTime.now().minusMonths(6).toInstant();
@@ -322,13 +318,12 @@ public class TimestampDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate2));
+        assertEquals(strTestDate2, alertsRaised.get(0).getEvidence());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"font.woff", "font.woff2", "font.ttf", "font.otf"})
-    public void shouldNotRaiseAlertOnValidTimeStampInFontUrlRequest(String fileName)
-            throws Exception {
+    void shouldNotRaiseAlertOnValidTimeStampInFontUrlRequest(String fileName) throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
@@ -340,10 +335,18 @@ public class TimestampDisclosureScanRuleUnitTest
         assertEquals(0, alertsRaised.size());
     }
 
+    @Test
+    void patternFontExtensionShouldNotFindSubString() {
+        // Given / When
+        boolean result =
+                TimestampDisclosureScanRule.PATTERN_FONT_EXTENSIONS.matcher("/font.woffL").find();
+        // Then
+        assertEquals(false, result);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
-    public void shouldNotRaiseAlertOnValidTimeStampWhenInFontResponse(String type)
-            throws Exception {
+    void shouldNotRaiseAlertOnValidTimeStampWhenInFontResponse(String type) throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());

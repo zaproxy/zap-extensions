@@ -25,6 +25,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,7 @@ public class ReportDialog extends StandardFieldsDialog {
     private static final String FIELD_RISK_2 = "reports.dialog.field.risk.2";
     private static final String FIELD_RISK_3 = "reports.dialog.field.risk.3";
     private static final String FIELD_SECTIONS = "reports.dialog.field.sections";
+    private static final String FIELD_THEME = "reports.dialog.field.theme";
 
     private static final String[] TAB_LABELS = {
         "reports.dialog.tab.scope",
@@ -250,6 +252,13 @@ public class ReportDialog extends StandardFieldsDialog {
                 extension.getTemplateNames(),
                 defaultTemplate != null ? defaultTemplate.getDisplayName() : null);
 
+        List<String> themes = new ArrayList<>();
+        if (defaultTemplate != null) {
+            themes = defaultTemplate.getThemeNames();
+        }
+
+        this.addComboField(TAB_TEMPLATE, FIELD_THEME, themes, null);
+
         this.addCustomComponent(TAB_TEMPLATE, FIELD_SECTIONS, getSectionsScrollPane());
         resetTemplateFields();
         this.addPadding(TAB_TEMPLATE);
@@ -297,12 +306,27 @@ public class ReportDialog extends StandardFieldsDialog {
         return sectionsPane;
     }
 
+    @SuppressWarnings("unchecked")
     private void resetTemplateFields() {
         JPanel sectionPanel = new JPanel();
         sectionPanel.setLayout(new BoxLayout(sectionPanel, BoxLayout.Y_AXIS));
 
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         if (template != null) {
+            JComboBox<String> themeCombo = ((JComboBox<String>) this.getField(FIELD_THEME));
+            themeCombo.removeAllItems();
+            for (String theme : template.getThemeNames()) {
+                themeCombo.addItem(theme);
+            }
+            if (template.getThemeNames().size() > 0) {
+                String defaultTheme = extension.getReportParam().getTheme(template.getConfigName());
+                if (defaultTheme != null) {
+                    themeCombo.setSelectedItem(template.getThemeName(defaultTheme));
+                } else {
+                    themeCombo.setSelectedIndex(0);
+                }
+            }
+
             List<String> sections = template.getSections();
             sectionsMap = new HashMap<String, JCheckBox>();
             if (sections.size() == 0) {
@@ -445,12 +469,13 @@ public class ReportDialog extends StandardFieldsDialog {
         return extraButtons;
     }
 
-    private ReportData getReportData() {
+    private ReportData getReportData(Template template) {
         ReportData reportData = new ReportData();
         reportData.setTitle(this.getStringValue(FIELD_TITLE));
         reportData.setDescription(this.getStringValue(FIELD_DESCRIPTION));
         reportData.setContexts(this.getContextsSelector().getSelectedValuesList());
         reportData.setSites(this.getSitesSelector().getSelectedValuesList());
+        reportData.setTheme(template.getThemeForName(getStringValue(FIELD_THEME)));
         if (reportData.getSites().isEmpty()) {
             // None selected so add all
             reportData.setSites(
@@ -481,9 +506,9 @@ public class ReportDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        ReportData reportData = getReportData();
         boolean displayReport = this.getBoolValue(FIELD_DISPLAY_REPORT);
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
+        ReportData reportData = getReportData(template);
 
         // Always save all of the options
         ReportParam reportParam = extension.getReportParam();
@@ -491,6 +516,9 @@ public class ReportDialog extends StandardFieldsDialog {
         reportParam.setTitle(reportData.getTitle());
         reportParam.setDescription(reportData.getDescription());
         reportParam.setTemplate(template.getConfigName());
+        reportParam.setTheme(
+                template.getConfigName(),
+                template.getThemeForName(this.getStringValue(FIELD_THEME)));
         reportParam.setReportDirectory(this.getStringValue(FIELD_REPORT_DIR));
         reportParam.setTemplateDirectory(this.getStringValue(FIELD_TEMPLATE_DIR));
         reportParam.setReportNamePattern(this.getStringValue(FIELD_REPORT_NAME_PATTERN));
@@ -523,8 +551,8 @@ public class ReportDialog extends StandardFieldsDialog {
                             Constant.messages.getString(
                                     "reports.dialog.error.generate", e.getMessage()));
             LOGGER.error(
-                    "Failed to generate a report using template "
-                            + extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE)),
+                    "Failed to generate a report using template {}",
+                    extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE)),
                     e);
         }
     }
@@ -556,7 +584,7 @@ public class ReportDialog extends StandardFieldsDialog {
             return Constant.messages.getString(
                     "reports.dialog.error.fileperms", f.getParentFile().getAbsolutePath());
         }
-        ReportData reportData = getReportData();
+        ReportData reportData = getReportData(template);
         AlertNode root = extension.getFilteredAlertTree(reportData);
         if (root.getChildCount() == 0 && !this.getBoolValue(FIELD_GENERATE_ANYWAY)) {
             return Constant.messages.getString("reports.dialog.error.noalerts");

@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CloudMetadataScanRule}. */
-public class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanRule> {
+class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanRule> {
 
     @Override
     protected CloudMetadataScanRule createScanner() {
@@ -41,7 +41,7 @@ public class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetada
     }
 
     @Test
-    public void shouldNotAlertIfResponseIsNot200Ok() throws Exception {
+    void shouldNotAlertIfResponseIsNot200Ok() throws Exception {
         // Given
         String path = "/latest/meta-data/";
         String body = "<html><head></head><H>404 - Not Found</H1><html>";
@@ -60,7 +60,7 @@ public class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetada
     }
 
     @Test
-    public void shouldAlertIfResponseIs200Ok() throws Exception {
+    void shouldAlertIfResponseIs200Ok() throws Exception {
         // Given
         String path = "/latest/meta-data/";
         // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html

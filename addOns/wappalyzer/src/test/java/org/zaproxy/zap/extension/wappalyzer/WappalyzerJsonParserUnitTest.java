@@ -20,16 +20,15 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class WappalyzerJsonParserUnitTest {
+class WappalyzerJsonParserUnitTest {
 
     @Test
-    public void shouldParseExample() {
+    void shouldParseExample() {
         // Given
         WappalyzerJsonParser wjp = new WappalyzerJsonParser();
         WappalyzerData wappData = wjp.parseAppsJson("apps.json");
@@ -40,9 +39,9 @@ public class WappalyzerJsonParserUnitTest {
         Application app = apps.get(0);
         // Then
         assertEquals(5, apps.size());
-        assertTrue(app.getName().equals("Test Entry"));
-        assertTrue(app.getDescription().equals("Test Entry is a test entry for UnitTests"));
-        assertTrue(app.getWebsite().equals("https://www.example.com/testentry"));
+        assertEquals("Test Entry", app.getName());
+        assertEquals("Test Entry is a test entry for UnitTests", app.getDescription());
+        assertEquals("https://www.example.com/testentry", app.getWebsite());
         assertEquals(expectedCategory, app.getCategories());
         assertEquals(1, app.getHeaders().size());
         assertEquals(1, app.getUrl().size());
@@ -51,11 +50,11 @@ public class WappalyzerJsonParserUnitTest {
         assertEquals(2, app.getMetas().size());
         assertEquals(0, app.getImplies().size());
         assertEquals(2, app.getDom().size());
-        assertTrue(app.getCpe().equals(""));
+        assertEquals("", app.getCpe());
         // Ignore Icon
 
         app = apps.get(2);
-        assertTrue(app.getName().equals("Apache"));
+        assertEquals("Apache", app.getName());
         assertEquals(1, app.getMetas().size());
     }
 }

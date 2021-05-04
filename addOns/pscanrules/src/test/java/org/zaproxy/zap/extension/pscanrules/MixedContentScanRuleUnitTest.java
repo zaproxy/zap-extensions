@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRule> {
+class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRule> {
 
     @Override
     protected MixedContentScanRule createScanner() {
@@ -39,7 +39,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHttpResource() {
+    void shouldNotRaiseAlertIfHttpResource() {
         // Given
         String uri = "http://example.com/";
         HttpMessage msg =
@@ -51,7 +51,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHttpsResourceContainsNoMixedContent() {
+    void shouldNotRaiseAlertIfHttpsResourceContainsNoMixedContent() {
         // Given
         String uri = "https://example.com/";
         HttpMessage msg =
@@ -63,7 +63,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHttpsResourceIsEmpty() {
+    void shouldNotRaiseAlertIfHttpsResourceIsEmpty() {
         // Given
         String uri = "https://example.com/";
         HttpMessage msg = createHtmlResponse(uri, "");
@@ -74,7 +74,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldNotRaiseAlertForNonHtmlContent() {
+    void shouldNotRaiseAlertForNonHtmlContent() {
         // Given
         String uri = "https://example.com/script.js";
         HttpMessage msg =
@@ -91,7 +91,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInUnknownAttribute() {
+    void shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInUnknownAttribute() {
         // Given
         String attribute = "unknown";
         String uri = "https://example.com/";
@@ -104,7 +104,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldRaiseLowAlertIfHttpsResourceContainsMixedContentInKnownAttributes() {
+    void shouldRaiseLowAlertIfHttpsResourceContainsMixedContentInKnownAttributes() {
         for (String attribute :
                 Arrays.asList(
                         "src",
@@ -136,7 +136,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void
+    void
             shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertTreshold() {
         for (String attribute : Arrays.asList("action", "formaction")) {
             // Given
@@ -153,7 +153,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldRaiseMediumAlertIfHttpsResourceContainsMixedContentInScriptTag() {
+    void shouldRaiseMediumAlertIfHttpsResourceContainsMixedContentInScriptTag() {
         // Given
         String uri = "https://example.com/";
         HttpMessage msg =
@@ -172,7 +172,7 @@ public class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedConten
     }
 
     @Test
-    public void shouldRaiseOneAlertForMultipleMixedContent() {
+    void shouldRaiseOneAlertForMultipleMixedContent() {
         // Given
         String uri = "https://example.com/";
         HttpMessage msg =

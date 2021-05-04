@@ -48,6 +48,7 @@ public class ReportParam extends AbstractParam {
     private static final String PARAM_INC_RISK_2 = PARAM_BASE_KEY + ".risk.med";
     private static final String PARAM_INC_RISK_3 = PARAM_BASE_KEY + ".risk.high";
     private static final String PARAM_REPORT_SECTIONS_PREFIX = PARAM_BASE_KEY + ".report.sections.";
+    private static final String PARAM_REPORT_THEME_PREFIX = PARAM_BASE_KEY + ".report.theme.";
 
     private static final String DEFAULT_TEMPLATE = "traditional-html";
     public static final String DEFAULT_NAME_PATTERN = "{{yyyy-MM-dd}}-ZAP-Report-[[site]]";
@@ -72,72 +73,33 @@ public class ReportParam extends AbstractParam {
 
     @Override
     protected void parse() {
-        try {
-            title =
-                    getConfig()
-                            .getString(
-                                    PARAM_TITLE,
-                                    Constant.messages.getString("reports.report.title"));
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
+        title = getString(PARAM_TITLE, Constant.messages.getString("reports.report.title"));
+        description = getString(PARAM_DESCRIPTION, "");
+        template = getString(PARAM_TEMPLATE, DEFAULT_TEMPLATE);
+
+        templateDirectory = getString(PARAM_TEMPLATE_DIRECTORY, DEFAULT_TEMPLATES_DIR);
+        File dir = new File(templateDirectory);
+        if (!dir.exists() || !dir.isDirectory()) {
+            LOGGER.error(
+                    "Reports template directory cannot be read or is not a directory: {}",
+                    dir.getAbsolutePath());
+            templateDirectory = Constant.getZapHome() + "/reports/";
         }
-        try {
-            description = getConfig().getString(PARAM_DESCRIPTION, "");
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            template = getConfig().getString(PARAM_TEMPLATE, DEFAULT_TEMPLATE);
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            templateDirectory =
-                    getConfig().getString(PARAM_TEMPLATE_DIRECTORY, DEFAULT_TEMPLATES_DIR);
-            File dir = new File(templateDirectory);
-            if (!dir.exists() || !dir.isDirectory()) {
-                LOGGER.error(
-                        "Reports template directory cannot be read or is not a directory: "
-                                + dir.getAbsolutePath());
-                templateDirectory = Constant.getZapHome() + "/reports/";
-            }
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            reportDirectory =
-                    getConfig().getString(PARAM_REPORT_DIRECTORY, System.getProperty("user.home"));
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            reportNamePattern =
-                    getConfig().getString(PARAM_REPORT_NAME_PATTERN, DEFAULT_NAME_PATTERN);
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            displayReport = getConfig().getBoolean(PARAM_DISPLAY, true);
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            incConfidence0 = getConfig().getBoolean(PARAM_INC_CONFIDENCE_0, false);
-            incConfidence1 = getConfig().getBoolean(PARAM_INC_CONFIDENCE_1, true);
-            incConfidence2 = getConfig().getBoolean(PARAM_INC_CONFIDENCE_2, true);
-            incConfidence3 = getConfig().getBoolean(PARAM_INC_CONFIDENCE_3, true);
-            incConfidence4 = getConfig().getBoolean(PARAM_INC_CONFIDENCE_4, true);
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
-        try {
-            incRisk0 = getConfig().getBoolean(PARAM_INC_RISK_0, true);
-            incRisk1 = getConfig().getBoolean(PARAM_INC_RISK_1, true);
-            incRisk2 = getConfig().getBoolean(PARAM_INC_RISK_2, true);
-            incRisk3 = getConfig().getBoolean(PARAM_INC_RISK_3, true);
-        } catch (Exception e) {
-            LOGGER.error("Failed to load the Reports configuration", e);
-        }
+
+        reportDirectory = getString(PARAM_REPORT_DIRECTORY, System.getProperty("user.home"));
+        reportNamePattern = getString(PARAM_REPORT_NAME_PATTERN, DEFAULT_NAME_PATTERN);
+        displayReport = getBoolean(PARAM_DISPLAY, true);
+
+        incConfidence0 = getBoolean(PARAM_INC_CONFIDENCE_0, false);
+        incConfidence1 = getBoolean(PARAM_INC_CONFIDENCE_1, true);
+        incConfidence2 = getBoolean(PARAM_INC_CONFIDENCE_2, true);
+        incConfidence3 = getBoolean(PARAM_INC_CONFIDENCE_3, true);
+        incConfidence4 = getBoolean(PARAM_INC_CONFIDENCE_4, true);
+
+        incRisk0 = getBoolean(PARAM_INC_RISK_0, true);
+        incRisk1 = getBoolean(PARAM_INC_RISK_1, true);
+        incRisk2 = getBoolean(PARAM_INC_RISK_2, true);
+        incRisk3 = getBoolean(PARAM_INC_RISK_3, true);
     }
 
     public String getTitle() {
@@ -290,5 +252,13 @@ public class ReportParam extends AbstractParam {
 
     public List<Object> getSections(String report) {
         return getConfig().getList(PARAM_REPORT_SECTIONS_PREFIX + report);
+    }
+
+    public void setTheme(String report, String theme) {
+        getConfig().setProperty(PARAM_REPORT_THEME_PREFIX + report, theme);
+    }
+
+    public String getTheme(String report) {
+        return getConfig().getString(PARAM_REPORT_THEME_PREFIX + report, null);
     }
 }

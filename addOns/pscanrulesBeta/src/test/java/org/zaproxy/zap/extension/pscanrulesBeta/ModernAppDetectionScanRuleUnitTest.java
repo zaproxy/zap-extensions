@@ -30,8 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
  *
  * @see ModernAppDetectionScanRule
  */
-public class ModernAppDetectionScanRuleUnitTest
-        extends PassiveScannerTest<ModernAppDetectionScanRule> {
+class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDetectionScanRule> {
 
     @Override
     protected ModernAppDetectionScanRule createScanner() {
@@ -39,7 +38,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWithBasicHtml() throws Exception {
+    void shouldNotRaiseAlertWithBasicHtml() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -52,7 +51,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithHashHref() throws Exception {
+    void shouldRaiseAlertWithHashHref() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -65,7 +64,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWithFragmentHref() throws Exception {
+    void shouldNotRaiseAlertWithFragmentHref() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -77,7 +76,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithSelfTarget() throws Exception {
+    void shouldRaiseAlertWithSelfTarget() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -93,7 +92,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithEmptyHref() throws Exception {
+    void shouldRaiseAlertWithEmptyHref() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -106,7 +105,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithScriptsInBodyButNoLinks() throws Exception {
+    void shouldRaiseAlertWithScriptsInBodyButNoLinks() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -120,7 +119,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithScriptsInHeadButNoLinks() throws Exception {
+    void shouldRaiseAlertWithScriptsInHeadButNoLinks() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -134,7 +133,7 @@ public class ModernAppDetectionScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithNoScript() throws Exception {
+    void shouldRaiseAlertWithNoScript() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

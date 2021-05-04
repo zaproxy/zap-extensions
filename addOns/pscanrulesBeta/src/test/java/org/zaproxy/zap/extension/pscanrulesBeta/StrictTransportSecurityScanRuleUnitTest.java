@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class StrictTransportSecurityScanRuleUnitTest
+class StrictTransportSecurityScanRuleUnitTest
         extends PassiveScannerTest<StrictTransportSecurityScanRule> {
 
     private static final String STS_HEADER = "Strict-Transport-Security";
@@ -52,7 +52,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void scannerNameShouldMatch() {
+    void scannerNameShouldMatch() {
         // Quick test to verify scan rule name which is used in the policy dialog but not
         // alerts
 
@@ -63,7 +63,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponsIsNotHttps() throws URIException {
+    void shouldNotRaiseAlertIfResponsIsNotHttps() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(false);
@@ -74,7 +74,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseMissingHeader() throws URIException {
+    void shouldRaiseAlertIfResponseMissingHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -86,7 +86,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasWelformedHeaderAndValue() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasWelformedHeaderAndValue() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
@@ -97,7 +97,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasMultipleHeaders() throws URIException {
+    void shouldRaiseAlertIfResponseHasMultipleHeaders() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
@@ -113,7 +113,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasStsDisablingHeader() throws URIException {
+    void shouldRaiseAlertIfResponseHasStsDisablingHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "max-age=0");
@@ -125,7 +125,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasStsHeaderWithBlankValue() throws URIException {
+    void shouldRaiseAlertIfResponseHasStsHeaderWithBlankValue() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "");
@@ -139,7 +139,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfHeaderValueHasJunkContent() throws URIException {
+    void shouldRaiseAlertIfHeaderValueHasJunkContent() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE + "”"); // Append curly quote
@@ -153,7 +153,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfHeaderValueHasImproperQuotes() throws URIException {
+    void shouldRaiseAlertIfHeaderValueHasImproperQuotes() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "\"max-age=84600\""); // Quotes before max
@@ -167,7 +167,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdLowNonSecureResponseWithHeader() throws URIException {
+    void shouldRaiseAlertIfThresholdLowNonSecureResponseWithHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(false);
@@ -183,7 +183,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThresholdLowNonSecureResponseNoHeader() throws URIException {
+    void shouldNotRaiseAlertIfThresholdLowNonSecureResponseNoHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(false);
@@ -195,7 +195,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsStsHeaderAndMeta() throws URIException {
+    void shouldRaiseAlertIfResponseContainsStsHeaderAndMeta() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
@@ -211,7 +211,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThresholdNotLowRedirectSameDomain() throws URIException {
+    void shouldNotRaiseAlertIfThresholdNotLowRedirectSameDomain() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(301);
@@ -223,7 +223,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdLowRedirectSameDomain() throws URIException {
+    void shouldRaiseAlertIfThresholdLowRedirectSameDomain() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(301);
@@ -238,7 +238,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThresholdNotLowRedirectRelativePath() throws URIException {
+    void shouldNotRaiseAlertIfThresholdNotLowRedirectRelativePath() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(301);
@@ -250,7 +250,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdLowRedirectRelativePath() throws URIException {
+    void shouldRaiseAlertIfThresholdLowRedirectRelativePath() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(301);
@@ -265,7 +265,7 @@ public class StrictTransportSecurityScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdNotLowRedirectCrossDomain() throws URIException {
+    void shouldRaiseAlertIfThresholdNotLowRedirectCrossDomain() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(301);

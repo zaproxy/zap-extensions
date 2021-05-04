@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledCharsetScanRuleUnitTest
+class UserControlledCharsetScanRuleUnitTest
         extends PassiveScannerTest<UserControlledCharsetScanRule> {
 
     @Override
@@ -58,7 +58,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
+    void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
@@ -70,7 +70,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+    void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -81,7 +81,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotHtmlNorXml() {
+    void shouldNotRaiseAlertIfResponseIsNotHtmlNorXml() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
@@ -93,7 +93,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
@@ -105,7 +105,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCharsetIsEmpty() throws Exception {
+    void shouldNotRaiseAlertIfResponseCharsetIsEmpty() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -118,7 +118,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamsAppearAsCharsetValue() throws Exception {
+    void shouldRaiseAlertIfRequestParamsAppearAsCharsetValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -133,7 +133,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseMetaCharsetIsEmpty() throws Exception {
+    void shouldNotRaiseAlertIfResponseMetaCharsetIsEmpty() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -147,7 +147,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseMetaIsNotContentType() throws Exception {
+    void shouldNotRaiseAlertIfResponseMetaIsNotContentType() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -160,7 +160,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamAppearAsMetaCharsetValue() throws Exception {
+    void shouldRaiseAlertIfRequestParamAppearAsMetaCharsetValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -175,7 +175,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfXmlResponseCharsetIsEmpty() throws Exception {
+    void shouldNotRaiseAlertIfXmlResponseCharsetIsEmpty() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
@@ -189,7 +189,7 @@ public class UserControlledCharsetScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamsAppearAsXmlCharsetValue() throws Exception {
+    void shouldRaiseAlertIfRequestParamsAppearAsXmlCharsetValue() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));

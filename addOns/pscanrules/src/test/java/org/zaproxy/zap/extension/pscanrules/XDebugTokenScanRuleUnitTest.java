@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule> {
+class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule> {
 
     private static final String X_DEBUG_TOKEN_HEADER = "X-Debug-Token";
     private static final String X_DEBUG_TOKEN_LINK_HEADER = "X-Debug-Token-Link";
@@ -45,7 +45,7 @@ public class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenS
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThereIsNoRelevantHeader() throws Exception {
+    void shouldNotRaiseAlertIfThereIsNoRelevantHeader() throws Exception {
         // Given
         HttpMessage msg = createMessage();
 
@@ -57,7 +57,7 @@ public class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenS
     }
 
     @Test
-    public void shouldRaiseAnAlertIfFindsXDebugToken() throws Exception {
+    void shouldRaiseAnAlertIfFindsXDebugToken() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(X_DEBUG_TOKEN_HEADER, "9687e6");
@@ -71,7 +71,7 @@ public class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenS
     }
 
     @Test
-    public void shouldRaiseAnAlertIfFindsXDebugTokenLink() throws Exception {
+    void shouldRaiseAnAlertIfFindsXDebugTokenLink() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(X_DEBUG_TOKEN_LINK_HEADER, "/_profiler/97b958");
@@ -85,7 +85,7 @@ public class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenS
     }
 
     @Test
-    public void shouldRaiseOnlyOneAlertIfBothHeaderVariantsFound() throws Exception {
+    void shouldRaiseOnlyOneAlertIfBothHeaderVariantsFound() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()

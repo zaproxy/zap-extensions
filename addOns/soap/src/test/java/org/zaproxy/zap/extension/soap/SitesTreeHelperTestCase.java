@@ -36,7 +36,7 @@ public class SitesTreeHelperTestCase extends TestUtils {
     }
 
     @Test
-    public void getNodeNameForSoapV1Message() throws Exception {
+    void getNodeNameForSoapV1Message() throws Exception {
         // Given
         Sample.setOriginalRequest(message);
         // When
@@ -46,7 +46,7 @@ public class SitesTreeHelperTestCase extends TestUtils {
     }
 
     @Test
-    public void getNodeNameForSoapV2Message() throws Exception {
+    void getNodeNameForSoapV2Message() throws Exception {
         // Given
         Sample.setSoapVersionTwoRequest(message);
         // When

@@ -24,13 +24,16 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link HashDisclosureScanRule}. */
-public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureScanRule> {
+class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureScanRule> {
 
     @Override
     protected HashDisclosureScanRule createScanner() {
@@ -38,12 +41,12 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
     }
 
     @BeforeEach
-    public void before() throws HttpMalformedHeaderException {
+    void before() throws HttpMalformedHeaderException {
         rule.setAlertThreshold(AlertThreshold.LOW); // Required by MD4/MD5 tests
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsUpperMd5Hash() throws Exception {
+    void shouldRaiseAlertWhenResponseContainsUpperMd5Hash() throws Exception {
         // Given - Upper MD5
         String hashVal = "DD6433D07B73FC14A2A4D03C5A8FAA90";
         HttpMessage msg = createMsg(hashVal);
@@ -56,7 +59,7 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsLowerMd5Hash() throws Exception {
+    void shouldRaiseAlertWhenResponseContainsLowerMd5Hash() throws Exception {
         // Given - Lower MD5
         String hashVal = "cc03e747a6afbbcbf8be7668acfebee5";
         HttpMessage msg = createMsg(hashVal);
@@ -69,7 +72,7 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsCookieWithMd5Hash() throws Exception {
+    void shouldRaiseAlertWhenResponseContainsCookieWithMd5Hash() throws Exception {
         // Given - Lower MD5
         String hashVal = "cc03e747a6afbbcbf8be7668acfebee5";
         HttpMessage msg = createMsg("");
@@ -83,7 +86,38 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenResponseContainsNonMd5Hash() throws Exception {
+    void shouldRaiseAlertWhenResponseContainsOsxSha1AtLowThreshold() throws Exception {
+        // Given
+        String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - Mac OSX salted SHA-1"));
+        assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"HIGH", "MEDIUM"})
+    void shouldNotRaiseAlertWhenResponseContainsOsxSha1InJsAtNonLowThreshold(
+            AlertThreshold threshold) throws Exception {
+        // Given
+        String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertWhenResponseContainsNonMd5Hash() throws Exception {
         // Given - Not MD5 (mm)
         String hashVal = "mm6433d07b73fc14a2a4d03c5a8faa90";
         HttpMessage msg = createMsg(hashVal);
@@ -94,7 +128,7 @@ public class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDiscl
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenResponseContainsObviousJsessionid() throws Exception {
+    void shouldNotRaiseAlertWhenResponseContainsObviousJsessionid() throws Exception {
         // Given - jsessionid cookie
         String hashVal = "dd6433d07b73fc14a2a4d03c5a8faa90";
         HttpMessage msg = createMsg("");

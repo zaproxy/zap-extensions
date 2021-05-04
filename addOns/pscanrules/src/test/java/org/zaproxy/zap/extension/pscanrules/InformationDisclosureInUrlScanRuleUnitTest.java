@@ -34,7 +34,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class InformationDisclosureInUrlScanRuleUnitTest
+class InformationDisclosureInUrlScanRuleUnitTest
         extends PassiveScannerTest<InformationDisclosureInUrlScanRule> {
 
     private static final String URI = "http://example.com/";
@@ -79,7 +79,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void sensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
+    void sensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String sensitiveParamName = "UserName";
@@ -98,7 +98,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void noSensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
+    void noSensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI + "?notused=45365";
@@ -112,8 +112,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void creditCardNoDashesInURLParamValue()
-            throws HttpMalformedHeaderException, URIException {
+    void creditCardNoDashesInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String sensitiveParamName = "docid";
@@ -151,7 +150,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void noCreditCardInURLParamValue() throws HttpMalformedHeaderException, URIException {
+    void noCreditCardInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI + "?docid=123456&hl=en";
@@ -165,7 +164,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void emailAddressInURLParamValue() throws HttpMalformedHeaderException, URIException {
+    void emailAddressInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String sensitiveParamName = "docid";
@@ -187,7 +186,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void noEmailAddressInURLParamValue() throws HttpMalformedHeaderException, URIException {
+    void noEmailAddressInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI + "?docid=exampleatgmail.com&hl=en";
@@ -201,7 +200,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void SsnDashesInURLParamValue() throws HttpMalformedHeaderException, URIException {
+    void SsnDashesInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String sensitiveParamName = "docid";
@@ -223,7 +222,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void noSsnInURLParamValue() throws HttpMalformedHeaderException, URIException {
+    void noSsnInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI + "?docid=snn-no-test&hl=en";
@@ -237,7 +236,7 @@ public class InformationDisclosureInUrlScanRuleUnitTest
     }
 
     @Test
-    public void noQueryParams() throws HttpMalformedHeaderException, URIException {
+    void noQueryParams() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI;

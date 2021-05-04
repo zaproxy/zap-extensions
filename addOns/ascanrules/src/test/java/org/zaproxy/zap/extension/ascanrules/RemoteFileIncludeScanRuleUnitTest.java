@@ -31,8 +31,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link RemoteFileIncludeScanRule}. */
-public class RemoteFileIncludeScanRuleUnitTest
-        extends ActiveScannerTest<RemoteFileIncludeScanRule> {
+class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncludeScanRule> {
 
     @Override
     protected RemoteFileIncludeScanRule createScanner() {
@@ -42,7 +41,7 @@ public class RemoteFileIncludeScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasRemoteFileContentAndPayloadIsNullByteBased()
+    void shouldRaiseAlertIfResponseHasRemoteFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =

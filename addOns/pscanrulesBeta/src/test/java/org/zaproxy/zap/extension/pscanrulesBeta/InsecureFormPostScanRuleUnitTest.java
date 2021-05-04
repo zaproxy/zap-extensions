@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<InsecureFormPostScanRule> {
+class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<InsecureFormPostScanRule> {
 
     private HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -52,7 +52,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotHttps() throws URIException {
+    void shouldNotRaiseAlertIfResponseIsNotHttps() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(false);
@@ -64,7 +64,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() throws URIException {
+    void shouldNotRaiseAlertIfResponseIsNotStatusOk() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
@@ -76,7 +76,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotHtml() throws URIException {
+    void shouldNotRaiseAlertIfResponseIsNotHtml() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
@@ -88,7 +88,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseContentTypeIsNull() throws URIException {
+    void shouldNotRaiseAlertIfResponseContentTypeIsNull() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
@@ -100,7 +100,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseFormIsSecure() throws URIException {
+    void shouldNotRaiseAlertIfResponseFormIsSecure() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody(
@@ -113,7 +113,7 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseFormIsInsecure() throws URIException {
+    void shouldRaiseAlertIfResponseFormIsInsecure() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody(
@@ -123,5 +123,6 @@ public class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<Insecur
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("http://example.com/processform"));
     }
 }

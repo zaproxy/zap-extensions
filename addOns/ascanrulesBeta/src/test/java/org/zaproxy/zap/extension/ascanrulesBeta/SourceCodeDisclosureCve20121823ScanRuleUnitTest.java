@@ -40,7 +40,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link SourceCodeDisclosureCve20121823ScanRule}. */
-public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
+class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         extends ActiveScannerTest<SourceCodeDisclosureCve20121823ScanRule> {
 
     private static final String RESPONSE_HEADER_404_NOT_FOUND =
@@ -57,7 +57,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetPhpTech() throws Exception {
+    void shouldTargetPhpTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.PHP);
         // When
@@ -67,7 +67,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonPhpTechs() throws Exception {
+    void shouldNotTargetNonPhpTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.PHP);
         // When
@@ -77,7 +77,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnoreNonTextResponses() throws Exception {
+    void shouldIgnoreNonTextResponses() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("/");
         message.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
@@ -89,7 +89,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnore404NotFoundResponsesOnMediumAttackStrength() throws Exception {
+    void shouldIgnore404NotFoundResponsesOnMediumAttackStrength() throws Exception {
         // Given
         HttpMessage message = httpMessage404NotFound();
         rule.init(message, parent);
@@ -101,7 +101,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnore404NotFoundResponsesOnLowAttackStrength() throws Exception {
+    void shouldIgnore404NotFoundResponsesOnLowAttackStrength() throws Exception {
         // Given
         HttpMessage message = httpMessage404NotFound();
         rule.init(message, parent);
@@ -113,7 +113,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScan404NotFoundResponsesOnHighAttackStrength() throws Exception {
+    void shouldScan404NotFoundResponsesOnHighAttackStrength() throws Exception {
         // Given
         HttpMessage message = httpMessage404NotFound();
         rule.setAttackStrength(AttackStrength.HIGH);
@@ -125,7 +125,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScan404NotFoundResponsesOnInsaneAttackStrength() throws Exception {
+    void shouldScan404NotFoundResponsesOnInsaneAttackStrength() throws Exception {
         // Given
         HttpMessage message = httpMessage404NotFound();
         rule.init(message, parent);
@@ -137,7 +137,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanUrlsWithoutPath() throws Exception {
+    void shouldScanUrlsWithoutPath() throws Exception {
         // Given
         nano.addHandler(
                 new NanoServerHandler("shouldScanUrlsWithoutPath") {
@@ -156,7 +156,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
+    void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
         // Given
         String test = "/shouldScanUrlsWithEncodedCharsInPath/";
         nano.addHandler(
@@ -176,7 +176,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfThereIsNoSourceCodeDisclosure() throws Exception {
+    void shouldNotAlertIfThereIsNoSourceCodeDisclosure() throws Exception {
         // Given
         String test = "/shouldNotAlertIfThereIsNoSourceCodeDisclosure/";
         nano.addHandler(
@@ -196,7 +196,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody() throws Exception {
+    void shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody() throws Exception {
         // Given
         String test = "/shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody/";
         nano.addHandler(
@@ -224,9 +224,8 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody()
-                    throws Exception {
+    void shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody()
+            throws Exception {
         // Given
         String test =
                 "/shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody/";
@@ -252,7 +251,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody() throws Exception {
+    void shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody() throws Exception {
         // Given
         String test = "/shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody/";
         nano.addHandler(
@@ -280,9 +279,8 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody()
-                    throws Exception {
+    void shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody()
+            throws Exception {
         // Given
         String test =
                 "/shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody/";
@@ -308,7 +306,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfJavaScriptFilesAtDefaultThreshold() throws Exception {
+    void shouldNotAlertIfJavaScriptFilesAtDefaultThreshold() throws Exception {
         // Given
         String test = "/shouldNotAlertIfJavaScriptFilesAtDefaultThreshold/";
         nano.addHandler(
@@ -335,7 +333,7 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfJavaScriptFilesAtLowThreshold() throws Exception {
+    void shouldAlertIfJavaScriptFilesAtLowThreshold() throws Exception {
         // Given
         String test = "/shouldAlertIfJavaScriptFilesAtLowThreshold/";
         nano.addHandler(

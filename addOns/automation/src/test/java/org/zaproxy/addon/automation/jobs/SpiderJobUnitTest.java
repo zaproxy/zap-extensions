@@ -60,23 +60,23 @@ import org.zaproxy.zap.spider.SpiderParam;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class SpiderJobUnitTest {
+class SpiderJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionSpider extSpider;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -90,7 +90,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given
 
         // When
@@ -105,7 +105,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         SpiderJob job = new SpiderJob();
 
@@ -121,7 +121,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         SpiderJob job = new SpiderJob();
 
@@ -137,7 +137,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldReturnConfigParams() throws MalformedURLException {
+    void shouldReturnConfigParams() throws MalformedURLException {
         // Given
         SpiderJob job = new SpiderJob();
 
@@ -175,7 +175,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldRunValidJob() throws MalformedURLException {
+    void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Session session = mock(Session.class);
@@ -208,7 +208,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidUrl() throws MalformedURLException {
+    void shouldFailIfInvalidUrl() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -227,7 +227,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfUnknownContext() throws MalformedURLException {
+    void shouldFailIfUnknownContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -246,7 +246,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldUseSpecifiedContext() throws MalformedURLException {
+    void shouldUseSpecifiedContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Session session = mock(Session.class);
@@ -301,7 +301,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldUseSpecifiedUrl() throws MalformedURLException {
+    void shouldUseSpecifiedUrl() throws MalformedURLException {
         Constant.messages = new I18N(Locale.ENGLISH);
         Session session = mock(Session.class);
         Context context = mock(Context.class);
@@ -336,7 +336,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
+    void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
         Session session = mock(Session.class);
         Context context = mock(Context.class);
@@ -370,7 +370,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
+    void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
         // Given
         Session session = mock(Session.class);
         Context context = mock(Context.class);
@@ -404,7 +404,7 @@ public class SpiderJobUnitTest {
     }
 
     @Test
-    public void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
+    void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
         // Given
         Session session = mock(Session.class);
         Context context = mock(Context.class);

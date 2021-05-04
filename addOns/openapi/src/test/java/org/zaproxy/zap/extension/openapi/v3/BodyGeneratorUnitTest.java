@@ -35,16 +35,16 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.RequestModelConverter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 
-public class BodyGeneratorUnitTest {
+class BodyGeneratorUnitTest {
     Generators generators;
 
     @BeforeEach
-    public void init() {
+    void init() {
         generators = new Generators(null);
     }
 
     @Test
-    public void shouldGenerateArrayOfStrings() throws IOException {
+    void shouldGenerateArrayOfStrings() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
         String jsonArray =
                 generators
@@ -60,7 +60,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateArrayOfEnums() throws IOException {
+    void shouldGenerateArrayOfEnums() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
         String jsonArray =
                 generators
@@ -76,7 +76,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateJsonObject() throws IOException {
+    void shouldGenerateJsonObject() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
 
         String jsonString =
@@ -90,7 +90,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void objectSchemaWithoutProperties() throws IOException {
+    void objectSchemaWithoutProperties() throws IOException {
         OpenAPI openAPI = parseResource("Object_schema_without_properties.json");
 
         String jsonString =
@@ -102,7 +102,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldHandleRequestBodyRef() throws IOException {
+    void shouldHandleRequestBodyRef() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -117,7 +117,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateFormData() throws IOException {
+    void shouldGenerateFormData() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -132,7 +132,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void complexObjectInFormData() throws IOException {
+    void complexObjectInFormData() throws IOException {
         OpenAPI openAPI = parseResource("Complex_object_in_form_data.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -147,7 +147,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void arrayInFormData() throws IOException {
+    void arrayInFormData() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_with_array_in_form.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -160,7 +160,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void testAllOf() throws IOException {
+    void testAllOf() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_allof_schema.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -175,7 +175,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void testOneOf() throws IOException {
+    void testOneOf() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_oneof_schema.yaml");
         String requestBody =
                 new RequestModelConverter()
@@ -188,7 +188,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void testAnyOf() throws IOException {
+    void testAnyOf() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_anyof_schema.yaml");
         String request =
                 new RequestModelConverter()
@@ -201,7 +201,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void testNot() throws IOException {
+    void testNot() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_not_schema.yaml");
         String requestType =
                 new RequestModelConverter()
@@ -224,7 +224,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldReadAdditionalPropertiesIfNoProperties() throws IOException {
+    void shouldReadAdditionalPropertiesIfNoProperties() throws IOException {
         OpenAPI openAPI = parseResource("Schema_with_additional_properties.yaml");
         String request =
                 new RequestModelConverter()
@@ -241,7 +241,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldReadAdditionalMapString() throws IOException {
+    void shouldReadAdditionalMapString() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
         String request =
                 new RequestModelConverter()
@@ -256,7 +256,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldReadAdditionalMapNumber() throws IOException {
+    void shouldReadAdditionalMapNumber() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
         String request =
                 new RequestModelConverter()
@@ -271,7 +271,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldReadAdditionalMapBoolean() throws IOException {
+    void shouldReadAdditionalMapBoolean() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
         String request =
                 new RequestModelConverter()
@@ -286,7 +286,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldReadAdditionalMapObject() throws IOException {
+    void shouldReadAdditionalMapObject() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
         String request =
                 new RequestModelConverter()
@@ -303,7 +303,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldUseExample() throws IOException {
+    void shouldUseExample() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
                 new RequestModelConverter()
@@ -319,7 +319,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateArraysFromExamples() throws IOException {
+    void shouldGenerateArraysFromExamples() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
                 new RequestModelConverter()
@@ -337,7 +337,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateArraysFromFullArrayExampleFormattedAsString() throws IOException {
+    void shouldGenerateArraysFromFullArrayExampleFormattedAsString() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
                 new RequestModelConverter()
@@ -356,7 +356,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateArraysFromFullArrayExampleFormattedAsYAML() throws IOException {
+    void shouldGenerateArraysFromFullArrayExampleFormattedAsYAML() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
                 new RequestModelConverter()
@@ -375,7 +375,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateBodyWithNoSchema() throws IOException {
+    void shouldGenerateBodyWithNoSchema() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_no_schema.yaml");
         String request =
                 new RequestModelConverter()

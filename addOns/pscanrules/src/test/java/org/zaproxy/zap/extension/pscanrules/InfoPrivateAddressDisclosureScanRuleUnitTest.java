@@ -29,7 +29,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class InfoPrivateAddressDisclosureScanRuleUnitTest
+class InfoPrivateAddressDisclosureScanRuleUnitTest
         extends PassiveScannerTest<InfoPrivateAddressDisclosureScanRule> {
     private static final String URI = "https://www.example.com/";
 
@@ -39,7 +39,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfPrivateIp() throws HttpMalformedHeaderException {
+    void alertsIfPrivateIp() throws HttpMalformedHeaderException {
         // ip as candidate / evidence
         String[][] data =
                 new String[][] {
@@ -85,7 +85,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnoreRequestedPrivateIpByDefault() throws Exception {
+    void shouldIgnoreRequestedPrivateIpByDefault() throws Exception {
         // Given
         // ip and aws-hostname which get concatenated with the ports as candidates
         String[] ipHost = new String[] {"10.0.2.2", "ip-10-0-2-2"};
@@ -104,8 +104,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertRequestedPrivateIpIfLowAlertThreshold()
-            throws HttpMalformedHeaderException {
+    void shouldAlertRequestedPrivateIpIfLowAlertThreshold() throws HttpMalformedHeaderException {
         // Given
         String privateIp = "192.168.36.127";
         String requestUri = "https://" + privateIp + ":8123/";
@@ -120,7 +119,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void passesIfNonPrivateOrInvalidIp() throws HttpMalformedHeaderException {
+    void passesIfNonPrivateOrInvalidIp() throws HttpMalformedHeaderException {
         String[] candidates =
                 new String[] {
                     // the "borders" of private IP ranges
@@ -164,7 +163,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfPrivIpAndAddsPortToEvidence() throws HttpMalformedHeaderException {
+    void alertsIfPrivIpAndAddsPortToEvidence() throws HttpMalformedHeaderException {
         // ip and aws-hostname which get concatenated with the ports as candidates
         String[] ipHost = new String[] {"10.0.0.0", "ip-10-0-0-0"};
         // several ports in the range 0-65535
@@ -193,7 +192,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfPrivIpAndDropsPortNoInEvidence() throws HttpMalformedHeaderException {
+    void alertsIfPrivIpAndDropsPortNoInEvidence() throws HttpMalformedHeaderException {
         // ip and aws-hostname which get concatenated with the ports as candidates
         String[] ipHost = new String[] {"10.0.0.0", "ip-10-0-0-0"};
         // several ports to be ignored
@@ -223,7 +222,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfPrivateAwsHostname() throws HttpMalformedHeaderException {
+    void alertsIfPrivateAwsHostname() throws HttpMalformedHeaderException {
         // ip as candidate / evidence
         String[][] data =
                 new String[][] {
@@ -263,7 +262,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void passesIfInvalidAwsHostname() throws HttpMalformedHeaderException {
+    void passesIfInvalidAwsHostname() throws HttpMalformedHeaderException {
         String[] candidates =
                 new String[] {
                     // "outside borders" of private-IP-range-patterns
@@ -310,7 +309,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void alertsWithJustTheFirstEvidenceIfPrivIpAndPrivHostname()
+    void alertsWithJustTheFirstEvidenceIfPrivIpAndPrivHostname()
             throws HttpMalformedHeaderException {
         // candidate, evidence, otherInfo
         String[][] data =
@@ -342,7 +341,7 @@ public class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
+    void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
         // the method should do nothing (test just for code coverage)
         scanHttpRequestSend(createHttpMessage("10.0.2.2"));
         assertThat(alertsRaised.size(), equalTo(0));

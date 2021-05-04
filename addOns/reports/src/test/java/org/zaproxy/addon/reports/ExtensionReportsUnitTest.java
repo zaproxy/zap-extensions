@@ -35,7 +35,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +49,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.xml.sax.SAXException;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -52,7 +59,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ExtensionReportsUnitTest {
+class ExtensionReportsUnitTest {
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
@@ -69,7 +76,7 @@ public class ExtensionReportsUnitTest {
     private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -80,7 +87,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExtractExpectedParams() {
+    void shouldExtractExpectedParams() {
         // Given
         String pattern = ReportParam.DEFAULT_NAME_PATTERN;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,7 +101,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantContextUrls() {
+    void shouldIncludeRelevantContextUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com.*");
@@ -126,7 +133,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantContextUrls() {
+    void shouldExcludeRelevantContextUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -158,7 +165,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantSiteUrls() {
+    void shouldIncludeRelevantSiteUrls() {
         // Given
         String site1 = "https://www.example.com";
         String site2 = "https://www.example.com2";
@@ -190,7 +197,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantSiteUrls() {
+    void shouldExcludeRelevantSiteUrls() {
         // Given
         String site1 = "https://www.example.com/";
         String site2 = "https://www.example.com2/";
@@ -222,7 +229,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantContextAndSiteUrls() {
+    void shouldIncludeRelevantContextAndSiteUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com.*");
@@ -258,7 +265,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantContextAndSiteUrls() {
+    void shouldExcludeRelevantContextAndSiteUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -301,7 +308,7 @@ public class ExtensionReportsUnitTest {
         ReportData reportData = new ReportData();
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
-        reportData.setSites(Arrays.asList("test"));
+        reportData.setSites(Arrays.asList("http://example.com"));
         return reportData;
     }
 
@@ -313,7 +320,7 @@ public class ExtensionReportsUnitTest {
                 "traditional-md",
                 "traditional-xml"
             })
-    public void shouldGenerateReport(String reportName) throws IOException, DocumentException {
+    void shouldGenerateReport(String reportName) throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
@@ -330,8 +337,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAllSectionsInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludeAllSectionsInReport(String reportName) throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
@@ -355,7 +361,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAlertSummarySectionInReport(String reportName)
+    void shouldIncludeAlertSummarySectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -378,7 +384,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeInstanceSummarySectionInReport(String reportName)
+    void shouldIncludeInstanceSummarySectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -402,7 +408,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAlertDetailsSectionInReport(String reportName)
+    void shouldIncludeAlertDetailsSectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -425,7 +431,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html-plus"})
-    public void shouldIncludePassingRulesSectionInReport(String reportName)
+    void shouldIncludePassingRulesSectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -448,5 +454,145 @@ public class ExtensionReportsUnitTest {
         assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_PASSING_RULES_SECTION_TITLE), is(true));
+    }
+
+    private static AlertNode getAlertNode(String name, String desc, int risk, int confidence)
+            throws URIException, HttpMalformedHeaderException {
+        AlertNode node = new AlertNode(risk, name);
+        Alert alert = new Alert(1, risk, confidence, name);
+        String uriStr = "http://example.com/example_" + risk;
+
+        HttpMessage msg = new HttpMessage(new URI(uriStr, true));
+        msg.setRequestBody("Test Request Body");
+        msg.setResponseBody("Test Response Body");
+
+        alert.setDetail(
+                desc,
+                uriStr,
+                "Test Param",
+                "Test Attack",
+                "Test Other",
+                "Test Solution",
+                "Test Reference",
+                "Test Evidence",
+                123,
+                456,
+                msg);
+        node.setUserObject(alert);
+
+        AlertNode instance = new AlertNode(0, name);
+        instance.setUserObject(alert);
+
+        node.add(instance);
+
+        return node;
+    }
+
+    private static ReportData getTestReportDataWithAlerts()
+            throws URIException, HttpMalformedHeaderException {
+        ReportData reportData = new ReportData();
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        List<PluginPassiveScanner> list = new ArrayList<PluginPassiveScanner>();
+        PassiveScanJobResultData pscanData = new PassiveScanJobResultData("passiveScan-wait", list);
+        reportData.addReportObjects(pscanData.getKey(), pscanData);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+        root.add(getAlertNode("XSS", "XSS Description", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
+        reportData.setSites(Arrays.asList("http://example.com"));
+        return reportData;
+    }
+
+    private static File generateReportWithAlerts(Template template, File f)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportDataWithAlerts();
+        reportData.setSections(template.getSections());
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    private static String cleanReport(String str) {
+        return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
+                .replaceAll("basic-.*/", "dir")
+                .replaceAll("[\\n\\r\\t]", "");
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "traditional-md",
+                "traditional-xml",
+                "traditional-html",
+                "traditional-html-plus"
+            })
+    void shouldGenerateExpectedReport(String templateName)
+            throws IOException, DocumentException, SAXException, ParserConfigurationException {
+        // Given
+        File t = new File("src/main/zapHomeFiles/reports/" + templateName + "/template.yaml");
+        Template template = new Template(t);
+        String fileName = "basic-" + templateName;
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        File expectedReport =
+                new File(
+                        "src/test/resources/org/zaproxy/addon/automation/resources/"
+                                + fileName
+                                + "."
+                                + template.getExtension());
+        String expected = new String(Files.readAllBytes(expectedReport.toPath()));
+
+        // Then
+        assertThat(cleanReport(report), is(equalTo(cleanReport(expected))));
+    }
+
+    private static void generateTestFile(String templateName)
+            throws IOException, DocumentException {
+
+        Template template =
+                new Template(
+                        new File(
+                                "src/main/zapHomeFiles/reports/"
+                                        + templateName
+                                        + "/template.yaml"));
+        generateReportWithAlerts(
+                template,
+                new File(
+                        "src/test/resources/org/zaproxy/addon/automation/resources/basic-"
+                                + templateName
+                                + "."
+                                + template.getExtension()));
+    }
+
+    /**
+     * This can be used to either regenerate the test files when they are expected to have changed
+     * so that they can be checked in or to make it easier to see the differences if the tests fail.
+     *
+     * @param args not used
+     */
+    public static void main(String[] args) {
+        try {
+            Constant.messages = new I18N(Locale.ENGLISH);
+
+            Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+            Model.setSingletonForTesting(model);
+            ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+            Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+            Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+
+            generateTestFile("traditional-md");
+            generateTestFile("traditional-xml");
+            generateTestFile("traditional-html");
+            generateTestFile("traditional-html-plus");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -30,13 +30,13 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScanRule> {
+class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScanRule> {
 
     private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
     private HttpMessage msg;
 
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
@@ -51,7 +51,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldRaiseAlertOnMissingFeaturePolicyHTML() throws Exception {
+    void shouldRaiseAlertOnMissingFeaturePolicyHTML() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
@@ -62,7 +62,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldRaiseAlertOnMissingFeaturePolicyJavaScript() throws Exception {
+    void shouldRaiseAlertOnMissingFeaturePolicyJavaScript() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
         // When
@@ -72,7 +72,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldNotRaiseAlertOnMissingFeaturePolicyOthers() throws Exception {
+    void shouldNotRaiseAlertOnMissingFeaturePolicyOthers() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
@@ -82,7 +82,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldNotRaiseAlertOnAvailableFeaturePolicy() throws Exception {
+    void shouldNotRaiseAlertOnAvailableFeaturePolicy() throws Exception {
         // Given
         msg.getResponseHeader().addHeader("Feature-Policy", "vibrate 'none'");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/HTML");
@@ -93,8 +93,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldNotRaiseAlertOnMissingFeaturePolicyRedirectMediumThreshold()
-            throws Exception {
+    void shouldNotRaiseAlertOnMissingFeaturePolicyRedirectMediumThreshold() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
@@ -106,7 +105,7 @@ public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePol
     }
 
     @Test
-    public void shouldRaiseAlertOnMissingFeaturePolicyRedirectLowThreshold() throws Exception {
+    void shouldRaiseAlertOnMissingFeaturePolicyRedirectLowThreshold() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");

@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ForbiddenBypassScanRule}. */
-public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassScanRule> {
+class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassScanRule> {
 
     private static final String PROTECTED_PATH = "/protected/endpoint";
 
@@ -46,7 +46,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldNotAlertIfInitialRequestIsNotForbidden() throws Exception {
+    void shouldNotAlertIfInitialRequestIsNotForbidden() throws Exception {
         // Given
         String path = "/allowed/";
         nano.addHandler(new OkResponse(path));
@@ -60,7 +60,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldNotAlertIfAllRequestsAreForbidden() throws Exception {
+    void shouldNotAlertIfAllRequestsAreForbidden() throws Exception {
         // Given
         String path = "/forbidden/";
         nano.addHandler(new ForbiddenResponse(path));
@@ -74,7 +74,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldAlertIfOkObtained() throws Exception {
+    void shouldAlertIfOkObtained() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
         nano.addHandler(new OkResponse("/." + PROTECTED_PATH)); // Period is %2e
@@ -90,7 +90,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldAlertIfOkWithRewriteUrlHeader() throws Exception {
+    void shouldAlertIfOkWithRewriteUrlHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
         nano.addHandler(new ResponseWithHeaderPayload("/anything", "x-rewrite-url"));
@@ -106,7 +106,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldAlertIfOkWithRefererHeader() throws Exception {
+    void shouldAlertIfOkWithRefererHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
         nano.addHandler(new ResponseWithHeaderPayload("/anything", "referer"));
@@ -122,7 +122,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldAlertIfOkWithOriginalUrlHeader() throws Exception {
+    void shouldAlertIfOkWithOriginalUrlHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
         nano.addHandler(new ResponseWithHeaderPayload("/", "x-original-url"));
@@ -138,7 +138,7 @@ public class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<Forbidden
     }
 
     @Test
-    public void shouldAlertIfOkWithCustomIpAuthorizationHeader() throws Exception {
+    void shouldAlertIfOkWithCustomIpAuthorizationHeader() throws Exception {
         // Given
         nano.addHandler(new ResponseWithHeaderPayload(PROTECTED_PATH, "x-custom-ip-authorization"));
         HttpMessage msg = this.getHttpMessage(PROTECTED_PATH);

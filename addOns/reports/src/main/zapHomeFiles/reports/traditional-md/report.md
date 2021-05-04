@@ -29,14 +29,16 @@
 ### [(${alert.nodeName})]
 [/th:block]
 
-##### [(${helper.getRiskString(alert.risk)})]
+##### [(${helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.userObject.confidence) + ')'})]
 
 ### [(#{report.alerts.detail.description})]
 
 [(${alert.userObject.description})]
 [#th:block th:each="instance: ${alert.children}"]
-* [(#{report.alerts.detail.url})]: [(${instance.userObject.uri})]
+* [(#{report.alerts.detail.url})]: [(${#strings.replace(#uris.escapePath(instance.userObject.uri), ')', '&29')})]
   * [(#{report.alerts.detail.method})]: `[(${instance.userObject.method})]`
+  * [(#{report.alerts.detail.param})]: `[(${instance.userObject.param})]`
+  * [(#{report.alerts.detail.attack})]: `[(${instance.userObject.attack})]`
   * [(#{report.alerts.detail.evidence})]: `[(${instance.userObject.evidence})]`
 [/th:block]
 [(#{report.alerts.detail.instances})]: [(${alert.childCount})]
@@ -56,5 +58,6 @@
 [#th:block th:if="${alert.userObject.wascId > 0}"]
 #### [(#{report.alerts.detail.wascid})]: [(${alert.userObject.wascId})]
 [/th:block]
+#### [(#{report.alerts.detail.sourceid})]: [(${alert.userObject.source.id})]
 [/th:block]
 [/th:block]

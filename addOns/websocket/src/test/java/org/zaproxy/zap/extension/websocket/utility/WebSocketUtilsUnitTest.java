@@ -25,10 +25,10 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
-public class WebSocketUtilsUnitTest {
+class WebSocketUtilsUnitTest {
 
     @Test
-    public void shouldEncodeTest1() throws Exception {
+    void shouldEncodeTest1() throws Exception {
         // given
         String key = "JIUetocUsIRxbzKP6sOH5Q==";
         // when
@@ -38,7 +38,7 @@ public class WebSocketUtilsUnitTest {
     }
 
     @Test
-    public void shouldEncodeTest2() throws Exception {
+    void shouldEncodeTest2() throws Exception {
         // given
         String key = "dGhlIHNhbXBsZSBub25jZQ==";
         // when

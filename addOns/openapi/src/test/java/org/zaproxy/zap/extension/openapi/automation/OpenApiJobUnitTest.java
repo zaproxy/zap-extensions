@@ -42,12 +42,12 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.utils.I18N;
 
-public class OpenApiJobUnitTest {
+class OpenApiJobUnitTest {
 
     private ExtensionOpenApi extOpenApi;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -60,7 +60,7 @@ public class OpenApiJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given / When
         OpenApiJob job = new OpenApiJob();
 
@@ -73,7 +73,7 @@ public class OpenApiJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         OpenApiJob job = new OpenApiJob();
 
@@ -88,7 +88,7 @@ public class OpenApiJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         OpenApiJob job = new OpenApiJob();
         String apiFile = "C:\\Users\\ZAPBot\\Documents\\test file.json";
@@ -107,7 +107,7 @@ public class OpenApiJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidUrl() {
+    void shouldFailIfInvalidUrl() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -124,7 +124,7 @@ public class OpenApiJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidFile() {
+    void shouldFailIfInvalidFile() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);

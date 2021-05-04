@@ -42,12 +42,12 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.soap.ExtensionImportWSDL;
 import org.zaproxy.zap.utils.I18N;
 
-public class SoapJobUnitTest {
+class SoapJobUnitTest {
 
     private ExtensionImportWSDL extSoap;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -60,7 +60,7 @@ public class SoapJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given / When
         SoapJob job = new SoapJob();
 
@@ -73,7 +73,7 @@ public class SoapJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         SoapJob job = new SoapJob();
 
@@ -87,7 +87,7 @@ public class SoapJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         SoapJob job = new SoapJob();
         String wsdlFile = "C:\\Users\\ZAPBot\\Documents\\test file.wsdl";
@@ -103,7 +103,7 @@ public class SoapJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidUrl() {
+    void shouldFailIfInvalidUrl() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -122,7 +122,7 @@ public class SoapJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfInvalidFile() {
+    void shouldFailIfInvalidFile() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();

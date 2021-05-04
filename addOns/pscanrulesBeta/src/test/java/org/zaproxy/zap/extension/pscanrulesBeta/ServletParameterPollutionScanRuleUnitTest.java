@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class ServletParameterPollutionScanRuleUnitTest
+class ServletParameterPollutionScanRuleUnitTest
         extends PassiveScannerTest<ServletParameterPollutionScanRule> {
 
     public static final String URI = "http://www.example.com/test/";
@@ -43,13 +43,13 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @BeforeEach
-    public void before() {
+    void before() {
         rule.setAlertThreshold(AlertThreshold.LOW);
         when(passiveScanData.getTechSet()).thenReturn(TechSet.getAllTech());
     }
 
     @Test
-    public void givenNoFormsWhenScanHttpResponseReceiveThenNoAlertsRaised() throws Exception {
+    void givenNoFormsWhenScanHttpResponseReceiveThenNoAlertsRaised() throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("");
         // When
@@ -59,7 +59,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void givenFormWithActionAttributeWhenScanHttpResponseReceiveThenNoAlertsRaised()
+    void givenFormWithActionAttributeWhenScanHttpResponseReceiveThenNoAlertsRaised()
             throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action='ActionMan'>");
@@ -70,9 +70,8 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
-            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAlertRaisedAndAlertPopulated()
-                    throws Exception {
+    void givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAlertRaisedAndAlertPopulated()
+            throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form />");
         // When
@@ -86,7 +85,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
+    void
             givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAtMediumThresholdThenNoAlertRaised()
                     throws Exception {
         // Given
@@ -99,7 +98,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
+    void
             givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAtHighThresholdThenNoAlertRaised()
                     throws Exception {
         // Given
@@ -112,7 +111,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
+    void
             givenFormWithNoActionAttributeWhenScanHttpResponseReceiveWithTechNotRelevantThenNoAlertRaised()
                     throws Exception {
         // Given
@@ -125,9 +124,8 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
-            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveWithTechRelevantThenAlertRaised()
-                    throws Exception {
+    void givenFormWithNoActionAttributeWhenScanHttpResponseReceiveWithTechRelevantThenAlertRaised()
+            throws Exception {
         // Given
         HttpMessage msg = createHttpMessageFromHtml("<form />");
         when(passiveScanData.getTechSet()).thenReturn(new TechSet(new Tech[] {Tech.JSP_SERVLET}));
@@ -138,7 +136,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
+    void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
             throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action />");
@@ -149,7 +147,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void givenFormWithEmptyActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
+    void givenFormWithEmptyActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
             throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action='' />");
@@ -160,9 +158,8 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
-            givenFormWithEmptyAndPopulatedActionAttributesWhenScanHttpResponseReceiveThenAlertRaised()
-                    throws Exception {
+    void givenFormWithEmptyAndPopulatedActionAttributesWhenScanHttpResponseReceiveThenAlertRaised()
+            throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action action='ActionMan' />");
         // When
@@ -172,9 +169,8 @@ public class ServletParameterPollutionScanRuleUnitTest
     }
 
     @Test
-    public void
-            givenTwoFormsWithNoActionAttributeWhenScanHttpResponseReceiveThenOnlyOneAlertRaised()
-                    throws Exception {
+    void givenTwoFormsWithNoActionAttributeWhenScanHttpResponseReceiveThenOnlyOneAlertRaised()
+            throws Exception {
         // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form /><form />");
         // When

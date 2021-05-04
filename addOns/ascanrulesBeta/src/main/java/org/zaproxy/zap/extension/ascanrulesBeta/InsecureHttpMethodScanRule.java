@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.ProxyClient;
 import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
 import org.apache.commons.httpclient.StatusLine;
@@ -429,7 +428,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
             int statusCode = statusLine.getStatusCode();
 
-            if (statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpStatusCode.OK) {
                 // we have a socket and a 200 status.
                 // Could still be a false positive though, if the server ignored
                 // the method,

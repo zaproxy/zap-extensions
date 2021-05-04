@@ -3,111 +3,10 @@
 <head>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title th:text="${reportTitle}">Report Title</title>
-<style type="text/css">
-body {
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	color: #000;
-	font-size: 13px;
-}
-
-h1 {
-	text-align: center;
-	font-weight: bold;
-	font-size: 32px
-}
-
-h3 {
-	font-size: 16px;
-}
-
-table {
-	border: none;
-	font-size: 13px;
-}
-
-td, th {
-	padding: 3px 4px;
-	word-break: break-word;
-}
-
-th {
-	font-weight: bold;
-	background-color: #666666;
-}
-
-td {
-	background-color: #e8e8e8;
-}
-
-.spacer {
-	margin: 10px;
-}
-
-.spacer-lg {
-	margin: 40px;
-}
-
-.indent1 {
-	padding: 4px 20px;
-}
-
-.indent2 {
-	padding: 4px 40px;
-}
-
-.risk-3 {
-	background-color: red;
-	color: #FFF;
-}
-
-.risk-2 {
-	background-color: orange;
-	color: #FFF;
-}
-
-.risk-1 {
-	background-color: yellow;
-	color: #000;
-}
-
-.risk-0 {
-	background-color: blue;
-	color: #FFF;
-}
-
-.risk--1 {
-	background-color: green;
-	color: #FFF;
-}
-
-.summary {
-	width: 45%;
-}
-
-.summary th {
-	color: #FFF;
-}
-
-.alerts {
-	width: 75%;
-}
-
-.alerts th {
-	color: #FFF;
-}
-
-.results {
-	width: 100%;
-}
-
-.results th {
-	text-align: left;
-}
-
-.left-header {
-	display: inline-block;
-}
-</style>
+<link th:href="${resources + '/common.css'}" href="resources/common.css"
+	rel="stylesheet" type="text/css">
+<link th:href="${resources + '/' + reportData.theme + '.css'}"
+	href="resources/dark.css" rel="stylesheet" type="text/css">
 <script th:src="${resources + '/Chart.min.js'}"
 	src="resources/Chart.min.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -318,6 +217,11 @@ td {
 						<td th:text="#{report.alerts.detail.method}" width="20%"
 							class="indent2">Method</td>
 						<td th:text="${instance.userObject.method}" width="80%">Method</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.param}" width="20%"
+							class="indent2">Param</td>
+						<td th:text="${instance.userObject.param}" width="80%">Param</td>
 					</tr>
 					<tr>
 						<td th:text="#{report.alerts.detail.attack}" width="20%"

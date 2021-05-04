@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Context;
 
 /** Unit test for {@link CrossDomainScriptInclusionScanRule}. */
-public class CrossDomainScriptInclusionScanRuleUnitTest
+class CrossDomainScriptInclusionScanRuleUnitTest
         extends PassiveScannerTest<CrossDomainScriptInclusionScanRule> {
 
     @Mock(lenient = true)
@@ -47,7 +47,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     Session session;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(session.getContextsForUrl(anyString())).thenReturn(Collections.emptyList());
         when(model.getSession()).thenReturn(session);
         rule.setModel(model);
@@ -59,7 +59,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void noScripts() throws HttpMalformedHeaderException {
+    void noScripts() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -78,7 +78,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void noCrossDomainScripts() throws HttpMalformedHeaderException {
+    void noCrossDomainScripts() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -103,7 +103,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScript() throws HttpMalformedHeaderException {
+    void crossDomainScript() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -132,7 +132,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptWithIntegrity() throws HttpMalformedHeaderException {
+    void crossDomainScriptWithIntegrity() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -157,7 +157,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptWithNullIntegrity() throws HttpMalformedHeaderException {
+    void crossDomainScriptWithNullIntegrity() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -186,7 +186,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptNotInContext() throws HttpMalformedHeaderException {
+    void crossDomainScriptNotInContext() throws HttpMalformedHeaderException {
         // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -219,7 +219,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnoreNonHtmlResponses() throws HttpMalformedHeaderException {
+    void shouldIgnoreNonHtmlResponses() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/thing.js HTTP/1.1");
@@ -248,7 +248,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptInContextHigh() throws HttpMalformedHeaderException {
+    void crossDomainScriptInContextHigh() throws HttpMalformedHeaderException {
         // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -280,7 +280,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptInContextMed() throws HttpMalformedHeaderException {
+    void crossDomainScriptInContextMed() throws HttpMalformedHeaderException {
         // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -312,7 +312,7 @@ public class CrossDomainScriptInclusionScanRuleUnitTest
     }
 
     @Test
-    public void crossDomainScriptInContextLow() throws HttpMalformedHeaderException {
+    void crossDomainScriptInContextLow() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
 

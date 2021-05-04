@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class ContentSecurityPolicyScanRuleUnitTest
+class ContentSecurityPolicyScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyScanRule> {
 
     private static final String REASONABLE_POLICY =
@@ -47,7 +47,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertOnNonHtmlAtMediumThreshold() {
+    void shouldNotRaiseAlertOnNonHtmlAtMediumThreshold() {
         // Given
         HttpMessage msg = createHttpMessage("report-uri /__cspreport__");
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/png");
@@ -59,7 +59,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertOnNonHtmlAtLowThreshold() {
+    void shouldRaiseAlertOnNonHtmlAtLowThreshold() {
         // Given
         HttpMessage msg = createHttpMessage("report-uri /__cspreport__");
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/png");
@@ -71,7 +71,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertWhenCspContainsSyntaxIssues() {
+    void shouldAlertWhenCspContainsSyntaxIssues() {
         // Given
         HttpMessage msg = createHttpMessage("default-src: 'none'; report_uri /__cspreport__");
         // When
@@ -111,7 +111,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertWithCspWarningNoticesWhenApplicable() {
+    void shouldAlertWithCspWarningNoticesWhenApplicable() {
         // Given
         HttpMessage msg = createHttpMessage("default-src none; report-to csp-endpoint ");
         // When
@@ -133,7 +133,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertAtInfoRiskWhenOnlyInformationalNotices() {
+    void shouldRaiseAlertAtInfoRiskWhenOnlyInformationalNotices() {
         // Given
         HttpMessage msg = createHttpMessage("report-uri /__cspreport__");
         // When
@@ -146,7 +146,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldIntersectMultipleCspHeaders() throws HttpMalformedHeaderException {
+    void shouldIntersectMultipleCspHeaders() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -190,7 +190,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotIntersectMultipleCspHeadersIfOneHasReportUri()
+    void shouldNotIntersectMultipleCspHeadersIfOneHasReportUri()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -234,7 +234,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertOnWildcardFrameAncestorsDirective() {
+    void shouldAlertOnWildcardFrameAncestorsDirective() {
         // Given
         HttpMessage msg =
                 createHttpMessage("frame-ancestors *; default-src 'self'; form-action 'none'");
@@ -259,7 +259,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertOnReasonableCsp() {
+    void shouldNotAlertOnReasonableCsp() {
         // Given
         HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
         // When
@@ -270,7 +270,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(strings = {"X-Content-Security-Policy", "X-WebKit-CSP"})
-    public void shouldRaiseAlertOnLegacyCspHeader(String input) {
+    void shouldRaiseAlertOnLegacyCspHeader(String input) {
         // Given
         HttpMessage msg = createHttpMessageWithReasonableCsp(input);
         // When
@@ -283,7 +283,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenCspIncludesScriptUnsafeInline() {
+    void shouldRaiseAlertWhenCspIncludesScriptUnsafeInline() {
         // Given
         HttpMessage msg = createHttpMessage("script-src 'unsafe-inline'");
         // When
@@ -297,7 +297,7 @@ public class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenCspIncludesStyleUnsafeInline() {
+    void shouldRaiseAlertWhenCspIncludesStyleUnsafeInline() {
         // Given
         HttpMessage msg = createHttpMessage("style-src 'unsafe-inline'");
         // When

@@ -81,8 +81,8 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         "NEL"
     };
 
-    private static final Pattern PATTERN_FONT_EXTENSIONS =
-            Pattern.compile("\\.ttf|\\.woff|\\.woff2|\\.otf\\z", Pattern.CASE_INSENSITIVE);
+    static final Pattern PATTERN_FONT_EXTENSIONS =
+            Pattern.compile("(?:\\.ttf|\\.woff|\\.woff2|\\.otf)\\z", Pattern.CASE_INSENSITIVE);
 
     /**
      * gets the name of the scanner

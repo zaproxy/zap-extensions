@@ -39,11 +39,10 @@ import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiUnitTest extends AbstractServerTest {
+class OpenApiUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldExplorePetStore1_2()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldExplorePetStore1_2() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStore_1_2_defn/";
 
         this.nano.addHandler(

@@ -33,7 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class InsecureJsfViewStatePassiveScanRuleUnitTest
+class InsecureJsfViewStatePassiveScanRuleUnitTest
         extends PassiveScannerTest<InsecureJsfViewStatePassiveScanRule> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.insecurejsfviewstate.";
@@ -45,7 +45,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldPassAsThereIsNoBody() throws HttpMalformedHeaderException {
+    void shouldPassAsThereIsNoBody() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -58,7 +58,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldPassWhenViewStateContainsUnderscore() throws HttpMalformedHeaderException {
+    void shouldPassWhenViewStateContainsUnderscore() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -76,7 +76,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldPassNoJavaWordInViewState() throws IOException {
+    void shouldPassNoJavaWordInViewState() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -97,7 +97,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldPassIfViewStateIsStoredOnServer() throws IOException {
+    void shouldPassIfViewStateIsStoredOnServer() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -119,7 +119,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfViewStateContainsJavaWord() throws IOException {
+    void shouldRaiseAlertIfViewStateContainsJavaWord() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -145,7 +145,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfViewStateContainsJavaWordCompressed() throws IOException {
+    void shouldRaiseAlertIfViewStateContainsJavaWordCompressed() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -172,7 +172,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfInsecureValueViewStateIdWithFormId() throws IOException {
+    void shouldRaiseAlertIfInsecureValueViewStateIdWithFormId() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -199,7 +199,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfInsecureViewStateManyInputs() throws IOException {
+    void shouldRaiseAlertIfInsecureViewStateManyInputs() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");

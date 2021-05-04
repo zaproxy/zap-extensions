@@ -30,8 +30,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class DirectoryBrowsingScanRuleUnitTest
-        extends PassiveScannerTest<DirectoryBrowsingScanRule> {
+class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrowsingScanRule> {
 
     private HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -50,7 +49,7 @@ public class DirectoryBrowsingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseBodyIsEmpty() throws URIException {
+    void shouldNotRaiseAlertIfResponseBodyIsEmpty() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -60,7 +59,7 @@ public class DirectoryBrowsingScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseBodyIsIrrelevant() throws URIException {
+    void shouldNotRaiseAlertIfResponseBodyIsIrrelevant() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody("<html><H1>Some Title</H1></html>");
@@ -71,7 +70,7 @@ public class DirectoryBrowsingScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsApacheStyleIndex() throws URIException {
+    void shouldRaiseAlertIfResponseContainsApacheStyleIndex() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody("<html><title>Index of /htdocs</title></html>");
@@ -82,7 +81,7 @@ public class DirectoryBrowsingScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseContainsIisStyleIndex() throws URIException {
+    void shouldRaiseAlertIfResponseContainsIisStyleIndex() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseBody(

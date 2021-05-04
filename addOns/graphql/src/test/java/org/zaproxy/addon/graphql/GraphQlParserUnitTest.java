@@ -28,24 +28,24 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class GraphQlParserUnitTest extends TestUtils {
+class GraphQlParserUnitTest extends TestUtils {
 
     String endpointUrl;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
         startServer();
         endpointUrl = "http://localhost:" + nano.getListeningPort();
     }
 
     @AfterEach
-    public void teardown() throws Exception {
+    void teardown() throws Exception {
         stopServer();
     }
 
     @Test
-    public void shouldFailIntrospectionWhenResponseIsEmpty() throws Exception {
+    void shouldFailIntrospectionWhenResponseIsEmpty() throws Exception {
         // Given
         nano.addHandler(new StaticContentServerHandler("/", ""));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
@@ -54,7 +54,7 @@ public class GraphQlParserUnitTest extends TestUtils {
     }
 
     @Test
-    public void shouldFailIntrospectionWhenResponseIsNotJson() throws Exception {
+    void shouldFailIntrospectionWhenResponseIsNotJson() throws Exception {
         // Given
         nano.addHandler(new StaticContentServerHandler("/", "not json"));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);

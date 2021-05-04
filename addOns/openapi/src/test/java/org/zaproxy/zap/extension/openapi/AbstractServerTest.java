@@ -35,12 +35,12 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class AbstractServerTest extends AbstractOpenApiTest {
 
     @BeforeEach
-    public void init() throws Exception {
+    void init() throws Exception {
         startServer();
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         stopServer();
     }
 

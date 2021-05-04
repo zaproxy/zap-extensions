@@ -36,7 +36,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 
-public class WebSocketProxyUnitTest extends WebSocketTestUtils {
+class WebSocketProxyUnitTest extends WebSocketTestUtils {
 
     private static final String HOST_NAME = "localhost";
 
@@ -58,7 +58,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldAnswerToPingWithPong() throws Exception {
+    void shouldAnswerToPingWithPong() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(
@@ -82,7 +82,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldReceiveMessagesFromServer() throws Exception {
+    void shouldReceiveMessagesFromServer() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(

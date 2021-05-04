@@ -34,11 +34,11 @@ import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 
-public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
+class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
     private static final String HOST_NAME = "localhost";
 
     @BeforeEach
-    public void openWebSocketServer() throws Exception {
+    void openWebSocketServer() throws Exception {
         super.startWebSocketServer(HOST_NAME);
         super.setUpZap();
     }
@@ -55,7 +55,7 @@ public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldReceiveUpgradeStatusCode() throws Exception {
+    void shouldReceiveUpgradeStatusCode() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         NanoWebSocketTestServer webSocketServer = super.getWebSocketTestServer();
         HttpMessage handshakeRequest =
@@ -75,7 +75,7 @@ public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldReturnWSProxy() throws Exception {
+    void shouldReturnWSProxy() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(

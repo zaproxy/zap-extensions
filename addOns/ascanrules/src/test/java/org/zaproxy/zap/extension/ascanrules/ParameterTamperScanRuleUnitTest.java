@@ -34,7 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ParameterTamperScanRule}. */
-public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperScanRule> {
+class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperScanRule> {
 
     @Override
     protected ParameterTamperScanRule createScanner() {
@@ -42,7 +42,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldNotContinueScanningIfFirstResponseIsNotOK() throws Exception {
+    void shouldNotContinueScanningIfFirstResponseIsNotOK() throws Exception {
         // Given
         rule.init(getHttpMessage("/?a=b"), parent);
         // When
@@ -53,7 +53,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldContinueScanningIfFirstResponseIsOK() throws Exception {
+    void shouldContinueScanningIfFirstResponseIsOK() throws Exception {
         // Given
         nano.addHandler(
                 new NanoServerHandler("/") {
@@ -72,7 +72,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseIsAlwaysTheSame() throws Exception {
+    void shouldNotAlertIfAttackResponseIsAlwaysTheSame() throws Exception {
         // Given
         nano.addHandler(
                 new NanoServerHandler("/") {
@@ -92,7 +92,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseIsNotOkNorServerError() throws Exception {
+    void shouldNotAlertIfAttackResponseIsNotOkNorServerError() throws Exception {
         // Given
         nano.addHandler(
                 new NanoServerHandler("/") {
@@ -119,8 +119,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseIsServerErrorWithUnknownErrorMessage()
-            throws Exception {
+    void shouldNotAlertIfAttackResponseIsServerErrorWithUnknownErrorMessage() throws Exception {
         // Given
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/");
         nano.addHandler(serverErrorOnAttack);
@@ -134,7 +133,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldAlertIfAttackResponseContainsJavaServletError() throws Exception {
+    void shouldAlertIfAttackResponseContainsJavaServletError() throws Exception {
         // Given
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/", 2);
         nano.addHandler(serverErrorOnAttack);
@@ -154,7 +153,27 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseDoesNotContainsJavaServletError() throws Exception {
+    void shouldAlertIfAttackResponseContainsVbScriptError() throws Exception {
+        // Given
+        ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/", 2);
+        nano.addHandler(serverErrorOnAttack);
+        serverErrorOnAttack.setError("Microsoft VBScript error");
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(4));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("Microsoft VBScript error")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("p")));
+        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("@")));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldNotAlertIfAttackResponseDoesNotContainsJavaServletError() throws Exception {
         // Given
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/");
         nano.addHandler(serverErrorOnAttack);
@@ -168,7 +187,7 @@ public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<Parameter
     }
 
     @Test
-    public void shouldAlertWithLowConfidenceIfAttackResponseContainsOtherKnownServerErrors()
+    void shouldAlertWithLowConfidenceIfAttackResponseContainsOtherKnownServerErrors()
             throws Exception {
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/");
         nano.addHandler(serverErrorOnAttack);

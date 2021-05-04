@@ -38,24 +38,24 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.utils.I18N;
 
-public class ReportParamUnitTest {
+class ReportParamUnitTest {
 
     private ReportParam reportParam;
 
     @BeforeAll
-    public static void initModel() {
+    static void initModel() {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
     }
 
     @BeforeEach
-    public void init() {
+    void init() {
         reportParam = new ReportParam();
     }
 
     @Test
-    public void shouldLoadDefaultParams() {
+    void shouldLoadDefaultParams() {
         // Given
         XMLConfiguration config = new XMLConfiguration();
 
@@ -76,7 +76,7 @@ public class ReportParamUnitTest {
     }
 
     @Test
-    public void shouldLoadExpectedParams() throws IOException {
+    void shouldLoadExpectedParams() throws IOException {
         // Given
         File tempDir = Files.createTempDirectory("Test").toFile();
         XMLConfiguration config = new XMLConfiguration();
@@ -102,7 +102,7 @@ public class ReportParamUnitTest {
     }
 
     @Test
-    public void shouldSetSpecifiedParams() {
+    void shouldSetSpecifiedParams() {
         // Given
         XMLConfiguration config = new XMLConfiguration();
 

@@ -34,8 +34,15 @@ subprojects {
     apply(plugin = "org.zaproxy.add-on")
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        // Compile with Java 8 when building ZAP releases.
+        if (System.getenv("ZAP_RELEASE") != null) {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(8))
+            }
+        } else {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
     }
 
     jacoco {

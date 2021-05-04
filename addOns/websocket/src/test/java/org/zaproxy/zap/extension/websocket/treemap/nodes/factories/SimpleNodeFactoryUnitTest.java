@@ -42,13 +42,13 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleN
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 
-public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
+class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
 
     private NodeFactory nodeFactory;
     private WebSocketSimpleNodeNamer namer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpMessages();
         super.startWebSocketServer("localhost");
         namer = new WebSocketSimpleNodeNamer();
@@ -61,7 +61,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldAddConnection()
+    void shouldAddConnection()
             throws URIException, DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, getServerUrl().toString());
@@ -74,7 +74,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldNotAddExistingHost() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldNotAddExistingHost() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel1_1 = getWebSocketChannelDTO(1, "hostname_1");
         WebSocketChannelDTO channel2_1 = getWebSocketChannelDTO(2, "hostname_1");
@@ -94,7 +94,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldAddMessagesUnderCorrectHostNode()
+    void shouldAddMessagesUnderCorrectHostNode()
             throws DatabaseException, HttpMalformedHeaderException {
         // Given
         List<WebSocketChannelDTO> channels =
@@ -136,8 +136,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldUpdateMessageIfExists()
-            throws DatabaseException, HttpMalformedHeaderException {
+    void shouldUpdateMessageIfExists() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         List<WebSocketChannelDTO> channels =
                 channels(
@@ -159,7 +158,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetRightPosition() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetRightPosition() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channelA = getWebSocketChannelDTO(1, "Hostname_A");
         WebSocketChannelDTO channelB = getWebSocketChannelDTO(2, "Hostname_B");

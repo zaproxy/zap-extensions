@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 
 /** Unit test for {@link UserAgentScanRule}. */
-public class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
+class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
 
     @Override
     protected UserAgentScanRule createScanner() {
@@ -40,7 +40,7 @@ public class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRu
     }
 
     @Test
-    public void shouldHaveInfoRisk() {
+    void shouldHaveInfoRisk() {
         // Given / When
         int risk = rule.getRisk();
         // Then

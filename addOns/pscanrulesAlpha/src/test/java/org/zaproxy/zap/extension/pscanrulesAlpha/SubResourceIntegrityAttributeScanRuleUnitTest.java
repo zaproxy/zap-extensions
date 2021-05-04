@@ -27,7 +27,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class SubResourceIntegrityAttributeScanRuleUnitTest
+class SubResourceIntegrityAttributeScanRuleUnitTest
         extends PassiveScannerTest<SubResourceIntegrityAttributeScanRule> {
 
     @Override
@@ -38,7 +38,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
+    void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
             throws HttpMalformedHeaderException {
         // Given
         // From https://www.w3.org/TR/SRI/#use-casesexamples
@@ -56,7 +56,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
+    void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
             throws HttpMalformedHeaderException {
         // Given
         // From https://www.w3.org/TR/SRI/#use-casesexamples
@@ -74,7 +74,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
+    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
@@ -91,8 +91,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldIndicateElementWithoutIntegrityAttribute()
-            throws HttpMalformedHeaderException {
+    void shouldIndicateElementWithoutIntegrityAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
@@ -110,7 +109,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenElementIsServedByCurrentDomain()
+    void shouldNotRaiseAlertGivenElementIsServedByCurrentDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
@@ -128,8 +127,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertGivenElementIsServedBySubDomain()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenElementIsServedBySubDomain() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
@@ -145,8 +143,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenElementIsServedRelatively()
-            throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertGivenElementIsServedRelatively() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
@@ -167,7 +164,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenElementIsInline() throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertGivenElementIsInline() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
@@ -193,7 +190,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldIgnoreInvalidFormattedHostname() throws HttpMalformedHeaderException {
+    void shouldIgnoreInvalidFormattedHostname() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
@@ -209,7 +206,7 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenHtmlAssetIsInline() throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertGivenHtmlAssetIsInline() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(

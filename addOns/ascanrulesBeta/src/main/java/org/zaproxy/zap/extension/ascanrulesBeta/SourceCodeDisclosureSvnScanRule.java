@@ -659,7 +659,10 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                         // delete the temp file.
                         // this will be deleted when the VM is shut down anyway, but better to be
                         // safe than to run out of disk space.
-                        tempSqliteFile.delete();
+                        boolean success = tempSqliteFile.delete();
+                        if (!success) {
+                            log.debug("Could not delete {}.", tempSqliteFile.getAbsolutePath());
+                        }
                     }
 
                     break; // out of the while loop

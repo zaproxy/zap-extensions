@@ -43,11 +43,7 @@ public class OptionsInvokePanel extends AbstractParamPanel {
     public OptionsInvokePanel(ExtensionInvoke extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setName(Constant.messages.getString("invoke.options.title"));
         this.setLayout(new GridBagLayout());
 

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class XBackendServerInformationLeakScanRuleUnitTest
+class XBackendServerInformationLeakScanRuleUnitTest
         extends PassiveScannerTest<XBackendServerInformationLeakScanRule> {
 
     private static final String XBS_HEADER = "X-Backend-Server";
@@ -49,7 +49,7 @@ public class XBackendServerInformationLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -59,7 +59,7 @@ public class XBackendServerInformationLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasRelevantContent() throws URIException {
+    void shouldRaiseAlertIfResponseHasRelevantContent() throws URIException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XBS_HEADER, HEADER_VALUE);

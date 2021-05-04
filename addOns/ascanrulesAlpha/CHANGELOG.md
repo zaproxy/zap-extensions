@@ -7,10 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update links to zaproxy repo.
 - Target 2.10 core and use new logging infrastructure (Log4j 2.x).
+- The LDAP Injection scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
+- Maintenance changes.
 
 ### Added
 - CORS active scan rule.
 - Forbidden (403) Bypass scan rule.
+
+### Removed
+- Unused file, it was used by promoted scan rule.
 
 ## [30] - 2020-11-26
 ### Changed

@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
-<OWASPZAPReport version="Dev Build"
-	generated="Thu, 11 Feb 2021 09:59:35">
-	<generated
-		th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</generated>
+<OWASPZAPReport
+	th:attr="version=${zapVersion}, generated=${generatedString}">
 	<th:block th:each="site: ${reportData.sites}">
-		<site th:name="${site}">
+		<site th:name="${site}"
+			th:attr="host=${helper.getHostForSite(site)}, port=${helper.getPortForSite(site)}, ssl=${helper.isSslSite(site)}">
 			<alerts>
 				<th:block th:each="alert: ${alertTree.children}">
 					<th:block th:if="${alert.userObject.uri.startsWith(site)}">
 						<alertitem>
 							<pluginid th:text="${alert.userObject.pluginId}"></pluginid>
-							<alertref th:text="${alert.userObject.alertRef}"></alertref>
+							<alertRef th:text="${alert.userObject.alertRef}"></alertRef>
 							<name th:text="${alert.nodeName}"></name>
 							<riskcode th:text="${alert.userObject.risk}"></riskcode>
 							<confidence th:text="${alert.userObject.confidence}"></confidence>
-							<riskdesc th:text="${helper.getRiskString(alert.risk)}"></riskdesc>
+							<riskdesc
+								th:text="${helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.userObject.confidence) + ')'}"></riskdesc>
 							<confidencedesc
 								th:text="${helper.getConfidenceString(alert.userObject.confidence)}"></confidencedesc>
 							<desc th:text="${alert.userObject.description}"></desc>
@@ -23,6 +23,8 @@
 									<instance>
 										<uri th:text="${instance.userObject.uri}"></uri>
 										<method th:text="${instance.userObject.method}"></method>
+										<param th:text="${instance.userObject.param}"></param>
+										<attack th:text="${instance.userObject.attack}"></attack>
 										<evidence th:text="${instance.userObject.evidence}"></evidence>
 									</instance>
 								</th:block>

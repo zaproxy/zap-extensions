@@ -53,7 +53,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class PassiveScanConfigJobUnitTest {
+class PassiveScanConfigJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 
@@ -61,17 +61,17 @@ public class PassiveScanConfigJobUnitTest {
     private ExtensionPassiveScan extPscan;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -85,7 +85,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given / When
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
@@ -98,7 +98,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldReturnNoCustomConfigParams() {
+    void shouldReturnNoCustomConfigParams() {
         // Given
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
@@ -110,7 +110,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldGetOptions() {
+    void shouldGetOptions() {
         // Given
         AutomationProgress progress = new AutomationProgress();
 
@@ -129,7 +129,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldApplyParameters() {
+    void shouldApplyParameters() {
         // Given
         String yamlStr =
                 "parameters:\n"
@@ -158,7 +158,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnBadParameter() {
+    void shouldWarnOnBadParameter() {
         // Given
         String yamlStr =
                 "parameters:\n"
@@ -190,7 +190,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldSetRules() {
+    void shouldSetRules() {
         // Given
         String yamlStr =
                 "rules:\n" + "- id: 1\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
@@ -223,7 +223,7 @@ public class PassiveScanConfigJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnUnknownRule() {
+    void shouldWarnOnUnknownRule() {
         // Given
         String yamlStr =
                 "rules:\n" + "- id: 4\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";

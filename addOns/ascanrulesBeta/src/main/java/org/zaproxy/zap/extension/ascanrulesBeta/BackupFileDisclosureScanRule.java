@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -370,7 +369,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                     statusCode);
 
             // is it worth looking for a copy of the file?
-            if (statusCode == HttpStatus.SC_NOT_FOUND) {
+            if (statusCode == HttpStatusCode.NOT_FOUND) {
                 log.debug(
                         "The original file request was not successfuly retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
                         statusCode);
@@ -450,7 +449,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             sendAndReceive(nonexistfilemsg, false);
             byte[] nonexistfilemsgdata = nonexistfilemsg.getResponseBody().getBytes();
             // does the server give a 404 for a non-existent file?
-            if (nonexistfilemsg.getResponseHeader().getStatusCode() != HttpStatus.SC_NOT_FOUND) {
+            if (nonexistfilemsg.getResponseHeader().getStatusCode() != HttpStatusCode.NOT_FOUND) {
                 gives404s = false;
                 log.debug(
                         "The server does not return a 404 status for a non-existent path: {}",
@@ -498,7 +497,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 nonexistparentmsgdata = nonexistparentmsg.getResponseBody().getBytes();
                 // does the server give a 404 for a non-existent parent folder?
                 if (nonexistparentmsg.getResponseHeader().getStatusCode()
-                        != HttpStatus.SC_NOT_FOUND) {
+                        != HttpStatusCode.NOT_FOUND) {
                     parentgives404s = false;
                     log.debug(
                             "The server does not return a 404 status for a non-existent parent path: {}",
@@ -715,7 +714,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // but for a "Copy of" file, actually gives a 404 (for some unknown reason). We need
                 // to handle this case.
                 if (!isEmptyResponse(disclosedData)
-                        && ((gives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND)
+                        && ((gives404s && requestStatusCode != HttpStatusCode.NOT_FOUND)
                                 || ((!gives404s)
                                         && nonexistfilemsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
@@ -766,7 +765,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // If the response is empty it's probably not really a backup
 
                 if (!isEmptyResponse(disclosedData)
-                        && ((parentgives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND)
+                        && ((parentgives404s && requestStatusCode != HttpStatusCode.NOT_FOUND)
                                 || ((!parentgives404s)
                                         && nonexistparentmsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode

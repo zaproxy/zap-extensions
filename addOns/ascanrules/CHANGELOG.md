@@ -9,6 +9,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - The Path Traversal scan rule should now be less False Positive prone at High Threshold, one of it's checks will now be excluded at High Threshold (Issues: 4209, 6030, 6219, 6372, and 6380).
   - The Other info field of Alerts will now include a reference indicating which check the triggered alert is caused by, in order to assist in future user inquiries.
+- Added/updated the details of some alerts (some changes might break Alert Filters)
+  - Buffer Overflow
+    - Includes an Attack string
+    - Evidence changed from the whole request header to the specific string sought
+  - Code Injection
+    - Includes evidence for PHP and ASP related alerts
+  - CRLF Injection
+    - Attack and Evidence are now more specific
+  - Directory Browsing
+    - Attack is now the URL of the request
+    - Evidence added
+- Parameter Tampering scan rule, adjusted regular expression related to VBScript errors.
 
 ### Fixed
 - Fix XSS false positive (Issue 5958).

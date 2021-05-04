@@ -23,10 +23,12 @@ import com.lowagie.text.DocumentException;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +80,8 @@ public class ExtensionReports extends ExtensionAdaptor {
     private static final String SITE_PATTERN = "[[site]]";
     private static final String DATETIME_REGEX = "\\{\\{(.*)\\}\\}";
     private static final Pattern DATETIME_PATTERN = Pattern.compile(DATETIME_REGEX);
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
+            new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private ZapMenuItem reportMenu;
     private JButton reportButton;
@@ -279,6 +283,12 @@ public class ExtensionReports extends ExtensionAdaptor {
                 "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
         context.setVariable("reportData", reportData);
 
+        synchronized (SIMPLE_DATE_FORMAT) {
+            context.setVariable(
+                    "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
+        }
+        context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
+
         if (reportDataHandler != null) {
             reportDataHandler.handle(reportData);
         }
@@ -307,18 +317,17 @@ public class ExtensionReports extends ExtensionAdaptor {
                 subDir = new File(subDirName + i);
             }
             LOGGER.debug(
-                    "Copying resources from "
-                            + resourcesDir.getAbsolutePath()
-                            + " to "
-                            + subDir.getAbsolutePath());
+                    "Copying resources from {} to {}",
+                    resourcesDir.getAbsolutePath(),
+                    subDir.getAbsolutePath());
             FileUtils.copyDirectory(resourcesDir, subDir);
             context.setVariable("resources", subDir.getName());
         }
 
         File file = new File(reportFilename);
-        try (FileWriter fileWriter = new FileWriter(file)) {
+        try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             templateEngine.process(
-                    template.getReportTemplateFile().getAbsolutePath(), context, fileWriter);
+                    template.getReportTemplateFile().getAbsolutePath(), context, writer);
         }
 
         if ("PDF".equals(template.getFormat())) {
@@ -333,12 +342,12 @@ public class ExtensionReports extends ExtensionAdaptor {
                 renderer.createPDF(outputStream);
             }
             if (!file.delete()) {
-                LOGGER.debug("Failed to delete interim report " + file.getAbsolutePath());
+                LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
             }
             file = pdfFile;
         }
 
-        LOGGER.debug("Generated report " + file.getAbsolutePath());
+        LOGGER.debug("Generated report {}", file.getAbsolutePath());
         if (display) {
             if ("HTML".equals(template.getFormat())) {
                 DesktopUtils.openUrlInBrowser(file.toURI());
@@ -415,8 +424,8 @@ public class ExtensionReports extends ExtensionAdaptor {
                         templateMap.put(template.getDisplayName(), template);
                     } catch (IOException e) {
                         LOGGER.error(
-                                "Failed to access template definition "
-                                        + templateYaml.getAbsolutePath());
+                                "Failed to access template definition {}",
+                                templateYaml.getAbsolutePath());
                     }
                 }
             }

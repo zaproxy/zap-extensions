@@ -88,9 +88,8 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            e.printStackTrace();
+            log.debug(e);
         }
-        // @formatter:off
         alert.setDetail(
                 Vulnerabilities.getDescription(vulnerabilityAuthorization),
                 result.getUri(),
@@ -107,7 +106,6 @@ public class AccessControlAlertsProcessor {
                 285, // CWE Id
                 2, // WASC Id
                 msg);
-        // @formatter:on
 
         alertExtension.alertFound(alert, result.getHistoryReference());
     }
@@ -120,9 +118,8 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            e.printStackTrace();
+            log.debug(e);
         }
-        // @formatter:off
         alert.setDetail(
                 Vulnerabilities.getDescription(vulnerabilityAuthentication),
                 result.getUri(),
@@ -138,7 +135,6 @@ public class AccessControlAlertsProcessor {
                 287, // CWE Id
                 1, // WASC Id
                 msg);
-        // @formatter:on
 
         alertExtension.alertFound(alert, result.getHistoryReference());
     }

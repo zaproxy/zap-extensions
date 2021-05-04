@@ -36,8 +36,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link BackupFileDisclosureScanRule}. */
-public class BackupFileDisclosureScanRuleUnitTest
-        extends ActiveScannerTest<BackupFileDisclosureScanRule> {
+class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileDisclosureScanRule> {
 
     private static final String PATH_TOKEN = "@@@PATH@@@";
     private static final String FORBIDDEN_RESPONSE_WITH_REQUESTED_PATH =
@@ -67,7 +66,7 @@ public class BackupFileDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfNonExistingBackupFileReturnsNon404Code() throws Exception {
+    void shouldNotAlertIfNonExistingBackupFileReturnsNon404Code() throws Exception {
         // Given
         String test = "/";
         nano.addHandler(new ForbiddenResponseWithReqPath(test));
@@ -80,7 +79,7 @@ public class BackupFileDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfOriginalFileNorBackupReturnsNon200Code() throws Exception {
+    void shouldNotAlertIfOriginalFileNorBackupReturnsNon200Code() throws Exception {
         // Given
         String test = "/";
         nano.addHandler(new ForbiddenResponseWithReqPath(test));
@@ -94,7 +93,7 @@ public class BackupFileDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfBackupResponseIsNotEmptyAndIsDifferentStatusFromBogusRequest()
+    void shouldAlertIfBackupResponseIsNotEmptyAndIsDifferentStatusFromBogusRequest()
             throws Exception {
         // Given
         String test = "/";
@@ -120,8 +119,7 @@ public class BackupFileDisclosureScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 500})
-    public void shouldNotAlertIfBackupResponseIsNonSuccessStdThreshold(int status)
-            throws Exception {
+    void shouldNotAlertIfBackupResponseIsNonSuccessStdThreshold(int status) throws Exception {
         // Given
         String test = "/";
         nano.addHandler(
@@ -148,7 +146,7 @@ public class BackupFileDisclosureScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 500})
-    public void shouldAlertIfBackupResponseIsNonSuccessLowThreshold(int status) throws Exception {
+    void shouldAlertIfBackupResponseIsNonSuccessLowThreshold(int status) throws Exception {
         // Given
         String test = "/";
         nano.addHandler(
@@ -176,7 +174,7 @@ public class BackupFileDisclosureScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 500})
-    public void shouldAlertIfOldBackupResponseAfterNonSuccess(int status) throws Exception {
+    void shouldAlertIfOldBackupResponseAfterNonSuccess(int status) throws Exception {
         // Given
         String test = "/";
         nano.addHandler(
@@ -206,7 +204,7 @@ public class BackupFileDisclosureScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfBackupDir() throws Exception {
+    void shouldAlertIfBackupDir() throws Exception {
         // Given
         String test = "/dirbackup/";
         nano.addHandler(
@@ -233,8 +231,7 @@ public class BackupFileDisclosureScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 500})
-    public void shouldNotAlertIfBackupDirResponseIsNonSuccessStdThreshold(int status)
-            throws Exception {
+    void shouldNotAlertIfBackupDirResponseIsNonSuccessStdThreshold(int status) throws Exception {
         // Given
         String test = "/dirbackup/";
         nano.addHandler(
@@ -261,8 +258,7 @@ public class BackupFileDisclosureScanRuleUnitTest
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 500})
-    public void shouldAlertIfBackupDirResponseIsNonSuccessLowThreshold(int status)
-            throws Exception {
+    void shouldAlertIfBackupDirResponseIsNonSuccessLowThreshold(int status) throws Exception {
         // Given
         String test = "/dirbackup/";
         nano.addHandler(

@@ -259,7 +259,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         } catch (Exception e) {
                             // no need to do anything here.. just don't set "validviewstate" to true
                             // :)
-                            // e.printStackTrace();
                             log.debug(
                                     "The Base64 value [{}] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.",
                                     base64evidence);

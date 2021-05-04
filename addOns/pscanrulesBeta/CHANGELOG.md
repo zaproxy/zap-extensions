@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Insecure Form Load
   - Insecure Form Post
   - Strict-Transport-Security
+- Hash Disclosure scan rule will now only evaluate JavaScript responses at Low threshold (Issue 6071).
+- Added/updated the details of some alerts (some changes might break Alert Filters)
+  - Insecure Form Load
+    - Added evidence
+  - Insecure Form Post
+    - Added evidence
 
 ## [24] - 2020-12-15
 ### Changed

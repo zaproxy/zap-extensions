@@ -21,12 +21,15 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +55,7 @@ import org.zaproxy.zap.testutils.StaticContentServerHandler;
  * rule.init()}</br> Note: If using {@code addTestPayload(HiddenFile)} should be called after {@code
  * rule.init()}
  */
-public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule> {
+class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule> {
 
     @Override
     protected HiddenFilesScanRule createScanner() {
@@ -60,12 +63,22 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @AfterEach
-    public void after() {
+    void after() {
         HiddenFilesScanRule.setPayloadProvider(null);
     }
 
     @Test
-    public void shouldScanMessageWithoutPath() throws HttpMalformedHeaderException {
+    void shouldHavePayloadsFile() {
+        // Given
+        String filePath = "/" + HiddenFilesScanRule.PAYLOADS_FILE_PATH;
+        // When
+        URL url = HiddenFilesScanRule.class.getResource(filePath);
+        // Then
+        assertThat(url, is(notNullValue()));
+    }
+
+    @Test
+    void shouldScanMessageWithoutPath() throws HttpMalformedHeaderException {
         // Given
         String path = "";
         HttpMessage msg = getHttpMessage(path);
@@ -85,8 +98,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldSendGetRequestWhenOriginalRequestWasNotGet()
-            throws HttpMalformedHeaderException {
+    void shouldSendGetRequestWhenOriginalRequestWasNotGet() throws HttpMalformedHeaderException {
         // Given
         String path = "";
         HttpMessage msg = getHttpMessage(path);
@@ -114,7 +126,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantContent()
+    void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantContent()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -152,7 +164,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
     @ParameterizedTest
     @EnumSource(names = {"LOW", "MEDIUM"})
-    public void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotHigh(
+    void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotHigh(
             AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -180,7 +192,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbiddenAtHighThreshold()
+    void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbiddenAtHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -213,7 +225,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldNotRaiseAlertIfPathIsntServed() throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfPathIsntServed() throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldNotAlert";
 
@@ -240,7 +252,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldAlertWithLowConfidenceIfContentStringsDontAllMatchAtHighThreshold()
+    void shouldAlertWithLowConfidenceIfContentStringsDontAllMatchAtHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -275,8 +287,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
     @ParameterizedTest
     @EnumSource(names = {"LOW", "MEDIUM"})
-    public void shouldNotAlertIfContentStringsDontAllMatchWhenNotHighThreshold(
-            AlertThreshold threshold) throws HttpMalformedHeaderException {
+    void shouldNotAlertIfContentStringsDontAllMatchWhenNotHighThreshold(AlertThreshold threshold)
+            throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
 
@@ -303,7 +315,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertWithHighConfidenceIfContentStringsAllMatch()
+    void shouldRaiseAlertWithHighConfidenceIfContentStringsAllMatch()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -336,7 +348,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkToCustomPayload()
+    void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkToCustomPayload()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -367,7 +379,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseStatusIsNotOkOrAuthRelated()
+    void shouldNotRaiseAlertIfResponseStatusIsNotOkOrAuthRelated()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldNotAlert";
@@ -395,7 +407,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantContentAndAppropriateNotContent()
+    void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantContentAndAppropriateNotContent()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -430,7 +442,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void
+    void
             shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentAtHighThreshold()
                     throws HttpMalformedHeaderException {
         // Given
@@ -468,7 +480,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
     @ParameterizedTest
     @EnumSource(names = {"LOW", "MEDIUM"})
-    public void
+    void
             shouldNotRaiseAlertIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentWhenNotHighThreshold(
                     AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
@@ -500,7 +512,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantBinContent()
+    void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantBinContent()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -538,7 +550,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void
+    void
             shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithoutRelevantBinContentAtHighThreshold()
                     throws HttpMalformedHeaderException {
         // Given
@@ -581,9 +593,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
     @ParameterizedTest
     @EnumSource(names = {"LOW", "MEDIUM"})
-    public void
-            shouldNotRaiseAlertIfTestedUrlRespondsOkWithoutRelevantBinContentWhenNotHighThreshold(
-                    AlertThreshold threshold) throws HttpMalformedHeaderException {
+    void shouldNotRaiseAlertIfTestedUrlRespondsOkWithoutRelevantBinContentWhenNotHighThreshold(
+            AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
 

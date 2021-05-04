@@ -19,12 +19,43 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+import fi.iki.elonen.NanoHTTPD;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.testutils.NanoServerHandler;
+
 /** Unit test for {@link DirectoryBrowsingScanRule}. */
-public class DirectoryBrowsingScanRuleUnitTest
-        extends ActiveScannerTest<DirectoryBrowsingScanRule> {
+class DirectoryBrowsingScanRuleUnitTest extends ActiveScannerTest<DirectoryBrowsingScanRule> {
+    private static final String RESOURCES_FOLDER =
+            "/org/zaproxy/zap/extension/ascanrules/directorybrowsingscanrule/";
 
     @Override
     protected DirectoryBrowsingScanRule createScanner() {
         return new DirectoryBrowsingScanRule();
+    }
+
+    @Test
+    void shouldFindDirectoryListing() throws Exception {
+        // Given
+        String test = "/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String html = getHtml(RESOURCES_FOLDER + "DirectoryListing.html");
+                        return newFixedLengthResponse(html);
+                    }
+                });
+        // When
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Parent Directory"));
     }
 }

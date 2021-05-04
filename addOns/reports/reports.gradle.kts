@@ -38,6 +38,11 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
     implementation("org.snakeyaml:snakeyaml-engine:2.2.1")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1") {
+        // Provided by ZAP.
+        exclude(group = "org.apache.logging.log4j")
+    }
+
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }
@@ -47,12 +52,14 @@ spotless {
         eclipseWtp(EclipseWtpFormatterStep.HTML)
         target(fileTree(projectDir) {
             include("src/**/*.html")
+            exclude("src/test/**/*.html")
         })
     })
     format("xml", {
         eclipseWtp(EclipseWtpFormatterStep.XML)
         target(fileTree(projectDir) {
             include("src/**/*.xml")
+            exclude("src/test/**/*.xml")
         })
     })
 }

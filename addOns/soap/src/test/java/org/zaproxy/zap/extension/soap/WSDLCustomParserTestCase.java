@@ -54,7 +54,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void parseWSDLContentTest() {
+    void parseWSDLContentTest() {
         /* Positive case. Checks the method's return value. */
         boolean result = parser.extContentWSDLImport(wsdlContent, false);
         assertTrue(result);
@@ -68,7 +68,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void canBeWSDLparsedTest() {
+    void canBeWSDLparsedTest() {
         /* Positive case. */
         boolean result = parser.canBeWSDLparsed(wsdlContent);
         assertTrue(result);
@@ -80,7 +80,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void createSoapRequestTest() {
+    void createSoapRequestTest() {
         parser.extContentWSDLImport(wsdlContent, false);
         /* Positive case. */
         HttpMessage result = parser.createSoapRequest(parser.getLastConfig());
@@ -91,7 +91,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void addParameterShouldUseValueGeneratorWhenAvailable() {
+    void addParameterShouldUseValueGeneratorWhenAvailable() {
         // Given
         String path = "CelsiusToFahrenheit/Celsius";
         String paramType = "s:string";
@@ -119,7 +119,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void addParameterShouldUseDefaultValuesWhenValueIsNotSpecified() {
+    void addParameterShouldUseDefaultValuesWhenValueIsNotSpecified() {
         // Given
         String path = "CelsiusToFahrenheit/Celsius";
         String paramType = "s:string";

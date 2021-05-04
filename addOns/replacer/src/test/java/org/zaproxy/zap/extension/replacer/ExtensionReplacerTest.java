@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class ExtensionReplacerTest {
+class ExtensionReplacerTest {
 
     private static final String MATCHING_STRING_WITH_HEX_VALUE =
             new String(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'}, US_ASCII);
@@ -43,12 +43,12 @@ public class ExtensionReplacerTest {
     private HttpMessage msg;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         msg = new HttpMessage();
     }
 
     @Test
-    public void shouldAddHeaderByHexValueInRequest() throws HttpMalformedHeaderException {
+    void shouldAddHeaderByHexValueInRequest() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(REQ_HEADER);
 
@@ -64,7 +64,7 @@ public class ExtensionReplacerTest {
     }
 
     @Test
-    public void shouldReplaceHexValueInRequestHeader() throws HttpMalformedHeaderException {
+    void shouldReplaceHexValueInRequestHeader() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(REQ_HEADER_STR);
 
@@ -80,7 +80,7 @@ public class ExtensionReplacerTest {
     }
 
     @Test
-    public void shouldReplaceHexValueInRequestBody() throws HttpMalformedHeaderException {
+    void shouldReplaceHexValueInRequestBody() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(REQ_BODY_STR);
 
@@ -95,7 +95,7 @@ public class ExtensionReplacerTest {
     }
 
     @Test
-    public void shouldReplaceHeaderByHexValueInResponse() throws HttpMalformedHeaderException {
+    void shouldReplaceHeaderByHexValueInResponse() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(RESP_HEADER);
 
@@ -111,7 +111,7 @@ public class ExtensionReplacerTest {
     }
 
     @Test
-    public void shouldReplaceHexValueInResponseHeader() throws HttpMalformedHeaderException {
+    void shouldReplaceHexValueInResponseHeader() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(RESP_HEADER_STR);
 
@@ -127,7 +127,7 @@ public class ExtensionReplacerTest {
     }
 
     @Test
-    public void shouldReplaceHexValueInResponseBody() throws HttpMalformedHeaderException {
+    void shouldReplaceHexValueInResponseBody() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = givenAHexByteReplacementRuleFor(RESP_BODY_STR);
 

@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 
-public class InsecureAuthenticationScanRuleUnitTest
+class InsecureAuthenticationScanRuleUnitTest
         extends PassiveScannerTest<InsecureAuthenticationScanRule> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.authenticationcredentialscaptured.";
@@ -53,7 +53,7 @@ public class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    public void shouldBeSecureIfHttpUsedWithSsl() throws HttpMalformedHeaderException {
+    void shouldBeSecureIfHttpUsedWithSsl() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -65,8 +65,7 @@ public class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfBasicAuthenticationWithNoSsl()
-            throws NullPointerException, IOException {
+    void shouldRaiseAlertIfBasicAuthenticationWithNoSsl() throws NullPointerException, IOException {
         // Given
         String userAndPass = user + ":" + pass;
         HttpMessage msg = new HttpMessage();
@@ -102,7 +101,7 @@ public class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfBasicAuthenticationOnlyUserWithNoSsl()
+    void shouldRaiseAlertIfBasicAuthenticationOnlyUserWithNoSsl()
             throws NullPointerException, IOException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -136,7 +135,7 @@ public class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfBasicAuthenticationResponseWithNoSsl()
+    void shouldRaiseAlertIfBasicAuthenticationResponseWithNoSsl()
             throws NullPointerException, IOException {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -162,7 +161,7 @@ public class InsecureAuthenticationScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfDigestAuthenticationWithNoSsl()
+    void shouldRaiseAlertIfDigestAuthenticationWithNoSsl()
             throws NullPointerException, IOException {
         // Given
         String digestValue = "username=\"" + user + "\", realm=\"members only\"";

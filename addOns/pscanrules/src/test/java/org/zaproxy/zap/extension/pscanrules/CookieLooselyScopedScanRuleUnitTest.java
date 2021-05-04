@@ -37,8 +37,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** @author Vahid Rafiei (@vahid_r) */
-public class CookieLooselyScopedScanRuleUnitTest
-        extends PassiveScannerTest<CookieLooselyScopedScanRule> {
+class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLooselyScopedScanRule> {
 
     private Model model;
 
@@ -63,7 +62,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThereIsNoCookieInResponseHeader() throws Exception {
+    void shouldNotRaiseAlertIfThereIsNoCookieInResponseHeader() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET /admin/roles/ HTTP/1.1");
@@ -76,7 +75,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfCookieDomainIsNotSet() throws Exception {
+    void shouldNotRaiseAlertIfCookieDomainIsNotSet() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET /admin/roles/ HTTP/1.1");
@@ -90,8 +89,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHostDomainStartsWithDotAndCookieDomainIsNotSet()
-            throws Exception {
+    void shouldNotRaiseAlertIfHostDomainStartsWithDotAndCookieDomainIsNotSet() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET .local.test.com HTTP/1.1");
@@ -105,7 +103,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
+    void shouldRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://dev.test.org HTTP/1.1");
@@ -120,7 +118,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldDomainComparisonBeCaseInsensitive() throws Exception {
+    void shouldDomainComparisonBeCaseInsensitive() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://TesT.org HTTP/1.1");
@@ -134,9 +132,8 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotRaiseAlertIfHostDomainAndCookieDomainAreTheSameAndDomainsAreNotSecondLevel()
-                    throws Exception {
+    void shouldNotRaiseAlertIfHostDomainAndCookieDomainAreTheSameAndDomainsAreNotSecondLevel()
+            throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com HTTP/1.1");
@@ -151,7 +148,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfHostDomainHasMoreSubDomainsThanCookieDomain() throws Exception {
+    void shouldRaiseAlertIfHostDomainHasMoreSubDomainsThanCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com HTTP/1.1");
@@ -165,8 +162,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHostDomainHasLessSubDomainsThanCookieDomain()
-            throws Exception {
+    void shouldNotRaiseAlertIfHostDomainHasLessSubDomainsThanCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://example.com HTTP/1.1");
@@ -181,7 +177,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRightMostDomainsMatch() throws Exception {
+    void shouldRaiseAlertIfRightMostDomainsMatch() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
@@ -195,7 +191,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanCookieDomainWithJustTld() throws Exception {
+    void shouldScanCookieDomainWithJustTld() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
@@ -206,7 +202,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldScanHostWithoutTld() throws Exception {
+    void shouldScanHostWithoutTld() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://intranet/ HTTP/1.1");
@@ -218,7 +214,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
+    void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
@@ -236,7 +232,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+    void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");

@@ -41,10 +41,10 @@ import org.mockito.stubbing.Answer;
 
 /** Unit test for {@link EventStreamListener}. */
 @ExtendWith(MockitoExtension.class)
-public class EventStreamListenerUnitTest {
+class EventStreamListenerUnitTest {
 
     @Test
-    public void shouldFireProcessEventOnce() throws IOException {
+    void shouldFireProcessEventOnce() throws IOException {
         // Given
         final String event1 = "data:blub";
 
@@ -60,7 +60,7 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldFireProcessEventMultipleTimes() throws IOException {
+    void shouldFireProcessEventMultipleTimes() throws IOException {
         // Given
         final String event1 = ": test stream";
         final String event2 = "data: first event\nid: 1";
@@ -84,7 +84,7 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldFireProcessEventOnceForComplexEvent() throws IOException {
+    void shouldFireProcessEventOnceForComplexEvent() throws IOException {
         // Given
         final String event1 = "event: foo\ndata: first event\nid: 1";
 
@@ -100,7 +100,7 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldNotFireProcessEventForAnIncompleteEvent() throws IOException {
+    void shouldNotFireProcessEventForAnIncompleteEvent() throws IOException {
         // Given
         LinkedList<String> streamLines = new LinkedList<String>();
         streamLines.add("data:blub");
@@ -118,7 +118,7 @@ public class EventStreamListenerUnitTest {
     }
 
     @Test
-    public void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
+    void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
         // Given
         LinkedList<String> streamLines = new LinkedList<String>();
         streamLines.add("");

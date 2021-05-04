@@ -77,7 +77,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             "?name=abc#<img src=\"random.gif\" onerror=alert(1)>";
 
     // In order of effectiveness vs benchmark apps
-    public static final String[] ATTACK_STRINGS = {
+    private static final String[] ATTACK_STRINGS = {
         POLYGLOT_ALERT,
         HASH_JAVASCRIPT_ALERT,
         QUERY_HASH_IMG_ALERT,
@@ -93,7 +93,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private static final String SCRIPT_ALERT = "<script>alert(1)</script>";
     private static final String JAVASCRIPT_ALERT = "javascript:alert(1)";
 
-    public static final String[] PARAM_ATTACK_STRINGS = {SCRIPT_ALERT, JAVASCRIPT_ALERT, IMG_ALERT};
+    private static final String[] PARAM_ATTACK_STRINGS = {
+        SCRIPT_ALERT, JAVASCRIPT_ALERT, IMG_ALERT
+    };
 
     /** The name of the rule to obtain the ID of the browser. */
     private static final String RULE_BROWSER_ID = "rules.domxss.browserid";
@@ -223,7 +225,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                 // target before sending
                                 sendAndReceive(msg);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                log.debug(e);
                             }
                             return true;
                         }

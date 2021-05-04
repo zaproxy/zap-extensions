@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.HTTPDTestServer;
 
-public class EasySSLProtocolSocketFactoryUnitTest {
+class EasySSLProtocolSocketFactoryUnitTest {
 
     private EasySSLProtocolSocketFactory socketFactory;
 
@@ -46,24 +46,24 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     private static int serverPort;
 
     @BeforeAll
-    public static void startEmbeddedHttpServers() throws Exception {
+    static void startEmbeddedHttpServers() throws Exception {
         testServer = new HTTPDTestServer(0);
         testServer.start();
         serverPort = testServer.getListeningPort();
     }
 
     @AfterAll
-    public static void stopEmbeddedHttpServers() {
+    static void stopEmbeddedHttpServers() {
         testServer.stop();
     }
 
     @BeforeEach
-    public void resetSocketFactory() throws Exception {
+    void resetSocketFactory() throws Exception {
         socketFactory = new EasySSLProtocolSocketFactory();
     }
 
     @Test
-    public void shouldCreateSocketForGivenHostAndPort() throws Exception {
+    void shouldCreateSocketForGivenHostAndPort() throws Exception {
         // Given
         String host = "localhost";
         int port = serverPort;
@@ -77,7 +77,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     // Note that on some platforms this gives a ConnectionException while on others it give a
     // UnknownHostException
     @Test
-    public void shouldFailCreatingSocketForUnknownHost() throws Exception {
+    void shouldFailCreatingSocketForUnknownHost() throws Exception {
         // Given
         String unknownHost = "localhorst";
         InetAddress localAddress = InetAddress.getLoopbackAddress();
@@ -93,7 +93,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     }
 
     @Test
-    public void shouldFailCreatingSocketForUnknownPort() throws Exception {
+    void shouldFailCreatingSocketForUnknownPort() throws Exception {
         // Given
         int unknownPort = 12345;
         // When / Then
@@ -102,7 +102,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     }
 
     @Test
-    public void shouldFailCreatingSocketForMissingParameters() throws Exception {
+    void shouldFailCreatingSocketForMissingParameters() throws Exception {
         // Given
         HttpConnectionParams nullParams = null;
         // When / Then
@@ -118,7 +118,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     }
 
     @Test
-    public void shouldCreateSocketWithGivenLocalAddressAndPort() throws Exception {
+    void shouldCreateSocketWithGivenLocalAddressAndPort() throws Exception {
         // Given
         InetAddress localAddress = InetAddress.getLoopbackAddress();
         int localPort = 28080;
@@ -137,7 +137,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
 
     @Test
     @Disabled(value = "Requires a way to slow down connect process artificially")
-    public void shouldFailCreatingSocketWithInstantTimeout() throws Exception {
+    void shouldFailCreatingSocketWithInstantTimeout() throws Exception {
         // Given
         HttpConnectionParams params = new HttpConnectionParams();
         params.setConnectionTimeout(1);
@@ -154,7 +154,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     }
 
     @Test
-    public void shouldSucceedCreatingSocketWithReasonableTimeout() throws Exception {
+    void shouldSucceedCreatingSocketWithReasonableTimeout() throws Exception {
         // Given
         HttpConnectionParams params = new HttpConnectionParams();
         params.setConnectionTimeout(1000);

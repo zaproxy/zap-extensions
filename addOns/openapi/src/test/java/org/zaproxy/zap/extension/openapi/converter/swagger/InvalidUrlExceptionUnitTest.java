@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link InvalidUrlException}. */
-public class InvalidUrlExceptionUnitTest {
+class InvalidUrlExceptionUnitTest {
 
     @Test
-    public void shouldFailToCreateException2ArgWithNullUrl() {
+    void shouldFailToCreateException2ArgWithNullUrl() {
         // Given
         String url = null;
         // When / Then
@@ -38,7 +38,7 @@ public class InvalidUrlExceptionUnitTest {
     }
 
     @Test
-    public void shouldCreateException2ArgWithNonNullUrl() {
+    void shouldCreateException2ArgWithNonNullUrl() {
         // Given
         String url = "url";
         // When
@@ -48,7 +48,7 @@ public class InvalidUrlExceptionUnitTest {
     }
 
     @Test
-    public void shouldFailToCreateException3ArgWithNullUrl() {
+    void shouldFailToCreateException3ArgWithNullUrl() {
         // Given
         String url = null;
         // When / Then
@@ -56,7 +56,7 @@ public class InvalidUrlExceptionUnitTest {
     }
 
     @Test
-    public void shouldCreateException3ArgWithNonNullUrl() {
+    void shouldCreateException3ArgWithNonNullUrl() {
         // Given
         String url = "url";
         // When

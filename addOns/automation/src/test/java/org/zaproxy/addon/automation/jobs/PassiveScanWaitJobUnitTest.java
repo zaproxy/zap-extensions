@@ -54,27 +54,27 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class PassiveScanWaitJobUnitTest {
+class PassiveScanWaitJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -97,7 +97,7 @@ public class PassiveScanWaitJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         PassiveScanWaitJob job = new PassiveScanWaitJob();
 
@@ -112,7 +112,7 @@ public class PassiveScanWaitJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldApplyParams() {
+    void shouldApplyParams() {
         // Given
         PassiveScanWaitJob job = new PassiveScanWaitJob();
         AutomationProgress progress = new AutomationProgress();
@@ -132,7 +132,7 @@ public class PassiveScanWaitJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldWarnOnUnknownParams() {
+    void shouldWarnOnUnknownParams() {
         // Given
         AddOnJob job = new AddOnJob();
         AutomationProgress progress = new AutomationProgress();
@@ -152,7 +152,7 @@ public class PassiveScanWaitJobUnitTest {
     }
 
     @Test
-    public void shouldWaitForPassiveScan() {
+    void shouldWaitForPassiveScan() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -190,7 +190,7 @@ public class PassiveScanWaitJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldExitIfPassiveScanTakesLongerThanConfig() {
+    void shouldExitIfPassiveScanTakesLongerThanConfig() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
