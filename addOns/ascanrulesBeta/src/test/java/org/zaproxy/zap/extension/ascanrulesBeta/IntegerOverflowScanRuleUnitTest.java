@@ -34,7 +34,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link IntegerOverflowScanRule}. */
-public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowScanRule> {
+class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowScanRule> {
 
     @Override
     protected IntegerOverflowScanRule createScanner() {
@@ -42,7 +42,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldTargetCTech() {
+    void shouldTargetCTech() {
         // Given
         TechSet techSet = techSet(Tech.C);
         // When
@@ -52,7 +52,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldNotTargetNonCTechs() {
+    void shouldNotTargetNonCTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.C);
         // When
@@ -62,7 +62,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldSkipScanning500ErrorMessage() throws Exception {
+    void shouldSkipScanning500ErrorMessage() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("?param=value");
         message.setResponseHeader(
@@ -75,7 +75,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldScanNon500ErrorMessage() throws Exception {
+    void shouldScanNon500ErrorMessage() throws Exception {
         // Given
         rule.init(getHttpMessage("?param=value"), parent);
         // When
@@ -85,7 +85,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldSkipScanIfStopped() throws Exception {
+    void shouldSkipScanIfStopped() throws Exception {
         // Given
         rule.init(getHttpMessage("?param=value"), parent);
         parent.stop();
@@ -96,7 +96,7 @@ public class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOv
     }
 
     @Test
-    public void shouldCreateAlertsWithPrimeHeaderAsEvidence() throws Exception {
+    void shouldCreateAlertsWithPrimeHeaderAsEvidence() throws Exception {
         // Given
         String test = "/shouldReportIntegerOverflowIssue/";
         int INT_MAX = 2147483647; // From c/c++

@@ -36,8 +36,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionSqLiteScanRule}. */
-public class SqlInjectionSQLiteScanRuleUnitTest
-        extends ActiveScannerTest<SqlInjectionSqLiteScanRule> {
+class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionSqLiteScanRule> {
 
     @Override
     protected SqlInjectionSqLiteScanRule createScanner() {
@@ -61,7 +60,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetSqLiteSQLTech() throws Exception {
+    void shouldTargetSqLiteSQLTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.SQLite);
         // When
@@ -71,7 +70,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonSqLiteSQLTechs() throws Exception {
+    void shouldNotTargetNonSqLiteSQLTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.SQLite);
         // When
@@ -81,7 +80,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfSqlErrorReturned() throws Exception {
+    void shouldAlertIfSqlErrorReturned() throws Exception {
         String test = "/shouldReportSqlErrorMessage/";
 
         this.nano.addHandler(
@@ -115,7 +114,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfRandomBlobTimesGetLonger() throws Exception {
+    void shouldAlertIfRandomBlobTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
@@ -156,7 +155,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(

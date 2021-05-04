@@ -29,7 +29,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class SOAPXMLInjectionActiveScanRuleTestCase {
 
     @Test
-    public void craftAttackMessageTest() throws Exception {
+    void craftAttackMessageTest() throws Exception {
         HttpMessage originalMsg = new HttpMessage();
         Sample.setOriginalRequest(originalMsg);
 

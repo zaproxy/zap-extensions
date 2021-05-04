@@ -34,8 +34,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionMyqlScanRule}. */
-public class SqlInjectionMySsqlScanRuleUnitTest
-        extends ActiveScannerTest<SqlInjectionMyqlScanRule> {
+class SqlInjectionMySsqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMyqlScanRule> {
 
     @Override
     protected SqlInjectionMyqlScanRule createScanner() {
@@ -43,7 +42,7 @@ public class SqlInjectionMySsqlScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetMySQLTech() throws Exception {
+    void shouldTargetMySQLTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.MySQL);
         // When
@@ -53,7 +52,7 @@ public class SqlInjectionMySsqlScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonMySQLTechs() throws Exception {
+    void shouldNotTargetNonMySQLTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.MySQL);
         // When
@@ -63,7 +62,7 @@ public class SqlInjectionMySsqlScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfSleepTimesGetLonger() throws Exception {
+    void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
@@ -101,7 +100,7 @@ public class SqlInjectionMySsqlScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
         String test = "/shouldNotReportGeneralTimingIssue/";
 
         this.nano.addHandler(

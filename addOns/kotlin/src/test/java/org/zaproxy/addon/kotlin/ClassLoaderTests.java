@@ -49,7 +49,7 @@ public class ClassLoaderTests {
     }
 
     @Test
-    public void shouldLoadClassesFromProvidedClassLoader() throws Exception {
+    void shouldLoadClassesFromProvidedClassLoader() throws Exception {
 
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 

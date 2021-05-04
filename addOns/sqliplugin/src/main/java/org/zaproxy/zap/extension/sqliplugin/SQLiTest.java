@@ -29,7 +29,7 @@ import org.jdom2.Element;
  *
  * @author yhawke (2013)
  */
-public class SQLiTest {
+class SQLiTest {
 
     /*
      * Tag: <test>

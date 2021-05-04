@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link Browser}. */
-public class BrowserUnitTest {
+class BrowserUnitTest {
 
     @Test
-    public void shouldThrowExceptionWhenGettingBrowserWithNullId() {
+    void shouldThrowExceptionWhenGettingBrowserWithNullId() {
         // Given
         String id = null;
         // When / Then
@@ -38,7 +38,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenGettingBrowserWithEmptyId() {
+    void shouldThrowExceptionWhenGettingBrowserWithEmptyId() {
         // Given
         String id = "";
         // When / Then
@@ -46,7 +46,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnChromeWhenGettingBrowserWithChromeId() {
+    void shouldReturnChromeWhenGettingBrowserWithChromeId() {
         // Given
         String chromeId = "chrome";
         // When
@@ -57,7 +57,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnFirefoxWhenGettingBrowserWithFirefoxId() {
+    void shouldReturnFirefoxWhenGettingBrowserWithFirefoxId() {
         // Given
         String firefoxId = "firefox";
         // When
@@ -68,7 +68,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnHtmlUnitWhenGettingBrowserWithHtmlUnitId() {
+    void shouldReturnHtmlUnitWhenGettingBrowserWithHtmlUnitId() {
         // Given
         String htmlUnitId = "htmlunit";
         // When
@@ -79,7 +79,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnOperaWhenGettingBrowserWithOperaId() {
+    void shouldReturnOperaWhenGettingBrowserWithOperaId() {
         // Given
         String operaId = "opera";
         // When
@@ -90,7 +90,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnPhantomJSWhenGettingBrowserWithPhantomJSId() {
+    void shouldReturnPhantomJSWhenGettingBrowserWithPhantomJSId() {
         // Given
         String phantomJSId = "phantomjs";
         // When
@@ -101,7 +101,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnSafariWhenGettingBrowserWithSafariId() {
+    void shouldReturnSafariWhenGettingBrowserWithSafariId() {
         // Given
         String safariId = "safari";
         // When
@@ -112,7 +112,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnFailSafeBrowserWhenGettingBrowserWithUnknownId() {
+    void shouldReturnFailSafeBrowserWhenGettingBrowserWithUnknownId() {
         // Given
         String unknowId = "unknowId";
         // When
@@ -122,7 +122,7 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnHtmlUnitBrowserWhenGettingFailSafeBrowser() {
+    void shouldReturnHtmlUnitBrowserWhenGettingFailSafeBrowser() {
         // Given / When
         Browser failSafeBrowser = Browser.getFailSafeBrowser();
         // Then

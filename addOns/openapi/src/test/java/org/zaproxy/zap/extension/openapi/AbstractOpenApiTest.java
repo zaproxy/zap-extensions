@@ -35,7 +35,7 @@ public abstract class AbstractOpenApiTest extends TestUtils {
     }
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
     }
 }

@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFlagScanRule> {
+class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFlagScanRule> {
 
     private Model model;
 
@@ -54,7 +54,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void httpNoSecureFlag() throws HttpMalformedHeaderException {
+    void httpNoSecureFlag() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -74,7 +74,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void httpsNoSecureFlag() throws HttpMalformedHeaderException {
+    void httpsNoSecureFlag() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -96,7 +96,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void httpsSecureFlag() throws HttpMalformedHeaderException {
+    void httpsSecureFlag() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -116,7 +116,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void secondCookieNoSecureFlag() throws HttpMalformedHeaderException {
+    void secondCookieNoSecureFlag() throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -139,7 +139,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void cookieOnIgnoreList() throws HttpMalformedHeaderException {
+    void cookieOnIgnoreList() throws HttpMalformedHeaderException {
         model.getOptionsParam()
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
@@ -162,7 +162,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+    void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
         model.getOptionsParam()
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
@@ -187,7 +187,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -207,7 +207,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -227,7 +227,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
+    void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -258,7 +258,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
+    void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -289,7 +289,7 @@ public class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieS
     }
 
     @Test
-    public void secondCookieNoSecureAttributeFirstExpired() throws HttpMalformedHeaderException {
+    void secondCookieNoSecureAttributeFirstExpired() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
 

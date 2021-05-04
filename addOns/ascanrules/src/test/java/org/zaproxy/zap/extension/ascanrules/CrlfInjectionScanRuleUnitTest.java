@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CrlfInjectionScanRule}. */
-public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanRule> {
+class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -56,7 +56,7 @@ public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjecti
     }
 
     @Test
-    public void shouldFindCrLfInjection() throws Exception {
+    void shouldFindCrLfInjection() throws Exception {
         // Given
         String test = "/shouldFindCrLfInjection.php";
         ArrayList<String> tamperedHeaders = new ArrayList<>();

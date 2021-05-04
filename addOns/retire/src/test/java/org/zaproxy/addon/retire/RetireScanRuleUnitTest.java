@@ -20,7 +20,6 @@
 package org.zaproxy.addon.retire;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 
@@ -34,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.retire.model.Repo;
 
-public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
+class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
 
     @Override
     protected RetireScanRule createScanner() {
@@ -48,7 +47,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
-    public void shouldIgnoreNon200OkMessages() {
+    void shouldIgnoreNon200OkMessages() {
         // Given
         HttpMessage msg =
                 createMessage("http://example.com/ajax/libs/angularjs/1.2.19/angular.min.js", null);
@@ -61,7 +60,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
-    public void shouldIgnoreCssUrl() {
+    void shouldIgnoreCssUrl() {
         // Given
         HttpMessage msg = createMessage("https://www.example.com/assets/styles.css", null);
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -72,7 +71,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
-    public void shouldIgnoreCssResponse() {
+    void shouldIgnoreCssResponse() {
         // Given
         HttpMessage msg = createMessage("https://www.example.com/assets/styles.scss", null);
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/css");
@@ -84,7 +83,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
-    public void shouldIgnoreImageResponse() {
+    void shouldIgnoreImageResponse() {
         // Given
         HttpMessage msg = createMessage("https://www.example.com/assets/image.gif", null);
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "image/gif");
@@ -96,7 +95,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
-    public void shouldRaiseAlertOnVulnerableUrl() {
+    void shouldRaiseAlertOnVulnerableUrl() {
         // Given
         HttpMessage msg =
                 createMessage("http://example.com/ajax/libs/angularjs/1.2.19/angular.min.js", null);
@@ -105,17 +104,14 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals("/1.2.19/angular.min.js"));
-        assertTrue(
-                alertsRaised
-                        .get(0)
-                        .getReference()
-                        .equals(
-                                "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n"));
+        assertEquals("/1.2.19/angular.min.js", alertsRaised.get(0).getEvidence());
+        assertEquals(
+                "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n",
+                alertsRaised.get(0).getReference());
     }
 
     @Test
-    public void shouldRaiseAlertOnVulnerableFilename() {
+    void shouldRaiseAlertOnVulnerableFilename() {
         // Given
         HttpMessage msg =
                 createMessage("http://example.com/CommonElements/js/jquery-3.1.1.min.js", null);
@@ -124,16 +120,14 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals("jquery-3.1.1.min.js"));
-        assertTrue(
-                alertsRaised
-                        .get(0)
-                        .getReference()
-                        .equals("https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n"));
+        assertEquals("jquery-3.1.1.min.js", alertsRaised.get(0).getEvidence());
+        assertEquals(
+                "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
+                alertsRaised.get(0).getReference());
     }
 
     @Test
-    public void shouldRaiseAlertOnVulnerableContent() {
+    void shouldRaiseAlertOnVulnerableContent() {
         // Given
         String content =
                 "/*!\n"
@@ -147,16 +141,14 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().equals("* Bootstrap v3.3.7"));
-        assertTrue(
-                alertsRaised
-                        .get(0)
-                        .getReference()
-                        .equals("https://github.com/twbs/bootstrap/issues/20184\n"));
+        assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
+        assertEquals(
+                "https://github.com/twbs/bootstrap/issues/20184\n",
+                alertsRaised.get(0).getReference());
     }
 
     @Test
-    public void shouldRaiseAlertOnHashOfVulnerableContent() {
+    void shouldRaiseAlertOnHashOfVulnerableContent() {
         // Given
         String content =
                 "/*!\n"
@@ -170,25 +162,19 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(
-                alertsRaised
-                        .get(0)
-                        .getOtherInfo()
-                        .equals(
-                                "CVE-XXXX-XXX2\n"
-                                        + "CVE-XXXX-XXX1\n"
-                                        + "CVE-XXXX-XXX0\n"
-                                        + "The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566."));
-        assertTrue(
-                alertsRaised
-                        .get(0)
-                        .getReference()
-                        .equals(
-                                "http://example.com/hash-test-entry\nhttp://example.com/hash-test-entry2\n"));
+        assertEquals(
+                "CVE-XXXX-XXX2\n"
+                        + "CVE-XXXX-XXX1\n"
+                        + "CVE-XXXX-XXX0\n"
+                        + "The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566.",
+                alertsRaised.get(0).getOtherInfo());
+        assertEquals(
+                "http://example.com/hash-test-entry\nhttp://example.com/hash-test-entry2\n",
+                alertsRaised.get(0).getReference());
     }
 
     @Test
-    public void shouldNotRaiseAlertOnDontCheckUrl() {
+    void shouldNotRaiseAlertOnDontCheckUrl() {
         // Given
         HttpMessage msg = createMessage("https://www.google-analytics.com/ga.js", null);
         // When

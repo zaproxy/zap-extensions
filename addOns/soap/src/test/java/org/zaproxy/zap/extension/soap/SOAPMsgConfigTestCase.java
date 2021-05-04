@@ -45,7 +45,7 @@ public class SOAPMsgConfigTestCase {
     }
 
     @Test
-    public void isCompleteTest() {
+    void isCompleteTest() {
         /* Positive case. */
         assertTrue(soapConfig.isComplete());
 

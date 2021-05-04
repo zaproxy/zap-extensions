@@ -37,15 +37,14 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CsrfCountermeasuresScanRuleUnitTest
-        extends PassiveScannerTest<CsrfCountermeasuresScanRule> {
+class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCountermeasuresScanRule> {
 
     private ExtensionAntiCSRF extensionAntiCSRFMock;
     private List<String> antiCsrfTokenNames;
     private HttpMessage msg;
 
     @BeforeEach
-    public void before() throws URIException {
+    void before() throws URIException {
         antiCsrfTokenNames = new ArrayList<>();
         antiCsrfTokenNames.add("token");
         antiCsrfTokenNames.add("csrfToken");
@@ -73,7 +72,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThereIsNoHTML() {
+    void shouldNotRaiseAlertIfThereIsNoHTML() {
         // Given
         msg.setResponseBody("no html");
         // When
@@ -83,7 +82,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfThereIsNoForm() {
+    void shouldNotRaiseAlertIfThereIsNoForm() {
         // Given
         msg.setResponseBody("<html><head></head><body><p>no form</p></body></html>");
         // When
@@ -93,7 +92,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfFormHasNoParent() {
+    void shouldNotRaiseAlertIfFormHasNoParent() {
         // Given
         msg.setResponseBody(
                 "<form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form>");
@@ -104,7 +103,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThereIsNoCSRFTokenFound() {
+    void shouldRaiseAlertIfThereIsNoCSRFTokenFound() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
@@ -117,7 +116,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithSortedFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
+    void shouldRaiseAlertWithSortedFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
@@ -141,7 +140,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWithSortedUniqueFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
+    void shouldRaiseAlertWithSortedUniqueFormFieldsInOtherInfoIfThereIsNoCSRFTokenFound() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
@@ -168,7 +167,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithFirstKnownCSRFTokenUsingName() {
+    void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithFirstKnownCSRFTokenUsingName() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"token\"/><input type=\"submit\"/></form></body></html>");
@@ -179,7 +178,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithAKnownCSRFTokenUsingId() {
+    void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithAKnownCSRFTokenUsingId() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" id=\"token\"/><input type=\"submit\"/></form></body></html>");
@@ -190,7 +189,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithSecondKnownCSRFTokenUsingName() {
+    void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithSecondKnownCSRFTokenUsingName() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form></body></html>");
@@ -201,7 +200,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseOneAlertForOneFormWhenSecondFormHasAKnownCSRFToken() {
+    void shouldRaiseOneAlertForOneFormWhenSecondFormHasAKnownCSRFToken() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
@@ -216,7 +215,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseOneAlertForOneFormWhenFirstFormOfTwoHasAKnownCSRFToken() {
+    void shouldRaiseOneAlertForOneFormWhenFirstFormOfTwoHasAKnownCSRFToken() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
@@ -231,7 +230,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseTwoAlertsForTwoFormsWhenOneOfThreeHasAKnownCSRFToken() {
+    void shouldRaiseTwoAlertsForTwoFormsWhenOneOfThreeHasAKnownCSRFToken() {
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
@@ -250,7 +249,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenFormIdIsOnCsrfIgnoreList() {
+    void shouldNotRaiseAlertWhenFormIdIsOnCsrfIgnoreList() {
         // Given
         rule.setCsrfIgnoreList("ignoredName,otherName");
 
@@ -265,7 +264,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenFormNameIsOnCsrfIgnoreList() {
+    void shouldNotRaiseAlertWhenFormNameIsOnCsrfIgnoreList() {
         // Given
         rule.setCsrfIgnoreList("ignoredName,otherName");
 
@@ -280,7 +279,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseInfoAlertWhenFormAttributeIsOnCsrfAttributeIgnoreList() {
+    void shouldRaiseInfoAlertWhenFormAttributeIsOnCsrfAttributeIgnoreList() {
         // Given
         rule.setCSRFIgnoreAttName("data-no-csrf");
 
@@ -296,7 +295,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseInfoAlertWhenFormAttributeAndValueMatchRuleConfig() {
+    void shouldRaiseInfoAlertWhenFormAttributeAndValueMatchRuleConfig() {
         // Given
         rule.setCSRFIgnoreAttName("data-no-csrf");
         rule.setCSRFIgnoreAttValue("data-no-csrf");
@@ -313,7 +312,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseLowAlertWhenFormAttributeAndRuleConfigMismatch() {
+    void shouldRaiseLowAlertWhenFormAttributeAndRuleConfigMismatch() {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
 
@@ -329,7 +328,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenThresholdHighAndMessageOutOfScope() throws URIException {
+    void shouldNotRaiseAlertWhenThresholdHighAndMessageOutOfScope() throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(false);
@@ -342,7 +341,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenThresholdHighAndMessageInScope() throws URIException {
+    void shouldRaiseAlertWhenThresholdHighAndMessageInScope() throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(true);
@@ -355,7 +354,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
+    void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(false);
@@ -368,7 +367,7 @@ public class CsrfCountermeasuresScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
+    void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(false);

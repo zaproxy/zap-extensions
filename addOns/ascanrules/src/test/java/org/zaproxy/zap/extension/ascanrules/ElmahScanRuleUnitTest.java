@@ -38,7 +38,7 @@ import org.zaproxy.addon.commonlib.AbstractHostFilePluginUnitTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ElmahScanRule}. */
-public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule> {
+class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule> {
 
     private static final String URL = "/elmah.axd";
     private static final String RESPONSE_WITHOUT_EVIDENCE =
@@ -70,7 +70,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
 
     @ParameterizedTest
     @ValueSource(ints = {301, 403, 404, 500})
-    public void shouldNotAlertIfNonExistingElmahFileReturnsNon200CodeStdThreshold(int status)
+    void shouldNotAlertIfNonExistingElmahFileReturnsNon200CodeStdThreshold(int status)
             throws Exception {
         // Given
         nano.addHandler(new StatusCodeResponse("/", status));
@@ -83,7 +83,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
     }
 
     @Test
-    public void shouldAlertIfElmahFileFound() throws Exception {
+    void shouldAlertIfElmahFileFound() throws Exception {
         // Given
         nano.addHandler(new OkResponseWithEvidence("/"));
         HttpMessage message = getHttpMessage(URL);
@@ -97,7 +97,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
     }
 
     @Test
-    public void shouldAlertIfElmahFileFoundNonRootInitialUrl() throws Exception {
+    void shouldAlertIfElmahFileFoundNonRootInitialUrl() throws Exception {
         // Given
         String path = "/foo/bar/";
         nano.addHandler(new OkResponseWithoutEvidence(path));
@@ -113,7 +113,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
     }
 
     @Test
-    public void shouldNotAlertIfNonElmahFileFoundStdThreshold() throws Exception {
+    void shouldNotAlertIfNonElmahFileFoundStdThreshold() throws Exception {
         // Given
         nano.addHandler(new OkResponseWithoutEvidence("/"));
         HttpMessage message = getHttpMessage(URL);
@@ -125,7 +125,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
     }
 
     @Test
-    public void shouldAlertIfNonElmahFileFoundLowThreshold() throws Exception {
+    void shouldAlertIfNonElmahFileFoundLowThreshold() throws Exception {
         // Given
         nano.addHandler(new OkResponseWithoutEvidence("/"));
         HttpMessage message = getHttpMessage(URL);
@@ -141,7 +141,7 @@ public class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahS
 
     @ParameterizedTest
     @ValueSource(ints = {401, 403})
-    public void shouldAlertIfBehindAuthLowThreshold(int status) throws Exception {
+    void shouldAlertIfBehindAuthLowThreshold(int status) throws Exception {
         // Given
         nano.addHandler(new StatusCodeResponse("/", status));
         HttpMessage message = getHttpMessage(URL);

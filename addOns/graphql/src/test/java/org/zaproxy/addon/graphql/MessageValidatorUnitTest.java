@@ -27,14 +27,14 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class MessageValidatorUnitTest extends TestUtils {
+class MessageValidatorUnitTest extends TestUtils {
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
     }
 
     @Test
-    public void nonExistentContentTypeHeader() throws Exception {
+    void nonExistentContentTypeHeader() throws Exception {
         HttpMessage message = new HttpMessage(new URI("http://example.com", true));
         assertEquals(MessageValidator.validate(message), MessageValidator.Result.INVALID);
     }

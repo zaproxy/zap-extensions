@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class InformationDisclosureReferrerScanRuleUnitTest
+class InformationDisclosureReferrerScanRuleUnitTest
         extends PassiveScannerTest<InformationDisclosureReferrerScanRule> {
 
     private static final String URI = "http://example.com/";
@@ -81,7 +81,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void noAlertOnRefererSelfReferenceWithSensitiveInfo()
+    void noAlertOnRefererSelfReferenceWithSensitiveInfo()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -96,7 +96,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void noAlertOnNoRefererHeaderWithSensitiveInfoInUrl()
+    void noAlertOnNoRefererHeaderWithSensitiveInfoInUrl()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -122,7 +122,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void noAlertWithUrlAbsolutePathInRefererWithSensitiveInfo()
+    void noAlertWithUrlAbsolutePathInRefererWithSensitiveInfo()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -137,7 +137,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void alertWhenMalformedRefererContainsSensitiveInfo()
+    void alertWhenMalformedRefererContainsSensitiveInfo()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -161,7 +161,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void alertWhenNoHostInRefererContainsSensitiveInfo()
+    void alertWhenNoHostInRefererContainsSensitiveInfo()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -185,7 +185,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenSensitiveInfoInReferer()
+    void shouldRaiseAlertWhenSensitiveInfoInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -207,7 +207,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithNoSensitiveInfoInReferer()
+    void shouldNotAlertWithNoSensitiveInfoInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -222,7 +222,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenCreditCardInReferer()
+    void shouldRaiseAlertWhenCreditCardInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -254,7 +254,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithNoCreditCardInReferer()
+    void shouldNotAlertWithNoCreditCardInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -269,7 +269,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenEmailAddressInReferer()
+    void shouldRaiseAlertWhenEmailAddressInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -292,7 +292,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithNoEmailAddressInReferer()
+    void shouldNotAlertWithNoEmailAddressInReferer()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -307,8 +307,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertWhenSsnInReferer()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldRaiseAlertWhenSsnInReferer() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String sensitiveParamName = "docid";
@@ -330,8 +329,7 @@ public class InformationDisclosureReferrerScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithNoSsnInReferer()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldNotAlertWithNoSsnInReferer() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testReferer = "http://example.org/?docid=ssn-no-here&hl=en";

@@ -41,7 +41,7 @@ public class PrintOutputTests {
     }
 
     @Test
-    public void shouldPrintToScriptContextWriter() throws Exception {
+    void shouldPrintToScriptContextWriter() throws Exception {
         String script = getScriptContents("printTest.kts");
 
         ScriptContext sc = se.getContext();

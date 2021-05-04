@@ -37,7 +37,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionScanRule}. */
-public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRule> {
+class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -61,7 +61,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldTargetDbTech() {
+    void shouldTargetDbTech() {
         // Given
         TechSet techSet = techSet(Tech.Db);
         // When
@@ -71,7 +71,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldTargetDbChildTechs() {
+    void shouldTargetDbChildTechs() {
         // Given
         TechSet techSet = techSet(techsOf(Tech.Db));
         techSet.exclude(Tech.Db);
@@ -82,7 +82,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldTargetDbChildTechsWithNonBuiltInTechInstances() {
+    void shouldTargetDbChildTechsWithNonBuiltInTechInstances() {
         // Given
         TechSet techSet = techSet(new Tech(new Tech("Db"), "SomeDb"));
         // When
@@ -92,7 +92,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldNotTargetNonDbTechs() {
+    void shouldNotTargetNonDbTechs() {
         // Given
         TechSet techSet = techSetWithout(techsOf(Tech.Db));
         // When
@@ -102,7 +102,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
+    void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -125,7 +125,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldAlertIfSumExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
+    void shouldAlertIfSumExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -154,7 +154,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessful() throws Exception {
+    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessful() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -171,7 +171,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessfulAndIsReflectedInResponse()
+    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessfulAndIsReflectedInResponse()
             throws Exception {
         // Given
         String param = "id";
@@ -193,7 +193,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldAlertIfMultExpressionsAreSuccessful() throws Exception {
+    void shouldAlertIfMultExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -216,7 +216,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldAlertIfMultExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
+    void shouldAlertIfMultExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -245,7 +245,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessful() throws Exception {
+    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessful() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -262,7 +262,7 @@ public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    public void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessfulAndReflectedInResponse()
+    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessfulAndReflectedInResponse()
             throws Exception {
         // Given
         String param = "id";

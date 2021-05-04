@@ -44,7 +44,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 // - https://github.com/zaproxy/zaproxy/issues/4038
 // - https://bitbucket.org/mstrobel/procyon/issues/320/java-9-sunmiscurlclasspath-and
 @EnabledOnJre(JRE.JAVA_8)
-public class SourceCodeDisclosureWebinfScanRuleUnitTest
+class SourceCodeDisclosureWebinfScanRuleUnitTest
         extends ActiveScannerTest<SourceCodeDisclosureWebInfScanRule> {
 
     private static final String JAVA_LIKE_FILE_NAME_PATH = "/WEB-INF/classes/about/html.class";
@@ -55,7 +55,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldTryToObtainWebInfFiles() throws Exception {
+    void shouldTryToObtainWebInfFiles() throws Exception {
         // Given
         rule.init(getHttpMessage("/some/path"), parent);
         // When
@@ -69,8 +69,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotContinueScanningIfReturnedContentHasNoJavaLikeFileNames()
-            throws Exception {
+    void shouldNotContinueScanningIfReturnedContentHasNoJavaLikeFileNames() throws Exception {
         // Given
         nano.addHandler(new NotFoundResponse(""));
         rule.init(getHttpMessage(""), parent);
@@ -81,7 +80,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldContinueScanningIfReturnedContentHasJavaLikeFileNamesEvenIfNotWebInfData()
+    void shouldContinueScanningIfReturnedContentHasJavaLikeFileNamesEvenIfNotWebInfData()
             throws Exception {
         // Given
         nano.addHandler(new NonWebInfWithJavaLikeFileNameResponse());
@@ -94,7 +93,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfJavaLikeFileNameIsNot200Ok() throws Exception {
+    void shouldNotAlertIfJavaLikeFileNameIsNot200Ok() throws Exception {
         // Given
         nano.addHandler(new NotFoundResponse(JAVA_LIKE_FILE_NAME_PATH));
         nano.addHandler(new NonWebInfWithJavaLikeFileNameResponse());
@@ -108,7 +107,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfJavaLikeFileNameIsNotAJavaClassEvenIfIs200Ok() throws Exception {
+    void shouldNotAlertIfJavaLikeFileNameIsNotAJavaClassEvenIfIs200Ok() throws Exception {
         // Given
         nano.addHandler(new OkResponse(JAVA_LIKE_FILE_NAME_PATH));
         nano.addHandler(new NonWebInfWithJavaLikeFileNameResponse());
@@ -122,7 +121,7 @@ public class SourceCodeDisclosureWebinfScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfJavaSourceWasDisclosed() throws Exception {
+    void shouldAlertIfJavaSourceWasDisclosed() throws Exception {
         // Given
         nano.addHandler(new JavaClassResponse(JAVA_LIKE_FILE_NAME_PATH));
         nano.addHandler(new NonWebInfWithJavaLikeFileNameResponse());

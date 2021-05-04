@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
+class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         extends PassiveScannerTest<InformationDisclosureSuspiciousCommentsScanRule> {
 
     @Override
@@ -82,7 +82,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertOnSuspiciousCommentInJavaScriptResponse()
+    void shouldAlertOnSuspiciousCommentInJavaScriptResponse()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -105,7 +105,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertOnSuspiciousCommentIsPartOfWordInJavaScriptResponse()
+    void shouldNotAlertOnSuspiciousCommentIsPartOfWordInJavaScriptResponse()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -124,7 +124,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldCreateOneAlertforMultipleAndEqualSuspiciousComments()
+    void shouldCreateOneAlertforMultipleAndEqualSuspiciousComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -149,7 +149,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithoutSuspiciousCommentInJavaScriptResponse()
+    void shouldNotAlertWithoutSuspiciousCommentInJavaScriptResponse()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -167,7 +167,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertOnSuspiciousCommentInHtmlScriptElements()
+    void shouldAlertOnSuspiciousCommentInHtmlScriptElements()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -189,7 +189,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithoutSuspiciousCommentInHtmlScriptElements()
+    void shouldNotAlertWithoutSuspiciousCommentInHtmlScriptElements()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -209,7 +209,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertOnSuspiciousCommentInHtmlComments()
+    void shouldAlertOnSuspiciousCommentInHtmlComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -229,7 +229,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertWhenNoSuspiciousCommentInHtmlComments()
+    void shouldNotAlertWhenNoSuspiciousCommentInHtmlComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -249,8 +249,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfResponseIsEmpty()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldNotAlertIfResponseIsEmpty() throws HttpMalformedHeaderException, URIException {
 
         // Given
         HttpMessage msg = createHttpMessageWithRespBody("", "text/html;charset=ISO-8859-1");
@@ -263,8 +262,7 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfResponseIsNotText()
-            throws HttpMalformedHeaderException, URIException {
+    void shouldNotAlertIfResponseIsNotText() throws HttpMalformedHeaderException, URIException {
 
         // Given
         HttpMessage msg =

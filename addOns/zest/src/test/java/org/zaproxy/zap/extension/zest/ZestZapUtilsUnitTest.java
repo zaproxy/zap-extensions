@@ -32,10 +32,10 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zest.core.v1.ZestRequest;
 
 /** Unit test for {@link ZestZapUtils}. */
-public class ZestZapUtilsUnitTest {
+class ZestZapUtilsUnitTest {
 
     @Test
-    public void shouldKeepAllHeadersIfIncludingAllWhenConvertingHttpMessageToZestRequest()
+    void shouldKeepAllHeadersIfIncludingAllWhenConvertingHttpMessageToZestRequest()
             throws Exception {
         // Given
         boolean includeAllHeaders = true;
@@ -51,7 +51,7 @@ public class ZestZapUtilsUnitTest {
     }
 
     @Test
-    public void shouldRemoveIgnoredHeadersIfNotIncludingAllWhenConvertingHttpMessageToZestRequest()
+    void shouldRemoveIgnoredHeadersIfNotIncludingAllWhenConvertingHttpMessageToZestRequest()
             throws Exception {
         // Given
         boolean includeAllHeaders = false;

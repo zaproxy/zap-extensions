@@ -26,10 +26,10 @@ import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-public class ReplacerParamRuleTest {
+class ReplacerParamRuleTest {
 
     @Test
-    public void shouldSubstituteHexValuesInReplacementString() {
+    void shouldSubstituteHexValuesInReplacementString() {
         // Given
         String replacement = "abc\\x01\\xaadef";
 
@@ -48,7 +48,7 @@ public class ReplacerParamRuleTest {
     }
 
     @Test
-    public void shouldSubstituteHexValuesInReplacementStringForNonRegexMatch() {
+    void shouldSubstituteHexValuesInReplacementStringForNonRegexMatch() {
         // Given
         String replacement = "abc\\x01\\xaadef";
 
@@ -67,7 +67,7 @@ public class ReplacerParamRuleTest {
     }
 
     @Test
-    public void shouldNotSubstituteHexValuesInReplacementStringGivenBackslashIsEscaped() {
+    void shouldNotSubstituteHexValuesInReplacementStringGivenBackslashIsEscaped() {
         // Given
         String replacement = "abc\\\\x01\\\\xaadef";
 
@@ -81,7 +81,7 @@ public class ReplacerParamRuleTest {
     }
 
     @Test
-    public void shouldNotSubstituteGivenHexValueIsNotHexadecimal() {
+    void shouldNotSubstituteGivenHexValueIsNotHexadecimal() {
         // Given
         String replacement = "\\xZZ";
 
@@ -95,7 +95,7 @@ public class ReplacerParamRuleTest {
     }
 
     @Test
-    public void shouldNotSubstituteGivenThereIsOnlyOneBackSlash() {
+    void shouldNotSubstituteGivenThereIsOnlyOneBackSlash() {
         // Given
         String replacement = "\\";
 
@@ -109,7 +109,7 @@ public class ReplacerParamRuleTest {
     }
 
     @Test
-    public void shouldNotSubstituteGivenThereIsOnlyBeginningOfHexValue() {
+    void shouldNotSubstituteGivenThereIsOnlyBeginningOfHexValue() {
         // Given
         String replacement = "\\x";
 

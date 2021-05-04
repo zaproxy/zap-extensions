@@ -67,23 +67,23 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ActiveScanJobUnitTest {
+class ActiveScanJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionActiveScan extAScan;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -97,7 +97,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultFields() {
+    void shouldReturnDefaultFields() {
         // Given
 
         // When
@@ -112,7 +112,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnCustomConfigParams() {
+    void shouldReturnCustomConfigParams() {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -125,7 +125,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldApplyCustomConfigParams() {
+    void shouldApplyCustomConfigParams() {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -139,7 +139,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldFailWithUnknownConfigParam() {
+    void shouldFailWithUnknownConfigParam() {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -151,7 +151,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnConfigParams() throws MalformedURLException {
+    void shouldReturnConfigParams() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -181,7 +181,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldRunValidJob() throws MalformedURLException {
+    void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Session session = mock(Session.class);
@@ -215,7 +215,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldFailIfUnknownContext() throws MalformedURLException {
+    void shouldFailIfUnknownContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -234,7 +234,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldUseSpecifiedContext() throws MalformedURLException {
+    void shouldUseSpecifiedContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Session session = mock(Session.class);
@@ -290,7 +290,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
+    void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
         // Given
         Session session = mock(Session.class);
         Context context = mock(Context.class);
@@ -324,7 +324,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnNullScanPolicyForNullData() throws MalformedURLException {
+    void shouldReturnNullScanPolicyForNullData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -336,7 +336,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnNullScanPolicyForEmptyData() throws MalformedURLException {
+    void shouldReturnNullScanPolicyForEmptyData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
 
@@ -348,7 +348,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnWarningForBadScanPolicyData() throws MalformedURLException {
+    void shouldReturnWarningForBadScanPolicyData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -367,7 +367,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldReturnScanPolicyForDefaultData() throws MalformedURLException {
+    void shouldReturnScanPolicyForDefaultData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -386,7 +386,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldSetScanPolicyDefaults() throws MalformedURLException {
+    void shouldSetScanPolicyDefaults() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -408,7 +408,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldDisableAllRulesWithString() throws MalformedURLException {
+    void shouldDisableAllRulesWithString() throws MalformedURLException {
         // There is one built in rule, and mocking more is tricky outside of the package :/
 
         // Given
@@ -434,7 +434,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldDisableAllRulesWithBoolean() throws MalformedURLException {
+    void shouldDisableAllRulesWithBoolean() throws MalformedURLException {
         // There is one built in rule, and mocking more is tricky outside of the package :/
 
         // Given
@@ -460,7 +460,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldSetSpecifiedRuleConfigs() throws MalformedURLException {
+    void shouldSetSpecifiedRuleConfigs() throws MalformedURLException {
         // There is one built in rule, and mocking more is tricky outside of the package :/
 
         // Given
@@ -503,7 +503,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnUnknownRule() throws MalformedURLException {
+    void shouldWarnOnUnknownRule() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -532,7 +532,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnInvalidStringStrength() throws MalformedURLException {
+    void shouldWarnOnInvalidStringStrength() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -560,7 +560,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnInvalidIntStrength() throws MalformedURLException {
+    void shouldWarnOnInvalidIntStrength() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -588,7 +588,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnInvalidStringThreshold() throws MalformedURLException {
+    void shouldWarnOnInvalidStringThreshold() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -617,7 +617,7 @@ public class ActiveScanJobUnitTest {
     }
 
     @Test
-    public void shouldWarnOnInvalidIntThreshold() throws MalformedURLException {
+    void shouldWarnOnInvalidIntThreshold() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();

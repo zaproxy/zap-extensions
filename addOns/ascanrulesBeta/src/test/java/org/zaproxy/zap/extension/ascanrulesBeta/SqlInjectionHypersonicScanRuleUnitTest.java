@@ -34,7 +34,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionHypersonicScanRule}. */
-public class SqlInjectionHypersonicScanRuleUnitTest
+class SqlInjectionHypersonicScanRuleUnitTest
         extends ActiveScannerTest<SqlInjectionHypersonicScanRule> {
 
     @Override
@@ -43,7 +43,7 @@ public class SqlInjectionHypersonicScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetHypersonicSQLTech() throws Exception {
+    void shouldTargetHypersonicSQLTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.HypersonicSQL);
         // When
@@ -53,7 +53,7 @@ public class SqlInjectionHypersonicScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonHypersonicSQLTechs() throws Exception {
+    void shouldNotTargetNonHypersonicSQLTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.HypersonicSQL);
         // When
@@ -63,7 +63,7 @@ public class SqlInjectionHypersonicScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfSleepTimesGetLonger() throws Exception {
+    void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
@@ -104,7 +104,7 @@ public class SqlInjectionHypersonicScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
         String test = "/shouldNotReportGeneralTimingIssue/";
 
         this.nano.addHandler(

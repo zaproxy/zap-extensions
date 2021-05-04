@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule> {
     @Test
-    public void shouldNotRaiseAlertGivenSiteIsIsolated() throws Exception {
+    void shouldNotRaiseAlertGivenSiteIsIsolated() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -49,7 +49,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessIdentifiedByCustomPage()
+    void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessIdentifiedByCustomPage()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -69,7 +69,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessAndIdentifiedByCustomPage()
+    void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessAndIdentifiedByCustomPage()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -89,7 +89,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertGivenResponseDoesntSendCorpHeader() throws Exception {
+    void shouldRaiseCorpAlertGivenResponseDoesntSendCorpHeader() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -111,7 +111,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertGivenCorpHeaderIsSetForSameSite() throws Exception {
+    void shouldRaiseCorpAlertGivenCorpHeaderIsSetForSameSite() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -133,7 +133,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertGivenCorpHeaderContentIsUnexpected() throws Exception {
+    void shouldRaiseCorpAlertGivenCorpHeaderContentIsUnexpected() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -156,7 +156,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertCaseInsensitive() throws Exception {
+    void shouldRaiseCorpAlertCaseInsensitive() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -179,7 +179,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseCorpAlertGivenCorpHeaderIsSetForCrossOrigin() throws Exception {
+    void shouldNotRaiseCorpAlertGivenCorpHeaderIsSetForCrossOrigin() throws Exception {
         // We consider that resource has been explicitly set to be shared.
         // Given
         HttpMessage msg = new HttpMessage();
@@ -199,7 +199,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertOnlyForSuccessfulQueries() throws Exception {
+    void shouldRaiseCorpAlertOnlyForSuccessfulQueries() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -214,7 +214,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseCorpAlertGivenCorsHeaderIsSet() throws Exception {
+    void shouldNotRaiseCorpAlertGivenCorsHeaderIsSet() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -233,7 +233,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseAlertGivenCoepHeaderIsMissing() throws Exception {
+    void shouldRaiseAlertGivenCoepHeaderIsMissing() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -255,7 +255,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseAlertGivenCoepHeaderIsNotEqualsToRequireCorp() throws Exception {
+    void shouldRaiseAlertGivenCoepHeaderIsNotEqualsToRequireCorp() throws Exception {
         // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
         // Given
         HttpMessage msg = new HttpMessage();
@@ -280,7 +280,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseAlertGivenCoopHeaderIsMissing() throws Exception {
+    void shouldRaiseAlertGivenCoopHeaderIsMissing() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -302,7 +302,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseAlertGivenCoopHeaderIsNotSameOrigin() throws Exception {
+    void shouldRaiseAlertGivenCoopHeaderIsNotSameOrigin() throws Exception {
         // Ref: https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policies
         // Given
         HttpMessage msg = new HttpMessage();
@@ -327,8 +327,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseCoepOrCoopAlertGivenResourceIsNotAnHtmlOrXmlDocument()
-            throws Exception {
+    void shouldNotRaiseCoepOrCoopAlertGivenResourceIsNotAnHtmlOrXmlDocument() throws Exception {
         // Definition of Document: https://dom.spec.whatwg.org/#document
         // Given
         HttpMessage msg = new HttpMessage();
@@ -347,7 +346,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenNoHeaderContentTypeIsPresent() throws Exception {
+    void shouldNotRaiseAlertGivenNoHeaderContentTypeIsPresent() throws Exception {
         // If no header content-type is provided, it is browser-dependent.
         //        It will try to sniff the type.
         // There is a rule ContentTypeMissingScanRule
@@ -366,7 +365,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldNotRaiseAlertForReportingAPI() throws Exception {
+    void shouldNotRaiseAlertForReportingAPI() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");

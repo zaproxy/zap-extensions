@@ -37,9 +37,9 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 
-public class ActiveScanJobResultsUnitTest {
+class ActiveScanJobResultsUnitTest {
     @Test
-    public void shouldReturnJobData() {
+    void shouldReturnJobData() {
         // Given
         ActiveScan activeScan = mock(ActiveScan.class);
         HostProcess hp = mock(HostProcess.class);

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 
 /** Unit test for {@link ExternalRedirectScanRule}. */
-public class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirectScanRule> {
+class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirectScanRule> {
 
     @Override
     protected ExternalRedirectScanRule createScanner() {
@@ -35,7 +35,7 @@ public class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<External
     }
 
     @Test
-    public void shouldHaveHighRisk() {
+    void shouldHaveHighRisk() {
         // Given / When
         int risk = rule.getRisk();
         // Then

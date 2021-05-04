@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledOpenRedirectScanRuleUnitTest
+class UserControlledOpenRedirectScanRuleUnitTest
         extends PassiveScannerTest<UserControlledOpenRedirectScanRule> {
 
     @Override
@@ -55,7 +55,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotRedirect() {
+    void shouldNotRaiseAlertIfResponseIsNotRedirect() {
         // Given
         HttpMessage msg = createMessage();
         // When
@@ -65,7 +65,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectButHasNoLocationHeader() {
+    void shouldNotRaiseAlertIfResponseIsRedirectButHasNoLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -76,7 +76,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasEmptyLocationHeader() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasEmptyLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -91,7 +91,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderNoParam() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderNoParam() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -103,7 +103,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderEmptyParam() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderEmptyParam() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -118,7 +118,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderIrrelevantParam() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderIrrelevantParam() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -133,7 +133,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParam() {
+    void shouldRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParam() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -149,7 +149,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnParam() {
+    void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnParam() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -165,7 +165,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnGetParamDuringPost()
+    void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnGetParamDuringPost()
             throws Exception {
         // Given
         HttpMessage msg = createMessage();
@@ -184,9 +184,8 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotRaiseAlertIfLocationHeaderIsBasedOnGetParamButValueIsSameAsOriginDuringPost()
-                    throws Exception {
+    void shouldNotRaiseAlertIfLocationHeaderIsBasedOnGetParamButValueIsSameAsOriginDuringPost()
+            throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://evil.com/i.php?place=evil.com", false));
@@ -203,8 +202,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -219,8 +217,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void
-            shouldNotRaiseAlertIfResponseIsRedirectAndParamIsOnlyMatchingProtocolOfLocationHeader() {
+    void shouldNotRaiseAlertIfResponseIsRedirectAndParamIsOnlyMatchingProtocolOfLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
@@ -235,7 +232,7 @@ public class UserControlledOpenRedirectScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasRelativeLocationHeader() {
+    void shouldNotRaiseAlertIfResponseIsRedirectHasRelativeLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();

@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledHTMLAttributesScanRuleUnitTest
+class UserControlledHTMLAttributesScanRuleUnitTest
         extends PassiveScannerTest<UserControlledHTMLAttributesScanRule> {
 
     @Override
@@ -58,7 +58,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
+    void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
@@ -70,7 +70,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsNotHtml() {
+    void shouldNotRaiseAlertIfResponseIsNotHtml() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
@@ -82,7 +82,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasNoContentType() {
+    void shouldNotRaiseAlertIfResponseHasNoContentType() {
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseHeader(new HttpResponseHeader());
@@ -95,7 +95,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+    void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -106,7 +106,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
@@ -118,7 +118,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseContainsNoAttributes() throws Exception {
+    void shouldNotRaiseAlertIfResponseContainsNoAttributes() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -132,7 +132,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInAttribute() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamValuesNotUsedInAttribute() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -146,7 +146,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInMetaAttribute() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamValuesNotUsedInMetaAttribute() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -161,7 +161,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamValuesUsedInMetaAttribute() throws Exception {
+    void shouldRaiseAlertIfRequestParamValuesUsedInMetaAttribute() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -176,7 +176,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInMetaRefresh() throws Exception {
+    void shouldNotRaiseAlertIfRequestParamValuesNotUsedInMetaRefresh() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -191,7 +191,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamValuesUsedInMetaRefresh() throws Exception {
+    void shouldRaiseAlertIfRequestParamValuesUsedInMetaRefresh() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -207,7 +207,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseMultipleAlertsIfRequestParamValuesUsedInAttributes() throws Exception {
+    void shouldRaiseMultipleAlertsIfRequestParamValuesUsedInAttributes() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()
@@ -227,7 +227,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfRequestParamsValuesUsedInAttributes() throws Exception {
+    void shouldRaiseAlertIfRequestParamsValuesUsedInAttributes() throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader()

@@ -37,7 +37,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CodeInjectionScanRule}. */
-public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanRule> {
+class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -61,7 +61,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldTargetAspTech() {
+    void shouldTargetAspTech() {
         // Given
         TechSet techSet = techSet(Tech.ASP);
         // When
@@ -71,7 +71,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldTargetPhpTech() {
+    void shouldTargetPhpTech() {
         // Given
         TechSet techSet = techSet(Tech.PHP);
         // When
@@ -81,7 +81,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldNotTargetNonAspPhpTechs() {
+    void shouldNotTargetNonAspPhpTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.ASP, Tech.PHP);
         // When
@@ -91,7 +91,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldFindPhpInjection() throws Exception {
+    void shouldFindPhpInjection() throws Exception {
         // Given
         String test = "/shouldFindPhpInjection.php";
         String PHP_ENCODED_TOKEN =
@@ -122,7 +122,7 @@ public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjecti
     }
 
     @Test
-    public void shouldFindAspInjection() throws Exception {
+    void shouldFindAspInjection() throws Exception {
         // Given
         String test = "/shouldFindAspInjection";
         List<String> evaluationResults = new ArrayList<>();

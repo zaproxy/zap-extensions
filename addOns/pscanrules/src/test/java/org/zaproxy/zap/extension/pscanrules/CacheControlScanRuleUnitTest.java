@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRule> {
+class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRule> {
 
     @Override
     protected CacheControlScanRule createScanner() {
@@ -39,7 +39,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpRequest() throws HttpMalformedHeaderException {
+    void httpRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -60,7 +60,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
+    void httpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -82,7 +82,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void shouldIgnoreEmptyHttpsResponses() throws HttpMalformedHeaderException {
+    void shouldIgnoreEmptyHttpsResponses() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -102,7 +102,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsMissingNoCacheRequest() throws HttpMalformedHeaderException {
+    void httpsMissingNoCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -126,7 +126,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsMissingNoStoreCacheRequest() throws HttpMalformedHeaderException {
+    void httpsMissingNoStoreCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -150,7 +150,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsMissingMustRevalidateCacheRequest() throws HttpMalformedHeaderException {
+    void httpsMissingMustRevalidateCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -174,7 +174,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
+    void httpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -199,7 +199,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsRedirectMedCacheRequest() throws HttpMalformedHeaderException {
+    void httpsRedirectMedCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -222,7 +222,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsRedirectHighCacheRequest() throws HttpMalformedHeaderException {
+    void httpsRedirectHighCacheRequest() throws HttpMalformedHeaderException {
 
         rule.setAlertThreshold(AlertThreshold.HIGH);
 
@@ -244,7 +244,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsErrorLowCacheRequest() throws HttpMalformedHeaderException {
+    void httpsErrorLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -268,7 +268,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsErrorMedCacheRequest() throws HttpMalformedHeaderException {
+    void httpsErrorMedCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -290,7 +290,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsErrorHighCacheRequest() throws HttpMalformedHeaderException {
+    void httpsErrorHighCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();
@@ -312,7 +312,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsJavaScriptLowCacheRequest() throws HttpMalformedHeaderException {
+    void httpsJavaScriptLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -336,7 +336,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsJavaScriptMedCacheRequest() throws HttpMalformedHeaderException {
+    void httpsJavaScriptMedCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -358,7 +358,7 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
     }
 
     @Test
-    public void httpsJavaScriptHighCacheRequest() throws HttpMalformedHeaderException {
+    void httpsJavaScriptHighCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();

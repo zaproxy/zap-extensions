@@ -29,7 +29,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetMismatchScanRule> {
+class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetMismatchScanRule> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.charsetmismatch.";
     private static final String NO_MISMATCH_METACONTENTTYPE_MISSING =
@@ -45,7 +45,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     private HttpMessage msg;
 
     @BeforeEach
-    public void before() throws HttpMalformedHeaderException {
+    void before() throws HttpMalformedHeaderException {
         rule.setAlertThreshold(AlertThreshold.LOW);
 
         msg = new HttpMessage();
@@ -58,7 +58,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldPassWhenZeroContentLength() throws HttpMalformedHeaderException {
+    void shouldPassWhenZeroContentLength() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -72,7 +72,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldPassWhenNoHeaderCharset() throws HttpMalformedHeaderException {
+    void shouldPassWhenNoHeaderCharset() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
@@ -89,7 +89,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldPassWhenNoContentType() throws HttpMalformedHeaderException {
+    void shouldPassWhenNoContentType() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
@@ -105,8 +105,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldPassWhenTheSameMetaCharsetAndHeaderHtml()
-            throws HttpMalformedHeaderException {
+    void shouldPassWhenTheSameMetaCharsetAndHeaderHtml() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
                 "<html>"
@@ -129,7 +128,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenDifferentMetaCharsetAndHeaderHtml()
+    void shouldRaiseAlertWhenDifferentMetaCharsetAndHeaderHtml()
             throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
@@ -161,7 +160,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenNoBodyCharsetTheSameMetaAndHeaderHtml()
+    void shouldRaiseAlertWhenNoBodyCharsetTheSameMetaAndHeaderHtml()
             throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
@@ -187,7 +186,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenDifferentBodyCharsetAndHeaderHtml()
+    void shouldRaiseAlertWhenDifferentBodyCharsetAndHeaderHtml()
             throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
@@ -215,7 +214,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenDifferentMetaAndHeaderPlusAdditionalMetaParametersHtml()
+    void shouldRaiseAlertWhenDifferentMetaAndHeaderPlusAdditionalMetaParametersHtml()
             throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
@@ -252,7 +251,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenDifferentMetaCharsetAndContentType()
+    void shouldRaiseAlertWhenDifferentMetaCharsetAndContentType()
             throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody(
@@ -289,7 +288,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldPassWhenTheSameEncodingAndHeaderXml() throws HttpMalformedHeaderException {
+    void shouldPassWhenTheSameEncodingAndHeaderXml() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody("<?xml version='1.0' encoding='UTF-8'?>" + "<zap></zap>");
         msg.setResponseHeader(
@@ -306,8 +305,7 @@ public class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetM
     }
 
     @Test
-    public void shouldRaiseAlertWhenDifferentEncodingAndHeaderXml()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertWhenDifferentEncodingAndHeaderXml() throws HttpMalformedHeaderException {
         // Given
         msg.setResponseBody("<?xml version='1.0' encoding='ISO-123'?>" + "<zap></zap>");
         msg.setResponseHeader(

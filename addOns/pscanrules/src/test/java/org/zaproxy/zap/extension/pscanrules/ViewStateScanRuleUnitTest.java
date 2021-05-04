@@ -33,13 +33,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
+class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
 
     private HttpMessage msg;
     private HttpRequestHeader header;
 
     @BeforeEach
-    public void before() throws URIException {
+    void before() throws URIException {
         msg = new HttpMessage();
         header = new HttpRequestHeader();
 
@@ -53,14 +53,14 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldNotRaiseAlertAsThereIsNoContent() {
+    void shouldNotRaiseAlertAsThereIsNoContent() {
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
-    public void shouldNotRaiseAlertAsThereIsNoValidViewState() {
+    void shouldNotRaiseAlertAsThereIsNoValidViewState() {
         msg.setResponseBody("<input name=\"__specialstate\">");
 
         scanHttpResponseReceive(msg);
@@ -69,7 +69,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldNotRaiseAlertAsThereIsAnUnknowVersionOfASP() {
+    void shouldNotRaiseAlertAsThereIsAnUnknowVersionOfASP() {
         msg.setResponseBody("<input name=\"__specialstate\" value=\"bm90dmFsaWQ=\">");
 
         scanHttpResponseReceive(msg);
@@ -78,7 +78,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertAsThereIsNoValidMACUnsure() {
+    void shouldRaiseAlertAsThereIsNoValidMACUnsure() {
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDWUKMTkwNjc4NTIwMWRkaKrolbpTKYmPUNsab597kh8iOBU=\">");
 
@@ -94,7 +94,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertAsThereIsNoValidMACSure() {
+    void shouldRaiseAlertAsThereIsNoValidMACSure() {
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDWUKMTkwNjc4NTIwwEPDWUKMTkwNjc4NTIwMWRkaMWRka\">");
 
@@ -110,7 +110,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertForOldASPVersion() {
+    void shouldRaiseAlertForOldASPVersion() {
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"dDPDWUKMTkwNjc4NTIwMWRkaKrolbpTKYmPUNsab597kh8iOBU=\">");
 
@@ -126,7 +126,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldNotRaiseAlertAsTheParametersDoNotHaveEmailsOrIps() {
+    void shouldNotRaiseAlertAsTheParametersDoNotHaveEmailsOrIps() {
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZMHbBY9JqBTvB5/6kXnY15AUSAwa\">");
 
@@ -136,7 +136,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertBecauseTheParametersDoesHaveEmail() {
+    void shouldRaiseAlertBecauseTheParametersDoesHaveEmail() {
         String encodedViewstate = getViewstateWithText("test@test.com");
         msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
 
@@ -153,7 +153,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertBecauseTheParametersDoesHaveIP() {
+    void shouldRaiseAlertBecauseTheParametersDoesHaveIP() {
         String encodedViewstate = getViewstateWithText("127.0.0.1");
         msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
 
@@ -176,7 +176,7 @@ public class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanR
     }
 
     @Test
-    public void shouldRaiseAlertAsViewstateIsSplit() {
+    void shouldRaiseAlertAsViewstateIsSplit() {
         msg.setResponseBody(
                 "<input type=\"hidden\" name=\"__VIEWSTATEFIELDCOUNT\" id=\"__VIEWSTATEFIELDCOUNT\" value=\"3\" />"
                         + "<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"/wEPDwUKLTk2Njk3OTQxNg9kFgICAw9kFgICCQ88\" />"

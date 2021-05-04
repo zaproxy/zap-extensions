@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link BrowserUI}. */
-public class BrowserUIUnitTest {
+class BrowserUIUnitTest {
 
     @Test
-    public void shouldThrowExceptionWhenCreatingBrowserUIWithNullName() {
+    void shouldThrowExceptionWhenCreatingBrowserUIWithNullName() {
         // Given
         String name = null;
         // When / Then
@@ -40,7 +40,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenCreatingBrowserUIWithEmptyName() {
+    void shouldThrowExceptionWhenCreatingBrowserUIWithEmptyName() {
         // Given
         String name = "";
         // When / Then
@@ -48,7 +48,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenCreatingBrowserUIWithNullBrowser() {
+    void shouldThrowExceptionWhenCreatingBrowserUIWithNullBrowser() {
         // Given
         Browser browser = null;
         // When / Then
@@ -56,7 +56,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldGetNamePassedInConstructor() {
+    void shouldGetNamePassedInConstructor() {
         // Given
         String name = "Some Name";
         BrowserUI browserUI = new BrowserUI(name, Browser.FIREFOX);
@@ -67,7 +67,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldGetBrowserPassedInConstructor() {
+    void shouldGetBrowserPassedInConstructor() {
         // Given
         Browser browser = Browser.FIREFOX;
         BrowserUI browserUI = new BrowserUI("Some Name", browser);
@@ -78,7 +78,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldReturnNameFromToString() {
+    void shouldReturnNameFromToString() {
         // Given
         String name = "Some Name";
         BrowserUI browserUI = new BrowserUI(name, Browser.FIREFOX);
@@ -89,7 +89,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldReturnPositiveNumberWhenComparingWithNull() {
+    void shouldReturnPositiveNumberWhenComparingWithNull() {
         // Given
         BrowserUI browserUI = new BrowserUI("Name A", Browser.FIREFOX);
         // When
@@ -99,7 +99,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldReturnNegativeNumberWhenComparingWithGreaterName() {
+    void shouldReturnNegativeNumberWhenComparingWithGreaterName() {
         // Given
         BrowserUI browserUI = new BrowserUI("Name A", Browser.FIREFOX);
         BrowserUI otherBrowserUI = new BrowserUI("Name B", Browser.FIREFOX);
@@ -110,7 +110,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldReturnPositiveNumberWhenComparingWithLesserName() {
+    void shouldReturnPositiveNumberWhenComparingWithLesserName() {
         // Given
         BrowserUI browserUI = new BrowserUI("Name B", Browser.FIREFOX);
         BrowserUI otherBrowserUI = new BrowserUI("Name A", Browser.FIREFOX);
@@ -121,7 +121,7 @@ public class BrowserUIUnitTest {
     }
 
     @Test
-    public void shouldReturnZeroWhenComparingWithSameName() {
+    void shouldReturnZeroWhenComparingWithSameName() {
         // Given
         BrowserUI browserUI = new BrowserUI("Name A", Browser.FIREFOX);
         BrowserUI otherBrowserUI = new BrowserUI("Name A", Browser.FIREFOX);

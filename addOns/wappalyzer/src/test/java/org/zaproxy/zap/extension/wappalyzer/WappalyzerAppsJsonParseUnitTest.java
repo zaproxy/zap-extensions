@@ -27,10 +27,10 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class WappalyzerAppsJsonParseUnitTest {
+class WappalyzerAppsJsonParseUnitTest {
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         // Given
         List<String> errs = new ArrayList<>();
         List<Exception> parsingExceptions = new ArrayList<>();

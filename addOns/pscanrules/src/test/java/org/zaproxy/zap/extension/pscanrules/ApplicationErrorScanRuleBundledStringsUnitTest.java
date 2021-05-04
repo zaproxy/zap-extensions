@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class ApplicationErrorScanRuleBundledStringsUnitTest
+class ApplicationErrorScanRuleBundledStringsUnitTest
         extends PassiveScannerTest<ApplicationErrorScanRule> {
 
     private static final String URI = "https://www.example.com/test/";
@@ -43,7 +43,7 @@ public class ApplicationErrorScanRuleBundledStringsUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndExpressPayloadDetected()
+    void shouldRaiseAlertForResponseCodeOkAndExpressPayloadDetected()
             throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "SyntaxError: Unexpected token";

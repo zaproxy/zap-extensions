@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class InPageBannerInfoLeakScanRuleUnitTest
+class InPageBannerInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<InPageBannerInfoLeakScanRule> {
 
     private HttpMessage createMessage(String banner) throws URIException {
@@ -52,7 +52,7 @@ public class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirect() throws URIException {
+    void shouldNotRaiseAlertIfResponseIsRedirect() throws URIException {
         // Given
         HttpMessage msg = createMessage("");
         msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
@@ -66,7 +66,7 @@ public class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasRelevanContent() throws URIException {
+    void shouldRaiseAlertIfResponseHasRelevanContent() throws URIException {
         // Given
         String squidBanner = "Squid/2.5.STABLE4";
         HttpMessage msg = createMessage(squidBanner);
@@ -81,7 +81,7 @@ public class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasRelevantContentWithStatusOk() throws URIException {
+    void shouldNotRaiseAlertIfResponseHasRelevantContentWithStatusOk() throws URIException {
         // Given - Default threshold (MEDIUM)
         String apacheBanner = "Apache/2.4.17";
         HttpMessage msg = createMessage(apacheBanner);
@@ -96,8 +96,7 @@ public class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseHasRelevantContentWithCustomPage200()
-            throws URIException {
+    void shouldNotRaiseAlertIfResponseHasRelevantContentWithCustomPage200() throws URIException {
         // Given - Default threshold (MEDIUM)
         String apacheBanner = "Apache/2.4.17";
         HttpMessage msg = createMessage(apacheBanner);
@@ -112,7 +111,7 @@ public class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentWithStatusOk()
+    void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentWithStatusOk()
             throws URIException {
         // Given
         String jettyBanner = "Jetty://9.4z-SNAPSHOT";

@@ -41,14 +41,14 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
-public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
+class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
     private WebSocketNode rootFolder;
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpMessages();
 
         namer = new WebSocketSimpleNodeNamer();
@@ -62,8 +62,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldAddParentsAndChildren()
-            throws DatabaseException, HttpMalformedHeaderException {
+    void shouldAddParentsAndChildren() throws DatabaseException, HttpMalformedHeaderException {
 
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -83,7 +82,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetContent() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetContent() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
         WebSocketMessageDTO message = getTextOutgoingMessage(channel, "TestMessage", 1);
@@ -99,7 +98,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetMessages() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetMessages() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         WebSocketChannelDTO channel = getWebSocketChannelDTO(1, defaultHostName.toString());
 
@@ -131,7 +130,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetAllHostNodes() throws DatabaseException, HttpMalformedHeaderException {
+    void shouldGetAllHostNodes() throws DatabaseException, HttpMalformedHeaderException {
         // Given
         ArrayList<TreeNode> expectedHostNodes = new ArrayList<>();
         WebSocketChannelDTO channel;

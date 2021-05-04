@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOptionScanRule> {
+class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOptionScanRule> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.xframeoptions.";
     private static final String NAME_HEADER_NOT_SET = BASE_RESOURCE_KEY + "missing.name";
@@ -46,7 +46,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsDeny() throws HttpMalformedHeaderException {
+    void xframeOptionsDeny() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -68,7 +68,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsDenyLc() throws HttpMalformedHeaderException {
+    void xframeOptionsDenyLc() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -90,7 +90,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsDenyMc() throws HttpMalformedHeaderException {
+    void xframeOptionsDenyMc() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -112,7 +112,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsSameOrigin() throws HttpMalformedHeaderException {
+    void xframeOptionsSameOrigin() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -134,7 +134,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsAllowFrom() throws HttpMalformedHeaderException {
+    void xframeOptionsAllowFrom() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -156,7 +156,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptions() throws HttpMalformedHeaderException {
+    void noXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -181,7 +181,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsErrorLow() throws HttpMalformedHeaderException {
+    void noXframeOptionsErrorLow() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -207,7 +207,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsErrorMed() throws HttpMalformedHeaderException {
+    void noXframeOptionsErrorMed() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -229,7 +229,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsErrorHigh() throws HttpMalformedHeaderException {
+    void noXframeOptionsErrorHigh() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();
@@ -251,7 +251,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsPlainTextLow() throws HttpMalformedHeaderException {
+    void noXframeOptionsPlainTextLow() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -277,7 +277,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsPlainTextMed() throws HttpMalformedHeaderException {
+    void noXframeOptionsPlainTextMed() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -299,7 +299,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void noXframeOptionsPlainTextHigh() throws HttpMalformedHeaderException {
+    void noXframeOptionsPlainTextHigh() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();
@@ -321,7 +321,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void multipleXframeOptions() throws HttpMalformedHeaderException {
+    void multipleXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -348,7 +348,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsViaMetaTag() throws HttpMalformedHeaderException {
+    void xframeOptionsViaMetaTag() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -380,7 +380,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void xframeOptionsViaMetaTagAndHeader() throws HttpMalformedHeaderException {
+    void xframeOptionsViaMetaTagAndHeader() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -409,7 +409,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void malformedXframeOptions() throws HttpMalformedHeaderException {
+    void malformedXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -435,7 +435,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspNoFaNoXframeOptions() throws HttpMalformedHeaderException {
+    void cspNoFaNoXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -461,7 +461,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspWithFaNoXframeOptions() throws HttpMalformedHeaderException {
+    void cspWithFaNoXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -483,7 +483,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspWithFaWithXframeOptions() throws HttpMalformedHeaderException {
+    void cspWithFaWithXframeOptions() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -506,7 +506,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspWithFaWithBadXframeOptionsLow() throws HttpMalformedHeaderException {
+    void cspWithFaWithBadXframeOptionsLow() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -534,7 +534,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspWithFaWithBadXframeOptionsMedium() throws HttpMalformedHeaderException {
+    void cspWithFaWithBadXframeOptionsMedium() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         HttpMessage msg = new HttpMessage();
@@ -558,7 +558,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
     }
 
     @Test
-    public void cspWithFaWithBadXframeOptionsHigh() throws HttpMalformedHeaderException {
+    void cspWithFaWithBadXframeOptionsHigh() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
         HttpMessage msg = new HttpMessage();

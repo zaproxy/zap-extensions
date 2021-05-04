@@ -37,8 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class WappalyzerPassiveScannerUnitTest
-        extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
 
     WappalyzerApplicationTestHolder defaultHolder;
 
@@ -68,7 +67,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void testApacheWithPhp() throws HttpMalformedHeaderException {
+    void testApacheWithPhp() throws HttpMalformedHeaderException {
         HttpMessage msg = makeHttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
         msg.setResponseHeader(
@@ -82,7 +81,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchScriptElement() throws HttpMalformedHeaderException {
+    void shouldMatchScriptElement() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -98,7 +97,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldNotMatchScriptElementContentIfNotOnScriptElement()
+    void shouldNotMatchScriptElementContentIfNotOnScriptElement()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
@@ -110,7 +109,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchDomElementWithTextAndAttribute() throws HttpMalformedHeaderException {
+    void shouldMatchDomElementWithTextAndAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -125,7 +124,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchDomElementWithOnlyText() throws HttpMalformedHeaderException {
+    void shouldMatchDomElementWithOnlyText() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -140,7 +139,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchDomElementWithOnlyAttribute() throws HttpMalformedHeaderException {
+    void shouldMatchDomElementWithOnlyAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -155,7 +154,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldNotMatchDomElementIfNoContentMatches() throws HttpMalformedHeaderException {
+    void shouldNotMatchDomElementIfNoContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -169,7 +168,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldNotMatchOnNontextResponse() throws HttpMalformedHeaderException {
+    void shouldNotMatchOnNontextResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/x-icon");
@@ -182,8 +181,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnNontextResponseWhenHeaderMatches()
-            throws HttpMalformedHeaderException {
+    void shouldMatchOnNontextResponseWhenHeaderMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/x-icon");
@@ -199,7 +197,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnCssResponseWhenContentMatches() throws HttpMalformedHeaderException {
+    void shouldMatchOnCssResponseWhenContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/css");
@@ -212,7 +210,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnCssRequestWhenContentMatches() throws HttpMalformedHeaderException {
+    void shouldMatchOnCssRequestWhenContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setRequestHeader("GET https://www.example.com/styles.css HTTP/1.1");
@@ -225,8 +223,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnHtmlResponseWhenContentStyleMatches()
-            throws HttpMalformedHeaderException {
+    void shouldMatchOnHtmlResponseWhenContentStyleMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -239,7 +236,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldNotMatchOnHtmlResponseWhenContentStyleDoesNotMatch()
+    void shouldNotMatchOnHtmlResponseWhenContentStyleDoesNotMatch()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
@@ -252,7 +249,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnMetaTag() throws HttpMalformedHeaderException {
+    void shouldMatchOnMetaTag() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
@@ -265,7 +262,7 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void shouldMatchOnMetaTagWithMultipleEntries() throws HttpMalformedHeaderException {
+    void shouldMatchOnMetaTagWithMultipleEntries() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(

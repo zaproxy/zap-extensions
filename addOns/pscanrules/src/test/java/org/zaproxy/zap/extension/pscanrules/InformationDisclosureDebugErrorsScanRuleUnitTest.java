@@ -39,7 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class InformationDisclosureDebugErrorsScanRuleUnitTest
+class InformationDisclosureDebugErrorsScanRuleUnitTest
         extends PassiveScannerTest<InformationDisclosureDebugErrorsScanRule> {
     private static final String URI = "https://www.example.com/";
     private static final String DEFAULT_ERROR_MESSAGE = "Internal Server Error";
@@ -84,7 +84,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void shouldFindDebugErrorsFile() {
+    void shouldFindDebugErrorsFile() {
         // Given
         String debugErrorFilePath = "/xml/debug-error-messages.txt";
         // When
@@ -94,7 +94,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfDebugErrorsDisclosed() throws HttpMalformedHeaderException {
+    void alertsIfDebugErrorsDisclosed() throws HttpMalformedHeaderException {
         for (int i = 0; i < DEBUG_ERRORS.size(); i++) {
             String debugError = DEBUG_ERRORS.get(i);
             String responseBody = "<html>" + debugError + "</html>";
@@ -117,7 +117,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void alertsIfMixedCaseDebugErrorsDisclosed() throws HttpMalformedHeaderException {
+    void alertsIfMixedCaseDebugErrorsDisclosed() throws HttpMalformedHeaderException {
         int expectedAlerts = 0;
 
         // Test the normal error message
@@ -163,7 +163,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void passesIfNoDebugErrorsDisclosed() throws HttpMalformedHeaderException {
+    void passesIfNoDebugErrorsDisclosed() throws HttpMalformedHeaderException {
         String[] data =
                 new String[] {
                     "Error Management theory",
@@ -184,7 +184,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void passesIfResponseIsEmpty() throws HttpMalformedHeaderException {
+    void passesIfResponseIsEmpty() throws HttpMalformedHeaderException {
         HttpMessage msg = createHttpMessageWithRespBody("");
 
         scanHttpResponseReceive(msg);
@@ -193,7 +193,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void passesIfResponseIsNotText() throws HttpMalformedHeaderException {
+    void passesIfResponseIsNotText() throws HttpMalformedHeaderException {
         HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
         msg.getResponseHeader()
                 .setHeader(
@@ -206,7 +206,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfJSResponseContainsErrorStringAtHighThreshold()
+    void shouldNotAlertIfJSResponseContainsErrorStringAtHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
@@ -221,7 +221,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfJSResponseContainsErrorStringAtMediumThreshold()
+    void shouldNotAlertIfJSResponseContainsErrorStringAtMediumThreshold()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
@@ -236,7 +236,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfJSResponseContainsErrorStringAtLowThreshold()
+    void shouldAlertIfJSResponseContainsErrorStringAtLowThreshold()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
@@ -254,7 +254,7 @@ public class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
-    public void changeDebugErrorsFile() throws HttpMalformedHeaderException {
+    void changeDebugErrorsFile() throws HttpMalformedHeaderException {
         int expectedAlerts = 0;
         List<String> alternativeDebugErrors =
                 Arrays.asList(

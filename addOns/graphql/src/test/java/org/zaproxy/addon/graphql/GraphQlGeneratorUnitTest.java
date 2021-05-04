@@ -25,18 +25,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class GraphQlGeneratorUnitTest extends TestUtils {
+class GraphQlGeneratorUnitTest extends TestUtils {
     GraphQlGenerator generator;
     GraphQlParam param;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
         param = new GraphQlParam(5, true, 5, 5, true, null, null, null);
     }
 
     @Test
-    public void scalarFieldsOnly() throws Exception {
+    void scalarFieldsOnly() throws Exception {
         generator = new GraphQlGenerator(getHtml("scalarFieldsOnly.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { name id age height human } ";
@@ -44,7 +44,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void zeroDepthObjects() throws Exception {
+    void zeroDepthObjects() throws Exception {
         generator = new GraphQlGenerator(getHtml("zeroDepthObjects.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -53,7 +53,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void nestedObjects() throws Exception {
+    void nestedObjects() throws Exception {
         generator = new GraphQlGenerator(getHtml("nestedObjects.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -62,7 +62,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void circularRelationship() throws Exception {
+    void circularRelationship() throws Exception {
         generator = new GraphQlGenerator(getHtml("circularRelationship.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -71,7 +71,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void scalarArguments() throws Exception {
+    void scalarArguments() throws Exception {
         generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { polygon (sides: 1, regular: true) { perimeter area } } ";
@@ -79,7 +79,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void nonNullableScalarArguments() throws Exception {
+    void nonNullableScalarArguments() throws Exception {
         generator =
                 new GraphQlGenerator(getHtml("nonNullableScalarArguments.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -88,7 +88,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void enumArgument() throws Exception {
+    void enumArgument() throws Exception {
         generator = new GraphQlGenerator(getHtml("enumArgument.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { location (direction: NORTH) } ";
@@ -96,7 +96,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void listAsArgument() throws Exception {
+    void listAsArgument() throws Exception {
         generator = new GraphQlGenerator(getHtml("listAsArgument.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -106,7 +106,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void inputObjectArgument() throws Exception {
+    void inputObjectArgument() throws Exception {
         generator = new GraphQlGenerator(getHtml("inputObjectArgument.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { plot (point: { x: 3.14, y: 3.14 }) } ";
@@ -114,7 +114,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void listsAndNonNull() throws Exception {
+    void listsAndNonNull() throws Exception {
         generator = new GraphQlGenerator(getHtml("listsAndNonNull.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -123,7 +123,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void nonNullableFields() throws Exception {
+    void nonNullableFields() throws Exception {
         generator = new GraphQlGenerator(getHtml("nonNullableFields.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { name phone child { id name school } } ";
@@ -131,7 +131,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void objectsImplementInterface() throws Exception {
+    void objectsImplementInterface() throws Exception {
         generator = new GraphQlGenerator(getHtml("objectsImplementInterface.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -140,7 +140,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void implementMultipleInterfaces() throws Exception {
+    void implementMultipleInterfaces() throws Exception {
         generator =
                 new GraphQlGenerator(getHtml("implementMultipleInterfaces.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -150,7 +150,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void interfaceImplementsInterface() throws Exception {
+    void interfaceImplementsInterface() throws Exception {
         generator =
                 new GraphQlGenerator(getHtml("interfaceImplementsInterface.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -159,7 +159,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void unionType() throws Exception {
+    void unionType() throws Exception {
         generator = new GraphQlGenerator(getHtml("unionType.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -168,7 +168,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void enumType() throws Exception {
+    void enumType() throws Exception {
         generator = new GraphQlGenerator(getHtml("enumType.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { direction } ";
@@ -176,7 +176,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void mutation() throws Exception {
+    void mutation() throws Exception {
         generator = new GraphQlGenerator(getHtml("mutation.graphql"), null, param);
         String mutation = generator.generate(GraphQlGenerator.RequestType.MUTATION);
         String expectedMutation =
@@ -185,7 +185,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void subscription() throws Exception {
+    void subscription() throws Exception {
         generator = new GraphQlGenerator(getHtml("subscription.graphql"), null, param);
         String subscription = generator.generate(GraphQlGenerator.RequestType.SUBSCRIPTION);
         String expectedSubscription = "subscription { newMessage (roomId: 1) { sender text } } ";
@@ -195,7 +195,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     // Tests for Arguments that use variables (i.e. not inline arguments)
 
     @Test
-    public void separatedScalarArguments() throws Exception {
+    void separatedScalarArguments() throws Exception {
         generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -207,7 +207,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void separatedNonNullableScalarArguments() throws Exception {
+    void separatedNonNullableScalarArguments() throws Exception {
         generator =
                 new GraphQlGenerator(getHtml("nonNullableScalarArguments.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
@@ -220,7 +220,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void separatedEnumArgumentVariable() throws Exception {
+    void separatedEnumArgumentVariable() throws Exception {
         generator = new GraphQlGenerator(getHtml("enumArgument.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -231,7 +231,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void separatedListAsArgument() throws Exception {
+    void separatedListAsArgument() throws Exception {
         generator = new GraphQlGenerator(getHtml("listAsArgument.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -246,7 +246,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void separatedInputObjectArgument() throws Exception {
+    void separatedInputObjectArgument() throws Exception {
         generator = new GraphQlGenerator(getHtml("inputObjectArgument.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query ($plot_point: Point2D) { plot (point: $plot_point) } ";
@@ -256,7 +256,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void variableNamesClash() throws Exception {
+    void variableNamesClash() throws Exception {
         generator = new GraphQlGenerator(getHtml("variableNamesClash.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -269,7 +269,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     // Tests for queries that exceed maximum query depth (Lenient Max Query Depth Enabled)
 
     @Test
-    public void lenientDepthDeepNestedLeaf() throws Exception {
+    void lenientDepthDeepNestedLeaf() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("deepNestedLeaf.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -279,7 +279,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void strictDepthScalarArguments() throws Exception {
+    void strictDepthScalarArguments() throws Exception {
         param = new GraphQlParam(1, false, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -288,7 +288,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthScalarArguments() throws Exception {
+    void lenientDepthScalarArguments() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -297,7 +297,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthObjectsImplementInterface() throws Exception {
+    void lenientDepthObjectsImplementInterface() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("objectsImplementInterface.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -306,7 +306,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthUnionType() throws Exception {
+    void lenientDepthUnionType() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("unionType.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -315,7 +315,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthEnumType() throws Exception {
+    void lenientDepthEnumType() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("enumType.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -324,7 +324,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthScalarArgumentsVariables() throws Exception {
+    void lenientDepthScalarArgumentsVariables() throws Exception {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
@@ -337,7 +337,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    public void lenientDepthExceeded() throws Exception {
+    void lenientDepthExceeded() throws Exception {
         param = new GraphQlParam(0, true, 3, 5, true, null, null, null);
         generator = new GraphQlGenerator(getHtml("deepNestedLeaf.graphql"), null, param);
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);

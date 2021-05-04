@@ -44,7 +44,7 @@ public class WSDLSpiderTestCase {
     }
 
     @Test
-    public void parseResourceTest()
+    void parseResourceTest()
             throws NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
         WSDLSpider spider = new WSDLSpider(new WSDLCustomParser(null));

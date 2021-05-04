@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class HttpResponseTagCreatorUnitTest {
+class HttpResponseTagCreatorUnitTest {
 
     private static final String NO_RESPONSE_MESSAGE = "";
     private static final String RESPONSE_HEADER =
@@ -41,7 +41,7 @@ public class HttpResponseTagCreatorUnitTest {
     private static final List<String> NO_EXISTING_TAGS = new ArrayList<>();
 
     @Test
-    public void whenMatchHeader_ShouldReturnTag() throws Exception {
+    void whenMatchHeader_ShouldReturnTag() throws Exception {
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("Server: Apache", "apache");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -52,7 +52,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenMatchBody_ShouldReturnTag() throws Exception {
+    void whenMatchBody_ShouldReturnTag() throws Exception {
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("Test", "tagTest");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -63,7 +63,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenMatchHeaderAndBody_ShouldReturnTag() throws Exception {
+    void whenMatchHeaderAndBody_ShouldReturnTag() throws Exception {
         MatchByRegexTagRule tagRule =
                 new MatchByRegexTagRule("(?s)Server: Apache.*Test", "apacheAndTagTest");
         HttpResponseTagCreator tagCreator =
@@ -75,7 +75,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenMatchAndExistingTags_ShouldReturnAllTags() throws Exception {
+    void whenMatchAndExistingTags_ShouldReturnAllTags() throws Exception {
         List<String> existingTags = Arrays.asList("tagA", "tagB");
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("Server: Apache", "apache");
         HttpResponseTagCreator tagCreator =
@@ -87,7 +87,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenNoRegexExists_ShouldReturnExistingTags() throws Exception {
+    void whenNoRegexExists_ShouldReturnExistingTags() throws Exception {
         List<String> existingTags = Arrays.asList("tagA", "tagB");
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule(NO_MESSAGE_REGEX, "tagC");
         HttpResponseTagCreator tagCreator =
@@ -99,7 +99,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenNotMatch_ShouldReturnExistingTags() throws Exception {
+    void whenNotMatch_ShouldReturnExistingTags() throws Exception {
         List<String> existingTags = Arrays.asList("tagA", "tagB");
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("NotExisting", "tagC");
         HttpResponseTagCreator tagCreator =
@@ -111,7 +111,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenNotMatchDueToMessageEmpty_ShouldReturnExistingTags() throws Exception {
+    void whenNotMatchDueToMessageEmpty_ShouldReturnExistingTags() throws Exception {
         List<String> existingTags = Arrays.asList("tagA", "tagB");
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("NotExisting", "tagC");
         HttpResponseTagCreator tagCreator =
@@ -123,7 +123,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenNotMatchAndNoExistingTags_ShouldReturnEmptyTags() throws Exception {
+    void whenNotMatchAndNoExistingTags_ShouldReturnEmptyTags() throws Exception {
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("NotExisting", "tagC");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -134,7 +134,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenMatchHeaderByRegex_ShouldReturnTag() throws Exception {
+    void whenMatchHeaderByRegex_ShouldReturnTag() throws Exception {
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("Se.ver.*ache.*29", "tagC");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -145,7 +145,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenMatchBodyByRegex_ShouldReturnTag() throws Exception {
+    void whenMatchBodyByRegex_ShouldReturnTag() throws Exception {
         MatchByRegexTagRule tagRule = new MatchByRegexTagRule("(?s)Test.*MyPage", "tagC");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -156,7 +156,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenExtractHeader_ShouldReturnTag() throws Exception {
+    void whenExtractHeader_ShouldReturnTag() throws Exception {
         ExtractByRegexTagRule tagRule = new ExtractByRegexTagRule("Server: (.*?)\\/.*");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -167,7 +167,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenExtractWithoutRegex_ShouldReturnEmptyTags() throws Exception {
+    void whenExtractWithoutRegex_ShouldReturnEmptyTags() throws Exception {
         ExtractByRegexTagRule tagRule = new ExtractByRegexTagRule("");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);
@@ -178,7 +178,7 @@ public class HttpResponseTagCreatorUnitTest {
     }
 
     @Test
-    public void whenExtractRegexNothingMatch_ShouldReturnEmptyTags() throws Exception {
+    void whenExtractRegexNothingMatch_ShouldReturnEmptyTags() throws Exception {
         ExtractByRegexTagRule tagRule = new ExtractByRegexTagRule("NotExisting: (.*?)");
         HttpResponseTagCreator tagCreator =
                 new HttpResponseTagCreator(tagRule, RESPONSE_MESSAGE, NO_EXISTING_TAGS);

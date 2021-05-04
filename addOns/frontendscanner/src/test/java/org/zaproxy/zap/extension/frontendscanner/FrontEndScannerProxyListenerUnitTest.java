@@ -39,7 +39,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link FrontEndScannerProxyListener}. */
-public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
+class FrontEndScannerProxyListenerUnitTest extends TestUtils {
 
     private static final String HOSTNAME = "example.com";
 
@@ -48,7 +48,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     private HttpMessage msg;
 
     @BeforeEach
-    public void setUp() throws URIException, HttpMalformedHeaderException {
+    void setUp() throws URIException, HttpMalformedHeaderException {
         FrontEndScannerAPI api = mock(FrontEndScannerAPI.class);
         options = mock(FrontEndScannerOptions.class);
 
@@ -64,7 +64,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(strings = {"Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"})
-    public void testRemovesCSPFromHttpResponsesIfInjecting(String header) {
+    void testRemovesCSPFromHttpResponsesIfInjecting(String header) {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody =
@@ -82,7 +82,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectTheFrontEndTrackerBeforeOtherScriptsInHeadTag() {
+    void testInjectTheFrontEndTrackerBeforeOtherScriptsInHeadTag() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody =
@@ -103,7 +103,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectAfterMetaTagInHeadTag() {
+    void testInjectAfterMetaTagInHeadTag() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><head><meta></head><body></body></html>";
@@ -123,7 +123,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectAfterAllMetaTagsInHeadTag() {
+    void testInjectAfterAllMetaTagsInHeadTag() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody =
@@ -144,7 +144,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectionShouldBeSuccessfulWithoutHead() {
+    void testInjectionShouldBeSuccessfulWithoutHead() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><body></body></head></html>";
@@ -164,7 +164,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectionShouldBeSuccessfulWithEmptyHead() {
+    void testInjectionShouldBeSuccessfulWithEmptyHead() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
@@ -184,7 +184,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectionShouldBeSuccessfulWithoutHtmlTag() {
+    void testInjectionShouldBeSuccessfulWithoutHtmlTag() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<head></head><body></body>";
@@ -204,7 +204,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testInjectionShouldBeSuccessfulWithoutHtmlNorHeadTag() {
+    void testInjectionShouldBeSuccessfulWithoutHtmlNorHeadTag() {
         // Given
         when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<body></body>";
@@ -225,7 +225,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(strings = {"Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"})
-    public void testCSPisNotRemovedIfNotEnabledInOptions(String header) {
+    void testCSPisNotRemovedIfNotEnabledInOptions(String header) {
         // Given
         when(options.isEnabled()).thenReturn(false);
         String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
@@ -242,7 +242,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
-    public void testNothingIsInjectedIfNotEnabledInOptions() {
+    void testNothingIsInjectedIfNotEnabledInOptions() {
         // Given
         when(options.isEnabled()).thenReturn(false);
         String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";

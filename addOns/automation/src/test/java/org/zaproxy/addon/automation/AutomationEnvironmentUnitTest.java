@@ -44,23 +44,23 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
-public class AutomationEnvironmentUnitTest {
+class AutomationEnvironmentUnitTest {
 
     private Session session;
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
         session = mock(Session.class);
         Context context = mock(Context.class);
@@ -68,7 +68,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfNoData() {
+    void shouldFailIfNoData() {
         // Given
         String contextStr = "env:";
         Yaml yaml = new Yaml();
@@ -86,7 +86,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfNoContexts() {
+    void shouldFailIfNoContexts() {
         // Given
         String contextStr = "env:\n" + "  contexts:\n";
         Yaml yaml = new Yaml();
@@ -104,7 +104,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfBadContexts() {
+    void shouldFailIfBadContexts() {
         // Given
         String contextStr = "env:\n" + "  contexts:\n" + "    param1: value 1\n";
         Yaml yaml = new Yaml();
@@ -122,7 +122,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfNoContextUrl() {
+    void shouldFailIfNoContextUrl() {
         // Given
         String contextStr = "env:\n" + "  contexts:\n" + "    - name: test\n" + "      url: \n";
         Yaml yaml = new Yaml();
@@ -140,7 +140,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfNoContextName() {
+    void shouldFailIfNoContextName() {
         // Given
         String contextStr =
                 "env:\n"
@@ -162,7 +162,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldFailIfBadContextUrl() {
+    void shouldFailIfBadContextUrl() {
         // Given
         String contextStr =
                 "env:\n" + "  contexts:\n" + "    - name: test\n" + "      url: Not a url\n";
@@ -183,7 +183,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldSucceedWithValidContext() {
+    void shouldSucceedWithValidContext() {
         // Given
         String contextName = "context 1";
         String exampleUrl = "https://www.example.com/";
@@ -218,7 +218,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldSucceedWith2ValidContexts() {
+    void shouldSucceedWith2ValidContexts() {
         // Given
         String contextStr =
                 "env:\n"
@@ -249,7 +249,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldSetValidParams() {
+    void shouldSetValidParams() {
         // Given
         String contextStr =
                 "env:\n"
@@ -280,7 +280,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldWarnOnUnrecognisedEnvParams() {
+    void shouldWarnOnUnrecognisedEnvParams() {
         // Given
         String contextStr =
                 "env:\n"
@@ -311,7 +311,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldWarnOnUnrecognisedContextParams() {
+    void shouldWarnOnUnrecognisedContextParams() {
         // Given
         String contextStr =
                 "env:\n"
@@ -342,7 +342,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldBeTimeToQuitOnErrorIfOptionSet() {
+    void shouldBeTimeToQuitOnErrorIfOptionSet() {
         // Given
         String contextStr =
                 "env:\n"
@@ -366,7 +366,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldNotBeTimeToQuitOnErrorIfOptionNotSet() {
+    void shouldNotBeTimeToQuitOnErrorIfOptionNotSet() {
         // Given
         String contextStr =
                 "env:\n"
@@ -390,7 +390,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldBeTimeToQuitOnWarningIfOptionSet() {
+    void shouldBeTimeToQuitOnWarningIfOptionSet() {
         // Given
         String contextStr =
                 "env:\n"
@@ -414,7 +414,7 @@ public class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldNotBeTimeToQuitOnWarningIfOptionNotSet() {
+    void shouldNotBeTimeToQuitOnWarningIfOptionNotSet() {
         // Given
         String contextStr =
                 "env:\n"

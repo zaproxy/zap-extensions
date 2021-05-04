@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-public class Utf8UtilUnitTest {
+class Utf8UtilUnitTest {
 
     @Test
-    public void shouldEncodeEmptyBytesToEmptyString() throws Exception {
+    void shouldEncodeEmptyBytesToEmptyString() throws Exception {
         // given
         byte[] utf8 = new byte[0];
         // when
@@ -39,7 +39,7 @@ public class Utf8UtilUnitTest {
     }
 
     @Test
-    public void shouldFailOnGivenInvalidUtf8Bytes() throws Exception {
+    void shouldFailOnGivenInvalidUtf8Bytes() throws Exception {
         // given
         byte[] invalidUtf8 = new byte[] {-1};
         // when / then
@@ -47,7 +47,7 @@ public class Utf8UtilUnitTest {
     }
 
     @Test
-    public void shouldEncodeSimpleUtf8Bytes() throws Exception {
+    void shouldEncodeSimpleUtf8Bytes() throws Exception {
         // given
         byte[] utf8 = new byte[] {49, 50, 51};
         // when

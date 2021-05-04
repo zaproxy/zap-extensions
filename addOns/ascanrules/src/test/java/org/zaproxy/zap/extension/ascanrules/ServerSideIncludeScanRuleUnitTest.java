@@ -28,8 +28,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link ServerSideIncludeScanRule}. */
-public class ServerSideIncludeScanRuleUnitTest
-        extends ActiveScannerTest<ServerSideIncludeScanRule> {
+class ServerSideIncludeScanRuleUnitTest extends ActiveScannerTest<ServerSideIncludeScanRule> {
 
     @Override
     protected ServerSideIncludeScanRule createScanner() {
@@ -37,7 +36,7 @@ public class ServerSideIncludeScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetLinuxTech() {
+    void shouldTargetLinuxTech() {
         // Given
         TechSet techSet = techSet(Tech.Linux);
         // When
@@ -47,7 +46,7 @@ public class ServerSideIncludeScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetMacOsTech() {
+    void shouldTargetMacOsTech() {
         // Given
         TechSet techSet = techSet(Tech.MacOS);
         // When
@@ -57,7 +56,7 @@ public class ServerSideIncludeScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetWindowsTech() {
+    void shouldTargetWindowsTech() {
         // Given
         TechSet techSet = techSet(Tech.Windows);
         // When
@@ -67,7 +66,7 @@ public class ServerSideIncludeScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonLinuxMacOsWindowsTechs() {
+    void shouldNotTargetNonLinuxMacOsWindowsTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.Linux, Tech.MacOS, Tech.Windows);
         // When

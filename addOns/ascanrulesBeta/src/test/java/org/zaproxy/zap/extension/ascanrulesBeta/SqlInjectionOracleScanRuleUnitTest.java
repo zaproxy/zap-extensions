@@ -34,8 +34,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionOracleScanRule}. */
-public class SqlInjectionOracleScanRuleUnitTest
-        extends ActiveScannerTest<SqlInjectionOracleScanRule> {
+class SqlInjectionOracleScanRuleUnitTest extends ActiveScannerTest<SqlInjectionOracleScanRule> {
 
     @Override
     protected SqlInjectionOracleScanRule createScanner() {
@@ -43,7 +42,7 @@ public class SqlInjectionOracleScanRuleUnitTest
     }
 
     @Test
-    public void shouldTargetOracleTech() throws Exception {
+    void shouldTargetOracleTech() throws Exception {
         // Given
         TechSet techSet = techSet(Tech.Oracle);
         // When
@@ -53,7 +52,7 @@ public class SqlInjectionOracleScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonOracleTechs() throws Exception {
+    void shouldNotTargetNonOracleTechs() throws Exception {
         // Given
         TechSet techSet = techSetWithout(Tech.Oracle);
         // When
@@ -63,7 +62,7 @@ public class SqlInjectionOracleScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfSleepTimesGetLonger() throws Exception {
+    void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
@@ -104,7 +103,7 @@ public class SqlInjectionOracleScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
         String test = "/shouldNotReportGeneralTimingIssue/";
 
         this.nano.addHandler(

@@ -44,7 +44,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link PathTraversalScanRule}. */
-public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanRule> {
+class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -70,7 +70,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseDoesNotListDirectories() throws Exception {
+    void shouldNotAlertIfAttackResponseDoesNotListDirectories() throws Exception {
         // Given
         rule.init(getHttpMessage("/?p=v"), parent);
         // When
@@ -81,7 +81,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldAlertIfAttackResponseListsWindowsDirectories() throws Exception {
+    void shouldAlertIfAttackResponseListsWindowsDirectories() throws Exception {
         // Given
         nano.addHandler(new ListWinDirsOnAttack("/", "p", "c:/"));
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -99,7 +99,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldAlertIfAttackResponseListsLinuxDirectories() throws Exception {
+    void shouldAlertIfAttackResponseListsLinuxDirectories() throws Exception {
         // Given
         nano.addHandler(new ListLinuxDirsOnAttack("/", "p", "/"));
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -117,7 +117,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertIfAttackResponseListsBogusLinuxDirectories() throws Exception {
+    void shouldNotAlertIfAttackResponseListsBogusLinuxDirectories() throws Exception {
         // Given
         nano.addHandler(new ListBogusLinuxDirsOnAttack("/", "p", "/"));
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -128,7 +128,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertIfLocalFilePathTraversalDoesNotExist() throws Exception {
+    void shouldNotAlertIfLocalFilePathTraversalDoesNotExist() throws Exception {
         // Given
         nano.addHandler(new LocalFileHandler("/", "p", ""));
         rule.init(getHttpMessage("/?p"), parent);
@@ -140,7 +140,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertIfOriginalResponseAlreadyContainsTheEvidence() throws Exception {
+    void shouldNotAlertIfOriginalResponseAlreadyContainsTheEvidence() throws Exception {
         // Given
         String filePath = "/static-file";
         String fileContent = ListWinDirsOnAttack.DIRS_LISTING;
@@ -161,7 +161,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+    void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
@@ -177,7 +177,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
+    void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
@@ -196,8 +196,8 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"LOW", "MEDIUM"})
-    public void shouldAlertOnCheckFiveBelowHighThresholdUnderValidConditions(
-            AlertThreshold alertThreshold) throws HttpMalformedHeaderException {
+    void shouldAlertOnCheckFiveBelowHighThresholdUnderValidConditions(AlertThreshold alertThreshold)
+            throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";
         HttpMessage msg = getHttpMessage(path + "?p=a");
@@ -213,7 +213,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertOnCheckFiveAtHighThresholdUnderValidConditions()
+    void shouldNotAlertOnCheckFiveAtHighThresholdUnderValidConditions()
             throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";
@@ -228,7 +228,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidInitialConditions()
+    void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidInitialConditions()
             throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";
@@ -243,7 +243,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
     }
 
     @Test
-    public void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidConditions()
+    void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidConditions()
             throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";

@@ -25,7 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.zap.utils.ContentMatcher;
 
-public class ApplicationErrorScanRuleRegexMatcherUnitTest {
+class ApplicationErrorScanRuleRegexMatcherUnitTest {
     private static final String INPUT_PREFIX = "<b>Some text before</b>";
     private static final String INPUT_SUFFIX = "<b>Some text after</b>";
 
@@ -71,7 +71,7 @@ public class ApplicationErrorScanRuleRegexMatcherUnitTest {
                 "<h1>Servlet Error: test</h1>",
                 "Servlet Error</title>"
             })
-    public void shouldRegexMatchErrorMessage(String input) {
+    void shouldRegexMatchErrorMessage(String input) {
         assertNotNull(MATCHER.findInContent(INPUT_PREFIX + input + INPUT_SUFFIX));
     }
 }

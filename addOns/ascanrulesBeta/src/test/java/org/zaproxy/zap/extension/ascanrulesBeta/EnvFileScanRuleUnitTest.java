@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 
 /** Unit test for {@link EnvFileScanRule}. */
-public class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
+class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
 
     private static final String RELEVANT_BODY =
             "DB_CONNECTION=mysql\n"
@@ -102,7 +102,7 @@ public class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFi
     }
 
     @Test
-    public void shouldNotAlertWhenRequestIsSuccessfulButContentNotRelevant() throws Exception {
+    void shouldNotAlertWhenRequestIsSuccessfulButContentNotRelevant() throws Exception {
         // Given
         String path = "/.env";
         this.nano.addHandler(

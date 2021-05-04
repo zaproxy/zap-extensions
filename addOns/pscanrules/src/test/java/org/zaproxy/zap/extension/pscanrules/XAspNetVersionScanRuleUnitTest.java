@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionScanRule> {
+class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionScanRule> {
 
     @Override
     protected XAspNetVersionScanRule createScanner() {
@@ -34,7 +34,7 @@ public class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVe
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsXAspNetVersionHeader()
+    void shouldRaiseAlertWhenResponseContainsXAspNetVersionHeader()
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNet-Version");
@@ -45,7 +45,7 @@ public class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVe
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsXAspNetMvcVersionHeader()
+    void shouldRaiseAlertWhenResponseContainsXAspNetMvcVersionHeader()
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNetMvc-Version");
@@ -56,7 +56,7 @@ public class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVe
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenResponseDoesNotContainsXAspNetVersionHeader()
+    void shouldNotRaiseAlertWhenResponseDoesNotContainsXAspNetVersionHeader()
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("dummy");

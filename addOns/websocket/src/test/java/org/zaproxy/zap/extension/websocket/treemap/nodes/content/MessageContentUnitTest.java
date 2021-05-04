@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.websocket.treemap.nodes.content;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -43,14 +44,14 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
-public class MessageContentUnitTest extends WebSocketAddonTestUtils {
+class MessageContentUnitTest extends WebSocketAddonTestUtils {
 
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
     TreeNode root;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.setUpMessages();
         namer = new WebSocketSimpleNodeNamer();
         defaultHostName = new URI("hostname", true);
@@ -63,7 +64,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldMessagesBeEquals() {
+    void shouldMessagesBeEquals() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -83,7 +84,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldMessageShouldBeGreater() {
+    void shouldMessageShouldBeGreater() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -104,7 +105,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldNotBeEqualWithDifferentDirection() {
+    void shouldNotBeEqualWithDifferentDirection() {
 
         // Given
         WebSocketChannelDTO channel1 = getWebSocketChannelDTO(1, defaultHostName.toString());
@@ -120,12 +121,12 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         MessageContent messageContent2 = new MessageContent(namer, message2);
 
         // Then
-        assertTrue(messageContent1.compareTo(messageContent2) != 0);
-        assertTrue(messageContent2.compareTo(messageContent1) != 0);
+        assertNotEquals(0, messageContent1.compareTo(messageContent2));
+        assertNotEquals(0, messageContent2.compareTo(messageContent1));
     }
 
     @Test
-    public void shouldCloneBeTheSame() {
+    void shouldCloneBeTheSame() {
 
         // Given
         MessageContent messageContent =
@@ -147,8 +148,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetHostNode()
-            throws URIException, DatabaseException, HttpMalformedHeaderException {
+    void shouldGetHostNode() throws URIException, DatabaseException, HttpMalformedHeaderException {
 
         // Given
         URI hostUri1 = new URI("https", null, defaultHostName.toString(), -1, "/first");
@@ -170,7 +170,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     }
 
     @Test
-    public void shouldGetMessagesPerHost()
+    void shouldGetMessagesPerHost()
             throws URIException, DatabaseException, HttpMalformedHeaderException {
         String[] hosts = {"hostname_1", "hostname_2"};
         ArrayList<TreeNode> hostNodes = new ArrayList<>();

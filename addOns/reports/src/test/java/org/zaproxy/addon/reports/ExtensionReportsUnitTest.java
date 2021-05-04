@@ -59,7 +59,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ExtensionReportsUnitTest {
+class ExtensionReportsUnitTest {
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
@@ -76,7 +76,7 @@ public class ExtensionReportsUnitTest {
     private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -87,7 +87,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExtractExpectedParams() {
+    void shouldExtractExpectedParams() {
         // Given
         String pattern = ReportParam.DEFAULT_NAME_PATTERN;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -101,7 +101,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantContextUrls() {
+    void shouldIncludeRelevantContextUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com.*");
@@ -133,7 +133,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantContextUrls() {
+    void shouldExcludeRelevantContextUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -165,7 +165,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantSiteUrls() {
+    void shouldIncludeRelevantSiteUrls() {
         // Given
         String site1 = "https://www.example.com";
         String site2 = "https://www.example.com2";
@@ -197,7 +197,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantSiteUrls() {
+    void shouldExcludeRelevantSiteUrls() {
         // Given
         String site1 = "https://www.example.com/";
         String site2 = "https://www.example.com2/";
@@ -229,7 +229,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldIncludeRelevantContextAndSiteUrls() {
+    void shouldIncludeRelevantContextAndSiteUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com.*");
@@ -265,7 +265,7 @@ public class ExtensionReportsUnitTest {
     }
 
     @Test
-    public void shouldExcludeRelevantContextAndSiteUrls() {
+    void shouldExcludeRelevantContextAndSiteUrls() {
         // Given
         Context context = new Context(null, 1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
@@ -320,7 +320,7 @@ public class ExtensionReportsUnitTest {
                 "traditional-md",
                 "traditional-xml"
             })
-    public void shouldGenerateReport(String reportName) throws IOException, DocumentException {
+    void shouldGenerateReport(String reportName) throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
@@ -337,8 +337,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAllSectionsInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludeAllSectionsInReport(String reportName) throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
@@ -362,7 +361,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAlertSummarySectionInReport(String reportName)
+    void shouldIncludeAlertSummarySectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -385,7 +384,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeInstanceSummarySectionInReport(String reportName)
+    void shouldIncludeInstanceSummarySectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -409,7 +408,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    public void shouldIncludeAlertDetailsSectionInReport(String reportName)
+    void shouldIncludeAlertDetailsSectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -432,7 +431,7 @@ public class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html-plus"})
-    public void shouldIncludePassingRulesSectionInReport(String reportName)
+    void shouldIncludePassingRulesSectionInReport(String reportName)
             throws IOException, DocumentException {
         // Given
         ExtensionReports extRep = new ExtensionReports();
@@ -529,7 +528,7 @@ public class ExtensionReportsUnitTest {
                 "traditional-html",
                 "traditional-html-plus"
             })
-    public void shouldGenerateExpectedReport(String templateName)
+    void shouldGenerateExpectedReport(String templateName)
             throws IOException, DocumentException, SAXException, ParserConfigurationException {
         // Given
         File t = new File("src/main/zapHomeFiles/reports/" + templateName + "/template.yaml");

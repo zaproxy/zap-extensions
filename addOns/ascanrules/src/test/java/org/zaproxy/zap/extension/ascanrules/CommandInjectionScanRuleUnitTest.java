@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -47,7 +48,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link CommandInjectionScanRule}. */
-public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectionScanRule> {
+class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -73,7 +74,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldTargetLinuxTech() {
+    void shouldTargetLinuxTech() {
         // Given
         TechSet techSet = techSet(Tech.Linux);
         // When
@@ -83,7 +84,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldTargetMacOsTech() {
+    void shouldTargetMacOsTech() {
         // Given
         TechSet techSet = techSet(Tech.MacOS);
         // When
@@ -93,7 +94,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldTargetWindowsTech() {
+    void shouldTargetWindowsTech() {
         // Given
         TechSet techSet = techSet(Tech.Windows);
         // When
@@ -103,7 +104,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldNotTargetNonLinuxMacOsWindowsTechs() {
+    void shouldNotTargetNonLinuxMacOsWindowsTechs() {
         // Given
         TechSet techSet = techSetWithout(Tech.Linux, Tech.MacOS, Tech.Windows);
         // When
@@ -113,15 +114,16 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldFailToInitWithoutConfig() throws Exception {
+    void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         CommandInjectionScanRule scanner = new CommandInjectionScanRule();
+        HttpMessage msg = getHttpMessage("");
         // When / Then
-        assertThrows(NullPointerException.class, () -> scanner.init(getHttpMessage(""), parent));
+        assertThrows(NullPointerException.class, () -> scanner.init(msg, parent));
     }
 
     @Test
-    public void shouldInitWithConfig() throws Exception {
+    void shouldInitWithConfig() throws Exception {
         // Given
         CommandInjectionScanRule scanner = new CommandInjectionScanRule();
         scanner.setConfig(new ZapXmlConfiguration());
@@ -130,7 +132,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldUse5SecsByDefaultForTimeBasedAttacks() throws Exception {
+    void shouldUse5SecsByDefaultForTimeBasedAttacks() throws Exception {
         // Given / When
         int time = rule.getTimeSleep();
         // Then
@@ -138,7 +140,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldUseTimeDefinedInConfigForTimeBasedAttacks() throws Exception {
+    void shouldUseTimeDefinedInConfigForTimeBasedAttacks() throws Exception {
         // Given
         rule.setConfig(configWithSleepRule("10"));
         // When
@@ -148,8 +150,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks()
-            throws Exception {
+    void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
         // Given
         rule.setConfig(configWithSleepRule("not a valid value"));
         // When
@@ -159,7 +160,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldUseSpecifiedTimeInAllTimeBasedPayloads() throws Exception {
+    void shouldUseSpecifiedTimeInAllTimeBasedPayloads() throws Exception {
         // Given
         String sleepTime = "987";
         PayloadCollectorHandler payloadCollector =
@@ -185,7 +186,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+    void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
@@ -200,7 +201,7 @@ public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandI
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
+    void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =

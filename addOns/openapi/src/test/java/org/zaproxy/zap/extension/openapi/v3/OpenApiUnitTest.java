@@ -47,11 +47,10 @@ import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiUnitTest extends AbstractServerTest {
+class OpenApiUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldExplorePetStoreJson()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldExplorePetStoreJson() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
 
@@ -84,8 +83,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreYaml()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldExplorePetStoreYaml() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYaml/";
         String defnName = "defn.yaml";
 
@@ -118,7 +116,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreJsonOverrideHost()
+    void shouldExplorePetStoreJsonOverrideHost()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -154,7 +152,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreYamlWithExamples()
+    void shouldExplorePetStoreYamlWithExamples()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYamlExamples/";
         String defnName = "defn.yaml";
@@ -201,7 +199,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreWithDefaultUrl()
+    void shouldExplorePetStoreWithDefaultUrl()
             throws NullPointerException, IOException, SwaggerException {
         // Given
         String test = "/PetStoreJson/";
@@ -241,7 +239,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldFailToExplorePetStoreWithoutHost() throws Exception {
+    void shouldFailToExplorePetStoreWithoutHost() throws Exception {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -262,7 +260,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldFailToExplorePetStoreWithoutFullURL() throws Exception {
+    void shouldFailToExplorePetStoreWithoutFullURL() throws Exception {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
 
@@ -282,7 +280,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreYamlLoop()
+    void shouldExplorePetStoreYamlLoop()
             throws NullPointerException, IOException, SwaggerException {
         // loops are not causing any serious issues
         // the result will be a string parameter instead of a ref that is part of a the loop
@@ -321,8 +319,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldUseValueGenerator()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldUseValueGenerator() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
         this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
@@ -389,7 +386,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldInterpretServerVariables()
+    void shouldInterpretServerVariables()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYaml/";
         String defnName = "defn.yaml";
@@ -420,8 +417,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldGenerateAcceptHeaders()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldGenerateAcceptHeaders() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
 
@@ -449,7 +445,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldGenerateContentTypeHeaders()
+    void shouldGenerateContentTypeHeaders()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";

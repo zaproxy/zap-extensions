@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link CookieUtils}. */
-public class CookieUtilsUnitTest {
+class CookieUtilsUnitTest {
 
     private static final String EMPTY_HEADER_VALUE = "";
     private static final String EMPTY_ATTRIBUTE_NAME = "";
 
     @Test
-    public void shouldFailToCheckNullHeaderValue() {
+    void shouldFailToCheckNullHeaderValue() {
         // Given
         String headerValue = null;
         // When / Then
@@ -43,7 +43,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFailToCheckNullAttributeName() {
+    void shouldFailToCheckNullAttributeName() {
         // Given
         String attributeName = null;
         // When / Then
@@ -53,7 +53,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindEmptyAttribute() {
+    void shouldNotFindEmptyAttribute() {
         // Given
         String headerValue = "Name=Value; Attribute1; Attribute2=AV2; ;;";
         // When
@@ -63,7 +63,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeInEmptyHeader() {
+    void shouldNotFindAttributeInEmptyHeader() {
         // Given
         String attribute = "Attribute1";
         // When
@@ -73,7 +73,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeIfHeaderHasNoAttributes() {
+    void shouldNotFindAttributeIfHeaderHasNoAttributes() {
         // Given
         String headerValue = "Name=Value";
         String attribute = "Attribute1";
@@ -84,7 +84,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeInNamelessCookie() {
+    void shouldNotFindAttributeInNamelessCookie() {
         // Given
         String headerValue = "=Value; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
@@ -95,7 +95,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeIfCookieHasNoNameValueSepartor() {
+    void shouldNotFindAttributeIfCookieHasNoNameValueSepartor() {
         // Given
         String headerValue = "Name; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
@@ -106,7 +106,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeEvenIfCookieNameIsEqual() {
+    void shouldNotFindAttributeEvenIfCookieNameIsEqual() {
         // Given
         String headerValue = "Attribute1=Value; Attribute2=AV2";
         String attribute = "Attribute1";
@@ -117,7 +117,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeEvenIfCookieValueIsEqual() {
+    void shouldNotFindAttributeEvenIfCookieValueIsEqual() {
         // Given
         String headerValue = "Name=Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
@@ -128,7 +128,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindAttributeEvenIfAnAttributeValueIsEqual() {
+    void shouldNotFindAttributeEvenIfAnAttributeValueIsEqual() {
         // Given
         String headerValue = "Name=Value; Attribute2=Attribute1";
         String attribute = "Attribute1";
@@ -139,7 +139,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindAttributeInValidCookieHeader() {
+    void shouldFindAttributeInValidCookieHeader() {
         // Given
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
@@ -150,7 +150,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindAttributeEvenIfCookieHasNoValue() {
+    void shouldFindAttributeEvenIfCookieHasNoValue() {
         // Given
         String headerValue = "Cookie=; Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
@@ -161,7 +161,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindAttributeEvenIfItHasValue() {
+    void shouldFindAttributeEvenIfItHasValue() {
         // Given
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "Attribute2";
@@ -172,7 +172,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindAttributeEvenIfItHasSpacesInName() {
+    void shouldFindAttributeEvenIfItHasSpacesInName() {
         // Given
         String headerValue = "Cookie=Value; Attribute1;  Attribute2  =AV2";
         String attribute = "Attribute2";
@@ -183,7 +183,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindAttributeEvenIfItHasDifferentCase() {
+    void shouldFindAttributeEvenIfItHasDifferentCase() {
         // Given
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "aTtRiBuTe2";
@@ -194,7 +194,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldNotFindCookiePlusNameIfNameIsNull() {
+    void shouldNotFindCookiePlusNameIfNameIsNull() {
         // Given
         String fullHeader = "Set-Cookie: foo; Attribute1";
         String headerValue = "foo; Attribute1";
@@ -205,7 +205,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldKnowThatNameDoesNotIncludeSemiColon() {
+    void shouldKnowThatNameDoesNotIncludeSemiColon() {
         // Given
         String fullHeader = "Set-Cookie: foo; Attribute1; Attribute2=AV2";
         String headerValue = "foo; Attribute1; Attribute2=AV2";
@@ -216,7 +216,7 @@ public class CookieUtilsUnitTest {
     }
 
     @Test
-    public void shouldFindCookiePlusNameIfWellFormed() {
+    void shouldFindCookiePlusNameIfWellFormed() {
         // Given
         String fullHeader = "Set-Cookie: name=value; Attribute1; Attribute2=AV2";
         String headerValue = "name=value; Attribute1; Attribute2=AV2";

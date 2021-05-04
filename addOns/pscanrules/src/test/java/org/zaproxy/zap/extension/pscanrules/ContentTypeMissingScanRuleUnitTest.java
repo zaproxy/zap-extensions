@@ -28,8 +28,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 
-public class ContentTypeMissingScanRuleUnitTest
-        extends PassiveScannerTest<ContentTypeMissingScanRule> {
+class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeMissingScanRule> {
 
     @Override
     protected ContentTypeMissingScanRule createScanner() {
@@ -54,7 +53,7 @@ public class ContentTypeMissingScanRuleUnitTest
     }
 
     @Test
-    public void shoudNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
+    void shoudNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
@@ -66,7 +65,7 @@ public class ContentTypeMissingScanRuleUnitTest
     }
 
     @Test
-    public void shoudNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
+    void shoudNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
@@ -78,8 +77,7 @@ public class ContentTypeMissingScanRuleUnitTest
     }
 
     @Test
-    public void shoudAlertIfContentTypePresentButEmptyInResponse()
-            throws HttpMalformedHeaderException {
+    void shoudAlertIfContentTypePresentButEmptyInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
@@ -93,7 +91,7 @@ public class ContentTypeMissingScanRuleUnitTest
     }
 
     @Test
-    public void shoudAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
+    void shoudAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         // When

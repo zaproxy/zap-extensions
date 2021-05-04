@@ -40,27 +40,27 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.I18N;
 
-public class AutomationJobUnitTest {
+class AutomationJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         mockedCmdLine.close();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @Test
-    public void shouldChangeName() {
+    void shouldChangeName() {
         // Given
         AutomationJob job = new AutomationJobImpl();
         String newName = "new-name";
@@ -80,7 +80,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldExtractExpectedParams() {
+    void shouldExtractExpectedParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -99,7 +99,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldExcludeNamedParams() {
+    void shouldExcludeNamedParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job =
@@ -129,7 +129,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldSetParams() {
+    void shouldSetParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -165,7 +165,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    public void shouldSetCaseInsensitiveEnum() {
+    void shouldSetCaseInsensitiveEnum() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -186,7 +186,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldWarnOnUnknownParam() {
+    void shouldWarnOnUnknownParam() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -208,7 +208,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldIgnoreNullParamValue() {
+    void shouldIgnoreNullParamValue() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -227,7 +227,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldFailOnBadInt() {
+    void shouldFailOnBadInt() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -248,7 +248,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldFailOnBadInteger() {
+    void shouldFailOnBadInteger() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -269,7 +269,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldFailOnBadBool() {
+    void shouldFailOnBadBool() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -290,7 +290,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldFailOnBadEnum() {
+    void shouldFailOnBadEnum() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -310,7 +310,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldIgnoreNullParams() {
+    void shouldIgnoreNullParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
@@ -326,7 +326,7 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldFailOnBadOptionsGetterName() {
+    void shouldFailOnBadOptionsGetterName() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc, "getBadTestParam");
@@ -345,7 +345,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldReturnDefaultConfigFileData() {
+    void shouldReturnDefaultConfigFileData() {
         // Given
         String expectedParams =
                 "  - type: type\n"
@@ -369,7 +369,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldReturnSetConfigFileData() {
+    void shouldReturnSetConfigFileData() {
         // Given
         String expectedParams =
                 "  - type: type\n"
@@ -399,7 +399,7 @@ public class AutomationJobUnitTest {
     }
 
     @Test
-    public void shouldCorrectlyOrderJobs() {
+    void shouldCorrectlyOrderJobs() {
         // Given
         AutomationJob lastJob =
                 new AutomationJobImpl() {

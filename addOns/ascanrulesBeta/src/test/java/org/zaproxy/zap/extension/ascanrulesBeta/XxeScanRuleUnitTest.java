@@ -43,7 +43,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
+class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
 
     @Override
     protected XxeScanRule createScanner() {
@@ -51,7 +51,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void replaceElementAndRemoveHeader() {
+    void replaceElementAndRemoveHeader() {
         // Given
         String requestBody = "<?xml version=\"1.0\"?><comment><text>\ntest\n</text></comment>";
         // When
@@ -63,7 +63,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void doNotReplaceAttributes() {
+    void doNotReplaceAttributes() {
         // Given
         String requestBody =
                 "<?xml version=\"1.0\"?><comment><text abc=\"123\">test</text></comment>";
@@ -76,7 +76,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void replaceMultipleElementsAndRemoveHeader() {
+    void replaceMultipleElementsAndRemoveHeader() {
         // Given
         String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
         String requestBody = "\n" + "<?xml version=\"1.0\"?>\n" + sampleXmlMessage;
@@ -108,7 +108,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void replaceElementsNested() {
+    void replaceElementsNested() {
         // Given
         String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
         String requestBody = "\n" + "\n" + sampleXmlMessage;
@@ -142,7 +142,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void replaceElementsBase() {
+    void replaceElementsBase() {
         // Given
         String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
         String requestBody = "\n" + "\n" + sampleXmlMessage;
@@ -177,7 +177,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void shouldScanOnlyIfRequestContentTypeIsXml() throws HttpMalformedHeaderException {
+    void shouldScanOnlyIfRequestContentTypeIsXml() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = this.getHttpMessage("/test");
         msg.getRequestHeader().setHeader("Content-Type", "application/json");
@@ -198,7 +198,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     @EnumSource(
             value = NanoHTTPD.Response.Status.class,
             names = {"OK", "BAD_REQUEST"})
-    public void shouldAlertWhenLocalFileReflectedInResponse(NanoHTTPD.Response.Status status)
+    void shouldAlertWhenLocalFileReflectedInResponse(NanoHTTPD.Response.Status status)
             throws HttpMalformedHeaderException {
         // Given
         String test = "/test";
@@ -227,7 +227,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     @EnumSource(
             value = NanoHTTPD.Response.Status.class,
             names = {"OK", "BAD_REQUEST"})
-    public void shouldAlertWhenLocalFileIncludedInResponse(NanoHTTPD.Response.Status status)
+    void shouldAlertWhenLocalFileIncludedInResponse(NanoHTTPD.Response.Status status)
             throws HttpMalformedHeaderException {
         // Given
         String test = "/test";
@@ -255,7 +255,7 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void shouldAlertOnlyIfCertainTagValuesArePresent()
+    void shouldAlertOnlyIfCertainTagValuesArePresent()
             throws HttpMalformedHeaderException, IOException {
         String validatedXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
         String sampleRequestBody = "\n" + "<?xml version=\"1.0\"?>\n" + validatedXmlMessage;

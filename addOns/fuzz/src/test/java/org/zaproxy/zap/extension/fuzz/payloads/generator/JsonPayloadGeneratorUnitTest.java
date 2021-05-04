@@ -38,29 +38,29 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class JsonPayloadGeneratorUnitTest {
+class JsonPayloadGeneratorUnitTest {
 
     @Test
-    public void shouldRejectMissingJsonBase() {
+    void shouldRejectMissingJsonBase() {
         assertThrows(IllegalArgumentException.class, () -> new JsonPayloadGenerator(null, 1));
     }
 
     @Test
-    public void shouldRejectInvalidJsonBase() {
+    void shouldRejectInvalidJsonBase() {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new JsonPayloadGenerator("'an invalid value", 1));
     }
 
     @Test
-    public void shouldHaveAtLeastOnePayload() {
+    void shouldHaveAtLeastOnePayload() {
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 1);
         assertThat(generator.iterator().hasNext(), is(true));
     }
 
     @Test
-    public void shouldGenerateAtLeastOneFuzzedPayload() {
+    void shouldGenerateAtLeastOneFuzzedPayload() {
         // Given
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 2);
@@ -75,7 +75,7 @@ public class JsonPayloadGeneratorUnitTest {
     }
 
     @Test
-    public void shouldNotGenerateTooManyPayloads() {
+    void shouldNotGenerateTooManyPayloads() {
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 1);
         ResettableAutoCloseableIterator<DefaultPayload> iterator = generator.iterator();
@@ -84,7 +84,7 @@ public class JsonPayloadGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateMultipleMutants() {
+    void shouldGenerateMultipleMutants() {
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 20);
         ResettableAutoCloseableIterator<DefaultPayload> iterator = generator.iterator();

@@ -31,15 +31,15 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 
-public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
+class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUpZap();
     }
 
     @Test
-    public void shouldBuildAlert() {
+    void shouldBuildAlert() {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
@@ -61,7 +61,7 @@ public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldNotBuildAlertWhenMissingNameAndSource() {
+    void shouldNotBuildAlertWhenMissingNameAndSource() {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
