@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Feature Policy
   - Site Isolation
   - Sub Resource Integrity
+- Maintenance changes.
 
 ## [30] - 2021-02-08
 

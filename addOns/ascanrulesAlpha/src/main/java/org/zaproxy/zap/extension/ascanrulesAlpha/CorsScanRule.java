@@ -69,7 +69,7 @@ public class CorsScanRule extends AbstractAppPlugin {
         };
 
         boolean secScheme = false;
-        if (scheme == "https") {
+        if ("https".equals(scheme)) {
             secScheme = true;
             payloads[5] = "http://" + authority;
         }

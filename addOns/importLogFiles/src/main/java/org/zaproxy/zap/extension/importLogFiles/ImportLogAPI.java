@@ -263,34 +263,19 @@ public class ImportLogAPI extends ApiImplementor {
             String httpPOSTData) {
         // Not appending the file with client state info as REST should produce a resource based on
         // the request indefinitely.
-        String sourceFilePath = filePath;
         String targetfileName =
-                sourceFilePath.substring(
-                                sourceFilePath.lastIndexOf("\\") + 1,
-                                sourceFilePath.lastIndexOf("."))
+                filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."))
                         + ".txt";
         String absoluteTargetFilePath = getLoggingStorageDirectory(logType) + "\\" + targetfileName;
         File targetFile = new File(absoluteTargetFilePath);
 
-        if (!targetFile.isFile() /* && !FileAlreadyExists(new File(sourceFilePath)) */) {
-            try {
-                targetFile.createNewFile();
-                // TODO investigate how to check for uniqueness of the file. Potentially hashing
-                // (md5) the string[] of the read
-                // file. Might be overkill?
-                // appendAddedFilesHashes(targetFile);
-            } catch (Exception ex) {
-                return new ApiResponseElement(
-                        "Parsing logs files to ZAPs site tree",
-                        "Failed - Could not create file on server");
-            }
-        } else {
+        if (targetFile.isFile()) {
             return new ApiResponseElement(
                     "Parsing logs files to ZAPs site tree", "Not processed - File already added");
         }
 
         if (httpPOSTData == null) {
-            try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath));
                     BufferedWriter wr = new BufferedWriter(new FileWriter(targetFile))) {
                 String sCurrentLine;
 

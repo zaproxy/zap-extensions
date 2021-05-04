@@ -85,7 +85,6 @@ public class SAMLConfiguration implements AttributeListener {
             }
             // try to copy configuration to user directory
             try {
-                confFile.createNewFile();
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(confURL.openStream()));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(confFile));

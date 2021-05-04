@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
@@ -81,6 +82,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_NONCACHEABLE =
             "pscanalpha.storablenoncacheable.";
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
+    private static final long SECONDS_IN_YEAR = TimeUnit.SECONDS.convert(365, TimeUnit.DAYS);
     private static final int PLUGIN_ID = 10049;
 
     private static final Logger logger = LogManager.getLogger(CacheableScanRule.class);
@@ -605,7 +607,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         "{} has no caching lifetime expiry of any form, so assuming that it is set 'heuristically' to 1 year (as a form of worst case)",
                         msg.getRequestHeader().getURI());
                 lifetimeFound = true;
-                lifetime = 60 * 60 * 24 * 365;
+                lifetime = SECONDS_IN_YEAR;
                 // a liberal heuristic was assumed, for which no actual evidence exists
                 freshEvidence = null;
                 otherInfo =

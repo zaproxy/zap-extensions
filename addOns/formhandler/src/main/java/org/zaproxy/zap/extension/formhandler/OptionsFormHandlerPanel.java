@@ -41,11 +41,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
     public OptionsFormHandlerPanel() {
         super();
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setName(Constant.messages.getString("formhandler.options.title"));
         this.setLayout(new GridBagLayout());
 

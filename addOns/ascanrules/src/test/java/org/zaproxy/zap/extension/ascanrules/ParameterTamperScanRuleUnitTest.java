@@ -153,6 +153,26 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
     }
 
     @Test
+    void shouldAlertIfAttackResponseContainsVbScriptError() throws Exception {
+        // Given
+        ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/", 2);
+        nano.addHandler(serverErrorOnAttack);
+        serverErrorOnAttack.setError("Microsoft VBScript error");
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(4));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("Microsoft VBScript error")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("p")));
+        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("@")));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("")));
+    }
+
+    @Test
     void shouldNotAlertIfAttackResponseDoesNotContainsJavaServletError() throws Exception {
         // Given
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/");

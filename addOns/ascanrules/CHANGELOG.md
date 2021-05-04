@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Directory Browsing
     - Attack is now the URL of the request
     - Evidence added
+- Parameter Tampering scan rule, adjusted regular expression related to VBScript errors.
 
 ### Fixed
 - Fix XSS false positive (Issue 5958).
