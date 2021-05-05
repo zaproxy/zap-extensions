@@ -23,7 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class DiceMatcherUnitTest {
 
@@ -131,5 +135,23 @@ class DiceMatcherUnitTest {
 
         // Then
         assertThat(sim, is(equalTo(25)));
+    }
+
+    static Stream<Arguments> stringSetSource() {
+        return Stream.of(
+                Arguments.of(null, ORIGINAL_STRING),
+                Arguments.of(ORIGINAL_STRING, null),
+                Arguments.of(null, null),
+                Arguments.of("a", ORIGINAL_STRING),
+                Arguments.of(ORIGINAL_STRING, "a"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringSetSource")
+    void shouldGiveZeroPercentageForNullOrShortString(String stringA, String stringB) {
+        // Given / When
+        int sim = DiceMatcher.getMatchPercentage(stringA, stringB);
+        // Then
+        assertThat(sim, is(equalTo(0)));
     }
 }

@@ -42,43 +42,35 @@ public final class DiceMatcher {
      * License :  https://creativecommons.org/licenses/by-sa/3.0/
      * Author : Jelle Fresen
      * Changes : Fixed indexing to prevent out of array access
+     *           Address various issues identified by static analysis
      * Released under CC-BY-SA.
      */
 
     public static int getMatchPercentage(String a, String b) {
 
+        if (a == null || b == null) return 0;
+
         String s = a.replaceAll("\\s+", " ");
         String t = b.replaceAll("\\s+", " ");
 
-        // Verifying the input:
-        if (s == null || t == null) return 0;
-        // Quick check to catch identical objects:
-        if (s == t) return 1;
+        // Quick check to catch equal strings:
+        if (s.equals(t)) return 100;
         // avoid exception for single character searches
         if (s.length() < 2 || t.length() < 2) return 0;
 
-        // Create the bigrams for string s:
-        final int n = s.length() - 1;
-        final int[] sPairs = new int[n];
-        for (int i = 0; i < n; i++)
-            if (i == 0) sPairs[i] = s.charAt(i) << 16;
-            else if (i == n - 1) sPairs[i - 1] |= s.charAt(i);
-            else sPairs[i] = (sPairs[i - 1] |= s.charAt(i)) << 16;
+        final int[] sPairs = getBigrams(s);
+        final int[] tPairs = getBigrams(t);
 
-        // Create the bigrams for string t:
-        final int m = t.length() - 1;
-        final int[] tPairs = new int[m];
-        for (int i = 0; i < m; i++)
-            if (i == 0) tPairs[i] = t.charAt(i) << 16;
-            else if (i == m - 1) tPairs[i - 1] |= t.charAt(i);
-            else tPairs[i] = (tPairs[i - 1] |= t.charAt(i)) << 16;
-
-        // Sort the bigram lists:
+        // Sort the bigram arrays:
         Arrays.sort(sPairs);
         Arrays.sort(tPairs);
 
         // Count the matches:
-        int matches = 0, i = 0, j = 0;
+        int matches = 0;
+        int i = 0;
+        int j = 0;
+        int n = s.length() - 1;
+        int m = t.length() - 1;
         while (i < n && j < m) {
             if (sPairs[i] == tPairs[j]) {
                 matches += 2;
@@ -88,5 +80,19 @@ public final class DiceMatcher {
             else j++;
         }
         return (int) Math.floor((double) matches * 100 / (n + m));
+    }
+
+    private static int[] getBigrams(String str) {
+        final int n = str.length() - 1;
+        final int[] pairs = new int[n];
+        for (int i = 0; i < n; i++)
+            if (i == 0) pairs[i] = str.charAt(i) << 16;
+            else if (i == n - 1) pairs[i - 1] |= str.charAt(i);
+            else {
+                int p = pairs[i - 1] | str.charAt(i);
+                pairs[i - 1] = p;
+                pairs[i] = p << 16;
+            }
+        return pairs;
     }
 }
