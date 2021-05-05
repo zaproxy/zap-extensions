@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
@@ -74,6 +73,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     private static final Logger log = LogManager.getLogger(CodeInjectionScanRule.class);
 
     private static final Random RAND = new Random();
+    private static final int MAX_VALUE = 999999;
 
     @Override
     public int getId() {
@@ -87,10 +87,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.ASP) || technologies.includes(Tech.PHP)) {
-            return true;
-        }
-        return false;
+        return technologies.includes(Tech.ASP) || technologies.includes(Tech.PHP);
     }
 
     @Override
@@ -150,10 +147,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 msg.getRequestHeader().getURI(),
                 paramName);
 
-        if (inScope(Tech.PHP)) {
-            if (testPhpInjection(paramName)) {
-                return;
-            }
+        if (inScope(Tech.PHP) && testPhpInjection(paramName)) {
+            return;
         }
 
         if (isStop()) {
@@ -161,9 +156,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
         }
 
         if (inScope(Tech.ASP)) {
-            if (testAspInjection(paramName)) {
-                return;
-            }
+            testAspInjection(paramName);
         }
     }
 
@@ -181,51 +174,38 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
 
             log.debug("Testing [{}] = [{}]", paramName, phpPayload);
 
+            // Send the request and retrieve the response
             try {
-                // Send the request and retrieve the response
-                try {
-                    sendAndReceive(msg, false);
-                } catch (SocketException ex) {
-                    log.debug(
-                            "Caught {}{} when accessing: {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msg.getRequestHeader().getURI());
-                    continue; // Advance in the PHP payload loop, no point continuing on this
-                    // payload
-                }
-
-                // Check if the injected content has been evaluated and printed
-                if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
-                    // We Found IT!
-                    // First do logging
-                    log.debug(
-                            "[PHP Code Injection Found] on parameter [{}] with payload [{}]",
-                            paramName,
-                            phpPayload);
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
-                            .setParam(paramName)
-                            .setAttack(phpPayload)
-                            .setEvidence(PHP_CONTROL_TOKEN)
-                            .setMessage(msg)
-                            .raise();
-
-                    // All done. No need to look for vulnerabilities on subsequent
-                    // parameters on the same request (to reduce performance impact)
-                    return true;
-                }
-
+                sendAndReceive(msg, false);
             } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
-                log.warn(
-                        "PHP Code Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                log.debug(
+                        "Caught {}{} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msg.getRequestHeader().getURI());
+                continue; // Advance in the PHP payload loop, no point continuing on this payload
+            }
+
+            // Check if the injected content has been evaluated and printed
+            if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
+                // We Found IT!
+                log.debug(
+                        "[PHP Code Injection Found] on parameter [{}] with payload [{}]",
                         paramName,
-                        phpPayload,
-                        ex);
+                        phpPayload);
+
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
+                        .setParam(paramName)
+                        .setAttack(phpPayload)
+                        .setEvidence(PHP_CONTROL_TOKEN)
+                        .setMessage(msg)
+                        .raise();
+
+                // All done. No need to look for vulnerabilities on subsequent
+                // parameters on the same request (to reduce performance impact)
+                return true;
             }
 
             // Check if the scan has been stopped
@@ -248,8 +228,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
      * @see #ASP_PAYLOADS
      */
     private boolean testAspInjection(String paramName) {
-        int bignum1 = 100000 + (int) (RAND.nextFloat() * (999999 - 1000000 + 1));
-        int bignum2 = 100000 + (int) (RAND.nextFloat() * (999999 - 1000000 + 1));
+        int bignum1 = RAND.nextInt(MAX_VALUE);
+        int bignum2 = RAND.nextInt(MAX_VALUE);
 
         for (String aspPayload : ASP_PAYLOADS) {
             HttpMessage msg = getNewMsg();
@@ -257,55 +237,39 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
 
             log.debug("Testing [{}] = [{}]", paramName, aspPayload);
 
+            // Send the request and retrieve the response
             try {
-                // Send the request and retrieve the response
-                try {
-                    sendAndReceive(msg, false);
-                } catch (SocketException ex) {
-                    log.debug(
-                            "Caught {} {} when accessing: {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msg.getRequestHeader().getURI());
-                    continue; // Advance in the ASP payload loop, no point continuing on this
-                    // payload
-                }
-
-                // Check if the injected content has been evaluated and printed
-                String evidence = Integer.toString(bignum1 * bignum2);
-                if (msg.getResponseBody().toString().contains(evidence)) {
-                    // We Found IT!
-                    // First do logging
-                    log.debug(
-                            "[ASP Code Injection Found] on parameter [{}] with payload [{}]",
-                            paramName,
-                            aspPayload);
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
-                            .setParam(paramName)
-                            .setAttack(aspPayload)
-                            .setEvidence(evidence)
-                            .setMessage(msg)
-                            .raise();
-                    return true;
-                }
-
+                sendAndReceive(msg, false);
             } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
-                log.warn(
-                        "ASP Code Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
-                        paramName,
-                        aspPayload,
-                        ex);
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msg.getRequestHeader().getURI());
+                continue; // Advance in the ASP payload loop, no point continuing on this payload
             }
 
-            // Check if the scan has been stopped
-            // if yes dispose resources and exit
+            // Check if the injected content has been evaluated and printed
+            String evidence = String.valueOf((long) bignum1 * bignum2);
+            if (msg.getResponseBody().toString().contains(evidence)) {
+                // We Found IT!
+                log.debug(
+                        "[ASP Code Injection Found] on parameter [{}] with payload [{}]",
+                        paramName,
+                        aspPayload);
+
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
+                        .setParam(paramName)
+                        .setAttack(aspPayload)
+                        .setEvidence(evidence)
+                        .setMessage(msg)
+                        .raise();
+                return true;
+            }
+
             if (isStop()) {
-                // Dispose all resources
                 // Exit the scan rule
                 break;
             }
