@@ -29,16 +29,14 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.EximFileChooser;
 import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
-import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContainer {
 
@@ -104,52 +102,11 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
     }
 
     private static File getOutputFile() {
-        SaveHarFileChooser fileChooser = new SaveHarFileChooser();
+        JFileChooser fileChooser = new EximFileChooser(HAR_FILE_EXTENSION, FILE_DESCRIPTION);
         int rc = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
         if (rc == JFileChooser.APPROVE_OPTION) {
             return fileChooser.getSelectedFile();
         }
         return null;
-    }
-
-    private static class SaveHarFileChooser extends WritableFileChooser {
-
-        private static final long serialVersionUID = -5743352709683023906L;
-
-        public SaveHarFileChooser() {
-            super(Model.getSingleton().getOptionsParam().getUserDirectory());
-            setFileFilter(
-                    new FileFilter() {
-                        @Override
-                        public boolean accept(File file) {
-                            if (file.isDirectory()) {
-                                return true;
-                            } else if (file.isFile()
-                                    && file.getName().endsWith(HAR_FILE_EXTENSION)) {
-                                return true;
-                            }
-                            return false;
-                        }
-
-                        @Override
-                        public String getDescription() {
-                            return FILE_DESCRIPTION;
-                        }
-                    });
-        }
-
-        @Override
-        public void approveSelection() {
-            File file = getSelectedFile();
-            if (file != null) {
-                String fileName = file.getAbsolutePath();
-                if (!fileName.endsWith(HAR_FILE_EXTENSION)) {
-                    fileName += HAR_FILE_EXTENSION;
-                    setSelectedFile(new File(fileName));
-                }
-            }
-
-            super.approveSelection();
-        }
     }
 }
