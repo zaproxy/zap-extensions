@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Attack is now the URL of the request
     - Evidence added
 - Parameter Tampering scan rule, adjusted regular expression related to VBScript errors.
+- Code Injection scan rule is now using random numbers for the ASP related check.
 
 ### Fixed
 - Fix XSS false positive (Issue 5958).
