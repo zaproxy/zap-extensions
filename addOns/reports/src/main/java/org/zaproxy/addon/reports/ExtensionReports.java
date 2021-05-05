@@ -101,6 +101,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getReportParam());
+        extensionHook.addApiImplementor(new ReportApi(this));
 
         if (getView() != null) {
             extensionHook.getHookMenu().addReportMenuItem(getReportMenu());
