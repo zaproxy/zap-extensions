@@ -22,20 +22,17 @@ package org.zaproxy.addon.exim;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
-import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
-import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = 8080417865825721164L;
 
-    public static enum MessageComponent {
+    public enum MessageComponent {
         REQUEST,
         REQUEST_HEADER,
         REQUEST_BODY,
@@ -201,54 +198,12 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
         }
 
         private File getOutputFile() {
-            SaveFileChooser fileChooser = new SaveFileChooser();
+            JFileChooser fileChooser = new EximFileChooser(fileExtension, fileDescription);
             int rc = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
             if (rc == JFileChooser.APPROVE_OPTION) {
                 return fileChooser.getSelectedFile();
             }
             return null;
-        }
-
-        private class SaveFileChooser extends WritableFileChooser {
-
-            private static final long serialVersionUID = -5743352709683023906L;
-
-            public SaveFileChooser() {
-                super(Model.getSingleton().getOptionsParam().getUserDirectory());
-                setFileFilter(new SpecificFileFilter());
-            }
-
-            @Override
-            public void approveSelection() {
-                File file = getSelectedFile();
-                if (file != null) {
-                    String fileName = file.getAbsolutePath();
-                    if (!fileName.endsWith(fileExtension)) {
-                        fileName += fileExtension;
-                        setSelectedFile(new File(fileName));
-                    }
-                }
-
-                super.approveSelection();
-            }
-        }
-
-        private class SpecificFileFilter extends FileFilter {
-
-            @Override
-            public boolean accept(File file) {
-                if (file.isDirectory()) {
-                    return true;
-                } else if (file.isFile() && file.getName().endsWith(fileExtension)) {
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public String getDescription() {
-                return fileDescription;
-            }
         }
     }
 

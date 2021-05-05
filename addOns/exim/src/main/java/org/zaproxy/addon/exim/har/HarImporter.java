@@ -43,11 +43,13 @@ import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 
-public class HarImporter {
+public final class HarImporter {
 
     private static final Logger LOG = LogManager.getLogger(HarImporter.class);
 
     private static ExtensionHistory extHistory;
+
+    private HarImporter() {}
 
     public static List<HttpMessage> getHttpMessages(HarLog log)
             throws HttpMalformedHeaderException {
