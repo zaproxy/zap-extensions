@@ -42,14 +42,6 @@
 		<br th:if="${!state.last}" />
 	</th:block>
 
-	<h2 th:switch="${reportData.sites == null ? 0 : reportData.sites.size}">
-		<th:block th:case="'0'"></th:block>
-		<th:block th:case="'1'"
-			th:text="#{report.site(${reportData.sites.get(0)})}">One site</th:block>
-		<th:block th:case="*"
-			th:text="#{report.sites(${#strings.listJoin(reportData.sites, ' ')})}">Multiple sites</th:block>
-	</h2>
-
 	<h3>
 		<th:block
 			th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</th:block>
@@ -183,6 +175,65 @@
 		<div class="spacer-lg"></div>
 	</th:block>
 
+	<h2 th:text="#{report.sites.title}">Sites</h2>
+	<th:block th:each="site: ${reportData.sites}">
+		<h3 th:text="${site}">Site</h3>
+		<th:block th:if="${reportData.isIncludeSection('statistics')}">
+			<table class="summary">
+				<tr>
+					<th width="45%" height="24"
+						th:text="#{report.template.stats.httpcode}">HTTP Response
+						Code</th>
+					<th width="55%" align="center"
+						th:text="#{report.template.stats.respcount}">Number of
+						Responses</th>
+				</tr>
+
+				<th:block
+					th:each="stat : ${helper.getSiteStats(site, 'stats.code.')}">
+					<tr th:with="httpcode=${stat.key.substring(11)}">
+						<td><a
+							th:href="${'https://developer.mozilla.org/docs/Web/HTTP/Status/' + httpcode}"
+							th:text="${httpcode + ' ' + helper.getHttpStatusCodeString(httpcode)}"
+							href="https://developer.mozilla.org/docs/Web/HTTP/Status/200">Code</a>
+						</td>
+						<td align="center">
+							<div th:text="${stat.value}">Count</div>
+						</td>
+					</tr>
+					<th:block th:if="${stat.key.startsWith('stats.auth.')}"
+						th:with="hasAuth=${true}">
+					</th:block>
+				</th:block>
+			</table>
+			<div class="spacer-lg"></div>
+			<h4 th:if="${!helper.hasSiteStats(site, 'stats.auth.')}"
+				th:text="#{report.template.stats.auth.none}">No Authentication
+				Statistics Found</h4>
+			<table class="summary"
+				th:if="${helper.hasSiteStats(site, 'stats.auth.')}">
+				<tr>
+					<th width="45%" height="24" th:text="#{report.template.stats.auth}">Authentications
+						Statistics</th>
+					<th width="55%" align="center"
+						th:text="#{report.template.stats.respcount}">Number of
+						Responses</th>
+				</tr>
+				<th:block
+					th:each="stat : ${helper.getSiteStats(site, 'stats.auth.')}">
+					<tr>
+						<td>
+							<div th:text="${helper.getStatisticsString(stat.key)}">Statistic</div>
+						</td>
+						<td align="center">
+							<div th:text="${stat.value}">Count</div>
+						</td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
+		<div class="spacer-lg"></div>
+	</th:block>
 
 	<th:block th:if="${reportData.isIncludeSection('alertdetails')}">
 		<h3 th:text="#{report.alerts.detail}">Alert Detail</h3>

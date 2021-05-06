@@ -19,7 +19,13 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.util.Collections;
+import java.util.Map;
+import org.apache.commons.httpclient.HttpStatus;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 
 public class ReportHelper {
 
@@ -30,6 +36,10 @@ public class ReportHelper {
     public static String getConfidenceString(int confidence) {
         return Constant.messages.getString(
                 ExtensionReports.PREFIX + ".report.confidence." + confidence);
+    }
+
+    public static String getStatisticsString(String statsKey) {
+        return Constant.messages.getString(ExtensionReports.PREFIX + ".report." + statsKey);
     }
 
     public static String getHostForSite(String site) {
@@ -49,8 +59,28 @@ public class ReportHelper {
         return 80;
     }
 
-    public boolean isSslSite(String site) {
+    public static boolean isSslSite(String site) {
         String[] schemeHostPort = site.split(":");
         return schemeHostPort[0].equalsIgnoreCase("https");
+    }
+
+    public static String getHttpStatusCodeString(int code) {
+        return HttpStatus.getStatusText(code);
+    }
+
+    public static Map<String, Long> getSiteStats(String site, String prefix) {
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+        if (extStats != null) {
+            InMemoryStats stats = extStats.getInMemoryStats();
+            if (stats != null) {
+                return stats.getSiteStats(site, prefix);
+            }
+        }
+        return Collections.emptyMap();
+    }
+
+    public static boolean hasSiteStats(String site, String prefix) {
+        return !getSiteStats(site, prefix).isEmpty();
     }
 }
