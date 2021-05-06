@@ -115,16 +115,37 @@ themes:      # An optional list of themes - different colours and styles which a
 		href="https://github.com/zaproxy/zap-extensions/tree/master/addOns/reports/src/main/java/org/zaproxy/addon/reports/ReportHelper.java">ReportHelper</a>
 	class that provides useful methods, including:
 	<ul>
-		<li><code>getRiskString(int risk)</code> Returns an
-			internationalised string for the associated risk code</li>
 		<li><code>getConfidenceString(int confidence)</code> Returns an
 			internationalised string for the associated confidence code</li>
+		<li><code>getRiskString(int risk)</code> Returns an
+			internationalised string for the associated risk code</li>
+		<li><code>getHttpStatusCode(int code)</code> Returns the meaning
+			of the specified HTTP status code</li>
+		<li><code>getHostForSite(String site)</code> Returns the hostname
+			for a given site URL</li>
+		<li><code>getPortForSite(String site)</code> Returns the port for
+			a given site URL</li>
+		<li><code>isSslSite(String site)</code> Returns true if the given
+			site URL is using SSL</li>
+		<li><code>getStatisticsString(String stat)</code> Returns the
+			meaning of the specific statistics key - currently only supported for
+			authentication stats</li>
+		<li><code>getSiteStats(String site, String prefix)</code> Returns
+			a Map of the statistics for the given site starting with the
+			(optional) prefix</li>
+		<li><code>hasSiteStats(String site, String prefix)</code> Returns
+			true if the given site has any statistics starting with the
+			(optional) prefix</li>
 	</ul>
 
 	<H3>alertCounts</H3>
 
 	A Map of risk levels to the number of unique alerts. This can be used
 	by reports, for example, to generate a summary table.
+
+	<H3>alertCountsByRule</H3>
+
+	A Map of scan rule IDs to the number of instances.
 
 	<H3>reportData</H3>
 	An instance of the
@@ -136,6 +157,11 @@ themes:      # An optional list of themes - different colours and styles which a
 	<p>Automation jobs can make additional data available to the
 		reports, in many cases even if the automation framework was not used.
 		See the help pages for the relevant jobs for more details.</p>
+
+	<H3>stats</H3>
+	A Map of the global statistics. The site based statistics are available
+	via the helper.
+
 	<H2>Testing Reports</H2>
 	ZAP does not cache the report templates, so it rereads them every time
 	you generate a report. This makes it much easier to test them. Just

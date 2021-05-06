@@ -57,6 +57,8 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -101,6 +103,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getReportParam());
+        extensionHook.addApiImplementor(new ReportApi(this));
 
         if (getView() != null) {
             extensionHook.getHookMenu().addReportMenuItem(getReportMenu());
@@ -282,6 +285,15 @@ public class ExtensionReports extends ExtensionAdaptor {
         context.setVariable(
                 "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
         context.setVariable("reportData", reportData);
+
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+        if (extStats != null) {
+            InMemoryStats stats = extStats.getInMemoryStats();
+            if (stats != null) {
+                context.setVariable("stats", stats.getStats(""));
+            }
+        }
 
         synchronized (SIMPLE_DATE_FORMAT) {
             context.setVariable(

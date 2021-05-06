@@ -1,4 +1,5 @@
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
+import org.zaproxy.gradle.addon.AddOnStatus
 
 plugins {
     id("com.diffplug.spotless")
@@ -9,6 +10,7 @@ description = "Official ZAP Reports."
 
 zapAddOn {
     addOnName.set("Report Generation")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.10.0")
 
     manifest {
@@ -28,6 +30,11 @@ zapAddOn {
                 }
             }
         }
+    }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.reports.ReportApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/reports/resources/Messages.properties"))
     }
 }
 

@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,6 +33,7 @@ import static org.mockito.Mockito.withSettings;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -385,8 +389,23 @@ public abstract class TestUtils {
      * @return the path, never {@code null}.
      */
     protected Path getResourcePath(String resourcePath) {
+        return getResourcePath(getClass(), resourcePath);
+    }
+
+    /**
+     * Gets the (file system) path to the given resource.
+     *
+     * <p>The resource path is obtained with the class {@code clazz}.
+     *
+     * @param clazz the class whose package will be used to resolve relative {@code resourcePath}s.
+     * @param resourcePath the path to the resource.
+     * @return the path, never {@code null}.
+     */
+    public static Path getResourcePath(Class<?> clazz, String resourcePath) {
         try {
-            return Paths.get(getClass().getResource(resourcePath).toURI());
+            URL resource = clazz.getResource(resourcePath);
+            assertThat("Resource path cannot be null.", resource, is(notNullValue()));
+            return Paths.get(resource.toURI());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

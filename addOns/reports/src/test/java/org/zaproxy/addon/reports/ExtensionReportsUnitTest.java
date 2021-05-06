@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,11 +50,11 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.xml.sax.SAXException;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -320,13 +319,12 @@ class ExtensionReportsUnitTest {
                 "traditional-md",
                 "traditional-xml"
             })
-    void shouldGenerateReport(String reportName) throws IOException, DocumentException {
+    void shouldGenerateReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
@@ -337,13 +335,12 @@ class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    void shouldIncludeAllSectionsInReport(String reportName) throws IOException, DocumentException {
+    void shouldIncludeAllSectionsInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         reportData.addSection(HTML_REPORT_ALERT_SUMMARY_SECTION);
@@ -361,14 +358,12 @@ class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    void shouldIncludeAlertSummarySectionInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludeAlertSummarySectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         reportData.addSection(HTML_REPORT_ALERT_SUMMARY_SECTION);
@@ -384,14 +379,12 @@ class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    void shouldIncludeInstanceSummarySectionInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludeInstanceSummarySectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         reportData.addSection(HTML_REPORT_INSTANCE_SUMMARY_SECTION);
@@ -408,14 +401,12 @@ class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html", "traditional-html-plus", "traditional-md"})
-    void shouldIncludeAlertDetailsSectionInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludeAlertDetailsSectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         reportData.addSection(HTML_REPORT_ALERT_DETAIL_SECTION);
@@ -431,8 +422,7 @@ class ExtensionReportsUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html-plus"})
-    void shouldIncludePassingRulesSectionInReport(String reportName)
-            throws IOException, DocumentException {
+    void shouldIncludePassingRulesSectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
@@ -440,8 +430,7 @@ class ExtensionReportsUnitTest {
                 new PassiveScanJobResultData("test", new ArrayList<PluginPassiveScanner>());
         reportData.addReportObjects(pscanData.getKey(), pscanData);
         File f = File.createTempFile("zap.reports.test", "x");
-        File t = new File("src/main/zapHomeFiles/reports/" + reportName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(reportName);
 
         // When
         reportData.addSection(HTML_REPORT_PASSING_RULES_SECTION);
@@ -528,11 +517,9 @@ class ExtensionReportsUnitTest {
                 "traditional-html",
                 "traditional-html-plus"
             })
-    void shouldGenerateExpectedReport(String templateName)
-            throws IOException, DocumentException, SAXException, ParserConfigurationException {
+    void shouldGenerateExpectedReport(String templateName) throws Exception {
         // Given
-        File t = new File("src/main/zapHomeFiles/reports/" + templateName + "/template.yaml");
-        Template template = new Template(t);
+        Template template = getTemplateFromYamlFile(templateName);
         String fileName = "basic-" + templateName;
         File f = File.createTempFile(fileName, template.getExtension());
 
@@ -542,7 +529,7 @@ class ExtensionReportsUnitTest {
 
         File expectedReport =
                 new File(
-                        "src/test/resources/org/zaproxy/addon/automation/resources/"
+                        "src/test/resources/org/zaproxy/addon/reports/resources/"
                                 + fileName
                                 + "."
                                 + template.getExtension());
@@ -552,19 +539,13 @@ class ExtensionReportsUnitTest {
         assertThat(cleanReport(report), is(equalTo(cleanReport(expected))));
     }
 
-    private static void generateTestFile(String templateName)
-            throws IOException, DocumentException {
+    private static void generateTestFile(String templateName) throws Exception {
 
-        Template template =
-                new Template(
-                        new File(
-                                "src/main/zapHomeFiles/reports/"
-                                        + templateName
-                                        + "/template.yaml"));
+        Template template = getTemplateFromYamlFile(templateName);
         generateReportWithAlerts(
                 template,
                 new File(
-                        "src/test/resources/org/zaproxy/addon/automation/resources/basic-"
+                        "src/test/resources/org/zaproxy/addon/reports/resources/basic-"
                                 + templateName
                                 + "."
                                 + template.getExtension()));
@@ -594,5 +575,13 @@ class ExtensionReportsUnitTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static Template getTemplateFromYamlFile(String templateName) throws Exception {
+        return new Template(
+                TestUtils.getResourcePath(
+                                ExtensionReports.class,
+                                "/reports/" + templateName + "/template.yaml")
+                        .toFile());
     }
 }

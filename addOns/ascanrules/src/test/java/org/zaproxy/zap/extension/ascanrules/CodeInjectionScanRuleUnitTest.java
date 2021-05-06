@@ -133,7 +133,7 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
                     protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                         String years = getFirstParamValue(session, "years");
                         String responseWriteRgx =
-                                "response\\.write\\((\\d+(?:,\\d+)?)\\*(\\d+(?:,\\d+)?)\\)";
+                                "response\\.write\\(([0-9]{1,3}(?:,[0-9]{3})?)\\*([0-9]{1,3}(?:,[0-9]{3})?)\\)";
 
                         Pattern pattern = Pattern.compile(responseWriteRgx);
                         Matcher matcher = pattern.matcher(years);
@@ -141,7 +141,7 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
                         if (matcher.find()) {
                             int num1 = Integer.parseInt(matcher.group(1).replace(",", ""));
                             int num2 = Integer.parseInt(matcher.group(2).replace(",", ""));
-                            String resultEval = Integer.toString(num1 * num2);
+                            String resultEval = String.valueOf((long) num1 * num2);
                             evaluationResults.add(resultEval);
                             return newFixedLengthResponse(
                                     "<html><body>" + resultEval + "</body></html>");

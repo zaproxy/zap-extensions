@@ -33,7 +33,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,6 +47,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -72,9 +76,14 @@ class ActiveScanJobUnitTest {
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionActiveScan extAScan;
 
+    @TempDir static Path tempDir;
+
     @BeforeAll
-    static void init() {
+    static void init() throws IOException {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+
+        Constant.setZapHome(
+                Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString());
     }
 
     @AfterAll

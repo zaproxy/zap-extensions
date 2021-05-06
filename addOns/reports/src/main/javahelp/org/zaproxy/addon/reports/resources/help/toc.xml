@@ -11,6 +11,7 @@
 				<tocitem text="Automation" target="reports.automation" />
 				<tocitem text="Creating Reports" target="reports.create" />
 				<tocitem text="About" target="reports.about" />
+				<tocitem text="API" target="reports.api" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

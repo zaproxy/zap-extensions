@@ -11,4 +11,5 @@
 	<indexitem text="reports creating reports"
 		target="reports.create" />
 	<indexitem text="reports about" target="reports.about" />
+	<indexitem text="reports api" target="reports.api" />
 </index>

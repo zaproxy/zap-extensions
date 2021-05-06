@@ -9,4 +9,5 @@
     <mapID target="reports.automation" url="contents/automation.html" />
     <mapID target="reports.create" url="contents/create.html" />
     <mapID target="reports.about" url="contents/about.html" />
+    <mapID target="reports.api" url="contents/api.html" />
 </map>

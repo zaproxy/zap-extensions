@@ -582,7 +582,7 @@ public class ReportDialog extends StandardFieldsDialog {
             }
         } else if (!f.canWrite()) {
             return Constant.messages.getString(
-                    "reports.dialog.error.fileperms", f.getParentFile().getAbsolutePath());
+                    "reports.dialog.error.fileperms", f.getAbsolutePath());
         }
         ReportData reportData = getReportData(template);
         AlertNode root = extension.getFilteredAlertTree(reportData);
