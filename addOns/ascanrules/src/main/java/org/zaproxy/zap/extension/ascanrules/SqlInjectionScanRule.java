@@ -109,7 +109,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
      * maximise SQL errors Note that we do separate runs for each family of characters, in case one
      * family are filtered out, the others might still get past
      */
-    private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", ")", "(", "NULL", "'\""};
+    private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", "'(", ")", "(", "NULL", "'\""};
 
     /**
      * A collection of RDBMS with its error message fragments and {@code Tech}.
@@ -304,6 +304,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 Arrays.asList(
                         new String[] {
                             "near \".+\": syntax error", // uses a regular expression..
+                            "SQLITE_ERROR",
                             "\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E"
                         }),
                 Arrays.asList(

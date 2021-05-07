@@ -49,9 +49,9 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             default:
                 return recommendMax + 14;
             case HIGH:
-                return recommendMax + 22;
+                return recommendMax + 24;
             case INSANE:
-                return recommendMax + 5;
+                return recommendMax + 7;
         }
     }
 
