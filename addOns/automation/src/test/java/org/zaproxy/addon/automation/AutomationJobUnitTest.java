@@ -22,6 +22,9 @@ package org.zaproxy.addon.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +46,12 @@ import org.zaproxy.zap.utils.I18N;
 class AutomationJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private String stringParamValue = "a string";
+    private int intParamValue = 6;
+    private Integer integerParamValue = Integer.valueOf(7);
+    private boolean boolParamValue = true;
+    private Boolean booleanParamValue = Boolean.FALSE;
+    private TestParam.Option enumParamValue = TestParam.Option.FIRST_OPTION;
 
     @BeforeAll
     static void init() {
@@ -134,12 +143,6 @@ class AutomationJobUnitTest {
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
-        String stringParamValue = "a string";
-        int intParamValue = 6;
-        Integer integerParamValue = Integer.valueOf(7);
-        boolean boolParamValue = true;
-        Boolean booleanParamValue = Boolean.FALSE;
-        TestParam.Option enumParamValue = TestParam.Option.FIRST_OPTION;
 
         Map map = new HashMap();
         map.put("stringParam", stringParamValue);
@@ -148,6 +151,44 @@ class AutomationJobUnitTest {
         map.put("boolParam", Boolean.toString(boolParamValue));
         map.put("booleanParam", booleanParamValue.toString());
         map.put("enumParam", enumParamValue.toString());
+        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        // When
+        job.applyParameters(params, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(tpc.getTestParam().getStringParam(), is(equalTo(stringParamValue)));
+        assertThat(tpc.getTestParam().getIntParam(), is(equalTo(intParamValue)));
+        assertThat(tpc.getTestParam().getIntegerParam(), is(equalTo(integerParamValue)));
+        assertThat(tpc.getTestParam().isBoolParam(), is(equalTo(boolParamValue)));
+        assertThat(tpc.getTestParam().getBooleanParam(), is(equalTo(booleanParamValue)));
+        assertThat(tpc.getTestParam().getEnumParam(), is(equalTo(enumParamValue)));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    public void shouldSetResolvedParams() {
+        // Given
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(eq("${myStringParam}"))).willReturn(stringParamValue);
+        given(env.replaceVars(eq("${myIntParam}"))).willReturn(Integer.toString(intParamValue));
+        given(env.replaceVars(eq("${myIntegerParam}"))).willReturn(integerParamValue.toString());
+        given(env.replaceVars(eq("${myBoolParam}"))).willReturn(Boolean.toString(boolParamValue));
+        given(env.replaceVars(eq("${myBooleanParam}"))).willReturn(booleanParamValue.toString());
+        given(env.replaceVars(eq("${myEnumParam}"))).willReturn(enumParamValue.toString());
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        job.setEnv(env);
+        AutomationProgress progress = new AutomationProgress();
+
+        Map map = new HashMap();
+        map.put("stringParam", "${myStringParam}");
+        map.put("intParam", "${myIntParam}");
+        map.put("integerParam", "${myIntegerParam}");
+        map.put("boolParam", "${myBoolParam}");
+        map.put("booleanParam", "${myBooleanParam}");
+        map.put("enumParam", "${myEnumParam}");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
         job.applyParameters(params, progress);

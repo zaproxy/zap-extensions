@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -212,6 +213,7 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getWarnings().size(), is(equalTo(0)));
         assertThat(contexts.size(), is(equalTo(1)));
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example.com/.*");
         assertThat(env.isFailOnError(), is(equalTo(true)));
         assertThat(env.isFailOnWarning(), is(equalTo(false)));
         assertThat(env.isTimeToQuit(), is(equalTo(false)));
@@ -243,6 +245,8 @@ class AutomationEnvironmentUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getWarnings().size(), is(equalTo(0)));
         assertThat(contexts.size(), is(equalTo(2)));
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example1.com/.*");
+        verify(contexts.get(1)).addIncludeInContextRegex("https://www.example2.com/.*");
         assertThat(env.isFailOnError(), is(equalTo(true)));
         assertThat(env.isFailOnWarning(), is(equalTo(false)));
         assertThat(env.isTimeToQuit(), is(equalTo(false)));
@@ -435,5 +439,57 @@ class AutomationEnvironmentUnitTest {
 
         // Then
         assertThat(env.isTimeToQuit(), is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldReplaceConfigVarsInEnv() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      url: https://www.${myPrefix}.example.com\n"
+                        + "  vars:\n"
+                        + "    myPrefix: prefix\n"
+                        + "    myVar: ${myPrefix}.suffix\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        assertThat(env.getVar("myPrefix"), is(equalTo("prefix")));
+        assertThat(env.getVar("myVar"), is(equalTo("prefix.suffix")));
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.prefix.example.com.*");
+    }
+
+    @Test
+    public void shouldReplaceEnvVarsInJobs() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      url: https://www.${myEnvVar}.example.com\n"
+                        + "  vars:\n"
+                        + "    myVar: ${myEnvVar}.suffix\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.envVarValue.example.com.*");
+        assertThat(env.getVar("myVar"), is(equalTo("envVarValue.suffix")));
     }
 }

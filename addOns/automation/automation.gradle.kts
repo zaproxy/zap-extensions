@@ -17,3 +17,7 @@ dependencies {
     implementation("org.snakeyaml:snakeyaml-engine:2.2.1")
     testImplementation(project(":testutils"))
 }
+
+tasks.test {
+    environment("myEnvVar", "envVarValue")
+}
