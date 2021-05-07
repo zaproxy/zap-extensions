@@ -35,6 +35,7 @@ import org.zaproxy.addon.automation.jobs.JobUtils;
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     private String name;
+    private AutomationEnvironment env;
 
     public enum Order {
         RUN_FIRST,
@@ -91,6 +92,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return ExtensionAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
 
+    void setEnv(AutomationEnvironment env) {
+        this.env = env;
+    }
+
+    public AutomationEnvironment getEnv() {
+        return this.env;
+    }
+
     public void applyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
         applyParameters(this.getParamMethodObject(), this.getParamMethodName(), params, progress);
     }
@@ -133,7 +142,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             if (param.getValue() == null) {
                 continue;
             }
-            if (applyCustomParameter(key, param.getValue().toString())) {
+            String resolvedValue;
+            if (env != null) {
+                resolvedValue = env.replaceVars(param.getValue());
+            } else {
+                resolvedValue = param.getValue().toString();
+            }
+            if (applyCustomParameter(key, resolvedValue)) {
                 progress.info(
                         Constant.messages.getString(
                                 "automation.info.setparam",
@@ -150,7 +165,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                         Object value = null;
                         Class<?> paramType = optMethod.getParameterTypes()[0];
                         try {
-                            value = stringToType(param.getValue().toString(), paramType);
+                            value = stringToType(resolvedValue, paramType);
                         } catch (NumberFormatException e1) {
                             progress.error(
                                     Constant.messages.getString(

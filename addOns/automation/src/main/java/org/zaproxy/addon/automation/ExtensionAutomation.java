@@ -215,6 +215,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
                 progress.info(
                         Constant.messages.getString("automation.info.jobstart", job.getType()));
+                job.setEnv(env);
                 job.runJob(env, jobData, progress);
                 progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
             } else {

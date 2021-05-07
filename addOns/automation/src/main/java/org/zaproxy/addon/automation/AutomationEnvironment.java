@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
@@ -37,12 +39,14 @@ public class AutomationEnvironment {
     public static final String AUTOMATION_CONTEXT_NAME = "Automation Context";
 
     private static final String YAML_FILE = "env.yaml";
+    private static final Pattern varPattern = Pattern.compile("\\$\\{(.+?)\\}");
 
     private AutomationProgress progress;
     private List<Context> contexts = new ArrayList<Context>();;
     private boolean failOnError = true;
     private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();
+    private Map<String, String> vars = new HashMap<>(System.getenv());
 
     public AutomationEnvironment(
             LinkedHashMap<?, ?> envData, AutomationProgress progress, Session session) {
@@ -50,6 +54,19 @@ public class AutomationEnvironment {
         if (envData == null) {
             progress.error(Constant.messages.getString("automation.error.env.missing"));
             return;
+        }
+
+        LinkedHashMap<?, ?> configVars = (LinkedHashMap<?, ?>) envData.get("vars");
+        if (configVars != null) {
+            for (Entry<?, ?> configVar : configVars.entrySet()) {
+                if (vars.containsKey(configVar.getKey().toString())) {
+                    continue;
+                }
+                vars.put(configVar.getKey().toString(), configVar.getValue().toString());
+            }
+            for (Entry<String, String> unresolvedVar : vars.entrySet()) {
+                vars.put(unresolvedVar.getKey(), replaceVars(unresolvedVar.getValue()));
+            }
         }
 
         LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) envData.get("parameters");
@@ -98,7 +115,7 @@ public class AutomationEnvironment {
         }
     }
 
-    public static Context parseContextData(
+    public Context parseContextData(
             Object contextObject, AutomationProgress progress, Session session) {
         if (!(contextObject instanceof LinkedHashMap)) {
             progress.error(
@@ -114,11 +131,11 @@ public class AutomationEnvironment {
             }
             switch (cdata.getKey().toString()) {
                 case "name":
-                    name = value.toString();
+                    name = replaceVars(value);
                     break;
                 case "url":
                     try {
-                        url = new URL(value.toString());
+                        url = new URL(replaceVars(value));
                     } catch (MalformedURLException e) {
                         progress.error(
                                 Constant.messages.getString(
@@ -148,6 +165,26 @@ public class AutomationEnvironment {
         return context;
     }
 
+    public String replaceVars(Object value) {
+        String text = value.toString();
+        Matcher matcher = varPattern.matcher(text);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String val = this.getVars().get(matcher.group(1));
+            if (val != null) {
+                matcher.appendReplacement(sb, "");
+                sb.append(val);
+            } else {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.env.novar", matcher.group(1)));
+            }
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
     public static String getConfigFileData() {
         return ExtensionAutomation.getResourceAsString(YAML_FILE);
     }
@@ -158,6 +195,14 @@ public class AutomationEnvironment {
 
     public List<Context> getContexts() {
         return contexts;
+    }
+
+    public Map<String, String> getVars() {
+        return vars;
+    }
+
+    public String getVar(String name) {
+        return vars.get(name);
     }
 
     public Context getContext(String name) {
