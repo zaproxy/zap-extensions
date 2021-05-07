@@ -63,7 +63,9 @@ public class FeaturePolicyScanRule extends PluginPassiveScanner {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#Browser_compatibility
         List<String> featurePolicyOptions =
                 httpMessage.getResponseHeader().getHeaderValues("Feature-Policy");
-        if (featurePolicyOptions.isEmpty()) {
+        List<String> permissionPolicyOptions =
+                httpMessage.getResponseHeader().getHeaderValues("Permissions-Policy");
+        if (featurePolicyOptions.isEmpty() && permissionPolicyOptions.isEmpty()) {
             newAlert()
                     .setRisk(Alert.RISK_LOW)
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
