@@ -110,7 +110,7 @@ public class ClientTable extends ParosAbstractTable {
     }
 
     public synchronized List<MonitoredPage> list() throws SQLException {
-        ArrayList<MonitoredPage> list = new ArrayList<MonitoredPage>();
+        ArrayList<MonitoredPage> list = new ArrayList<>();
 
         ResultSet rs = psGetAllData.executeQuery();
         while (rs.next()) {

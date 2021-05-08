@@ -518,7 +518,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     protected JComboBox<String> getAlertCombo() {
         if (alertCombo == null) {
-            alertCombo = new JComboBox<String>();
+            alertCombo = new JComboBox<>();
             for (String name : ExtensionAlertFilters.getAllRuleNames()) {
                 alertCombo.addItem(name);
             }
@@ -528,7 +528,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     protected JComboBox<String> getNewLevelCombo() {
         if (newLevelCombo == null) {
-            newLevelCombo = new JComboBox<String>();
+            newLevelCombo = new JComboBox<>();
             newLevelCombo.addItem(AlertFilter.getNameForRisk(-1));
             newLevelCombo.addItem(AlertFilter.getNameForRisk(0));
             newLevelCombo.addItem(AlertFilter.getNameForRisk(1));
@@ -577,7 +577,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     private JComboBox<String> getScopeCombo() {
         if (scopeCombo == null) {
-            scopeCombo = new JComboBox<String>();
+            scopeCombo = new JComboBox<>();
         }
         return scopeCombo;
     }

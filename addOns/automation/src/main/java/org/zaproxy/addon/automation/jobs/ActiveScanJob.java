@@ -175,11 +175,11 @@ public class ActiveScanJob extends AutomationJob {
         if (lastScan != null) {
             return createJobResultData(lastScan.getId());
         }
-        return new ArrayList<JobResultData>();
+        return new ArrayList<>();
     }
 
     private List<JobResultData> createJobResultData(int scanId) {
-        List<JobResultData> list = new ArrayList<JobResultData>();
+        List<JobResultData> list = new ArrayList<>();
         list.add(new ActiveScanJobResultData(this.getName(), this.getExtAScan().getScan(scanId)));
         return list;
     }

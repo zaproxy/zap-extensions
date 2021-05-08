@@ -57,7 +57,7 @@ public class HttpsCallerLauncher {
     }
 
     private List<String> getArgumentsList(URL url, String debugStatus) throws IOException {
-        List<String> argumentsList = new ArrayList<String>();
+        List<String> argumentsList = new ArrayList<>();
         argumentsList.add(System.getProperty("java.home") + "/bin/java");
         argumentsList.add("-classpath");
         argumentsList.add(getClasspath());

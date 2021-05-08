@@ -50,7 +50,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
 
     /** the ordered set of (lowercase) file extensions to try */
     static final Set<String> fileExtensions =
-            new LinkedHashSet<String>(
+            new LinkedHashSet<>(
                     Arrays.asList(
                             new String[] {
                                 ".bak",
@@ -205,7 +205,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
      * before the extension) also used as directory suffixes for the parent folder of the file
      */
     static final Set<String> fileSuffixes =
-            new LinkedHashSet<String>(
+            new LinkedHashSet<>(
                     Arrays.asList(
                             new String[] {
                                 " - Copy",
@@ -253,7 +253,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
      * before the extension)
      */
     static final Set<String> filePrefixes =
-            new LinkedHashSet<String>(
+            new LinkedHashSet<>(
                     Arrays.asList(
                             new String[] {
                                 "Copy of ",
@@ -535,10 +535,10 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                         path.substring(0, positionDirectorySuffixInjection).lastIndexOf("/") + 1;
 
             // the set of files we will try, in the order of insertion
-            Set<URI> candidateBackupFileURIs = new LinkedHashSet<URI>();
+            Set<URI> candidateBackupFileURIs = new LinkedHashSet<>();
             Set<URI> candidateBackupFileChangedFolderURIs =
-                    new LinkedHashSet<
-                            URI>(); // for a changed parent folder name, which we need to handle
+                    new LinkedHashSet<>(); // for a changed parent folder name, which we need to
+            // handle
             // separately
 
             log.debug("The path is {}", path);

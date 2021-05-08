@@ -96,8 +96,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private AlertFilterAPI api = null;
     private int lastAlert = -1;
 
-    private static Map<String, Integer> nameToId = new HashMap<String, Integer>();
-    private static Map<Integer, String> idToName = new HashMap<Integer, String>();
+    private static Map<String, Integer> nameToId = new HashMap<>();
+    private static Map<Integer, String> idToName = new HashMap<>();
     private static List<String> allRuleNames;
     private static ExtensionActiveScan extAscan;
 
@@ -138,7 +138,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     public static List<String> getAllRuleNames() {
         if (allRuleNames == null) {
-            allRuleNames = new ArrayList<String>();
+            allRuleNames = new ArrayList<>();
             PolicyManager pm = getExtAscan().getPolicyManager();
             ScanPolicy sp = pm.getDefaultScanPolicy();
             for (Plugin plugin : sp.getPluginFactory().getAllPlugin()) {

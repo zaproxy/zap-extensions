@@ -243,8 +243,7 @@ public class HttpsInfoOutputPanel extends OutputPanel {
             this.append(cipherSuitesException);
             return;
         }
-        HashMap<IDVCipherSuite, IDVCipherSuite> csMap =
-                new HashMap<IDVCipherSuite, IDVCipherSuite>();
+        HashMap<IDVCipherSuite, IDVCipherSuite> csMap = new HashMap<>();
 
         for (IDVCipherSuite cipher : ciphers) {
             // If cipher's in the map then skip since we already printed it. We

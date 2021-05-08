@@ -257,7 +257,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 
     private TableExportButton<HistoryReferencesTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<HistoryReferencesTable>(getSpiderResultsTable());
+            exportButton = new TableExportButton<>(getSpiderResultsTable());
         }
         return exportButton;
     }

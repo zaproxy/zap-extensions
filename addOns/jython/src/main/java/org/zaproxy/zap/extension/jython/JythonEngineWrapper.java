@@ -50,7 +50,7 @@ public class JythonEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public List<String> getExtensions() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("py");
         return list;
     }

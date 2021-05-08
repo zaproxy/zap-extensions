@@ -55,7 +55,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.csrftoken.";
     private static final int PLUGIN_ID = 20012;
 
-    private List<String> ignoreList = new ArrayList<String>();
+    private List<String> ignoreList = new ArrayList<>();
     private String ignoreAttName;
     private String ignoreAttValue;
 

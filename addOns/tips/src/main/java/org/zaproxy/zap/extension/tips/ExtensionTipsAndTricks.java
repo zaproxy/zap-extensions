@@ -85,7 +85,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     private List<String> getTipsAndTricks() {
         if (tipsAndTricks == null) {
             // Need to load them in
-            tipsAndTricks = new ArrayList<String>();
+            tipsAndTricks = new ArrayList<>();
 
             ResourceBundle rb = Constant.messages.getMessageBundle(PREFIX);
             Enumeration<String> enm = rb.getKeys();
@@ -156,7 +156,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
             fw.write("<H2>Full list of tips</H2>\n");
 
             Set<Object> keys = props.keySet();
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (Object key : keys) {
                 if (key.toString().startsWith(TIPS_PREFIX)) {
                     list.add(props.getProperty(key.toString()));

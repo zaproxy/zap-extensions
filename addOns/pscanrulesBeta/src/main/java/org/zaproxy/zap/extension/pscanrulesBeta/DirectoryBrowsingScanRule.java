@@ -43,7 +43,7 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
      * a consistently ordered map of: a regular expression pattern, mapping to the Web server to
      * which the pattern most likely corresponds
      */
-    static Map<Pattern, String> serverPatterns = new LinkedHashMap<Pattern, String>();
+    static Map<Pattern, String> serverPatterns = new LinkedHashMap<>();
 
     static {
         // Apache 2

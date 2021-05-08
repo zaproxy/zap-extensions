@@ -57,7 +57,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
             // Set the response url to empty to give us a way to work out this is a request in the
             // script
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put(ZestVariables.RESPONSE_URL, "");
 
             this.run(script.getZestScript(), req, params);

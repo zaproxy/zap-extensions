@@ -126,7 +126,7 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
 
     private JComboBox<String> getStartPageOption() {
         if (startPageOption == null) {
-            startPageOption = new JComboBox<String>();
+            startPageOption = new JComboBox<>();
             /*
              * Note that the indexes are explicitly used in setUrlFieldState()
              * initParam(Object obj) validateParam(Object obj)

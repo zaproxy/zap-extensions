@@ -57,7 +57,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.proxydisclosure.";
 
     public static final List<String> MAX_FORWARD_METHODS =
-            new LinkedList<String>(
+            new LinkedList<>(
                     Arrays.asList(
                             new String[] {
                                 HttpRequestHeader.TRACE, HttpRequestHeader.OPTIONS,
@@ -76,7 +76,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
      * a map of patterns indicating any cookies set by a proxy. Use a capture group for the cookie
      * name.
      */
-    public static final Map<Pattern, String> PROXY_COOKIES = new LinkedHashMap<Pattern, String>();
+    public static final Map<Pattern, String> PROXY_COOKIES = new LinkedHashMap<>();
 
     static {
         // Citrix NetScaler
@@ -91,8 +91,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
      * a map of any request headers set by a proxy. Use a capture group for the header name, and
      * another for the value.
      */
-    public static final Map<Pattern, String> PROXY_REQUEST_HEADERS =
-            new LinkedHashMap<Pattern, String>();
+    public static final Map<Pattern, String> PROXY_REQUEST_HEADERS = new LinkedHashMap<>();
 
     static {
         // product-specific headers go first..
@@ -131,8 +130,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
      * a map of any response headers set by a proxy. Use a capture group for the header name, and
      * another for the value.
      */
-    public static final Map<Pattern, String> PROXY_RESPONSE_HEADERS =
-            new LinkedHashMap<Pattern, String>();
+    public static final Map<Pattern, String> PROXY_RESPONSE_HEADERS = new LinkedHashMap<>();
 
     static {
         PROXY_RESPONSE_HEADERS.put(
@@ -261,7 +259,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             // They are also inherently un-ordered, because we do not, and cannot be sure at what
             // point they fit into the topology
             // that we can otherwise document using OPTIONS/TRACE + Max-Forwards.
-            Set<String> silentProxySet = new HashSet<String>();
+            Set<String> silentProxySet = new HashSet<>();
             boolean endToEndTraceEnabled = false;
             boolean proxyTraceEnabled = false;
 

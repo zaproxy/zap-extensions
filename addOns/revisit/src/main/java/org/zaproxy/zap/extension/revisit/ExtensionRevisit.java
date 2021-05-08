@@ -96,7 +96,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     private Logger log = LogManager.getLogger(this.getClass());
 
-    private Map<String, TimeRange> sites = new HashMap<String, TimeRange>();
+    private Map<String, TimeRange> sites = new HashMap<>();
     private RevisitDialog revisitDialog;
     private RevisitAPI revisitAPI;
 
@@ -518,7 +518,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
     }
 
     public List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.addAll(sites.keySet());
         return list;
     }

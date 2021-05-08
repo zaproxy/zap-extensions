@@ -39,8 +39,7 @@ import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 
 public class ScriptAutoCompleteKeyListener extends KeyAdapter {
 
-    private Map<String, Map<String, String>> typeToClassMaps =
-            new HashMap<String, Map<String, String>>();
+    private Map<String, Map<String, String>> typeToClassMaps = new HashMap<>();
 
     private JTextArea textInput;
     private ScriptAutoCompleteMenu textPopupMenu;
@@ -54,7 +53,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         this.textInput = textInput;
 
         // Active Rules
-        HashMap<String, String> activeRuleMap = new HashMap<String, String>();
+        HashMap<String, String> activeRuleMap = new HashMap<>();
         activeRuleMap.put("as", "org.zaproxy.zap.extension.ascan.ScriptsActiveScanner");
         activeRuleMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         activeRuleMap.put("param", "java.lang.String");
@@ -62,7 +61,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         typeToClassMaps.put(ExtensionActiveScan.SCRIPT_TYPE_ACTIVE, activeRuleMap);
 
         // Authentication
-        HashMap<String, String> authMap = new HashMap<String, String>();
+        HashMap<String, String> authMap = new HashMap<>();
         authMap.put("helper", "org.zaproxy.zap.authentication.AuthenticationHelper");
         authMap.put("paramsValues", "java.util.Map");
         authMap.put(
@@ -70,12 +69,12 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         typeToClassMaps.put(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH, authMap);
 
         // Extender
-        HashMap<String, String> extendMap = new HashMap<String, String>();
+        HashMap<String, String> extendMap = new HashMap<>();
         extendMap.put("helper", "org.zaproxy.zap.extension.scripts.ExtenderScriptHelper");
         typeToClassMaps.put(ExtensionScriptsUI.SCRIPT_EXT_TYPE, extendMap);
 
         // Fuzzer HTTP Processor
-        HashMap<String, String> fuzzHttpMap = new HashMap<String, String>();
+        HashMap<String, String> fuzzHttpMap = new HashMap<>();
         fuzzHttpMap.put(
                 "utils", "org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils");
         fuzzHttpMap.put("message", "org.parosproxy.paros.network.HttpMessage");
@@ -85,7 +84,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         typeToClassMaps.put("httpfuzzerprocessor", fuzzHttpMap);
 
         // Fuzzer Websocket Processor
-        HashMap<String, String> fuzzWsMap = new HashMap<String, String>();
+        HashMap<String, String> fuzzWsMap = new HashMap<>();
         fuzzWsMap.put(
                 "utils",
                 "org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtils");
@@ -96,13 +95,13 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         typeToClassMaps.put("websocketfuzzerprocessor", fuzzWsMap);
 
         // HTTP Sender
-        HashMap<String, String> httpSenderMap = new HashMap<String, String>();
+        HashMap<String, String> httpSenderMap = new HashMap<>();
         httpSenderMap.put("helper", "org.zaproxy.zap.extension.script.HttpSenderScriptHelper");
         httpSenderMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         typeToClassMaps.put(ExtensionScript.TYPE_HTTP_SENDER, httpSenderMap);
 
         // Passive Rules
-        HashMap<String, String> passiveRuleMap = new HashMap<String, String>();
+        HashMap<String, String> passiveRuleMap = new HashMap<>();
         passiveRuleMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         passiveRuleMap.put("ps", "org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner");
         passiveRuleMap.put("src", "net.htmlparser.jericho.Source");
@@ -111,19 +110,19 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         // Payload Generator - none : has no parameters
 
         // Payload Processor
-        HashMap<String, String> procMap = new HashMap<String, String>();
+        HashMap<String, String> procMap = new HashMap<>();
         procMap.put("payload", "java.lang.String");
         // Defined in org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor
         // not using directly as its in another add-on
         typeToClassMaps.put("payloadprocessor", procMap);
 
         // Proxy
-        HashMap<String, String> proxyMap = new HashMap<String, String>();
+        HashMap<String, String> proxyMap = new HashMap<>();
         proxyMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         typeToClassMaps.put(ExtensionScript.TYPE_PROXY, proxyMap);
 
         // Script Input Vector
-        HashMap<String, String> inputVectorMap = new HashMap<String, String>();
+        HashMap<String, String> inputVectorMap = new HashMap<>();
         inputVectorMap.put("helper", "org.parosproxy.paros.core.scanner.VariantCustom");
         inputVectorMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         typeToClassMaps.put(ExtensionActiveScan.SCRIPT_TYPE_VARIANT, inputVectorMap);
@@ -131,7 +130,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         // Standalone - none : has no parameters
 
         // Targeted
-        HashMap<String, String> targetedMap = new HashMap<String, String>();
+        HashMap<String, String> targetedMap = new HashMap<>();
         targetedMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         typeToClassMaps.put(ExtensionScript.TYPE_TARGETED, targetedMap);
     }

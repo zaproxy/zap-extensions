@@ -505,7 +505,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     }
 
     public List<String> getFileNamesList() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (ForcedBrowseFile file : this.getFileList()) {
             names.add(file.getFile().getName());
         }

@@ -119,7 +119,7 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
     }
 
     private static List<String> loadFile(String file) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
             logger.error("No such file: {}", f.getAbsolutePath());

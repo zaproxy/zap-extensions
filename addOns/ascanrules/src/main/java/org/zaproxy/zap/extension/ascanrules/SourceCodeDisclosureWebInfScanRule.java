@@ -58,7 +58,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
 
     /** the set of files that commonly occur in the WEB-INF folder */
     private static final List<String> WEBINF_FILES =
-            new LinkedList<String>(
+            new LinkedList<>(
                     Arrays.asList(
                             new String[] {
                                 "web.xml", "applicationContext.xml" // for Spring
@@ -150,8 +150,8 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
     public void scan() {
         try {
             URI originalURI = getBaseMsg().getRequestHeader().getURI();
-            List<String> javaClassesFound = new LinkedList<String>();
-            List<String> javaClassesHandled = new LinkedList<String>();
+            List<String> javaClassesFound = new LinkedList<>();
+            List<String> javaClassesHandled = new LinkedList<>();
 
             // Pass 1: thru each of the WEB-INF files, looking for class names
             for (String filename : WEBINF_FILES) {

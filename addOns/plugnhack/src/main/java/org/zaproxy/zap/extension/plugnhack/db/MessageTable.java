@@ -128,7 +128,7 @@ public class MessageTable extends ParosAbstractTable {
     }
 
     public synchronized List<ClientMessage> list() throws SQLException {
-        ArrayList<ClientMessage> list = new ArrayList<ClientMessage>();
+        ArrayList<ClientMessage> list = new ArrayList<>();
 
         ResultSet rs = psGetAllData.executeQuery();
         while (rs.next()) {

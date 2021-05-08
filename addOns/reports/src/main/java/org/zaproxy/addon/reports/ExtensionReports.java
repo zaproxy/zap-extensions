@@ -453,7 +453,7 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     public List<Template> getTemplates() {
-        return new ArrayList<Template>(getTemplateMap().values());
+        return new ArrayList<>(getTemplateMap().values());
     }
 
     public List<String> getTemplateNames() {

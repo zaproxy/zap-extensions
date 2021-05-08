@@ -137,7 +137,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     }
 
     public List<WebSocketFrame> getListOfIncomingMessages() {
-        return new ArrayList<WebSocketFrame>(incomingMessages);
+        return new ArrayList<>(incomingMessages);
     }
 
     class Scheduling {

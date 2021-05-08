@@ -226,7 +226,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
 
     private TableExportButton<JXTable> getButtonExport() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<JXTable>(getNotesTable());
+            exportButton = new TableExportButton<>(getNotesTable());
         }
         return exportButton;
     }

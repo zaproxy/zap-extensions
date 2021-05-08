@@ -87,7 +87,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
             log.debug("Targeting {}", getBaseMsg().getRequestHeader().getURI());
 
             // pages are not vulnerable if not proved otherwise
-            List<String> vulnLinks = new ArrayList<String>();
+            List<String> vulnLinks = new ArrayList<>();
 
             // We parse the HTML of the response and get all its parameters
             Source s = new Source(getBaseMsg().getResponseBody().toString());
@@ -193,7 +193,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
     public TreeSet<HtmlParameter> getParams(Source s, List<Element> inputTags) {
 
         // We store all the page fields in a hash map and add the payload
-        TreeSet<HtmlParameter> tags = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> tags = new TreeSet<>();
 
         for (HtmlParameter p : getBaseMsg().getFormParams()) {
             if (p.getName() != null && p.getValue() != null) {
@@ -236,7 +236,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
      * @return a hashmap of the query string
      */
     private Map<String, List<String>> getUrlParameters(String url) {
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
+        Map<String, List<String>> params = new HashMap<>();
 
         if (url != null) {
             String[] urlParts = url.split("\\?");
@@ -252,7 +252,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                     }
                     List<String> values = params.get(key);
                     if (values == null) {
-                        values = new ArrayList<String>();
+                        values = new ArrayList<>();
                         params.put(key, values);
                     }
                     values.add(value);

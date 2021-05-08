@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update links to zaproxy repo.
 - Rename reliability to confidence in active/passive templates.
+- Maintenance changes.
 
 ## [7] - 2020-12-15
 ### Added

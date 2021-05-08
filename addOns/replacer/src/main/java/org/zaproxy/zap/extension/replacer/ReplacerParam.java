@@ -48,7 +48,7 @@ public class ReplacerParam extends AbstractParam {
 
     private static final String CONFIRM_REMOVE_RULE_KEY = REPLACER_BASE_KEY + ".confirmRemoveToken";
 
-    private static ArrayList<ReplacerParamRule> defaultList = new ArrayList<ReplacerParamRule>();
+    private static ArrayList<ReplacerParamRule> defaultList = new ArrayList<>();
 
     private List<ReplacerParamRule> rules = new ArrayList<>();
 
@@ -129,7 +129,7 @@ public class ReplacerParam extends AbstractParam {
                     String initStr = sub.getString(RULE_INITIATORS_KEY, "");
                     List<Integer> initList = null;
                     if (!StringUtils.isEmpty(initStr)) {
-                        initList = new ArrayList<Integer>();
+                        initList = new ArrayList<>();
                         String[] initStrArray =
                                 initStr.replace("[", "").replace("]", "").split(",");
                         for (String str : initStrArray) {

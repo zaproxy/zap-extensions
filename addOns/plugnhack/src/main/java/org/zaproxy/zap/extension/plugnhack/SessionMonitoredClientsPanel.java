@@ -54,8 +54,8 @@ public class SessionMonitoredClientsPanel extends AbstractParamPanel {
     private MonitoredPagesManager mpm;
 
     // These are used to tell if the user made any changes
-    private ArrayList<String> includeCache = new ArrayList<String>();
-    private ArrayList<String> excludeCache = new ArrayList<String>();
+    private ArrayList<String> includeCache = new ArrayList<>();
+    private ArrayList<String> excludeCache = new ArrayList<>();
 
     public SessionMonitoredClientsPanel(MonitoredPagesManager mpm) {
         super();

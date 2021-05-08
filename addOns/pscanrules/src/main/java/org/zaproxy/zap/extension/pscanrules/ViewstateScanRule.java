@@ -138,7 +138,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
     }
 
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<Alert>();
+        List<Alert> alerts = new ArrayList<>();
         alerts.add(
                 alertViewstateAnalyzerResult(
                                 new ViewstateAnalyzerResult(ViewstateAnalyzerPattern.IPADDRESS) {

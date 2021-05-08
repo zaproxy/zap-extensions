@@ -35,7 +35,7 @@ public class CookiesTableModel extends AbstractTableModel {
         Constant.messages.getString("zest.cookies.table.path")
     };
 
-    private List<String[]> values = new ArrayList<String[]>();
+    private List<String[]> values = new ArrayList<>();
 
     /** */
     public CookiesTableModel() {

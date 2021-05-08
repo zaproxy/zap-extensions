@@ -106,7 +106,7 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
             return;
         }
 
-        Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
+        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
         params.addAll(msg.getUrlParams());
         if (params.size() == 0) {
             return;

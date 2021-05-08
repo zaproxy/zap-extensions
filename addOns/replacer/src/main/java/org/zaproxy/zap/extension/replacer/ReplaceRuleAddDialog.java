@@ -237,7 +237,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     public void save() {
         List<Integer> initiators = null;
         if (!getBoolValue(INIT_TYPE_ALL_FIELD)) {
-            initiators = new ArrayList<Integer>();
+            initiators = new ArrayList<>();
             if (getBoolValue(INIT_TYPE_PROXY_FIELD)) {
                 initiators.add(HttpSender.PROXY_INITIATOR);
             }
@@ -313,7 +313,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     }
 
     private List<String> getMatchTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_HEADER));
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_HEADER_STR));
         list.add(matchTypeToStr(ReplacerParamRule.MatchType.REQ_BODY_STR));
@@ -325,7 +325,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private List<String> getDefaultRequestHeaders() {
         // Taken from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Accept");
         list.add("Accept-Charset");
         list.add("Accept-Datetime");
@@ -381,7 +381,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private List<String> getDefaultResponseHeaders() {
         // Taken from https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Access-Control-Allow-Origin");
         list.add("Accept-Patch");
         list.add("Accept-Ranges");

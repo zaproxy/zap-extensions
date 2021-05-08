@@ -195,7 +195,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
             }
         }
 
-        List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+        List<ScriptNode> nodes = new ArrayList<>();
         nodes.add(dragNode);
 
         extension.pasteToNode((ScriptNode) parent, nodes, cut, beforeChild, afterChild);

@@ -31,7 +31,7 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
 
     private static final long serialVersionUID = 1L;
     private ScriptAutoCompleteKeyListener parent;
-    private List<JMenuItem> menus = new ArrayList<JMenuItem>();
+    private List<JMenuItem> menus = new ArrayList<>();
 
     public ScriptAutoCompleteMenu(ScriptAutoCompleteKeyListener parent) {
         this.parent = parent;

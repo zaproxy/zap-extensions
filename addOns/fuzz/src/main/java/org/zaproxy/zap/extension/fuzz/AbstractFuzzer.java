@@ -203,7 +203,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                 poolSize,
                 0L,
                 TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 threadFactory);
     }
 

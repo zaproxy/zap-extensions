@@ -60,7 +60,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
     // LDAP errors for Injection testing
     // Use an inverse map to avoid multimap use
     // ----------------------------------------
-    private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<Pattern, String>();
+    private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<>();
     private int matchThreshold = 0;
     private int andRequests = 0;
 

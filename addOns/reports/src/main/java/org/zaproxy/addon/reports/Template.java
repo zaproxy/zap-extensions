@@ -47,8 +47,8 @@ public class Template {
     private String extension;
     private String format;
     private TemplateMode mode;
-    private List<String> sections = new ArrayList<String>();
-    private List<String> themes = new ArrayList<String>();
+    private List<String> sections = new ArrayList<>();
+    private List<String> themes = new ArrayList<>();
     private ResourceBundle msgs = null;
     private Boolean hasMsgs = null;
     private URLClassLoader classloader = null;

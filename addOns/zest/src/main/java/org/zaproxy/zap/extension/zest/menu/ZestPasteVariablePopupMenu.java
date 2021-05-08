@@ -38,7 +38,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     private JTextComponent lastInvoker = null;
     private ZestScriptWrapper script = null;
-    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<ExtensionPopupMenuItem>();
+    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
     /** This method initializes */
     public ZestPasteVariablePopupMenu(ExtensionZest extension) {
@@ -99,8 +99,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
     private void reCreateSubMenu() {
         if (script != null) {
             final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-            TreeSet<String> sortedSet =
-                    new TreeSet<String>(script.getZestScript().getVariableNames());
+            TreeSet<String> sortedSet = new TreeSet<>(script.getZestScript().getVariableNames());
             for (String var : sortedSet) {
                 ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
                 piicm.setMenuIndex(this.getMenuIndex());

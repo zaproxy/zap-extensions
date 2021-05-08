@@ -205,7 +205,7 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 
     private JComboBox<String> getTypesCombo() {
         if (typesCombo == null) {
-            typesCombo = new JComboBox<String>();
+            typesCombo = new JComboBox<>();
             resetTypesCombo();
         }
         return typesCombo;
@@ -224,7 +224,7 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 
     private JComboBox<String> getClientsCombo() {
         if (clientsCombo == null) {
-            clientsCombo = new JComboBox<String>();
+            clientsCombo = new JComboBox<>();
             resetClientsCombo();
         }
         return clientsCombo;

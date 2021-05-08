@@ -64,7 +64,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
         // Add any header(s) using the alternate name
         List<String> xcpdHeader = msg.getResponseHeader().getHeaderValues("X-ChromePhp-Data");
 
-        List<String> loggerHeaders = new ArrayList<String>(2);
+        List<String> loggerHeaders = new ArrayList<>(2);
 
         if (!xcldHeader.isEmpty()) {
             loggerHeaders.addAll(xcldHeader);

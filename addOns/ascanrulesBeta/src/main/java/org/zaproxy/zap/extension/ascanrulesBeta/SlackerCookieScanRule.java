@@ -63,8 +63,8 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
         int baseResponseLength = getBaseMsg().getResponseBody().length();
         Set<HtmlParameter> cookies = getBaseMsg().getCookieParams();
 
-        Set<String> cookiesThatMakeADifference = new HashSet<String>();
-        Set<String> cookiesThatDoNOTMakeADifference = new HashSet<String>();
+        Set<String> cookiesThatMakeADifference = new HashSet<>();
+        Set<String> cookiesThatDoNOTMakeADifference = new HashSet<>();
 
         boolean thereAreSlackCookies = false;
         HttpMessage msg = getNewMsg();
@@ -101,7 +101,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
             int baseResponseLength) {
 
         boolean sessionNoLongerGood = false;
-        msg.setCookieParams(new TreeSet<HtmlParameter>(cookies));
+        msg.setCookieParams(new TreeSet<>(cookies));
 
         try {
             sendAndReceive(msg, false);
@@ -156,7 +156,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
         HttpMessage msg = getNewMsg();
 
         boolean doesThisCookieMatter = false;
-        TreeSet<HtmlParameter> allCookiesExceptOne = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> allCookiesExceptOne = new TreeSet<>();
         for (HtmlParameter cookieCandidate : cookies) {
             if (cookieCandidate != oneCookie) allCookiesExceptOne.add(cookieCandidate);
         }

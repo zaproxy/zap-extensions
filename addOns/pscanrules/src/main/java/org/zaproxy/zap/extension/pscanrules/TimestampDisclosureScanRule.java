@@ -51,7 +51,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
     /** a map of a regular expression pattern to details of the timestamp type found */
-    static Map<Pattern, String> timestampPatterns = new HashMap<Pattern, String>();
+    static Map<Pattern, String> timestampPatterns = new HashMap<>();
 
     static {
         // 8 - 10 digits is unlikely to cause many false positives, but covers most of the range of

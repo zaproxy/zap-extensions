@@ -66,7 +66,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
         Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
 
         // find all loosely scoped cookies
-        List<HttpCookie> looselyScopedCookies = new LinkedList<HttpCookie>();
+        List<HttpCookie> looselyScopedCookies = new LinkedList<>();
         for (HttpCookie cookie : cookies) {
             if (!ignoreList.contains(cookie.getName()) && isLooselyScopedCookie(cookie, host)) {
                 looselyScopedCookies.add(cookie);

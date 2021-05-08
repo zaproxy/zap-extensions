@@ -52,7 +52,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
     // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
     // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
     static Set<Pattern> base64Patterns =
-            new LinkedHashSet<Pattern>(); // the order of patterns is important. most specific first
+            new LinkedHashSet<>(); // the order of patterns is important. most specific first
 
     static {
         // base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}"));

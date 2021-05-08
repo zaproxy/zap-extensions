@@ -1156,7 +1156,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         HttpMessage msg = this.getHttpMessage(HttpRequestHeader.POST, test, "<html>/<html>");
         HtmlParameter param = new HtmlParameter(HtmlParameter.Type.form, "name", "test");
-        TreeSet<HtmlParameter> paramSet = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> paramSet = new TreeSet<>();
         paramSet.add(param);
         msg.setFormParams(paramSet);
         msg.getRequestHeader()

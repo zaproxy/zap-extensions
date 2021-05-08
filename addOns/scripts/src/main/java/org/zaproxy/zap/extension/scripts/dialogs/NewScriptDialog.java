@@ -165,7 +165,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getEngines() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         int engineCount = extension.getExtScript().getScriptingEngines().size();
         if (engineCount > 1) {
             list.add("");
@@ -175,7 +175,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getTypes() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.add("");
         for (ScriptType type : extension.getExtScript().getScriptTypes()) {
             if (type.hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
@@ -205,7 +205,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getTemplates() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         ScriptEngineWrapper selectedEngine = getSelectedEngine();
         for (ScriptWrapper template :
                 extension

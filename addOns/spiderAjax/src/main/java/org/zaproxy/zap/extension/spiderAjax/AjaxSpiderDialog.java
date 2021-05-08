@@ -138,7 +138,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
                 });
 
         List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        List<String> browserNames = new ArrayList<String>();
+        List<String> browserNames = new ArrayList<>();
         String defaultBrowser = null;
         for (ProvidedBrowserUI browser : browserList) {
             browserNames.add(browser.getName());
@@ -258,7 +258,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     @Override
     public void targetSelected(String field, Target target) {
         boolean contextSelected = false;
-        List<String> ctxNames = new ArrayList<String>();
+        List<String> ctxNames = new ArrayList<>();
         if (target != null) {
             this.target = target;
             if (target.getStartNode() != null) {

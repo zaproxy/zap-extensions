@@ -79,7 +79,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectHasEmptyLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://evil.com"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -106,7 +106,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderEmptyParam() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", ""));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -121,7 +121,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderIrrelevantParam() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "fred"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -136,7 +136,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParam() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://evil.com"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -152,7 +152,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnParam() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://evil.com"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
@@ -171,7 +171,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=evil.com", false));
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
-        TreeSet<HtmlParameter> formParams = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> formParams = new TreeSet<>();
         formParams.add(new HtmlParameter(HtmlParameter.Type.form, "name", "jane"));
         msg.setFormParams(formParams);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
@@ -190,7 +190,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://evil.com/i.php?place=evil.com", false));
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
-        TreeSet<HtmlParameter> formParams = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> formParams = new TreeSet<>();
         formParams.add(new HtmlParameter(HtmlParameter.Type.form, "name", "jane"));
         msg.setFormParams(formParams);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
@@ -205,7 +205,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://example.com"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -220,7 +220,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectAndParamIsOnlyMatchingProtocolOfLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
@@ -235,7 +235,7 @@ class UserControlledOpenRedirectScanRuleUnitTest
     void shouldNotRaiseAlertIfResponseIsRedirectHasRelativeLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "/images"));
         msg.setGetParams(params);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);

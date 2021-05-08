@@ -119,7 +119,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
         this.getParamsModel().setValues(getCapabilities(client));
 
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
@@ -131,7 +131,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
     private List<String[]> getCapabilities(ZestClientLaunch client) {
         // TODO
-        List<String[]> list = new ArrayList<String[]>();
+        List<String[]> list = new ArrayList<>();
         if (client.getCapabilities() != null) {
             for (String capability : client.getCapabilities().split("\n")) {
                 if (capability != null && capability.trim().length() > 0) {

@@ -64,8 +64,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
      * a list of HTML attributes that load objects using a URL (and potentially using a relative
      * path), mapping to the HTML tags that use them
      */
-    static final Map<String, String[]> RELATIVE_LOADING_ATTRIBUTE_TO_TAGS =
-            new LinkedHashMap<String, String[]>();
+    static final Map<String, String[]> RELATIVE_LOADING_ATTRIBUTE_TO_TAGS = new LinkedHashMap<>();
 
     // statically populate the tag data
     static {

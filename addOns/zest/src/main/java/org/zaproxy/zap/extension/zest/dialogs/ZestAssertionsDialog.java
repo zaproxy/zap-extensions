@@ -122,7 +122,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;

@@ -105,7 +105,7 @@ public class ScriptsListPanel extends AbstractPanel {
 
     private HttpMessage lastMessageDisplayed = null;
 
-    private List<Class<?>> disabledScriptDialogs = new ArrayList<Class<?>>();
+    private List<Class<?>> disabledScriptDialogs = new ArrayList<>();
 
     private ScriptTreeTransferHandler stth = new ScriptTreeTransferHandler();
 
@@ -489,7 +489,7 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     protected List<ScriptNode> getSelectedNodes() {
-        List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+        List<ScriptNode> nodes = new ArrayList<>();
 
         if (tree.getSelectionPaths() != null) {
             for (TreePath t : tree.getSelectionPaths()) {

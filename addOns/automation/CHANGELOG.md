@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Support for using variables in the config 
+- Support for using variables in the config.
+
+### Changed
+- Maintenance changes.
 
 ## [0.2.0] - 2021-04-12
 ### Added

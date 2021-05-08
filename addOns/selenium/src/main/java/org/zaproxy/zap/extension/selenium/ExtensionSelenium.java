@@ -114,7 +114,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private Map<String, List<WebDriver>> proxiedWebDrivers = new HashMap<>();
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
-            new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
+            new ArrayList<>();
 
     private ExtensionScript extScript;
 
@@ -150,9 +150,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         seleniumApi = new SeleniumAPI(getOptions());
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
-        webDriverProviders =
-                Collections.synchronizedMap(new HashMap<String, SingleWebDriverProvider>());
-        providedBrowsers = Collections.synchronizedMap(new HashMap<String, ProvidedBrowser>());
+        webDriverProviders = Collections.synchronizedMap(new HashMap<>());
+        providedBrowsers = Collections.synchronizedMap(new HashMap<>());
 
         addBuiltInProvider(Browser.CHROME);
         addBuiltInProvider(Browser.CHROME_HEADLESS);
@@ -374,7 +373,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public ProvidedBrowsersComboBoxModel createProvidedBrowsersComboBoxModel() {
         ProvidedBrowsersComboBoxModel model =
                 new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
-        providedBrowserComboBoxModels.add(new WeakReference<ProvidedBrowsersComboBoxModel>(model));
+        providedBrowserComboBoxModels.add(new WeakReference<>(model));
         return model;
     }
 
@@ -395,7 +394,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     public List<ProvidedBrowserUI> getUsableProvidedBrowserUIList(boolean incHeadless) {
-        List<ProvidedBrowserUI> list = new ArrayList<ProvidedBrowserUI>();
+        List<ProvidedBrowserUI> list = new ArrayList<>();
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
             if (provided.getBrowser().isConfigured()
                     && (incHeadless || !provided.getBrowser().isHeadless())) {
@@ -410,7 +409,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     public List<String> getUsableProvidedBrowserUINameList(boolean incHeadless) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
             if (provided.getBrowser().isConfigured()
                     && (incHeadless || !provided.getBrowser().isHeadless())) {

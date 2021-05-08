@@ -76,8 +76,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         this.removeAllFields();
 
         // Pull down of all the valid window ids
-        List<String> windowIds =
-                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 
@@ -93,7 +92,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ELEMENT_TYPES) {
             list.add(Constant.messages.getString(ELEMENT_TYPE_PREFIX + type));
         }

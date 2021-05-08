@@ -204,7 +204,7 @@ public class WebSocketMessageDTO implements Message {
     }
 
     public Map<String, String> toMap(boolean fullPayload) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("id", Integer.toString(this.id));
         map.put("opcode", Integer.toString(this.opcode));
         map.put("opcodeString", this.readableOpcode);

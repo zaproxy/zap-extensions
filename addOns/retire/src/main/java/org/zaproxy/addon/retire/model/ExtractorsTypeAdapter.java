@@ -86,7 +86,7 @@ public class ExtractorsTypeAdapter extends TypeAdapter<Extractors> {
                     break;
                 case Extractors.TYPE_HASHES:
                     in.beginObject();
-                    Map<String, String> hashes = new HashMap<String, String>();
+                    Map<String, String> hashes = new HashMap<>();
                     while (in.hasNext()) {
                         String key = in.nextName();
                         String value = in.nextString();

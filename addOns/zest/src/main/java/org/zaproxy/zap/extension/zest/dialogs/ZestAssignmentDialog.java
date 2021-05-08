@@ -280,7 +280,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getVariableNames(boolean editable) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         if (editable) {
             list.add("");
         }
@@ -290,7 +290,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private void initFormField(String value) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (stmt instanceof ZestRequest) {
             ZestRequest req = (ZestRequest) stmt;
             if (stmt != null && req.getResponse() != null) {

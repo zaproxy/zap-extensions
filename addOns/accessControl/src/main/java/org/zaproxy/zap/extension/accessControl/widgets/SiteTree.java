@@ -50,7 +50,7 @@ public class SiteTree {
     }
 
     public SiteTreeNode addPath(Context context, URI uri, String method) {
-        Collection<String> urlParams = new ArrayList<String>();
+        Collection<String> urlParams = new ArrayList<>();
         try {
             context.getUrlParamParser()
                     .parseParameters(uri.getQuery())

@@ -286,7 +286,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // and follow the forward url
                         // need to clear the params (which would come from the initial POST,
                         // otherwise)
-                        temp.getRequestHeader().setGetParams(new TreeSet<HtmlParameter>());
+                        temp.getRequestHeader().setGetParams(new TreeSet<>());
                         temp.setRequestBody("");
                         temp.setResponseBody(
                                 ""); // make sure no values accidentally carry from one iteration to
@@ -765,7 +765,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // and follow the forward url
                         // need to clear the params (which would come from the initial POST,
                         // otherwise)
-                        temp2.getRequestHeader().setGetParams(new TreeSet<HtmlParameter>());
+                        temp2.getRequestHeader().setGetParams(new TreeSet<>());
                         temp2.setRequestBody("");
                         temp2.setResponseBody(
                                 ""); // make sure no values accidentally carry from one iteration to

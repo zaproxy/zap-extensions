@@ -54,7 +54,7 @@ public class JrubyEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public List<String> getExtensions() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("rb");
         return list;
     }

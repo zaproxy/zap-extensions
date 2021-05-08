@@ -124,7 +124,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
             return Collections.emptySet();
         }
 
-        HashSet<Alert> alertNodes = new HashSet<Alert>();
+        HashSet<Alert> alertNodes = new HashSet<>();
         if (!isMultiSelect()) {
             DefaultMutableTreeNode alertNode =
                     (DefaultMutableTreeNode) paths[0].getLastPathComponent();

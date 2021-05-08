@@ -42,7 +42,7 @@ public class AutomationEnvironment {
     private static final Pattern varPattern = Pattern.compile("\\$\\{(.+?)\\}");
 
     private AutomationProgress progress;
-    private List<Context> contexts = new ArrayList<Context>();;
+    private List<Context> contexts = new ArrayList<>();
     private boolean failOnError = true;
     private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();

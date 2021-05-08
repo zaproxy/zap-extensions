@@ -309,7 +309,7 @@ public class ReportDialog extends StandardFieldsDialog {
             }
 
             List<String> sections = template.getSections();
-            sectionsMap = new HashMap<String, JCheckBox>();
+            sectionsMap = new HashMap<>();
             if (sections.size() == 0) {
                 sectionPanel.add(
                         new JLabel(
@@ -354,7 +354,7 @@ public class ReportDialog extends StandardFieldsDialog {
 
     private DefaultListModel<Context> getContextsModel() {
         if (contextsModel == null) {
-            contextsModel = new DefaultListModel<Context>();
+            contextsModel = new DefaultListModel<>();
             for (Context context : Model.getSingleton().getSession().getContexts()) {
                 contextsModel.addElement(context);
             }
@@ -392,7 +392,7 @@ public class ReportDialog extends StandardFieldsDialog {
 
     private DefaultListModel<String> getSitesModel() {
         if (sitesModel == null) {
-            sitesModel = new DefaultListModel<String>();
+            sitesModel = new DefaultListModel<>();
             SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
             SiteNode root = siteMap.getRoot();
             if (root.getChildCount() > 0) {

@@ -152,7 +152,7 @@ public class UploadPropertiesDialog {
 	private JComboBox<NameValuePair> createProjectComboBox(Container cont){
 		createSettingsLabel("Project: ", cont);
 				
-		JComboBox<NameValuePair> box = new JComboBox<NameValuePair>();
+		JComboBox<NameValuePair> box = new JComboBox<>();
 		box.setPreferredSize(new Dimension(300, 27));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 1;

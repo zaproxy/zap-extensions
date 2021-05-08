@@ -437,7 +437,7 @@ public class WebSocketUiHelper {
 
     public JComboBox<String> getDirectionSingleSelect() {
         if (directionComboBox == null) {
-            directionComboBox = new JComboBox<String>(getDirectionModel());
+            directionComboBox = new JComboBox<>(getDirectionModel());
         }
         return directionComboBox;
     }

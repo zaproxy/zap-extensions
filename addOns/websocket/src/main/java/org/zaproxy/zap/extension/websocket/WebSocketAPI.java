@@ -411,7 +411,7 @@ public class WebSocketAPI extends ApiImplementor {
                 List<WebSocketChannelDTO> channels =
                         extension.getChannels(new WebSocketChannelDTO());
                 for (WebSocketChannelDTO channel : channels) {
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put("id", Integer.toString(channel.id));
                     map.put("displayName", channel.toString());
                     map.put("connected", Boolean.toString(channel.isConnected()));
@@ -423,7 +423,7 @@ public class WebSocketAPI extends ApiImplementor {
                                 "handshakeHistoryId",
                                 Integer.toString(channel.getHandshakeReference().getHistoryId()));
                     }
-                    resultList.addItem(new ApiResponseSet<String>("channel", map));
+                    resultList.addItem(new ApiResponseSet<>("channel", map));
                 }
                 result = resultList;
             } catch (DatabaseException e) {
@@ -457,7 +457,7 @@ public class WebSocketAPI extends ApiImplementor {
                 }
 
                 if (params.containsKey(PARAM_CHANNEL_ID)) {
-                    inScopeChannelIds = new ArrayList<Integer>();
+                    inScopeChannelIds = new ArrayList<>();
                     inScopeChannelIds.add(params.getInt(PARAM_CHANNEL_ID));
                 }
 
@@ -508,7 +508,7 @@ public class WebSocketAPI extends ApiImplementor {
 
     private ApiResponseSet<String> wsMessageToResult(
             WebSocketMessageDTO message, boolean fullPayload) {
-        return new ApiResponseSet<String>("message", message.toMap(fullPayload));
+        return new ApiResponseSet<>("message", message.toMap(fullPayload));
     }
 
     @Override

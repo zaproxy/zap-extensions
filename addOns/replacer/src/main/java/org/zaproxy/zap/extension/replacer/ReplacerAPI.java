@@ -150,7 +150,7 @@ public class ReplacerAPI extends ApiImplementor {
             List<Integer> initiators = null;
             String initString = this.getParam(params, PARAM_INITIATORS, "");
             if (initString.length() > 0) {
-                initiators = new ArrayList<Integer>();
+                initiators = new ArrayList<>();
                 try {
                     for (String str : initString.split(",")) {
                         initiators.add(Integer.parseInt(str.trim()));
@@ -201,7 +201,7 @@ public class ReplacerAPI extends ApiImplementor {
     }
 
     private ApiResponse ruleToResponse(ReplacerParamRule rule) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("description", rule.getDescription());
         map.put("enabled", Boolean.toString(rule.isEnabled()));
         map.put("matchType", rule.getMatchType().name());
@@ -218,6 +218,6 @@ public class ReplacerAPI extends ApiImplementor {
             }
         }
         map.put("initiators", sb.toString());
-        return new ApiResponseSet<String>("rule", map);
+        return new ApiResponseSet<>("rule", map);
     }
 }

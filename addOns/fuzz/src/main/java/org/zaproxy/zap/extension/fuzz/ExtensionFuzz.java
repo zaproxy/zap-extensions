@@ -475,8 +475,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                             if (depth != 0) {
                                 categoryNames.add(dir.getFileName().toString());
                             }
-                            directories.push(new ArrayList<FuzzerPayloadCategory>());
-                            files.push(new ArrayList<FuzzerPayloadSource>());
+                            directories.push(new ArrayList<>());
+                            files.push(new ArrayList<>());
 
                             depth++;
                             return super.preVisitDirectory(dir, attrs);

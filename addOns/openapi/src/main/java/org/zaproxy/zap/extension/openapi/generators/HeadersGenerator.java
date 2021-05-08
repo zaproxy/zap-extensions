@@ -48,7 +48,7 @@ public class HeadersGenerator {
     }
 
     public List<HttpHeaderField> generate(OperationModel operationModel) {
-        List<HttpHeaderField> headerList = new LinkedList<HttpHeaderField>();
+        List<HttpHeaderField> headerList = new LinkedList<>();
         generateAcceptHeaders(operationModel.getOperation(), headerList);
         generateContentTypeHeaders(operationModel.getOperation(), headerList);
         generateCustomHeader(operationModel.getOperation(), headerList);

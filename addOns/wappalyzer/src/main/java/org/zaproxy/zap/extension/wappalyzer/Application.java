@@ -30,17 +30,17 @@ public class Application {
     private String description;
     private String website;
     private ImageIcon icon = null;
-    private List<String> categories = new ArrayList<String>();
+    private List<String> categories = new ArrayList<>();
     private String cpe;
     private List<Map<String, AppPattern>> headers;
-    private List<AppPattern> url = new ArrayList<AppPattern>();
-    private List<AppPattern> html = new ArrayList<AppPattern>();
+    private List<AppPattern> url = new ArrayList<>();
+    private List<AppPattern> html = new ArrayList<>();
     private List<Map<String, AppPattern>> metas;
     private List<Map<String, Map<String, Map<String, AppPattern>>>> dom;
-    private List<AppPattern> css = new ArrayList<AppPattern>();
-    private List<AppPattern> script = new ArrayList<AppPattern>();
+    private List<AppPattern> css = new ArrayList<>();
+    private List<AppPattern> script = new ArrayList<>();
 
-    private List<String> implies = new ArrayList<String>();
+    private List<String> implies = new ArrayList<>();
 
     public String getName() {
         return name;

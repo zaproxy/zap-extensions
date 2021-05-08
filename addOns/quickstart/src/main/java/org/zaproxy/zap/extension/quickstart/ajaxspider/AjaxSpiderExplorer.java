@@ -100,7 +100,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
 
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
         if (browserComboBox == null) {
-            browserComboBox = new JComboBox<ProvidedBrowserUI>();
+            browserComboBox = new JComboBox<>();
             ProvidedBrowsersComboBoxModel model =
                     extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
             model.setIncludeUnconfigured(false);

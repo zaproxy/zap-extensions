@@ -223,14 +223,14 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 
     private DefaultListModel<MonitoredPage> getClientsListModel() {
         if (this.clientsListModel == null) {
-            this.clientsListModel = new DefaultListModel<MonitoredPage>();
+            this.clientsListModel = new DefaultListModel<>();
         }
         return this.clientsListModel;
     }
 
     private JList<MonitoredPage> getClientsList() {
         if (this.clientsList == null) {
-            this.clientsList = new JList<MonitoredPage>(this.getClientsListModel());
+            this.clientsList = new JList<>(this.getClientsListModel());
             this.clientsList.setName(CLIENTS_LIST_NAME);
             this.clientsList.setCellRenderer(new ClientListCellRenderer());
 

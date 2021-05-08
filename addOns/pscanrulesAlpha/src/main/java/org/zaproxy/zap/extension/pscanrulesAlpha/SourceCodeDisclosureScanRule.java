@@ -46,7 +46,7 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
      * a consistently ordered map of: a regular expression pattern to the Programming language
      * (string) to which the pattern most likely corresponds
      */
-    static Map<Pattern, String> languagePatterns = new LinkedHashMap<Pattern, String>();
+    static Map<Pattern, String> languagePatterns = new LinkedHashMap<>();
 
     static {
         // PHP

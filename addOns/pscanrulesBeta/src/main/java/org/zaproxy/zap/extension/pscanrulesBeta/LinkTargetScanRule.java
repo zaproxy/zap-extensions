@@ -51,7 +51,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
     private static final String NOREFERRER = "noreferrer";
 
     private String trustedConfig = "";
-    private List<String> trustedDomainRegexes = new ArrayList<String>();
+    private List<String> trustedDomainRegexes = new ArrayList<>();
 
     private Model model = null;
 

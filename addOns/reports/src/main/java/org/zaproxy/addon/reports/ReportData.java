@@ -38,7 +38,7 @@ public class ReportData {
     private Map<String, Object> reportObjects = new HashMap<>();
     private boolean[] confidences = new boolean[Alert.MSG_CONFIDENCE.length];
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
-    private List<String> sections = new ArrayList<String>();
+    private List<String> sections = new ArrayList<>();
     private String theme;
 
     public ReportData() {}

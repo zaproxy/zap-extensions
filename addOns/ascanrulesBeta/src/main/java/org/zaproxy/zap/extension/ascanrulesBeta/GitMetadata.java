@@ -1077,7 +1077,7 @@ public class GitMetadata {
      */
     @SuppressWarnings("unused")
     public Map<String, String> getIndexSha1s(byte[] data) throws Exception {
-        Map<String, String> map = new TreeMap<String, String>();
+        Map<String, String> map = new TreeMap<>();
 
         // wrap up the data, so we can read it..
         ByteBuffer dataBuffer = ByteBuffer.wrap(data);

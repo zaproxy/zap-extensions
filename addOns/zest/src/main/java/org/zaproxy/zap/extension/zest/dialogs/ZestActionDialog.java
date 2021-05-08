@@ -108,7 +108,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
         if (action instanceof ZestActionScan) {
             ZestActionScan za = (ZestActionScan) action;
-            List<String> namesList = new ArrayList<String>();
+            List<String> namesList = new ArrayList<>();
             if (stmt != null && stmt instanceof ZestRequest) {
                 ZestRequest req = (ZestRequest) stmt;
                 namesList = this.getParamNames(req.getUrl().getQuery());
@@ -157,7 +157,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
             this.getParamsModel().setValues(za.getParameters());
 
-            List<JButton> buttons = new ArrayList<JButton>();
+            List<JButton> buttons = new ArrayList<>();
             buttons.add(getAddButton());
             buttons.add(getModifyButton());
             buttons.add(getRemoveButton());
@@ -327,7 +327,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     }
 
     private List<String> getScriptNames() {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         for (ScriptWrapper script :
                 this.extension.getExtScript().getScripts(ExtensionScript.TYPE_STANDALONE)) {
             if (script.getFile() != null) {
@@ -339,7 +339,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     }
 
     private List<String> getParamNames(String data) {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         if (data != null && data.length() > 0) {
             String[] nameValues = data.split("&");
             for (String nameValue : nameValues) {

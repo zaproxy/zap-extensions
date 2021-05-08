@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.sequence;
 
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -206,7 +205,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     private void updateMessage(HttpMessage msg, HttpMessage newMsg) {
         msg.setRequestHeader(newMsg.getRequestHeader());
         msg.setRequestBody(newMsg.getRequestBody());
-        msg.setCookies(new ArrayList<HttpCookie>());
+        msg.setCookies(new ArrayList<>());
     }
 
     private ExtensionScript getExtScript() {

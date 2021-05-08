@@ -48,7 +48,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
     private static Logger logger = LogManager.getLogger(ViewStateModel.class);
     public static final int VS_ACTION_REQUEST = 1;
     public static final int VS_ACTION_RESPONSE = 2;
-    private ArrayList<ViewState> viewstateParams = new ArrayList<ViewState>();
+    private ArrayList<ViewState> viewstateParams = new ArrayList<>();
     private ViewStateUpdatedListener vsListener;
     private String viewstateType;
     private int modelAction;
@@ -232,7 +232,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 
     private TreeSet<HtmlParameter> updateParamList(
             TreeSet<HtmlParameter> paramList, String paramName, String paramVal) {
-        TreeSet<HtmlParameter> updatedList = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> updatedList = new TreeSet<>();
         for (HtmlParameter param : paramList) {
             if (param.getName().equalsIgnoreCase(paramName)) {
                 // Update

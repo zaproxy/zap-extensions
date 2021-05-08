@@ -102,9 +102,8 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
 
-    private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers =
-            new HashMap<Browser, Stack<WebDriverWrapper>>();
-    private static List<WebDriverWrapper> takenDrivers = new ArrayList<WebDriverWrapper>();
+    private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers = new HashMap<>();
+    private static List<WebDriverWrapper> takenDrivers = new ArrayList<>();
 
     private static Thread reaperThread = null;
     private static Object reaperThreadSync = new Object();
@@ -320,9 +319,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private void returnDriver(WebDriverWrapper driver) {
         synchronized (takenDrivers) {
             if (takenDrivers.remove(driver)) {
-                freeDrivers
-                        .computeIfAbsent(driver.getBrowser(), k -> new Stack<WebDriverWrapper>())
-                        .push(driver);
+                freeDrivers.computeIfAbsent(driver.getBrowser(), k -> new Stack<>()).push(driver);
 
             } else {
                 log.debug("Driver not in 'taken' list");
@@ -430,7 +427,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         } catch (WebDriverException wde) {
             log.debug(wde);
         }
-        return new ArrayList<WebElement>();
+        return new ArrayList<>();
     }
 
     private void scanHelper(String attackVector, String url) throws DomAlertException {
@@ -540,7 +537,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     @Override
     public void scan() {
         Stats.incCounter("domxss.scan.count");
-        ArrayList<String> attackVectors = new ArrayList<String>();
+        ArrayList<String> attackVectors = new ArrayList<>();
         int numberOfAttackStrings;
 
         switch (this.getAttackStrength()) {

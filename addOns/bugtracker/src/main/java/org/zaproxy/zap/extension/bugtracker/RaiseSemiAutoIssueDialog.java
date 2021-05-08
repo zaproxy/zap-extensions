@@ -61,7 +61,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
     }
 
     public void addTrackerList(String value) {
-        List<String> trackerNames = new ArrayList<String>();
+        List<String> trackerNames = new ArrayList<>();
         for (BugTracker bugTracker : bugTrackers) {
             trackerNames.add(bugTracker.getName());
         }

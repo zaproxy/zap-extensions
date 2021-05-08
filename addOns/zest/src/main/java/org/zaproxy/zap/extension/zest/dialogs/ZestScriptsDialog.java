@@ -91,7 +91,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ScriptTokensTableModel paramsModel = null;
     private ZestParameterDialog parmaDialog = null;
 
-    private List<HttpMessage> deferedMessages = new ArrayList<HttpMessage>();
+    private List<HttpMessage> deferedMessages = new ArrayList<>();
 
     public ZestScriptsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(
@@ -144,7 +144,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         this.addTextField(0, FIELD_TITLE, script.getTitle());
         if (this.chooseType) {
-            List<String> types = new ArrayList<String>();
+            List<String> types = new ArrayList<>();
             for (ScriptType st : extension.getExtScript().getScriptTypes()) {
                 if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                     types.add(Constant.messages.getString(st.getI18nKey()));
@@ -175,7 +175,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         this.getParamsModel().setValues(script.getParameters().getVariables());
 
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
@@ -285,7 +285,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     }
 
     private List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(""); // Always start with the blank option
         SiteNode siteRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         if (siteRoot != null && siteRoot.getChildCount() > 0) {
@@ -352,7 +352,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             }
         }
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String nv[] : getParamsModel().getValues()) {
             map.put(nv[0], nv[1]);
         }
@@ -376,7 +376,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
 
-                Map<String, String> tokens = new HashMap<String, String>();
+                Map<String, String> tokens = new HashMap<>();
                 for (String[] nv : getParamsModel().getValues()) {
                     tokens.put(nv[0], nv[1]);
                 }
@@ -384,7 +384,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 script.getParameters().setVariable(tokens);
 
                 // Just support one auth for now
-                script.setAuthentication(new ArrayList<ZestAuthentication>());
+                script.setAuthentication(new ArrayList<>());
                 if (!this.isEmptyField(FIELD_AUTH_SITE)) {
                     ZestHttpAuthentication zha = new ZestHttpAuthentication();
                     zha.setSite(this.getStringValue(FIELD_AUTH_SITE));

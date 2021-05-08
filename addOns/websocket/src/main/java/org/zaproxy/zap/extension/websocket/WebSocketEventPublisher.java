@@ -84,7 +84,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
         if (message.isFinished) {
             this.executor.execute(
                     () -> {
-                        Map<String, String> map = new HashMap<String, String>();
+                        Map<String, String> map = new HashMap<>();
                         map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
                         map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
                         map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
@@ -127,7 +127,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
     public void onStateChange(State state, WebSocketProxy proxy) {
         this.executor.execute(
                 () -> {
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put(FIELD_STATE, state.name());
                     map.put(FIELD_CHANNEL_ID, Integer.toString(proxy.getChannelId()));
                     map.put(FIELD_LOCAL_SOCKET, socketToStr(proxy.localSocket));

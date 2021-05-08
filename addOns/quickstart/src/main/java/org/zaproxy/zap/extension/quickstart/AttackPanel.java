@@ -268,7 +268,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     private JComboBox<String> getUrlField() {
         if (urlField == null) {
-            urlField = new JComboBox<String>();
+            urlField = new JComboBox<>();
             urlField.setEditable(true);
             urlField.setModel(getUrlModel());
             setRecentUrls();
@@ -278,7 +278,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     protected DefaultComboBoxModel<String> getUrlModel() {
         if (urlModel == null) {
-            urlModel = new DefaultComboBoxModel<String>();
+            urlModel = new DefaultComboBoxModel<>();
         }
         return urlModel;
     }

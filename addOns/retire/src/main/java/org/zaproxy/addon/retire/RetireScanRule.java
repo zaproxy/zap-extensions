@@ -111,7 +111,7 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<Alert>();
+        List<Alert> alerts = new ArrayList<>();
         alerts.add(
                 buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), null), "")
                         .build());

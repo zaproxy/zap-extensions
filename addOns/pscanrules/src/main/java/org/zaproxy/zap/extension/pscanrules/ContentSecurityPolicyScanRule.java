@@ -320,7 +320,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
     private List<String> getAllowedWildcardSources(String policyText, Origin origin) {
 
-        List<String> allowedSources = new ArrayList<String>();
+        List<String> allowedSources = new ArrayList<>();
         Policy pol = ParserWithLocation.parse(policyText, origin);
 
         if (pol.allowsScriptFromSource(PARSED_WILDCARD_URI)) {
