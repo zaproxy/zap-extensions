@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Evidence added
 - Parameter Tampering scan rule, adjusted regular expression related to VBScript errors.
 - Code Injection scan rule is now using random numbers for the ASP related check.
+- SQL Injection scan rule now has one more payload for error based checks, and an additional SQLite related check string (Issue 6588).
 
 ### Fixed
 - Fix XSS false positive (Issue 5958).
