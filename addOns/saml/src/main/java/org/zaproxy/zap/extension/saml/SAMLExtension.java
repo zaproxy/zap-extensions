@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,12 +62,9 @@ public class SAMLExtension extends ExtensionAdaptor {
                 JMenuItem samlActiveEditorMenu =
                         new JMenuItem(SamlI18n.getMessage("saml.toolmenu.settings"));
                 samlActiveEditorMenu.addActionListener(
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
-                                settingUI.setVisible(true);
-                            }
+                        e -> {
+                            SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
+                            settingUI.setVisible(true);
                         });
                 extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);
             }

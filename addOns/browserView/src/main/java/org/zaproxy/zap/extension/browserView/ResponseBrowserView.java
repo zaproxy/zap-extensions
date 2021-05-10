@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.browserView;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -79,13 +78,7 @@ public class ResponseBrowserView implements HttpPanelView, HttpPanelViewModelLis
         button.setToolTipText(ADJUST_HEIGHT_BUTTON_TOOLTIP);
         button.setIcon(ADJUST_HEIGHT_ICON);
 
-        ActionListener actionListener =
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        ssb.adjustPanelHeightToWebsite();
-                    }
-                };
+        ActionListener actionListener = e -> ssb.adjustPanelHeightToWebsite();
 
         button.addActionListener(actionListener);
         return button;

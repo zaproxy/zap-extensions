@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.tokengen;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
@@ -123,15 +121,11 @@ public class GenerateTokensDialog extends AbstractDialog {
             cancelButton = new JButton();
             cancelButton.setText(messages.getString("tokengen.generate.button.cancel"));
             cancelButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            if (generator != null) {
-                                generator.stopGenerating();
-                                generator = null;
-                            } else setVisible(false);
-                        }
+                    e -> {
+                        if (generator != null) {
+                            generator.stopGenerating();
+                            generator = null;
+                        } else setVisible(false);
                     });
         }
         return cancelButton;
@@ -142,61 +136,55 @@ public class GenerateTokensDialog extends AbstractDialog {
             startButton = new JButton();
             startButton.setText(messages.getString("tokengen.generate.button.generate"));
             startButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            log.debug("getStartButton action {}", arg0);
-                            int numGen = -1;
-                            try {
-                                numGen =
-                                        Integer.parseInt(
-                                                (String) getNumTokensField().getSelectedItem());
-                            } catch (NumberFormatException e) {
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                GenerateTokensDialog.this,
-                                                messages.getString("tokengen.generate.num.error"));
-                                return;
-                            }
-
-                            Mode mode = Control.getSingleton().getMode();
-                            if (Mode.safe.equals(mode)) {
+                    e -> {
+                        log.debug("getStartButton action {}", e);
+                        int numGen = -1;
+                        try {
+                            numGen =
+                                    Integer.parseInt(
+                                            (String) getNumTokensField().getSelectedItem());
+                        } catch (NumberFormatException nfe) {
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            GenerateTokensDialog.this,
+                                            messages.getString("tokengen.generate.num.error"));
+                            return;
+                        }
+                        Mode mode = Control.getSingleton().getMode();
+                        if (Mode.safe.equals(mode)) {
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            GenerateTokensDialog.this,
+                                            Constant.messages.getString(
+                                                    "tokengen.generate.error.mode.safe"));
+                            return;
+                        } else if (Mode.protect.equals(mode)) {
+                            if (!httpMessage.isInScope()) {
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 GenerateTokensDialog.this,
                                                 Constant.messages.getString(
-                                                        "tokengen.generate.error.mode.safe"));
+                                                        "tokengen.generate.error.mode.protected",
+                                                        httpMessage.getRequestHeader().getURI()));
                                 return;
-                            } else if (Mode.protect.equals(mode)) {
-                                if (!httpMessage.isInScope()) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    GenerateTokensDialog.this,
-                                                    Constant.messages.getString(
-                                                            "tokengen.generate.error.mode.protected",
-                                                            httpMessage
-                                                                    .getRequestHeader()
-                                                                    .getURI()));
-                                    return;
-                                }
                             }
-
-                            extension.startTokenGeneration(
-                                    httpMessage,
-                                    numGen,
-                                    new HtmlParameterStats(
-                                            "",
-                                            (String) getParamName().getSelectedItem(),
-                                            HtmlParameter.Type.valueOf(
-                                                    (String) getParamType().getSelectedItem()),
-                                            null,
-                                            null),
-                                    getShouldRemoveCookieCheckBox().isSelected()
-                                            && getShouldRemoveCookieCheckBox()
-                                                    .isEnabled()); // Could be selected but not
-                            // enabled for non-cookie types
-                            setVisible(false);
                         }
+
+                        extension.startTokenGeneration(
+                                httpMessage,
+                                numGen,
+                                new HtmlParameterStats(
+                                        "",
+                                        (String) getParamName().getSelectedItem(),
+                                        HtmlParameter.Type.valueOf(
+                                                (String) getParamType().getSelectedItem()),
+                                        null,
+                                        null),
+                                getShouldRemoveCookieCheckBox().isSelected()
+                                        && getShouldRemoveCookieCheckBox()
+                                                .isEnabled()); // Could be selected but not
+                        // enabled for non-cookie types
+                        setVisible(false);
                     });
         }
         return startButton;
@@ -289,43 +277,40 @@ public class GenerateTokensDialog extends AbstractDialog {
         if (paramType == null) {
             paramType = new JComboBox<>(PARAM_TYPES);
             paramType.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if ("comboBoxChanged".equals(e.getActionCommand())) {
-                                getParamName().removeAllItems();
-                                Vector<String> params = null;
-                                if (HtmlParameter.Type.cookie
-                                        .name()
-                                        .equals(paramType.getSelectedItem())) {
-                                    params = cookieParams;
-                                } else if (HtmlParameter.Type.form
-                                        .name()
-                                        .equals(paramType.getSelectedItem())) {
-                                    params = formParams;
-                                } else if (HtmlParameter.Type.url
-                                        .name()
-                                        .equals(paramType.getSelectedItem())) {
-                                    params = urlParams;
-                                }
-                                if (params != null) {
-                                    for (String param : params) {
-                                        getParamName().addItem(param);
-                                    }
-                                }
-                                getParamName().setEnabled(params != null && params.size() > 0);
-                                getStartButton().setEnabled(params != null && params.size() > 0);
-                                getShouldRemoveCookieCheckBox()
-                                        .setEnabled(
-                                                HtmlParameter.Type.cookie
-                                                        .name()
-                                                        .equals(paramType.getSelectedItem()));
-                                getRemoveCookiesLabel()
-                                        .setEnabled(
-                                                HtmlParameter.Type.cookie
-                                                        .name()
-                                                        .equals(paramType.getSelectedItem()));
+                    e -> {
+                        if ("comboBoxChanged".equals(e.getActionCommand())) {
+                            getParamName().removeAllItems();
+                            Vector<String> params = null;
+                            if (HtmlParameter.Type.cookie
+                                    .name()
+                                    .equals(paramType.getSelectedItem())) {
+                                params = cookieParams;
+                            } else if (HtmlParameter.Type.form
+                                    .name()
+                                    .equals(paramType.getSelectedItem())) {
+                                params = formParams;
+                            } else if (HtmlParameter.Type.url
+                                    .name()
+                                    .equals(paramType.getSelectedItem())) {
+                                params = urlParams;
                             }
+                            if (params != null) {
+                                for (String param : params) {
+                                    getParamName().addItem(param);
+                                }
+                            }
+                            getParamName().setEnabled(params != null && params.size() > 0);
+                            getStartButton().setEnabled(params != null && params.size() > 0);
+                            getShouldRemoveCookieCheckBox()
+                                    .setEnabled(
+                                            HtmlParameter.Type.cookie
+                                                    .name()
+                                                    .equals(paramType.getSelectedItem()));
+                            getRemoveCookiesLabel()
+                                    .setEnabled(
+                                            HtmlParameter.Type.cookie
+                                                    .name()
+                                                    .equals(paramType.getSelectedItem()));
                         }
                     });
         }

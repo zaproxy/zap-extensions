@@ -458,7 +458,7 @@ public class ExtensionReports extends ExtensionAdaptor {
 
     public List<String> getTemplateNames() {
         return this.getTemplateMap().values().stream()
-                .map((template) -> template.getDisplayName())
+                .map(Template::getDisplayName)
                 .collect(Collectors.toList());
     }
 

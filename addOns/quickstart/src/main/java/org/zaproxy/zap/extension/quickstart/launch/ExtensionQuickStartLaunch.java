@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -173,14 +171,9 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             launchToolbarButton.setToolTipText(
                     Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
             launchToolbarButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             launchBrowser(
-                                    launchPanel.getSelectedBrowser(), launchPanel.getUrlValue());
-                        }
-                    });
+                                    launchPanel.getSelectedBrowser(), launchPanel.getUrlValue()));
         }
         return launchToolbarButton;
     }
@@ -217,40 +210,37 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     protected void launchBrowser(String browserName, String url) {
         new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    WebDriver wd =
-                                            getExtSelenium().getProxiedBrowserByName(browserName);
-                                    if (wd != null) {
-                                        QuickStartParam params =
-                                                getExtQuickStart().getQuickStartParam();
-                                        if (url != null
-                                                && url.length() > 0
-                                                && !url.equals(DEFAULT_VALUE_URL_FIELD)) {
-                                            wd.get(url);
-                                        } else if (params.isLaunchZapStartPage()) {
-                                            wd.get(
-                                                    API.getInstance()
-                                                            .getBaseURL(
-                                                                    API.Format.OTHER,
-                                                                    QuickStartLaunchAPI.API_PREFIX,
-                                                                    API.RequestType.other,
-                                                                    QuickStartLaunchAPI
-                                                                            .OTHER_START_PAGE,
-                                                                    true));
-                                        } else if (!params.isLaunchBlankStartPage()) {
-                                            wd.get(params.getLaunchStartPage());
-                                        }
-                                        // Use the same browser next time, as long
-                                        // as it worked
-                                        params.setLaunchDefaultBrowser(browserName);
-                                        params.getConfig().save();
+                        () -> {
+                            try {
+                                WebDriver wd =
+                                        getExtSelenium().getProxiedBrowserByName(browserName);
+                                if (wd != null) {
+                                    QuickStartParam params =
+                                            getExtQuickStart().getQuickStartParam();
+                                    if (url != null
+                                            && url.length() > 0
+                                            && !url.equals(DEFAULT_VALUE_URL_FIELD)) {
+                                        wd.get(url);
+                                    } else if (params.isLaunchZapStartPage()) {
+                                        wd.get(
+                                                API.getInstance()
+                                                        .getBaseURL(
+                                                                API.Format.OTHER,
+                                                                QuickStartLaunchAPI.API_PREFIX,
+                                                                API.RequestType.other,
+                                                                QuickStartLaunchAPI
+                                                                        .OTHER_START_PAGE,
+                                                                true));
+                                    } else if (!params.isLaunchBlankStartPage()) {
+                                        wd.get(params.getLaunchStartPage());
                                     }
-                                } catch (Exception e1) {
-                                    LOGGER.error(e1.getMessage(), e1);
+                                    // Use the same browser next time, as long
+                                    // as it worked
+                                    params.setLaunchDefaultBrowser(browserName);
+                                    params.getConfig().save();
                                 }
+                            } catch (Exception e1) {
+                                LOGGER.error(e1.getMessage(), e1);
                             }
                         },
                         "ZAP-BrowserLauncher")

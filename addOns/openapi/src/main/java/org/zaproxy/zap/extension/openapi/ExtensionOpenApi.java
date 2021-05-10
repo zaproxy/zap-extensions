@@ -128,17 +128,14 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             menuImportLocalOpenApi.setToolTipText(
                     Constant.messages.getString("openapi.topmenu.import.importopenapi.tooltip"));
             menuImportLocalOpenApi.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (currentFileDialog == null) {
-                                currentFileDialog =
-                                        new ImportFromFileDialog(
-                                                View.getSingleton().getMainFrame(),
-                                                ExtensionOpenApi.this);
-                            } else {
-                                currentFileDialog.setVisible(true);
-                            }
+                    e -> {
+                        if (currentFileDialog == null) {
+                            currentFileDialog =
+                                    new ImportFromFileDialog(
+                                            View.getSingleton().getMainFrame(),
+                                            ExtensionOpenApi.this);
+                        } else {
+                            currentFileDialog.setVisible(true);
                         }
                     });
         }
@@ -154,18 +151,14 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             "openapi.topmenu.import.importremoteopenapi.tooltip"));
 
             menuImportUrlOpenApi.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (currentUrlDialog == null) {
-                                currentUrlDialog =
-                                        new ImportFromUrlDialog(
-                                                View.getSingleton().getMainFrame(),
-                                                ExtensionOpenApi.this);
-                            } else {
-                                currentUrlDialog.setVisible(true);
-                            }
+                    e -> {
+                        if (currentUrlDialog == null) {
+                            currentUrlDialog =
+                                    new ImportFromUrlDialog(
+                                            View.getSingleton().getMainFrame(),
+                                            ExtensionOpenApi.this);
+                        } else {
+                            currentUrlDialog.setVisible(true);
                         }
                     });
         }

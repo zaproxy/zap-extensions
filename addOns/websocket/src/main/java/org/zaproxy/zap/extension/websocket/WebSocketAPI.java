@@ -398,7 +398,7 @@ public class WebSocketAPI extends ApiImplementor {
             Collections.synchronizedMap(new HashMap<>());
 
     private WebsocketEventConsumer getEventConsumer(int channelId) {
-        return evMap.computeIfAbsent(channelId, key -> new WebsocketEventConsumer(key));
+        return evMap.computeIfAbsent(channelId, WebsocketEventConsumer::new);
     }
 
     @Override

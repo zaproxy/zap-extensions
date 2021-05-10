@@ -283,22 +283,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         if (getView() != null) {
             SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            ListDataEvent ev =
-                                    new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, idx, idx);
-                            Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
-                                    providedBrowserComboBoxModels.iterator();
-                            while (iter.hasNext()) {
-                                WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
-                                ProvidedBrowsersComboBoxModel pb = wr.get();
-                                if (pb == null) {
-                                    iter.remove();
-                                } else {
-                                    for (ListDataListener listener : pb.getListDataListeners()) {
-                                        listener.contentsChanged(ev);
-                                    }
+                    () -> {
+                        ListDataEvent ev =
+                                new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, idx, idx);
+                        Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
+                                providedBrowserComboBoxModels.iterator();
+                        while (iter.hasNext()) {
+                            WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                            ProvidedBrowsersComboBoxModel pb = wr.get();
+                            if (pb == null) {
+                                iter.remove();
+                            } else {
+                                for (ListDataListener listener : pb.getListDataListeners()) {
+                                    listener.contentsChanged(ev);
                                 }
                             }
                         }
@@ -343,26 +340,23 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         if (getView() != null) {
             SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            ListDataEvent ev =
-                                    new ListDataEvent(
-                                            this,
-                                            ListDataEvent.CONTENTS_CHANGED,
-                                            0,
-                                            providedBrowserUIList.size());
-                            Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
-                                    providedBrowserComboBoxModels.iterator();
-                            while (iter.hasNext()) {
-                                WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
-                                ProvidedBrowsersComboBoxModel pb = wr.get();
-                                if (pb == null) {
-                                    iter.remove();
-                                } else {
-                                    for (ListDataListener listener : pb.getListDataListeners()) {
-                                        listener.contentsChanged(ev);
-                                    }
+                    () -> {
+                        ListDataEvent ev =
+                                new ListDataEvent(
+                                        this,
+                                        ListDataEvent.CONTENTS_CHANGED,
+                                        0,
+                                        providedBrowserUIList.size());
+                        Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
+                                providedBrowserComboBoxModels.iterator();
+                        while (iter.hasNext()) {
+                            WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                            ProvidedBrowsersComboBoxModel pb = wr.get();
+                            if (pb == null) {
+                                iter.remove();
+                            } else {
+                                for (ListDataListener listener : pb.getListDataListeners()) {
+                                    listener.contentsChanged(ev);
                                 }
                             }
                         }

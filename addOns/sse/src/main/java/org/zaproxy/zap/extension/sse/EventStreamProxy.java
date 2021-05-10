@@ -261,21 +261,17 @@ public class EventStreamProxy {
     private static Comparator<EventStreamObserver> getObserversComparator() {
         if (observersComparator == null) {
             observersComparator =
-                    new Comparator<EventStreamObserver>() {
+                    (o1, o2) -> {
+                        int order1 = o1.getServerSentEventObservingOrder();
+                        int order2 = o2.getServerSentEventObservingOrder();
 
-                        @Override
-                        public int compare(EventStreamObserver o1, EventStreamObserver o2) {
-                            int order1 = o1.getServerSentEventObservingOrder();
-                            int order2 = o2.getServerSentEventObservingOrder();
-
-                            if (order1 < order2) {
-                                return -1;
-                            } else if (order1 > order2) {
-                                return 1;
-                            }
-
-                            return 0;
+                        if (order1 < order2) {
+                            return -1;
+                        } else if (order1 > order2) {
+                            return 1;
                         }
+
+                        return 0;
                     };
         }
         return observersComparator;

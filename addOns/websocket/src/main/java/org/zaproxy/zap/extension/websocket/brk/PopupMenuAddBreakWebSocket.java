@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.websocket.brk;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,28 +47,23 @@ public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new ActionListener() {
+                evt -> {
+                    int[] rows = tableWebSocket.getSelectedRows();
+                    if (rows.length != 1) {
+                        return;
+                    }
 
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
+                    try {
+                        WebSocketMessagesViewModel model =
+                                (WebSocketMessagesViewModel) tableWebSocket.getModel();
+                        WebSocketMessageDTO message = model.getDTO(rows[0]);
+                        extension.addUiBreakpoint(message);
 
-                        int[] rows = tableWebSocket.getSelectedRows();
-                        if (rows.length != 1) {
-                            return;
-                        }
-
-                        try {
-                            WebSocketMessagesViewModel model =
-                                    (WebSocketMessagesViewModel) tableWebSocket.getModel();
-                            WebSocketMessageDTO message = model.getDTO(rows[0]);
-                            extension.addUiBreakpoint(message);
-
-                        } catch (Exception e) {
-                            extension
-                                    .getView()
-                                    .showWarningDialog(
-                                            Constant.messages.getString("brk.add.error.history"));
-                        }
+                    } catch (Exception e) {
+                        extension
+                                .getView()
+                                .showWarningDialog(
+                                        Constant.messages.getString("brk.add.error.history"));
                     }
                 });
     }

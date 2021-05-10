@@ -110,13 +110,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnAllTips == null) {
             btnAllTips = new JButton();
             btnAllTips.setText(Constant.messages.getString("tips.button.allTips"));
-            btnAllTips.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            ExtensionHelp.showHelp("tips");
-                        }
-                    });
+            btnAllTips.addActionListener(e -> ExtensionHelp.showHelp("tips"));
         }
         return btnAllTips;
     }
@@ -130,13 +124,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnNextTip == null) {
             btnNextTip = new JButton();
             btnNextTip.setText(Constant.messages.getString("tips.button.nextTip"));
-            btnNextTip.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            displayTip();
-                        }
-                    });
+            btnNextTip.addActionListener(e -> displayTip());
         }
         return btnNextTip;
     }
@@ -149,13 +137,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnClose == null) {
             btnClose = new JButton();
             btnClose.setText(Constant.messages.getString("all.button.close"));
-            btnClose.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            TipsAndTricksDialog.this.setVisible(false);
-                        }
-                    });
+            btnClose.addActionListener(e -> TipsAndTricksDialog.this.setVisible(false));
         }
         return btnClose;
     }

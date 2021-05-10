@@ -19,10 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -179,13 +176,9 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 }
             }
             scriptComboBox.addItemListener(
-                    new ItemListener() {
-
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (e.getStateChange() == ItemEvent.SELECTED) {
-                                updatePreviewFor((PayloadGeneratorScriptUIEntry) e.getItem());
-                            }
+                    e -> {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            updatePreviewFor((PayloadGeneratorScriptUIEntry) e.getItem());
                         }
                     });
             setPreviewAndSaveButtonsEnabled(scriptComboBox.getSelectedIndex() >= 0);
@@ -242,13 +235,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 payloadsPreviewGenerateButton.setEnabled(false);
 
                 payloadsPreviewGenerateButton.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
             }
             return payloadsPreviewGenerateButton;
         }

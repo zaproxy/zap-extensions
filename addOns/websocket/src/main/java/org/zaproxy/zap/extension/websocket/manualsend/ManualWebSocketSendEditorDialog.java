@@ -26,7 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -190,19 +189,15 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         if (menuItem == null) {
             menuItem = new ZapMenuItem("websocket.manual_send.menu");
             menuItem.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Message message = getMessage();
-                            if (message == null) {
-                                setDefaultMessage();
-                            } else if (message instanceof WebSocketMessageDTO
-                                    && ((WebSocketMessageDTO) message).opcode == null) {
-                                setDefaultMessage();
-                            }
-                            setVisible(true);
+                    e -> {
+                        Message message = getMessage();
+                        if (message == null) {
+                            setDefaultMessage();
+                        } else if (message instanceof WebSocketMessageDTO
+                                && ((WebSocketMessageDTO) message).opcode == null) {
+                            setDefaultMessage();
                         }
+                        setVisible(true);
                     });
         }
         return menuItem;

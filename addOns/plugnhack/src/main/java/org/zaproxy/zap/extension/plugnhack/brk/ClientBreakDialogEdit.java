@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.plugnhack.brk;
 
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
 import org.parosproxy.paros.Constant;
@@ -55,13 +54,9 @@ public class ClientBreakDialogEdit extends ClientBreakDialog {
     protected ActionListener getActionListenerCancel() {
         if (actionListenerCancel == null) {
             actionListenerCancel =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            breakpoint = null;
-                            dispose();
-                        }
+                    e -> {
+                        breakpoint = null;
+                        dispose();
                     };
         }
         return actionListenerCancel;
@@ -71,23 +66,19 @@ public class ClientBreakDialogEdit extends ClientBreakDialog {
     protected ActionListener getActionListenerSubmit() {
         if (actionListenerSubmit == null) {
             actionListenerSubmit =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            try {
-                                breakPointsManager.editBreakpoint(
-                                        breakpoint, getClientBreakpointMessage());
-                                breakpoint = null;
-                                dispose();
-                            } catch (PatternSyntaxException e) {
-                                // show popup
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "plugnhack.invalidpattern"));
-                                return;
-                            }
+                    evt -> {
+                        try {
+                            breakPointsManager.editBreakpoint(
+                                    breakpoint, getClientBreakpointMessage());
+                            breakpoint = null;
+                            dispose();
+                        } catch (PatternSyntaxException e) {
+                            // show popup
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "plugnhack.invalidpattern"));
+                            return;
                         }
                     };
         }

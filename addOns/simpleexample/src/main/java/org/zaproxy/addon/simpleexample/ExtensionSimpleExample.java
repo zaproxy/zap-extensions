@@ -132,18 +132,14 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
             menuExample = new ZapMenuItem(PREFIX + ".topmenu.tools.title");
 
             menuExample.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            // This is where you do what you want to do.
-                            // In this case we'll just show a popup message.
-                            View.getSingleton()
-                                    .showMessageDialog(
-                                            Constant.messages.getString(
-                                                    PREFIX + ".topmenu.tools.msg"));
-                            // And display a file included with the add-on in the Output tab
-                            displayFile(EXAMPLE_FILE);
-                        }
+                    e -> {
+                        // This is where you do what you want to do.
+                        // In this case we'll just show a popup message.
+                        View.getSingleton()
+                                .showMessageDialog(
+                                        Constant.messages.getString(PREFIX + ".topmenu.tools.msg"));
+                        // And display a file included with the add-on in the Output tab
+                        displayFile(EXAMPLE_FILE);
                     });
         }
         return menuExample;

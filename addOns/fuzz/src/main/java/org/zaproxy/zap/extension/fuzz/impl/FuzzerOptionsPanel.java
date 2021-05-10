@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
@@ -35,8 +34,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.LayoutStyle;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzOptions;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
@@ -81,21 +78,15 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                         resourceBundle.getString(
                                 "fuzz.fuzzer.dialog.tab.options.label.maxErrorsAllowedEnabled"));
         maxErrorsAllowedEnabledLabel.setLabelFor(maxErrorsAllowedEnabledCheckBox);
-        maxErrorsAllowedEnabledCheckBox.addItemListener(
-                new ItemListener() {
-
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        maxErrorsAllowedNumberSpinner.setEnabled(
-                                ItemEvent.SELECTED == e.getStateChange());
-                    }
-                });
-
         maxErrorsAllowedNumberSpinner =
                 new ZapNumberSpinner(0, defaultOptions.getMaxErrorsAllowed(), Integer.MAX_VALUE);
         JLabel maxErrorsAllowedLabel =
                 new JLabel(resourceBundle.getString("fuzz.options.label.maxErrorsAllowed"));
         maxErrorsAllowedLabel.setLabelFor(maxErrorsAllowedNumberSpinner);
+        maxErrorsAllowedEnabledCheckBox.addItemListener(
+                e ->
+                        maxErrorsAllowedNumberSpinner.setEnabled(
+                                ItemEvent.SELECTED == e.getStateChange()));
 
         JLabel currentDefaultThreadsPerFuzzerLabel = new JLabel();
         defaultThreadsPerFuzzerSlider =
@@ -280,14 +271,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
             int value, int maxThreadsPerFuzzer, final JLabel currentValueFeedbackLabel) {
         final JSlider threadsSlider = new PositiveValuesSlider(value, maxThreadsPerFuzzer);
         threadsSlider.addChangeListener(
-                new ChangeListener() {
-
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        currentValueFeedbackLabel.setText(
-                                Integer.toString(threadsSlider.getValue()));
-                    }
-                });
+                e -> currentValueFeedbackLabel.setText(Integer.toString(threadsSlider.getValue())));
         return threadsSlider;
     }
 
@@ -302,13 +286,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         delaySlider.setPaintTicks(true);
         delaySlider.setPaintLabels(true);
         delaySlider.addChangeListener(
-                new ChangeListener() {
-
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue()));
-                    }
-                });
+                e -> currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue())));
         return delaySlider;
     }
 

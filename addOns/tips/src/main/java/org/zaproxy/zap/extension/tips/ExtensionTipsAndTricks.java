@@ -77,13 +77,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
         if (menuTipsAndTricks == null) {
             menuTipsAndTricks = new ZapMenuItem(PREFIX + ".topmenu.help.tips");
 
-            menuTipsAndTricks.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            displayRandomTip();
-                        }
-                    });
+            menuTipsAndTricks.addActionListener(e -> displayRandomTip());
         }
         return menuTipsAndTricks;
     }

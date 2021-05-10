@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -48,13 +46,9 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
         this.extension = extension;
 
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        action.perform();
-                        action = null;
-                    }
+                e -> {
+                    action.perform();
+                    action = null;
                 });
     }
 

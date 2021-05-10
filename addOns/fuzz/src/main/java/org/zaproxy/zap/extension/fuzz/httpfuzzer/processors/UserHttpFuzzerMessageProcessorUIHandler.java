@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -174,13 +173,9 @@ public class UserHttpFuzzerMessageProcessorUIHandler
             usersComboBox = new JComboBox<>(ContextUI.NO_CONTEXT);
 
             contextsComboBox.addItemListener(
-                    new ItemListener() {
-
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (ItemEvent.SELECTED == e.getStateChange()) {
-                                usersComboBox.setModel((ContextUI) e.getItem());
-                            }
+                    e -> {
+                        if (ItemEvent.SELECTED == e.getStateChange()) {
+                            usersComboBox.setModel((ContextUI) e.getItem());
                         }
                     });
 

@@ -179,13 +179,7 @@ public class ScriptsListPanel extends AbstractPanel {
             loadButton.setToolTipText(
                     Constant.messages.getString("scripts.list.toolbar.button.load"));
 
-            loadButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            loadScript();
-                        }
-                    });
+            loadButton.addActionListener(e -> loadScript());
         }
         return loadButton;
     }
@@ -203,16 +197,12 @@ public class ScriptsListPanel extends AbstractPanel {
             saveButton.setEnabled(false);
 
             saveButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            ScriptWrapper script = getSelectedScript();
-                            if (script == null) {
-                                return;
-                            }
-                            saveScript(script);
+                    e -> {
+                        ScriptWrapper script = getSelectedScript();
+                        if (script == null) {
+                            return;
                         }
+                        saveScript(script);
                     });
         }
         return saveButton;
@@ -229,14 +219,7 @@ public class ScriptsListPanel extends AbstractPanel {
             newScriptButton.setToolTipText(
                     Constant.messages.getString("scripts.list.toolbar.button.new"));
 
-            newScriptButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            showNewScriptDialog((ScriptWrapper) null);
-                        }
-                    });
+            newScriptButton.addActionListener(e -> showNewScriptDialog((ScriptWrapper) null));
         }
         return newScriptButton;
     }
@@ -252,14 +235,10 @@ public class ScriptsListPanel extends AbstractPanel {
                     Constant.messages.getString("scripts.list.toolbar.button.options"));
 
             optionsButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(Constant.messages.getString("scripts.options.title"));
-                        }
-                    });
+                                    .options(Constant.messages.getString("scripts.options.title")));
         }
         return optionsButton;
     }
@@ -656,13 +635,7 @@ public class ScriptsListPanel extends AbstractPanel {
                             }
                         }
                     });
-            tree.addTreeSelectionListener(
-                    new javax.swing.event.TreeSelectionListener() {
-                        @Override
-                        public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
-                            selectionChanged();
-                        }
-                    });
+            tree.addTreeSelectionListener(e -> selectionChanged());
         }
         return tree;
     }

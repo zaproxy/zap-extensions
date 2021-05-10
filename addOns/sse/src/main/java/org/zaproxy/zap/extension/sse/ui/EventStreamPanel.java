@@ -25,8 +25,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -281,14 +279,10 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             optionsButton.setIcon(
                     new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(Constant.messages.getString("sse.panel.title"));
-                        }
-                    });
+                                    .options(Constant.messages.getString("sse.panel.title")));
         }
         return optionsButton;
     }
@@ -303,14 +297,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             filterButton.setToolTipText(Constant.messages.getString("sse.filter.button.filter"));
 
             final EventStreamPanel panel = this;
-            filterButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            panel.showFilterDialog();
-                        }
-                    });
+            filterButton.addActionListener(e -> panel.showFilterDialog());
         }
         return filterButton;
     }
@@ -452,13 +439,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             if (EventQueue.isDispatchThread()) {
                 updateStreamState(state, stream);
             } else {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                updateStreamState(state, stream);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> updateStreamState(state, stream));
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -674,12 +655,9 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             } else {
                 try {
                     EventQueue.invokeAndWait(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    pause();
-                                    reset();
-                                }
+                            () -> {
+                                pause();
+                                reset();
                             });
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
@@ -742,24 +720,20 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                     Constant.messages.getString("history.scope.button.selected"));
 
             scopeButton.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        // show channels only in scope in JComboBox (select element)
+                        boolean isShowJustInScope = scopeButton.isSelected();
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // show channels only in scope in JComboBox (select element)
-                            boolean isShowJustInScope = scopeButton.isSelected();
+                        //					channelsModel.setShowJustInScope(isShowJustInScope);
+                        //					if (!channelsModel.contains(channelSelect.getSelectedItem())) {
+                        //						// select first entry, if selected item does no longer appear in
+                        // drop-down
+                        //						channelSelect.setSelectedIndex(0);
+                        //					}
 
-                            //					channelsModel.setShowJustInScope(isShowJustInScope);
-                            //					if (!channelsModel.contains(channelSelect.getSelectedItem())) {
-                            //						// select first entry, if selected item does no longer appear in
-                            // drop-down
-                            //						channelSelect.setSelectedIndex(0);
-                            //					}
-
-                            // show messages only from channels in scope
-                            getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
-                            applyFilter();
-                        }
+                        // show messages only from channels in scope
+                        getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
+                        applyFilter();
                     });
         }
         return scopeButton;

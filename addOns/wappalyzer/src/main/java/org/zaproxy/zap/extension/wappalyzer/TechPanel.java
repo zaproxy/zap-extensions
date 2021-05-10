@@ -254,15 +254,10 @@ public class TechPanel extends AbstractPanel {
             siteSelect.setSelectedIndex(0);
 
             siteSelect.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-
-                            String item = (String) siteSelect.getSelectedItem();
-                            if (item != null && siteSelect.getSelectedIndex() > 0) {
-                                siteSelected(item);
-                            }
+                    e -> {
+                        String item = (String) siteSelect.getSelectedItem();
+                        if (item != null && siteSelect.getSelectedIndex() > 0) {
+                            siteSelected(item);
                         }
                     });
         }

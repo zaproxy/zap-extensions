@@ -27,8 +27,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -198,16 +196,13 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
             sliderThreadsPerScan.setSnapToTicks(true);
             sliderThreadsPerScan.setPaintTrack(true);
             sliderThreadsPerScan.addChangeListener(
-                    new ChangeListener() {
-                        @Override
-                        public void stateChanged(ChangeEvent e) {
-                            // If the minimum is set to 1 then the ticks are at 6, 11 etc
-                            // But we dont want to support 0 threads, hence this hack
-                            if (getSliderThreadsPerScan().getValue() == 0) {
-                                getSliderThreadsPerScan().setValue(1);
-                            }
-                            setLabelThreadsPerScanValue(getSliderThreadsPerScan().getValue());
+                    e -> {
+                        // If the minimum is set to 1 then the ticks are at 6, 11 etc
+                        // But we dont want to support 0 threads, hence this hack
+                        if (getSliderThreadsPerScan().getValue() == 0) {
+                            getSliderThreadsPerScan().setValue(1);
                         }
+                        setLabelThreadsPerScanValue(getSliderThreadsPerScan().getValue());
                     });
         }
         return sliderThreadsPerScan;

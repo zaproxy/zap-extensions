@@ -189,15 +189,13 @@ public class ZapDiffRowGenerator {
      InlineOldCssClass = builder.InlineOldCssClass;
      InlineNewCssClass = builder.InlineNewCssClass;
      columnWidth = builder.columnWidth; //
-     equalizer = new Equalizer() {
-         public boolean equals(Object original, Object revised) {
+     equalizer = (original, revised) -> {
              if (ignoreWhiteSpaces) {
                  original = ((String)original).trim().replaceAll("\\s+", " ");
                  revised = ((String)revised).trim().replaceAll("\\s+", " ");
              }
              return original.equals(revised);
-         }
-     };
+         };
  }
 
  /**

@@ -144,40 +144,37 @@ public class ConsolePanel extends AbstractPanel implements Tab {
                             if (dialogRunnable == null && isScriptUpdatedOnDisk()) {
 
                                 dialogRunnable =
-                                        new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                String message;
-                                                if (script.isChanged()) {
-                                                    message =
-                                                            Constant.messages.getString(
-                                                                    "scripts.console.changedOnDiskAndConsole");
-                                                } else {
-                                                    message =
-                                                            Constant.messages.getString(
-                                                                    "scripts.console.changedOnDisk");
-                                                }
-
-                                                if (JOptionPane.showOptionDialog(
-                                                                ConsolePanel.this,
-                                                                message,
-                                                                Constant.PROGRAM_NAME,
-                                                                JOptionPane.YES_NO_OPTION,
-                                                                JOptionPane.WARNING_MESSAGE,
-                                                                null,
-                                                                SCRIPT_CHANGED_BUTTONS,
-                                                                null)
-                                                        == JOptionPane.YES_OPTION) {
-                                                    try {
-                                                        extension.getExtScript().saveScript(script);
-                                                    } catch (IOException e) {
-                                                        LOG.error(e.getMessage(), e);
-                                                    }
-                                                } else {
-                                                    reloadScript();
-                                                }
-                                                dialogRunnable = null;
+                                        () -> {
+                                            String message;
+                                            if (script.isChanged()) {
+                                                message =
+                                                        Constant.messages.getString(
+                                                                "scripts.console.changedOnDiskAndConsole");
+                                            } else {
+                                                message =
+                                                        Constant.messages.getString(
+                                                                "scripts.console.changedOnDisk");
                                             }
+
+                                            if (JOptionPane.showOptionDialog(
+                                                            ConsolePanel.this,
+                                                            message,
+                                                            Constant.PROGRAM_NAME,
+                                                            JOptionPane.YES_NO_OPTION,
+                                                            JOptionPane.WARNING_MESSAGE,
+                                                            null,
+                                                            SCRIPT_CHANGED_BUTTONS,
+                                                            null)
+                                                    == JOptionPane.YES_OPTION) {
+                                                try {
+                                                    extension.getExtScript().saveScript(script);
+                                                } catch (IOException e) {
+                                                    LOG.error(e.getMessage(), e);
+                                                }
+                                            } else {
+                                                reloadScript();
+                                            }
+                                            dialogRunnable = null;
                                         };
                                 try {
                                     SwingUtilities.invokeAndWait(dialogRunnable);
@@ -285,13 +282,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
             runButton.setEnabled(false);
 
-            runButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            runScript();
-                        }
-                    });
+            runButton.addActionListener(e -> runScript());
         }
         return runButton;
     }
@@ -307,13 +298,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
             stopButton.setEnabled(false);
 
-            stopButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            stopScript();
-                        }
-                    });
+            stopButton.addActionListener(e -> stopScript());
         }
         return stopButton;
     }
@@ -330,13 +315,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             autoCompleteButton.setSelected(true);
 
             autoCompleteButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            getCommandPanel()
-                                    .setAutoCompleteEnabled(autoCompleteButton.isSelected());
-                        }
-                    });
+                    e -> getCommandPanel().setAutoCompleteEnabled(autoCompleteButton.isSelected()));
         }
         return autoCompleteButton;
     }

@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.tokengen;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import javax.swing.ImageIcon;
@@ -241,13 +239,7 @@ public class TokenPanel extends AbstractPanel {
             stopScanButton.setIcon(
                     new ImageIcon(getClass().getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            stopScan();
-                        }
-                    });
+            stopScanButton.addActionListener(e -> stopScan());
         }
         return stopScanButton;
     }
@@ -268,13 +260,7 @@ public class TokenPanel extends AbstractPanel {
             pauseScanButton.setRolloverSelectedIcon(
                     new ImageIcon(getClass().getResource("/resource/icon/16/131.png")));
             pauseScanButton.setEnabled(false);
-            pauseScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            pauseScan();
-                        }
-                    });
+            pauseScanButton.addActionListener(e -> pauseScan());
         }
         return pauseScanButton;
     }
@@ -286,13 +272,7 @@ public class TokenPanel extends AbstractPanel {
                     extension.getMessages().getString("tokengen.toolbar.button.load"));
             loadButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/047.png")));
             loadButton.setEnabled(true);
-            loadButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            loadTokens();
-                        }
-                    });
+            loadButton.addActionListener(e -> loadTokens());
         }
         return loadButton;
     }
@@ -304,13 +284,7 @@ public class TokenPanel extends AbstractPanel {
                     extension.getMessages().getString("tokengen.toolbar.button.save"));
             saveButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/096.png")));
             saveButton.setEnabled(false);
-            saveButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            saveTokens();
-                        }
-                    });
+            saveButton.addActionListener(e -> saveTokens());
         }
         return saveButton;
     }
@@ -374,13 +348,7 @@ public class TokenPanel extends AbstractPanel {
             return;
         }
         try {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            addTokenResult(msg);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addTokenResult(msg));
         } catch (Exception e) {
         }
     }

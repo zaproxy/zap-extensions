@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Set;
@@ -87,95 +85,80 @@ public class SamlExtentionSettingsUI extends JFrame
         JButton btnAddAutoChange =
                 new JButton(SamlI18n.getMessage("saml.settings.button.addautochangeattrib"));
         btnAddAutoChange.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AddAutoChangeAttributeUI dialog =
-                                new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
-                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                        dialog.setVisible(true);
-                    }
+                e -> {
+                    AddAutoChangeAttributeUI dialog =
+                            new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setVisible(true);
                 });
         footerPanel.add(btnAddAutoChange);
 
         JButton btnAdd = new JButton(SamlI18n.getMessage("saml.settings.button.addattrib"));
         btnAdd.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AddAttributeUI addAttributeUI =
-                                new AddAttributeUI(SamlExtentionSettingsUI.this);
-                        addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                        addAttributeUI.setVisible(true);
-                    }
+                e -> {
+                    AddAttributeUI addAttributeUI =
+                            new AddAttributeUI(SamlExtentionSettingsUI.this);
+                    addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    addAttributeUI.setVisible(true);
                 });
         footerPanel.add(btnAdd);
 
         JButton btnSaveChanges = new JButton(SamlI18n.getMessage("saml.settings.button.save"));
         btnSaveChanges.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean success = saveChanges();
-                        if (success) {
-                            JOptionPane.showMessageDialog(
-                                    SamlExtentionSettingsUI.this,
-                                    SamlI18n.getMessage("saml.settings" + ".messages.saved"),
-                                    SamlI18n.getMessage("saml.settings.messages.success"),
-                                    JOptionPane.INFORMATION_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(
-                                    SamlExtentionSettingsUI.this,
-                                    SamlI18n.getMessage("saml.settings" + ".messages.notsaved"),
-                                    SamlI18n.getMessage("saml.settings.messages.failed"),
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
+                e -> {
+                    boolean success = saveChanges();
+                    if (success) {
+                        JOptionPane.showMessageDialog(
+                                SamlExtentionSettingsUI.this,
+                                SamlI18n.getMessage("saml.settings" + ".messages.saved"),
+                                SamlI18n.getMessage("saml.settings.messages.success"),
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                SamlExtentionSettingsUI.this,
+                                SamlI18n.getMessage("saml.settings" + ".messages.notsaved"),
+                                SamlI18n.getMessage("saml.settings.messages.failed"),
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 });
         footerPanel.add(btnSaveChanges);
 
         JButton btnResetChanges = new JButton(SamlI18n.getMessage("saml.settings.button.reset"));
         btnResetChanges.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int response =
-                                JOptionPane.showConfirmDialog(
-                                        SamlExtentionSettingsUI.this,
-                                        SamlI18n.getMessage("saml.editor.msg.confirmreset"),
-                                        SamlI18n.getMessage("saml.settings.messages.confirm"),
-                                        JOptionPane.YES_NO_OPTION);
-                        if (response == JOptionPane.YES_OPTION) {
-                            resetChanges();
-                        }
+                e -> {
+                    int response =
+                            JOptionPane.showConfirmDialog(
+                                    SamlExtentionSettingsUI.this,
+                                    SamlI18n.getMessage("saml.editor.msg.confirmreset"),
+                                    SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                    JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
+                        resetChanges();
                     }
                 });
         footerPanel.add(btnResetChanges);
 
         JButton btnExit = new JButton(SamlI18n.getMessage("saml.settings.button.exit"));
         btnExit.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int response =
-                                JOptionPane.showConfirmDialog(
-                                        SamlExtentionSettingsUI.this,
-                                        "Do You want to save changes before exit?",
-                                        SamlI18n.getMessage("saml.settings.messages" + ".confirm"),
-                                        JOptionPane.YES_NO_CANCEL_OPTION);
-                        boolean exit = false;
-                        if (response == JOptionPane.YES_OPTION) {
-                            saveChanges();
-                            exit = true;
-                        } else if (response == JOptionPane.NO_OPTION) {
-                            resetChanges();
-                            exit = true;
-                        }
+                e -> {
+                    int response =
+                            JOptionPane.showConfirmDialog(
+                                    SamlExtentionSettingsUI.this,
+                                    "Do You want to save changes before exit?",
+                                    SamlI18n.getMessage("saml.settings.messages" + ".confirm"),
+                                    JOptionPane.YES_NO_CANCEL_OPTION);
+                    boolean exit = false;
+                    if (response == JOptionPane.YES_OPTION) {
+                        saveChanges();
+                        exit = true;
+                    } else if (response == JOptionPane.NO_OPTION) {
+                        resetChanges();
+                        exit = true;
+                    }
 
-                        if (exit) {
-                            setVisible(false);
-                            dispose();
-                        }
+                    if (exit) {
+                        setVisible(false);
+                        dispose();
                     }
                 });
         footerPanel.add(btnExit);
@@ -284,19 +267,15 @@ public class SamlExtentionSettingsUI extends JFrame
             JButton btnRemoveAttribute =
                     new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
             btnRemoveAttribute.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            int response =
-                                    JOptionPane.showConfirmDialog(
-                                            SamlExtentionSettingsUI.this,
-                                            SamlI18n.getMessage(
-                                                    "saml.settings.messages.confirmremove"),
-                                            SamlI18n.getMessage("saml.settings.messages.confirm"),
-                                            JOptionPane.YES_NO_OPTION);
-                            if (response == JOptionPane.YES_OPTION) {
-                                onDeleteDesiredAttribute(attribute);
-                            }
+                    e -> {
+                        int response =
+                                JOptionPane.showConfirmDialog(
+                                        SamlExtentionSettingsUI.this,
+                                        SamlI18n.getMessage("saml.settings.messages.confirmremove"),
+                                        SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                        JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            onDeleteDesiredAttribute(attribute);
                         }
                     });
             attributePanel.add(btnRemoveAttribute, gridBagConstraints);
@@ -333,19 +312,15 @@ public class SamlExtentionSettingsUI extends JFrame
             JButton btnRemoveAttribute =
                     new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
             btnRemoveAttribute.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            int response =
-                                    JOptionPane.showConfirmDialog(
-                                            SamlExtentionSettingsUI.this,
-                                            SamlI18n.getMessage(
-                                                    "saml.settings.messages.confirmremove"),
-                                            SamlI18n.getMessage("saml.settings.messages.confirm"),
-                                            JOptionPane.YES_NO_OPTION);
-                            if (response == JOptionPane.YES_OPTION) {
-                                onAttributeDelete(attribute);
-                            }
+                    e -> {
+                        int response =
+                                JOptionPane.showConfirmDialog(
+                                        SamlExtentionSettingsUI.this,
+                                        SamlI18n.getMessage("saml.settings.messages.confirmremove"),
+                                        SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                        JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            onAttributeDelete(attribute);
                         }
                     });
             allAttributePanel.add(btnRemoveAttribute, gridBagConstraints);

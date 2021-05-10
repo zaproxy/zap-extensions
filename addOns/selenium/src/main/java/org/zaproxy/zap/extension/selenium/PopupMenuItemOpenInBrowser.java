@@ -51,17 +51,14 @@ public class PopupMenuItemOpenInBrowser extends PopupMenuItemHttpMessageContaine
     @Override
     public void performAction(final HttpMessage msg) {
         new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    ext.getProxiedBrowser(
-                                            browser.getId(),
-                                            msg.getRequestHeader().getURI().toString());
-                                } catch (Exception e) {
-                                    View.getSingleton().showWarningDialog(e.getMessage());
-                                    LOGGER.error(e.getMessage(), e);
-                                }
+                        () -> {
+                            try {
+                                ext.getProxiedBrowser(
+                                        browser.getId(),
+                                        msg.getRequestHeader().getURI().toString());
+                            } catch (Exception e) {
+                                View.getSingleton().showWarningDialog(e.getMessage());
+                                LOGGER.error(e.getMessage(), e);
                             }
                         })
                 .start();

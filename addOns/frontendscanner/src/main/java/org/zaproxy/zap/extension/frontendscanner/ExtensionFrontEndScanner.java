@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.frontendscanner;
 
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -215,22 +216,19 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor {
 
         try (Stream<Path> scriptFilePaths = Files.list(scriptFolderPath)) {
             scriptFilePaths
-                    .map(path -> path.toFile())
-                    .filter(file -> file.isFile())
+                    .map(Path::toFile)
+                    .filter(File::isFile)
                     .map(
-                            file -> {
-                                return new ScriptWrapper(
-                                        file.getName(), "", "Null", scriptType, true, file);
-                            })
-                    .map(scriptWrapper -> loadScript(scriptWrapper))
-                    .filter(maybeScriptWrapper -> maybeScriptWrapper.isPresent())
-                    .map(maybeScriptWrapper -> maybeScriptWrapper.get())
+                            file ->
+                                    new ScriptWrapper(
+                                            file.getName(), "", "Null", scriptType, true, file))
+                    .map(this::loadScript)
+                    .filter(Optional<ScriptWrapper>::isPresent)
+                    .map(Optional<ScriptWrapper>::get)
                     // Keep scripts are not registered yet.
                     .filter(
-                            scriptWrapper -> {
-                                return this.extensionScript.getScript(scriptWrapper.getName())
-                                        == null;
-                            })
+                            scriptWrapper ->
+                                    this.extensionScript.getScript(scriptWrapper.getName()) == null)
                     .forEach(scriptWrapper -> this.extensionScript.addScript(scriptWrapper, false));
         } catch (NoSuchFileException e) {
             return;

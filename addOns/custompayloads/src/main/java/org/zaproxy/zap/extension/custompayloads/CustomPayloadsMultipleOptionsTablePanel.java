@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -89,37 +87,19 @@ public class CustomPayloadsMultipleOptionsTablePanel
 
     private void addMissingDefaultsButton() {
         addMissingDefaultsButton = new JButton(ADD_MISSING_DEFAULTS_BUTTON);
-        addMissingDefaultsButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        tableModel.addMissingDefaultPayloads();
-                    }
-                });
+        addMissingDefaultsButton.addActionListener(e -> tableModel.addMissingDefaultPayloads());
         addButton(addMissingDefaultsButton);
     }
 
     private void addResetIdButton() {
         resetButtonId = new JButton(RESET_ID_BUTTON);
-        resetButtonId.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        tableModel.resetPayloadIds();
-                    }
-                });
+        resetButtonId.addActionListener(e -> tableModel.resetPayloadIds());
         addButton(resetButtonId);
     }
 
     private void addResetButton() {
         resetButton = new JButton(RESET_BUTTON);
-        resetButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        tableModel.resetToDefaults();
-                    }
-                });
+        resetButton.addActionListener(e -> tableModel.resetToDefaults());
         addButton(resetButton);
     }
 

@@ -68,14 +68,7 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
     private void initialize(String label) {
         this.setText(Constant.messages.getString(label));
 
-        this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        showDialog(parent, child, req);
-                    }
-                });
+        this.addActionListener(e -> showDialog(parent, child, req));
     }
 
     public abstract void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request);

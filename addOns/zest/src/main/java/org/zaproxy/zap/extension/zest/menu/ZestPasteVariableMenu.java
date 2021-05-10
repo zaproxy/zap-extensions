@@ -48,14 +48,10 @@ public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
     protected void initialize() {
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ZestVariables vars = script.getZestScript().getParameters();
-                        lastInvoker.replaceSelection(
-                                vars.getTokenStart() + variable + vars.getTokenEnd());
-                    }
+                e -> {
+                    ZestVariables vars = script.getZestScript().getParameters();
+                    lastInvoker.replaceSelection(
+                            vars.getTokenStart() + variable + vars.getTokenEnd());
                 });
     }
 

@@ -50,14 +50,10 @@ public class PopupInstantiateTemplate extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("scripts.instantiate.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-                        if (script != null) {
-                            instantiateScript(script);
-                        }
+                e -> {
+                    ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
+                    if (script != null) {
+                        instantiateScript(script);
                     }
                 });
     }

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -300,13 +298,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
                 payloadsPreviewGenerateButton.setEnabled(false);
 
                 payloadsPreviewGenerateButton.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
             }
             return payloadsPreviewGenerateButton;
         }

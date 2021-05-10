@@ -104,7 +104,7 @@ public class WappalyzerAPI extends ApiImplementor {
 
     private ApiResponseList sitesToList(String name, Set<String> sites) {
         ApiResponseList resultList = new ApiResponseList(name);
-        sites.forEach((site) -> resultList.addItem(new ApiResponseElement("site", site)));
+        sites.forEach(site -> resultList.addItem(new ApiResponseElement("site", site)));
         return resultList;
     }
 }

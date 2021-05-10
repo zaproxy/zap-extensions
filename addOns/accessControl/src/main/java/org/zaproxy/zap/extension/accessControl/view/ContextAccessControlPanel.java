@@ -36,8 +36,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,23 +173,19 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
             usersComboBox.setCustomUsers(new User[] {unauthenticatedUser});
 
             usersComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            User selectedUser = usersComboBox.getSelectedUser();
-                            if (selectedUser != null) {
-                                selectedUserId = selectedUser.getId();
-                                tree.setVisible(true);
-                                if (internalRulesManager != null) {
-                                    tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
-                                }
-                                tree.expandAll();
-                            } else {
-                                tree.setVisible(false);
-                                tree.setTreeTableModel(new DefaultTreeTableModel());
-                                tree.expandAll();
+                    e -> {
+                        User selectedUser = usersComboBox.getSelectedUser();
+                        if (selectedUser != null) {
+                            selectedUserId = selectedUser.getId();
+                            tree.setVisible(true);
+                            if (internalRulesManager != null) {
+                                tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
                             }
+                            tree.expandAll();
+                        } else {
+                            tree.setVisible(false);
+                            tree.setTreeTableModel(new DefaultTreeTableModel());
+                            tree.expandAll();
                         }
                     });
         }

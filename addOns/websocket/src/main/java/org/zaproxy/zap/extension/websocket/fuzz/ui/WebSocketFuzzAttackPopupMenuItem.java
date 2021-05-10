@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.fuzz.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerUIUtils;
@@ -49,15 +47,11 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
         this.fuzzerHandler = fuzzerHandler;
 
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        try {
-                            performAction();
-                        } finally {
-                            resetState();
-                        }
+                e -> {
+                    try {
+                        performAction();
+                    } finally {
+                        resetState();
                     }
                 });
     }

@@ -63,14 +63,14 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         UsernameIdorScanRule.USERNAME_IDOR_PAYLOAD_CATEGORY,
                         UsernameIdorScanRule.DEFAULT_USERNAMES);
         ecp.addPayloadCategory(idorCategory);
-        UsernameIdorScanRule.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
+        UsernameIdorScanRule.setPayloadProvider(idorCategory::getPayloadsIterator);
 
         errorCategory =
                 new PayloadCategory(
                         ApplicationErrorScanRule.ERRORS_PAYLOAD_CATEGORY,
                         ApplicationErrorScanRule.DEFAULT_ERRORS);
         ecp.addPayloadCategory(errorCategory);
-        ApplicationErrorScanRule.setPayloadProvider(() -> errorCategory.getPayloadsIterator());
+        ApplicationErrorScanRule.setPayloadProvider(errorCategory::getPayloadsIterator);
     }
 
     @Override

@@ -58,17 +58,14 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.cnp.paste.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptNode node = extension.getSelectedZestNode();
-                        ZestElement elmt = ZestZapUtils.getElement(node);
-                        if (node != null) {
-                            if (elmt instanceof ZestContainer) {
-                                extension.pasteToNode(node);
-                            } else {
-                                extension.pasteToNode(node.getParent(), node);
-                            }
+                e -> {
+                    ScriptNode node = extension.getSelectedZestNode();
+                    ZestElement elmt = ZestZapUtils.getElement(node);
+                    if (node != null) {
+                        if (elmt instanceof ZestContainer) {
+                            extension.pasteToNode(node);
+                        } else {
+                            extension.pasteToNode(node.getParent(), node);
                         }
                     }
                 });

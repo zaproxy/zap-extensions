@@ -659,19 +659,15 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             // example, EDT and pool's thread, if the scan is stopped just before the
             // termination.
             new Thread(
-                            new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    acquireScanStateLock();
-                                    try {
-                                        if (!State.FINISHED.equals(state)
-                                                && !State.STOPPED.equals(state)) {
-                                            AbstractFuzzer.this.terminated(true);
-                                        }
-                                    } finally {
-                                        releaseScanStateLock();
+                            () -> {
+                                acquireScanStateLock();
+                                try {
+                                    if (!State.FINISHED.equals(state)
+                                            && !State.STOPPED.equals(state)) {
+                                        AbstractFuzzer.this.terminated(true);
                                     }
+                                } finally {
+                                    releaseScanStateLock();
                                 }
                             },
                             "ZAP-FuzzerTerminationNotifier-" + fuzzerScanId)

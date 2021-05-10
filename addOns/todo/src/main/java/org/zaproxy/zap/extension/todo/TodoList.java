@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.InputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -114,15 +112,11 @@ public class TodoList extends AbstractPanel implements Tab {
             this.removeBtn = new JButton();
             removeBtn.setText(Constant.messages.getString("todo.remove.btn.label"));
             removeBtn.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            panel.remove(handle);
-                            panel.repaint();
-                            crazyFix(); // clicking on remove btn does not immediately rerender the
-                            // view.so use fix
-                        }
+                    e -> {
+                        panel.remove(handle);
+                        panel.repaint();
+                        crazyFix(); // clicking on remove btn does not immediately rerender the
+                        // view.so use fix
                     });
             add(checkbox);
             add(this.label);

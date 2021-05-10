@@ -81,28 +81,23 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
                     Constant.messages.getString("importurls.topmenu.import.importurls.tooltip"));
 
             menuImportUrls.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // Prompt for a file
-                            final JFileChooser chooser =
-                                    new JFileChooser(
-                                            Model.getSingleton()
-                                                    .getOptionsParam()
-                                                    .getUserDirectory());
-                            int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                            if (rc == JFileChooser.APPROVE_OPTION) {
+                    e -> {
+                        // Prompt for a file
+                        final JFileChooser chooser =
+                                new JFileChooser(
+                                        Model.getSingleton().getOptionsParam().getUserDirectory());
+                        int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
+                        if (rc == JFileChooser.APPROVE_OPTION) {
 
-                                Thread t =
-                                        new Thread() {
-                                            @Override
-                                            public void run() {
-                                                this.setName(THREAD_PREFIX + threadId++);
-                                                importUrlFile(chooser.getSelectedFile());
-                                            }
-                                        };
-                                t.start();
-                            }
+                            Thread t =
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            this.setName(THREAD_PREFIX + threadId++);
+                                            importUrlFile(chooser.getSelectedFile());
+                                        }
+                                    };
+                            t.start();
                         }
                     });
         }
@@ -157,12 +152,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
                     if (View.isInitialised()) {
                         final String str = outputLine.toString();
                         EventQueue.invokeLater(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        View.getSingleton().getOutputPanel().append(str);
-                                    }
-                                });
+                                () -> View.getSingleton().getOutputPanel().append(str));
                     }
                 }
             }
@@ -202,15 +192,12 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
                                 .getExtension(ExtensionHistory.NAME);
         if (extHistory != null) {
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            extHistory.addHistory(historyRef);
-                            Model.getSingleton()
-                                    .getSession()
-                                    .getSiteTree()
-                                    .addPath(historyRef, message);
-                        }
+                    () -> {
+                        extHistory.addHistory(historyRef);
+                        Model.getSingleton()
+                                .getSession()
+                                .getSiteTree()
+                                .addPath(historyRef, message);
                     });
         }
     }

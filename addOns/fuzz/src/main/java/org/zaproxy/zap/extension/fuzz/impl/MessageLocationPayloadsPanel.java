@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -199,42 +197,35 @@ public class MessageLocationPayloadsPanel extends JPanel {
                             "fuzz.fuzzer.dialog.payloads.button.processors.tooltip"));
             processorsButton.setEnabled(false);
             processorsButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (processorsDialog == null) {
-                                processorsDialog =
-                                        new ProcessorsPayloadDialog(
-                                                parent,
-                                                new PayloadProcessorsContainer(
-                                                        PayloadProcessorUIHandlersRegistry
-                                                                .getInstance()
-                                                                .getProcessorUIHandlers(),
-                                                        PayloadProcessorUIHandlersRegistry
-                                                                .getInstance()
-                                                                .getNameDefaultPayloadProcessor()));
-                                processorsDialog.pack();
-                            }
-                            int row = getSelectedRow();
-                            PayloadTableEntry payloadTableEntry =
-                                    getMultipleOptionsModel().getElement(row);
-
-                            processorsDialog.setMessageLocation(messageLocation);
-                            processorsDialog.setPayloadProcessors(
-                                    payloadTableEntry.getPayloadProcessors());
-                            processorsDialog.setPayloads(
-                                    (ResettableAutoCloseableIterator<Payload>)
-                                            payloadTableEntry
-                                                    .getPayloadGeneratorUI()
-                                                    .getPayloadGenerator()
-                                                    .iterator());
-                            processorsDialog.setVisible(true);
-
-                            payloadTableEntry.setPayloadProcessors(
-                                    processorsDialog.getProcessors());
-                            getMultipleOptionsModel().fireTableRowsUpdated(row, row);
+                    e -> {
+                        if (processorsDialog == null) {
+                            processorsDialog =
+                                    new ProcessorsPayloadDialog(
+                                            parent,
+                                            new PayloadProcessorsContainer(
+                                                    PayloadProcessorUIHandlersRegistry.getInstance()
+                                                            .getProcessorUIHandlers(),
+                                                    PayloadProcessorUIHandlersRegistry.getInstance()
+                                                            .getNameDefaultPayloadProcessor()));
+                            processorsDialog.pack();
                         }
+                        int row = getSelectedRow();
+                        PayloadTableEntry payloadTableEntry =
+                                getMultipleOptionsModel().getElement(row);
+
+                        processorsDialog.setMessageLocation(messageLocation);
+                        processorsDialog.setPayloadProcessors(
+                                payloadTableEntry.getPayloadProcessors());
+                        processorsDialog.setPayloads(
+                                (ResettableAutoCloseableIterator<Payload>)
+                                        payloadTableEntry
+                                                .getPayloadGeneratorUI()
+                                                .getPayloadGenerator()
+                                                .iterator());
+                        processorsDialog.setVisible(true);
+
+                        payloadTableEntry.setPayloadProcessors(processorsDialog.getProcessors());
+                        getMultipleOptionsModel().fireTableRowsUpdated(row, row);
                     });
             addButton(processorsButton);
 

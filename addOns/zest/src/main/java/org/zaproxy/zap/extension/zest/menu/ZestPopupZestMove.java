@@ -64,15 +64,12 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
         }
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            if (up) {
-                                extension.moveNodeUp(node);
-                            } else {
-                                extension.moveNodeDown(node);
-                            }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        if (up) {
+                            extension.moveNodeUp(node);
+                        } else {
+                            extension.moveNodeDown(node);
                         }
                     }
                 });

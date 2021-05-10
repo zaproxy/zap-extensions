@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.invoke;
 
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.List;
 import javax.swing.GroupLayout;
@@ -278,39 +277,35 @@ class DialogAddApp extends AbstractFormDialog {
         if (chooseAppButton == null) {
             chooseAppButton = new JButton(FULL_COMMAND_BUTTON_LABEL);
             chooseAppButton.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        JFileChooser fcCommand = new JFileChooser();
+                        fcCommand.setFileFilter(
+                                new FileFilter() {
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            JFileChooser fcCommand = new JFileChooser();
-                            fcCommand.setFileFilter(
-                                    new FileFilter() {
+                                    @Override
+                                    public String getDescription() {
+                                        return APP_FILE_DESCRIPTION;
+                                    }
 
-                                        @Override
-                                        public String getDescription() {
-                                            return APP_FILE_DESCRIPTION;
-                                        }
+                                    @Override
+                                    public boolean accept(File f) {
+                                        return f.isDirectory() || f.canExecute();
+                                    }
+                                });
 
-                                        @Override
-                                        public boolean accept(File f) {
-                                            return f.isDirectory() || f.canExecute();
-                                        }
-                                    });
+                        String command = getFullCommandTextField().getText();
+                        if (command.length() > 0) {
+                            // If there's an existing file select containing
+                            // directory
+                            File f = new File(command);
+                            fcCommand.setCurrentDirectory(f.getParentFile());
+                        }
 
-                            String command = getFullCommandTextField().getText();
-                            if (command.length() > 0) {
-                                // If there's an existing file select containing
-                                // directory
-                                File f = new File(command);
-                                fcCommand.setCurrentDirectory(f.getParentFile());
-                            }
+                        int state = fcCommand.showOpenDialog(null);
 
-                            int state = fcCommand.showOpenDialog(null);
-
-                            if (state == JFileChooser.APPROVE_OPTION) {
-                                getFullCommandTextField()
-                                        .setText(fcCommand.getSelectedFile().toString());
-                            }
+                        if (state == JFileChooser.APPROVE_OPTION) {
+                            getFullCommandTextField()
+                                    .setText(fcCommand.getSelectedFile().toString());
                         }
                     });
         }
@@ -330,28 +325,24 @@ class DialogAddApp extends AbstractFormDialog {
         if (chooseDirButton == null) {
             chooseDirButton = new JButton(WORKING_DIR_BUTTON_LABEL);
             chooseDirButton.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        JFileChooser fcDirectory = new JFileChooser();
+                        fcDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        // disable the "All files" option.
+                        fcDirectory.setAcceptAllFileFilterUsed(false);
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            JFileChooser fcDirectory = new JFileChooser();
-                            fcDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                            // disable the "All files" option.
-                            fcDirectory.setAcceptAllFileFilterUsed(false);
+                        String workingDir = getWorkingDirTextField().getText();
+                        if (workingDir.length() > 0) {
+                            // If there's an existing directory then select it
+                            File f = new File(workingDir);
+                            fcDirectory.setCurrentDirectory(f);
+                        }
 
-                            String workingDir = getWorkingDirTextField().getText();
-                            if (workingDir.length() > 0) {
-                                // If there's an existing directory then select it
-                                File f = new File(workingDir);
-                                fcDirectory.setCurrentDirectory(f);
-                            }
+                        int state = fcDirectory.showOpenDialog(null);
 
-                            int state = fcDirectory.showOpenDialog(null);
-
-                            if (state == JFileChooser.APPROVE_OPTION) {
-                                getWorkingDirTextField()
-                                        .setText(fcDirectory.getSelectedFile().toString());
-                            }
+                        if (state == JFileChooser.APPROVE_OPTION) {
+                            getWorkingDirTextField()
+                                    .setText(fcDirectory.getSelectedFile().toString());
                         }
                     });
         }
@@ -374,16 +365,12 @@ class DialogAddApp extends AbstractFormDialog {
         if (captureOutputCheckBox == null) {
             captureOutputCheckBox = new JCheckBox();
             captureOutputCheckBox.addItemListener(
-                    new ItemListener() {
-
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (e.getStateChange() == ItemEvent.SELECTED) {
-                                getOutputToNoteCheckBox().setEnabled(true);
-                            } else {
-                                getOutputToNoteCheckBox().setSelected(false);
-                                getOutputToNoteCheckBox().setEnabled(false);
-                            }
+                    e -> {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            getOutputToNoteCheckBox().setEnabled(true);
+                        } else {
+                            getOutputToNoteCheckBox().setSelected(false);
+                            getOutputToNoteCheckBox().setEnabled(false);
                         }
                     });
         }

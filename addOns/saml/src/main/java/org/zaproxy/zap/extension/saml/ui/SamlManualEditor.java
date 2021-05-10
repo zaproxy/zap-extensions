@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.saml.ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Map;
@@ -106,38 +104,32 @@ public class SamlManualEditor extends JFrame {
         bottomPanel.add(btnReset);
 
         btnResend.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        // wait till the message is updated
-                        while (msgUpdating) {
-                            try {
-                                Thread.sleep(50);
-                            } catch (InterruptedException ignored) {
-                            }
-                        }
+                evt -> {
+                    // wait till the message is updated
+                    while (msgUpdating) {
                         try {
-                            SAMLResender.resendMessage(
-                                    SamlManualEditor.this.samlMessage.getChangedMessage());
-                            updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
-                            btnResend.setEnabled(false);
-                            btnReset.setEnabled(false);
-                        } catch (SAMLException e) {
-                            JOptionPane.showMessageDialog(
-                                    reqPanel,
-                                    e.getMessage(),
-                                    SamlI18n.getMessage("saml.editor.msg.cantresend"),
-                                    JOptionPane.ERROR_MESSAGE);
+                            Thread.sleep(50);
+                        } catch (InterruptedException ignored) {
                         }
+                    }
+                    try {
+                        SAMLResender.resendMessage(
+                                SamlManualEditor.this.samlMessage.getChangedMessage());
+                        updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
+                        btnResend.setEnabled(false);
+                        btnReset.setEnabled(false);
+                    } catch (SAMLException e) {
+                        JOptionPane.showMessageDialog(
+                                reqPanel,
+                                e.getMessage(),
+                                SamlI18n.getMessage("saml.editor.msg.cantresend"),
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 });
         btnReset.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SamlManualEditor.this.samlMessage.resetChanges();
-                        updateFields();
-                    }
+                e -> {
+                    SamlManualEditor.this.samlMessage.resetChanges();
+                    updateFields();
                 });
 
         JPanel respPanel = new JPanel();

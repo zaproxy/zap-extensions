@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.requester;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -171,13 +169,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                 helpButton.setIcon(ExtensionHelp.getHelpIcon());
                 helpButton.setToolTipText(
                         Constant.messages.getString("help.dialog.button.tooltip"));
-                helpButton.addActionListener(
-                        new java.awt.event.ActionListener() {
-                            @Override
-                            public void actionPerformed(java.awt.event.ActionEvent e) {
-                                ExtensionHelp.showHelp(helpKey);
-                            }
-                        });
+                helpButton.addActionListener(e -> ExtensionHelp.showHelp(helpKey));
                 requestResponsePanel.addToolbarButton(helpButton);
             }
 
@@ -272,18 +264,15 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                             "menu.tools.manReq",
                             View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_M, 0, false));
             menuItem.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Message message = getMessage();
-                            if (message == null) {
-                                setDefaultMessage();
-                            } else if (message instanceof HttpMessage
-                                    && ((HttpMessage) message).getRequestHeader().isEmpty()) {
-                                setDefaultMessage();
-                            }
-                            setVisible(true);
+                    e -> {
+                        Message message = getMessage();
+                        if (message == null) {
+                            setDefaultMessage();
+                        } else if (message instanceof HttpMessage
+                                && ((HttpMessage) message).getRequestHeader().isEmpty()) {
+                            setDefaultMessage();
                         }
+                        setVisible(true);
                     });
         }
         return menuItem;
@@ -412,13 +401,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                                             "/resource/icon/layout_tabbed.png")));
             tabsButtonView.setToolTipText(TABS_VIEW_TOOL_TIP);
 
-            tabsButtonView.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            changeView(TABS_VIEW);
-                        }
-                    });
+            tabsButtonView.addActionListener(e -> changeView(TABS_VIEW));
 
             addToolbarButton(tabsButtonView);
 
@@ -429,13 +412,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                                             "/resource/icon/layout_vertical_split.png")));
             aboveButtonView.setToolTipText(ABOVE_VIEW_TOOL_TIP);
 
-            aboveButtonView.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            changeView(ABOVE_VIEW);
-                        }
-                    });
+            aboveButtonView.addActionListener(e -> changeView(ABOVE_VIEW));
 
             addToolbarButton(aboveButtonView);
 
@@ -446,13 +423,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                                             "/resource/icon/layout_horizontal_split.png")));
             sideBySideButtonView.setToolTipText(SIDE_BY_SIDE_VIEW_TOOL_TIP);
 
-            sideBySideButtonView.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            changeView(SIDE_BY_SIDE_VIEW);
-                        }
-                    });
+            sideBySideButtonView.addActionListener(e -> changeView(SIDE_BY_SIDE_VIEW));
 
             addToolbarButton(sideBySideButtonView);
         }

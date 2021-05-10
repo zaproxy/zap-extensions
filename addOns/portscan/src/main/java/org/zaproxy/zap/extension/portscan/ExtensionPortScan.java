@@ -121,14 +121,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

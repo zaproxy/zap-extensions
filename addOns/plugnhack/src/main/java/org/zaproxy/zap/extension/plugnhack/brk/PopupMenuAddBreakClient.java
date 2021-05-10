@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.plugnhack.brk;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,27 +47,22 @@ public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new ActionListener() {
+                evt -> {
+                    int[] rows = messageTable.getSelectedRows();
+                    if (rows.length != 1) {
+                        return;
+                    }
 
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
+                    try {
+                        MessageListTableModel model =
+                                (MessageListTableModel) messageTable.getModel();
+                        extension.addUiBreakpoint(model.getClientMessageAtRow(rows[0]));
 
-                        int[] rows = messageTable.getSelectedRows();
-                        if (rows.length != 1) {
-                            return;
-                        }
-
-                        try {
-                            MessageListTableModel model =
-                                    (MessageListTableModel) messageTable.getModel();
-                            extension.addUiBreakpoint(model.getClientMessageAtRow(rows[0]));
-
-                        } catch (Exception e) {
-                            extension
-                                    .getView()
-                                    .showWarningDialog(
-                                            Constant.messages.getString("brk.add.error.history"));
-                        }
+                    } catch (Exception e) {
+                        extension
+                                .getView()
+                                .showWarningDialog(
+                                        Constant.messages.getString("brk.add.error.history"));
                     }
                 });
     }

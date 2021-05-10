@@ -52,14 +52,10 @@ public class PopupRemoveScript extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("scripts.close.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-                        if (script != null) {
-                            removeScript(script);
-                        }
+                e -> {
+                    ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
+                    if (script != null) {
+                        removeScript(script);
                     }
                 });
     }

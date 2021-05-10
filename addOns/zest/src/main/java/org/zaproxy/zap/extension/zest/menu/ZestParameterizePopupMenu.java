@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -47,14 +45,10 @@ public class ZestParameterizePopupMenu extends ExtensionPopupMenuItem {
         this.extension = extension;
 
         this.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
-                                .showZestParameterizeDialog(script, node, request, replace);
-                    }
-                });
+                                .showZestParameterizeDialog(script, node, request, replace));
     }
 
     @Override

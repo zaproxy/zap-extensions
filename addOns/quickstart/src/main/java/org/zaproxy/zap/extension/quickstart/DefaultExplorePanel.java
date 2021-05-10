@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.quickstart;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -136,29 +134,24 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                     DisplayUtils.getScaledIcon(
                             new ImageIcon(ZAP.class.getResource("/resource/icon/16/096.png"))));
             saveButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            final JFileChooser fc =
-                                    new WritableFileChooser(
-                                            new File(System.getProperty("user.home")));
-                            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            fc.setMultiSelectionEnabled(false);
-                            fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
-                            if (fc.showSaveDialog(DefaultExplorePanel.this)
-                                    == JFileChooser.APPROVE_OPTION) {
-                                final File f = fc.getSelectedFile();
-                                try {
-                                    writePubCertificateToFile(f);
-                                } catch (final Exception e) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    DefaultExplorePanel.this,
-                                                    Constant.messages.getString(
-                                                            "quickstart.explore.warning.savefail",
-                                                            e.getMessage()));
-                                }
+                    evt -> {
+                        final JFileChooser fc =
+                                new WritableFileChooser(new File(System.getProperty("user.home")));
+                        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        fc.setMultiSelectionEnabled(false);
+                        fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
+                        if (fc.showSaveDialog(DefaultExplorePanel.this)
+                                == JFileChooser.APPROVE_OPTION) {
+                            final File f = fc.getSelectedFile();
+                            try {
+                                writePubCertificateToFile(f);
+                            } catch (final Exception e) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                DefaultExplorePanel.this,
+                                                Constant.messages.getString(
+                                                        "quickstart.explore.warning.savefail",
+                                                        e.getMessage()));
                             }
                         }
                     });
@@ -211,16 +204,11 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                                             ExtensionQuickStart.RESOURCES
                                                     + "/clipboard-sign.png"))));
             copyButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            OptionsParam options = Model.getSingleton().getOptionsParam();
-                            clipboard.setContents(
-                                    new StringSelection(getProxyString(options.getProxyParam())),
-                                    null);
-                        }
+                    e -> {
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        OptionsParam options = Model.getSingleton().getOptionsParam();
+                        clipboard.setContents(
+                                new StringSelection(getProxyString(options.getProxyParam())), null);
                     });
         }
         return copyButton;

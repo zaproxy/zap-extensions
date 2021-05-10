@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -81,16 +79,12 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                                 AbstractPersistentPayloadGeneratorUIPanel.class.getResource(
                                         "/resource/icon/16/096.png"))));
         saveButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        T2 payloadGenerator = getPayloadGenerator();
-                        if (payloadGenerator != null) {
-                            Path file = getFile();
-                            if (file != null) {
-                                saveToFile(payloadGenerator, file);
-                            }
+                e -> {
+                    T2 payloadGenerator = getPayloadGenerator();
+                    if (payloadGenerator != null) {
+                        Path file = getFile();
+                        if (file != null) {
+                            saveToFile(payloadGenerator, file);
                         }
                     }
                 });

@@ -45,8 +45,8 @@ public class RegexDialog extends AbstractFrame {
 
     public RegexDialog(RegexModel regexModel) {
         setTitle(DIALOG_TITLE);
-        this.regexPanel = new RegexPanel(regexModel, () -> somethingChanged());
-        this.testValuePanel = new TestValuePanel(regexModel, () -> somethingChanged());
+        this.regexPanel = new RegexPanel(regexModel, this::somethingChanged);
+        this.testValuePanel = new TestValuePanel(regexModel, this::somethingChanged);
         this.matchPanel = new MatchPanel(regexModel);
 
         setPreferredSize(new Dimension(1024, 768));

@@ -117,15 +117,11 @@ public class AjaxSpiderResultsTableModel
         }
         final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, state);
         EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        final int row = resources.size();
-                        idsToRows.put(entry.getHistoryId(), Integer.valueOf(row));
-                        resources.add(entry);
-                        fireTableRowsInserted(row, row);
-                    }
+                () -> {
+                    final int row = resources.size();
+                    idsToRows.put(entry.getHistoryId(), Integer.valueOf(row));
+                    resources.add(entry);
+                    fireTableRowsInserted(row, row);
                 });
     }
 
@@ -279,14 +275,7 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            refreshEntry(id);
-                        }
-                    });
+            EventQueue.invokeLater(() -> refreshEntry(id));
         }
 
         private void refreshEntries() {
@@ -295,14 +284,7 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            refreshEntries();
-                        }
-                    });
+            EventQueue.invokeLater(this::refreshEntries);
         }
 
         public void refreshEntryRows() {

@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -175,67 +173,50 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
         }
         if (za instanceof ZestLoop<?>) {
             menu.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             extension
                                     .getDialogManager()
                                     .showZestLoopDialog(
-                                            parent, children, null, (ZestLoop<?>) za, true, true);
-                        }
-                    });
+                                            parent, children, null, (ZestLoop<?>) za, true, true));
         } else if (za instanceof ZestConditional) {
             final ZestExpression expr = (ZestExpression) ((ZestConditional) za).getRootExpression();
             menu.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (expr instanceof ZestStructuredExpression) {
-                                ZestConditional zc = (ZestConditional) za;
-                                for (ScriptNode node : children) {
-                                    extension.delete(node);
-                                    ZestStatement ifStmt =
-                                            (ZestStatement) ZestZapUtils.getElement(node);
-                                    zc.addIf(ifStmt);
-                                }
-                                // TODO should add at end
-                                extension.addToParent(parent, zc);
-                                //						extension.setCnpNodes(children);
-                                //						extension.setCut(true);
-                                //						extension.pasteToNode(condNode);
-                            } else {
-                                extension
-                                        .getDialogManager()
-                                        .showZestExpressionDialog(
-                                                parent, children, null, expr, true, true, true);
+                    e -> {
+                        if (expr instanceof ZestStructuredExpression) {
+                            ZestConditional zc = (ZestConditional) za;
+                            for (ScriptNode node : children) {
+                                extension.delete(node);
+                                ZestStatement ifStmt =
+                                        (ZestStatement) ZestZapUtils.getElement(node);
+                                zc.addIf(ifStmt);
                             }
+                            // TODO should add at end
+                            extension.addToParent(parent, zc);
+                            // extension.setCnpNodes(children);
+                            // extension.setCut(true);
+                            // extension.pasteToNode(condNode);
+                        } else {
+                            extension
+                                    .getDialogManager()
+                                    .showZestExpressionDialog(
+                                            parent, children, null, expr, true, true, true);
                         }
                     });
         } else if (za instanceof ZestExpressionAnd) {
             menu.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ScriptNode andNode =
-                                    extension.addToParent(parent, (ZestExpressionAnd) za);
-                            extension.setCnpNodes(children);
-                            extension.setCut(true);
-                            extension.pasteToNode(andNode);
-                        }
+                    e -> {
+                        ScriptNode andNode = extension.addToParent(parent, (ZestExpressionAnd) za);
+                        extension.setCnpNodes(children);
+                        extension.setCut(true);
+                        extension.pasteToNode(andNode);
                     });
         } else if (za instanceof ZestExpressionOr) {
             menu.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ScriptNode orNode =
-                                    extension.addToParent(parent, (ZestExpressionOr) za);
-                            extension.setCnpNodes(children);
-                            extension.setCut(true);
-                            extension.pasteToNode(orNode);
-                        }
+                    e -> {
+                        ScriptNode orNode = extension.addToParent(parent, (ZestExpressionOr) za);
+                        extension.setCnpNodes(children);
+                        extension.setCut(true);
+                        extension.pasteToNode(orNode);
                     });
         }
         menu.setMenuIndex(this.getMenuIndex());

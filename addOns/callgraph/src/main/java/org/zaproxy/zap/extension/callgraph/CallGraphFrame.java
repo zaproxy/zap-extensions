@@ -34,8 +34,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.security.InvalidParameterException;
 import java.sql.Connection;
@@ -319,41 +317,33 @@ public class CallGraphFrame extends AbstractFrame {
         // zoom to fit button
         JButton btZoomToFit = new JButton(Constant.messages.getString("callgraph.button.zoomfit"));
         btZoomToFit.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        double newScale = 1;
-                        Dimension graphSize = graphComponent.getGraphControl().getSize();
-                        Dimension viewPortSize = graphComponent.getViewport().getSize();
-                        int gw = (int) graphSize.getWidth();
-                        int gh = (int) graphSize.getHeight();
-                        if (gw > 0 && gh > 0) {
-                            int w = (int) viewPortSize.getWidth();
-                            int h = (int) viewPortSize.getHeight();
+                e -> {
+                    double newScale = 1;
+                    Dimension graphSize = graphComponent.getGraphControl().getSize();
+                    Dimension viewPortSize = graphComponent.getViewport().getSize();
+                    int gw = (int) graphSize.getWidth();
+                    int gh = (int) graphSize.getHeight();
+                    if (gw > 0 && gh > 0) {
+                        int w = (int) viewPortSize.getWidth();
+                        int h = (int) viewPortSize.getHeight();
 
-                            newScale = Math.min((double) w / gw, (double) h / gh);
-                        }
-                        graphComponent.zoomTo(newScale, true);
+                        newScale = Math.min((double) w / gw, (double) h / gh);
                     }
+                    graphComponent.zoomTo(newScale, true);
                 });
         buttonBar.add(btZoomToFit);
 
         // center graph
         JButton btCenter = new JButton(Constant.messages.getString("callgraph.button.centregraph"));
         btCenter.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        Dimension graphSize = graphComponent.getGraphControl().getSize();
-                        Dimension viewPortSize = graphComponent.getViewport().getSize();
-                        int x = graphSize.width / 2 - viewPortSize.width / 2;
-                        int y = graphSize.height / 2 - viewPortSize.height / 2;
-                        int w = viewPortSize.width;
-                        int h = viewPortSize.height;
-                        graphComponent
-                                .getGraphControl()
-                                .scrollRectToVisible(new Rectangle(x, y, w, h));
-                    }
+                e -> {
+                    Dimension graphSize = graphComponent.getGraphControl().getSize();
+                    Dimension viewPortSize = graphComponent.getViewport().getSize();
+                    int x = graphSize.width / 2 - viewPortSize.width / 2;
+                    int y = graphSize.height / 2 - viewPortSize.height / 2;
+                    int w = viewPortSize.width;
+                    int h = viewPortSize.height;
+                    graphComponent.getGraphControl().scrollRectToVisible(new Rectangle(x, y, w, h));
                 });
         buttonBar.add(btCenter);
 

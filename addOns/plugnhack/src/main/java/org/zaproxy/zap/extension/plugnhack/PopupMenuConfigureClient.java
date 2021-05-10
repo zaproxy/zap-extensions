@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,13 +43,10 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
 
     private void initialize() {
         this.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        MonitoredPage page = clientsList.getSelectedValue();
-                        if (page != null) {
-                            extension.showClientConfigDialog(page);
-                        }
+                e -> {
+                    MonitoredPage page = clientsList.getSelectedValue();
+                    if (page != null) {
+                        extension.showClientConfigDialog(page);
                     }
                 });
     }

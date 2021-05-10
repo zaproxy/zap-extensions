@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.allinonenotes;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -220,13 +219,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
 
     private ActionListener getReloadActionListener() {
         if (reloadActionListener == null) {
-            reloadActionListener =
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            resetNotesTable();
-                        }
-                    };
+            reloadActionListener = e -> resetNotesTable();
         }
         return reloadActionListener;
     }

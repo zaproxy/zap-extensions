@@ -185,26 +185,12 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
                 final long executedTasks,
                 final long tasksToExecute) {
             EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            scanProgress(
-                                    id, displayName, (int) executedTasks, (int) tasksToExecute);
-                        }
-                    });
+                    () -> scanProgress(id, displayName, (int) executedTasks, (int) tasksToExecute));
         }
 
         @Override
         public void fuzzerCompleted(final int id, final String displayName, boolean successfully) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            scanFinshed(id, displayName);
-                        }
-                    });
+            EventQueue.invokeLater(() -> scanFinshed(id, displayName));
         }
     }
 }

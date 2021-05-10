@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -104,24 +102,21 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
         this.addFieldListener(
                 FIELD_RECORD,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (isServerSide()) {
-                            getField(FIELD_CLIENT_NODE).setEnabled(false);
-                            getField(FIELD_PREFIX).setEnabled(true);
+                e -> {
+                    if (isServerSide()) {
+                        getField(FIELD_CLIENT_NODE).setEnabled(false);
+                        getField(FIELD_PREFIX).setEnabled(true);
 
-                            getField(FIELD_STATUS).setEnabled(true);
-                            getField(FIELD_LENGTH).setEnabled(true);
-                            getField(FIELD_APPROX).setEnabled(true);
-                        } else {
-                            getField(FIELD_CLIENT_NODE).setEnabled(true);
-                            getField(FIELD_PREFIX).setEnabled(false);
+                        getField(FIELD_STATUS).setEnabled(true);
+                        getField(FIELD_LENGTH).setEnabled(true);
+                        getField(FIELD_APPROX).setEnabled(true);
+                    } else {
+                        getField(FIELD_CLIENT_NODE).setEnabled(true);
+                        getField(FIELD_PREFIX).setEnabled(false);
 
-                            getField(FIELD_STATUS).setEnabled(false);
-                            getField(FIELD_LENGTH).setEnabled(false);
-                            getField(FIELD_APPROX).setEnabled(false);
-                        }
+                        getField(FIELD_STATUS).setEnabled(false);
+                        getField(FIELD_LENGTH).setEnabled(false);
+                        getField(FIELD_APPROX).setEnabled(false);
                     }
                 });
     }

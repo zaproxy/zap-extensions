@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -264,26 +262,23 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                             ZestZapUtils.toUiString(ze, false));
         }
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (ze != null) {
-                            extension
-                                    .getDialogManager()
-                                    .showZestExpressionDialog(
-                                            parent, nodes, stmt, ze, true, false, true);
-                        } else if (stmt instanceof ZestRequest) {
-                            ScriptNode parent = extension.getSelectedZestNode().getParent();
-                            ScriptNode childNode = extension.getSelectedZestNode();
-                            ZestStatement existingChild = stmt;
-                            ZestStatement newChild = new ZestConditional(new ZestExpressionAnd());
-                            extension.addAfterRequest(parent, childNode, existingChild, newChild);
-                        } else {
-                            // add a new empty conditional with no dialog
-                            extension.addToParent(
-                                    extension.getSelectedZestNode(),
-                                    new ZestConditional(new ZestExpressionAnd()));
-                        }
+                e -> {
+                    if (ze != null) {
+                        extension
+                                .getDialogManager()
+                                .showZestExpressionDialog(
+                                        parent, nodes, stmt, ze, true, false, true);
+                    } else if (stmt instanceof ZestRequest) {
+                        ScriptNode parent2 = extension.getSelectedZestNode().getParent();
+                        ScriptNode childNode = extension.getSelectedZestNode();
+                        ZestStatement existingChild = stmt;
+                        ZestStatement newChild = new ZestConditional(new ZestExpressionAnd());
+                        extension.addAfterRequest(parent2, childNode, existingChild, newChild);
+                    } else {
+                        // add a new empty conditional with no dialog
+                        extension.addToParent(
+                                extension.getSelectedZestNode(),
+                                new ZestConditional(new ZestExpressionAnd()));
                     }
                 });
         final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
@@ -291,28 +286,23 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
         mainPopupMenuItems.add(menu);
         if (menu2 != null) {
             menu2.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (ze != null) {
-                                extension
-                                        .getDialogManager()
-                                        .showZestExpressionDialog(
-                                                parent, nodes, stmt, ze, true, false, true);
-                            } else if (stmt instanceof ZestRequest) {
-                                ScriptNode parent = extension.getSelectedZestNode().getParent();
-                                ScriptNode childNode = extension.getSelectedZestNode();
-                                ZestStatement existingChild = stmt;
-                                ZestStatement newChild =
-                                        new ZestConditional(new ZestExpressionOr());
-                                extension.addAfterRequest(
-                                        parent, childNode, existingChild, newChild);
-                            } else {
-                                // add a new empty conditional with no dialog
-                                extension.addToParent(
-                                        extension.getSelectedZestNode(),
-                                        new ZestConditional(new ZestExpressionOr()));
-                            }
+                    e -> {
+                        if (ze != null) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestExpressionDialog(
+                                            parent, nodes, stmt, ze, true, false, true);
+                        } else if (stmt instanceof ZestRequest) {
+                            ScriptNode parent2 = extension.getSelectedZestNode().getParent();
+                            ScriptNode childNode = extension.getSelectedZestNode();
+                            ZestStatement existingChild = stmt;
+                            ZestStatement newChild = new ZestConditional(new ZestExpressionOr());
+                            extension.addAfterRequest(parent2, childNode, existingChild, newChild);
+                        } else {
+                            // add a new empty conditional with no dialog
+                            extension.addToParent(
+                                    extension.getSelectedZestNode(),
+                                    new ZestConditional(new ZestExpressionOr()));
                         }
                     });
             menu2.setMenuIndex(this.getMenuIndex());

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -227,14 +226,7 @@ public class DefaultStringPayloadGeneratorUIHandler
                 multilineCheckBox = new JCheckBox();
                 multilineCheckBox.setToolTipText(MULTILINE_FIELD_TOOLTIP);
                 multilineCheckBox.addItemListener(
-                        new ItemListener() {
-
-                            @Override
-                            public void itemStateChanged(ItemEvent e) {
-                                getSaveButton()
-                                        .setEnabled(e.getStateChange() != ItemEvent.SELECTED);
-                            }
-                        });
+                        e -> getSaveButton().setEnabled(e.getStateChange() != ItemEvent.SELECTED));
             }
             return multilineCheckBox;
         }

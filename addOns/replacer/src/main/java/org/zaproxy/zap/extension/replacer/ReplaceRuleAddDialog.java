@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -124,23 +122,11 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
         this.addFieldListener(
                 MATCH_TYPE_FIELD,
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        save();
-                        initFields();
-                    }
+                e -> {
+                    save();
+                    initFields();
                 });
-        this.addFieldListener(
-                INIT_TYPE_ALL_FIELD,
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setUpInitiatorFields();
-                    }
-                });
+        this.addFieldListener(INIT_TYPE_ALL_FIELD, e -> setUpInitiatorFields());
     }
 
     private void setUpInitiatorFields() {

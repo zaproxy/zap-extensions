@@ -357,14 +357,7 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
             return;
         }
 
-        EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        fuzzersStatusPanel.updateScannerUI();
-                    }
-                });
+        EventQueue.invokeLater(() -> fuzzersStatusPanel.updateScannerUI());
     }
 
     private static class FuzzerEntry<M extends Message, F extends Fuzzer<M>> {

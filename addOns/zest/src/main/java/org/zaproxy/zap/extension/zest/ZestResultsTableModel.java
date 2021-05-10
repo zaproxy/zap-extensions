@@ -70,14 +70,7 @@ public class ZestResultsTableModel
     @Override
     public void clear() {
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            clear();
-                        }
-                    });
+            EventQueue.invokeLater(this::clear);
             return;
         }
 
@@ -150,14 +143,7 @@ public class ZestResultsTableModel
     @Override
     public void addEntry(final ZestResultsTableEntry entry) {
         if (View.isInitialised() && !EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addEntry(entry);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addEntry(entry));
             return;
         }
 

@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,15 +49,11 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
         setText(getMenuText());
         final WebSocketMessagesPopupMenuItem item = this;
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        try {
-                            item.performAction();
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                evt -> {
+                    try {
+                        item.performAction();
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 });
     }

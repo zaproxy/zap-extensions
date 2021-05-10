@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import org.apache.logging.log4j.LogManager;
@@ -126,26 +125,22 @@ public class EventStreamView implements Runnable {
     }
 
     protected ListSelectionListener getListSelectionListener() {
-        return new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                // only display events when there are no more selection changes.
-                if (!e.getValueIsAdjusting()) {
-                    int rowIndex = view.getSelectedRow();
-                    if (rowIndex < 0) {
-                        // selection got filtered away
-                        return;
-                    }
-
-                    EventStreamViewModel model = (EventStreamViewModel) view.getModel();
-
-                    // as we use a JTable here, that can be sorted, we have to
-                    // transform the row index to the appropriate model row
-                    int modelRow = view.convertRowIndexToModel(rowIndex);
-                    final ServerSentEvent event = model.getServerSentEvent(modelRow);
-                    readAndDisplay(event);
+        return e -> {
+            // only display events when there are no more selection changes.
+            if (!e.getValueIsAdjusting()) {
+                int rowIndex = view.getSelectedRow();
+                if (rowIndex < 0) {
+                    // selection got filtered away
+                    return;
                 }
+
+                EventStreamViewModel model = (EventStreamViewModel) view.getModel();
+
+                // as we use a JTable here, that can be sorted, we have to
+                // transform the row index to the appropriate model row
+                int modelRow = view.convertRowIndexToModel(rowIndex);
+                final ServerSentEvent event = model.getServerSentEvent(modelRow);
+                readAndDisplay(event);
             }
         };
     }
@@ -205,13 +200,10 @@ public class EventStreamView implements Runnable {
             try {
                 final ServerSentEvent eventToDisplay = event;
                 EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                requestPanel.clearView(true);
-                                responsePanel.setMessage(eventToDisplay, true);
-                                responsePanel.setTabFocus();
-                            }
+                        () -> {
+                            requestPanel.clearView(true);
+                            responsePanel.setMessage(eventToDisplay, true);
+                            responsePanel.setTabFocus();
                         });
 
             } catch (Exception e) {

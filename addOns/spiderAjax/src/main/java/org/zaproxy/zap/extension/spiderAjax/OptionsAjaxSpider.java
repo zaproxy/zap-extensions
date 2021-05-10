@@ -143,12 +143,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             clickDefaultElems.setText(
                     resourceBundle.getString("spiderajax.proxy.local.label.defaultElems"));
             clickDefaultElems.addItemListener(
-                    new java.awt.event.ItemListener() {
-                        @Override
-                        public void itemStateChanged(java.awt.event.ItemEvent e) {
-                            setClickElemsEnabled(ItemEvent.DESELECTED == e.getStateChange());
-                        }
-                    });
+                    e -> setClickElemsEnabled(ItemEvent.DESELECTED == e.getStateChange()));
         }
         return clickDefaultElems;
     }

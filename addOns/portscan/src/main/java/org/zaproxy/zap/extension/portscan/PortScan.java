@@ -27,7 +27,6 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
@@ -161,19 +160,14 @@ public class PortScan extends ScanThread implements ScanListenner {
 
                     FutureTask<Integer> ft =
                             new FutureTask<>(
-                                    new Callable<Integer>() {
-
-                                        @Override
-                                        public Integer call() {
-                                            SocketAddress endpoint =
-                                                    new InetSocketAddress(site, port);
-                                            try (Socket s = new Socket(proxy)) {
-                                                s.connect(endpoint, timeout);
-                                            } catch (IOException e) {
-                                                return null;
-                                            }
-                                            return port;
+                                    () -> {
+                                        SocketAddress endpoint = new InetSocketAddress(site, port);
+                                        try (Socket s = new Socket(proxy)) {
+                                            s.connect(endpoint, timeout);
+                                        } catch (IOException e) {
+                                            return null;
                                         }
+                                        return port;
                                     });
                     new Thread(ft).start();
                     try {
@@ -205,14 +199,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.addPort(port);
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addResult(port);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addResult(port));
         }
     }
 
@@ -340,14 +327,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.clear();
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            reset();
-                        }
-                    });
+            EventQueue.invokeLater(this::reset);
         }
     }
 

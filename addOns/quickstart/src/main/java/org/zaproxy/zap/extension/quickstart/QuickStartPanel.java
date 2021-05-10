@@ -25,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -187,13 +185,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                     Constant.messages.getString("quickstart.top.button.tooltip.attack"));
             attackButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            attackButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            jScrollPane.setViewportView(getAttackPanel());
-                        }
-                    });
+            attackButton.addActionListener(e -> jScrollPane.setViewportView(getAttackPanel()));
         }
         return attackButton;
     }
@@ -218,12 +210,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
             learnMoreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
             learnMoreButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            jScrollPane.setViewportView(getLearnMorePanel());
-                        }
-                    });
+                    e -> jScrollPane.setViewportView(getLearnMorePanel()));
         }
         return learnMoreButton;
     }
@@ -248,14 +235,11 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
             exploreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
             exploreButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (explorePanel != null) {
-                                jScrollPane.setViewportView(explorePanel);
-                            } else {
-                                jScrollPane.setViewportView(getDefaultExplorePanel());
-                            }
+                    e -> {
+                        if (explorePanel != null) {
+                            jScrollPane.setViewportView(explorePanel);
+                        } else {
+                            jScrollPane.setViewportView(getDefaultExplorePanel());
                         }
                     });
         }
@@ -320,25 +304,14 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
         closeButton.setVerticalAlignment(SwingConstants.TOP);
         closeButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        newsPanel.setVisible(false);
-                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
-                    }
+                e -> {
+                    newsPanel.setVisible(false);
+                    extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
                 });
 
         JButton learnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
-        learnMoreButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        DesktopUtils.openUrlInBrowser(newsItem.getUri());
-                    }
-                });
+        learnMoreButton.addActionListener(e -> DesktopUtils.openUrlInBrowser(newsItem.getUri()));
 
         innerPanel.setBorder(
                 BorderFactory.createTitledBorder(

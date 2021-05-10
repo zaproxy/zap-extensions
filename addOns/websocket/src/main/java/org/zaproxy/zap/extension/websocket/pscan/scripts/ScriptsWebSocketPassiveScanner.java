@@ -57,14 +57,10 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
         run(
                 scriptDecorator ->
                         scriptDecorator.scan(
-                                new WebSocketScanHelper() {
-                                    @Override
-                                    public WebSocketAlertRaiser newAlert() {
-                                        return WebSocketAlertRaiser.WebSocketAlertScriptRaiser
+                                () ->
+                                        WebSocketAlertRaiser.WebSocketAlertScriptRaiser
                                                 .getWebSocketAlertRaiser(
-                                                        helper.newAlert(), scriptDecorator.getId());
-                                    }
-                                },
+                                                        helper.newAlert(), scriptDecorator.getId()),
                                 webSocketMessage));
     }
 

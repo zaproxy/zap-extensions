@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
@@ -395,18 +393,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             testButton =
                     new JButton(Constant.messages.getString("alertFilters.dialog.button.test"));
             testButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            oldAlertFilter = fieldsToFilter();
-                            if (validateFields()) {
-                                int count = extension.applyAlertFilter(oldAlertFilter, true);
-                                testResultsLabel.setText(
-                                        Constant.messages.getString(
-                                                "alertFilters.dialog.filter.state.appliesto",
-                                                count));
-                            }
+                    e -> {
+                        oldAlertFilter = fieldsToFilter();
+                        if (validateFields()) {
+                            int count = extension.applyAlertFilter(oldAlertFilter, true);
+                            testResultsLabel.setText(
+                                    Constant.messages.getString(
+                                            "alertFilters.dialog.filter.state.appliesto", count));
                         }
                     });
             JLabel testFilterLabel =
@@ -425,18 +418,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             applyButton =
                     new JButton(Constant.messages.getString("alertFilters.dialog.button.apply"));
             applyButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            oldAlertFilter = fieldsToFilter();
-                            if (validateFields()) {
-                                int count = extension.applyAlertFilter(oldAlertFilter, false);
-                                applyResultsLabel.setText(
-                                        Constant.messages.getString(
-                                                "alertFilters.dialog.filter.state.appliedto",
-                                                count));
-                            }
+                    e -> {
+                        oldAlertFilter = fieldsToFilter();
+                        if (validateFields()) {
+                            int count = extension.applyAlertFilter(oldAlertFilter, false);
+                            applyResultsLabel.setText(
+                                    Constant.messages.getString(
+                                            "alertFilters.dialog.filter.state.appliedto", count));
                         }
                     });
             JLabel applyFilterLabel =
@@ -457,14 +445,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         if (enabledCheckBox == null) {
             enabledCheckBox = new JCheckBox();
             enabledCheckBox.setSelected(true);
-            enabledCheckBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            setButtonStates();
-                        }
-                    });
+            enabledCheckBox.addActionListener(e -> setButtonStates());
         }
 
         return enabledCheckBox;

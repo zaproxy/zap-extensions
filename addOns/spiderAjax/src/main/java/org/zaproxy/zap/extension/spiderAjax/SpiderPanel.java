@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -164,13 +162,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
             stopScanButton.setIcon(
                     new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            stopScan();
-                        }
-                    });
+            stopScanButton.addActionListener(e -> stopScan());
         }
         return stopScanButton;
     }
@@ -215,14 +207,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
                     new ImageIcon(
                             SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")));
             startScanButton.setEnabled(!Mode.safe.equals(Control.getSingleton().getMode()));
-            startScanButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            extension.showScanDialog(null);
-                        }
-                    });
+            startScanButton.addActionListener(e -> extension.showScanDialog(null));
         }
         return startScanButton;
     }
@@ -259,17 +244,13 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
             optionsButton.setIcon(
                     new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
                                     .options(
                                             extension
                                                     .getMessages()
-                                                    .getString("spiderajax.options.title"));
-                        }
-                    });
+                                                    .getString("spiderajax.options.title")));
         }
         return optionsButton;
     }

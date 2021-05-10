@@ -23,7 +23,6 @@ import com.crawljax.browser.EmbeddedBrowser;
 import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
 import com.crawljax.core.CrawljaxRunner;
 import com.crawljax.core.configuration.BrowserConfiguration;
-import com.crawljax.core.configuration.CrawlScope;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.crawljax.core.configuration.ProxyConfiguration;
@@ -182,14 +181,7 @@ public class SpiderThread implements Runnable {
 
         // For Crawljax assume everything in scope, SpiderProxyListener does the actual scope
         // checks.
-        configurationBuilder.setCrawlScope(
-                new CrawlScope() {
-
-                    @Override
-                    public boolean isInScope(String url) {
-                        return true;
-                    }
-                });
+        configurationBuilder.setCrawlScope(url -> true);
 
         configurationBuilder.setProxyConfig(
                 ProxyConfiguration.manualProxyOn(LOCAL_PROXY_IP, proxyPort));
@@ -399,14 +391,7 @@ public class SpiderThread implements Runnable {
             final HttpMessage httpMessage, final int historyType, final ResourceState state) {
         try {
             if (extension.getView() != null && !EventQueue.isDispatchThread()) {
-                EventQueue.invokeLater(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                notifyMessage(httpMessage, historyType, state);
-                            }
-                        });
+                EventQueue.invokeLater(() -> notifyMessage(httpMessage, historyType, state));
                 return;
             }
 
