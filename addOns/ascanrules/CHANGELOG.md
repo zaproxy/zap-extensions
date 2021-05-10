@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [39] - 2021-05-10
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
@@ -257,6 +257,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[39]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v36
