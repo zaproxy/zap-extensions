@@ -144,6 +144,11 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         showWarningDialog(Constant.messages.getString(MESSAGE_PREFIX + "invalidurl", url));
     }
 
+    protected void clear() {
+        getFromField().setText("");
+        getTargetField().setText("");
+    }
+
     private static void setContextMenu(JTextField field) {
         JMenuItem paste =
                 new JMenuItem(Constant.messages.getString(MESSAGE_PREFIX + "pasteaction"));

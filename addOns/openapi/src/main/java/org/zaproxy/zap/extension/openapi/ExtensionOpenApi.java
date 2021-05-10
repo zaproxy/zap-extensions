@@ -30,10 +30,13 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
@@ -54,6 +57,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
+    private ImportFromFileDialog currentFileDialog = null;
+    private ImportFromUrlDialog currentUrlDialog = null;
     private int threadId = 1;
     private SpiderParser customSpider;
 
@@ -89,6 +94,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         if (getView() != null) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
+            extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
 
         extensionHook.addApiImplementor(new OpenApiAPI(this));
@@ -107,6 +113,12 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             spider.removeCustomParser(customSpider);
             LOG.debug("Removed custom Open API spider.");
         }
+        if (currentFileDialog != null) {
+            currentFileDialog.dispose();
+        }
+        if (currentUrlDialog != null) {
+            currentUrlDialog.dispose();
+        }
     }
 
     /* Menu option to import a local OpenApi file. */
@@ -119,8 +131,14 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                            new ImportFromFileDialog(
-                                    View.getSingleton().getMainFrame(), ExtensionOpenApi.this);
+                            if (currentFileDialog == null) {
+                                currentFileDialog =
+                                        new ImportFromFileDialog(
+                                                View.getSingleton().getMainFrame(),
+                                                ExtensionOpenApi.this);
+                            } else {
+                                currentFileDialog.setVisible(true);
+                            }
                         }
                     });
         }
@@ -135,13 +153,19 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     Constant.messages.getString(
                             "openapi.topmenu.import.importremoteopenapi.tooltip"));
 
-            final ExtensionOpenApi shadowCopy = this;
             menuImportUrlOpenApi.addActionListener(
                     new java.awt.event.ActionListener() {
 
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                            new ImportFromUrlDialog(View.getSingleton().getMainFrame(), shadowCopy);
+                            if (currentUrlDialog == null) {
+                                currentUrlDialog =
+                                        new ImportFromUrlDialog(
+                                                View.getSingleton().getMainFrame(),
+                                                ExtensionOpenApi.this);
+                            } else {
+                                currentUrlDialog.setVisible(true);
+                            }
                         }
                     });
         }
@@ -455,5 +479,27 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     public boolean handleFile(File file) {
         // Not supported
         return false;
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {}
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            if (currentFileDialog != null) {
+                currentFileDialog.clear();
+            }
+            if (currentUrlDialog != null) {
+                currentUrlDialog.clear();
+            }
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {}
+
+        @Override
+        public void sessionModeChanged(Mode mode) {}
     }
 }
