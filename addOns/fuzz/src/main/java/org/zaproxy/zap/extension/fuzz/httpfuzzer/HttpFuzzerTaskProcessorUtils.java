@@ -102,21 +102,24 @@ public class HttpFuzzerTaskProcessorUtils {
         }
 
         if (extensionAlert != null) {
-            Alert alert = new Alert(PLUGIN_ID, risk, confidence, name);
-            String uri = fuzzResult.getHttpMessage().getRequestHeader().getURI().toString();
+            Alert alert =
+                    Alert.builder()
+                            .setPluginId(PLUGIN_ID)
+                            .setRisk(risk)
+                            .setConfidence(confidence)
+                            .setName(name)
+                            .setDescription(description)
+                            .setParam(param)
+                            .setAttack(attack)
+                            .setOtherInfo(otherInfo)
+                            .setSolution(solution)
+                            .setReference(reference)
+                            .setEvidence(evidence)
+                            .setCweId(cweId)
+                            .setWascId(wascId)
+                            .setMessage(fuzzResult.getHttpMessage())
+                            .build();
 
-            alert.setDetail(
-                    description,
-                    uri,
-                    param,
-                    attack,
-                    otherInfo,
-                    solution,
-                    reference,
-                    evidence,
-                    cweId,
-                    wascId,
-                    fuzzResult.getHttpMessage());
             if (historyReference == null) {
                 try {
                     historyReference =

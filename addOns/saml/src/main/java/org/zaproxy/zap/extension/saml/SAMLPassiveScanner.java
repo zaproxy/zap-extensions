@@ -49,7 +49,7 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
         SAMLInspectionResult samlInspectionResult = SAMLUtils.inspectMessage(msg);
         if (samlInspectionResult.hasSAMLMessage()) {
             addTag(id);
-            raiseAlert(msg, id, samlInspectionResult);
+            raiseAlert(samlInspectionResult);
         }
     }
 
@@ -57,21 +57,16 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
         parent.addTag(id, "SAML");
     }
 
-    private void raiseAlert(HttpMessage msg, int id, SAMLInspectionResult samlInspectionResult) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, NAME);
-        alert.setDetail(
-                DESCRIPTION,
-                msg.getRequestHeader().getURI().toString(),
-                samlInspectionResult.getEvidence().getName(),
-                "",
-                OTHER_INFO,
-                "",
-                REFS,
-                samlInspectionResult.getEvidence().getValue(),
-                0,
-                0,
-                msg);
-        parent.raiseAlert(id, alert);
+    private void raiseAlert(SAMLInspectionResult samlInspectionResult) {
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(DESCRIPTION)
+                .setOtherInfo(OTHER_INFO)
+                .setReference(REFS)
+                .setParam(samlInspectionResult.getEvidence().getName())
+                .setEvidence(samlInspectionResult.getEvidence().getValue())
+                .raise();
     }
 
     @Override

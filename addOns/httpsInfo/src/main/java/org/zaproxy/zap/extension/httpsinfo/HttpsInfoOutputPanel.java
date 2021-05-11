@@ -286,46 +286,38 @@ public class HttpsInfoOutputPanel extends OutputPanel {
     @SuppressWarnings("unused")
     private void raiseBeastAlert() {
         Alert alert =
-                new Alert(
-                        BEAST_PLUGIN_ID,
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString("httpsinfo.beast.name"));
-        alert.setDetail(
-                Constant.messages.getString("httpsinfo.beast.desc"), // Desc
-                getBaseMessage().getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                null, // Attack
-                null, // OtherInfo
-                Constant.messages.getString("httpsinfo.beast.soln"), // Solution
-                Constant.messages.getString("httpsinfo.beast.refs"), // References
-                null, // Evidence
-                311, // CWE ID
-                4, // WASC ID
-                getBaseMessage()); // HTTPMessage
+                Alert.builder()
+                        .setPluginId(BEAST_PLUGIN_ID)
+                        .setRisk(Alert.RISK_INFO)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(Constant.messages.getString("httpsinfo.beast.name"))
+                        .setDescription(Constant.messages.getString("httpsinfo.beast.desc"))
+                        .setSolution(Constant.messages.getString("httpsinfo.beast.soln"))
+                        .setReference(Constant.messages.getString("httpsinfo.beast.refs"))
+                        .setCweId(311)
+                        .setWascId(4)
+                        .setMessage(getBaseMessage())
+                        .build();
+
         extensionAlert.alertFound(alert, getBaseMessage().getHistoryRef());
     }
 
     @SuppressWarnings("unused")
     private void raiseCrimeAlert() {
         Alert alert =
-                new Alert(
-                        CRIME_PLUGIN_ID,
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString("httpsinfo.crime.name"));
-        alert.setDetail(
-                Constant.messages.getString("httpsinfo.crime.desc"), // Desc
-                getBaseMessage().getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                null, // Attack
-                null, // OtherInfo
-                Constant.messages.getString("httpsinfo.crime.soln"), // Solution
-                Constant.messages.getString("httpsinfo.crime.refs"), // References
-                null, // Evidence
-                311, // CWE ID
-                4, // WASC ID
-                getBaseMessage()); // HTTPMessage
+                Alert.builder()
+                        .setPluginId(CRIME_PLUGIN_ID)
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(Constant.messages.getString("httpsinfo.crime.name"))
+                        .setDescription(Constant.messages.getString("httpsinfo.crime.desc"))
+                        .setSolution(Constant.messages.getString("httpsinfo.crime.soln"))
+                        .setReference(Constant.messages.getString("httpsinfo.crime.refs"))
+                        .setCweId(311)
+                        .setWascId(4)
+                        .setMessage(getBaseMessage())
+                        .build();
+
         extensionAlert.alertFound(alert, getBaseMessage().getHistoryRef());
     }
 }
