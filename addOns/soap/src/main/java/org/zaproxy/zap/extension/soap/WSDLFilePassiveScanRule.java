@@ -46,7 +46,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
         if (isWsdl(msg)) {
             HttpResponseHeader header = msg.getResponseHeader();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-            raiseAlert(msg, id, contentType);
+            raiseAlert(contentType);
         }
     }
 
@@ -62,24 +62,17 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
         return false;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                this.getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "", // Param, not relevant
-                // for this example
-                // vulnerability
-                "", // Attack, not relevant for passive vulnerabilities
-                this.getOtherInfo(),
-                this.getSolution(),
-                this.getReference(),
-                evidence, // Evidence
-                0, // CWE Id - return 0 if no relevant one
-                13, // WASC Id - Info leakage (return 0 if no relevant one)
-                msg);
-
-        parent.raiseAlert(id, alert);
+    private void raiseAlert(String evidence) {
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(getOtherInfo())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

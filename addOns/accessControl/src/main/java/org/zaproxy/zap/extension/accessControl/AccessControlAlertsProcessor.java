@@ -81,60 +81,64 @@ public class AccessControlAlertsProcessor {
     }
 
     private void raiseAuthorizationAlert(AccessControlResultEntry result) {
-        Alert alert =
-                new Alert(10102, alertRiskLevel, Alert.CONFIDENCE_HIGH, AUTHORIZATION_ALERT_TITLE);
-
         HttpMessage msg = null;
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             log.debug(e);
         }
-        alert.setDetail(
-                Vulnerabilities.getDescription(vulnerabilityAuthorization),
-                result.getUri(),
-                "", // Param
-                "", // Attack
-                Constant.messages.getString(
-                        "accessControl.alert.authorization.otherinfo",
-                        result.getUser().getName(),
-                        result.isRequestAuthorized(),
-                        result.getAccessRule()),
-                Vulnerabilities.getSolution(vulnerabilityAuthorization), // Solution
-                Vulnerabilities.getReference(vulnerabilityAuthorization), // Reference
-                "", // Evidence
-                285, // CWE Id
-                2, // WASC Id
-                msg);
+
+        Alert alert =
+                Alert.builder()
+                        .setPluginId(10102)
+                        .setRisk(alertRiskLevel)
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setName(AUTHORIZATION_ALERT_TITLE)
+                        .setDescription(Vulnerabilities.getDescription(vulnerabilityAuthorization))
+                        .setOtherInfo(
+                                Constant.messages.getString(
+                                        "accessControl.alert.authorization.otherinfo",
+                                        result.getUser().getName(),
+                                        result.isRequestAuthorized(),
+                                        result.getAccessRule()))
+                        .setSolution(Vulnerabilities.getSolution(vulnerabilityAuthorization))
+                        .setReference(Vulnerabilities.getReference(vulnerabilityAuthorization))
+                        .setCweId(205)
+                        .setWascId(2)
+                        .setMessage(msg)
+                        .setUri(result.getUri())
+                        .build();
 
         alertExtension.alertFound(alert, result.getHistoryReference());
     }
 
     private void raiseAuthenticationAlert(AccessControlResultEntry result) {
-        Alert alert =
-                new Alert(10101, alertRiskLevel, Alert.CONFIDENCE_HIGH, AUTHENTICATION_ALERT_TITLE);
-
         HttpMessage msg = null;
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             log.debug(e);
         }
-        alert.setDetail(
-                Vulnerabilities.getDescription(vulnerabilityAuthentication),
-                result.getUri(),
-                "", // Param
-                "", // Attack
-                Constant.messages.getString(
-                        "accessControl.alert.authentication.otherinfo",
-                        result.isRequestAuthorized(),
-                        result.getAccessRule()),
-                Vulnerabilities.getSolution(vulnerabilityAuthentication), // Solution
-                Vulnerabilities.getReference(vulnerabilityAuthentication), // Reference
-                "", // Evidence
-                287, // CWE Id
-                1, // WASC Id
-                msg);
+
+        Alert alert =
+                Alert.builder()
+                        .setPluginId(10101)
+                        .setRisk(alertRiskLevel)
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setName(AUTHENTICATION_ALERT_TITLE)
+                        .setDescription(Vulnerabilities.getDescription(vulnerabilityAuthentication))
+                        .setOtherInfo(
+                                Constant.messages.getString(
+                                        "accessControl.alert.authentication.otherinfo",
+                                        result.isRequestAuthorized(),
+                                        result.getAccessRule()))
+                        .setSolution(Vulnerabilities.getSolution(vulnerabilityAuthentication))
+                        .setReference(Vulnerabilities.getReference(vulnerabilityAuthentication))
+                        .setCweId(287)
+                        .setWascId(1)
+                        .setMessage(msg)
+                        .setUri(result.getUri())
+                        .build();
 
         alertExtension.alertFound(alert, result.getHistoryReference());
     }

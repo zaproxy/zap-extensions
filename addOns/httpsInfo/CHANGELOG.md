@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.10.0.
 - Updated owasp.org references (Issue 5962).
+- Maintenance changes.
 
 ## [12] - 2019-04-26
 
