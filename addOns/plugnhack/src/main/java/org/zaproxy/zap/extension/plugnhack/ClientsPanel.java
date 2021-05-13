@@ -24,8 +24,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -40,8 +38,6 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
@@ -165,12 +161,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
             customBreak.setToolTipText(
                     Constant.messages.getString("plugnhack.client.button.custom.tooltip"));
             customBreak.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            extension.getBrkManager().handleAddBreakpoint(new ClientMessage());
-                        }
-                    });
+                    e -> extension.getBrkManager().handleAddBreakpoint(new ClientMessage()));
             clientToolbar.add(customBreak);
 
             final ZapToggleButton activeSwitch = new ZapToggleButton();
@@ -184,12 +175,9 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
             activeSwitch.setSelectedToolTipText(
                     Constant.messages.getString("plugnhack.client.button.active.on"));
             activeSwitch.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            showInactiveClients = !activeSwitch.isSelected();
-                            refreshClientList();
-                        }
+                    e -> {
+                        showInactiveClients = !activeSwitch.isSelected();
+                        refreshClientList();
                     });
             clientToolbar.add(activeSwitch);
 
@@ -317,16 +305,13 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
             this.msgTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    ClientMessage msg = getSelectedClientMessage();
-                                    if (msg != null) {
-                                        // Show the selected message in the Request tab
-                                        displayMessage(msg);
-                                        // Get the focus back so that the arrow keys work
-                                        msgTable.requestFocus();
-                                    }
+                            e -> {
+                                ClientMessage msg = getSelectedClientMessage();
+                                if (msg != null) {
+                                    // Show the selected message in the Request tab
+                                    displayMessage(msg);
+                                    // Get the focus back so that the arrow keys work
+                                    msgTable.requestFocus();
                                 }
                             });
         }
@@ -404,19 +389,16 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
     @Override
     public ApiResponse messageReceived(final ClientMessage message) {
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (getMessageModel().getRowCount() == 0) {
-                                // First message, switch from the instructions
-                                msgScrollPane.setViewportView(getMessageTable());
-                            }
-                            getMessageModel().addClientMessage(message);
-
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                () -> {
+                    try {
+                        if (getMessageModel().getRowCount() == 0) {
+                            // First message, switch from the instructions
+                            msgScrollPane.setViewportView(getMessageTable());
                         }
+                        getMessageModel().addClientMessage(message);
+
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 });
         return null;
@@ -431,12 +413,6 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
     }
 
     public void messageChanged(final ClientMessage msg) {
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        getMessageModel().clientMessageChanged(msg);
-                    }
-                });
+        SwingUtilities.invokeLater(() -> getMessageModel().clientMessageChanged(msg));
     }
 }

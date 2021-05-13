@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.ajaxspider;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.util.Optional;
 import javax.swing.Box;
@@ -89,15 +87,12 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         if (selectCheckBox == null) {
             selectCheckBox = new JCheckBox();
             selectCheckBox.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            getBrowserComboBox().setEnabled(selectCheckBox.isSelected());
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderEnabled(selectCheckBox.isSelected());
-                        }
+                    e -> {
+                        getBrowserComboBox().setEnabled(selectCheckBox.isSelected());
+                        extension
+                                .getExtQuickStart()
+                                .getQuickStartParam()
+                                .setAjaxSpiderEnabled(selectCheckBox.isSelected());
                     });
         }
         return selectCheckBox;
@@ -111,17 +106,12 @@ public class AjaxSpiderExplorer implements PlugableSpider {
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
             browserComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
+                    e ->
                             extension
                                     .getExtQuickStart()
                                     .getQuickStartParam()
                                     .setAjaxSpiderDefaultBrowser(
-                                            browserComboBox.getSelectedItem().toString());
-                        }
-                    });
+                                            browserComboBox.getSelectedItem().toString()));
 
             String defaultBrowserId = Browser.FIREFOX_HEADLESS.getId();
             Optional<ProvidedBrowserUI> defaultItem =

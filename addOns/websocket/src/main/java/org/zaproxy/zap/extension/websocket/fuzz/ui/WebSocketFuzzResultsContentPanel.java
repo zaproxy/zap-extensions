@@ -117,14 +117,7 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
     public void clear() {
         if (!EventQueue.isDispatchThread()) {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                clear();
-                            }
-                        });
+                EventQueue.invokeAndWait(this::clear);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

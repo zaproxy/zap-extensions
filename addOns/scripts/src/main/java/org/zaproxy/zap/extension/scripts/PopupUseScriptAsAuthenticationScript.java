@@ -112,17 +112,14 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
         this.setText(MessageFormat.format(MENU_NAME, ctx.getName()));
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptWrapper script =
-                                PopupUseScriptAsAuthenticationScript.this
-                                        .extension
-                                        .getScriptsPanel()
-                                        .getSelectedScript();
-                        if (script != null) {
-                            performAction(script);
-                        }
+                e -> {
+                    ScriptWrapper script =
+                            PopupUseScriptAsAuthenticationScript.this
+                                    .extension
+                                    .getScriptsPanel()
+                                    .getSelectedScript();
+                    if (script != null) {
+                        performAction(script);
                     }
                 });
     }
@@ -239,17 +236,12 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                             Model.getSingleton().getSession(),
                             ContextAuthenticationPanel.buildName(this.contextId),
                             false,
-                            new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    // Removing the users from the 'shared context' (the UI)
-                                    // will cause their removal at
-                                    // save as well
-                                    if (getUsersExtension() != null)
-                                        getUsersExtension()
-                                                .removeSharedContextUsers(uiSharedContext);
-                                }
+                            () -> {
+                                // Removing the users from the 'shared context' (the UI)
+                                // will cause their removal at
+                                // save as well
+                                if (getUsersExtension() != null)
+                                    getUsersExtension().removeSharedContextUsers(uiSharedContext);
                             });
         }
     }

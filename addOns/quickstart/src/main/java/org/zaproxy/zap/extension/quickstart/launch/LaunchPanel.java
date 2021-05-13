@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.quickstart.launch;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
@@ -140,35 +138,32 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                                     View.class.getResource("/resource/icon/16/094.png")))); // Globe
             // icon
             selectButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            NodeSelectDialog nsd =
-                                    new NodeSelectDialog(View.getSingleton().getMainFrame());
-                            SiteNode node = null;
+                    e -> {
+                        NodeSelectDialog nsd =
+                                new NodeSelectDialog(View.getSingleton().getMainFrame());
+                        SiteNode node = null;
+                        try {
+                            node =
+                                    Model.getSingleton()
+                                            .getSession()
+                                            .getSiteTree()
+                                            .findNode(
+                                                    new URI(
+                                                            getUrlField()
+                                                                    .getSelectedItem()
+                                                                    .toString(),
+                                                            false));
+                        } catch (Exception e2) {
+                            // Ignore
+                        }
+                        node = nsd.showDialog(node);
+                        if (node != null && node.getHistoryReference() != null) {
                             try {
-                                node =
-                                        Model.getSingleton()
-                                                .getSession()
-                                                .getSiteTree()
-                                                .findNode(
-                                                        new URI(
-                                                                getUrlField()
-                                                                        .getSelectedItem()
-                                                                        .toString(),
-                                                                false));
-                            } catch (Exception e2) {
+                                getUrlField()
+                                        .setSelectedItem(
+                                                node.getHistoryReference().getURI().toString());
+                            } catch (Exception e1) {
                                 // Ignore
-                            }
-                            node = nsd.showDialog(node);
-                            if (node != null && node.getHistoryReference() != null) {
-                                try {
-                                    getUrlField()
-                                            .setSelectedItem(
-                                                    node.getHistoryReference().getURI().toString());
-                                } catch (Exception e1) {
-                                    // Ignore
-                                }
                             }
                         }
                     });
@@ -200,13 +195,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             } else {
                 hudCheckbox.setSelected(hud.isHudEnabled());
                 hudCheckbox.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent ev) {
-                                hud.setHudEnabledForDesktop(hudCheckbox.isSelected());
-                                setBrowserOptions(hudCheckbox.isSelected());
-                            }
+                        e -> {
+                            hud.setHudEnabledForDesktop(hudCheckbox.isSelected());
+                            setBrowserOptions(hudCheckbox.isSelected());
                         });
             }
         }
@@ -249,12 +240,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                     Constant.messages.getString("quickstart.button.tooltip.launch"));
 
             launchButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            getExtQuickStart().getQuickStartParam().addRecentUrl(getUrlValue());
-                            extLaunch.launchBrowser(getSelectedBrowser(), getUrlValue());
-                        }
+                    e -> {
+                        getExtQuickStart().getQuickStartParam().addRecentUrl(getUrlValue());
+                        extLaunch.launchBrowser(getSelectedBrowser(), getUrlValue());
                     });
         }
         return launchButton;
@@ -329,14 +317,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             allBrowserModel.setIncludeUnconfigured(false);
             browserComboBox.setModel(allBrowserModel);
             browserComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
+                    e ->
                             extLaunch.setToolbarButtonIcon(
-                                    browserComboBox.getSelectedItem().toString());
-                        }
-                    });
+                                    browserComboBox.getSelectedItem().toString()));
         }
         return browserComboBox;
     }

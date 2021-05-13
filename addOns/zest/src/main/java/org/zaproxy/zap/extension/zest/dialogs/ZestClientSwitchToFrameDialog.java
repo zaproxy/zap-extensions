@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -131,13 +129,10 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
                         });
         this.addFieldListener(
                 FIELD_PARENT_FRAME,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (getBoolValue(FIELD_PARENT_FRAME)) {
-                            setFieldValue(FIELD_FRAME_NAME, "");
-                            setFieldValue(FIELD_FRAME_INDEX, -1);
-                        }
+                e -> {
+                    if (getBoolValue(FIELD_PARENT_FRAME)) {
+                        setFieldValue(FIELD_FRAME_NAME, "");
+                        setFieldValue(FIELD_FRAME_INDEX, -1);
                     }
                 });
     }

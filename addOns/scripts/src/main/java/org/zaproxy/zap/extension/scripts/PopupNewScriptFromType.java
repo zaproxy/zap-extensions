@@ -52,13 +52,9 @@ public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("scripts.instantiate.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        if (type != null) {
-                            instantiateType(type);
-                        }
+                e -> {
+                    if (type != null) {
+                        instantiateType(type);
                     }
                 });
     }

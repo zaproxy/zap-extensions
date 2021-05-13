@@ -36,18 +36,14 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
         super(Constant.messages.getString("treetools.popop"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        TreePath[] paths = sitesTree.getSelectionPaths();
-                        for (int i = 0; i < paths.length; i++) {
-                            TreePath t = paths[i];
-                            if (sitesTree.isExpanded(t)) {
-                                expandOrCollapseFromNode(t, false);
-                            } else {
-                                expandOrCollapseFromNode(t, true);
-                            }
+                e -> {
+                    TreePath[] paths = sitesTree.getSelectionPaths();
+                    for (int i = 0; i < paths.length; i++) {
+                        TreePath t = paths[i];
+                        if (sitesTree.isExpanded(t)) {
+                            expandOrCollapseFromNode(t, false);
+                        } else {
+                            expandOrCollapseFromNode(t, true);
                         }
                     }
                 });

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest;
 
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
@@ -288,14 +287,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
             }
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            optionsLoaded();
-                        }
-                    });
+            EventQueue.invokeLater(this::optionsLoaded);
         }
     }
 
@@ -410,14 +402,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     Constant.messages.getString("zest.toolbar.button.record.on"));
 
             recordButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (recordButton.isSelected()) {
-                                getDialogManager().showZestRecordScriptDialog(null);
-                            } else {
-                                cancelScriptRecording();
-                            }
+                    e -> {
+                        if (recordButton.isSelected()) {
+                            getDialogManager().showZestRecordScriptDialog(null);
+                        } else {
+                            cancelScriptRecording();
                         }
                     });
         }
@@ -1210,14 +1199,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     // TODO check script prefix??
 
                     EventQueue.invokeLater(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        addToParent(getRecordingNode(), msg, null);
-                                    } catch (Exception e) {
-                                        logger.error(e.getMessage(), e);
-                                    }
+                            () -> {
+                                try {
+                                    addToParent(getRecordingNode(), msg, null);
+                                } catch (Exception e) {
+                                    logger.error(e.getMessage(), e);
                                 }
                             });
 
@@ -1234,14 +1220,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         .toString()
                         .startsWith(zsw.getZestScript().getPrefix())) {
                     EventQueue.invokeLater(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        addToParent(node, msg, null);
-                                    } catch (Exception e) {
-                                        logger.error(e.getMessage(), e);
-                                    }
+                            () -> {
+                                try {
+                                    addToParent(node, msg, null);
+                                } catch (Exception e) {
+                                    logger.error(e.getMessage(), e);
                                 }
                             });
                 }
@@ -1471,14 +1454,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             final ZestClientLaunch launch = new ZestClientLaunch(handle, "firefox", url);
 
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(getRecordingNode(), launch);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
+                    () -> {
+                        try {
+                            addToParent(getRecordingNode(), launch);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1490,14 +1470,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             final ZestClientWindowHandle winHandle = new ZestClientWindowHandle(handle, url, false);
 
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(getRecordingNode(), winHandle);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
+                    () -> {
+                        try {
+                            addToParent(getRecordingNode(), winHandle);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1611,14 +1588,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             final ZestStatement stmtFinal = stmt;
 
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addToParent(clientRecordingNode, stmtFinal, false);
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                            }
+                    () -> {
+                        try {
+                            addToParent(clientRecordingNode, stmtFinal, false);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
                         }
                     });
         }

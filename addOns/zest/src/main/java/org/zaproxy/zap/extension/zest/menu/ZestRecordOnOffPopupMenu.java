@@ -57,12 +57,7 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        extension.setRecording(extension.getSelectedZestNode(), record);
-                    }
-                });
+                e -> extension.setRecording(extension.getSelectedZestNode(), record));
     }
 
     @Override

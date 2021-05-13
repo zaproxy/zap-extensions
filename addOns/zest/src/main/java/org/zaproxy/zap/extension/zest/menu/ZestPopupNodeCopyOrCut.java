@@ -64,18 +64,15 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
         }
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        List<ScriptNode> nodes = new ArrayList<ScriptNode>();
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
-                                nodes.add(node);
-                            }
+                e -> {
+                    List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
+                            nodes.add(node);
                         }
-                        extension.setCnpNodes(nodes);
-                        extension.setCut(cut);
                     }
+                    extension.setCnpNodes(nodes);
+                    extension.setCut(cut);
                 });
     }
 

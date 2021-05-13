@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.10.0.
 - Issue 2000 - Updated strings shown in context menu with title caps.
 - Change info URL to link to the site.
+- Maintenance changes.
 
 ## 11 - 2017-11-27
 

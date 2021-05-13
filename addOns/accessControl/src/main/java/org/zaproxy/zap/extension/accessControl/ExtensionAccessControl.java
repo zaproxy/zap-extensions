@@ -389,20 +389,17 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         List<User> users = new ArrayList<>(scanThread.getStartOptions().targetUsers);
         Collections.sort(
                 users,
-                new Comparator<User>() {
-                    @Override
-                    public int compare(User o1, User o2) {
-                        if (o1 == o2) {
-                            return 0;
-                        }
-                        if (o1 == null) {
-                            return -1;
-                        }
-                        if (o2 == null) {
-                            return 1;
-                        }
-                        return o1.getId() - o2.getId();
+                (o1, o2) -> {
+                    if (o1 == o2) {
+                        return 0;
                     }
+                    if (o1 == null) {
+                        return -1;
+                    }
+                    if (o2 == null) {
+                        return 1;
+                    }
+                    return o1.getId() - o2.getId();
                 });
         // ... and add the list of users in the report
         Element usersElement = doc.createElement("users");
@@ -417,20 +414,17 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
         // Prepare a comparator that keeps scan results in order based on the user id
         Comparator<AccessControlResultEntry> resultsComparator =
-                new Comparator<AccessControlScannerThread.AccessControlResultEntry>() {
-                    @Override
-                    public int compare(AccessControlResultEntry o1, AccessControlResultEntry o2) {
-                        if (o1.getUser() == o2.getUser()) {
-                            return 0;
-                        }
-                        if (o1.getUser() == null) {
-                            return -1;
-                        }
-                        if (o2.getUser() == null) {
-                            return 1;
-                        }
-                        return o1.getUser().getId() - o2.getUser().getId();
+                (o1, o2) -> {
+                    if (o1.getUser() == o2.getUser()) {
+                        return 0;
                     }
+                    if (o1.getUser() == null) {
+                        return -1;
+                    }
+                    if (o2.getUser() == null) {
+                        return 1;
+                    }
+                    return o1.getUser().getId() - o2.getUser().getId();
                 };
         Map<String, TreeSet<AccessControlResultEntry>> uriResults =
                 new HashMap<>(scanResults.size());

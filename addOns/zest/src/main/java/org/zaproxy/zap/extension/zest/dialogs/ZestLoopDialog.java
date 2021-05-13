@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -155,32 +153,25 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
         this.addFileSelectField(FILE_PATH, new File(path), JFileChooser.FILES_ONLY, null);
         this.addFieldListener(
                 CATEGORY_FUZZ,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
+                e ->
                         setComboFields(
                                 FILE_FUZZ,
                                 extension
                                         .getFuzzerDelegate()
                                         .getFuzzersForCategory(getStringValue(CATEGORY_FUZZ)),
-                                "");
-                    }
-                });
+                                ""));
         this.addFieldListener(
                 FILE_FUZZ,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        File f =
-                                extension
-                                        .getFuzzerDelegate()
-                                        .getFuzzerFile(
-                                                getStringValue(CATEGORY_FUZZ),
-                                                getStringValue(FILE_FUZZ));
+                e -> {
+                    File f =
+                            extension
+                                    .getFuzzerDelegate()
+                                    .getFuzzerFile(
+                                            getStringValue(CATEGORY_FUZZ),
+                                            getStringValue(FILE_FUZZ));
 
-                        if (f != null && f.exists()) {
-                            setFieldValue(FILE_PATH, f.getAbsolutePath());
-                        }
+                    if (f != null && f.exists()) {
+                        setFieldValue(FILE_PATH, f.getAbsolutePath());
                     }
                 });
     }

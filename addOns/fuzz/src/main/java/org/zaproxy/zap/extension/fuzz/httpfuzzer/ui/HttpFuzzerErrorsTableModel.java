@@ -43,14 +43,10 @@ public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
 
     public void addFuzzerError(final long taskId, final String source, final String message) {
         EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        int row = errors.size();
-                        errors.add(new FuzzerError(taskId, source, message));
-                        fireTableRowsInserted(row, row);
-                    }
+                () -> {
+                    int row = errors.size();
+                    errors.add(new FuzzerError(taskId, source, message));
+                    fireTableRowsInserted(row, row);
                 });
     }
 

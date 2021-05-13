@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -72,14 +70,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
             bugTracker.setDialog(this);
             bugTracker.setDetails(alerts);
         }
-        this.addFieldListener(
-                FIELD_TRACKER_LIST,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateTrackerFields();
-                    }
-                });
+        this.addFieldListener(FIELD_TRACKER_LIST, e -> updateTrackerFields());
     }
 
     public void updateTrackerFields() {

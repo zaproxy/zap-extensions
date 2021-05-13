@@ -613,9 +613,8 @@ public class WebSocketUiHelper {
             generateWebSocketKeyButton.setText(
                     Constant.messages.getString("websocket.manual_send.adv_dialog.generate_key"));
             generateWebSocketKeyButton.addActionListener(
-                    actionEvent -> {
-                        webSocketKeyField.setText(WebSocketUtils.generateSecWebSocketKey());
-                    });
+                    actionEvent ->
+                            webSocketKeyField.setText(WebSocketUtils.generateSecWebSocketKey()));
         }
         return generateWebSocketKeyButton;
     }

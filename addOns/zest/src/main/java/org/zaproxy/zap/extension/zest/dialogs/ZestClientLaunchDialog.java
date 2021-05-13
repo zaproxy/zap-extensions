@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -30,8 +28,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -183,14 +179,11 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.addButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
             this.addButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestParameterDialog dialog = getParamDialog();
-                            if (!dialog.isVisible()) {
-                                dialog.init(script, "", "", true, -1, true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestParameterDialog dialog = getParamDialog();
+                        if (!dialog.isVisible()) {
+                            dialog.init(script, "", "", true, -1, true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -202,13 +195,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.modifyButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
             this.modifyButton.setEnabled(false);
-            this.modifyButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            showParamDialog();
-                        }
-                    });
+            this.modifyButton.addActionListener(e -> showParamDialog());
         }
         return this.modifyButton;
     }
@@ -235,17 +222,14 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.removeButton.setEnabled(false);
             final ZestClientLaunchDialog parent = this;
             this.removeButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    parent,
-                                                    Constant.messages.getString(
-                                                            "zest.dialog.script.remove.confirm"))) {
-                                getParamsModel().remove(getParamsTable().getSelectedRow());
-                            }
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.script.remove.confirm"))) {
+                            getParamsModel().remove(getParamsTable().getSelectedRow());
                         }
                     });
         }
@@ -267,20 +251,17 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             paramsTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    if (getParamsTable().getSelectedRowCount() == 0) {
-                                        modifyButton.setEnabled(false);
-                                        removeButton.setEnabled(false);
-                                    } else if (getParamsTable().getSelectedRowCount() == 1) {
-                                        modifyButton.setEnabled(true);
-                                        removeButton.setEnabled(true);
-                                    } else {
-                                        modifyButton.setEnabled(false);
-                                        // TODO allow multiple deletions?
-                                        removeButton.setEnabled(false);
-                                    }
+                            e -> {
+                                if (getParamsTable().getSelectedRowCount() == 0) {
+                                    modifyButton.setEnabled(false);
+                                    removeButton.setEnabled(false);
+                                } else if (getParamsTable().getSelectedRowCount() == 1) {
+                                    modifyButton.setEnabled(true);
+                                    removeButton.setEnabled(true);
+                                } else {
+                                    modifyButton.setEnabled(false);
+                                    // TODO allow multiple deletions?
+                                    removeButton.setEnabled(false);
                                 }
                             });
             paramsTable.addMouseListener(

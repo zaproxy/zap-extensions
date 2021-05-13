@@ -109,7 +109,7 @@ public class MatchPanel extends JPanel {
     }
 
     public void updateFromModel() {
-        SwingUtilities.invokeLater(() -> update());
+        SwingUtilities.invokeLater(this::update);
     }
 
     private void update() {

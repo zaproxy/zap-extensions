@@ -64,85 +64,44 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
                             "onlineMenu.home",
                             getView().getMenuShortcutKeyStroke(KeyEvent.VK_Z, 0, false));
             menuHomepage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuHomepage.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_HOMEPAGE);
-                        }
-                    });
+            menuHomepage.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_HOMEPAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuHomepage);
 
             // Extensions
             ZapMenuItem menuExtPage = new ZapMenuItem("onlineMenu.ext");
             menuExtPage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuExtPage.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_EXTENSIONS_PAGE);
-                        }
-                    });
+            menuExtPage.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_EXTENSIONS_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuExtPage);
 
             // FAQ
             ZapMenuItem menuFAQ = new ZapMenuItem("onlineMenu.faq");
             menuFAQ.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuFAQ.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_FAQ_PAGE);
-                        }
-                    });
+            menuFAQ.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_FAQ_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuFAQ);
 
             // Videos
             ZapMenuItem menuVideos = new ZapMenuItem("onlineMenu.videos");
             menuVideos.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuVideos.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_VIDEOS_PAGE);
-                        }
-                    });
+            menuVideos.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_VIDEOS_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuVideos);
 
             // UserGroup
             ZapMenuItem menuUserGroup = new ZapMenuItem("onlineMenu.usergroup");
             menuUserGroup.setEnabled(DesktopUtils.canOpenUrlInBrowser());
             menuUserGroup.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_USER_GROUP_PAGE);
-                        }
-                    });
+                    e -> DesktopUtils.openUrlInBrowser(ZAP_USER_GROUP_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuUserGroup);
 
             // DevGroup
             ZapMenuItem menuDevGroup = new ZapMenuItem("onlineMenu.devgroup");
             menuDevGroup.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuDevGroup.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_DEV_GROUP_PAGE);
-                        }
-                    });
+            menuDevGroup.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_DEV_GROUP_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuDevGroup);
 
             // Issues
             ZapMenuItem menuIssues = new ZapMenuItem("onlineMenu.issues");
             menuIssues.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuIssues.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_ISSUES_PAGE);
-                        }
-                    });
+            menuIssues.addActionListener(e -> DesktopUtils.openUrlInBrowser(ZAP_ISSUES_PAGE));
             extensionHook.getHookMenu().addOnlineMenuItem(menuIssues);
         }
     }

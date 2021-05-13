@@ -160,7 +160,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                     Constant.messages.getString(
                             "graphql.options.label.lenientMaxQueryDepthEnabled.tooltip"));
             lenientMaxQueryDepthEnabled.addItemListener(
-                    (e) -> {
+                    e -> {
                         if (e.getStateChange() == ItemEvent.SELECTED) {
                             getMaxAdditionalQueryDepthLabel().setEnabled(true);
                             getMaxAdditionalQueryDepthNumberSpinner().setEditable(true);

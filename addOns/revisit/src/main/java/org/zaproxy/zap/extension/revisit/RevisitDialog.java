@@ -311,13 +311,7 @@ public class RevisitDialog extends AbstractDialog {
         if (okButton == null) {
             okButton = new JButton();
             okButton.setText(Constant.messages.getString("all.button.ok"));
-            okButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            saveAndClose();
-                        }
-                    });
+            okButton.addActionListener(e -> saveAndClose());
         }
         return okButton;
     }
@@ -326,13 +320,7 @@ public class RevisitDialog extends AbstractDialog {
         if (cancelButton == null) {
             cancelButton = new JButton();
             cancelButton.setText(Constant.messages.getString("all.button.cancel"));
-            cancelButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            RevisitDialog.this.dispose();
-                        }
-                    });
+            cancelButton.addActionListener(e -> RevisitDialog.this.dispose());
         }
         return cancelButton;
     }
@@ -341,13 +329,7 @@ public class RevisitDialog extends AbstractDialog {
         if (resetButton == null) {
             resetButton = new JButton();
             resetButton.setText(Constant.messages.getString("revisit.dialog.button.reset"));
-            resetButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            RevisitDialog.this.init(sn, startTime, endTime);
-                        }
-                    });
+            resetButton.addActionListener(e -> RevisitDialog.this.init(sn, startTime, endTime));
         }
         return resetButton;
     }

@@ -821,21 +821,17 @@ public abstract class WebSocketProxy {
     private static synchronized void createObserversComparator() {
         if (observersComparator == null) {
             observersComparator =
-                    new Comparator<WebSocketObserver>() {
+                    (o1, o2) -> {
+                        int order1 = o1.getObservingOrder();
+                        int order2 = o2.getObservingOrder();
 
-                        @Override
-                        public int compare(WebSocketObserver o1, WebSocketObserver o2) {
-                            int order1 = o1.getObservingOrder();
-                            int order2 = o2.getObservingOrder();
-
-                            if (order1 < order2) {
-                                return -1;
-                            } else if (order1 > order2) {
-                                return 1;
-                            }
-
-                            return 0;
+                        if (order1 < order2) {
+                            return -1;
+                        } else if (order1 > order2) {
+                            return 1;
                         }
+
+                        return 0;
                     };
         }
     }
@@ -891,12 +887,7 @@ public abstract class WebSocketProxy {
     private static synchronized Comparator<WebSocketSenderListener> getSenderListenersComparator() {
         if (null == senderListenersComparator) {
             senderListenersComparator =
-                    new Comparator<WebSocketSenderListener>() {
-                        @Override
-                        public int compare(WebSocketSenderListener o1, WebSocketSenderListener o2) {
-                            return Integer.compare(o1.getListenerOrder(), o2.getListenerOrder());
-                        }
-                    };
+                    (o1, o2) -> Integer.compare(o1.getListenerOrder(), o2.getListenerOrder());
         }
 
         return senderListenersComparator;

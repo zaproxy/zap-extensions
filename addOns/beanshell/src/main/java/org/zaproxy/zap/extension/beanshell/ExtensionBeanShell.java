@@ -74,12 +74,9 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
         if (menuBeanShell == null) {
             menuBeanShell = new ZapMenuItem("beanshell.menu.title");
             menuBeanShell.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            BeanShellConsoleFrame dialog = getBeanShellConsoleDialog();
-                            dialog.setVisible(true);
-                        }
+                    e -> {
+                        BeanShellConsoleFrame dialog = getBeanShellConsoleDialog();
+                        dialog.setVisible(true);
                     });
         }
         return menuBeanShell;

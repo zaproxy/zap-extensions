@@ -56,27 +56,23 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
         if (menuGettingStarted == null) {
             menuGettingStarted = new ZapMenuItem("gettingStarted.menu");
             menuGettingStarted.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent event) {
-                            try {
-                                /* Note that if you translate the guide to another language you need to also change
-                                 * the language file so that gettingStarted.file refers to the localized file name
-                                 */
-                                File guide =
-                                        new File(
-                                                Constant.getZapHome()
-                                                        + File.separator
-                                                        + DIR
-                                                        + File.separator
-                                                        + Constant.messages.getString(
-                                                                "gettingStarted.file"));
-                                logger.debug("Getting started guide: {}", guide.getAbsolutePath());
-                                Desktop.getDesktop().open(guide);
-                            } catch (Exception ex) {
-                                logger.error(
-                                        "Failed to locate or open Getting started guide: ", ex);
-                            }
+                    e -> {
+                        try {
+                            /* Note that if you translate the guide to another language you need to also change
+                             * the language file so that gettingStarted.file refers to the localized file name
+                             */
+                            File guide =
+                                    new File(
+                                            Constant.getZapHome()
+                                                    + File.separator
+                                                    + DIR
+                                                    + File.separator
+                                                    + Constant.messages.getString(
+                                                            "gettingStarted.file"));
+                            logger.debug("Getting started guide: {}", guide.getAbsolutePath());
+                            Desktop.getDesktop().open(guide);
+                        } catch (Exception ex) {
+                            logger.error("Failed to locate or open Getting started guide: ", ex);
                         }
                     });
         }

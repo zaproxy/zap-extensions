@@ -26,7 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -148,13 +147,9 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
             JButton close = new JButton(Constant.messages.getString("diff.diff.close.button"));
             close.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             DiffDialog.this.dispatchEvent(
-                                    new WindowEvent(DiffDialog.this, WindowEvent.WINDOW_CLOSING));
-                        }
-                    });
+                                    new WindowEvent(DiffDialog.this, WindowEvent.WINDOW_CLOSING)));
 
             footer.add(
                     getSyncCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(2, 10, 2, 2)));

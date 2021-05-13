@@ -104,23 +104,20 @@ public class HttpPanelSender implements MessageSender {
             }
 
             EventQueue.invokeAndWait(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!httpMessage.getResponseHeader().isEmpty()) {
-                                // Indicate UI new response arrived
-                                responsePanel.updateContent();
+                    () -> {
+                        if (!httpMessage.getResponseHeader().isEmpty()) {
+                            // Indicate UI new response arrived
+                            responsePanel.updateContent();
 
-                                if (!followRedirects) {
-                                    persistAndShowMessage(httpMessage);
-                                } else if (!redirectionValidator.isRequestValid()) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "manReq.outofscope.redirection.warning",
-                                                            redirectionValidator
-                                                                    .getInvalidRedirection()));
-                                }
+                            if (!followRedirects) {
+                                persistAndShowMessage(httpMessage);
+                            } else if (!redirectionValidator.isRequestValid()) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "manReq.outofscope.redirection.warning",
+                                                        redirectionValidator
+                                                                .getInvalidRedirection()));
                             }
                         }
                     });

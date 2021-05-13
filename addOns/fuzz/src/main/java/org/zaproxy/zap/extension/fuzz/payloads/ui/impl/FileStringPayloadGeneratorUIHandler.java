@@ -19,10 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -383,48 +380,43 @@ public class FileStringPayloadGeneratorUIHandler
             if (fileChooserButton == null) {
                 fileChooserButton = new JButton(FILE_CHOOSER_BUTTON_LABEL);
                 fileChooserButton.addActionListener(
-                        new ActionListener() {
+                        e -> {
+                            JFileChooser fileChooser = new JFileChooser();
+                            fileChooser.setFileFilter(
+                                    new FileFilter() {
 
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                JFileChooser fileChooser = new JFileChooser();
-                                fileChooser.setFileFilter(
-                                        new FileFilter() {
+                                        @Override
+                                        public String getDescription() {
+                                            return FILE_DESCRIPTION;
+                                        }
 
-                                            @Override
-                                            public String getDescription() {
-                                                return FILE_DESCRIPTION;
-                                            }
+                                        @Override
+                                        public boolean accept(File f) {
+                                            return f.isDirectory() || f.canRead();
+                                        }
+                                    });
 
-                                            @Override
-                                            public boolean accept(File f) {
-                                                return f.isDirectory() || f.canRead();
-                                            }
-                                        });
-
-                                boolean pathSet = false;
-                                String path = getFileTextField().getText();
-                                if (!path.isEmpty()) {
-                                    File file = new File(path);
-                                    if (file.exists()) {
-                                        fileChooser.setSelectedFile(file);
-                                        pathSet = true;
-                                    }
+                            boolean pathSet = false;
+                            String path = getFileTextField().getText();
+                            if (!path.isEmpty()) {
+                                File file = new File(path);
+                                if (file.exists()) {
+                                    fileChooser.setSelectedFile(file);
+                                    pathSet = true;
                                 }
+                            }
 
-                                if (!pathSet && lastSelectedDirectory != null) {
-                                    fileChooser.setCurrentDirectory(lastSelectedDirectory.toFile());
-                                }
+                            if (!pathSet && lastSelectedDirectory != null) {
+                                fileChooser.setCurrentDirectory(lastSelectedDirectory.toFile());
+                            }
 
-                                if (fileChooser.showOpenDialog(null)
-                                        == JFileChooser.APPROVE_OPTION) {
-                                    final File selectedFile = fileChooser.getSelectedFile();
-                                    lastSelectedDirectory = selectedFile.toPath().getParent();
+                            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                                final File selectedFile = fileChooser.getSelectedFile();
+                                lastSelectedDirectory = selectedFile.toPath().getParent();
 
-                                    getFileTextField().setText(selectedFile.getAbsolutePath());
-                                    getSaveButton().setEnabled(true);
-                                    updatePayloadsPreviewTextArea();
-                                }
+                                getFileTextField().setText(selectedFile.getAbsolutePath());
+                                getSaveButton().setEnabled(true);
+                                updatePayloadsPreviewTextArea();
                             }
                         });
             }
@@ -480,14 +472,7 @@ public class FileStringPayloadGeneratorUIHandler
         private JComboBox<Charset> getCharsetComboBox() {
             if (charsetComboBox == null) {
                 charsetComboBox = new JComboBox<>(new DefaultComboBoxModel<>(CHARSETS));
-                charsetComboBox.addItemListener(
-                        new ItemListener() {
-
-                            @Override
-                            public void itemStateChanged(ItemEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                charsetComboBox.addItemListener(e -> updatePayloadsPreviewTextArea());
             }
             return charsetComboBox;
         }
@@ -497,14 +482,9 @@ public class FileStringPayloadGeneratorUIHandler
                 limitCheckBox = new JCheckBox();
                 limitCheckBox.setToolTipText(LIMIT_FIELD_TOOPTIP);
                 limitCheckBox.addItemListener(
-                        new ItemListener() {
-
-                            @Override
-                            public void itemStateChanged(ItemEvent e) {
+                        e ->
                                 getLimitNumberSpinner()
-                                        .setEnabled(ItemEvent.SELECTED == e.getStateChange());
-                            }
-                        });
+                                        .setEnabled(ItemEvent.SELECTED == e.getStateChange()));
             }
             return limitCheckBox;
         }
@@ -556,14 +536,7 @@ public class FileStringPayloadGeneratorUIHandler
             if (ignoreEmptyLinesCheckBox == null) {
                 ignoreEmptyLinesCheckBox = new JCheckBox();
                 ignoreEmptyLinesCheckBox.setToolTipText(IGNORE_EMPTY_LINES_FIELD_TOOL_TIP);
-                ignoreEmptyLinesCheckBox.addItemListener(
-                        new ItemListener() {
-
-                            @Override
-                            public void itemStateChanged(ItemEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                ignoreEmptyLinesCheckBox.addItemListener(e -> updatePayloadsPreviewTextArea());
             }
             return ignoreEmptyLinesCheckBox;
         }
@@ -571,14 +544,7 @@ public class FileStringPayloadGeneratorUIHandler
         private JCheckBox getIgnoreFirstLineCheckBox() {
             if (ignoreFirstLineCheckBox == null) {
                 ignoreFirstLineCheckBox = new JCheckBox();
-                ignoreFirstLineCheckBox.addItemListener(
-                        new ItemListener() {
-
-                            @Override
-                            public void itemStateChanged(ItemEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                ignoreFirstLineCheckBox.addItemListener(e -> updatePayloadsPreviewTextArea());
             }
             return ignoreFirstLineCheckBox;
         }

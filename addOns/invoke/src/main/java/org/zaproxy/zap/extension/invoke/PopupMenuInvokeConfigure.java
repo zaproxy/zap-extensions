@@ -31,15 +31,10 @@ public class PopupMenuInvokeConfigure extends JMenuItem {
         super(Constant.messages.getString("invoke.config.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                e ->
                         // Implement
                         Control.getSingleton()
                                 .getMenuToolsControl()
-                                .options(Constant.messages.getString("invoke.options.title"));
-                    }
-                });
+                                .options(Constant.messages.getString("invoke.options.title")));
     }
 }

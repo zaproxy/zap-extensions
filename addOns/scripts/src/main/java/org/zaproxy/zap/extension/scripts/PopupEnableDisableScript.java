@@ -54,22 +54,18 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (TreePath tp :
-                                extension.getScriptsPanel().getTree().getSelectionPaths()) {
-                            ScriptNode node = (ScriptNode) tp.getLastPathComponent();
+                e -> {
+                    for (TreePath tp : extension.getScriptsPanel().getTree().getSelectionPaths()) {
+                        ScriptNode node = (ScriptNode) tp.getLastPathComponent();
 
-                            if (node == null
-                                    || node.isTemplate()
-                                    || node.getUserObject() == null
-                                    || !(node.getUserObject() instanceof ScriptWrapper)) {
-                                continue;
-                            }
-                            ScriptWrapper script = (ScriptWrapper) node.getUserObject();
-                            extension.getExtScript().setEnabled(script, !script.isEnabled());
+                        if (node == null
+                                || node.isTemplate()
+                                || node.getUserObject() == null
+                                || !(node.getUserObject() instanceof ScriptWrapper)) {
+                            continue;
                         }
+                        ScriptWrapper script = (ScriptWrapper) node.getUserObject();
+                        extension.getExtScript().setEnabled(script, !script.isEnabled());
                     }
                 });
     }

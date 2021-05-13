@@ -33,8 +33,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.FileCopier;
@@ -445,13 +443,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             sliderThreadsPerScan.setMajorTickSpacing(20);
 
             sliderThreadsPerScan.addChangeListener(
-                    new ChangeListener() {
-
-                        @Override
-                        public void stateChanged(ChangeEvent e) {
-                            setThreadsLabelValue(getSliderThreadsPerScan().getValue());
-                        }
-                    });
+                    e -> setThreadsLabelValue(getSliderThreadsPerScan().getValue()));
             setThreadsLabelValue(sliderThreadsPerScan.getValue());
         }
         return sliderThreadsPerScan;
@@ -462,69 +454,64 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             addFileButton =
                     new JButton(Constant.messages.getString(MESSAGE_PREFIX + "button.addfile"));
             addFileButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            JFileChooser fcCommand = new JFileChooser();
-                            fcCommand.setFileFilter(
-                                    new FileFilter() {
-                                        @Override
-                                        public String getDescription() {
-                                            return Constant.messages.getString(
-                                                    MESSAGE_PREFIX + "title");
-                                        }
-
-                                        @Override
-                                        public boolean accept(File f) {
-                                            return true;
-                                        }
-                                    });
-
-                            // Copy the file into the 'home' dirbuster directory
-                            int state = fcCommand.showOpenDialog(null);
-
-                            if (state == JFileChooser.APPROVE_OPTION) {
-                                FileCopier copier = new FileCopier();
-                                File newFile =
-                                        new File(
-                                                Constant.getInstance().DIRBUSTER_CUSTOM_DIR
-                                                        + File.separator
-                                                        + fcCommand.getSelectedFile().getName());
-                                if (newFile.exists()
-                                        || extension
-                                                .getFileNamesList()
-                                                .contains(newFile.getName())) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "bruteforce.add.duplicate.error"));
-
-                                } else if (!newFile.getParentFile().canWrite()) {
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                                    "bruteforce.add.dirperms.error")
-                                                            + newFile.getParentFile()
-                                                                    .getAbsolutePath());
-
-                                } else {
-                                    try {
-                                        copier.copy(fcCommand.getSelectedFile(), newFile);
-                                        // Refresh list in panel
-                                        extension.refreshFileList();
-                                        // Refresh the list in this popup
-                                        refreshFileList();
-                                        View.getSingleton()
-                                                .showMessageDialog(
-                                                        Constant.messages.getString(
-                                                                "bruteforce.add.ok"));
-                                    } catch (IOException e1) {
-                                        View.getSingleton()
-                                                .showWarningDialog(
-                                                        Constant.messages.getString(
-                                                                        "bruteforce.add.fail.error")
-                                                                + e1.getMessage());
+                    e -> {
+                        JFileChooser fcCommand = new JFileChooser();
+                        fcCommand.setFileFilter(
+                                new FileFilter() {
+                                    @Override
+                                    public String getDescription() {
+                                        return Constant.messages.getString(
+                                                MESSAGE_PREFIX + "title");
                                     }
+
+                                    @Override
+                                    public boolean accept(File f) {
+                                        return true;
+                                    }
+                                });
+
+                        // Copy the file into the 'home' dirbuster directory
+                        int state = fcCommand.showOpenDialog(null);
+
+                        if (state == JFileChooser.APPROVE_OPTION) {
+                            FileCopier copier = new FileCopier();
+                            File newFile =
+                                    new File(
+                                            Constant.getInstance().DIRBUSTER_CUSTOM_DIR
+                                                    + File.separator
+                                                    + fcCommand.getSelectedFile().getName());
+                            if (newFile.exists()
+                                    || extension.getFileNamesList().contains(newFile.getName())) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "bruteforce.add.duplicate.error"));
+
+                            } else if (!newFile.getParentFile().canWrite()) {
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                                "bruteforce.add.dirperms.error")
+                                                        + newFile.getParentFile()
+                                                                .getAbsolutePath());
+
+                            } else {
+                                try {
+                                    copier.copy(fcCommand.getSelectedFile(), newFile);
+                                    // Refresh list in panel
+                                    extension.refreshFileList();
+                                    // Refresh the list in this popup
+                                    refreshFileList();
+                                    View.getSingleton()
+                                            .showMessageDialog(
+                                                    Constant.messages.getString(
+                                                            "bruteforce.add.ok"));
+                                } catch (IOException e1) {
+                                    View.getSingleton()
+                                            .showWarningDialog(
+                                                    Constant.messages.getString(
+                                                                    "bruteforce.add.fail.error")
+                                                            + e1.getMessage());
                                 }
                             }
                         }
@@ -552,13 +539,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                     Constant.messages.getString(MESSAGE_PREFIX + "label.browsefiles"));
             checkBoxBrowseFiles.setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
             checkBoxBrowseFiles.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            txtFileExtensions.setEnabled(checkBoxBrowseFiles.isSelected());
-                        }
-                    });
+                    e -> txtFileExtensions.setEnabled(checkBoxBrowseFiles.isSelected()));
         }
         return checkBoxBrowseFiles;
     }

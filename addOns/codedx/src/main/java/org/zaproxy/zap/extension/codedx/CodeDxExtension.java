@@ -92,13 +92,10 @@ public class CodeDxExtension extends ExtensionAdaptor {
         if (menuExport == null) {
             menuExport = new ZapMenuItem("codedx.topmenu.report.title");
 
-            menuExport.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ae) {
+            menuExport.addActionListener(e -> {
                     ReportLastScanHttp saver = new ReportLastScanHttp();
                     saver.generateReport(getView(), ReportType.XML);
-                }
-            });
+                });
         }
         return menuExport;
     }

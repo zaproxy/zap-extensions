@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.brk;
 
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
 import org.parosproxy.paros.Constant;
@@ -54,14 +53,7 @@ public class WebSocketBreakDialogAdd extends WebSocketBreakDialog {
     @Override
     protected ActionListener getActionListenerCancel() {
         if (actionListenerCancel == null) {
-            actionListenerCancel =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            dispose();
-                        }
-                    };
+            actionListenerCancel = e -> dispose();
         }
         return actionListenerCancel;
     }
@@ -70,22 +62,18 @@ public class WebSocketBreakDialogAdd extends WebSocketBreakDialog {
     protected ActionListener getActionListenerSubmit() {
         if (actionListenerSubmit == null) {
             actionListenerSubmit =
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            try {
-                                breakPointsManager.addBreakpoint(getWebSocketBreakpointMessage());
-                                dispose();
-                            } catch (PatternSyntaxException e) {
-                                // show popup
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "websocket.invalidpattern"));
-                                wsUiHelper.getPatternTextField().grabFocus();
-                                return;
-                            }
+                    evt -> {
+                        try {
+                            breakPointsManager.addBreakpoint(getWebSocketBreakpointMessage());
+                            dispose();
+                        } catch (PatternSyntaxException e) {
+                            // show popup
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "websocket.invalidpattern"));
+                            wsUiHelper.getPatternTextField().grabFocus();
+                            return;
                         }
                     };
         }

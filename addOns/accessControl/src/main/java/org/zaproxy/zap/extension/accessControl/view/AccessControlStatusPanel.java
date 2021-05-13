@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -243,35 +241,31 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             // Add the proper behavior for the generate report button: allow users to select a
             // report location, generate the report and open it in the browser
             reportButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            File targetFile = selectReportLocation();
-                            if (targetFile == null) {
-                                return;
-                            }
-
-                            File generatedFile = null;
-                            try {
-                                generatedFile =
-                                        extension.generateAccessControlReport(
-                                                getSelectedContext().getId(), targetFile);
-                            } catch (ParserConfigurationException e1) {
-                                log.error("Failed to generate access control report:", e1);
-                            }
-                            // Check if the generation was OK
-                            if (generatedFile == null) {
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                Constant.messages.getString(
-                                                        "report.unknown.error",
-                                                        targetFile.getName()));
-                                return;
-                            }
-
-                            // Try to show the report in the default browser
-                            DesktopUtils.openUrlInBrowser(generatedFile.toURI());
+                    e -> {
+                        File targetFile = selectReportLocation();
+                        if (targetFile == null) {
+                            return;
                         }
+
+                        File generatedFile = null;
+                        try {
+                            generatedFile =
+                                    extension.generateAccessControlReport(
+                                            getSelectedContext().getId(), targetFile);
+                        } catch (ParserConfigurationException e1) {
+                            log.error("Failed to generate access control report:", e1);
+                        }
+                        // Check if the generation was OK
+                        if (generatedFile == null) {
+                            View.getSingleton()
+                                    .showMessageDialog(
+                                            Constant.messages.getString(
+                                                    "report.unknown.error", targetFile.getName()));
+                            return;
+                        }
+
+                        // Try to show the report in the default browser
+                        DesktopUtils.openUrlInBrowser(generatedFile.toURI());
                     });
             toolbar.add(reportButton, LayoutHelper.getGBC(gridX++, 0, 1, 0));
         }

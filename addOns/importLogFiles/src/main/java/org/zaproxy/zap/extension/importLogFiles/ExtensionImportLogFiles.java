@@ -110,41 +110,35 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
             menuExample = new ZapMenuItem("importLogFiles.import.importLOG");
 
             menuExample.addActionListener(
-                    new java.awt.event.ActionListener() {
+                    e -> {
+                        View view = View.getSingleton();
+                        JFrame main = view.getMainFrame();
+                        JFileChooser fc = new JFileChooser();
+                        fc.setAcceptAllFileFilterUsed(false);
+                        FileFilter filter =
+                                new FileNameExtensionFilter(
+                                        getMessageString(
+                                                "importLogFiles.choosefile.filter.description"),
+                                        "txt");
+                        fc.addChoosableFileFilter(filter);
 
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                        LogType logChoice =
+                                (LogType)
+                                        JOptionPane.showInputDialog(
+                                                main,
+                                                getMessageString(
+                                                        "importLogFiles.choosefile.message"),
+                                                getMessageString("importLogFiles.choosefile.title"),
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                LogType.values(),
+                                                LogType.ZAP);
 
-                            View view = View.getSingleton();
-                            JFrame main = view.getMainFrame();
-                            JFileChooser fc = new JFileChooser();
-                            fc.setAcceptAllFileFilterUsed(false);
-                            FileFilter filter =
-                                    new FileNameExtensionFilter(
-                                            getMessageString(
-                                                    "importLogFiles.choosefile.filter.description"),
-                                            "txt");
-                            fc.addChoosableFileFilter(filter);
-
-                            LogType logChoice =
-                                    (LogType)
-                                            JOptionPane.showInputDialog(
-                                                    main,
-                                                    getMessageString(
-                                                            "importLogFiles.choosefile.message"),
-                                                    getMessageString(
-                                                            "importLogFiles.choosefile.title"),
-                                                    JOptionPane.QUESTION_MESSAGE,
-                                                    null,
-                                                    LogType.values(),
-                                                    LogType.ZAP);
-
-                            if (logChoice != null) {
-                                int openChoice = fc.showOpenDialog(main);
-                                if (openChoice == JFileChooser.APPROVE_OPTION) {
-                                    File newFile = fc.getSelectedFile();
-                                    processInput(newFile, logChoice);
-                                }
+                        if (logChoice != null) {
+                            int openChoice = fc.showOpenDialog(main);
+                            if (openChoice == JFileChooser.APPROVE_OPTION) {
+                                File newFile = fc.getSelectedFile();
+                                processInput(newFile, logChoice);
                             }
                         }
                     });

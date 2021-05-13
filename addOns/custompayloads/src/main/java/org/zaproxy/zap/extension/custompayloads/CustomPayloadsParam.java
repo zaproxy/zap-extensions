@@ -161,9 +161,9 @@ public class CustomPayloadsParam extends AbstractParam {
                                                 Function.identity(), Collectors.toList())));
 
         payloadCategories.forEach(
-                (name, category) -> {
-                    category.setPayloads(newPayloads.getOrDefault(name, Collections.emptyList()));
-                });
+                (name, category) ->
+                        category.setPayloads(
+                                newPayloads.getOrDefault(name, Collections.emptyList())));
         savePayloadsToConfig();
     }
 
@@ -209,7 +209,7 @@ public class CustomPayloadsParam extends AbstractParam {
     public List<CustomPayload> getDefaultPayloads() {
         return payloadCategories.values().stream()
                 .map(PayloadCategory::getDefaultPayloads)
-                .flatMap(payloads -> payloads.stream())
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 

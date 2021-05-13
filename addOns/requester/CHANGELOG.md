@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Warn when unable to save (malformed) HTTP message (Issue 4235).
 - Update minimum ZAP version to 2.10.0.
+- Maintenance changes.
 
 ## [4] - 2020-07-15
 ### Added

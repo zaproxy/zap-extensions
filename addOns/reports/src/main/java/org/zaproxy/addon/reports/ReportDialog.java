@@ -22,8 +22,6 @@ package org.zaproxy.addon.reports;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +43,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -166,51 +162,46 @@ public class ReportDialog extends StandardFieldsDialog {
                                 File file = new File(selectedTemplateDir);
 
                                 EventQueue.invokeLater(
-                                        new Runnable() {
-
-                                            @Override
-                                            public void run() {
-                                                if (ExtensionReports.isTemplateDir(file)) {
-                                                    int templateCount =
-                                                            extension.reloadTemplates(file);
-                                                    currentTemplateDir = file.getAbsolutePath();
-                                                    reportParam.setTemplateDirectory(
-                                                            currentTemplateDir);
-                                                    reset();
-                                                    View.getSingleton()
-                                                            .showMessageDialog(
-                                                                    ReportDialog.this,
-                                                                    Constant.messages.getString(
-                                                                            "reports.dialog.info.reloadtemplates",
-                                                                            templateCount,
-                                                                            currentTemplateDir));
-                                                } else if (ExtensionReports.isTemplateDir(
-                                                        new File(currentTemplateDir))) {
-                                                    // Existing one ok, go back to it
-                                                    View.getSingleton()
-                                                            .showWarningDialog(
-                                                                    ReportDialog.this,
-                                                                    Constant.messages.getString(
-                                                                            "reports.dialog.error.notemplates"));
-                                                    ignoreEvents = true;
-                                                    templateDirField.setText(currentTemplateDir);
-                                                    ignoreEvents = false;
-                                                } else {
-                                                    // Existing one bad, use default
-                                                    currentTemplateDir =
-                                                            ReportParam.DEFAULT_TEMPLATES_DIR;
-                                                    extension.reloadTemplates(
-                                                            new File(currentTemplateDir));
-                                                    reportParam.setTemplateDirectory(
-                                                            currentTemplateDir);
-                                                    reset();
-                                                    View.getSingleton()
-                                                            .showWarningDialog(
-                                                                    ReportDialog.this,
-                                                                    Constant.messages.getString(
-                                                                            "reports.dialog.error.badtemplates",
-                                                                            currentTemplateDir));
-                                                }
+                                        () -> {
+                                            if (ExtensionReports.isTemplateDir(file)) {
+                                                int templateCount = extension.reloadTemplates(file);
+                                                currentTemplateDir = file.getAbsolutePath();
+                                                reportParam.setTemplateDirectory(
+                                                        currentTemplateDir);
+                                                reset();
+                                                View.getSingleton()
+                                                        .showMessageDialog(
+                                                                ReportDialog.this,
+                                                                Constant.messages.getString(
+                                                                        "reports.dialog.info.reloadtemplates",
+                                                                        templateCount,
+                                                                        currentTemplateDir));
+                                            } else if (ExtensionReports.isTemplateDir(
+                                                    new File(currentTemplateDir))) {
+                                                // Existing one ok, go back to it
+                                                View.getSingleton()
+                                                        .showWarningDialog(
+                                                                ReportDialog.this,
+                                                                Constant.messages.getString(
+                                                                        "reports.dialog.error.notemplates"));
+                                                ignoreEvents = true;
+                                                templateDirField.setText(currentTemplateDir);
+                                                ignoreEvents = false;
+                                            } else {
+                                                // Existing one bad, use default
+                                                currentTemplateDir =
+                                                        ReportParam.DEFAULT_TEMPLATES_DIR;
+                                                extension.reloadTemplates(
+                                                        new File(currentTemplateDir));
+                                                reportParam.setTemplateDirectory(
+                                                        currentTemplateDir);
+                                                reset();
+                                                View.getSingleton()
+                                                        .showWarningDialog(
+                                                                ReportDialog.this,
+                                                                Constant.messages.getString(
+                                                                        "reports.dialog.error.badtemplates",
+                                                                        currentTemplateDir));
                                             }
                                         });
                             }
@@ -266,21 +257,11 @@ public class ReportDialog extends StandardFieldsDialog {
         setReportName();
         ((JComboBox<?>) this.getField(FIELD_TEMPLATE))
                 .addActionListener(
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                setReportName();
-                                resetTemplateFields();
-                            }
+                        e -> {
+                            setReportName();
+                            resetTemplateFields();
                         });
-        getSitesSelector()
-                .addListSelectionListener(
-                        new ListSelectionListener() {
-                            @Override
-                            public void valueChanged(ListSelectionEvent e) {
-                                setReportName();
-                            }
-                        });
+        getSitesSelector().addListSelectionListener(e -> setReportName());
 
         this.addTextFieldReadOnly(TAB_FILTER, FIELD_RISK_HEADER, "");
         this.addCheckBoxField(TAB_FILTER, FIELD_RISK_3, reportParam.isIncRisk3());
@@ -455,13 +436,7 @@ public class ReportDialog extends StandardFieldsDialog {
         if (extraButtons == null) {
             JButton resetButton =
                     new JButton(Constant.messages.getString("reports.dialog.button.reset"));
-            resetButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            reset(true);
-                        }
-                    });
+            resetButton.addActionListener(e -> reset(true));
 
             extraButtons = new JButton[] {resetButton};
         }

@@ -100,22 +100,17 @@ public class HttpFuzzerResultsTableModel
                                     result.getHttpMessage());
 
             EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            final int row = results.size();
-                            idsToRows.put(
-                                    Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
-                            results.add(
-                                    new FuzzResultTableEntry(
-                                            href,
-                                            result.getTaskId(),
-                                            result.getType(),
-                                            result.getCustomStates(),
-                                            result.getPayloads()));
-                            fireTableRowsInserted(row, row);
-                        }
+                    () -> {
+                        final int row = results.size();
+                        idsToRows.put(Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
+                        results.add(
+                                new FuzzResultTableEntry(
+                                        href,
+                                        result.getTaskId(),
+                                        result.getType(),
+                                        result.getCustomStates(),
+                                        result.getPayloads()));
+                        fireTableRowsInserted(row, row);
                     });
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.error("Failed to persist (and show) the message:", e);

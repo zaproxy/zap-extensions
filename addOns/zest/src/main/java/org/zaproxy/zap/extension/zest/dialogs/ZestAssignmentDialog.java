@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -133,14 +131,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             }
             this.addTextField(FIELD_VARIABLE, assign.getVariableName());
             this.addComboField(FIELD_REPLACE_FORM, new String[] {}, "");
-            this.addFieldListener(
-                    FIELD_REPLACE_FORM,
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            initFieldField(null);
-                        }
-                    });
+            this.addFieldListener(FIELD_REPLACE_FORM, e -> initFieldField(null));
 
             this.addComboField(FIELD_REPLACE_FIELD, new String[] {}, "");
 

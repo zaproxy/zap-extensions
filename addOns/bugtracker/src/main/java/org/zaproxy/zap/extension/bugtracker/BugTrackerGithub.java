@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.bugtracker;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,14 +104,7 @@ public class BugTrackerGithub extends BugTracker {
         dialog.addTextField(FIELD_USERNAME, "");
         dialog.addTextField(FIELD_PASSWORD, "");
         updateAssigneeList();
-        dialog.addFieldListener(
-                FIELD_GITHUB_CONFIG,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateAssigneeList();
-                    }
-                });
+        dialog.addFieldListener(FIELD_GITHUB_CONFIG, e -> updateAssigneeList());
     }
 
     public void updateAssigneeList() {

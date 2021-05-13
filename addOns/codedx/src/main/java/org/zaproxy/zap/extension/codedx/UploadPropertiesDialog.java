@@ -161,14 +161,11 @@ public class UploadPropertiesDialog {
 
 		JButton refresh = new JButton(REFRESH_ICON);
 		refresh.setPreferredSize(new Dimension(REFRESH_ICON.getIconHeight()+6,REFRESH_ICON.getIconHeight()+6));
-		refresh.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		refresh.addActionListener(e -> {
 				dialog.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				updateProjects();
 				dialog.setCursor(Cursor.getDefaultCursor());
-			}
-		});
+			});
 		gbc = new GridBagConstraints();
 		gbc.gridx = 2;
 		gbc.gridy = 2;

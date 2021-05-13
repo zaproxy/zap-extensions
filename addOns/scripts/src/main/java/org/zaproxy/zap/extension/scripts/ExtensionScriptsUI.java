@@ -823,14 +823,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
         if (!EventQueue.isDispatchThread()) {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                engineAdded(scriptEngineWrapper);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> engineAdded(scriptEngineWrapper));
             } catch (InvocationTargetException | InterruptedException e) {
                 LOGGER.error("Failed to update the UI:", e);
             }
@@ -854,14 +847,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
         if (!EventQueue.isDispatchThread()) {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                engineRemoved(scriptEngineWrapper);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> engineRemoved(scriptEngineWrapper));
             } catch (InvocationTargetException | InterruptedException e) {
                 LOGGER.error("Failed to update the UI:", e);
             }

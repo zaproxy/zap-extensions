@@ -24,8 +24,6 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
@@ -137,48 +135,45 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
             btnSend.setText(Constant.messages.getString("manReq.button.send"));
             btnSend.setEnabled(isSendEnabled);
             btnSend.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            btnSend.setEnabled(false);
+                    e -> {
+                        btnSend.setEnabled(false);
 
-                            try {
-                                getRequestPanel().saveData();
-                            } catch (Exception e1) {
-                                StringBuilder warnMessage = new StringBuilder(150);
-                                warnMessage.append(
-                                        Constant.messages.getString("requester.warn.datainvalid"));
-                                String exceptionMessage = e1.getLocalizedMessage();
-                                if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
-                                    warnMessage.append('\n').append(exceptionMessage);
-                                }
-                                View.getSingleton().showWarningDialog(warnMessage.toString());
-                                btnSend.setEnabled(true);
-                                return;
+                        try {
+                            getRequestPanel().saveData();
+                        } catch (Exception e1) {
+                            StringBuilder warnMessage = new StringBuilder(150);
+                            warnMessage.append(
+                                    Constant.messages.getString("requester.warn.datainvalid"));
+                            String exceptionMessage = e1.getLocalizedMessage();
+                            if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+                                warnMessage.append('\n').append(exceptionMessage);
                             }
+                            View.getSingleton().showWarningDialog(warnMessage.toString());
+                            btnSend.setEnabled(true);
+                            return;
+                        }
 
-                            Mode mode = Control.getSingleton().getMode();
-                            if (mode.equals(Mode.safe)) {
-                                // Can happen if the user turns on safe mode with the dialog open
+                        Mode mode = Control.getSingleton().getMode();
+                        if (mode.equals(Mode.safe)) {
+                            // Can happen if the user turns on safe mode with the dialog open
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString("manReq.safe.warning"));
+                            btnSend.setEnabled(true);
+                            return;
+                        } else if (mode.equals(Mode.protect)) {
+                            if (!getMessage().isInScope()) {
+                                // In protected mode and not in scope, so fail
                                 View.getSingleton()
                                         .showWarningDialog(
-                                                Constant.messages.getString("manReq.safe.warning"));
+                                                Constant.messages.getString(
+                                                        "manReq.outofscope.warning"));
                                 btnSend.setEnabled(true);
                                 return;
-                            } else if (mode.equals(Mode.protect)) {
-                                if (!getMessage().isInScope()) {
-                                    // In protected mode and not in scope, so fail
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "manReq.outofscope.warning"));
-                                    btnSend.setEnabled(true);
-                                    return;
-                                }
                             }
-
-                            btnSendAction();
                         }
+
+                        btnSendAction();
                     });
         }
         return btnSend;
@@ -190,18 +185,15 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
     protected void send(final Message aMessage) {
         final Thread t =
                 new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    getMessageSender().handleSendMessage(aMessage);
-                                    postSend();
-                                } catch (Exception e) {
-                                    logger.warn(e.getMessage(), e);
-                                    View.getSingleton().showWarningDialog(e.getMessage());
-                                } finally {
-                                    btnSend.setEnabled(true);
-                                }
+                        () -> {
+                            try {
+                                getMessageSender().handleSendMessage(aMessage);
+                                postSend();
+                            } catch (Exception e) {
+                                logger.warn(e.getMessage(), e);
+                                View.getSingleton().showWarningDialog(e.getMessage());
+                            } finally {
+                                btnSend.setEnabled(true);
                             }
                         });
         t.setPriority(Thread.NORM_PRIORITY);
@@ -210,14 +202,9 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
 
     protected void postSend() {
         EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
+                () ->
                         // redraw, as message may have changed after sending
-                        getRequestPanel().updateContent();
-                    }
-                });
+                        getRequestPanel().updateContent());
     }
 
     protected abstract void saveConfig();

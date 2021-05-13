@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.sequence;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -90,19 +88,16 @@ public class SequencePanel extends AbstractParamPanel {
 
         btnInclude = new JButton(BTNINCLUDESELECT);
         btnInclude.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean selectScripts;
-                        if (btnInclude.getText().equals(BTNINCLUDESELECT)) {
-                            selectScripts = true;
-                            btnInclude.setText(BTNINCLUDEDESELECT);
-                        } else {
-                            selectScripts = false;
-                            btnInclude.setText(BTNINCLUDESELECT);
-                        }
-                        scriptsTableModel.setAllSelected(selectScripts);
+                e -> {
+                    boolean selectScripts;
+                    if (btnInclude.getText().equals(BTNINCLUDESELECT)) {
+                        selectScripts = true;
+                        btnInclude.setText(BTNINCLUDEDESELECT);
+                    } else {
+                        selectScripts = false;
+                        btnInclude.setText(BTNINCLUDESELECT);
                     }
+                    scriptsTableModel.setAllSelected(selectScripts);
                 });
         GridBagConstraints gbc_btnInclude = new GridBagConstraints();
         gbc_btnInclude.anchor = GridBagConstraints.NORTHWEST;
@@ -146,14 +141,7 @@ public class SequencePanel extends AbstractParamPanel {
                             new ImageIcon(
                                     AbstractParamContainerPanel.class.getResource(
                                             "/resource/icon/16/201.png")))); // help icon
-            btnHelp.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            ExtensionHelp.showHelp(HELPSTRING);
-                        }
-                    });
+            btnHelp.addActionListener(e -> ExtensionHelp.showHelp(HELPSTRING));
             btnHelp.setToolTipText(Constant.messages.getString("menu.help"));
         }
         return btnHelp;

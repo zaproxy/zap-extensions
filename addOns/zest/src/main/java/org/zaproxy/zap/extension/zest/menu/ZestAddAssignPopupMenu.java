@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -146,14 +144,10 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
                         Constant.messages.getString("zest.assign.add.popup"),
                         ZestZapUtils.toUiString(za, false));
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
-                                .showZestAssignDialog(parent, child, stmt, za, true);
-                    }
-                });
+                                .showZestAssignDialog(parent, child, stmt, za, true));
         menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }

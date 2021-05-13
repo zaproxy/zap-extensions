@@ -64,13 +64,10 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
         */
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
-                                extension.setEnabled(node, comment);
-                            }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
+                            extension.setEnabled(node, comment);
                         }
                     }
                 });

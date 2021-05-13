@@ -57,9 +57,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -509,37 +507,29 @@ public abstract class TestUtils {
         extensionResourceBundle = getExtensionResourceBundle(baseName);
         when(i18n.getString(anyString()))
                 .thenAnswer(
-                        new Answer<String>() {
-
-                            @Override
-                            public String answer(InvocationOnMock invocation) {
-                                String key = (String) invocation.getArguments()[0];
-                                if (key.startsWith(prefix)) {
-                                    assertKeyExists(key);
-                                    return extensionResourceBundle.getString(key);
-                                }
-                                // Return an empty string for non extension's messages.
-                                return "";
+                        invocation -> {
+                            String key = (String) invocation.getArguments()[0];
+                            if (key.startsWith(prefix)) {
+                                assertKeyExists(key);
+                                return extensionResourceBundle.getString(key);
                             }
+                            // Return an empty string for non extension's messages.
+                            return "";
                         });
 
         when(i18n.getString(anyString(), any()))
                 .thenAnswer(
-                        new Answer<String>() {
-
-                            @Override
-                            public String answer(InvocationOnMock invocation) {
-                                Object[] args = invocation.getArguments();
-                                String key = (String) args[0];
-                                if (key.startsWith(prefix)) {
-                                    assertKeyExists(key);
-                                    return MessageFormat.format(
-                                            extensionResourceBundle.getString(key),
-                                            Arrays.copyOfRange(args, 1, args.length));
-                                }
-                                // Return an empty string for non extension's messages.
-                                return "";
+                        invocation -> {
+                            Object[] args = invocation.getArguments();
+                            String key = (String) args[0];
+                            if (key.startsWith(prefix)) {
+                                assertKeyExists(key);
+                                return MessageFormat.format(
+                                        extensionResourceBundle.getString(key),
+                                        Arrays.copyOfRange(args, 1, args.length));
                             }
+                            // Return an empty string for non extension's messages.
+                            return "";
                         });
     }
 

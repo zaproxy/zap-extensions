@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.sequence;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,36 +51,29 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
                 extension.getMessages().getString("sequence.popupmenuitem.activeScanSequence"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ScriptWrapper wrapper =
-                                    (ScriptWrapper)
-                                            extScript
-                                                    .getScriptUI()
-                                                    .getSelectedNode()
-                                                    .getUserObject();
-                            SequenceScript scr =
-                                    extScript.getInterface(wrapper, SequenceScript.class);
-                            if (scr != null) {
-                                extension.setDirectScanScript(wrapper);
-                                scr.scanSequence();
-                            } else {
-                                String msg =
-                                        extension
-                                                .getMessages()
-                                                .getString(
-                                                        "sequence.popupmenuitem.script.error.interface");
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                MessageFormat.format(msg, wrapper.getName()));
-                            }
-                        } catch (Exception ex) {
-                            logger.warn(
-                                    "An exception occurred while starting an active scan for a sequence script:",
-                                    ex);
+                e -> {
+                    try {
+                        ScriptWrapper wrapper =
+                                (ScriptWrapper)
+                                        extScript.getScriptUI().getSelectedNode().getUserObject();
+                        SequenceScript scr = extScript.getInterface(wrapper, SequenceScript.class);
+                        if (scr != null) {
+                            extension.setDirectScanScript(wrapper);
+                            scr.scanSequence();
+                        } else {
+                            String msg =
+                                    extension
+                                            .getMessages()
+                                            .getString(
+                                                    "sequence.popupmenuitem.script.error.interface");
+                            View.getSingleton()
+                                    .showMessageDialog(
+                                            MessageFormat.format(msg, wrapper.getName()));
                         }
+                    } catch (Exception ex) {
+                        logger.warn(
+                                "An exception occurred while starting an active scan for a sequence script:",
+                                ex);
                     }
                 });
     }

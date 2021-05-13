@@ -54,28 +54,23 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
         this.setText(Constant.messages.getString("ports.copy.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-
-                        if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
-                            return;
-                        }
-
-                        List<PortScanResultEntry> results =
-                                extension.getPortScanPanel().getSelectedResults();
-
-                        StringBuilder sb = new StringBuilder();
-                        for (PortScanResultEntry result : results) {
-                            sb.append(result.getPort());
-                            sb.append('\t');
-                            sb.append(result.getDescription());
-
-                            sb.append('\n');
-                        }
-                        setClipboardContents(sb.toString());
+                e -> {
+                    if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
+                        return;
                     }
+
+                    List<PortScanResultEntry> results =
+                            extension.getPortScanPanel().getSelectedResults();
+
+                    StringBuilder sb = new StringBuilder();
+                    for (PortScanResultEntry result : results) {
+                        sb.append(result.getPort());
+                        sb.append('\t');
+                        sb.append(result.getDescription());
+
+                        sb.append('\n');
+                    }
+                    setClipboardContents(sb.toString());
                 });
     }
 

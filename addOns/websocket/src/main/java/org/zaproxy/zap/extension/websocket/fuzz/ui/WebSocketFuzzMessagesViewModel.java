@@ -184,14 +184,7 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     public void addResult(final WebSocketFuzzResult result, int count, boolean forceRefresh) {
         final WebSocketFuzzMessageDTO message = result.getWebSocketMessage();
         if (message.state == WebSocketFuzzMessageDTO.State.ERROR) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addErroneousWebSocketMessage(message);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addErroneousWebSocketMessage(message));
         } else {
             try {
                 getTable().insertMessage(message);

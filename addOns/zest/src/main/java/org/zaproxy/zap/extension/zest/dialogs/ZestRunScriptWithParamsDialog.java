@@ -103,14 +103,11 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     @Override
     public void save() {
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            runner.run(script, getParams());
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                () -> {
+                    try {
+                        runner.run(script, getParams());
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 });
     }

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.scripts.autocomplete;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -47,14 +45,7 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
 
     public void addMenu(final String text) {
         JMenuItem menu = new JMenuItem(text);
-        menu.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        parent.insertText(text);
-                    }
-                });
+        menu.addActionListener(e -> parent.insertText(text));
         this.add(menu);
         menus.add(menu);
     }
@@ -62,13 +53,9 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
     public void addMenu(Method method) {
         final JMenuItemMethod menu = new JMenuItemMethod(method);
         menu.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        parent.insertText(menu.getText());
-                        parent.setLastReturnType(menu.method.getReturnType());
-                    }
+                e -> {
+                    parent.insertText(menu.getText());
+                    parent.setLastReturnType(menu.method.getReturnType());
                 });
         this.add(menu);
         menus.add(menu);

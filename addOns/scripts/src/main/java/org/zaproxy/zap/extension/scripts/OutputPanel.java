@@ -100,13 +100,7 @@ public class OutputPanel extends AbstractPanel {
             clearButton.setToolTipText(
                     Constant.messages.getString("scripts.output.clear.button.toolTip"));
             clearButton.setIcon(DisplayUtils.getScaledIcon(CLEAR_ICON));
-            clearButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            getTxtOutput().setText("");
-                        }
-                    });
+            clearButton.addActionListener(e -> getTxtOutput().setText(""));
 
             final ZapToggleButton clearOnRunButton = new ZapToggleButton();
             clearOnRunButton.setToolTipText(
@@ -117,13 +111,7 @@ public class OutputPanel extends AbstractPanel {
                             "scripts.output.clearOnRun.button.enabled.toolTip"));
             clearOnRunButton.setIcon(DisplayUtils.getScaledIcon(CLEAR_ON_RUN_DISABLED_ICON));
             clearOnRunButton.setSelectedIcon(DisplayUtils.getScaledIcon(CLEAR_ON_RUN_ENABLED_ICON));
-            clearOnRunButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            clearOnRun = clearOnRunButton.isSelected();
-                        }
-                    });
+            clearOnRunButton.addActionListener(e -> clearOnRun = clearOnRunButton.isSelected());
 
             final ZapToggleButton scrollLockButton = new ZapToggleButton();
             scrollLockButton.setToolTipText(
@@ -135,18 +123,15 @@ public class OutputPanel extends AbstractPanel {
             scrollLockButton.setIcon(DisplayUtils.getScaledIcon(SCROLL_LOCK_DISABLED_ICON));
             scrollLockButton.setSelectedIcon(DisplayUtils.getScaledIcon(SCROLL_LOCK_ENABLED_ICON));
             scrollLockButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            if (scrollLockButton.isSelected()) {
-                                DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
-                                caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-                            } else {
-                                DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
-                                caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-                                getTxtOutput()
-                                        .setCaretPosition(getTxtOutput().getDocument().getLength());
-                            }
+                    e -> {
+                        if (scrollLockButton.isSelected()) {
+                            DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
+                            caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+                        } else {
+                            DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
+                            caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+                            getTxtOutput()
+                                    .setCaretPosition(getTxtOutput().getDocument().getLength());
                         }
                     });
 
@@ -159,12 +144,7 @@ public class OutputPanel extends AbstractPanel {
                             "scripts.output.scriptLock.button.enabled.toolTip"));
             scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
             scriptLockButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected());
-                        }
-                    });
+                    e -> extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected()));
 
             mainToolBar.add(clearButton);
             mainToolBar.add(clearOnRunButton);
@@ -213,13 +193,7 @@ public class OutputPanel extends AbstractPanel {
             return;
         }
         try {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            getTxtOutput().append(msg);
-                        }
-                    });
+            EventQueue.invokeLater(() -> getTxtOutput().append(msg));
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
                 // Ignore - stop button likely to have been used

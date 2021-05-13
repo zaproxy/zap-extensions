@@ -122,13 +122,7 @@ public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
             backButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.back"));
 
-            backButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            qsp.backToMainPanel();
-                        }
-                    });
+            backButton.addActionListener(e -> qsp.backToMainPanel());
         }
         return backButton;
     }

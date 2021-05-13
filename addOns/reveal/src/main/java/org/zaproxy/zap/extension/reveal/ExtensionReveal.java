@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.reveal;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -143,14 +142,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
             revealButton.setSelectedToolTipText(
                     Constant.messages.getString("reveal.button.disable"));
 
-            revealButton.addItemListener(
-                    new ItemListener() {
-
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            setReveal(ItemEvent.SELECTED == e.getStateChange());
-                        }
-                    });
+            revealButton.addItemListener(e -> setReveal(ItemEvent.SELECTED == e.getStateChange()));
         }
         return revealButton;
     }

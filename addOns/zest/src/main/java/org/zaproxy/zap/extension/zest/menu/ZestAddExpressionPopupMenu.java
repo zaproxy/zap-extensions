@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import org.parosproxy.paros.Constant;
@@ -134,14 +132,9 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
                             Constant.messages.getString("zest.expression.add.popup"),
                             ZestZapUtils.toUiString(exp, false));
             menu.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
+                    e ->
                             // add a new empty structures expression node (no dialog needed)
-                            extension.addToParent(extension.getSelectedZestNode(), exp);
-                        }
-                    });
+                            extension.addToParent(extension.getSelectedZestNode(), exp));
             menu.setMenuIndex(this.getMenuIndex());
             View.getSingleton().getPopupList().add(menu);
         }
@@ -167,15 +160,11 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
                         ZestZapUtils.toUiString(ze, false));
         //		}
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
                                 .showZestExpressionDialog(
-                                        parent, nodes, stmt, ze, true, false, false);
-                    }
-                });
+                                        parent, nodes, stmt, ze, true, false, false));
         menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }

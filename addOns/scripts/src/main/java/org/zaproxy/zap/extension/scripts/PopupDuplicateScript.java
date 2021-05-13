@@ -50,14 +50,10 @@ public class PopupDuplicateScript extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("scripts.duplicate.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-                        if (script != null) {
-                            duplicateScript(script);
-                        }
+                e -> {
+                    ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
+                    if (script != null) {
+                        duplicateScript(script);
                     }
                 });
     }

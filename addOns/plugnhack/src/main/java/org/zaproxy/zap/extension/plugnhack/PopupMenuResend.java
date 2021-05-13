@@ -41,20 +41,14 @@ public class PopupMenuResend extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("plugnhack.resend.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
+                e -> {
+                    ClientMessage msg = extension.getSelectedClientMessage();
 
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        ClientMessage msg = extension.getSelectedClientMessage();
-
-                        if (msg != null) {
-                            ClientMessage msg2 =
-                                    new ClientMessage(msg.getClientId(), msg.getJson());
-                            ManualClientMessageSendEditorDialog dialog =
-                                    extension.getResendDialog();
-                            dialog.setMessage(msg2);
-                            dialog.setVisible(true);
-                        }
+                    if (msg != null) {
+                        ClientMessage msg2 = new ClientMessage(msg.getClientId(), msg.getJson());
+                        ManualClientMessageSendEditorDialog dialog = extension.getResendDialog();
+                        dialog.setMessage(msg2);
+                        dialog.setVisible(true);
                     }
                 });
     }

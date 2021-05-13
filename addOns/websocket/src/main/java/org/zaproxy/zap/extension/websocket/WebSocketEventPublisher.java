@@ -58,9 +58,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
         this.extension = extension;
         executor =
                 Executors.newSingleThreadExecutor(
-                        r -> {
-                            return new Thread(r, "ZAP-WebSocketEventPublisher");
-                        });
+                        r -> new Thread(r, "ZAP-WebSocketEventPublisher"));
 
         ZAP.getEventBus().registerPublisher(this, new String[] {EVENT_MESSAGE, EVENT_STATE_CHANGE});
     }

@@ -423,24 +423,21 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             } else {
                 // Have to add the SiteNode on the EDT
                 SwingUtilities.invokeLater(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    StructuralNode node =
-                                            SessionStructure.addPath(
-                                                    Model.getSingleton(),
-                                                    alert.getHistoryRef(),
-                                                    alert.getHistoryRef().getHttpMessage());
+                        () -> {
+                            try {
+                                StructuralNode node =
+                                        SessionStructure.addPath(
+                                                Model.getSingleton(),
+                                                alert.getHistoryRef(),
+                                                alert.getHistoryRef().getHttpMessage());
 
-                                    if (node instanceof StructuralSiteNode) {
-                                        StructuralSiteNode ssn = (StructuralSiteNode) node;
-                                        alert.getHistoryRef().setSiteNode(ssn.getSiteNode());
-                                    }
-                                    handleAlert(alert);
-                                } catch (Exception e) {
-                                    log.error("Error handling alert", e);
+                                if (node instanceof StructuralSiteNode) {
+                                    StructuralSiteNode ssn = (StructuralSiteNode) node;
+                                    alert.getHistoryRef().setSiteNode(ssn.getSiteNode());
                                 }
+                                handleAlert(alert);
+                            } catch (Exception e) {
+                                log.error("Error handling alert", e);
                             }
                         });
             }

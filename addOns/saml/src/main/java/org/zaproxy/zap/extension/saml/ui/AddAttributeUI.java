@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.saml.ui;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -119,71 +117,63 @@ public class AddAttributeUI extends JFrame {
 
         JButton btnNewButton = new JButton(SamlI18n.getMessage("saml.addattrib.button.saveexit"));
         btnNewButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String error = "";
-                        if (textFieldAttributeName.getText().equals("")) {
-                            error = SamlI18n.getMessage("saml.addattrib.error.noname") + "\n";
-                        }
-                        if (textFieldViewName.getText().equals("")) {
-                            error += SamlI18n.getMessage("saml.addattrib.error.noviewname") + "\n";
-                        }
-                        if (textFieldViewName.getText().length() > 30) {
-                            error +=
-                                    SamlI18n.getMessage("saml.addattrib.error.longviewname") + "\n";
-                        }
-                        if (textFieldXpath.getText().equals("")) {
-                            error += SamlI18n.getMessage("saml.addattrib.error.noxpath") + "\n";
-                        }
+                e -> {
+                    String error = "";
+                    if (textFieldAttributeName.getText().equals("")) {
+                        error = SamlI18n.getMessage("saml.addattrib.error.noname") + "\n";
+                    }
+                    if (textFieldViewName.getText().equals("")) {
+                        error += SamlI18n.getMessage("saml.addattrib.error.noviewname") + "\n";
+                    }
+                    if (textFieldViewName.getText().length() > 30) {
+                        error += SamlI18n.getMessage("saml.addattrib.error.longviewname") + "\n";
+                    }
+                    if (textFieldXpath.getText().equals("")) {
+                        error += SamlI18n.getMessage("saml.addattrib.error.noxpath") + "\n";
+                    }
 
-                        // validate xpath expression
-                        XPathFactory xFactory = XPathFactory.newInstance();
-                        XPath xpath = xFactory.newXPath();
-                        try {
-                            xpath.compile(textFieldXpath.getText());
-                        } catch (XPathExpressionException e1) {
-                            error +=
-                                    SamlI18n.getMessage("saml.addattrib.error.invalidxpath") + "\n";
-                        }
+                    // validate xpath expression
+                    XPathFactory xFactory = XPathFactory.newInstance();
+                    XPath xpath = xFactory.newXPath();
+                    try {
+                        xpath.compile(textFieldXpath.getText());
+                    } catch (XPathExpressionException e1) {
+                        error += SamlI18n.getMessage("saml.addattrib.error.invalidxpath") + "\n";
+                    }
 
-                        if (!error.equals("")) {
-                            // Something wrong with inputs
-                            JOptionPane.showMessageDialog(
-                                    AddAttributeUI.this,
-                                    error,
-                                    SamlI18n.getMessage("saml.addattrib.error.error"),
-                                    JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            // valid input
-                            Attribute attribute = new Attribute();
-                            attribute.setName(textFieldAttributeName.getText());
-                            attribute.setViewName(textFieldViewName.getText());
-                            attribute.setxPath(textFieldXpath.getText());
-                            attribute.setValueType(
-                                    (Attribute.SAMLAttributeValueType)
-                                            comboBoxValueType.getSelectedItem());
-                            attributeListener.onAttributeAdd(attribute);
-                            close();
-                        }
+                    if (!error.equals("")) {
+                        // Something wrong with inputs
+                        JOptionPane.showMessageDialog(
+                                AddAttributeUI.this,
+                                error,
+                                SamlI18n.getMessage("saml.addattrib.error.error"),
+                                JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // valid input
+                        Attribute attribute = new Attribute();
+                        attribute.setName(textFieldAttributeName.getText());
+                        attribute.setViewName(textFieldViewName.getText());
+                        attribute.setxPath(textFieldXpath.getText());
+                        attribute.setValueType(
+                                (Attribute.SAMLAttributeValueType)
+                                        comboBoxValueType.getSelectedItem());
+                        attributeListener.onAttributeAdd(attribute);
+                        close();
                     }
                 });
         bottomPanel.add(btnNewButton);
 
         JButton btnCancel = new JButton(SamlI18n.getMessage("saml.addattrib.button.cancel"));
         btnCancel.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int response =
-                                JOptionPane.showConfirmDialog(
-                                        AddAttributeUI.this,
-                                        SamlI18n.getMessage("saml.addattrib.msg.confirm"),
-                                        SamlI18n.getMessage("saml.addattrib.msg.confirmexit"),
-                                        JOptionPane.YES_NO_OPTION);
-                        if (response == JOptionPane.YES_OPTION) {
-                            close();
-                        }
+                e -> {
+                    int response =
+                            JOptionPane.showConfirmDialog(
+                                    AddAttributeUI.this,
+                                    SamlI18n.getMessage("saml.addattrib.msg.confirm"),
+                                    SamlI18n.getMessage("saml.addattrib.msg.confirmexit"),
+                                    JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
+                        close();
                     }
                 });
         bottomPanel.add(btnCancel);

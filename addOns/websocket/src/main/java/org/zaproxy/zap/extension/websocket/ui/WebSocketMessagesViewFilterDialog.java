@@ -24,7 +24,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -183,32 +182,28 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
             btnApply = new JButton();
             btnApply.setText(Constant.messages.getString("history.filter.button.apply"));
             btnApply.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            filter.setOpcodes(wsUiHelper.getSelectedOpcodeIntegers());
-                            filter.setDirection(wsUiHelper.getDirection());
-                            if (filter.isValidPattern(
+                    e -> {
+                        filter.setOpcodes(wsUiHelper.getSelectedOpcodeIntegers());
+                        filter.setDirection(wsUiHelper.getDirection());
+                        if (filter.isValidPattern(
+                                wsUiHelper.getPattern(),
+                                wsUiHelper.getRegexCheckbox().isSelected())) {
+                            filter.setPayloadFilter(
                                     wsUiHelper.getPattern(),
-                                    wsUiHelper.getRegexCheckbox().isSelected())) {
-                                filter.setPayloadFilter(
-                                        wsUiHelper.getPattern(),
-                                        wsUiHelper.getRegexCheckbox().isSelected(),
-                                        wsUiHelper.getCaseIgnoreCheckbox().isSelected(),
-                                        wsUiHelper.getInverseCheckbox().isSelected());
-                            } else {
-                                // show popup
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "websocket.invalidpattern"));
-                                wsUiHelper.getPatternTextField().requestFocusInWindow();
-                                return;
-                            }
-                            exitResult = JOptionPane.OK_OPTION;
-                            WebSocketMessagesViewFilterDialog.this.dispose();
+                                    wsUiHelper.getRegexCheckbox().isSelected(),
+                                    wsUiHelper.getCaseIgnoreCheckbox().isSelected(),
+                                    wsUiHelper.getInverseCheckbox().isSelected());
+                        } else {
+                            // show popup
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "websocket.invalidpattern"));
+                            wsUiHelper.getPatternTextField().requestFocusInWindow();
+                            return;
                         }
+                        exitResult = JOptionPane.OK_OPTION;
+                        WebSocketMessagesViewFilterDialog.this.dispose();
                     });
         }
         return btnApply;
@@ -223,13 +218,9 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
             btnCancel = new JButton();
             btnCancel.setText(Constant.messages.getString("all.button.cancel"));
             btnCancel.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            exitResult = JOptionPane.CANCEL_OPTION;
-                            WebSocketMessagesViewFilterDialog.this.dispose();
-                        }
+                    e -> {
+                        exitResult = JOptionPane.CANCEL_OPTION;
+                        WebSocketMessagesViewFilterDialog.this.dispose();
                     });
         }
         return btnCancel;
@@ -257,20 +248,16 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
             btnReset = new JButton();
             btnReset.setText(Constant.messages.getString("history.filter.button.clear"));
             btnReset.addActionListener(
-                    new ActionListener() {
+                    e -> {
+                        exitResult = JOptionPane.NO_OPTION;
+                        wsUiHelper.setSelectedOpcodes(null);
+                        wsUiHelper.setDirection(null);
+                        wsUiHelper.setPattern(null);
+                        wsUiHelper.setInverseCheckbox(false);
+                        wsUiHelper.setRegexCheckbox(true);
+                        wsUiHelper.setCaseIgnoreCheckbox(false);
 
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            exitResult = JOptionPane.NO_OPTION;
-                            wsUiHelper.setSelectedOpcodes(null);
-                            wsUiHelper.setDirection(null);
-                            wsUiHelper.setPattern(null);
-                            wsUiHelper.setInverseCheckbox(false);
-                            wsUiHelper.setRegexCheckbox(true);
-                            wsUiHelper.setCaseIgnoreCheckbox(false);
-
-                            filter.reset();
-                        }
+                        filter.reset();
                     });
         }
         return btnReset;

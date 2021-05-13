@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -173,21 +172,17 @@ public class AddProcessorDialog extends AbstractFormDialog {
             }
 
             payloadUIHandlersComboBox.addItemListener(
-                    new ItemListener() {
+                    e -> {
+                        if (ItemEvent.SELECTED == e.getStateChange()) {
+                            String panelName = (String) e.getItem();
 
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (ItemEvent.SELECTED == e.getStateChange()) {
-                                String panelName = (String) e.getItem();
+                            currentPanel = processorsUIHandlers.getPanel(panelName);
+                            contentsPanelCardLayout.show(contentsPanel, panelName);
 
-                                currentPanel = processorsUIHandlers.getPanel(panelName);
-                                contentsPanelCardLayout.show(contentsPanel, panelName);
+                            previewPanel.resetPreview();
+                            previewPanel.setPayloadProcessorUIPanel(currentPanel);
 
-                                previewPanel.resetPreview();
-                                previewPanel.setPayloadProcessorUIPanel(currentPanel);
-
-                                setHelpTarget(currentPanel.getHelpTarget());
-                            }
+                            setHelpTarget(currentPanel.getHelpTarget());
                         }
                     });
         }

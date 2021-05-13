@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -195,12 +193,9 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
             cancelButton = new JButton();
             cancelButton.setText(messages.getString("tokengen.button.cancel"));
             cancelButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            stopAnalysis();
-                            setVisible(false);
-                        }
+                    e -> {
+                        stopAnalysis();
+                        setVisible(false);
                     });
         }
         return cancelButton;
@@ -210,13 +205,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
         if (saveButton == null) {
             saveButton = new JButton();
             saveButton.setText(messages.getString("tokengen.analyse.button.save"));
-            saveButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            saveAnalysis();
-                        }
-                    });
+            saveButton.addActionListener(e -> saveAnalysis());
         }
         return saveButton;
     }

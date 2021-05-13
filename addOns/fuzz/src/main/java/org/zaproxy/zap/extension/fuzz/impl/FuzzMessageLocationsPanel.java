@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,26 +69,22 @@ public class FuzzMessageLocationsPanel
                 Constant.messages.getString(
                         "fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
         payloadsButton.addActionListener(
-                new ActionListener() {
+                e -> {
+                    int row = getSelectedRow();
+                    FuzzLocationTableEntry entry = getMultipleOptionsModel().getElement(row);
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int row = getSelectedRow();
-                        FuzzLocationTableEntry entry = getMultipleOptionsModel().getElement(row);
+                    PayloadsDialog a =
+                            new PayloadsDialog(
+                                    getParentOwner(),
+                                    entry.getLocation(),
+                                    entry.getPayloads(),
+                                    FuzzMessageLocationsPanel.this.payloadGeneratorsUIHandlers);
+                    a.setVisible(true);
 
-                        PayloadsDialog a =
-                                new PayloadsDialog(
-                                        getParentOwner(),
-                                        entry.getLocation(),
-                                        entry.getPayloads(),
-                                        FuzzMessageLocationsPanel.this.payloadGeneratorsUIHandlers);
-                        a.setVisible(true);
-
-                        List<PayloadTableEntry> payloads = a.getPayloads();
-                        if (payloads != null) {
-                            entry.setPayloads(payloads);
-                            getMultipleOptionsModel().fireTableRowsUpdated(row, row);
-                        }
+                    List<PayloadTableEntry> payloads = a.getPayloads();
+                    if (payloads != null) {
+                        entry.setPayloads(payloads);
+                        getMultipleOptionsModel().fireTableRowsUpdated(row, row);
                     }
                 });
         payloadsButton.setEnabled(false);
@@ -106,33 +100,29 @@ public class FuzzMessageLocationsPanel
                 Constant.messages.getString(
                         "fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
         processorsButton.addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (processorsDialog == null) {
-                            processorsDialog =
-                                    new ProcessorsMessageLocationDialog(
-                                            getParentOwner(),
-                                            new PayloadProcessorsContainer(
-                                                    PayloadProcessorUIHandlersRegistry.getInstance()
-                                                            .getProcessorUIHandlers(),
-                                                    PayloadProcessorUIHandlersRegistry.getInstance()
-                                                            .getNameDefaultPayloadProcessor()));
-                            processorsDialog.pack();
-                        }
-                        int row = getSelectedRow();
-                        FuzzLocationTableEntry locationEntry =
-                                getMultipleOptionsModel().getElement(row);
-
-                        processorsDialog.setMessageLocation(locationEntry.getLocation());
-                        processorsDialog.setPayloadProcessors(locationEntry.getProcessors());
-                        processorsDialog.setPayloads(getPayloads(locationEntry));
-                        processorsDialog.setVisible(true);
-
-                        locationEntry.setProcessors(processorsDialog.getProcessors());
-                        getMultipleOptionsModel().fireTableRowsUpdated(row, row);
+                e -> {
+                    if (processorsDialog == null) {
+                        processorsDialog =
+                                new ProcessorsMessageLocationDialog(
+                                        getParentOwner(),
+                                        new PayloadProcessorsContainer(
+                                                PayloadProcessorUIHandlersRegistry.getInstance()
+                                                        .getProcessorUIHandlers(),
+                                                PayloadProcessorUIHandlersRegistry.getInstance()
+                                                        .getNameDefaultPayloadProcessor()));
+                        processorsDialog.pack();
                     }
+                    int row = getSelectedRow();
+                    FuzzLocationTableEntry locationEntry =
+                            getMultipleOptionsModel().getElement(row);
+
+                    processorsDialog.setMessageLocation(locationEntry.getLocation());
+                    processorsDialog.setPayloadProcessors(locationEntry.getProcessors());
+                    processorsDialog.setPayloads(getPayloads(locationEntry));
+                    processorsDialog.setVisible(true);
+
+                    locationEntry.setProcessors(processorsDialog.getProcessors());
+                    getMultipleOptionsModel().fireTableRowsUpdated(row, row);
                 });
         processorsButton.setEnabled(false);
         addButton(processorsButton);

@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -99,29 +97,24 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
                                 View.class.getResource("/resource/icon/16/094.png")))); // Globe
         // icon
         selectButton.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        NodeSelectDialog nsd =
-                                new NodeSelectDialog(View.getSingleton().getMainFrame());
-                        SiteNode node = null;
+                e -> {
+                    NodeSelectDialog nsd = new NodeSelectDialog(View.getSingleton().getMainFrame());
+                    SiteNode node = null;
+                    try {
+                        node =
+                                Model.getSingleton()
+                                        .getSession()
+                                        .getSiteTree()
+                                        .findNode(new URI(getUrlField().getText(), false));
+                    } catch (Exception e2) {
+                        // Ignore
+                    }
+                    node = nsd.showDialog(node);
+                    if (node != null && node.getHistoryReference() != null) {
                         try {
-                            node =
-                                    Model.getSingleton()
-                                            .getSession()
-                                            .getSiteTree()
-                                            .findNode(new URI(getUrlField().getText(), false));
-                        } catch (Exception e2) {
+                            getUrlField().setText(node.getHistoryReference().getURI().toString());
+                        } catch (Exception e1) {
                             // Ignore
-                        }
-                        node = nsd.showDialog(node);
-                        if (node != null && node.getHistoryReference() != null) {
-                            try {
-                                getUrlField()
-                                        .setText(node.getHistoryReference().getURI().toString());
-                            } catch (Exception e1) {
-                                // Ignore
-                            }
                         }
                     }
                 });
@@ -181,18 +174,15 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
                     Constant.messages.getString("tlsdebug.button.tooltip.check"));
 
             checkButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            try {
-                                extension.launchDebug(new URL(getUrlField().getText()));
-                            } catch (MalformedURLException mue) {
-                                logger.warn(mue.getMessage(), mue);
-                                View.getSingleton().showWarningDialog(mue.getMessage());
-                            } catch (IOException ioe) {
-                                logger.warn(ioe.getMessage(), ioe);
-                                View.getSingleton().showWarningDialog(ioe.getMessage());
-                            }
+                    e -> {
+                        try {
+                            extension.launchDebug(new URL(getUrlField().getText()));
+                        } catch (MalformedURLException mue) {
+                            logger.warn(mue.getMessage(), mue);
+                            View.getSingleton().showWarningDialog(mue.getMessage());
+                        } catch (IOException ioe) {
+                            logger.warn(ioe.getMessage(), ioe);
+                            View.getSingleton().showWarningDialog(ioe.getMessage());
                         }
                     });
         }
@@ -213,13 +203,7 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
             outputAreaPopup = new JPopupMenu();
 
             JMenuItem menuItem = new JMenuItem(Constant.messages.getString("tlsdebug.label.clear"));
-            menuItem.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            outputArea.setText("");
-                        }
-                    });
+            menuItem.addActionListener(e -> outputArea.setText(""));
             outputAreaPopup.add(menuItem);
         }
 

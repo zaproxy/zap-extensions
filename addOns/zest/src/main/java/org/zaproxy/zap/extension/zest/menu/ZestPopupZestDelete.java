@@ -56,13 +56,9 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.delete.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (ScriptNode node : extension.getSelectedZestNodes()) {
-                            deleteNode(node);
-                        }
+                e -> {
+                    for (ScriptNode node : extension.getSelectedZestNodes()) {
+                        deleteNode(node);
                     }
                 });
     }

@@ -438,13 +438,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                                     .getMenuShortcutKeyStroke(
                                             KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false));
 
-            menuItemCustomScan.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            fuzzerStarter.actionPerformed(e);
-                        }
-                    });
+            menuItemCustomScan.addActionListener(e -> fuzzerStarter.actionPerformed(e));
         }
 
         return menuItemCustomScan;

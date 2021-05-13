@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -123,25 +121,20 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
         this.addFieldListener(
                 FIELD_IN_SCOPE,
-                new ActionListener() {
+                e -> {
+                    boolean selected = getBoolValue(FIELD_IN_SCOPE);
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean selected = getBoolValue(FIELD_IN_SCOPE);
-
-                        getField(FIELD_CONTEXT)
-                                .setEnabled(
-                                        !selected
-                                                && ((JComboBox<?>) getField(FIELD_CONTEXT))
-                                                                .getItemCount()
-                                                        > 1);
-                        getField(FIELD_USER)
-                                .setEnabled(
-                                        !selected
-                                                && ((JComboBox<?>) getField(FIELD_USER))
-                                                                .getItemCount()
-                                                        > 1);
-                    }
+                    getField(FIELD_CONTEXT)
+                            .setEnabled(
+                                    !selected
+                                            && ((JComboBox<?>) getField(FIELD_CONTEXT))
+                                                            .getItemCount()
+                                                    > 1);
+                    getField(FIELD_USER)
+                            .setEnabled(
+                                    !selected
+                                            && ((JComboBox<?>) getField(FIELD_USER)).getItemCount()
+                                                    > 1);
                 });
 
         List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
@@ -161,25 +154,14 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
         this.addPadding(0);
 
-        this.addFieldListener(
-                FIELD_CONTEXT,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setUsers();
-                    }
-                });
+        this.addFieldListener(FIELD_CONTEXT, e -> setUsers());
 
         this.addFieldListener(
                 FIELD_ADVANCED,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         // Save the adv option permanently for next time
 
-                        setAdvancedOptions(getBoolValue(FIELD_ADVANCED));
-                    }
-                });
+                        setAdvancedOptions(getBoolValue(FIELD_ADVANCED)));
 
         if (target != null) {
             this.targetSelected(FIELD_START, this.target);
@@ -358,13 +340,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         if (extraButtons == null) {
             JButton resetButton =
                     new JButton(Constant.messages.getString("spiderajax.scandialog.button.reset"));
-            resetButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            reset();
-                        }
-                    });
+            resetButton.addActionListener(e -> reset());
 
             extraButtons = new JButton[] {resetButton};
         }

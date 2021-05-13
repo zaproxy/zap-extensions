@@ -42,6 +42,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.model.StandardParameterParser;
 
@@ -219,8 +220,8 @@ public class FrontEndScannerAPI extends ApiImplementor {
                     this.extension.getExtensionScript()
                             .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
                             .stream()
-                            .filter(script -> script.isEnabled())
-                            .map(script -> script.getContents())
+                            .filter(ScriptWrapper::isEnabled)
+                            .map(ScriptWrapper::getContents)
                             .map(code -> "function (frontEndScanner) { " + code + " }")
                             .collect(Collectors.joining(", "));
 

@@ -202,14 +202,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
                                             KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK, false));
             menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
 
-            menuItemCustomScan.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            showScanDialog(null);
-                        }
-                    });
+            menuItemCustomScan.addActionListener(e -> showScanDialog(null));
         }
         return menuItemCustomScan;
     }

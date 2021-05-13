@@ -326,13 +326,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -373,15 +367,16 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void postInstall() {
         super.postInstall();
         if (getView() != null) {
-            EventQueue.invokeLater(
-                    () -> {
-                        getTechPanel().setTabFocus();
-                        // Un-comment to test icon rendering
-                        /*
-                         * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
-                         * new ApplicationMatch(app)));
-                         */
-                    });
+            EventQueue.invokeLater(this::focusTab);
         }
+    }
+
+    private void focusTab() {
+        getTechPanel().setTabFocus();
+        // Un-comment to test icon rendering
+        /*
+         * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
+         * new ApplicationMatch(app)));
+         */
     }
 }

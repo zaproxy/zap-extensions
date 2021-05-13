@@ -80,7 +80,8 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
 
     @Override
     public String[] getRequiredParamsNames() {
-        return readScriptParams(s -> s.getRequiredParamsNames(), "getRequiredParamsNames");
+        return readScriptParams(
+                HttpFuzzerProcessorScript::getRequiredParamsNames, "getRequiredParamsNames");
     }
 
     private String[] readScriptParams(
@@ -100,6 +101,7 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
 
     @Override
     public String[] getOptionalParamsNames() {
-        return readScriptParams(s -> s.getOptionalParamsNames(), "getOptionalParamsNames");
+        return readScriptParams(
+                HttpFuzzerProcessorScript::getOptionalParamsNames, "getOptionalParamsNames");
     }
 }

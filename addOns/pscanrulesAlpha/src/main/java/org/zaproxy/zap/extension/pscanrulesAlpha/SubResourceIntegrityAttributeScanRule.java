@@ -102,19 +102,18 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                 .filter(element -> SupportedElements.contains(element.getName()))
                 .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
                 .forEach(
-                        element -> {
-                            newAlert()
-                                    .setRisk(Alert.RISK_MEDIUM)
-                                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                                    .setDescription(getString("desc"))
-                                    .setSolution(getString("soln"))
-                                    .setReference(getString("refs"))
-                                    .setEvidence(element.toString())
-                                    .setCweId(345) // CWE-345: Insufficient Verification of Data
-                                    // Authenticity
-                                    .setWascId(15) // Application Misconfiguration
-                                    .raise();
-                        });
+                        element ->
+                                newAlert()
+                                        .setRisk(Alert.RISK_MEDIUM)
+                                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                                        .setDescription(getString("desc"))
+                                        .setSolution(getString("soln"))
+                                        .setReference(getString("refs"))
+                                        .setEvidence(element.toString())
+                                        .setCweId(345) // CWE-345: Insufficient Verification of Data
+                                        // Authenticity
+                                        .setWascId(15) // Application Misconfiguration
+                                        .raise());
     }
 
     private static Predicate<Element> unsafeSubResource(String origin) {

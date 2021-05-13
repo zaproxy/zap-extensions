@@ -114,14 +114,10 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                             getView().getMenuShortcutKeyStroke(KeyEvent.VK_R, 0, false));
 
             replacerMenuItem.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(OptionsReplacerPanel.PANEL_NAME);
-                        }
-                    });
+                                    .options(OptionsReplacerPanel.PANEL_NAME));
         }
         return replacerMenuItem;
     }

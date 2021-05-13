@@ -273,47 +273,42 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 if (reaperThread == null) {
                     reaperThread =
                             new Thread(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            log.info("Reaper thread starting");
-                                            reaperThread.setName("ZAP-DomXssReaper");
-                                            do {
-                                                try {
-                                                    Thread.sleep(5000);
-                                                } catch (InterruptedException e) {
-                                                    // Ignore
-                                                }
-                                                Date now = new Date();
-                                                // concurrent modification exception :(
-                                                synchronized (takenDrivers) {
-                                                    Iterator<WebDriverWrapper> iter =
-                                                            takenDrivers.iterator();
-                                                    while (iter.hasNext()) {
-                                                        WebDriverWrapper wrapper = iter.next();
-                                                        if ((now.getTime()
-                                                                                - wrapper.getLastAccessed()
-                                                                                        .getTime())
-                                                                        / 1000
-                                                                > 10) {
-                                                            log.debug(
-                                                                    "Driver hung {}",
-                                                                    wrapper.getDriver().hashCode());
-                                                            wrapper.getDriver().quit();
-                                                            wrapper.setDriver(createWebDriver());
-                                                            log.debug(
-                                                                    "New driver {}",
-                                                                    wrapper.getDriver().hashCode());
-                                                        }
+                                    () -> {
+                                        log.info("Reaper thread starting");
+                                        reaperThread.setName("ZAP-DomXssReaper");
+                                        do {
+                                            try {
+                                                Thread.sleep(5000);
+                                            } catch (InterruptedException e) {
+                                                // Ignore
+                                            }
+                                            Date now = new Date();
+                                            // concurrent modification exception :(
+                                            synchronized (takenDrivers) {
+                                                Iterator<WebDriverWrapper> iter =
+                                                        takenDrivers.iterator();
+                                                while (iter.hasNext()) {
+                                                    WebDriverWrapper wrapper = iter.next();
+                                                    if ((now.getTime()
+                                                                            - wrapper.getLastAccessed()
+                                                                                    .getTime())
+                                                                    / 1000
+                                                            > 10) {
+                                                        log.debug(
+                                                                "Driver hung {}",
+                                                                wrapper.getDriver().hashCode());
+                                                        wrapper.getDriver().quit();
+                                                        wrapper.setDriver(createWebDriver());
+                                                        log.debug(
+                                                                "New driver {}",
+                                                                wrapper.getDriver().hashCode());
                                                     }
                                                 }
-                                            } while (takenDrivers.size() > 0);
-                                            log.info(
-                                                    "Reaper thread exiting {}",
-                                                    takenDrivers.size());
+                                            }
+                                        } while (takenDrivers.size() > 0);
+                                        log.info("Reaper thread exiting {}", takenDrivers.size());
 
-                                            reaperThread = null;
-                                        }
+                                        reaperThread = null;
                                     });
                     reaperThread.start();
                 }

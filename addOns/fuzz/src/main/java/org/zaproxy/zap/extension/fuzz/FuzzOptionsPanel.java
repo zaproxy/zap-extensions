@@ -43,8 +43,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.LayoutStyle;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
@@ -279,14 +277,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
         final JSlider threadsSlider =
                 new PositiveValuesSlider(defaultMaxThreadsPerFuzzer, maxThreadsPerFuzzer);
         threadsSlider.addChangeListener(
-                new ChangeListener() {
-
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        currentValueFeedbackLabel.setText(
-                                Integer.toString(threadsSlider.getValue()));
-                    }
-                });
+                e -> currentValueFeedbackLabel.setText(Integer.toString(threadsSlider.getValue())));
         return threadsSlider;
     }
 
@@ -301,13 +292,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
         delaySlider.setPaintTicks(true);
         delaySlider.setPaintLabels(true);
         delaySlider.addChangeListener(
-                new ChangeListener() {
-
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue()));
-                    }
-                });
+                e -> currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue())));
         return delaySlider;
     }
 

@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.bruteforce;
 import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
@@ -397,14 +395,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             startScanButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
             startScanButton.setEnabled(false);
-            startScanButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            startScan();
-                        }
-                    });
+            startScanButton.addActionListener(e -> startScan());
         }
         return startScanButton;
     }
@@ -417,13 +408,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             stopScanButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            extension.stopScan(currentSite);
-                        }
-                    });
+            stopScanButton.addActionListener(e -> extension.stopScan(currentSite));
         }
         return stopScanButton;
     }
@@ -445,15 +430,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
             pauseScanButton.setEnabled(false);
             pauseScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            BruteForce bf = extension.getBruteForce(currentSite);
-                            if (bf.isPaused()) {
-                                extension.resumeScan(currentSite);
-                            } else {
-                                extension.pauseScan(currentSite);
-                            }
+                    e -> {
+                        BruteForce bf = extension.getBruteForce(currentSite);
+                        if (bf.isPaused()) {
+                            extension.resumeScan(currentSite);
+                        } else {
+                            extension.pauseScan(currentSite);
                         }
                     });
         }
@@ -468,16 +450,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             optionsButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
                                     .options(
                                             Constant.messages.getString(
-                                                    "bruteforce.options.title"));
-                        }
-                    });
+                                                    "bruteforce.options.title")));
         }
         return optionsButton;
     }

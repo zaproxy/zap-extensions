@@ -61,13 +61,9 @@ public class PopupMenuItemSaveScript extends ExtensionPopupMenuItem {
         this.scriptsPanel = scriptsPanel;
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
-                        selectedScript = null;
-                    }
+                e -> {
+                    PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
+                    selectedScript = null;
                 });
     }
 

@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,14 +118,10 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
                         Constant.messages.getString("zest.loop.add.popup"),
                         ZestZapUtils.toUiString(za, false));
         menu.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
-                                .showZestLoopDialog(parent, children, stmt, za, true, false);
-                    }
-                });
+                                .showZestLoopDialog(parent, children, stmt, za, true, false));
         menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }

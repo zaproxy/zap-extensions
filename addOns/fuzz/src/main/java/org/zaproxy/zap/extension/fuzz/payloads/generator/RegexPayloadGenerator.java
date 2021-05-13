@@ -148,16 +148,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
             return false;
         }
         return TimeOutRunner.run(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        @SuppressWarnings("unused")
-                        Generex generator = new Generex(regex);
-                    }
-                },
-                VALID_REGEX_MAX_SECONDS,
-                TimeUnit.SECONDS);
+                () -> new Generex(regex), VALID_REGEX_MAX_SECONDS, TimeUnit.SECONDS);
     }
 
     /**
@@ -344,16 +335,12 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
                 executor = Executors.newSingleThreadExecutor();
                 Future<?> future =
                         executor.submit(
-                                new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        synchronized (thread) {
-                                            thread.start();
-                                            try {
-                                                thread.wait();
-                                            } catch (InterruptedException e) {
-                                            }
+                                () -> {
+                                    synchronized (thread) {
+                                        thread.start();
+                                        try {
+                                            thread.wait();
+                                        } catch (InterruptedException e) {
                                         }
                                     }
                                 });

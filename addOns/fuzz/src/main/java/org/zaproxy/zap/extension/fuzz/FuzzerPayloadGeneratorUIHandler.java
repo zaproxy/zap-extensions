@@ -67,8 +67,6 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.JCheckBoxTree;
-import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEvent;
-import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEventListener;
 
 public class FuzzerPayloadGeneratorUIHandler
         implements PayloadGeneratorUIHandler<
@@ -261,14 +259,7 @@ public class FuzzerPayloadGeneratorUIHandler
         public FuzzerPayloadGeneratorUIPanel(ExtensionFuzz extensionFuzz) {
             this.extensionFuzz = extensionFuzz;
 
-            this.fuzzersDirChangeListener =
-                    new FuzzersDirChangeListener() {
-
-                        @Override
-                        public void fuzzersDirChanged(FuzzersDir fuzzersDir) {
-                            createFileFuzzersCheckBoxTreeModel();
-                        }
-                    };
+            this.fuzzersDirChangeListener = e -> createFileFuzzersCheckBoxTreeModel();
 
             addPanel = new JPanel();
 
@@ -351,13 +342,7 @@ public class FuzzerPayloadGeneratorUIHandler
                 fileFuzzersCheckBoxTree.setShowsRootHandles(true);
                 fileFuzzersCheckBoxTree.setSelectionModel(new DefaultTreeSelectionModel());
                 fileFuzzersCheckBoxTree.addCheckChangeEventListener(
-                        new CheckChangeEventListener() {
-
-                            @Override
-                            public void checkStateChanged(CheckChangeEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
                 fileFuzzersCheckBoxTree.setVisibleRowCount(10);
 
                 treeSearchable = new TreeSearchable(fileFuzzersCheckBoxTree);

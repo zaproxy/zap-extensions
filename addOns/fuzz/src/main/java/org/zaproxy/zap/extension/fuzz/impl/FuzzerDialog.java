@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -229,16 +227,12 @@ public class FuzzerDialog<
             JButton resetButton =
                     new JButton(Constant.messages.getString("fuzz.fuzzer.dialog.button.reset"));
             resetButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            fuzzLocationsPanel.reset();
-                            optionsPanel.reset();
-                            fuzzMessagePanel.reset();
-                            if (fuzzerMessageProcessorsTablePanel != null) {
-                                fuzzerMessageProcessorsTablePanel.reset();
-                            }
+                    e -> {
+                        fuzzLocationsPanel.reset();
+                        optionsPanel.reset();
+                        fuzzMessagePanel.reset();
+                        if (fuzzerMessageProcessorsTablePanel != null) {
+                            fuzzerMessageProcessorsTablePanel.reset();
                         }
                     });
 

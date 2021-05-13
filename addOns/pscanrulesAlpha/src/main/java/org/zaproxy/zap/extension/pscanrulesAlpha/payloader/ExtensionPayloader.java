@@ -61,7 +61,7 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         JsFunctionScanRule.JS_FUNCTION_PAYLOAD_CATEGORY,
                         JsFunctionScanRule.DEFAULT_FUNCTIONS);
         ecp.addPayloadCategory(jsFuncCategory);
-        JsFunctionScanRule.setPayloadProvider(() -> jsFuncCategory.getPayloadsIterator());
+        JsFunctionScanRule.setPayloadProvider(jsFuncCategory::getPayloadsIterator);
     }
 
     @Override

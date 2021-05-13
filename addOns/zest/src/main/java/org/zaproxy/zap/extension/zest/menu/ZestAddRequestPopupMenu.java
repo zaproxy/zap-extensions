@@ -49,13 +49,7 @@ public class ZestAddRequestPopupMenu extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.request.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        extension.getDialogManager().showZestEditRequestDialog(parent, null);
-                    }
-                });
+                e -> extension.getDialogManager().showZestEditRequestDialog(parent, null));
     }
 
     @Override

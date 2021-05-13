@@ -742,10 +742,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 // Don't constantly request focus on the tab, once is enough.
                 focusWebSocketsTabOnHandshake = false;
                 EventQueue.invokeLater(
-                        () -> {
-                            // Show the tab in case its been closed
-                            this.getWebSocketPanel().setTabFocus();
-                        });
+                        () ->
+                                // Show the tab in case its been closed
+                                this.getWebSocketPanel().setTabFocus());
             }
 
             if (method != null) {

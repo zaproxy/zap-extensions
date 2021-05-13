@@ -68,14 +68,11 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
 
     private void initialize() {
         addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        try {
-                            performAction();
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                evt -> {
+                    try {
+                        performAction();
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 });
     }

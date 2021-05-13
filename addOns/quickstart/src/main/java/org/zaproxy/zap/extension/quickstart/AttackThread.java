@@ -257,16 +257,12 @@ public class AttackThread extends Thread {
             extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
 
             SwingUtilities.invokeAndWait(
-                    new Runnable() {
-                        @Override
-                        public void run() {
+                    () ->
                             // Needs to be done on the EDT
                             Model.getSingleton()
                                     .getSession()
                                     .getSiteTree()
-                                    .addPath(msg.getHistoryRef());
-                        }
-                    });
+                                    .addPath(msg.getHistoryRef()));
 
             String urlStr = url.toString();
             if (urlStr.endsWith("/")) {

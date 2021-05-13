@@ -56,16 +56,11 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.comment.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                e ->
                         extension
                                 .getDialogManager()
                                 .showZestCommentDialog(
-                                        parent, child, stmt, new ZestComment(), true);
-                    }
-                });
+                                        parent, child, stmt, new ZestComment(), true));
     }
 
     @Override

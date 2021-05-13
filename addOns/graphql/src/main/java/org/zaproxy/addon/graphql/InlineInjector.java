@@ -175,7 +175,7 @@ public final class InlineInjector {
                 String csVars =
                         vars.stream()
                                 .filter(var -> !variableName.equals(var.getName()))
-                                .map(var -> AstPrinter.printAstCompact(var))
+                                .map(AstPrinter::printAstCompact)
                                 .collect(Collectors.joining(", "));
                 if (csVars.isEmpty()) {
                     // Remove parantheses and extra whitespace.
@@ -332,8 +332,8 @@ public final class InlineInjector {
         Document document = Parser.parse(query);
         List<Definition> definitions = document.getDefinitions();
         return definitions.stream()
-                .filter(defn -> defn instanceof OperationDefinition)
-                .map(defn -> (OperationDefinition) defn)
+                .filter(OperationDefinition.class::isInstance)
+                .map(OperationDefinition.class::cast)
                 .map(OperationDefinition::getOperation)
                 .map(Object::toString)
                 .map(s -> s.toLowerCase(Locale.ROOT))
