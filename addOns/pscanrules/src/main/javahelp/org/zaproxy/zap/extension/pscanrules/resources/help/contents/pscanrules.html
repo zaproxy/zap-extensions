@@ -25,8 +25,8 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
  
 <H2>Cache Control</H2>
 Checks "Cache-Control" response headers against general industry best practice settings for protection of sensitive content.<br>
-At MEDIUM and HIGH thresholds only non-error or non-redirect text responses (excluding JavaScript) are considered.<br>
-At LOW threshold all responses apart from images and CSS are considered including errors and redirects.
+At MEDIUM and HIGH thresholds only non-error or non-redirect text responses (excluding JavaScript and CSS) are considered.<br>
+At LOW threshold all responses are considered including errors and redirects.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CacheControlScanRule.java">CacheControlScanRule.java</a>
 
