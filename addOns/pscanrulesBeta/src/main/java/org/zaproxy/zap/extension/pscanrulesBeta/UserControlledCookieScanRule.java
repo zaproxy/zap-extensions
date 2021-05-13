@@ -50,11 +50,6 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         List<String> cookies = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
         if (cookies.isEmpty()) {

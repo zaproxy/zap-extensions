@@ -90,11 +90,6 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
     private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         List<Element> sourceElements = source.getAllElements();

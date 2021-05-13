@@ -38,9 +38,6 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10021;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         boolean includeErrorRedirectResponses = false;
         switch (this.getAlertThreshold()) {

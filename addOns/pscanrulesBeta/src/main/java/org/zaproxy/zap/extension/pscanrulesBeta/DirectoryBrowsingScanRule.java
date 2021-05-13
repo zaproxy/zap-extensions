@@ -74,17 +74,6 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
     }
 
     /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    /**
      * scans the HTTP response for signatures that might indicate Directory Browsing
      *
      * @param msg

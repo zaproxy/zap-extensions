@@ -49,9 +49,6 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
     private List<String> errors = null;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         // At medium or high exclude javascript responses
         if (!AlertThreshold.LOW.equals(this.getAlertThreshold())

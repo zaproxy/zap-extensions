@@ -84,11 +84,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // TODO: implement checks for base64 encoding in the request?
-    }
-
     /**
      * scans the HTTP response for base64 signatures
      *

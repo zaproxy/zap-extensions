@@ -54,11 +54,6 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
-    @Override
     public int getPluginId() {
         return PLUGIN_ID;
     }

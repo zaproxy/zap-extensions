@@ -48,9 +48,6 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
     private Model model = null;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
             List<Element> sourceElements = source.getAllElements(HTMLElementName.SCRIPT);

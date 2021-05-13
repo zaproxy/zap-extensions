@@ -50,11 +50,6 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (!msg.getRequestHeader().isSecure()) {
             // If SSL isn't used then the Secure flag has not to be checked

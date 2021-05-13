@@ -95,17 +95,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
     }
 
     /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // TODO: implement checks for timestamps in the request?
-    }
-
-    /**
      * scans the HTTP response for timestamp signatures
      *
      * @param msg

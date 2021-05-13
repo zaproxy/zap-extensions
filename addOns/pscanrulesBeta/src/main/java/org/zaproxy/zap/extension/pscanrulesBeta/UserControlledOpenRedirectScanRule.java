@@ -54,11 +54,6 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.MOVED_PERMANENTLY
                 || msg.getResponseHeader().getStatusCode() == HttpStatusCode.FOUND) {

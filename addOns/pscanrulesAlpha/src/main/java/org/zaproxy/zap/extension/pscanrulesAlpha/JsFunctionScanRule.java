@@ -62,11 +62,6 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     private static List<Pattern> patterns = null;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // This rule only scans responses received
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() <= 0
                 || (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript())) {

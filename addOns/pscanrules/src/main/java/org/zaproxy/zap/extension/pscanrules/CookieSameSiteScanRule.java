@@ -50,11 +50,6 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         checkCookies(msg, id, HttpHeader.SET_COOKIE);
         checkCookies(msg, id, HttpHeader.SET_COOKIE2);

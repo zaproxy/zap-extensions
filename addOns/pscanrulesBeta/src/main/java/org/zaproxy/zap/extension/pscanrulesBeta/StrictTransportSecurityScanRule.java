@@ -87,11 +87,6 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
         // Nothing to do.
     }
 
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this plugin
-    }
-
     private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
         newAlert()
                 .setName(getAlertElement(currentVT, "name"))

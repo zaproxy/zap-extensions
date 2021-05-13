@@ -38,9 +38,6 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     private PassiveScanThread parent;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         scanMessage(msg, id);
     }

@@ -70,11 +70,6 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
     /**
      * scans the HTTP response for signatures that might indicate the Heartbleed OpenSSL
      * vulnerability

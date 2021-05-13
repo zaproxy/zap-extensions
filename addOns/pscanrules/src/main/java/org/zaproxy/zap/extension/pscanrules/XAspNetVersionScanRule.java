@@ -50,9 +50,6 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         for (String header : xAspNetHeaders) {
             List<String> found = msg.getResponseHeader().getHeaderValues(header);

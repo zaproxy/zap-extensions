@@ -59,9 +59,6 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static List<Pattern> patterns = null;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         List<Pattern> patterns = getPatterns();
