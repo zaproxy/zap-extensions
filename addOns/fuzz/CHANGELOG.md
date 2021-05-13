@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Update results panels when Look and Feel changes (Issue 6479).
 - Correct payload count from file.
+- Show Add Payload dialogue above the Payloads dialogue.
 
 ## [13.1.0] - 2020-12-15
 ### Changed
