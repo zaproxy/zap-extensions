@@ -52,7 +52,7 @@ public class PayloadsDialog extends AbstractFormDialog {
 
         payloadsPanel =
                 new MessageLocationPayloadsPanel(
-                        parent, messageLocation, payloads, payloadGeneratorsUIHandlers);
+                        this, messageLocation, payloads, payloadGeneratorsUIHandlers);
         payloadsPanel.setPayloadsChangedListener(
                 new PayloadsChangedListener() {
 
