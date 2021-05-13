@@ -269,7 +269,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     }
 
     List<String> readFileFromPath(Path filePath) {
-        List<String> parsed = new ArrayList<String>();
+        List<String> parsed = new ArrayList<>();
         Charset charset = Charset.forName("US-ASCII");
         try (BufferedReader reader = Files.newBufferedReader(filePath, charset)) {
             Scanner sc = new Scanner(reader);

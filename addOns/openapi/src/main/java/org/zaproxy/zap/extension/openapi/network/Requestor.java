@@ -36,7 +36,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 public class Requestor {
 
     private final int initiator;
-    private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
+    private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
     private static final Logger LOG = LogManager.getLogger(Requestor.class);
@@ -53,7 +53,7 @@ public class Requestor {
     }
 
     public List<String> run(List<RequestModel> requestsModel) {
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         try {
             for (RequestModel requestModel : requestsModel) {
                 String url = requestModel.getUrl();

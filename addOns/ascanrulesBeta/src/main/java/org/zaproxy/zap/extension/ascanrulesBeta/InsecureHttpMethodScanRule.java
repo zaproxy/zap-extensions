@@ -86,7 +86,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     private static List<String> INSECURE_METHODS;
 
     static {
-        INSECURE_METHODS = new ArrayList<String>();
+        INSECURE_METHODS = new ArrayList<>();
         INSECURE_METHODS.addAll(INSECURE_DEFAULT_METHODS);
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }

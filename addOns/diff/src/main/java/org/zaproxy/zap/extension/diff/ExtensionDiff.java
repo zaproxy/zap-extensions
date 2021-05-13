@@ -118,8 +118,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
         }
         diffDialog.clearPanels();
 
-        List<String> msgList1 = new ArrayList<String>();
-        List<String> msgList2 = new ArrayList<String>();
+        List<String> msgList1 = new ArrayList<>();
+        List<String> msgList2 = new ArrayList<>();
 
         if (request) {
             stringToList(msg1.getRequestHeader().toString(), msgList1);
@@ -157,8 +157,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
                      * so everything is highlighted.
                      */
 
-                    List<int[]> leftHighlighters = new ArrayList<int[]>();
-                    List<int[]> rightHighlighters = new ArrayList<int[]>();
+                    List<int[]> leftHighlighters = new ArrayList<>();
+                    List<int[]> rightHighlighters = new ArrayList<>();
 
                     LinkedList<Diff> diffs = dmp.diff_main(dr.getOldLine(), dr.getNewLine());
                     for (Diff diff : diffs) {

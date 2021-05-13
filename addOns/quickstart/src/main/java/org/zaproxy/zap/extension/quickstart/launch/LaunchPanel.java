@@ -275,7 +275,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         PlugableHud hud = getExtQuickStart().getHudProvider();
         if (hud != null) {
             // Build up a model just with the browsers supported by the HUD
-            List<ProvidedBrowserUI> hudBrowsers = new ArrayList<ProvidedBrowserUI>();
+            List<ProvidedBrowserUI> hudBrowsers = new ArrayList<>();
             List<String> browserIds = hud.getSupportedBrowserIds();
             for (int i = 0; i < allBrowserModel.getSize(); i++) {
                 ProvidedBrowserUI browser = allBrowserModel.getElementAt(i);
@@ -302,7 +302,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private JComboBox<String> getUrlField() {
         if (urlField == null) {
-            urlField = new JComboBox<String>();
+            urlField = new JComboBox<>();
             urlField.setEditable(true);
             urlField.setModel(this.getExtensionQuickStart().getUrlModel());
         }
@@ -311,7 +311,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
         if (browserComboBox == null) {
-            browserComboBox = new JComboBox<ProvidedBrowserUI>();
+            browserComboBox = new JComboBox<>();
             allBrowserModel = getExtSelenium().createProvidedBrowsersComboBoxModel();
             allBrowserModel.setIncludeHeadless(false);
             allBrowserModel.setIncludeUnconfigured(false);

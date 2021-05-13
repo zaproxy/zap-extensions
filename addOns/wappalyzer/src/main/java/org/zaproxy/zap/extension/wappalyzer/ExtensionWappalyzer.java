@@ -65,12 +65,12 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private TechPanel techPanel = null;
     private PopupMenuEvidence popupMenuEvidence = null;
 
-    private Map<String, String> categories = new HashMap<String, String>();
-    private List<Application> applications = new ArrayList<Application>();
+    private Map<String, String> categories = new HashMap<>();
+    private List<Application> applications = new ArrayList<>();
 
     private ExtensionSearch extSearch = null;
 
-    private Map<String, TechTableModel> siteTechMap = new HashMap<String, TechTableModel>();
+    private Map<String, TechTableModel> siteTechMap = new HashMap<>();
     private boolean enabled;
     private WappalyzerParam wappalyzerParam;
 
@@ -335,7 +335,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     private void sessionChangedEventHandler(Session session) {
         // Clear all scans
-        siteTechMap = new HashMap<String, TechTableModel>();
+        siteTechMap = new HashMap<>();
         this.getTechPanel().reset();
         if (session == null) {
             // Closedown

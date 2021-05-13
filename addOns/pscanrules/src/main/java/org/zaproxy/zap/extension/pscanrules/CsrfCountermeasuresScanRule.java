@@ -116,7 +116,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
             int numberOfFormsPassed = 0;
 
-            List<String> ignoreList = new ArrayList<String>();
+            List<String> ignoreList = new ArrayList<>();
             String ignoreConf = getCSRFIgnoreList();
             if (ignoreConf != null && ignoreConf.length() > 0) {
                 logger.debug("Using ignore list: {}", ignoreConf);
@@ -134,7 +134,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 logger.debug(
                         "FORM [{}] has parent [{}]", formElement, formElement.getParentElement());
                 StringBuilder sbForm = new StringBuilder();
-                SortedSet<String> elementNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+                SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
                 ++numberOfFormsPassed;
                 // if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!),
                 // so we will not report

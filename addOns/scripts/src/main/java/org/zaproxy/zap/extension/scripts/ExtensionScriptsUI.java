@@ -89,8 +89,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     private ScriptType extScriptType =
             new ScriptType(SCRIPT_EXT_TYPE, "scripts.type.extender", SCRIPT_EXT_ICON, true, true);
     private ExtenderScriptHelper helper;
-    private Map<String, ExtenderScript> installedExtenderScripts =
-            new HashMap<String, ExtenderScript>();
+    private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<>();
     private ScriptEngineWrapper nullEngineWrapper = null;
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;

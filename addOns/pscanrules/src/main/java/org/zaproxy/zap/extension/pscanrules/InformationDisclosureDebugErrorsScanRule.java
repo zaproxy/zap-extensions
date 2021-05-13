@@ -95,7 +95,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
     }
 
     private List<String> loadFile(Path path) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = path.toFile();
         if (!f.exists()) {

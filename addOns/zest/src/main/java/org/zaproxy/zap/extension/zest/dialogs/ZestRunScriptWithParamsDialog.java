@@ -93,7 +93,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     }
 
     public Map<String, String> getParams() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String[] param : this.getParamsModel().getValues()) {
             map.put(param[0], param[1]);
         }

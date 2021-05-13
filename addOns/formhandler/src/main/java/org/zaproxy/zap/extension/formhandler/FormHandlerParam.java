@@ -50,8 +50,7 @@ public class FormHandlerParam extends AbstractParam {
 
     private boolean confirmRemoveField = true;
 
-    private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS =
-            new HashMap<String, String>();
+    private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS = new HashMap<>();
 
     static {
         DEFAULT_KEY_VALUE_PAIRS.put("color", "#ffffff");

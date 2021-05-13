@@ -217,7 +217,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private JComboBox<ArgsTypeOption> getArgsTypeOptions() {
         if (argsTypeOptions == null) {
             argsTypeOptions =
-                    new JComboBox<ArgsTypeOption>(
+                    new JComboBox<>(
                             new ArgsTypeOption[] {
                                 ArgsTypeOption.INLINE, ArgsTypeOption.VARIABLES, ArgsTypeOption.BOTH
                             });
@@ -230,7 +230,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private JComboBox<QuerySplitOption> getQuerySplitOptions() {
         if (querySplitOptions == null) {
             querySplitOptions =
-                    new JComboBox<QuerySplitOption>(
+                    new JComboBox<>(
                             new QuerySplitOption[] {
                                 QuerySplitOption.LEAF,
                                 QuerySplitOption.ROOT_FIELD,
@@ -245,7 +245,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private JComboBox<RequestMethodOption> getRequestMethodOptions() {
         if (requestMethodOptions == null) {
             requestMethodOptions =
-                    new JComboBox<RequestMethodOption>(
+                    new JComboBox<>(
                             new RequestMethodOption[] {
                                 RequestMethodOption.POST_JSON,
                                 RequestMethodOption.POST_GRAPHQL,

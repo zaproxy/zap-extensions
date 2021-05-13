@@ -93,7 +93,7 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
 
         for (User user : scanUsers) {
             username = user.getName();
-            Map<String, String> hashes = new HashMap<String, String>();
+            Map<String, String> hashes = new HashMap<>();
             hashes.put("MD2", DigestUtils.md2Hex(username));
             hashes.put("MD5", DigestUtils.md5Hex(username));
             hashes.put("SHA1", DigestUtils.sha1Hex(username));

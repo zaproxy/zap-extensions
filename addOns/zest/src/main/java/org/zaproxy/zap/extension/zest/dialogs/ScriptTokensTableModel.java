@@ -33,7 +33,7 @@ public class ScriptTokensTableModel extends AbstractTableModel {
         Constant.messages.getString("zest.tokens.table.value")
     };
 
-    private List<String[]> values = new ArrayList<String[]>();
+    private List<String[]> values = new ArrayList<>();
     private boolean directlyEditable = false;
 
     /** */

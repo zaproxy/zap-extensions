@@ -112,7 +112,7 @@ public class OptionsZestIgnoreHeadersTableModel extends AbstractTableModel {
     }
 
     public void setIgnoredHeaders(List<String> ignoredHeaders) {
-        this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
+        this.ignoredHeaders = new ArrayList<>(ignoredHeaders);
     }
 
     public List<String> getIgnoredHeaders() {

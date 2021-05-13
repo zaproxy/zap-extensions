@@ -31,7 +31,7 @@ public class Generators {
     private BodyGenerator bodyGenerator;
     private DataGenerator dataGenerator;
     private PathGenerator pathGenerator;
-    private List<String> errorMessages = new ArrayList<String>();
+    private List<String> errorMessages = new ArrayList<>();
 
     public Generators(org.zaproxy.zap.model.ValueGenerator valueGenerator) {
         this.valueGenerator = new ValueGenerator(valueGenerator);

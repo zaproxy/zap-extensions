@@ -122,7 +122,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         if (options != null) {
             try {
                 Method[] methods = options.getClass().getMethods();
-                methodMap = new HashMap<String, Method>(methods.length);
+                methodMap = new HashMap<>(methods.length);
                 for (Method m : methods) {
                     methodMap.put(m.getName(), m);
                 }
@@ -308,11 +308,11 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public Map<String, String> getCustomConfigParameters() {
-        return new HashMap<String, String>();
+        return new HashMap<>();
     }
 
     public List<JobResultData> getJobResultData() {
-        return new ArrayList<JobResultData>();
+        return new ArrayList<>();
     }
 
     public String getExtraConfigFileData() {
@@ -338,7 +338,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                 params.putAll(configParams);
             }
         }
-        Map<String, String> sortedParams = new TreeMap<String, String>(params);
+        Map<String, String> sortedParams = new TreeMap<>(params);
 
         for (Entry<String, String> entry : sortedParams.entrySet()) {
             sb.append("      ");
@@ -363,7 +363,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public Map<String, String> getConfigParameters(Object obj, String optionsGetterName) {
-        Map<String, String> kvMap = new HashMap<String, String>();
+        Map<String, String> kvMap = new HashMap<>();
         try {
             Method method = obj.getClass().getDeclaredMethod(optionsGetterName);
             method.setAccessible(true);

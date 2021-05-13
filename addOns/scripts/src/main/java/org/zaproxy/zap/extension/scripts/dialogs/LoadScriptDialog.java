@@ -107,13 +107,13 @@ public class LoadScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getEngines() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(extension.getExtScript().getScriptingEngines());
         return list;
     }
 
     private List<String> getTypes() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (ScriptType type : extension.getExtScript().getScriptTypes()) {
             if (type.hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
                 // Ignore

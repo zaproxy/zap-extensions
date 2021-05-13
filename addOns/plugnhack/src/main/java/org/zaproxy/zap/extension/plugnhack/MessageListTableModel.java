@@ -45,7 +45,7 @@ public class MessageListTableModel extends AbstractTableModel {
         columnNames.add(Constant.messages.getString("plugnhack.msg.table.header.type"));
         columnNames.add(Constant.messages.getString("plugnhack.msg.table.header.data"));
 
-        messages = Collections.synchronizedList(new ArrayList<ClientMessage>());
+        messages = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override

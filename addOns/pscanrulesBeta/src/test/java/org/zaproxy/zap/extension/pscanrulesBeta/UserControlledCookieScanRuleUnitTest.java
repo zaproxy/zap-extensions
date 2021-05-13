@@ -159,7 +159,7 @@ class UserControlledCookieScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=evil", false));
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
-        TreeSet<HtmlParameter> formParams = new TreeSet<HtmlParameter>();
+        TreeSet<HtmlParameter> formParams = new TreeSet<>();
         formParams.add(new HtmlParameter(HtmlParameter.Type.form, "name", "jane"));
         msg.setFormParams(formParams);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);

@@ -136,7 +136,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ExtensionAntiCSRF extAcsrf = null;
     private ZestScript lastRunScript = null;
     private HttpMessage lastSelectedMessage = null;
-    private Map<String, String> acsrfTokenToVar = new HashMap<String, String>();
+    private Map<String, String> acsrfTokenToVar = new HashMap<>();
 
     private ZestFuzzerDelegate fuzzerMessenger = null;
     private ScriptNode scriptNodeRecording = null;
@@ -146,7 +146,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private boolean cutNodes = false;
 
     // Client side recording
-    private Map<String, String> clientUrlToWindowHandle = new HashMap<String, String>();
+    private Map<String, String> clientUrlToWindowHandle = new HashMap<>();
     private String startRecordingUrl = null;
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
@@ -576,7 +576,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptNode> getAllZestScriptNodes() {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
 
         for (ScriptType type : this.getExtScript().getScriptTypes()) {
             for (ScriptNode node : this.getExtScript().getTreeModel().getNodes(type.getName())) {
@@ -589,7 +589,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptNode> getZestScriptNodes(String type) {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
 
         for (ScriptNode node : this.getExtScript().getTreeModel().getNodes(type)) {
             if (ZestZapUtils.isZestNode(node)) {
@@ -612,7 +612,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptWrapper> getZestScripts(String type) {
-        List<ScriptWrapper> list = new ArrayList<ScriptWrapper>();
+        List<ScriptWrapper> list = new ArrayList<>();
         for (ScriptWrapper sw : this.getExtScript().getScripts(type)) {
             if (sw.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
                 list.add(sw);
@@ -1415,7 +1415,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public List<ScriptNode> getSelectedZestNodes() {
-        List<ScriptNode> list = new ArrayList<ScriptNode>();
+        List<ScriptNode> list = new ArrayList<>();
         if (this.getExtScript().getScriptUI() == null) {
             return list;
         }
@@ -1765,7 +1765,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
      * @return
      */
     public List<HttpMessage> getAllRequestsInScript(ScriptWrapper script) {
-        ArrayList<HttpMessage> requests = new ArrayList<HttpMessage>();
+        ArrayList<HttpMessage> requests = new ArrayList<>();
 
         if (!(script instanceof ZestScriptWrapper)) {
             throw new InvalidParameterException(script.getClass().getCanonicalName());

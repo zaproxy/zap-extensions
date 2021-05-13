@@ -91,7 +91,7 @@ public class BugTrackerBugzilla extends BugTracker {
     public void createDialogs() {
         dialog.setXWeights(0.1D, 0.9D);
         List<BugTrackerBugzillaConfigParams> configs = getOptions().getConfigs();
-        List<String> configNames = new ArrayList<String>();
+        List<String> configNames = new ArrayList<>();
         for (BugTrackerBugzillaConfigParams config : configs) {
             configNames.add(config.getName());
         }

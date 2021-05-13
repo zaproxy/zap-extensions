@@ -26,8 +26,8 @@ import java.util.Map;
 
 public class WappalyzerData {
 
-    private Map<String, String> categories = new HashMap<String, String>();
-    private List<Application> applications = new ArrayList<Application>();
+    private Map<String, String> categories = new HashMap<>();
+    private List<Application> applications = new ArrayList<>();
 
     public void addCategory(String key, String value) {
         this.categories.put(key, value);

@@ -427,7 +427,7 @@ class ExtensionReportsUnitTest {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
         PassiveScanJobResultData pscanData =
-                new PassiveScanJobResultData("test", new ArrayList<PluginPassiveScanner>());
+                new PassiveScanJobResultData("test", new ArrayList<>());
         reportData.addReportObjects(pscanData.getKey(), pscanData);
         File f = File.createTempFile("zap.reports.test", "x");
         Template template = getTemplateFromYamlFile(reportName);
@@ -484,7 +484,7 @@ class ExtensionReportsUnitTest {
         reportData.setDescription("Test Description");
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
-        List<PluginPassiveScanner> list = new ArrayList<PluginPassiveScanner>();
+        List<PluginPassiveScanner> list = new ArrayList<>();
         PassiveScanJobResultData pscanData = new PassiveScanJobResultData("passiveScan-wait", list);
         reportData.addReportObjects(pscanData.getKey(), pscanData);
 

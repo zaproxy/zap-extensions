@@ -404,8 +404,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("enabled", e.isEnabled());
                                             map.put("regex", e.getPattern().pattern());
-                                            return new ApiResponseSet<Object>(
-                                                    "allowedResource", map);
+                                            return new ApiResponseSet<>("allowedResource", map);
                                         })
                                 .collect(Collectors.toList());
 
@@ -478,9 +477,9 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
     @Override
     public void spiderStarted() {
-        historyReferences = Collections.synchronizedList(new ArrayList<HistoryReference>());
-        resourcesOutOfScope = Collections.synchronizedList(new ArrayList<SpiderResource>());
-        resourcesError = Collections.synchronizedList(new ArrayList<SpiderResource>());
+        historyReferences = Collections.synchronizedList(new ArrayList<>());
+        resourcesOutOfScope = Collections.synchronizedList(new ArrayList<>());
+        resourcesError = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -541,7 +540,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         }
 
         private static ApiResponse resourceToSet(HistoryReference hr) {
-            return new ApiResponseSet<String>("resource", createDataMap(hr));
+            return new ApiResponseSet<>("resource", createDataMap(hr));
         }
 
         private static Map<String, String> createDataMap(HistoryReference hr) {
@@ -557,7 +556,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         private ApiResponseSet<String> spiderResourceToSet(SpiderResource spiderResource) {
             Map<String, String> map = createDataMap(spiderResource.getHistoryReference());
             map.put("state", spiderResource.getState().toString());
-            return new ApiResponseSet<String>("resource", map);
+            return new ApiResponseSet<>("resource", map);
         }
 
         @Override

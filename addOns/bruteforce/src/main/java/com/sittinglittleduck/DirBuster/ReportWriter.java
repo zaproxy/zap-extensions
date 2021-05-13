@@ -45,9 +45,9 @@ public class ReportWriter {
     public void writeReportHeadless() {
         Vector<HeadlessResult> data = manager.getHeadlessResult();
 
-        Vector<HeadlessResult> dirs = new Vector<HeadlessResult>(100, 10);
-        Vector<HeadlessResult> files = new Vector<HeadlessResult>(100, 10);
-        Vector<HeadlessResult> errors = new Vector<HeadlessResult>(100, 10);
+        Vector<HeadlessResult> dirs = new Vector<>(100, 10);
+        Vector<HeadlessResult> files = new Vector<>(100, 10);
+        Vector<HeadlessResult> errors = new Vector<>(100, 10);
 
         Vector dirCodes = new Vector(100, 10);
         Vector fileCodes = new Vector(100, 10);

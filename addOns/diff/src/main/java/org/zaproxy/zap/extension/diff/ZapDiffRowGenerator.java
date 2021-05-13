@@ -211,7 +211,7 @@ public class ZapDiffRowGenerator {
  }
 
  private List<String> removeBlankLines(List<String> lines) {
-     List<String> result = new ArrayList<String>();
+     List<String> result = new ArrayList<>();
      for (String line: lines) {
          if (line.trim().length() == 0) {
              result.add("");
@@ -241,7 +241,7 @@ public class ZapDiffRowGenerator {
      // original = StringUtills.wrapText(original, this.columnWidth);
      // revised = StringUtills.wrapText(revised, this.columnWidth);
 
-     List<DiffRow> diffRows = new ArrayList<DiffRow>();
+     List<DiffRow> diffRows = new ArrayList<>();
      int endPos = 0;
      final List<Delta<String>> deltaList = patch.getDeltas();
      for (int i = 0; i < deltaList.size(); i++) {
@@ -318,11 +318,11 @@ public class ZapDiffRowGenerator {
  private void addInlineDiffs(Delta<String> delta) {
      List<String> orig = delta.getOriginal().getLines();
      List<String> rev = delta.getRevised().getLines();
-     LinkedList<String> origList = new LinkedList<String>();
+     LinkedList<String> origList = new LinkedList<>();
      for (Character character : join(orig, "\n").toCharArray()) {
          origList.add(character.toString());
      }
-     LinkedList<String> revList = new LinkedList<String>();
+     LinkedList<String> revList = new LinkedList<>();
      for (Character character : join(rev, "\n").toCharArray()) {
          revList.add(character.toString());
      }

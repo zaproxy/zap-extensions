@@ -31,7 +31,7 @@ public class OperationHelper {
     private static final Logger log = LogManager.getLogger(OperationHelper.class);
 
     public List<OperationModel> getAllOperations(PathItem path, String url) {
-        List<OperationModel> operations = new LinkedList<OperationModel>();
+        List<OperationModel> operations = new LinkedList<>();
 
         if (path.getGet() != null) {
             operations.add(new OperationModel(url, path.getGet(), RequestMethod.GET));

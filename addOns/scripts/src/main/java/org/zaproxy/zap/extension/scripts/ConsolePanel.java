@@ -86,8 +86,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
                 Constant.messages.getString("scripts.changed.replace")
             };
 
-    private Map<ScriptWrapper, Integer> scriptWrapperToOffset =
-            new HashMap<ScriptWrapper, Integer>();
+    private Map<ScriptWrapper, Integer> scriptWrapperToOffset = new HashMap<>();
 
     private static final Logger LOG = LogManager.getLogger(ConsolePanel.class);
 

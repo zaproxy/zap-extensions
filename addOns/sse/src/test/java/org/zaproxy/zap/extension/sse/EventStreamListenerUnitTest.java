@@ -102,7 +102,7 @@ class EventStreamListenerUnitTest {
     @Test
     void shouldNotFireProcessEventForAnIncompleteEvent() throws IOException {
         // Given
-        LinkedList<String> streamLines = new LinkedList<String>();
+        LinkedList<String> streamLines = new LinkedList<>();
         streamLines.add("data:blub");
         streamLines.add("id: 9982");
 
@@ -120,7 +120,7 @@ class EventStreamListenerUnitTest {
     @Test
     void shouldFireProcessEventOnAnEmptyEvent() throws IOException {
         // Given
-        LinkedList<String> streamLines = new LinkedList<String>();
+        LinkedList<String> streamLines = new LinkedList<>();
         streamLines.add("");
 
         // When

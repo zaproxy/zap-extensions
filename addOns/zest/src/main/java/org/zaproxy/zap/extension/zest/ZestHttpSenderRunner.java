@@ -63,7 +63,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 
             // Set the response url to empty to give us a way to work out this is a request in the
             // script
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put(ZestVariables.RESPONSE_URL, "");
             params.put(ZAP_INITIATOR, Integer.toString(initiator));
 
@@ -97,7 +97,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
             ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
             req.setResponse(ZestZapUtils.toZestResponse(msg));
 
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put(ZAP_INITIATOR, Integer.toString(initiator));
 
             this.run(script.getZestScript(), req, params);

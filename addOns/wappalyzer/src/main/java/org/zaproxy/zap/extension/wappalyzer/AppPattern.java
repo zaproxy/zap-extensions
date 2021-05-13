@@ -107,7 +107,7 @@ public class AppPattern {
         if (size == 0) {
             return Collections.emptyList();
         }
-        return new ArrayList<String>(size);
+        return new ArrayList<>(size);
     }
 
     private void addGroup(String group, List<String> results) {

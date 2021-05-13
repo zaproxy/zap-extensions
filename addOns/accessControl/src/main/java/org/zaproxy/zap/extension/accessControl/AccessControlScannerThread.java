@@ -321,7 +321,7 @@ public class AccessControlScannerThread
 
         public AccessControlScanStartOptions() {
             super();
-            this.targetUsers = new LinkedList<User>();
+            this.targetUsers = new LinkedList<>();
         }
     }
 

@@ -155,7 +155,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 
             // Pull down of all the valid window ids
             List<String> windowIds =
-                    new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+                    new ArrayList<>(script.getZestScript().getClientWindowHandles());
             Collections.sort(windowIds);
             this.addComboField(
                     ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, zc.getWindowHandle());
@@ -178,7 +178,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
             list.add(
                     Constant.messages.getString(
@@ -205,7 +205,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;
@@ -221,7 +221,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
     }
 
     private List<String> strToList(String str) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String el : str.split("\n")) {
             if (el.length() > 0) {
                 list.add(el);

@@ -115,8 +115,8 @@ public class ScriptTreeTransferHandler extends TransferHandler {
             // Make up a node array of copies for transfer and
             // another for/of the nodes that will be removed in
             // exportDone after a successful drop.
-            List<DefaultMutableTreeNode> copies = new ArrayList<DefaultMutableTreeNode>();
-            List<DefaultMutableTreeNode> toRemove = new ArrayList<DefaultMutableTreeNode>();
+            List<DefaultMutableTreeNode> copies = new ArrayList<>();
+            List<DefaultMutableTreeNode> toRemove = new ArrayList<>();
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
             DefaultMutableTreeNode copy = copy(node);
             copies.add(copy);

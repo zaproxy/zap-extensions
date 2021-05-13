@@ -164,7 +164,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     private ClientBreakpointsUiManagerInterface brkManager = null;
 
-    private List<String> knownTypes = new ArrayList<String>();
+    private List<String> knownTypes = new ArrayList<>();
 
     private Thread timeoutThread = null;
     private boolean shutdown = false;

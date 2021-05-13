@@ -89,7 +89,7 @@ public class BugTrackerGithub extends BugTracker {
     @Override
     public void createDialogs() {
         List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
-        List<String> configNames = new ArrayList<String>();
+        List<String> configNames = new ArrayList<>();
         for (BugTrackerGithubConfigParams config : configs) {
             configNames.add(config.getName());
         }
@@ -100,7 +100,7 @@ public class BugTrackerGithub extends BugTracker {
         dialog.addMultilineField(FIELD_BODY, getBody());
         dialog.addTextField(FIELD_LABELS, getLabels());
         dialog.addTextField(FIELD_ASSIGNEE_MANUAL, "");
-        dialog.addComboField(FIELD_ASSIGNEE_LIST, new ArrayList<String>(), "");
+        dialog.addComboField(FIELD_ASSIGNEE_LIST, new ArrayList<>(), "");
         dialog.addTextField(FIELD_USERNAME, "");
         dialog.addTextField(FIELD_PASSWORD, "");
         updateAssigneeList();
@@ -110,7 +110,7 @@ public class BugTrackerGithub extends BugTracker {
     public void updateAssigneeList() {
         try {
             String currentItem = dialog.getStringValue(FIELD_GITHUB_CONFIG);
-            Set<String> collaborators = new HashSet<String>();
+            Set<String> collaborators = new HashSet<>();
             List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
             for (BugTrackerGithubConfigParams config : configs) {
                 if (config.getName().equals(currentItem)) {
@@ -123,10 +123,10 @@ public class BugTrackerGithub extends BugTracker {
                     collaborators =
                             getCollaborators(config.getName(), config.getPassword(), repoFormatted);
                     if (collaborators != null && collaborators.size() > 0) {
-                        List<String> assignees = new ArrayList<String>(collaborators);
+                        List<String> assignees = new ArrayList<>(collaborators);
                         dialog.setComboFields(FIELD_ASSIGNEE_LIST, assignees, "");
                     } else {
-                        List<String> assignees = new ArrayList<String>();
+                        List<String> assignees = new ArrayList<>();
                         dialog.setComboFields(FIELD_ASSIGNEE_LIST, assignees, "");
                     }
                 }

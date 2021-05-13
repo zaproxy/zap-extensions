@@ -88,10 +88,10 @@ public class ZestParam extends AbstractParam {
     private static final Logger log = LogManager.getLogger(ZestParam.class);
 
     /** The full list of headers that can be ignored. */
-    private List<String> allHeaders = new ArrayList<String>();
+    private List<String> allHeaders = new ArrayList<>();
 
     /** The list of headers that will be ignored. */
-    private List<String> ignoredHeaders = new ArrayList<String>();
+    private List<String> ignoredHeaders = new ArrayList<>();
 
     private boolean includeResponses = true;
 
@@ -144,7 +144,7 @@ public class ZestParam extends AbstractParam {
      * @param ignoredHeaders the ignored Headers
      */
     public void setIgnoredHeaders(final List<String> ignoredHeaders) {
-        this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
+        this.ignoredHeaders = new ArrayList<>(ignoredHeaders);
         getConfig().setProperty(IGNORE_HEADERS_KEY, this.ignoredHeaders);
     }
 

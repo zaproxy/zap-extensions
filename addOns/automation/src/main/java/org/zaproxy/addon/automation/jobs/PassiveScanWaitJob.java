@@ -66,7 +66,7 @@ public class PassiveScanWaitJob extends AutomationJob {
 
     @Override
     public List<JobResultData> getJobResultData() {
-        List<JobResultData> list = new ArrayList<JobResultData>();
+        List<JobResultData> list = new ArrayList<>();
         list.add(
                 new PassiveScanJobResultData(
                         this.getName(), getExtPassiveScan().getPluginPassiveScanners()));

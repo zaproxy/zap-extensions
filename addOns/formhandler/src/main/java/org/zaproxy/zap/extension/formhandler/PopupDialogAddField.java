@@ -84,7 +84,7 @@ class PopupDialogAddField extends DialogAddField {
     @Override
     protected JComboBox<String> getValueField() {
         if (valueField == null) {
-            valueField = new JComboBox<String>();
+            valueField = new JComboBox<>();
             valueField.setEditable(true);
         }
 

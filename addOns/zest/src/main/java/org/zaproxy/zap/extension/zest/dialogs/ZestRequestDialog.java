@@ -141,7 +141,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
         setFieldMainPopupMenu(FIELD_BODY);
 
         // Cookies tab
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());

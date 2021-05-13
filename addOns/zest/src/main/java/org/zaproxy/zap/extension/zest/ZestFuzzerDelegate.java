@@ -85,7 +85,7 @@ public class ZestFuzzerDelegate {
 
     public List<String> getFuzzersForCategory(String category) {
         if (category == null || category.length() == 0) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add("");
             return list;
         } else if (category.startsWith(JBROFUZZ_CATEGORY_PREFIX)) {
@@ -104,7 +104,7 @@ public class ZestFuzzerDelegate {
     }
 
     public List<String> getAllFuzzCategories() {
-        List<String> cats = new ArrayList<String>();
+        List<String> cats = new ArrayList<>();
         cats.add("");
         for (String cat : getJBroFuzzCategories()) {
             if (cat.length() > 0) {

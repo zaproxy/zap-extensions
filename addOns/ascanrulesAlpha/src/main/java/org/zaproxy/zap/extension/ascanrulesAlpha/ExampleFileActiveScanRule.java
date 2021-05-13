@@ -198,7 +198,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         /*
          * ZAP will have already extracted the file from the add-on and put it underneath the 'ZAP home' directory
          */
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {

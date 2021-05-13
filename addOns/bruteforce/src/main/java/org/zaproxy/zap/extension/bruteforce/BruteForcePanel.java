@@ -471,7 +471,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private TableExportButton<HistoryReferencesTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<HistoryReferencesTable>(getBruteForceTable());
+            exportButton = new TableExportButton<>(getBruteForceTable());
         }
         return exportButton;
     }

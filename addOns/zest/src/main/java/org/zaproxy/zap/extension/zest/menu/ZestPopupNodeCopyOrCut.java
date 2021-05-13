@@ -65,7 +65,7 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
 
         this.addActionListener(
                 e -> {
-                    List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+                    List<ScriptNode> nodes = new ArrayList<>();
                     for (ScriptNode node : extension.getSelectedZestNodes()) {
                         if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
                             nodes.add(node);

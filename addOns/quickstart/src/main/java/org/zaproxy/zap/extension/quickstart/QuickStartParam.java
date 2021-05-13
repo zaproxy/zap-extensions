@@ -60,7 +60,7 @@ public class QuickStartParam extends AbstractParam {
     private static final String PARAM_CLEARED_NEWS_ITEM = PARAM_BASE_KEY + ".clearedNews";
 
     private boolean isTradSpiderEnabled;
-    private List<Object> recentUrls = new ArrayList<Object>(0);
+    private List<Object> recentUrls = new ArrayList<>(0);
     private int maxRecentUrls;
     private String launchStartPage;
     private String launchDefaultBrowser = DEFAULT_BROWSER;
@@ -77,7 +77,7 @@ public class QuickStartParam extends AbstractParam {
             LOGGER.error("Failed to load the trad spider configuration", e);
         }
         try {
-            recentUrls = getConfig().getList(PARAM_RECENT_URLS, new ArrayList<Object>(0));
+            recentUrls = getConfig().getList(PARAM_RECENT_URLS, new ArrayList<>(0));
         } catch (Exception e) {
             LOGGER.error("Failed to load the recent urls configuration", e);
         }

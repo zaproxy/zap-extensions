@@ -31,7 +31,7 @@ public class TechTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final Vector<String> columnNames;
-    private List<ApplicationMatch> apps = new ArrayList<ApplicationMatch>();
+    private List<ApplicationMatch> apps = new ArrayList<>();
 
     private int lastAddedRow;
     private int lastEditedRow;
@@ -48,7 +48,7 @@ public class TechTableModel extends AbstractTableModel {
         // Dont currently support confidence
         // columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
 
-        apps = Collections.synchronizedList(new ArrayList<ApplicationMatch>());
+        apps = Collections.synchronizedList(new ArrayList<>());
 
         lastAddedRow = -1;
         lastEditedRow = -1;

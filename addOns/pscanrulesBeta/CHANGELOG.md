@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Added evidence
   - Insecure Form Post
     - Added evidence
+- Maintenance changes.
 
 ## [24] - 2020-12-15
 ### Changed

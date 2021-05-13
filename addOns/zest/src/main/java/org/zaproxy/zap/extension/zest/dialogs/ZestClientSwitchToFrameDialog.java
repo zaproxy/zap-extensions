@@ -82,8 +82,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
         }
 
         // Pull down of all the valid window ids
-        List<String> windowIds =
-                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 

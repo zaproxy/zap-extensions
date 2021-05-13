@@ -641,10 +641,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         // get the diff as a series of patches
                         Patch<String> diffpatch =
                                 DiffUtils.diff(
-                                        new LinkedList<String>(
+                                        new LinkedList<>(
                                                 Arrays.asList(
                                                         longestCommonSubstringA.split("\\n"))),
-                                        new LinkedList<String>(
+                                        new LinkedList<>(
                                                 Arrays.asList(
                                                         longestCommonSubstringB.split("\\n"))));
 

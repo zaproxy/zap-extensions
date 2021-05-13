@@ -52,8 +52,8 @@ public class Base {
 
 	private boolean hasBeenRun = false;
 	private Result result = Result.FAIL;
-	private List<String> details = new ArrayList<String>();
-	private List<String> errors = new ArrayList<String>();
+	private List<String> details = new ArrayList<>();
+	private List<String> errors = new ArrayList<>();
 	
 	final public double PI = Math.PI; // 3.141592653589793;
 

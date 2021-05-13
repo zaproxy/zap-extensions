@@ -96,7 +96,7 @@ public class Repo {
         Result result;
 
         // Check if included in don't check section
-        HashMap<String, String> msginfo = new HashMap<String, String>();
+        HashMap<String, String> msginfo = new HashMap<>();
         msginfo.put(Extractors.TYPE_URI, uri);
         if (fileName != null) {
             msginfo.put(Extractors.TYPE_FILENAME, fileName.toString());

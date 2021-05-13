@@ -54,7 +54,7 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
     // The registered callbacks for this API
     // Use a synchronized collection
     private final Map<String, RegisteredCallback> regCallbacks =
-            Collections.synchronizedMap(new TreeMap<String, RegisteredCallback>());
+            Collections.synchronizedMap(new TreeMap<>());
 
     private static ExtensionCallback extCallback;
 
@@ -74,7 +74,7 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
 
     @Override
     public List<String> getCallbackPrefixes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(getPrefix());
         return list;
     }

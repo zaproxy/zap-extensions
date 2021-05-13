@@ -36,7 +36,7 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
 
     protected static final String PREFIX = "bugtracker";
 
-    private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
+    private List<BugTracker> bugTrackers = new ArrayList<>();
     private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
 
     public ExtensionBugTracker() {

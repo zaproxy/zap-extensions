@@ -91,7 +91,7 @@ public class GetForPostScanRule extends AbstractAppPlugin {
 
         HttpMessage newRequest = getNewMsg();
         newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
-        newRequest.setFormParams(new TreeSet<HtmlParameter>());
+        newRequest.setFormParams(new TreeSet<>());
         for (HtmlParameter param : postParams) {
             param.setType(HtmlParameter.Type.url);
         }

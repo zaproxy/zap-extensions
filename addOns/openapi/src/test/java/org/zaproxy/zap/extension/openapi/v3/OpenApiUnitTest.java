@@ -64,7 +64,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
 
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -97,7 +97,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
 
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -133,7 +133,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                         null,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -168,7 +168,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
 
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -367,7 +367,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         Converter converter =
                 new SwaggerConverter(
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), vg);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override

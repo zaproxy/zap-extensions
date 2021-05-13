@@ -60,7 +60,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
     private static final int SEQUENCE_HISTORY_TYPE = HistoryReference.TYPE_SEQUENCE_TEMPORARY;
 
-    private static final Map<String, String> EMPTYPARAMS = new HashMap<String, String>();
+    private static final Map<String, String> EMPTYPARAMS = new HashMap<>();
     private AbstractPlugin currentPlugin = null;
     private ZestResponse tempLastResponse = null;
     private ExtensionHistory extHistory = null;
@@ -80,7 +80,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
     @Override
     public List<HttpMessage> getAllRequestsInScript() {
-        ArrayList<HttpMessage> requests = new ArrayList<HttpMessage>();
+        ArrayList<HttpMessage> requests = new ArrayList<>();
 
         for (ZestStatement stmt : this.script.getZestScript().getStatements()) {
             try {
@@ -260,7 +260,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
     // Gets a script containing all statements prior to the supplied HttpMessage.
     private ZestScript getBeforeSubScript(HttpMessage msg) {
         ZestScript scr = new ZestScript();
-        ArrayList<ZestStatement> stmts = new ArrayList<ZestStatement>();
+        ArrayList<ZestStatement> stmts = new ArrayList<>();
 
         for (ZestStatement stmt : this.script.getZestScript().getStatements()) {
             if (isSameRequest(msg, stmt)) {
@@ -275,7 +275,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
     // Gets a script containing all statements after the supplied HttpMessage.
     private ZestScript getAfterSubScript(HttpMessage msg) {
         ZestScript scr = new ZestScript();
-        ArrayList<ZestStatement> stmts = new ArrayList<ZestStatement>();
+        ArrayList<ZestStatement> stmts = new ArrayList<>();
         boolean foundMatch = false;
         for (ZestStatement stmt : this.script.getZestScript().getStatements()) {
             if (!foundMatch && isSameRequest(msg, stmt)) {

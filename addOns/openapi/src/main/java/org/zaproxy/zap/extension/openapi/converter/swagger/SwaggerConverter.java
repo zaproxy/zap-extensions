@@ -63,7 +63,7 @@ public class SwaggerConverter implements Converter {
     private OperationHelper operationHelper;
     private RequestModelConverter requestConverter;
     private Generators generators;
-    private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<>();
 
     public SwaggerConverter(String defn, ValueGenerator valGen) {
         this(null, null, defn, valGen);

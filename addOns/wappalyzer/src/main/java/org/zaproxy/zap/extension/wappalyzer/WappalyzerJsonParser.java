@@ -169,8 +169,7 @@ public class WappalyzerJsonParser {
 
     private static Graphics2D addRenderingHints(BufferedImage image) {
         Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(
-                RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, new WeakReference<BufferedImage>(image));
+        g2d.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, new WeakReference<>(image));
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(
                 RenderingHints.KEY_ALPHA_INTERPOLATION,
@@ -229,7 +228,7 @@ public class WappalyzerJsonParser {
     }
 
     private List<String> jsonToStringList(Object json) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : (JSONArray) json) {
                 list.add(obj.toString());
@@ -241,7 +240,7 @@ public class WappalyzerJsonParser {
     }
 
     private List<String> jsonToCategoryList(Map<String, String> categories, Object json) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : (JSONArray) json) {
                 String category = categories.get(obj.toString());
@@ -257,7 +256,7 @@ public class WappalyzerJsonParser {
 
     @SuppressWarnings("unchecked")
     private List<Map<String, AppPattern>> jsonToAppPatternMapList(String type, Object json) {
-        List<Map<String, AppPattern>> list = new ArrayList<Map<String, AppPattern>>();
+        List<Map<String, AppPattern>> list = new ArrayList<>();
         if (json instanceof JSONObject) {
             for (Object obj : ((JSONObject) json).entrySet()) {
                 Map.Entry<String, Object> entry = (Map.Entry<String, Object>) obj;
@@ -371,7 +370,7 @@ public class WappalyzerJsonParser {
     }
 
     private List<AppPattern> jsonToPatternList(String type, Object json) {
-        List<AppPattern> list = new ArrayList<AppPattern>();
+        List<AppPattern> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : ((JSONArray) json).toArray()) {
                 String objStr = obj.toString();

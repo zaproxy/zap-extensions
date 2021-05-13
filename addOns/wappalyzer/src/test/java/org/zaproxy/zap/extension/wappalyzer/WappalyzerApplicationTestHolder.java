@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class WappalyzerApplicationTestHolder implements WappalyzerApplicationHolder {
 
-    private List<Application> applications = new ArrayList<Application>();
+    private List<Application> applications = new ArrayList<>();
     private Map<String, List<ApplicationMatch>> siteToApps = new HashMap<>();
 
     @Override

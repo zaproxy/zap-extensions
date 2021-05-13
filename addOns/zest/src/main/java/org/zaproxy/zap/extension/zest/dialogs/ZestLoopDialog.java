@@ -185,7 +185,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private void drawLoopClientElementsDialog(ZestLoopClientElements loop) {
         // Pull down of all the valid window ids
         ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
-        List<String> windowIds = new ArrayList<String>(script.getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(
                 ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, loop.getWindowHandle());
@@ -211,14 +211,14 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
             list.add(
                     Constant.messages.getString(

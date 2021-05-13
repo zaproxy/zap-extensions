@@ -37,7 +37,7 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xaspnetversion.";
 
-    private final List<String> xAspNetHeaders = new ArrayList<String>();
+    private final List<String> xAspNetHeaders = new ArrayList<>();
 
     public XAspNetVersionScanRule() {
         xAspNetHeaders.add("X-AspNet-Version");

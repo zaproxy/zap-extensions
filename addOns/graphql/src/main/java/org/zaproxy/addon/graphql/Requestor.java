@@ -41,7 +41,7 @@ public class Requestor {
 
     private final int initiator;
     private final URI endpointUrl;
-    private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
+    private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
     private static final Logger LOG = LogManager.getLogger(Requestor.class);

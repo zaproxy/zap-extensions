@@ -289,7 +289,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     public List<JobResultData> getJobResultData() {
-        List<JobResultData> list = new ArrayList<JobResultData>();
+        List<JobResultData> list = new ArrayList<>();
         for (AutomationJob job : jobs.values()) {
             list.addAll(job.getJobResultData());
         }

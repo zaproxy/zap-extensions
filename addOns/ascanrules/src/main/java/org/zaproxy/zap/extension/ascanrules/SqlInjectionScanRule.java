@@ -1202,12 +1202,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                     refreshedmessage.getRequestHeader().getURI());
                             Patch<String> diffpatch =
                                     DiffUtils.diff(
-                                            new LinkedList<String>(
+                                            new LinkedList<>(
                                                     Arrays.asList(
                                                             normalBodyOutput[
                                                                     booleanStrippedUnstrippedIndex]
                                                                     .split("\\n"))),
-                                            new LinkedList<String>(
+                                            new LinkedList<>(
                                                     Arrays.asList(
                                                             andTrueBodyOutput[
                                                                     booleanStrippedUnstrippedIndex]

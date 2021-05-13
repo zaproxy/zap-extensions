@@ -47,14 +47,14 @@ public class MonitoredPagesManager {
 
     public static final String CLIENT_MESSAGE_TYPE_HEARTBEAT = "heartbeat";
     private boolean monitorAllInScope = false;
-    private List<Pattern> includeRegexes = new ArrayList<Pattern>();
-    private List<Pattern> excludeRegexes = new ArrayList<Pattern>();
-    private List<String> oneTimeURLs = new ArrayList<String>();
+    private List<Pattern> includeRegexes = new ArrayList<>();
+    private List<Pattern> excludeRegexes = new ArrayList<>();
+    private List<String> oneTimeURLs = new ArrayList<>();
 
-    private Map<String, MonitoredPage> monitoredPages = new HashMap<String, MonitoredPage>();
-    private Map<String, MonitoredPage> inactivePages = new HashMap<String, MonitoredPage>();
-    private List<MonitoredPageListener> listeners = new ArrayList<MonitoredPageListener>();
-    private List<ClientMessage> queuedMessages = new ArrayList<ClientMessage>();
+    private Map<String, MonitoredPage> monitoredPages = new HashMap<>();
+    private Map<String, MonitoredPage> inactivePages = new HashMap<>();
+    private List<MonitoredPageListener> listeners = new ArrayList<>();
+    private List<ClientMessage> queuedMessages = new ArrayList<>();
 
     private SessionMonitoredClientsPanel sessionPanel =
             null; // Note this wont be initialised in daemon mode
@@ -288,7 +288,7 @@ public class MonitoredPagesManager {
     }
 
     protected List<String> getIncludeRegexes() {
-        List<String> list = new ArrayList<String>(this.includeRegexes.size());
+        List<String> list = new ArrayList<>(this.includeRegexes.size());
         for (Pattern pattern : this.includeRegexes) {
             list.add(pattern.pattern());
         }
@@ -296,7 +296,7 @@ public class MonitoredPagesManager {
     }
 
     protected List<String> getExcludeRegexes() {
-        List<String> list = new ArrayList<String>(this.excludeRegexes.size());
+        List<String> list = new ArrayList<>(this.excludeRegexes.size());
         for (Pattern pattern : this.excludeRegexes) {
             list.add(pattern.pattern());
         }
@@ -326,7 +326,7 @@ public class MonitoredPagesManager {
     }
 
     public ApiResponse messageReceived(ClientMessage msg) {
-        List<ApiResponse> responseSet = new ArrayList<ApiResponse>();
+        List<ApiResponse> responseSet = new ArrayList<>();
 
         MonitoredPage page = this.monitoredPages.get(msg.getClientId());
         if (page != null) {
@@ -371,7 +371,7 @@ public class MonitoredPagesManager {
 
         // Add any queued messages
         synchronized (this.queuedMessages) {
-            List<ClientMessage> handledMessages = new ArrayList<ClientMessage>();
+            List<ClientMessage> handledMessages = new ArrayList<>();
             for (ClientMessage qmsg : this.queuedMessages) {
                 if (qmsg.getClientId().equals(msg.getClientId())) {
                     // Only return messages for this page - simple way to handle multiple browsers
@@ -430,8 +430,8 @@ public class MonitoredPagesManager {
     public void timeoutPages(int time) {
         long timenow = new Date().getTime();
         long timeout;
-        List<MonitoredPage> removeList = new ArrayList<MonitoredPage>();
-        List<SiteNode> activeNodes = new ArrayList<SiteNode>();
+        List<MonitoredPage> removeList = new ArrayList<>();
+        List<SiteNode> activeNodes = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             if (page.getHeartbeat() > 0 && page.getHeartbeat() * 2000 > time) {
                 // Extend the timeout if the poll time is set long
@@ -584,7 +584,7 @@ public class MonitoredPagesManager {
     }
 
     public List<String> getActiveClientIds() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             list.add(page.getId());
         }
@@ -592,7 +592,7 @@ public class MonitoredPagesManager {
     }
 
     public List<MonitoredPage> getActiveClients() {
-        List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+        List<MonitoredPage> list = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             list.add(page);
         }
@@ -600,7 +600,7 @@ public class MonitoredPagesManager {
     }
 
     public List<String> getInactiveClientIds() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (MonitoredPage page : this.inactivePages.values()) {
             list.add(page.getId());
         }
@@ -608,7 +608,7 @@ public class MonitoredPagesManager {
     }
 
     public List<MonitoredPage> getInactiveClients() {
-        List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+        List<MonitoredPage> list = new ArrayList<>();
         for (MonitoredPage page : this.inactivePages.values()) {
             list.add(page);
         }

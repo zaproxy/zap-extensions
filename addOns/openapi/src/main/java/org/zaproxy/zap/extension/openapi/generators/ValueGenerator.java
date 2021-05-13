@@ -48,7 +48,7 @@ public class ValueGenerator {
             return defaultValue;
         }
 
-        HashMap<String, String> fieldAtts = new HashMap<String, String>();
+        HashMap<String, String> fieldAtts = new HashMap<>();
         fieldAtts.put("Control Type", type == null ? "" : type);
         String value =
                 coreValGen.getValue(

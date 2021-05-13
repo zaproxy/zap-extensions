@@ -126,7 +126,7 @@ public class AccessControlAPI extends ApiImplementor {
                                     .getExtension(ExtensionUserManagement.class);
                 }
 
-                List<User> users = new ArrayList<User>();
+                List<User> users = new ArrayList<>();
 
                 String[] commaSeparatedUserIDs =
                         ApiUtils.getNonEmptyStringParam(params, PARAM_USER_ID).split("\\s*,\\s*");

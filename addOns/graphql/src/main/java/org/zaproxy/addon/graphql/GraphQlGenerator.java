@@ -647,7 +647,7 @@ public class GraphQlGenerator {
         if (coreValGen != null && type instanceof GraphQLNamedType) {
             GraphQLNamedType namedType = (GraphQLNamedType) type;
             String typeName = namedType.getName();
-            HashMap<String, String> fieldAttributes = new HashMap<String, String>();
+            HashMap<String, String> fieldAttributes = new HashMap<>();
             fieldAttributes.put("Control Type", "TEXT");
             fieldAttributes.put("type", typeName);
             String value =

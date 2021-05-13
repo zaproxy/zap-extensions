@@ -97,7 +97,7 @@ public class WappalyzerAPI extends ApiImplementor {
             map.put("website", (String) ttm.getValueAt(i, 3));
             map.put("implies", (String) ttm.getValueAt(i, 4));
             map.put("cpe", (String) ttm.getValueAt(i, 5));
-            resultList.addItem(new ApiResponseSet<String>("app", map));
+            resultList.addItem(new ApiResponseSet<>("app", map));
         }
         return resultList;
     }

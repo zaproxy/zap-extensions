@@ -167,7 +167,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /*
      * Vector to store results when we are running in headless mode
      */
-    Vector<HeadlessResult> headlessResult = new Vector<HeadlessResult>(100, 100);
+    Vector<HeadlessResult> headlessResult = new Vector<>(100, 100);
 
     /*
      * stores of information used to transer data to the gui when started with console args
@@ -482,13 +482,13 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             parseWorkers.addElement(new HTMLparse(this));
         }
         // work queue
-        workQueue = new ArrayBlockingQueue<WorkUnit>(workerCount * 3);
+        workQueue = new ArrayBlockingQueue<>(workerCount * 3);
 
         // dir to be processed
-        dirQueue = new ArrayBlockingQueue<DirToCheck>(100000);
+        dirQueue = new ArrayBlockingQueue<>(100000);
 
         // queue to hold a list of items to parsed
-        parseQueue = new ArrayBlockingQueue<HTMLparseWorkUnit>(200000);
+        parseQueue = new ArrayBlockingQueue<>(200000);
 
         timer = new Timer();
 

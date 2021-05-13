@@ -112,7 +112,7 @@ public class CallGraphFrame extends AbstractFrame {
         Connection conn = null;
         Statement st = null;
         ResultSet rs = null;
-        Map<String, String> schemaAuthorityToColor = new HashMap<String, String>();
+        Map<String, String> schemaAuthorityToColor = new HashMap<>();
         // use some web safe colours. Currently, there are 24 colours.
         String[] colors = {
             "#FFFF00", "#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#CCFF00", "#CCCC00", "#CC9900",

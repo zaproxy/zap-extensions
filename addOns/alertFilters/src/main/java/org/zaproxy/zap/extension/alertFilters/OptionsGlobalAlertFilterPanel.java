@@ -44,7 +44,7 @@ public class OptionsGlobalAlertFilterPanel extends AbstractParamPanel {
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
         GlobalAlertFilterParam param = optionsParam.getParamSet(GlobalAlertFilterParam.class);
-        alertFilterModel.setAlertFilters(new ArrayList<AlertFilter>(param.getGlobalAlertFilters()));
+        alertFilterModel.setAlertFilters(new ArrayList<>(param.getGlobalAlertFilters()));
         alertFilterOptionsPanel.setRemoveWithoutConfirmation(!param.isConfirmRemoveFilter());
     }
 

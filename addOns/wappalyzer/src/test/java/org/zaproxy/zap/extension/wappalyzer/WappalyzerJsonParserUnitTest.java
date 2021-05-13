@@ -32,7 +32,7 @@ class WappalyzerJsonParserUnitTest {
         // Given
         WappalyzerJsonParser wjp = new WappalyzerJsonParser();
         WappalyzerData wappData = wjp.parseAppsJson("apps.json");
-        List<String> expectedCategory = new ArrayList<String>(1);
+        List<String> expectedCategory = new ArrayList<>(1);
         expectedCategory.add("Advertising"); // 36 - Advertising
         // When
         List<Application> apps = wappData.getApplications();

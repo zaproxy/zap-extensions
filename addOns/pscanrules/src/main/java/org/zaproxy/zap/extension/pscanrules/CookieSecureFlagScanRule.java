@@ -142,7 +142,7 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
     }
 
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<Alert>();
+        List<Alert> alerts = new ArrayList<>();
         alerts.add(buildAlert(new HttpMessage(), "").build());
         return alerts;
     }

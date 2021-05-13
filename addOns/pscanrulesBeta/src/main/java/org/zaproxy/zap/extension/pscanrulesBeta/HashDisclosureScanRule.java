@@ -42,7 +42,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class HashDisclosureScanRule extends PluginPassiveScanner {
 
     /** a map of a regular expression pattern to details of the Hash type found */
-    static Map<Pattern, HashAlert> hashPatterns = new LinkedHashMap<Pattern, HashAlert>();
+    static Map<Pattern, HashAlert> hashPatterns = new LinkedHashMap<>();
 
     static {
         // Traditional DES: causes *way* too many false positives to enable this..

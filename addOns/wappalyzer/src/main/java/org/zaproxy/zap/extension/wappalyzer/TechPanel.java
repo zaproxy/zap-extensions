@@ -316,7 +316,7 @@ public class TechPanel extends AbstractPanel {
 
     private TableExportButton<JXTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<JXTable>(getTechTable());
+            exportButton = new TableExportButton<>(getTechTable());
         }
         return exportButton;
     }

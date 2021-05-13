@@ -127,7 +127,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getScriptTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (ScriptType st : extension.getExtScript().getScriptTypes()) {
             if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
@@ -149,7 +149,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getRecordTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(Constant.messages.getString("zest.dialog.script.record.type.server"));
         // TODO disable until support improved...
         // list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
@@ -162,7 +162,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(""); // Always start with the blank option
         SiteNode siteRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         if (siteRoot != null && siteRoot.getChildCount() > 0) {
