@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - JSF ViewState
   - MS ViewState
   - X-Content-Type-Options
+- Cache-control scan rule no longer checks CSS messages unless threshold is Low (Issue 6596).
 
 ## [33] - 2021-01-29
 ### Added

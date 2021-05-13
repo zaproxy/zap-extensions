@@ -26,6 +26,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -198,10 +201,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
 
-    @Test
-    void httpsRedirectMedCacheRequest() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void httpsRedirectMedHighCacheRequest(AlertThreshold threshold)
+            throws HttpMalformedHeaderException {
         // Given
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody("<html></html>");
@@ -213,33 +220,9 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        given(passiveScanData.isClientError(any())).willReturn(false);
-        given(passiveScanData.isServerError(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void httpsRedirectHighCacheRequest() throws HttpMalformedHeaderException {
-
-        rule.setAlertThreshold(AlertThreshold.HIGH);
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 301 Moved Permanently\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Location: http://www.example.org/test2\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
@@ -267,32 +250,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
 
-    @Test
-    void httpsErrorMedCacheRequest() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void httpsErrorMedHighCacheRequest(AlertThreshold threshold)
+            throws HttpMalformedHeaderException {
         // Given
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        given(passiveScanData.isClientError(any())).willReturn(true);
-        given(passiveScanData.isServerError(any())).willReturn(false);
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void httpsErrorHighCacheRequest() throws HttpMalformedHeaderException {
-        // Given
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(threshold);
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody("<html></html>");
@@ -335,10 +300,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
 
-    @Test
-    void httpsJavaScriptMedCacheRequest() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void httpsJavaScriptMedHighCacheRequest(AlertThreshold threshold)
+            throws HttpMalformedHeaderException {
         // Given
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.js HTTP/1.1");
         msg.setResponseBody("STUFF");
@@ -358,16 +327,43 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsJavaScriptHighCacheRequest() throws HttpMalformedHeaderException {
+    void httpsCssLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test.js HTTP/1.1");
+        msg.setRequestHeader("GET https://www.example.com/test.css HTTP/1.1");
         msg.setResponseBody("STUFF");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/javascript;charset=ISO-8859-1\r\n"
+                        + "Content-Type: text/css;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void httpsCssMedHighCacheRequest(AlertThreshold threshold) throws HttpMalformedHeaderException {
+        // Given
+        rule.setAlertThreshold(threshold);
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test.css HTTP/1.1");
+        msg.setResponseBody("STUFF");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/css;charset=ISO-8859-1\r\n"
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");

@@ -41,30 +41,21 @@ public class CacheControlScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getRequestHeader().isSecure() && msg.getResponseBody().length() > 0) {
+        if (msg.getRequestHeader().isSecure()
+                && msg.getResponseBody().length() > 0
+                && !msg.getResponseHeader().isImage()) {
 
-            if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
-                if (msg.getResponseHeader().isImage()) {
-                    return;
-                }
-                if (msg.getRequestHeader().getURI().toString().toLowerCase().endsWith(".css")) {
-                    return;
-                }
-            } else {
-                // MEDIUM or HIGH thresholds
-                if (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())
-                        || getHelper().isClientError(msg)
-                        || getHelper().isServerError(msg)) {
-                    return;
-                } else if (!msg.getResponseHeader().isText()
-                        || msg.getResponseHeader().isJavaScript()) {
-                    // Covers HTML, XML, JSON and TEXT while excluding JS
-                    return;
-                }
+            if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
+                    && (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())
+                            || getHelper().isClientError(msg)
+                            || getHelper().isServerError(msg)
+                            || !msg.getResponseHeader().isText()
+                            || msg.getResponseHeader().isJavaScript()
+                            || msg.getResponseHeader().isCss()
+                            || msg.getRequestHeader().isCss())) {
+                // Covers HTML, XML, JSON and TEXT while excluding JS & CSS
+                return;
             }
 
             List<String> cacheControlList =
@@ -77,12 +68,12 @@ public class CacheControlScanRule extends PluginPassiveScanner {
                     cacheControlHeaders.indexOf("no-store") < 0
                     || cacheControlHeaders.indexOf("no-cache") < 0
                     || cacheControlHeaders.indexOf("must-revalidate") < 0) {
-                this.raiseAlert(msg, id, HttpHeader.CACHE_CONTROL, cacheControlHeaders);
+                this.raiseAlert(HttpHeader.CACHE_CONTROL, cacheControlHeaders);
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String header, String evidence) {
+    private void raiseAlert(String header, String evidence) {
         if (evidence.startsWith("[") && evidence.endsWith("]")) {
             // Due to casting a Vector to a string
             // Strip so that if a single headers used the highlighting will work
