@@ -9,6 +9,7 @@ import org.zaproxy.gradle.addon.misc.CreateGitHubRelease
 import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
 
 plugins {
+    eclipse
     jacoco
     id("org.zaproxy.add-on") version "0.5.0" apply false
 }
@@ -29,9 +30,20 @@ subprojects {
         return@subprojects
     }
 
+    apply(plugin = "eclipse")
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
     apply(plugin = "org.zaproxy.add-on")
+
+    val compileOnlyEclipse by configurations.creating {
+        extendsFrom(configurations.get("compileOnly"))
+    }
+
+    eclipse {
+        classpath {
+            plusConfigurations.add(compileOnlyEclipse)
+        }
+    }
 
     java {
         // Compile with Java 8 when building ZAP releases.
