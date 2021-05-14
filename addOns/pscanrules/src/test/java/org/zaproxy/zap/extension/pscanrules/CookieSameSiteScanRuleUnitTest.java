@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -29,10 +30,15 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -54,148 +60,122 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     }
 
     @Test
-    void noSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+    void shouldAlertWhenNoSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat("Cookie without SameSite Attribute", equalTo(alertsRaised.get(0).getName()));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
 
+    @Test
+    void shouldNotAlertWhenNoCookie() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"none", "None", "nonE"})
+    void shouldAlertGivenNoneSameSiteAttribute(String sameSite)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage(sameSite);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert alert = alertsRaised.get(0);
+        assertEquals("Cookie with SameSite Attribute None", alert.getName());
+    }
+
+    @Test
+    void shouldNotAlertOnNoneSameSiteAttributeHighThreshold() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage("none");
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotAlertOnLaxSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage("Lax");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotAlertOnStrictSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage("strICt");
+        // WHen
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertOnceWhenSecondCookieNoSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage("lax");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
 
     @Test
-    void noCookie() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+    void shouldAlertWhenBadValSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage("badVal");
+        // When
         scanHttpResponseReceive(msg);
-
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void laxSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; SameSite=Lax; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void strictSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; SameSite=strICt; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void secondCookieNoSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: hasatt=test123; Path=/; SameSite=lax; HttpOnly\r\n"
-                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
 
     @Test
-    void badValSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; SameSite=badVal; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+    void shouldAlertWhenNoValSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/; SameSite");
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
 
     @Test
-    void noValSameSiteAttribute() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; SameSite; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+    void shouldAlertWhenEmptyValSameSiteAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/; SameSite=");
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
@@ -204,18 +184,12 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     @Test
     void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE,
+                        "test=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/");
         // When
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -224,18 +198,12 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     @Test
     void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE,
+                        "test=\"\"; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/");
         // When
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -243,28 +211,18 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
 
     @Test
     void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        // When
-        msg.setResponseBody("<html></html>");
-
+        // Given - value empty, expiry in +1 year
         DateTimeFormatter df =
                 DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
                         .withZone(ZoneOffset.UTC);
         LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
         String expiry = dateTime.format(df);
 
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires="
-                        + expiry
-                        + "; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE, "test=\"\"; expires=" + expiry + "; Path=/");
+        // Then
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
@@ -274,28 +232,18 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
 
     @Test
     void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        // When
-        msg.setResponseBody("<html></html>");
-
+        // Given - value empty, expiry in +1 year
         DateTimeFormatter df =
                 DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
                         .withZone(ZoneOffset.UTC);
         LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
         String expiry = dateTime.format(df);
 
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires="
-                        + expiry
-                        + "; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE, "test=\"\"; expires=" + expiry + "; Path=/");
+        // Then
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
@@ -304,22 +252,18 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     }
 
     @Test
-    void secondCookieNoSameSiteAttributeFirstExpired() throws HttpMalformedHeaderException {
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: hasatt=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; secure\r\n"
-                        + "Set-Cookie: test=123; Path=/;\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+    void shouldAlertOnceWhenSecondCookieNoSameSiteAttributeFirstExpired()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE,
+                        "hasatt=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/;");
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
@@ -332,22 +276,10 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
 
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/");
         // When
         scanHttpResponseReceive(msg);
-
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -359,25 +291,38 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
 
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/");
         // When
         scanHttpResponseReceive(msg);
-
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
+
+    private static HttpMessage createMessage() throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        return msg;
+    }
+
+    private static HttpMessage createMessage(String sameSite) throws HttpMalformedHeaderException {
+        HttpMessage msg = createMessage();
+        if (!sameSite.isEmpty()) {
+            msg.getResponseHeader()
+                    .setHeader(
+                            HttpResponseHeader.SET_COOKIE,
+                            "test=123; Path=/; SameSite=" + sameSite);
+        }
+        return msg;
     }
 }

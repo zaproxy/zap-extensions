@@ -76,7 +76,12 @@ A cookie set with the secure flag will not be sent during a plain HTTP session.
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSecureFlagScanRule.java">CookieSecureFlagScanRule.java</a>
 
 <H2>Cookie Without SameSite Attribute</H2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+This reports any cookies that:
+<ul>
+  <li>do not have the SameSite attribute</li>
+  <li>have the attribute set to "None" (ignored at HIGH Threshold)</li>
+  <li>do not have a recognised valid value for that attribute</li>
+</ul>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSameSiteScanRule.java">CookieSameSiteScanRule.java</a>
 

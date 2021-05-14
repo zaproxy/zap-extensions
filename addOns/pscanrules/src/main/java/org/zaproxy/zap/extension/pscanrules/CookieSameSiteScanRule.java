@@ -24,6 +24,7 @@ import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,6 +42,7 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
     private static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";
     private static final String SAME_SITE_COOKIE_VALUE_STRICT = "Strict";
     private static final String SAME_SITE_COOKIE_VALUE_LAX = "Lax";
+    private static final String SAME_SITE_COOKIE_VALUE_NONE = "None";
 
     private Model model = null;
 
@@ -51,11 +53,11 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        checkCookies(msg, id, HttpHeader.SET_COOKIE);
-        checkCookies(msg, id, HttpHeader.SET_COOKIE2);
+        checkCookies(msg, HttpHeader.SET_COOKIE);
+        checkCookies(msg, HttpHeader.SET_COOKIE2);
     }
 
-    private void checkCookies(HttpMessage msg, int id, String cookieHeader) {
+    private void checkCookies(HttpMessage msg, String cookieHeader) {
         List<String> cookies = msg.getResponseHeader().getHeaderValues(cookieHeader);
 
         if (cookies.isEmpty()) {
@@ -72,18 +74,31 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
             String sameSiteVal = CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
             if (sameSiteVal == null) {
                 // Its missing
-                this.raiseAlert(msg, id, cookie, this.getDescription());
+                this.raiseAlert(msg, cookie, getName(), getDescription());
+            } else if (sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_NONE)
+                    && !AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+                this.raiseAlert(
+                        msg,
+                        cookieHeader,
+                        Constant.messages.getString(MESSAGE_PREFIX + "none.name"),
+                        Constant.messages.getString(MESSAGE_PREFIX + "none.desc"));
             } else if (!(sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_STRICT)
-                    || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_LAX))) {
+                    || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_LAX)
+                    || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_NONE))) {
                 // Its present but with an illegal value
                 this.raiseAlert(
-                        msg, id, cookie, Constant.messages.getString(MESSAGE_PREFIX + "badval"));
+                        msg,
+                        cookie,
+                        Constant.messages.getString(MESSAGE_PREFIX + "badval.name"),
+                        Constant.messages.getString(MESSAGE_PREFIX + "badval.desc"));
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String cookieHeaderValue, String description) {
+    private void raiseAlert(
+            HttpMessage msg, String cookieHeaderValue, String name, String description) {
         newAlert()
+                .setName(name)
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(description)
