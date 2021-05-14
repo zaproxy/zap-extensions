@@ -90,21 +90,21 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
     public void save() {
         // In this case, the 'Save' action corresponds to starting a scan with the specified options
         AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
-        startOptions.targetContext =
-                ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext();
-        startOptions.targetUsers = usersSelectTable.getSelectedUsers();
+        startOptions.setTargetContext(
+                ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext());
+        startOptions.setTargetUsers(usersSelectTable.getSelectedUsers());
         // If the un-authenticated user was selected, replace it with a 'null' user
-        if (startOptions.targetUsers.remove(unauthenticatedUser)) {
-            startOptions.targetUsers.add(null);
+        if (startOptions.getTargetUsers().remove(unauthenticatedUser)) {
+            startOptions.getTargetUsers().add(null);
         }
-        startOptions.raiseAlerts = ((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected();
+        startOptions.setRaiseAlerts(((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected());
         // Just to make sure we have a reference here to MSG_RISK for taking care when refactoring
         // and that this still works if somehow the connection between index and value is lost, we
         // perform a quick search
         @SuppressWarnings("unchecked")
         String selectedAlertRisk =
                 (String) ((JComboBox<String>) getField(FIELD_ALERTS_RISK)).getSelectedItem();
-        startOptions.alertRiskLevel = ArrayUtils.indexOf(Alert.MSG_RISK, selectedAlertRisk);
+        startOptions.setAlertRiskLevel(ArrayUtils.indexOf(Alert.MSG_RISK, selectedAlertRisk));
         extension.startScan(startOptions);
     }
 

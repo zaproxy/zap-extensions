@@ -24,6 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Mode;
 
 /**
@@ -138,9 +141,10 @@ public abstract class WebSocketMessage {
 
     // 1015 is another reserved status code
 
-    public static final int[] OPCODES = {
-        OPCODE_TEXT, OPCODE_BINARY, OPCODE_CLOSE, OPCODE_PING, OPCODE_PONG
-    };
+    private static final List<Integer> OPCODES =
+            Collections.unmodifiableList(
+                    Arrays.asList(
+                            OPCODE_TEXT, OPCODE_BINARY, OPCODE_CLOSE, OPCODE_PING, OPCODE_PONG));
 
     /**
      * Indicates the opcode of this message. Initially it is set to -1, meaning that its type is
@@ -399,28 +403,28 @@ public abstract class WebSocketMessage {
     public WebSocketMessageDTO getDTO() {
         // build upon base dto attribute set in constructor,
         // such that existing instances are updated with changed values.
-        dto.channel = proxy.getDTO();
+        dto.setChannel(proxy.getDTO());
 
         Timestamp ts = getTimestamp();
         dto.setTime(ts);
 
-        dto.opcode = getOpcode();
-        dto.readableOpcode = getOpcodeString();
+        dto.setOpcode(getOpcode());
+        dto.setReadableOpcode(getOpcodeString());
 
         if (isBinary()) {
-            dto.payload = getPayload();
+            dto.setPayload(getPayload());
         } else {
-            dto.payload = getReadablePayload();
+            dto.setPayload(getReadablePayload());
 
-            if (dto.payload == null) {
+            if (dto.getPayload() == null) {
                 // prevents NullPointerException
-                dto.payload = "";
+                dto.setPayload("");
             }
         }
 
-        dto.isOutgoing = (getDirection() == Direction.OUTGOING) ? true : false;
+        dto.setOutgoing((getDirection() == Direction.OUTGOING) ? true : false);
 
-        dto.payloadLength = getPayloadLength();
+        dto.setPayloadLength(getPayloadLength());
 
         return dto;
     }
@@ -432,5 +436,9 @@ public abstract class WebSocketMessage {
     @Override
     public String toString() {
         return "WebSocketMessage#" + getMessageId();
+    }
+
+    public static List<Integer> getOpcodes() {
+        return OPCODES;
     }
 }

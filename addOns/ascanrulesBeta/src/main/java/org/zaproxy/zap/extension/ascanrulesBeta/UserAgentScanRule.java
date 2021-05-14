@@ -59,7 +59,7 @@ public class UserAgentScanRule extends AbstractAppPlugin {
     private static final String I_PHONE_3 =
             "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16";
 
-    public static final List<String> USER_AGENTS =
+    private static final List<String> USER_AGENTS =
             Arrays.asList(
                     INTERNET_EXPLORER_8,
                     INTERNET_EXPLORER_7,
@@ -128,6 +128,10 @@ public class UserAgentScanRule extends AbstractAppPlugin {
 
     private static Supplier<Iterable<String>> getUserAgentPayloads() {
         return payloadProvider;
+    }
+
+    public static List<String> getUserAgents() {
+        return USER_AGENTS;
     }
 
     private void attack(String userAgent) {

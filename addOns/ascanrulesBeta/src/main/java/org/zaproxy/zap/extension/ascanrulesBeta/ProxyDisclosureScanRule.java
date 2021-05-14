@@ -56,18 +56,18 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.proxydisclosure.";
 
-    public static final List<String> MAX_FORWARD_METHODS =
+    private static final List<String> MAX_FORWARD_METHODS =
             new LinkedList<>(
                     Arrays.asList(
                             new String[] {
                                 HttpRequestHeader.TRACE, HttpRequestHeader.OPTIONS,
                             }));
 
-    public static final Pattern NOT_SUPPORTED_APACHE_PATTERN =
+    private static final Pattern NOT_SUPPORTED_APACHE_PATTERN =
             Pattern.compile(
                     "^<address>(.+)\\s+Server[^<]*</address>$",
                     Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    public static final Pattern MAX_FORWARDS_RESPONSE_PATTERN =
+    private static final Pattern MAX_FORWARDS_RESPONSE_PATTERN =
             Pattern.compile(
                     "^Max-Forwards:\\s*([0-9]+)\\s*$",
                     Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -76,7 +76,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
      * a map of patterns indicating any cookies set by a proxy. Use a capture group for the cookie
      * name.
      */
-    public static final Map<Pattern, String> PROXY_COOKIES = new LinkedHashMap<>();
+    private static final Map<Pattern, String> PROXY_COOKIES = new LinkedHashMap<>();
 
     static {
         // Citrix NetScaler
@@ -91,7 +91,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
      * a map of any request headers set by a proxy. Use a capture group for the header name, and
      * another for the value.
      */
-    public static final Map<Pattern, String> PROXY_REQUEST_HEADERS = new LinkedHashMap<>();
+    private static final Map<Pattern, String> PROXY_REQUEST_HEADERS = new LinkedHashMap<>();
 
     static {
         // product-specific headers go first..
@@ -124,41 +124,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
         // detecting a proxy. D'oh!
         // PROXY_REQUEST_HEADERS.put(Pattern.compile("^(Cache-Control):\\s*(.+)\\s*$",
         // Pattern.CASE_INSENSITIVE |  Pattern.MULTILINE | Pattern.DOTALL), "");
-    }
-
-    /**
-     * a map of any response headers set by a proxy. Use a capture group for the header name, and
-     * another for the value.
-     */
-    public static final Map<Pattern, String> PROXY_RESPONSE_HEADERS = new LinkedHashMap<>();
-
-    static {
-        PROXY_RESPONSE_HEADERS.put(
-                Pattern.compile(
-                        "^(X-RBT-Optimized-By):\\s*(.+)\\s*$",
-                        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-                "Riverbed Steelhead");
-
-        PROXY_RESPONSE_HEADERS.put(
-                Pattern.compile(
-                        "^(X-Cache):\\s*(.+)\\s*$",
-                        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-                "");
-        PROXY_RESPONSE_HEADERS.put(
-                Pattern.compile(
-                        "^(X-Cache-Lookup):\\s*(.+)\\s*$",
-                        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-                "");
-        PROXY_RESPONSE_HEADERS.put(
-                Pattern.compile(
-                        "^(Via):\\s*(.+)\\s*$",
-                        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-                "");
-        PROXY_RESPONSE_HEADERS.put(
-                Pattern.compile(
-                        "^(Cache-Control):\\s*(.+)\\s*$",
-                        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-                "");
     }
 
     /** the number of Max-Forwards to apply. Set depending on the Attack strength. */

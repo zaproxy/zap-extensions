@@ -44,7 +44,7 @@ var debug_messages = [
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
     var message = String(msg.getReadablePayload());

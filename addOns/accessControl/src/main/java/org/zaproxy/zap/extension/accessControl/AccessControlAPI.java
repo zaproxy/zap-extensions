@@ -101,7 +101,8 @@ public class AccessControlAPI extends ApiImplementor {
 
                 AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
 
-                startOptions.targetContext = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
+                startOptions.setTargetContext(
+                        ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID));
 
                 Mode mode = Control.getSingleton().getMode();
                 if (Mode.safe.equals(mode)) {
@@ -110,12 +111,12 @@ public class AccessControlAPI extends ApiImplementor {
                             Constant.messages.getString(
                                     "accessControl.scanOptions.error.mode.safe"));
                 } else if (Mode.protect.equals(mode)) {
-                    if (!startOptions.targetContext.isInScope()) {
+                    if (!startOptions.getTargetContext().isInScope()) {
                         throw new ApiException(
                                 ApiException.Type.MODE_VIOLATION,
                                 Constant.messages.getString(
                                         "accessControl.scanOptions.error.mode.protected",
-                                        startOptions.targetContext.getName()));
+                                        startOptions.getTargetContext().getName()));
                     }
                 }
 
@@ -143,7 +144,8 @@ public class AccessControlAPI extends ApiImplementor {
                     }
                     User userToAdd =
                             usersExtension
-                                    .getContextUserAuthManager(startOptions.targetContext.getId())
+                                    .getContextUserAuthManager(
+                                            startOptions.getTargetContext().getId())
                                     .getUserById(userID);
                     if (userToAdd != null) {
                         users.add(userToAdd);
@@ -154,19 +156,19 @@ public class AccessControlAPI extends ApiImplementor {
                     }
                 }
 
-                startOptions.targetUsers = users;
+                startOptions.setTargetUsers(users);
 
                 // Add unauthenticated user
                 if (params.optBoolean(PARAM_UNAUTH_USER, false)) {
-                    startOptions.targetUsers.add(null);
+                    startOptions.getTargetUsers().add(null);
                 }
 
-                startOptions.raiseAlerts = params.optBoolean(PARAM_RAISE_ALERT, true);
+                startOptions.setRaiseAlerts(params.optBoolean(PARAM_RAISE_ALERT, true));
 
-                startOptions.alertRiskLevel =
-                        params.optInt(PARAM_ALERT_RISK_LEVEL, Alert.RISK_HIGH);
-                if (!(startOptions.alertRiskLevel >= Alert.RISK_INFO
-                        && startOptions.alertRiskLevel <= Alert.RISK_HIGH)) {
+                startOptions.setAlertRiskLevel(
+                        params.optInt(PARAM_ALERT_RISK_LEVEL, Alert.RISK_HIGH));
+                if (!(startOptions.getAlertRiskLevel() >= Alert.RISK_INFO
+                        && startOptions.getAlertRiskLevel() <= Alert.RISK_HIGH)) {
                     throw new ApiException(
                             ApiException.Type.ILLEGAL_PARAMETER,
                             "The parsed Alert Risk Level was outside the range: "

@@ -194,7 +194,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
                         if (message == null) {
                             setDefaultMessage();
                         } else if (message instanceof WebSocketMessageDTO
-                                && ((WebSocketMessageDTO) message).opcode == null) {
+                                && ((WebSocketMessageDTO) message).getOpcode() == null) {
                             setDefaultMessage();
                         }
                         setVisible(true);
@@ -206,9 +206,9 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
     @Override
     public void setDefaultMessage() {
         WebSocketMessageDTO msg = new WebSocketMessageDTO();
-        msg.isOutgoing = true;
-        msg.opcode = WebSocketMessage.OPCODE_TEXT;
-        msg.readableOpcode = WebSocketMessage.opcode2string(msg.opcode);
+        msg.setOutgoing(true);
+        msg.setOpcode(WebSocketMessage.OPCODE_TEXT);
+        msg.setReadableOpcode(WebSocketMessage.opcode2string(msg.getOpcode()));
 
         setMessage(msg);
     }
@@ -292,23 +292,23 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         }
 
         public void setMessageMetadata(WebSocketMessageDTO message) {
-            if (message.channel != null && message.channel.id != null) {
-                wsUiHelper.getChannelSingleSelect().setSelectedItem(message.channel);
+            if (message.getChannel() != null && message.getChannel().getId() != null) {
+                wsUiHelper.getChannelSingleSelect().setSelectedItem(message.getChannel());
             }
 
-            if (message.opcode != null) {
-                wsUiHelper.getOpcodeSingleSelect().setSelectedItem(message.readableOpcode);
+            if (message.getOpcode() != null) {
+                wsUiHelper.getOpcodeSingleSelect().setSelectedItem(message.getReadableOpcode());
             }
 
-            if (message.isOutgoing != null) {
-                wsUiHelper.setDirectionSingleSelect(message.isOutgoing);
+            if (message.isOutgoing() != null) {
+                wsUiHelper.setDirectionSingleSelect(message.isOutgoing());
             }
         }
 
         public void setMetadata(WebSocketMessageDTO msg) {
-            msg.channel = wsUiHelper.getSelectedChannelDTO();
-            msg.isOutgoing = wsUiHelper.isDirectionSingleSelectOutgoing();
-            msg.opcode = wsUiHelper.getSelectedOpcodeInteger();
+            msg.setChannel(wsUiHelper.getSelectedChannelDTO());
+            msg.setOutgoing(wsUiHelper.isDirectionSingleSelectOutgoing());
+            msg.setOpcode(wsUiHelper.getSelectedOpcodeInteger());
         }
 
         public void loadConfig() {

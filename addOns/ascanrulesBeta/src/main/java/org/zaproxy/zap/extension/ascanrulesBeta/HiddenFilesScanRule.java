@@ -65,7 +65,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
 
-    public static final List<String> HIDDEN_FILES = new ArrayList<>();
+    private static final List<String> HIDDEN_FILES = new ArrayList<>();
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> HIDDEN_FILES;
     public static final String HIDDEN_FILE_PAYLOAD_CATEGORY = "Hidden-File";
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
@@ -365,6 +365,10 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     private static Supplier<Iterable<String>> getHiddenFilePayloads() {
         return payloadProvider;
+    }
+
+    public static List<String> getHiddenFiles() {
+        return HIDDEN_FILES;
     }
 
     /**

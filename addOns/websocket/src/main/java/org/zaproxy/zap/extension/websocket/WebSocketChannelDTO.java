@@ -31,25 +31,25 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 public class WebSocketChannelDTO implements Comparable<WebSocketChannelDTO> {
 
     /** ChannelId. */
-    public Integer id;
+    private Integer id;
 
     /** Is not necessarily the same as the {@link WebSocketChannelDTO#url}. */
-    public String host;
+    private String host;
 
     /** Port where this channel is connected at. Usually 80 or 443. */
-    public Integer port;
+    private Integer port;
 
     /** URL used in HTTP handshake. */
-    public String url;
+    private String url;
 
     /** Timestamp taken, when connection was established successfully. */
-    public Long startTimestamp;
+    private Long startTimestamp;
 
     /** Timestamp of close, otherwise <code>null</code>. */
-    public Long endTimestamp;
+    private Long endTimestamp;
 
     /** Id of handshake message. */
-    public Integer historyId;
+    private Integer historyId;
 
     public WebSocketChannelDTO() {}
 
@@ -179,5 +179,61 @@ public class WebSocketChannelDTO implements Comparable<WebSocketChannelDTO> {
             regex.append(port);
         }
         return regex.toString();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Long getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(Long startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    public Long getEndTimestamp() {
+        return endTimestamp;
+    }
+
+    public void setEndTimestamp(Long endTimestamp) {
+        this.endTimestamp = endTimestamp;
+    }
+
+    public Integer getHistoryId() {
+        return historyId;
+    }
+
+    public void setHistoryId(Integer historyId) {
+        this.historyId = historyId;
     }
 }

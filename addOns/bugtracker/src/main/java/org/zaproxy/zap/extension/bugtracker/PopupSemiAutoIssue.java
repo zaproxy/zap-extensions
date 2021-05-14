@@ -40,7 +40,6 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
 
     private void showRaiseSemiAutoIssueDialog(Set<Alert> alerts) {
         if (raiseSemiAutoIssueDialog == null) {
-            this.extBT.alerts = alerts;
             raiseSemiAutoIssueDialog =
                     new RaiseSemiAutoIssueDialog(
                             this.extBT,

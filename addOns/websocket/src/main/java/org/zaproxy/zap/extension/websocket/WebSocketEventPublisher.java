@@ -86,7 +86,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
                     () -> {
                         Map<String, String> map = new HashMap<>();
                         map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
-                        map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
+                        map.put(FIELD_CHANNEL_HOST, message.getDTO().getChannel().getHost());
                         map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
                         map.put(FIELD_OP_CODE, Integer.toString(message.getOpcode()));
                         map.put(FIELD_OP_CODE_STRING, message.getOpcodeString());

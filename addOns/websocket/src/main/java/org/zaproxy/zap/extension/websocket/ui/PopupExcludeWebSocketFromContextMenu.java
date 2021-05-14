@@ -80,7 +80,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
     protected void performAction() throws SQLException {
         WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
         if (message != null) {
-            String url = Pattern.quote(message.channel.getContextUrl());
+            String url = Pattern.quote(message.getChannel().getContextUrl());
 
             Session session = Model.getSingleton().getSession();
 
@@ -104,7 +104,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
             WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
 
             if (message != null) {
-                String url = message.channel.getContextUrl();
+                String url = message.getChannel().getContextUrl();
                 setEnabled(isEnabledForUrl(url));
             } else {
                 setEnabled(false);

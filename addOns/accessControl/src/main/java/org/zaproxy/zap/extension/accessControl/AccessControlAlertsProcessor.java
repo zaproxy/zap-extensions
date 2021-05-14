@@ -62,8 +62,8 @@ public class AccessControlAlertsProcessor {
                         Control.getSingleton()
                                 .getExtensionLoader()
                                 .getExtension(ExtensionAlert.NAME);
-        this.shouldRun = alertExtension != null && scanOptions.raiseAlerts;
-        this.alertRiskLevel = scanOptions.alertRiskLevel;
+        this.shouldRun = alertExtension != null && scanOptions.isRaiseAlerts();
+        this.alertRiskLevel = scanOptions.getAlertRiskLevel();
     }
 
     public void processScanResult(AccessControlResultEntry result) {

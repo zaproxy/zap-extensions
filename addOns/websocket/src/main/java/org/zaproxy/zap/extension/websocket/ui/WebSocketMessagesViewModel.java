@@ -170,7 +170,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
             try {
                 for (WebSocketChannelDTO channel : table.getChannelItems()) {
                     if (channel.isInScope()) {
-                        inScopeChannelIds.add(channel.id);
+                        inScopeChannelIds.add(channel.getId());
                     }
                 }
                 return inScopeChannelIds;
@@ -189,11 +189,11 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
         WebSocketMessageDTO message = new WebSocketMessageDTO();
 
         if (activeChannelId != null) {
-            message.channel.id = activeChannelId;
+            message.getChannel().setId(activeChannelId);
         }
 
         if (filter.getDirection() != null) {
-            message.isOutgoing = filter.getDirection().equals(Direction.OUTGOING) ? true : false;
+            message.setOutgoing(filter.getDirection().equals(Direction.OUTGOING) ? true : false);
         }
 
         return message;
@@ -212,24 +212,26 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = new WebSocketMessagePrimaryKey(message.channel.id, message.id);
+                value =
+                        new WebSocketMessagePrimaryKey(
+                                message.getChannel().getId(), message.getId());
                 break;
             case 1:
                 // had problems with ASCII arrows => use icons
-                if (message.isOutgoing) {
+                if (message.isOutgoing()) {
                     value = outgoingDirection;
                 } else {
                     value = incomingDirection;
                 }
                 break;
             case 2:
-                value = message.dateTime;
+                value = message.getDateTime();
                 break;
             case 3:
-                value = message.opcode + "=" + message.readableOpcode;
+                value = message.getOpcode() + "=" + message.getReadableOpcode();
                 break;
             case 4:
-                value = message.payloadLength;
+                value = message.getPayloadLength();
                 break;
             case 5:
                 String preview = message.getPayloadAsString();
@@ -318,11 +320,12 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
         String pk = message.toString();
         if (fullMessagesCache.containsKey(pk)) {
             return (WebSocketMessageDTO) fullMessagesCache.get(pk);
-        } else if (message.id == null) {
+        } else if (message.getId() == null) {
             return message;
         } else {
             try {
-                WebSocketMessageDTO fullMessage = table.getMessage(message.id, message.channel.id);
+                WebSocketMessageDTO fullMessage =
+                        table.getMessage(message.getId(), message.getChannel().getId());
                 fullMessagesCache.put(pk, fullMessage);
 
                 return fullMessage;
@@ -365,7 +368,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
      */
     public void fireMessageArrived(WebSocketMessageDTO message) {
         boolean isAllowlistedChannel =
-                (activeChannelId == null) || message.channel.id.equals(activeChannelId);
+                (activeChannelId == null) || message.getChannel().getId().equals(activeChannelId);
         if ((filter != null && filter.isDenylisted(message)) || !isAllowlistedChannel) {
             // no need to fire update, as it isn't active now
         } else {
@@ -386,20 +389,20 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
     }
 
     public Integer getModelRowIndexOf(WebSocketMessageDTO message) {
-        if (message.id == null) {
+        if (message.getId() == null) {
             return null;
         }
 
         WebSocketMessageDTO criteria = getCriterionMessage();
-        criteria.channel.id = message.channel.id;
-        criteria.id = message.id;
+        criteria.getChannel().setId(message.getChannel().getId());
+        criteria.setId(message.getId());
 
         try {
             return table.getIndexOf(criteria, null, null);
         } catch (DatabaseException e) {
             logger.error(e.getMessage(), e);
             // maybe I'm right with this guess - try
-            return message.id - 1;
+            return message.getId() - 1;
         }
     }
 

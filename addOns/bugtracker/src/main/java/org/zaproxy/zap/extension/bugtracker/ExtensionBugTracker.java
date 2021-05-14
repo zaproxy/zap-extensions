@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
@@ -32,7 +30,6 @@ import org.parosproxy.paros.view.View;
 public class ExtensionBugTracker extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionBugTracker";
-    public Set<Alert> alerts = null;
 
     protected static final String PREFIX = "bugtracker";
 

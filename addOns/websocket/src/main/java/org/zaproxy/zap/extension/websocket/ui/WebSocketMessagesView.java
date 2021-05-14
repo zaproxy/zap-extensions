@@ -216,7 +216,7 @@ public class WebSocketMessagesView implements Runnable {
                 final WebSocketMessageDTO msg = message;
                 EventQueue.invokeAndWait(
                         () -> {
-                            if (msg.isOutgoing.booleanValue()) {
+                            if (msg.isOutgoing().booleanValue()) {
                                 requestPanel.setMessage(msg);
                                 responsePanel.clearView(false);
                                 requestPanel.setTabFocus();
@@ -257,7 +257,8 @@ public class WebSocketMessagesView implements Runnable {
                 displayQueue.clear();
             }
 
-            message.tempUserObj = WebSocketPanel.connectedChannelIds.contains(message.channel.id);
+            message.setTempUserObj(
+                    WebSocketPanel.connectedChannelIds.contains(message.getChannel().getId()));
             displayQueue.add(message);
         }
 

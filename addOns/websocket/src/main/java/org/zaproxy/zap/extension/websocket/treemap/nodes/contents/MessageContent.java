@@ -74,8 +74,8 @@ public class MessageContent extends WebSocketContent {
                                 .getReadablePayload()
                                 .compareTo(that.getMessage().getReadablePayload());
                 if (compareResult == 0
-                        && !this.getMessage().isOutgoing.equals(that.getMessage().isOutgoing)) {
-                    compareResult = that.getMessage().isOutgoing ? 1 : -1;
+                        && !this.getMessage().isOutgoing().equals(that.getMessage().isOutgoing())) {
+                    compareResult = that.getMessage().isOutgoing() ? 1 : -1;
                 }
             } catch (InvalidUtf8Exception ignored) {
                 compareResult = super.compareTo(that);

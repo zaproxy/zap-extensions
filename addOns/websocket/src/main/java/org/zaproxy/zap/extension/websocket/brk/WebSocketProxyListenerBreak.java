@@ -100,19 +100,19 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
             return continueNotifying;
         }
 
-        if (message.isOutgoing) {
+        if (message.isOutgoing()) {
             // already safe => onlyIfInScope can be false
             if (wsBrkMessageHandler.handleMessageReceivedFromClient(message, false)) {
                 // As the DTO that is shown and modified in the
                 // Request/Response panels we must set the content to message
                 // here.
-                setPayload(wsMessage, message.payload);
+                setPayload(wsMessage, message.getPayload());
                 continueNotifying = true;
             }
         } else {
             // already safe => onlyIfInScope can be false
             if (wsBrkMessageHandler.handleMessageReceivedFromServer(message, false)) {
-                setPayload(wsMessage, message.payload);
+                setPayload(wsMessage, message.getPayload());
                 continueNotifying = true;
             }
         }

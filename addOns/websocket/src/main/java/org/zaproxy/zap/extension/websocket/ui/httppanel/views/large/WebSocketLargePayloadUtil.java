@@ -28,10 +28,10 @@ public class WebSocketLargePayloadUtil extends LargeResponseUtil {
     public static boolean isLargePayload(Message aMessage) {
         if (aMessage instanceof WebSocketMessageDTO) {
             WebSocketMessageDTO message = (WebSocketMessageDTO) aMessage;
-            if (message.payloadLength == null || minContentLength == -1) {
+            if (message.getPayloadLength() == null || minContentLength == -1) {
                 return false;
             }
-            return message.payloadLength > minContentLength;
+            return message.getPayloadLength() > minContentLength;
         }
 
         return false;

@@ -61,13 +61,13 @@ public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO>
 
     private WebSocketFuzzMessageDTO sendMessage(
             Map<Integer, WebSocketProxy> wsProxies, WebSocketFuzzMessageDTO message) {
-        if (!wsProxies.containsKey(message.channel.id)) {
+        if (!wsProxies.containsKey(message.getChannel().getId())) {
             getParent().stopScan();
             return null;
         }
 
         try {
-            WebSocketProxy wsProxy = wsProxies.get(message.channel.id);
+            WebSocketProxy wsProxy = wsProxies.get(message.getChannel().getId());
 
             message.fuzzId = getParent().getId();
             if (wsProxy.send(message, Initiator.FUZZER)) {

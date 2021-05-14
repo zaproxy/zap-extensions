@@ -67,7 +67,7 @@ public class ComboBoxChannelRenderer extends JLabel
         if (channel != null) {
             text = channel.toString();
 
-            if (channel.id != null) {
+            if (channel.getId() != null) {
                 setWebSocketIcon(channel);
             } else {
                 // unset icon

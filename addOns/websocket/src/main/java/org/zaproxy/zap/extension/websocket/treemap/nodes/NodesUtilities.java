@@ -40,7 +40,7 @@ public class NodesUtilities {
         } else {
             scheme = "ws";
         }
-        host.append(scheme).append("://").append(channel.host);
+        host.append(scheme).append("://").append(channel.getHost());
 
         if ((port != 80 && port != 443)) {
             host.append(":").append(port);
@@ -51,8 +51,8 @@ public class NodesUtilities {
 
     private static int getPort(WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
-        return channel.port != -1
-                ? channel.port
+        return channel.getPort() != -1
+                ? channel.getPort()
                 : channel.getHandshakeReference()
                         .getHttpMessage()
                         .getRequestHeader()

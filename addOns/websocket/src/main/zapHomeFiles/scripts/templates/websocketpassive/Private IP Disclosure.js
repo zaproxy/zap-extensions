@@ -59,7 +59,7 @@ patternPre.push(
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
     var ipRegex = new RegExp(patternPre.join(""),"gim");

@@ -74,7 +74,7 @@ public class ChannelSortedListModel extends SortedListModel<WebSocketChannelDTO>
             final int index = indexOf(channel);
             if (index != -1) {
                 WebSocketChannelDTO old = getElementAt(index);
-                old.endTimestamp = channel.endTimestamp;
+                old.setEndTimestamp(channel.getEndTimestamp());
 
                 fireContentsChanged(this, index, index);
             }

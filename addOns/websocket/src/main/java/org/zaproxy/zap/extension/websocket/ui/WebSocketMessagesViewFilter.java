@@ -107,26 +107,26 @@ public class WebSocketMessagesViewFilter {
      * @return True if the given entry is filtered out, false if valid.
      */
     public boolean isDenylisted(WebSocketMessageDTO message) {
-        if (isShowJustInScope && !message.channel.isInScope()) {
+        if (isShowJustInScope && !message.getChannel().isInScope()) {
             return true;
         }
 
         if (opcodeList != null) {
-            if (!opcodeList.contains(message.opcode)) {
+            if (!opcodeList.contains(message.getOpcode())) {
                 return true;
             }
         }
 
         if (direction != null) {
-            if (message.isOutgoing && !direction.equals(Direction.OUTGOING)) {
+            if (message.isOutgoing() && !direction.equals(Direction.OUTGOING)) {
                 return true;
-            } else if (!message.isOutgoing && !direction.equals(Direction.INCOMING)) {
+            } else if (!message.isOutgoing() && !direction.equals(Direction.INCOMING)) {
                 return true;
             }
         }
 
         if (payloadFilter != null
-                && message.payload instanceof String
+                && message.getPayload() instanceof String
                 && !payloadFilter.isMessageValidWithPattern(message)) {
             return true;
             // binary messages are not affected by pattern

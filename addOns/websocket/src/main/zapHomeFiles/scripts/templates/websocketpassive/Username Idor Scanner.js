@@ -20,7 +20,7 @@ var usersList = null;
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing || (usersList = getUsers()) == null){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing() || (usersList = getUsers()) == null){
         return;
     }
     var message = String(msg.getReadablePayload());

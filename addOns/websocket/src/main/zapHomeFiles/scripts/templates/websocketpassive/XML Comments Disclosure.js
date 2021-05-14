@@ -35,7 +35,7 @@ var commentPatterns = [/\bTODO\b/gmi,
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode()!= OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
 

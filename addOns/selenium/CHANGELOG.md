@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Update links to zaproxy repo.
-- Maintenance changes.
+- Maintenance changes (some changes impact the visibility of variables and getters/setters, which may impact third party add-ons or scripts).
 
 ## [15.3.0] - 2020-12-15
 ### Changed

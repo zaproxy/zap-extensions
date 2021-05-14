@@ -127,12 +127,12 @@ class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         host2Messages.sort(comparator);
 
         // Then
-        assertEquals(host1Messages.get(0).id, messages.get(0).id);
-        assertEquals(host1Messages.get(1).id, messages.get(2).id);
-        assertEquals(host1Messages.get(2).id, messages.get(4).id);
+        assertEquals(host1Messages.get(0).getId(), messages.get(0).getId());
+        assertEquals(host1Messages.get(1).getId(), messages.get(2).getId());
+        assertEquals(host1Messages.get(2).getId(), messages.get(4).getId());
 
-        assertEquals(host2Messages.get(0).id, messages.get(1).id);
-        assertEquals(host2Messages.get(1).id, messages.get(3).id);
+        assertEquals(host2Messages.get(0).getId(), messages.get(1).getId());
+        assertEquals(host2Messages.get(1).getId(), messages.get(3).getId());
     }
 
     @Test
@@ -153,8 +153,8 @@ class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         // Then
         WebSocketMessageDTO actualMessage =
                 nodeFactory.getRoot().getMessagesPerHost(new HashMap<>()).get(hostNode).get(0);
-        assertEquals(expectedMessage.id, actualMessage.id);
-        assertEquals(expectedMessage.channel, actualMessage.channel);
+        assertEquals(expectedMessage.getId(), actualMessage.getId());
+        assertEquals(expectedMessage.getChannel(), actualMessage.getChannel());
     }
 
     @Test
