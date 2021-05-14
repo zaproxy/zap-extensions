@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - MS ViewState
   - X-Content-Type-Options
 - Cache-control scan rule no longer checks CSS messages unless threshold is Low (Issue 6596).
+- Cookie SameSite Attribute scan rule now handles the value "none" (Issue 6482).
 
 ## [33] - 2021-01-29
 ### Added
