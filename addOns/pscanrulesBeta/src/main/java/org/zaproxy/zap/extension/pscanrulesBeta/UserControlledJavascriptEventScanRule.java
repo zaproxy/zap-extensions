@@ -92,11 +92,6 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (!getHelper().isPage200(msg)) {
             return;

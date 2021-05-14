@@ -117,11 +117,6 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         String host = msg.getRequestHeader().getHostName();
 

@@ -67,12 +67,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         // Nothing to do.
     }
 
-    /** does nothing. The request itself is not scanned. Only the response is scanned. */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
     /**
      * gets the plugin id for this extension
      *

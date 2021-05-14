@@ -51,11 +51,6 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         List<HttpCookie> cookies =
                 msg.getResponseHeader().getHttpCookies(msg.getRequestHeader().getHostName());

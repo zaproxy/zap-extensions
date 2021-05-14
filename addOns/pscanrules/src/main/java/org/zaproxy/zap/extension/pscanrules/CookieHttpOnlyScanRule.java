@@ -50,11 +50,6 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Ignore
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         IteratorChain iterator = new IteratorChain();
         List<String> cookies1 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);

@@ -49,11 +49,6 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this scan rule
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 

@@ -49,9 +49,6 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         boolean includeErrorsAndRedirects = false;
 

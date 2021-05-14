@@ -57,15 +57,6 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
     }
 
     /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    /**
      * scans the HTTP response for cross-domain mis-configurations
      *
      * @param msg

@@ -46,11 +46,6 @@ public class ViewstateScanRule extends PluginPassiveScanner {
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Nothing to do on send
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         Map<String, StartTag> hiddenFields = getHiddenFields(source);

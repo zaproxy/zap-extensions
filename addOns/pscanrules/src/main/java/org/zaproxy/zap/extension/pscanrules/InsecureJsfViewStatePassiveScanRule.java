@@ -73,12 +73,6 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // You can also detect potential vulnerabilities here, with the same
-        // caveats as below.
-    }
-
-    @Override
     public int getPluginId() {
         return 90001; // This is be changed if included in the ZAP code base
     }

@@ -81,11 +81,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this plugin
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         boolean cspHeaderFound = false;
         int noticesRisk = Alert.RISK_INFO;

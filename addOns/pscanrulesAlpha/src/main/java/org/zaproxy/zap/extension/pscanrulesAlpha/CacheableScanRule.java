@@ -93,11 +93,6 @@ public class CacheableScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this scan rule
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         // TODO: standardise the logic in the case of duplicate / conflicting headers.

@@ -53,11 +53,6 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this plugin
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 

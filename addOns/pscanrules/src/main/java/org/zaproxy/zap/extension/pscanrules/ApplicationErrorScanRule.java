@@ -144,17 +144,6 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
     }
 
     /**
-     * Scan the request. Currently it does nothing.
-     *
-     * @param msg the HTTP message
-     * @param id the id of the request
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Do Nothing it's related to response managed
-    }
-
-    /**
      * Perform the passive scanning of application errors inside the response content
      *
      * @param msg the message that need to be checked

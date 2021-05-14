@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -210,9 +209,6 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         }
         return null;
     }
-
-    @Override
-    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {}
 
     @Override
     public int getPluginId() {

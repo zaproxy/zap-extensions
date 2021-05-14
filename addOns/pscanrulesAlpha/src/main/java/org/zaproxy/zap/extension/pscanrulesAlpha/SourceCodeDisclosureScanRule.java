@@ -635,11 +635,6 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do nothing
-    }
-
     /**
      * scans the HTTP response for Source Code signatures
      *

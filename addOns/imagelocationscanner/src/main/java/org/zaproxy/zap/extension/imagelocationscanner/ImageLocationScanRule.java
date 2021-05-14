@@ -60,11 +60,6 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
     }
 
 	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		return;
-	}
-
-	@Override
 	public int getPluginId() {
 		return PLUGIN_ID;
 	}

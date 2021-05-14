@@ -63,9 +63,6 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {}
-
-    @Override
     public int getPluginId() {
         return 10108;
     }

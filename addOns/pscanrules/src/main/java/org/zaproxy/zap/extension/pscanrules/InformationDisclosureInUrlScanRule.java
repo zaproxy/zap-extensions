@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -100,9 +99,6 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
             }
         }
     }
-
-    @Override
-    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {}
 
     private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
         newAlert()

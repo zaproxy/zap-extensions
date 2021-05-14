@@ -36,11 +36,6 @@ public class ContentTypeMissingScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10019;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // ignore
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() > 0) {
             List<String> contentType =

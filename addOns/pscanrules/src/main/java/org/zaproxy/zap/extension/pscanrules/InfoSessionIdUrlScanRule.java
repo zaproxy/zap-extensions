@@ -130,18 +130,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
         // Nothing to do.
     }
 
-    /**
-     * Scan the request. Currently it does nothing.
-     *
-     * @param msg the HTTP message
-     * @param id the id of the response
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // do Nothing. All work currently is done in the scanHttpResponseReceive()
-        // method.
-    }
-
     private static final Pattern PATHSESSIONIDPATTERN =
             Pattern.compile(
                     "jsessionid=[\\dA-Z]{" + SESSION_TOKEN_MIN_LENGTH + ",}",
