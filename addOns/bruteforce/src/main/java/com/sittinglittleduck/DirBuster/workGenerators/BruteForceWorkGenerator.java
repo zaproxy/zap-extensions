@@ -25,16 +25,15 @@ import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.DirToCheck;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
 import com.sittinglittleduck.DirBuster.GenBaseCase;
-import com.sittinglittleduck.DirBuster.HTTPHeader;
+import com.sittinglittleduck.DirBuster.HttpStatus;
 import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,8 +68,6 @@ public class BruteForceWorkGenerator implements Runnable {
     // find bug UuF
     // HttpState initialState;
 
-    HttpClient httpclient;
-
     /** Creates a new instance of BruteForceWorkGenerator */
     public BruteForceWorkGenerator(Manager manager) {
         this.manager = manager;
@@ -86,8 +83,6 @@ public class BruteForceWorkGenerator implements Runnable {
         dirQueue = manager.dirQueue;
         fileExtention = manager.getFileExtention();
         firstPart = manager.getFirstPartOfURL();
-
-        httpclient = manager.getHttpclient();
     }
 
     public void run() {
@@ -99,18 +94,14 @@ public class BruteForceWorkGenerator implements Runnable {
             try {
                 URL headurl = new URL(firstPart);
 
-                HeadMethod httphead = new HeadMethod(headurl.toString());
-
-                // set the custom HTTP headers
-                Vector HTTPheaders = manager.getHTTPHeaders();
-                for (int a = 0; a < HTTPheaders.size(); a++) {
-                    HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                    httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                }
-                int responceCode = httpclient.executeMethod(httphead);
+                int responceCode =
+                        manager.getHttpClient()
+                                .send(HttpMethod.HEAD, headurl.toString())
+                                .getStatusCode();
 
                 // if the responce code is method not implemented or fails
-                if (responceCode == 501 || responceCode == 400) {
+                if (responceCode == HttpStatus.NOT_IMPLEMENTED
+                        || responceCode == HttpStatus.BAD_REQUEST) {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
@@ -228,13 +219,13 @@ public class BruteForceWorkGenerator implements Runnable {
         // System.out.println(temp);
         try {
 
-            String method;
+            HttpMethod method;
             if (manager.getAuto()
                     && !baseCaseObj.useContentAnalysisMode()
                     && !baseCaseObj.isUseRegexInstead()) {
-                method = "HEAD";
+                method = HttpMethod.HEAD;
             } else {
-                method = "GET";
+                method = HttpMethod.GET;
             }
 
             if (doingDirs) {

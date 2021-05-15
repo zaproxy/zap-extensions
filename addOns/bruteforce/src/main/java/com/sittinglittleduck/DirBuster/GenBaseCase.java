@@ -21,15 +21,13 @@
  */
 package com.sittinglittleduck.DirBuster;
 
-import java.io.BufferedReader;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,39 +99,17 @@ public class GenBaseCase {
 
         LOG.debug("Getting: {}", failurl);
 
-        GetMethod httpget = new GetMethod(failurl.toString());
-        // set the custom HTTP headers
-        Vector HTTPheaders = manager.getHTTPHeaders();
-        for (int a = 0; a < HTTPheaders.size(); a++) {
-            HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-            /*
-             * Host header has to be set in a different way!
-             */
-            if (httpHeader.getHeader().startsWith("Host")) {
-                httpget.getParams().setVirtualHost(httpHeader.getValue());
-            } else {
-                httpget.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-            }
-        }
-        httpget.setFollowRedirects(Config.followRedirects);
+        HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
         // save the http responce code for the base case
-        failcode = manager.getHttpclient().executeMethod(httpget);
+        failcode = response.getStatusCode();
         manager.workDone();
 
         // we now need to get the content as we need a base case!
-        if (failcode == 200) {
+        if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            BufferedReader input =
-                    new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
-            String tempLine;
-            StringBuffer buf = new StringBuffer();
-            while ((tempLine = input.readLine()) != null) {
-                buf.append("\r\n" + tempLine);
-            }
-            baseResponce = buf.toString();
-            input.close();
+            baseResponce = response.getResponseBody();
 
             // HTMLparse.parseHTML();
 
@@ -143,8 +119,6 @@ public class GenBaseCase {
 
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
-
-            httpget.releaseConnection();
 
             /*
              * get the base case twice more, for consisitency checking
@@ -198,7 +172,6 @@ public class GenBaseCase {
                 LOG.debug("Base case was set to: {}", baseResponce);
             }
         }
-        httpget.releaseConnection();
 
         baseCase =
                 new BaseCase(
@@ -236,46 +209,22 @@ public class GenBaseCase {
 
         URL failurl = new URL(fuzzStart + failString + FuzzEnd);
 
-        GetMethod httpget = new GetMethod(failurl.toString());
-        // set the custom HTTP headers
-        Vector HTTPheaders = manager.getHTTPHeaders();
-        for (int a = 0; a < HTTPheaders.size(); a++) {
-            HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-            /*
-             * Host header has to be set in a different way!
-             */
-            if (httpHeader.getHeader().startsWith("Host")) {
-                httpget.getParams().setVirtualHost(httpHeader.getValue());
-            } else {
-                httpget.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-            }
-        }
-        httpget.setFollowRedirects(Config.followRedirects);
+        HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
         // save the http responce code for the base case
-        failcode = manager.getHttpclient().executeMethod(httpget);
+        failcode = response.getStatusCode();
         manager.workDone();
 
-        if (failcode == 200) {
+        if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            BufferedReader input =
-                    new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
-            String tempLine;
-            StringBuffer buf = new StringBuffer();
-            while ((tempLine = input.readLine()) != null) {
-                buf.append("\r\n" + tempLine);
-            }
-            baseResponce = buf.toString();
-            input.close();
+            baseResponce = response.getResponseBody();
 
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
 
             LOG.debug("Base case was set to: {}", baseResponce);
         }
-
-        httpget.releaseConnection();
 
         /*
          * create the base case object
@@ -295,39 +244,17 @@ public class GenBaseCase {
         int failcode;
         String baseResponce = "";
 
-        GetMethod httpget = new GetMethod(failurl.toString());
-        // set the custom HTTP headers
-        Vector HTTPheaders = manager.getHTTPHeaders();
-        for (int a = 0; a < HTTPheaders.size(); a++) {
-            HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-            /*
-             * Host header has to be set in a different way!
-             */
-            if (httpHeader.getHeader().startsWith("Host")) {
-                httpget.getParams().setVirtualHost(httpHeader.getValue());
-            } else {
-                httpget.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-            }
-        }
-        httpget.setFollowRedirects(Config.followRedirects);
+        HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
         // save the http responce code for the base case
-        failcode = manager.getHttpclient().executeMethod(httpget);
+        failcode = response.getStatusCode();
         manager.workDone();
 
         // we now need to get the content as we need a base case!
-        if (failcode == 200) {
+        if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            BufferedReader input =
-                    new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
-            String tempLine;
-            StringBuffer buf = new StringBuffer();
-            while ((tempLine = input.readLine()) != null) {
-                buf.append("\r\n" + tempLine);
-            }
-            baseResponce = buf.toString();
-            input.close();
+            baseResponce = response.getResponseBody();
 
             // HTMLparse.parseHTML();
 
@@ -337,8 +264,6 @@ public class GenBaseCase {
 
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
-
-            httpget.releaseConnection();
 
             /*
              * return the cleaned responce

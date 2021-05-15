@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
+import com.sittinglittleduck.DirBuster.HttpResponse;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,16 +33,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -81,32 +85,9 @@ public class BruteForce extends Thread implements BruteForceListenner {
         this.tableModel = new BruteForceTableModel();
         log.debug("BruteForce: {}/{} threads: {}", target.getURI(), directory, threads);
 
-        manager = new DirBusterManager(this);
+        manager = new DirBusterManager(new SimpleHttpClientImpl(), this);
 
         manager.setDefaultNoThreads(threads);
-
-        ConnectionParam conParam = Model.getSingleton().getOptionsParam().getConnectionParam();
-
-        manager.setUserAgent(conParam.getDefaultUserAgent());
-
-        // Set up proxy?
-        if (conParam.isUseProxy(target.getHost())) {
-            manager.setProxyRealm(
-                    Model.getSingleton()
-                            .getOptionsParam()
-                            .getConnectionParam()
-                            .getProxyChainRealm());
-            manager.setProxyHost(conParam.getProxyChainName());
-            manager.setProxyPort(conParam.getProxyChainPort());
-            manager.setProxyUsername(conParam.getProxyChainUserName());
-            manager.setProxyPassword(conParam.getProxyChainPassword());
-            manager.setUseProxy(true);
-            manager.setUseProxyAuth(true);
-            log.debug(
-                    "BruteForce : set proxy to {}:{}",
-                    manager.getProxyHost(),
-                    manager.getProxyPort());
-        }
 
         if (bruteForceParam.isBrowseFiles()) {
             extensions = bruteForceParam.getFileExtensionsList();
@@ -364,5 +345,56 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     public int getScanId() {
         return scanId;
+    }
+
+    private static class SimpleHttpClientImpl implements SimpleHttpClient {
+
+        private HttpSender httpSender;
+
+        private SimpleHttpClientImpl() {
+            httpSender =
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.FORCED_BROWSE_INITIATOR);
+        }
+
+        @Override
+        public HttpResponse send(HttpMethod method, String url) throws IOException {
+            HttpMessage httpMessage =
+                    new HttpMessage(
+                            new HttpRequestHeader(method.name(), new URI(url, true), "HTTP/1.1"));
+            httpSender.sendAndReceive(httpMessage, false);
+            return new ZapHttpResponse(httpMessage);
+        }
+    }
+
+    private static class ZapHttpResponse implements HttpResponse {
+
+        private final HttpMessage httpMessage;
+
+        private ZapHttpResponse(HttpMessage httpMessage) {
+            this.httpMessage = httpMessage;
+        }
+
+        @Override
+        public int getStatusCode() {
+            return httpMessage.getResponseHeader().getStatusCode();
+        }
+
+        @Override
+        public String getContentType() {
+            return httpMessage.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        }
+
+        @Override
+        public String getResponseHeader() {
+            return httpMessage.getResponseHeader().toString();
+        }
+
+        @Override
+        public String getResponseBody() {
+            return httpMessage.getResponseBody().toString();
+        }
     }
 }

@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Send HTTP messages with the user-agent defined in ZAP (Issue 173).
+- Send HTTP messages with ZAP, making use of all its features (e.g. user authentication, custom user-agent, HTTP Sender scripts) (Issues 173 and 3060).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
 

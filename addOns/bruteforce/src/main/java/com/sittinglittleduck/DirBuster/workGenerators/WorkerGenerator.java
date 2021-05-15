@@ -22,12 +22,12 @@
 package com.sittinglittleduck.DirBuster.workGenerators;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
-import com.sittinglittleduck.DirBuster.Config;
 import com.sittinglittleduck.DirBuster.DirToCheck;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
 import com.sittinglittleduck.DirBuster.GenBaseCase;
-import com.sittinglittleduck.DirBuster.HTTPHeader;
+import com.sittinglittleduck.DirBuster.HttpStatus;
 import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -38,8 +38,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +54,6 @@ public class WorkerGenerator implements Runnable {
     private String started;
     private boolean stopMe = false;
     private boolean skipCurrent = false;
-    HttpClient httpclient;
 
     /* Logger Object for the class */
     private static final Logger LOG = LogManager.getLogger(WorkerGenerator.class);
@@ -80,14 +77,11 @@ public class WorkerGenerator implements Runnable {
         // extToCheck = manager.getExtToUse();
         inputFile = manager.getInputFile();
         firstPart = manager.getFirstPartOfURL();
-
-        httpclient = manager.getHttpclient();
     }
 
     /** Thread run method */
     public void run() {
         String currentDir = "/";
-        int failcode = 404;
         String line;
         Vector extToCheck = new Vector(10, 5);
         boolean recursive = true;
@@ -120,30 +114,18 @@ public class WorkerGenerator implements Runnable {
             try {
                 URL headurl = new URL(firstPart);
 
-                HeadMethod httphead = new HeadMethod(headurl.toString());
-
-                // set the custom HTTP headers
-                Vector HTTPheaders = manager.getHTTPHeaders();
-                for (int a = 0; a < HTTPheaders.size(); a++) {
-                    HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                    /*
-                     * Host header has to be set in a different way!
-                     */
-                    if (httpHeader.getHeader().startsWith("Host:")) {
-                        httphead.getParams().setVirtualHost(httpHeader.getValue());
-                    } else {
-                        httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                    }
-                }
-
-                httphead.setFollowRedirects(Config.followRedirects);
-                int responceCode = httpclient.executeMethod(httphead);
+                int responceCode =
+                        manager.getHttpClient()
+                                .send(HttpMethod.HEAD, headurl.toString())
+                                .getStatusCode();
 
                 LOG.debug("Response code for head check = {}", responceCode);
 
                 // if the responce code is method not implemented or if the head requests return
                 // 400!
-                if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
+                if (responceCode == HttpStatus.NOT_IMPLEMENTED
+                        || responceCode == HttpStatus.BAD_REQUEST
+                        || responceCode == HttpStatus.METHOD_NOT_ALLOWED) {
                     LOG.debug(
                             "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     // switch the mode to just GET requests
@@ -230,7 +212,9 @@ public class WorkerGenerator implements Runnable {
                             currentURL = new URL(firstPart + currentDir);
                             // System.out.println("first part = " + firstPart);
                             // System.out.println("current dir = " + currentDir);
-                            workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
+                            workQueue.put(
+                                    new WorkUnit(
+                                            currentURL, true, HttpMethod.GET, baseCaseObj, null));
                             LOG.debug("1 adding dir to work list {} {}", method, currentDir);
                         } catch (MalformedURLException ex) {
                             LOG.debug("Bad URL", ex);
@@ -255,13 +239,13 @@ public class WorkerGenerator implements Runnable {
                             line = line.trim();
                             line = makeItemsafe(line);
                             try {
-                                String method;
+                                HttpMethod method;
                                 if (manager.getAuto()
                                         && !baseCaseObj.useContentAnalysisMode()
                                         && !baseCaseObj.isUseRegexInstead()) {
-                                    method = "HEAD";
+                                    method = HttpMethod.HEAD;
                                 } else {
-                                    method = "GET";
+                                    method = HttpMethod.GET;
                                 }
 
                                 currentURL = new URL(firstPart + currentDir + line + "/");
@@ -350,13 +334,13 @@ public class WorkerGenerator implements Runnable {
                                     line = line.trim();
                                     line = makeItemsafe(line);
                                     try {
-                                        String method;
+                                        HttpMethod method;
                                         if (manager.getAuto()
                                                 && !baseCaseObj.useContentAnalysisMode()
                                                 && !baseCaseObj.isUseRegexInstead()) {
-                                            method = "HEAD";
+                                            method = HttpMethod.HEAD;
                                         } else {
-                                            method = "GET";
+                                            method = HttpMethod.GET;
                                         }
 
                                         URL currentURL =

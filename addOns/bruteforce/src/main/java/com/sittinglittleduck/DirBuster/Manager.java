@@ -32,13 +32,6 @@ import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.prefs.Preferences;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,23 +74,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // used to record the total number of dirs that have been found
     // set to 1 as we there must always at least 1
     private int totalDirsFound = 1;
-    public Vector HTTPheaders = new Vector(10, 5);
-    // proxy detials
-    private boolean useProxy = false;
-    private String proxyHost = "";
-    private int proxyPort = 0;
-    // proxy credentials detials
-    private boolean useProxyAuth = false;
-    private String proxyUsername = "";
-    private String proxyPassword = "";
-    private String proxyRealm = "";
     // setting for using a blank extention
     private boolean blankExt = false;
     // store of all extention that are to be tested
     private Vector extToUse = new Vector(10, 5);
-    // variable for httpclient
-    private HttpClient httpclient;
-    private HttpState initialState;
     private Vector producedBasesCases = new Vector(10, 10);
     // used to store all the links that have parsed, will not contain a list a all items, processed
     // as this will consume to much memory.  There for there is a chance of some duplication.
@@ -116,12 +96,6 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public Vector elementsToParse = new Vector(10, 10);
     // Used to store a string of what we are currently processing
     private String currentlyProcessing = "";
-    // variables used to store information about the http athentifcation that is to be used
-    private boolean useHTTPauth = false;
-    private String userName = "";
-    private String password = "";
-    private String realmDomain = "";
-    private String authType = "";
     // Variables to store information used for the URL fuzzing
     private String urlFuzzStart;
     private String urlFuzzEnd;
@@ -186,10 +160,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /* Logger object for the class */
     private static final Logger LOG = LogManager.getLogger(Manager.class);
 
-    private String userAgent;
+    private final SimpleHttpClient httpClient;
 
     // ZAP: Changed to public to allow it to be extended
-    public Manager() {
+    public Manager(SimpleHttpClient httpClient) {
         elementsToParse.addElement(new HTMLelementToParse("a", "href"));
         elementsToParse.addElement(new HTMLelementToParse("img", "src"));
         elementsToParse.addElement(new HTMLelementToParse("form", "action"));
@@ -204,14 +178,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
          */
         loadPrefs();
 
-        /*
-         * create the httpclient
-         */
-        createHttpClient();
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+        this.httpClient = httpClient;
     }
 
     // set up dictionay based attack with normal start
@@ -256,17 +223,12 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         LOG.info("Starting dir/file list based brute forcing");
 
-        setpUpHttpClient();
         createTheThreads();
         workGen = new WorkerGenerator(this);
     }
 
     public Vector<HeadlessResult> getHeadlessResult() {
         return headlessResult;
-    }
-
-    public HttpClient getHttpclient() {
-        return httpclient;
     }
 
     // setup for purebrute force with normal start
@@ -313,7 +275,6 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         LOG.info("Starting dir/file pure brute forcing");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenBrute = new BruteForceWorkGenerator(this);
     }
@@ -343,7 +304,6 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         LOG.info("Starting URL fuzz");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenFuzz = new WorkerGeneratorURLFuzz(this);
     }
@@ -389,80 +349,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         LOG.info("Starting URL fuzz");
 
-        setpUpHttpClient();
         createTheThreads();
         workGenBruteFuzz = new BruteForceURLFuzz(this);
-    }
-
-    private void createHttpClient() {
-        Protocol protocol = Protocol.getProtocol("https");
-        if (protocol == null) {
-            // ZAP: Dont override an existing protocol - it causes problems with ZAP
-            Protocol easyhttps = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
-            Protocol.registerProtocol("https", easyhttps);
-        }
-        initialState = new HttpState();
-
-        MultiThreadedHttpConnectionManager connectionManager =
-                new MultiThreadedHttpConnectionManager();
-        connectionManager.getParams().setDefaultMaxConnectionsPerHost(1000);
-        connectionManager.getParams().setMaxTotalConnections(1000);
-
-        // connectionManager.set
-
-        httpclient = new HttpClient(connectionManager);
-        // httpclient.
-
-    }
-
-    private void setpUpHttpClient() {
-        if (httpclient != null) {
-            // add the proxy setting is required
-            if (this.isUseProxy()) {
-                httpclient
-                        .getHostConfiguration()
-                        .setProxy(this.getProxyHost(), this.getProxyPort());
-                if (this.isUseProxyAuth()) {
-                    httpclient
-                            .getState()
-                            .setProxyCredentials(
-                                    this.getProxyRealm(),
-                                    this.getProxyHost(),
-                                    new UsernamePasswordCredentials(
-                                            this.getProxyUsername(), this.getProxyPassword()));
-                }
-            }
-
-            httpclient
-                    .getHttpConnectionManager()
-                    .getParams()
-                    .setConnectionTimeout(Config.connectionTimeout * 1000);
-            httpclient.setState(initialState);
-            httpclient
-                    .getParams()
-                    .setParameter(
-                            "http.useragent", userAgent != null ? userAgent : Config.userAgent);
-
-            /*
-             * Code to deal with http auth
-             *
-             */
-
-            if (useHTTPauth) {
-                // Credentials creds = new Credentials();
-                // creds.
-                NTCredentials ntCreds =
-                        new NTCredentials(this.userName, this.password, "", this.realmDomain);
-                httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
-            }
-
-            /*
-             * Custom code to add ntlm auth
-             */
-
-            // NTCredentials ntCreds = new NTCredentials("username", "password", "", "");
-            // httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
-        }
     }
 
     private void createTheThreads() {
@@ -965,72 +853,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         }
     }
 
-    public boolean isUseProxy() {
-        return useProxy;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public void setUseProxy(boolean useProxy) {
-        this.useProxy = useProxy;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public boolean isUseProxyAuth() {
-        return useProxyAuth;
-    }
-
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    public String getProxyRealm() {
-        return proxyRealm;
-    }
-
-    public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
-    }
-
-    public void setProxyRealm(String proxyRealm) {
-        this.proxyRealm = proxyRealm;
-    }
-
-    public void setProxyUsername(String proxyUsername) {
-        this.proxyUsername = proxyUsername;
-    }
-
-    public void setUseProxyAuth(boolean useProxyAuth) {
-        this.useProxyAuth = useProxyAuth;
-    }
-
     public boolean isBlankExt() {
         return blankExt;
-    }
-
-    public void addHTTPheader(HTTPHeader header) {
-        HTTPheaders.addElement(header);
-    }
-
-    public Vector getHTTPHeaders() {
-        return HTTPheaders;
     }
 
     public void addExt(ExtToCheck ext) {
@@ -1181,40 +1005,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         workAmountCorrection = workAmountCorrection + amount;
     }
 
-    public String getAuthType() {
-        return authType;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRealmDomain() {
-        return realmDomain;
-    }
-
-    public boolean isUseHTTPauth() {
-        return useHTTPauth;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
     public synchronized int getWorkAmountCorrection() {
         return workAmountCorrection;
-    }
-
-    public void setAuthDetails(String username, String password, String realmDomain, String type) {
-        this.userName = username;
-        this.password = password;
-        this.realmDomain = realmDomain;
-        this.authType = type;
-        this.useHTTPauth = true;
-    }
-
-    public void setDoNotUseAuth() {
-        this.useHTTPauth = false;
     }
 
     public String getUrlFuzzEnd() {
@@ -1357,5 +1149,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public void setOnlyUnderStartPoint(boolean onlyUnderStartPoint) {
         this.onlyUnderStartPoint = onlyUnderStartPoint;
+    }
+
+    public SimpleHttpClient getHttpClient() {
+        return httpClient;
     }
 }
