@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient;
 import java.net.URL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,8 +33,8 @@ public class DirBusterManager extends Manager {
     private boolean finished = false;
     private static Logger log = LogManager.getLogger(DirBusterManager.class);
 
-    public DirBusterManager(BruteForceListenner listenner) {
-        super();
+    public DirBusterManager(SimpleHttpClient httpClient, BruteForceListenner listenner) {
+        super(httpClient);
         this.listenner = listenner;
     }
 

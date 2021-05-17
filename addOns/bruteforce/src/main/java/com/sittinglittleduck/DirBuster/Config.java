@@ -160,10 +160,6 @@ public class Config {
             "DirBuster-"
                     + version
                     + " (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)";
-    /** Default setting for following redirects */
-    public static boolean followRedirects = false;
-    /** Default setting for connection timeout, in seconds */
-    public static int connectionTimeout = 30;
     /** Default setting for connection timeout, in seconds */
     public static String failCaseString = "thereIsNoWayThat-You-CanBeThere";
 

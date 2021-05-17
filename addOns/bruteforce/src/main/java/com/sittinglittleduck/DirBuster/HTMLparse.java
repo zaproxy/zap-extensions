@@ -20,6 +20,7 @@
 // TODO convert this over to a thread, so it doe snot tie up the workers :)
 package com.sittinglittleduck.DirBuster;
 
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -167,14 +168,14 @@ public class HTMLparse extends Thread {
                                 // get base case for item
                                 BaseCase baseCase = findBaseCasePoint(founditem);
                                 if (baseCase != null) {
-                                    String method = "";
+                                    HttpMethod method;
                                     // create work unit for item
                                     if (manager.getAuto()
                                             && !baseCase.useContentAnalysisMode()
                                             && !baseCase.isUseRegexInstead()) {
-                                        method = "HEAD";
+                                        method = HttpMethod.HEAD;
                                     } else {
-                                        method = "GET";
+                                        method = HttpMethod.GET;
                                     }
 
                                     try {
