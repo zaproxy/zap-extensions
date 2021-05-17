@@ -141,7 +141,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
             // using the session, get the list of contexts for the url
             List<Context> contextList =
-                    extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
+                    extAuth.getModel().getSession().getContextsForUrl(requestUri.toString());
 
             // now loop, and see if the url is a login url in each of the contexts in turn...
             for (Context context : contextList) {

@@ -52,7 +52,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
         try {
             logger.debug(
                     "Checking URL {} to see if was served from a shared cache",
-                    msg.getRequestHeader().getURI().getURI());
+                    msg.getRequestHeader().getURI());
 
             // X-Cache: HIT
             // X-Cache: HIT from cache.kolich.local					<-- was the data actually served from the
@@ -87,7 +87,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                                 String evidence = proxyServerDetails;
                                 logger.debug(
                                         "{} was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header",
-                                        msg.getRequestHeader().getURI().getURI());
+                                        msg.getRequestHeader().getURI());
                                 // could be from HTTP/1.0 or HTTP/1.1. We don't know which.
                                 newAlert()
                                         .setRisk(Alert.RISK_INFO)
@@ -126,7 +126,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                         String evidence = "Age: " + ageHeader;
                         logger.debug(
                                 "{} was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value",
-                                msg.getRequestHeader().getURI().getURI());
+                                msg.getRequestHeader().getURI());
                         newAlert()
                                 .setRisk(Alert.RISK_INFO)
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)

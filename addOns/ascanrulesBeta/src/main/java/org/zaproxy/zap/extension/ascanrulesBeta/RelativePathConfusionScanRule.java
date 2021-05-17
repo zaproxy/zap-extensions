@@ -612,8 +612,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 // alert it..
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
-                        .setAttack(hackedUri.getURI())
+                        .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                        .setAttack(hackedUri.toString())
                         .setOtherInfo(extraInfo)
                         .setEvidence(relativeReferenceEvidence)
                         .setMessage(hackedMessage)

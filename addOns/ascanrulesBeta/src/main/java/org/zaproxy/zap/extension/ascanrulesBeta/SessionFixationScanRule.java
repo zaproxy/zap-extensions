@@ -122,7 +122,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
             // using the session, get the list of contexts for the url
             List<Context> contextList =
-                    extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
+                    extAuth.getModel().getSession().getContextsForUrl(requestUri.toString());
 
             // now loop, and see if the url is a login url in each of the contexts in turn...
             for (Context context : contextList) {
@@ -450,7 +450,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName(),
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().getURI());
+                                getBaseMsg().getRequestHeader().getURI());
                         // Note: do NOT continue to the next field at this point..
                         // since we still need to check for Session Fixation.
                     }
@@ -507,7 +507,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         log.debug(
                                 "A session identifier in [{}] URL [{}] {} field: [{}] may be accessible to JavaScript",
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
+                                getBaseMsg().getRequestHeader().getURI(),
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName());
                         // Note: do NOT continue to the next field at this point..
@@ -685,7 +685,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 "A session identifier in [{}] URL [{}] {} field: "
                                         + "[{}] may be accessed until [{}], unless the session is destroyed.",
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
+                                getBaseMsg().getRequestHeader().getURI(),
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName(),
                                 sessionExpiryDescription);
@@ -1078,7 +1078,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             log.debug(
                                     "An exposed session identifier has been found at [{}] URL [{}] on {} {} field: [{}]",
                                     getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().getURI(),
+                                    getBaseMsg().getRequestHeader().getURI(),
                                     (isPseudoUrlParameter ? "pseudo " : ""),
                                     currentHtmlParameter.getType(),
                                     currentHtmlParameter.getName());

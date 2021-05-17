@@ -373,7 +373,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setName(getName() + " - Time Based")
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(attack)
                             .setOtherInfo(extraInfo)
@@ -383,7 +383,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI().getURI(),
+                            msgAttack.getRequestHeader().getURI(),
                             paramName);
                     return;
                 } // query took longer than the amount of time we attempted to retard it by

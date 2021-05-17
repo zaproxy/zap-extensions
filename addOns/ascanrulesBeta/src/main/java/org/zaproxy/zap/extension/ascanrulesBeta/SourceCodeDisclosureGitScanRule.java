@@ -260,13 +260,13 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 null,
                                 null);
                 try {
-                    log.debug("Trying for a Git index file {}", gitindexuri.getURI());
+                    log.debug("Trying for a Git index file {}", gitindexuri);
 
                     if (!gitindexentrycache.isIndexCached(gitindexuri)) {
                         // The Git index is not cached, so parse it and cache it.
                         log.debug(
                                 "Git Index {} is not cached. We will parse and cache it",
-                                gitindexuri.getURI().toString());
+                                gitindexuri);
 
                         data = git.getURIResponseBody(gitindexuri, false, originalMessage);
                         // get the list of relative file paths and Git SHA1s from the file
@@ -293,8 +293,8 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 // cache the entry..
                                 log.debug(
                                         "Caching Git Index file {}, Index Entry {}, SHA1 {}",
-                                        gitindexuri.getURI().toString(),
-                                        gitIndexEntryUri.getURI().toString(),
+                                        gitindexuri,
+                                        gitIndexEntryUri,
                                         gitSHA1Temp);
                                 gitindexentrycache.putIndexEntry(
                                         gitindexuri, gitIndexEntryUri, gitSHA1Temp);
@@ -394,7 +394,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     // it's the least worst way of doing it, IMHO.
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setOtherInfo(new String(disclosedData))
                             .setEvidence(getEvidence(filename, gitURIs))
                             .setMessage(originalMessage)

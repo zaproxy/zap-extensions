@@ -118,11 +118,7 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
             String sitePattern = ".*";
             String title = null;
             if (httpMessage != null) {
-                try {
-                    uri = httpMessage.getRequestHeader().getURI().getURI();
-                } catch (Exception e1) {
-                    log.debug("The URI is not valid");
-                }
+                uri = httpMessage.getRequestHeader().getURI().toString();
             }
 
             switch (nodeType) {

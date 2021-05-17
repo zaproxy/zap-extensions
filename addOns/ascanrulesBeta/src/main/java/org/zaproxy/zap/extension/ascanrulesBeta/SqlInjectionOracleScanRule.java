@@ -307,7 +307,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setName(getName() + " - Time Based")
                             .setParam(paramName)
                             .setAttack(attack)

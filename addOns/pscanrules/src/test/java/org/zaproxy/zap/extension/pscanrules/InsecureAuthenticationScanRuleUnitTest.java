@@ -90,7 +90,7 @@ class InsecureAuthenticationScanRuleUnitTest
                 containsOtherInfoLoadedWithKey(
                         BASIC_AUTH_KEY,
                         HttpRequestHeader.POST,
-                        requestHeader.getURI().getURI(),
+                        requestHeader.getURI(),
                         AUTHORIZATION_BASIC,
                         user,
                         pass));
@@ -124,7 +124,7 @@ class InsecureAuthenticationScanRuleUnitTest
                 containsOtherInfoLoadedWithKey(
                         BASIC_AUTH_KEY,
                         HttpRequestHeader.POST,
-                        requestHeader.getURI().getURI(),
+                        requestHeader.getURI(),
                         AUTHORIZATION_BASIC,
                         user,
                         null));
@@ -183,7 +183,7 @@ class InsecureAuthenticationScanRuleUnitTest
                 containsOtherInfoLoadedWithKey(
                         DIGEST_AUTH_KEY,
                         HttpRequestHeader.POST,
-                        requestHeader.getURI().getURI(),
+                        requestHeader.getURI(),
                         AUTHORIZATION_DIGEST,
                         user,
                         digestValue));

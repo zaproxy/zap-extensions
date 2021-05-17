@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- The SQL Injection scan rule will raise alerts with the URI field in encoded form.
 
+### Fixed
+- Correct Context check in SQL Injection scan rule.
 
 ## [39] - 2021-05-10
 ### Changed

@@ -411,7 +411,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                     // raise the alert
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(newTimeBasedInjectionValue)
                             .setOtherInfo(extraInfo)

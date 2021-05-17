@@ -435,7 +435,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                             // raise the alert
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                                     .setParam(paramName)
                                     .setAttack(newTimeBasedInjectionValue)
                                     .setOtherInfo(extraInfo)
@@ -576,7 +576,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
                             .setAttack(detectableDelayParameter)
                             .setOtherInfo(extraInfo)
@@ -728,7 +728,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                                                     getBaseMsg()
                                                                             .getRequestHeader()
                                                                             .getURI()
-                                                                            .getURI())
+                                                                            .toString())
                                                             .setParam(paramName)
                                                             .setAttack(unionAttack)
                                                             .setOtherInfo(extraInfo)

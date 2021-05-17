@@ -523,7 +523,9 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                 URI requestUri = getBaseMsg().getRequestHeader().getURI();
                 try {
                     List<Context> contextList =
-                            extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
+                            extAuth.getModel()
+                                    .getSession()
+                                    .getContextsForUrl(requestUri.toString());
                     for (Context context : contextList) {
                         URI loginUri = extAuth.getLoginRequestURIForContext(context);
                         if (loginUri != null) {

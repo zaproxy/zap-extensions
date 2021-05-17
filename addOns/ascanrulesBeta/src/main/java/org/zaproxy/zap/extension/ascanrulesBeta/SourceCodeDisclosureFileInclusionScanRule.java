@@ -326,7 +326,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                                     .setDescription(
                                             Constant.messages.getString(
                                                     "ascanbeta.sourcecodedisclosure.desc"))
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                                     .setParam(paramname)
                                     .setAttack(prefixedUrlfilename)
                                     .setOtherInfo(
@@ -423,7 +423,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                                     .setDescription(
                                             Constant.messages.getString(
                                                     "ascanbeta.sourcecodedisclosure.desc"))
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                                     .setParam(paramname)
                                     .setAttack(prefixedUrlfilename)
                                     .setOtherInfo(

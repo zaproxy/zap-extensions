@@ -376,7 +376,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     .setDescription(
                             Constant.messages.getString(
                                     "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method))
-                    .setUri(msg.getRequestHeader().getURI().getURI())
+                    .setUri(msg.getRequestHeader().getURI().toString())
                     .setOtherInfo(
                             Constant.messages.getString(
                                     "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
@@ -516,14 +516,14 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             String randomResource =
                     RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
             String requestBody = '"' + randomKey + "\":\"" + randomValue + '"';
-            String newURI = msg.getRequestHeader().getURI().getURI();
+            String newURI = msg.getRequestHeader().getURI().toString();
             if (newURI.endsWith("/")) {
                 newURI += randomResource;
             } else {
                 newURI += '/' + randomResource;
             }
 
-            msg.getRequestHeader().setURI(new URI(newURI, false, URI.getDefaultProtocolCharset()));
+            msg.getRequestHeader().setURI(new URI(newURI, true));
             msg.setRequestBody(requestBody);
         }
 

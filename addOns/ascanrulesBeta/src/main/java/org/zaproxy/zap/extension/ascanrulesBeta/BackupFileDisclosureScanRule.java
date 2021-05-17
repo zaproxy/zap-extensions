@@ -721,8 +721,8 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         && (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(candidateBackupFileURI.getURI())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().getURI())
+                            .setAttack(candidateBackupFileURI.toString())
+                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
                             .setSolution(
                                     Constant.messages.getString(
                                             "ascanbeta.backupfiledisclosure.soln"))
@@ -730,7 +730,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     Constant.messages.getString(
                                             "ascanbeta.backupfiledisclosure.evidence",
                                             originalURI,
-                                            candidateBackupFileURI.getURI()))
+                                            candidateBackupFileURI))
                             .setMessage(requestmsg)
                             .raise();
                 }
@@ -776,8 +776,8 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                             .setName(
                                     Constant.messages.getString(
                                             "ascanbeta.backupfiledisclosure.name"))
-                            .setAttack(candidateBackupFileURI.getURI())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().getURI())
+                            .setAttack(candidateBackupFileURI.toString())
+                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
                             .setSolution(
                                     Constant.messages.getString(
                                             "ascanbeta.backupfiledisclosure.soln"))
@@ -785,7 +785,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     Constant.messages.getString(
                                             "ascanbeta.backupfiledisclosure.evidence",
                                             originalURI,
-                                            candidateBackupFileURI.getURI()))
+                                            candidateBackupFileURI))
                             .setMessage(requestmsg)
                             .raise();
                 }
