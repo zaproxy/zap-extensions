@@ -59,8 +59,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private String startPoint;
     private boolean doDirs, doFiles;
     private int totalDone = 0;
-    private Vector workers = new Vector(100, 10);
-    private Vector parseWorkers = new Vector(100, 10);
+    private Vector<Worker> workers = new Vector<>(100, 10);
+    private Vector<HTMLparse> parseWorkers = new Vector<>(100, 10);
     private String[] charSet;
     private int maxLen, minLen;
     boolean pureBrute = false;
@@ -77,11 +77,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // setting for using a blank extention
     private boolean blankExt = false;
     // store of all extention that are to be tested
-    private Vector extToUse = new Vector(10, 5);
-    private Vector producedBasesCases = new Vector(10, 10);
+    private Vector<ExtToCheck> extToUse = new Vector<>(10, 5);
+    private Vector<BaseCase> producedBasesCases = new Vector<>(10, 10);
     // used to store all the links that have parsed, will not contain a list a all items, processed
     // as this will consume to much memory.  There for there is a chance of some duplication.
-    private Vector processedLinks = new Vector(100, 100);
+    private Vector<String> processedLinks = new Vector<>(100, 100);
     // not all base case requests are processed so this will ensure the stats stay correct
     private int baseCaseCounterCorrection = 0;
     // used to store the value of items that will have been skipped
@@ -93,7 +93,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // exts that are not to be added to the work queue if found by the HTML parser
     public Vector<String> extsToMiss = new Vector<>(10, 10);
     // Vector to store all the html elements that are to be parsed.
-    public Vector elementsToParse = new Vector(10, 10);
+    public Vector<HTMLelementToParse> elementsToParse = new Vector<>(10, 10);
     // Used to store a string of what we are currently processing
     private String currentlyProcessing = "";
     // Variables to store information used for the URL fuzzing
@@ -137,7 +137,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /*
      * this stores all the regexes that have been used when we get inconsistent base cases
      */
-    private Vector<String> failCaseRegexes = new Vector(10, 10);
+    private Vector<String> failCaseRegexes = new Vector<>(10, 10);
     /*
      * Vector to store results when we are running in headless mode
      */
@@ -194,7 +194,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             boolean doFiles,
             boolean recursive,
             boolean blankExt,
-            Vector extToUse) {
+            Vector<ExtToCheck> extToUse) {
         totalDone = 0;
         this.startPoint = startPoint;
         this.inputFile = inputFile;
@@ -382,7 +382,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         // add the fist string on to the queue
         try {
-            Vector tempext = extToUse;
+            Vector<ExtToCheck> tempext = extToUse;
             // extToUse.clone().
             dirQueue.put(new DirToCheck(startPoint, tempext));
         } catch (InterruptedException e) {
@@ -427,10 +427,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
             // add the worker and parseWorker threads
             for (int i = 0; i < workers.size(); i++) {
-                Thread workerThread = new Thread(((Worker) workers.elementAt(i)));
+                Thread workerThread = new Thread((workers.elementAt(i)));
                 workerThread.setName("DirBuster-Worker");
                 workerThread.start();
-                ((HTMLparse) parseWorkers.elementAt(i)).start();
+                parseWorkers.elementAt(i).start();
             }
 
         } catch (Exception e) {
@@ -501,11 +501,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     // hack to prevent getting an instance of the main extToUse and its contents!
 
-                    Vector tempExtToUse = new Vector(10, 10);
+                    Vector<ExtToCheck> tempExtToUse = new Vector<>(10, 10);
                     // tempExtToUse = extToUse.clone();
 
                     for (int a = 0; a < extToUse.size(); a++) {
-                        ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
+                        ExtToCheck oldExtToCheck = extToUse.elementAt(a);
                         ExtToCheck tempExtToCheck =
                                 new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
@@ -540,11 +540,11 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     // hack to prevent getting an instance of the main extToUse and its contents!
 
-                    Vector tempExtToUse = new Vector(10, 10);
+                    Vector<ExtToCheck> tempExtToUse = new Vector<>(10, 10);
                     // tempExtToUse = extToUse.clone();
 
                     for (int a = 0; a < extToUse.size(); a++) {
-                        ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
+                        ExtToCheck oldExtToCheck = extToUse.elementAt(a);
                         ExtToCheck tempExtToCheck =
                                 new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
@@ -619,6 +619,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return extention;
     }
 
+    @Override
     public void isAlive() {}
 
     public synchronized void workDone() {
@@ -651,17 +652,17 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public void pause() {
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).pause();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).pause();
             }
         }
     }
 
     public void unPause() {
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).unPause();
-                ((Worker) workers.elementAt(a)).notify();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).unPause();
+                workers.elementAt(a).notify();
             }
         }
     }
@@ -714,16 +715,16 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         // stop all the workers;
         for (int a = 0; a < workers.size(); a++) {
-            synchronized ((Worker) workers.elementAt(a)) {
-                ((Worker) workers.elementAt(a)).stopThread();
+            synchronized (workers.elementAt(a)) {
+                workers.elementAt(a).stopThread();
             }
         }
 
         // stops all the parsers
         for (int a = 0; a < this.parseWorkers.size(); a++) {
-            synchronized ((HTMLparse) parseWorkers.elementAt(a)) {
-                ((HTMLparse) parseWorkers.elementAt(a)).stopWorking();
-                ((HTMLparse) parseWorkers.elementAt(a)).notify();
+            synchronized (parseWorkers.elementAt(a)) {
+                parseWorkers.elementAt(a).stopWorking();
+                parseWorkers.elementAt(a).notify();
             }
         }
 
@@ -753,7 +754,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return workerCount;
     }
 
-    public Vector getWorkers() {
+    public Vector<Worker> getWorkers() {
         return workers;
     }
 
@@ -774,7 +775,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             int threadid = currentNumber + i;
             workers.addElement(new Worker(threadid, this));
 
-            new Thread((Worker) workers.elementAt(threadid)).start();
+            new Thread(workers.elementAt(threadid)).start();
         }
         workerCount = currentNumber + number;
     }
@@ -790,7 +791,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         }
 
         for (int a = currentNumber - 1; a >= (currentNumber - number); a--) {
-            ((Worker) workers.elementAt(a)).stopThread();
+            workers.elementAt(a).stopThread();
             workers.remove(a);
         }
         workerCount = currentNumber - number;
@@ -861,7 +862,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         extToUse.addElement(ext);
     }
 
-    public Vector getExtToUse() {
+    public Vector<ExtToCheck> getExtToUse() {
         return extToUse;
     }
 
@@ -869,7 +870,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         try {
             for (int a = 0; a < producedBasesCases.size(); a++) {
-                BaseCase tempBaseCase = (BaseCase) producedBasesCases.elementAt(a);
+                BaseCase tempBaseCase = producedBasesCases.elementAt(a);
 
                 if (tempBaseCase.getBaseCaseURL().equals(new URL(base))
                         && tempBaseCase.isDir() == isDir) {
@@ -920,7 +921,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         if (Config.caseInsensativeMode) {
 
             for (int a = 0; a < processedLinks.size(); a++) {
-                if (link.equalsIgnoreCase((String) processedLinks.elementAt(a))) {
+                if (link.equalsIgnoreCase(processedLinks.elementAt(a))) {
                     return false;
                 }
             }
@@ -963,7 +964,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         baseCaseCounterCorrection++;
     }
 
-    public Vector getElementsToParse() {
+    public Vector<HTMLelementToParse> getElementsToParse() {
         return elementsToParse;
     }
 
@@ -971,7 +972,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         numberOfBaseCasesProduced++;
     }
 
-    public Vector getParseWorkers() {
+    public Vector<HTMLparse> getParseWorkers() {
         return parseWorkers;
     }
 
@@ -1047,7 +1048,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public boolean areWorkersAlive() {
         for (int a = 0; a < workers.size(); a++) {
-            if (((Worker) workers.elementAt(a)).isWorking()) {
+            if (workers.elementAt(a).isWorking()) {
                 // there is a worker still working so break
                 return true;
             }

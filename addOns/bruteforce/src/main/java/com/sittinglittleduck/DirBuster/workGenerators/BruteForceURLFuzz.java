@@ -30,7 +30,6 @@ import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +49,6 @@ public class BruteForceURLFuzz implements Runnable {
     private String started;
 
     private String currentDir = "/";
-    Vector extToCheck = new Vector(10, 5);
 
     private String urlFuzzStart;
     private String urlFuzzEnd;
@@ -77,6 +75,7 @@ public class BruteForceURLFuzz implements Runnable {
         urlFuzzEnd = manager.getUrlFuzzEnd();
     }
 
+    @Override
     public void run() {
         // checks if the server surports heads requests
 
@@ -106,8 +105,6 @@ public class BruteForceURLFuzz implements Runnable {
             DirToCheck tempDirToCheck = dirQueue.take();
             // get dir name
             currentDir = tempDirToCheck.getName();
-            // get any extention that need to be checked
-            extToCheck = tempDirToCheck.getExts();
         } catch (InterruptedException e) {
             LOG.debug(e);
         }

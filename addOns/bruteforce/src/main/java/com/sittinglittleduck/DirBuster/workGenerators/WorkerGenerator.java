@@ -80,10 +80,11 @@ public class WorkerGenerator implements Runnable {
     }
 
     /** Thread run method */
+    @Override
     public void run() {
         String currentDir = "/";
         String line;
-        Vector extToCheck = new Vector(10, 5);
+        Vector<ExtToCheck> extToCheck = new Vector<>(10, 5);
         boolean recursive = true;
         int passTotal = 0;
 
@@ -290,7 +291,7 @@ public class WorkerGenerator implements Runnable {
                 // loop for all the different file extentions
                 for (int b = 0; b < extToCheck.size(); b++) {
                     // only test if we are surposed to
-                    ExtToCheck extTemp = (ExtToCheck) extToCheck.elementAt(b);
+                    ExtToCheck extTemp = extToCheck.elementAt(b);
 
                     if (extTemp.toCheck()) {
 
