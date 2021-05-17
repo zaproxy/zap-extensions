@@ -10,10 +10,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The trace.axd file scan rule now performs a content check to reduce false positives (Issue 6517).
 - XML External Entity Attack scan rule changed to detect a possible XML File Reflection Attack when XML validation is present. (Issue 6204)
 - Added/updated the details of some alerts (some changes might break Alert Filters)
+  - Backup File Disclosure
+    - The attack, evidence, and other info will use URIs in encoded form.
+  - Insecure HTTP Method
+    - The URI field will be in encoded form.
   - Integer Overflow
     - Added evidence
-  - SQLi SQLite
+  - Relative Path Confusion
+    - The attack and URI field will use URIs in encoded form.
+  - Source Code Disclosure - File Inclusion
+    - The URI field will be in encoded form.
+  - Source Code Disclosure - Git
+    - The URI field will be in encoded form.
+  - Source Code Disclosure - SVN
+    - The URI field will be in encoded form.
+  - SQL Injection - Hypersonic SQL
+    - The URI field will be in encoded form.
+  - SQL Injection - MySQL
+    - The URI field will be in encoded form.
+  - SQL Injection - Oracle
+    - The URI field will be in encoded form.
+  - SQL Injection - PostgreSQL
+    - The URI field will be in encoded form.
+  - SQL Injection - SQLite
     - Evidence is now the string that was matched in the response
+    - The URI field will be in encoded form.
   - XPath Injection
     - Added evidence
 - The Source Code Disclosure - File Inclusion scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
@@ -21,6 +42,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Add missing file, used by Hidden File Finder scan rule.
+- Correct Context check in scan rules:
+  - Session Fixation
+  - Possible Username Enumeration
 
 ## [33] - 2020-12-15
 ### Changed

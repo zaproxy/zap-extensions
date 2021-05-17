@@ -350,7 +350,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     // attack. alert it.
                     newAlert()
                             .setConfidence(getConfidence(svnsourcefileattackmsg))
-                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setAttack(attackFilename)
                             .setOtherInfo(getExtraInfo(urlfilename, attackFilename))
                             .setEvidence(evidence)
@@ -598,7 +598,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                                 getBaseMsg()
                                                                         .getRequestHeader()
                                                                         .getURI()
-                                                                        .getURI())
+                                                                        .toString())
                                                         .setAttack(attackFilename)
                                                         .setOtherInfo(
                                                                 getExtraInfo(

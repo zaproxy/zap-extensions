@@ -60,14 +60,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
             return;
         }
 
-        // get the URI
-        try {
-            uri = msg.getRequestHeader().getURI().getURI().toString();
-            method = msg.getRequestHeader().getMethod();
-        } catch (Exception e) {
-            log.error("Error getting URI from message [{}]", msg);
-            return;
-        }
+        uri = msg.getRequestHeader().getURI().toString();
+        method = msg.getRequestHeader().getMethod();
 
         List<String> headers = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
         if (!headers.isEmpty()) {

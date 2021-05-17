@@ -187,7 +187,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
             while (javaClassesFound.size() > 0) {
                 String classname = javaClassesFound.get(0);
                 URI classURI = getClassURI(originalURI, classname);
-                log.debug("Looking for Class file: {}", classURI.getURI());
+                log.debug("Looking for Class file: {}", classURI);
 
                 HttpMessage classfilemsg = new HttpMessage(classURI);
                 sendAndReceive(classfilemsg, false); // do not follow redirects

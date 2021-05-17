@@ -1622,7 +1622,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
                     // using the session, get the list of contexts for the url
                     List<Context> contextList =
-                            extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
+                            extAuth.getModel()
+                                    .getSession()
+                                    .getContextsForUrl(requestUri.toString());
 
                     // now loop, and see if the url is a login url in each of the contexts in turn..
                     for (Context context : contextList) {
@@ -1660,7 +1662,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setName(vulnname)
                             .setDescription(vulndesc)
-                            .setUri(refreshedmessage.getRequestHeader().getURI().getURI())
+                            .setUri(refreshedmessage.getRequestHeader().getURI().toString())
                             .setParam(param)
                             .setAttack(sqlInjectionAttack)
                             .setMessage(getBaseMsg())

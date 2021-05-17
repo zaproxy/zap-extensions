@@ -359,7 +359,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                     I18N_PREFIX + "ldapinjection.booleanbased.alert.extrainfo",
                                     paramname,
                                     getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().getURI(),
+                                    getBaseMsg().getRequestHeader().getURI(),
                                     appendTrueAttack,
                                     randomparameterAttack);
 
@@ -459,7 +459,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                     I18N_PREFIX + "ldapinjection.booleanbased.alert.extrainfo",
                                     paramname,
                                     getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().getURI(),
+                                    getBaseMsg().getRequestHeader().getURI(),
                                     hopefullyTrueAttack,
                                     randomparameterAttack);
 
@@ -581,7 +581,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                 I18N_PREFIX + "ldapinjection.alert.extrainfo",
                                 parameterName,
                                 getBaseMsg().getRequestHeader().getMethod(),
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
+                                getBaseMsg().getRequestHeader().getURI(),
                                 errorAttack,
                                 LDAP_ERRORS.get(errorPattern),
                                 errorPattern);
@@ -616,7 +616,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                             + "on parameter [{2}], using an attack with LDAP meta-characters [{3}], "
                                             + "yielding known [{4}] error message [{5}], which was not present in the original response.",
                                     getBaseMsg().getRequestHeader().getMethod(),
-                                    getBaseMsg().getRequestHeader().getURI().getURI(),
+                                    getBaseMsg().getRequestHeader().getURI(),
                                     parameterName,
                                     errorAttack,
                                     LDAP_ERRORS.get(errorPattern),

@@ -145,11 +145,11 @@ public class GitMetadata {
         HttpMessage msg = messagecache.getMessage(uri, basemsg, false);
 
         if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-            throw new FileNotFoundException(uri.getURI());
+            throw new FileNotFoundException(uri.toString());
         }
         // record the URI if it came back with a 200 (see the condition above)
-        if (this.urisUsed == null || this.urisUsed.equals("")) this.urisUsed = uri.getURI();
-        else this.urisUsed = this.urisUsed + ", " + uri.getURI();
+        if (this.urisUsed == null || this.urisUsed.equals("")) this.urisUsed = uri.toString();
+        else this.urisUsed = this.urisUsed + ", " + uri;
         data = msg.getResponseBody().getBytes();
 
         if (inflate) {

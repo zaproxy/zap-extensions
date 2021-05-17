@@ -165,7 +165,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             if (isPage200(attackmsg)
                     && attackResponseBody.length >= RANDOM_STRING.length()
                     && responseBody.startsWith(RANDOM_STRING)) {
-                log.debug("Remote Code Execution alert for: {}", originalURI.getURI());
+                log.debug("Remote Code Execution alert for: {}", originalURI);
 
                 // bingo.
                 newAlert()
