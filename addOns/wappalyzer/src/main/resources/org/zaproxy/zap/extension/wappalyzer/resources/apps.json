@@ -321,7 +321,7 @@
       ],
       "description": "33Across is a technology company focused on solving the challenge of consumer attention for automated advertising.",
       "dom": {
-        "iframe[src*='.33across.com]": {
+        "iframe[src*='.33across.com']": {
           "attributes": {
             "src": ""
           }
@@ -2347,7 +2347,7 @@
       ],
       "description": "Astute Solutions is a customer engagement software.",
       "dom": {
-        "iframe[src*='.iperceptions.com]": {
+        "iframe[src*='.iperceptions.com']": {
           "attributes": {
             "src": ""
           }
