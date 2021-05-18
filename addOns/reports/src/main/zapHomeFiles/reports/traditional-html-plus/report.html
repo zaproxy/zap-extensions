@@ -232,6 +232,35 @@
 				</th:block>
 			</table>
 		</th:block>
+		<th:block
+			th:if="${reportData.reportObjects.get('wappalyzerData') != null &amp;&amp; reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site).size() &gt; 0}">
+			<table class="summary">
+				<tr>
+					<th th:text="#{report.template.tech.name}">Technology</th>
+					<th th:text="#{report.template.tech.version}">Version</th>
+					<th th:text="#{report.template.tech.categories}">Categories</th>
+					<th th:text="#{report.template.tech.implies}">Implies</th>
+				</tr>
+
+				<th:block
+					th:each="tech : ${reportData.reportObjects.get('wappalyzerData').getTechnologyForSite(site)}">
+					<tr>
+						<td>
+							<div th:text="${tech.name}">Name</div>
+						</td>
+						<td>
+							<div th:text="${tech.version}">Version</div>
+						</td>
+						<td><th:block th:each="category : ${tech.categories}">
+								<div th:text="${category}">Category</div>
+							</th:block></td>
+						<td><th:block th:each="imply : ${tech.implies}">
+								<div th:text="${imply}">Imply</div>
+							</th:block></td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
 		<div class="spacer-lg"></div>
 	</th:block>
 
