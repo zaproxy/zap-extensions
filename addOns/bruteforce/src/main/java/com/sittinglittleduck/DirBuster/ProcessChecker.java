@@ -29,7 +29,7 @@ public class ProcessChecker extends TimerTask {
     private final Manager manager;
     private long timeStarted;
     private long lastTotal = 0L;
-    private Vector lastTen = new Vector(10, 1);
+    private Vector<Long> lastTen = new Vector<>(10, 1);
 
     /* Logger object for the class */
     private static final Logger LOG = LogManager.getLogger(ProcessChecker.class);
@@ -45,6 +45,7 @@ public class ProcessChecker extends TimerTask {
         timeStarted = System.currentTimeMillis();
     }
 
+    @Override
     public void run() {
         long timePassed = (scheduledExecutionTime() - timeStarted) / 1000;
         if (timePassed > 0) {
@@ -102,7 +103,7 @@ public class ProcessChecker extends TimerTask {
 
             long lastTenTotal = 0;
             for (int a = 0; a < lastTen.size(); a++) {
-                long temp = (Long) lastTen.elementAt(a);
+                long temp = lastTen.elementAt(a);
                 lastTenTotal = lastTenTotal + temp;
             }
 

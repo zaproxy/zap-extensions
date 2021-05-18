@@ -62,6 +62,7 @@ public class Worker implements Runnable {
     }
 
     /** Run method of the thread */
+    @Override
     public void run() {
 
         queue = manager.workQueue;
@@ -90,7 +91,7 @@ public class Worker implements Runnable {
 
             try {
 
-                work = (WorkUnit) queue.take();
+                work = queue.take();
                 working = true;
                 url = work.getWork();
 

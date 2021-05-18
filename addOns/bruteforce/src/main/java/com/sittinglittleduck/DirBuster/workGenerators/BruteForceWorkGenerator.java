@@ -58,7 +58,7 @@ public class BruteForceWorkGenerator implements Runnable {
     // private String failString = Config.failCaseString;
 
     private String currentDir = "/";
-    Vector extToCheck = new Vector(10, 5);
+    Vector<ExtToCheck> extToCheck = new Vector<>(10, 5);
     private int failcode = 404;
     private boolean doingDirs = true;
 
@@ -85,6 +85,7 @@ public class BruteForceWorkGenerator implements Runnable {
         firstPart = manager.getFirstPartOfURL();
     }
 
+    @Override
     public void run() {
         boolean recursive = true;
 
@@ -158,7 +159,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 BaseCase baseCaseObj = null;
                 URL failurl = null;
                 for (int b = 0; b < extToCheck.size(); b++) {
-                    ExtToCheck tempExt = (ExtToCheck) extToCheck.elementAt(b);
+                    ExtToCheck tempExt = extToCheck.elementAt(b);
                     if (tempExt.toCheck()) {
                         fileExtention = "";
                         if (tempExt.getName().equals(ExtToCheck.BLANK_EXT)) {

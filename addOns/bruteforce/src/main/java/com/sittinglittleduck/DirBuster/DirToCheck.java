@@ -27,10 +27,10 @@ import java.util.Vector;
 /** @author james */
 public class DirToCheck {
     String name = "";
-    private Vector exts = new Vector(10, 10);
+    private Vector<ExtToCheck> exts = new Vector<>(10, 10);
 
     /** Creates a new instance of DirToCheck */
-    public DirToCheck(String name, Vector exts) {
+    public DirToCheck(String name, Vector<ExtToCheck> exts) {
         this.name = name;
         this.exts = exts;
     }
@@ -39,11 +39,11 @@ public class DirToCheck {
         return name;
     }
 
-    public Vector getExts() {
+    public Vector<ExtToCheck> getExts() {
         return exts;
     }
 
-    public void setExts(Vector exts) {
+    public void setExts(Vector<ExtToCheck> exts) {
         this.exts = exts;
     }
 }

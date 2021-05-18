@@ -37,7 +37,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,6 +89,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
     }
 
     /** Thread run method */
+    @Override
     public void run() {
 
         /*
@@ -101,7 +101,6 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             manager.setURLFuzzGenFinished(false);
             String currentDir = "/";
             String line;
-            Vector extToCheck = new Vector(10, 5);
             boolean recursive = true;
             int passTotal = 0;
 
@@ -167,7 +166,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     }
 
                     // url encode all the items
-                    line = URLEncoder.encode(line);
+                    line = URLEncoder.encode(line, "UTF-8");
 
                     URL currentURL = new URL(firstPart + urlFuzzStart + line + urlFuzzEnd);
                     // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true, failurl,
