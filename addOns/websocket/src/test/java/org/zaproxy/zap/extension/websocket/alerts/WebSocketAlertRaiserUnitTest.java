@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.websocket.alerts;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,8 @@ class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
-        message.channel = mock(WebSocketChannelDTO.class);
+        given(message.getChannel()).willReturn(mock(WebSocketChannelDTO.class));
+        given(message.getChannel().getId()).willReturn(1);
         WebSocketAlertRaiser alertRaiser =
                 new WebSocketAlertRaiser(webSocketAlertThread, 0, message);
 
@@ -65,7 +67,8 @@ class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
-        message.channel = mock(WebSocketChannelDTO.class);
+        given(message.getChannel()).willReturn(mock(WebSocketChannelDTO.class));
+        given(message.getChannel().getId()).willReturn(1);
         WebSocketAlertRaiser alertRaiser =
                 new WebSocketAlertRaiser(webSocketAlertThread, 0, message);
         // When

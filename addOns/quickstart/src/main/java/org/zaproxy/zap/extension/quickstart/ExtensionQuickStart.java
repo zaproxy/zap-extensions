@@ -67,24 +67,24 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     public static final String NAME = "ExtensionQuickStart";
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
-    public static ImageIcon ZAP_ICON =
+    public static final ImageIcon ZAP_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             QuickStartSubPanel.class.getResource(RESOURCES + "/zap64x64.png")));
-    public static ImageIcon HUD_ICON =
+    public static final ImageIcon HUD_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             QuickStartSubPanel.class.getResource(
                                     RESOURCES + "/hud_logo_64px.png")));
-    public static ImageIcon HELP_ICON =
+    public static final ImageIcon HELP_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(QuickStartSubPanel.class.getResource(RESOURCES + "/help.png")));
-    public static ImageIcon ONLINE_DOC_ICON =
+    public static final ImageIcon ONLINE_DOC_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             QuickStartSubPanel.class.getResource(
                                     RESOURCES + "/document-globe.png")));
-    public static ImageIcon PDF_DOC_ICON =
+    public static final ImageIcon PDF_DOC_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             QuickStartSubPanel.class.getResource(

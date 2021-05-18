@@ -81,7 +81,7 @@ public class SimpleNodeFactory implements NodeFactory {
         try {
             hostNode =
                     root.getChildrenWhen(
-                            TreeNode::getHost, NodesUtilities.getHostName(message.channel));
+                            TreeNode::getHost, NodesUtilities.getHostName(message.getChannel()));
         } catch (Exception ignored) {
         }
         if (hostNode == null) return null;

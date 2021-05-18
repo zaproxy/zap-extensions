@@ -24,7 +24,7 @@ function processMessage(utils, message) {
 	//    utils.sendMessage(myMessage, false)
 
 	// Process fuzzed message...
-	message.payload = "123"
+	message.setPayload("123");
 	count++;
 }
 

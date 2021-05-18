@@ -11,7 +11,7 @@ var emailRegex = new RegExp("([a-z0-9_.+-]+@[a-z0-9]+[a-z0-9-]*\.[a-z0-9-.]*[a-z
 
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
     var message = String(msg.getReadablePayload());

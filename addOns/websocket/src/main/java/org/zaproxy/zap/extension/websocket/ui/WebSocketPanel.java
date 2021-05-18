@@ -283,14 +283,14 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                     e -> {
                         WebSocketChannelDTO channel =
                                 (WebSocketChannelDTO) channelSelect.getSelectedItem();
-                        if (channel != null && channel.id != null) {
+                        if (channel != null && channel.getId() != null) {
                             // has valid element selected + a valid reference
-                            useModel(channel.id);
+                            useModel(channel.getId());
                         } else {
                             useJoinedModel();
                         }
 
-                        if (channel != null && channel.historyId != null) {
+                        if (channel != null && channel.getHistoryId() != null) {
                             getShowHandshakeButton().setEnabled(true);
                         } else {
                             getShowHandshakeButton().setEnabled(false);
@@ -487,12 +487,12 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         boolean isNewChannel = false;
 
         synchronized (connectedChannelIds) {
-            boolean isConnectedChannel = connectedChannelIds.contains(channel.id);
+            boolean isConnectedChannel = connectedChannelIds.contains(channel.getId());
 
             switch (state) {
                 case CLOSED:
-                    if (isConnectedChannel && channel.endTimestamp != null) {
-                        connectedChannelIds.remove(channel.id);
+                    if (isConnectedChannel && channel.getEndTimestamp() != null) {
+                        connectedChannelIds.remove(channel.getId());
 
                         // updates icon
                         channelsModel.updateElement(channel);
@@ -501,15 +501,15 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
                 case EXCLUDED:
                     // remove from UI
-                    connectedChannelIds.remove(channel.id);
+                    connectedChannelIds.remove(channel.getId());
                     channelsModel.removeElement(channel);
 
                     messagesModel.fireTableDataChanged();
                     break;
 
                 case OPEN:
-                    if (!isConnectedChannel && channel.endTimestamp == null) {
-                        connectedChannelIds.add(channel.id);
+                    if (!isConnectedChannel && channel.getEndTimestamp() == null) {
+                        connectedChannelIds.add(channel.getId());
                         channelsModel.addElement(channel);
                         isNewChannel = true;
                     }
@@ -517,7 +517,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
                 case INCLUDED:
                     // add to UI (probably again)
-                    connectedChannelIds.add(channel.id);
+                    connectedChannelIds.add(channel.getId());
                     channelsModel.addElement(channel);
 
                     messagesModel.fireTableDataChanged();
@@ -660,9 +660,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
         // show channel if not already active
         Integer activeChannelId = messagesModel.getActiveChannelId();
-        if (message.channel.id != null && !message.channel.id.equals(activeChannelId)) {
-            messagesModel.setActiveChannel(message.channel.id);
-            channelSelectModel.setSelectedChannelId(message.channel.id);
+        if (message.getChannel().getId() != null
+                && !message.getChannel().getId().equals(activeChannelId)) {
+            messagesModel.setActiveChannel(message.getChannel().getId());
+            channelSelectModel.setSelectedChannelId(message.getChannel().getId());
         }
 
         // check if message is filtered out

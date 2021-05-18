@@ -153,18 +153,18 @@ public class WebSocketComponent
         StringBuilder sb = new StringBuilder();
 
         sb.append(message.toString()).append(" - ");
-        if (message.dateTime != null) {
-            sb.append(message.dateTime).append(" - ");
+        if (message.getDateTime() != null) {
+            sb.append(message.getDateTime()).append(" - ");
         }
-        if (message.readableOpcode != null) {
-            sb.append(message.readableOpcode);
+        if (message.getReadableOpcode() != null) {
+            sb.append(message.getReadableOpcode());
         }
 
         informationLabel.setText(sb.toString());
 
         views.setMessage(message);
-        if (message.tempUserObj instanceof Boolean) {
-            Boolean isConnected = (Boolean) message.tempUserObj;
+        if (message.getTempUserObj() instanceof Boolean) {
+            Boolean isConnected = (Boolean) message.getTempUserObj();
 
             ImageIcon icon;
             if (isConnected) {

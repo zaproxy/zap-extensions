@@ -320,23 +320,23 @@ public class WebSocketProxyV13 extends WebSocketProxy {
         public WebSocketMessageV13(WebSocketProxy proxy, WebSocketMessageDTO message)
                 throws WebSocketException {
             super(proxy, getIncrementedMessageCount(), message);
-            message.id = getMessageId();
+            message.setId(getMessageId());
 
             Calendar calendar = Calendar.getInstance();
             timestamp = new Timestamp(calendar.getTimeInMillis());
             message.setTime(timestamp);
 
             isFinished = true;
-            opcode = message.opcode;
-            closeCode = (message.closeCode == null) ? -1 : message.closeCode;
-            direction = message.isOutgoing ? Direction.OUTGOING : Direction.INCOMING;
-            hasChanged = message.hasChanged;
+            opcode = message.getOpcode();
+            closeCode = (message.getCloseCode() == null) ? -1 : message.getCloseCode();
+            direction = message.isOutgoing() ? Direction.OUTGOING : Direction.INCOMING;
+            hasChanged = message.hasChanged();
 
             payload = ByteBuffer.allocate(0);
-            if (message.payload instanceof byte[]) {
-                setPayload((byte[]) message.payload);
+            if (message.getPayload() instanceof byte[]) {
+                setPayload((byte[]) message.getPayload());
             } else {
-                setReadablePayload((String) message.payload);
+                setReadablePayload((String) message.getPayload());
             }
         }
 
@@ -754,8 +754,8 @@ public class WebSocketProxyV13 extends WebSocketProxy {
         public WebSocketMessageDTO getDTO() {
             WebSocketMessageDTO message = super.getDTO();
 
-            message.channel.id = getChannelId();
-            message.id = getMessageId();
+            message.getChannel().setId(getChannelId());
+            message.setId(getMessageId());
 
             return message;
         }

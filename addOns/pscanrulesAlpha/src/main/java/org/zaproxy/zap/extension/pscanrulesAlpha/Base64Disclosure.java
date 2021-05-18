@@ -247,7 +247,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
                             // is the ViewState protected by a MAC?
                             Matcher hmaclessmatcher =
-                                    ViewStateDecoder.patternNoHMAC.matcher(viewstatexml);
+                                    ViewStateDecoder.PATTERN_NO_HMAC.matcher(viewstatexml);
                             macless = hmaclessmatcher.find();
 
                             log.debug("MAC-less??? {}", macless);

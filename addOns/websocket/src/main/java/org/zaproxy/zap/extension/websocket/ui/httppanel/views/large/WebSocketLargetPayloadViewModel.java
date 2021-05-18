@@ -26,7 +26,7 @@ public class WebSocketLargetPayloadViewModel extends StringWebSocketPanelViewMod
 
     @Override
     public String getData() {
-        if (webSocketMessage == null || webSocketMessage.payloadLength == 0) {
+        if (webSocketMessage == null || webSocketMessage.getPayloadLength() == 0) {
             return "";
         }
 

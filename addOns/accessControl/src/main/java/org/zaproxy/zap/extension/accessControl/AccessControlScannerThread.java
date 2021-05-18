@@ -310,18 +310,50 @@ public class AccessControlScannerThread
      * testing.
      */
     public static class AccessControlScanStartOptions implements ScanStartOptions {
-        public Context targetContext;
-        public List<User> targetUsers;
-        public boolean raiseAlerts;
+        private Context targetContext;
+        private List<User> targetUsers;
+        private boolean raiseAlerts;
         /**
          * Defines the risk level with which alerts should be raised and corresponds to the alert
          * levels from {@link Alert#MSG_RISK}, such as {@link Alert#RISK_HIGH}.
          */
-        public int alertRiskLevel;
+        private int alertRiskLevel;
 
         public AccessControlScanStartOptions() {
             super();
             this.targetUsers = new LinkedList<>();
+        }
+
+        public Context getTargetContext() {
+            return targetContext;
+        }
+
+        public void setTargetContext(Context targetContext) {
+            this.targetContext = targetContext;
+        }
+
+        public List<User> getTargetUsers() {
+            return targetUsers;
+        }
+
+        public void setTargetUsers(List<User> targetUsers) {
+            this.targetUsers = targetUsers;
+        }
+
+        public boolean isRaiseAlerts() {
+            return raiseAlerts;
+        }
+
+        public void setRaiseAlerts(boolean raiseAlerts) {
+            this.raiseAlerts = raiseAlerts;
+        }
+
+        public int getAlertRiskLevel() {
+            return alertRiskLevel;
+        }
+
+        public void setAlertRiskLevel(int alertRiskLevel) {
+            this.alertRiskLevel = alertRiskLevel;
         }
     }
 

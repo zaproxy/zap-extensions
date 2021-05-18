@@ -66,7 +66,8 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
     public void handleSendMessage(Message aMessage) throws IOException {
         final WebSocketMessageDTO websocketMessage = (WebSocketMessageDTO) aMessage;
 
-        if (websocketMessage.channel == null || websocketMessage.channel.id == null) {
+        if (websocketMessage.getChannel() == null
+                || websocketMessage.getChannel().getId() == null) {
             logger.warn(
                     "Invalid WebSocket channel selected. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
@@ -75,7 +76,7 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                             + Constant.messages.getString("websocket.manual_send.fail"));
         }
 
-        if (websocketMessage.opcode == null) {
+        if (websocketMessage.getOpcode() == null) {
             logger.warn(
                     "Invalid WebSocket opcode selected. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
@@ -84,8 +85,8 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                             + Constant.messages.getString("websocket.manual_send.fail"));
         }
 
-        WebSocketProxy wsProxy = getDelegate(websocketMessage.channel.id);
-        if (!websocketMessage.isOutgoing && wsProxy.isClientMode()) {
+        WebSocketProxy wsProxy = getDelegate(websocketMessage.getChannel().getId());
+        if (!websocketMessage.isOutgoing() && wsProxy.isClientMode()) {
             logger.warn(
                     "Invalid WebSocket direction 'incoming' selected for Proxy in Client Mode. Unable to send manual crafted message!");
             throw new IllegalArgumentException(

@@ -42,9 +42,7 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
     public RaiseSemiAutoIssueDialog(ExtensionBugTracker ext, Frame owner, Dimension dim) {
         super(owner, "bugtracker.dialog.semi.title", dim);
         this.extension = ext;
-        this.alerts = ext.alerts;
         bugTrackers = extension.getBugTrackers();
-        initialize();
     }
 
     public void setAlert(Set<Alert> alerts) {

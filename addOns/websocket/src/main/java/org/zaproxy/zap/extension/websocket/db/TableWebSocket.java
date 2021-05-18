@@ -375,7 +375,7 @@ public class TableWebSocket extends ParosAbstractTable {
                     buildMessageCriteriaStatement(query, criteria, opcodes, inScopeChannelIds);
 
             int paramsCount = stmt.getParameterMetaData().getParameterCount();
-            stmt.setInt(paramsCount, criteria.id);
+            stmt.setInt(paramsCount, criteria.getId());
 
             try {
                 return executeAndGetSingleIntValue(stmt);
@@ -538,44 +538,44 @@ public class TableWebSocket extends ParosAbstractTable {
                     message = new WebSocketMessageDTO(channel);
                 }
 
-                message.id = rs.getInt("message_id");
+                message.setId(rs.getInt("message_id"));
                 message.setTime(rs.getTimestamp("timestamp"));
-                message.opcode = rs.getInt("opcode");
-                message.readableOpcode = WebSocketMessage.opcode2string(message.opcode);
+                message.setOpcode(rs.getInt("opcode"));
+                message.setReadableOpcode(WebSocketMessage.opcode2string(message.getOpcode()));
 
                 // read payload
-                if (message.opcode == WebSocketMessage.OPCODE_BINARY) {
+                if (message.getOpcode() == WebSocketMessage.OPCODE_BINARY) {
                     if (payloadLength == -1) {
                         // load all bytes
-                        message.payload = rs.getBytes("payload_bytes");
+                        message.setPayload(rs.getBytes("payload_bytes"));
                     } else {
                         Blob blob = rs.getBlob("payload_bytes");
                         int length = Math.min(payloadLength, (int) blob.length());
-                        message.payload = blob.getBytes(1, length);
+                        message.setPayload(blob.getBytes(1, length));
                         blob.free();
                     }
 
-                    if (message.payload == null) {
-                        message.payload = new byte[0];
+                    if (message.getPayload() == null) {
+                        message.setPayload(new byte[0]);
                     }
                 } else {
                     if (payloadLength == -1) {
                         // load all characters
-                        message.payload = rs.getString("payload_utf8");
+                        message.setPayload(rs.getString("payload_utf8"));
                     } else {
                         Clob clob = rs.getClob("payload_utf8");
                         int length = Math.min(payloadLength, (int) clob.length());
-                        message.payload = clob.getSubString(1, length);
+                        message.setPayload(clob.getSubString(1, length));
                         clob.free();
                     }
 
-                    if (message.payload == null) {
-                        message.payload = "";
+                    if (message.getPayload() == null) {
+                        message.setPayload("");
                     }
                 }
 
-                message.isOutgoing = rs.getBoolean("is_outgoing");
-                message.payloadLength = rs.getInt("payload_length");
+                message.setOutgoing(rs.getBoolean("is_outgoing"));
+                message.setPayloadLength(rs.getInt("payload_length"));
 
                 messages.add(message);
             }
@@ -591,7 +591,7 @@ public class TableWebSocket extends ParosAbstractTable {
     private WebSocketChannelDTO getChannel(int channelId) throws SQLException, DatabaseException {
         if (!channelCache.containsKey(channelId)) {
             WebSocketChannelDTO criteria = new WebSocketChannelDTO();
-            criteria.id = channelId;
+            criteria.setId(channelId);
             List<WebSocketChannelDTO> channels = getChannels(criteria);
             if (channels.size() == 1) {
                 channelCache.put(channelId, channels.get(0));
@@ -611,14 +611,14 @@ public class TableWebSocket extends ParosAbstractTable {
         ArrayList<String> where = new ArrayList<>();
         ArrayList<Object> params = new ArrayList<>();
 
-        if (criteria.channel.id != null) {
+        if (criteria.getChannel().getId() != null) {
             where.add("m.channel_id = ?");
-            params.add(criteria.channel.id);
+            params.add(criteria.getChannel().getId());
         }
 
-        if (criteria.isOutgoing != null) {
+        if (criteria.isOutgoing() != null) {
             where.add("m.is_outgoing = ?");
-            params.add(criteria.isOutgoing);
+            params.add(criteria.isOutgoing());
         }
 
         if (opcodes != null && !opcodes.isEmpty()) {
@@ -673,7 +673,7 @@ public class TableWebSocket extends ParosAbstractTable {
     }
 
     public WebSocketMessagePrimaryKey getMessagePrimaryKey(WebSocketMessageDTO message) {
-        return new WebSocketMessagePrimaryKey(message.channel.id, message.id);
+        return new WebSocketMessagePrimaryKey(message.getChannel().getId(), message.getId());
     }
 
     public List<WebSocketChannelDTO> getChannelItems() throws DatabaseException {
@@ -692,16 +692,16 @@ public class TableWebSocket extends ParosAbstractTable {
         try {
             while (rs.next()) {
                 WebSocketChannelDTO channel = new WebSocketChannelDTO();
-                channel.id = rs.getInt("channel_id");
-                channel.host = rs.getString("host");
-                channel.port = rs.getInt("port");
-                channel.url = rs.getString("url");
-                channel.startTimestamp = rs.getTimestamp("start_timestamp").getTime();
+                channel.setId(rs.getInt("channel_id"));
+                channel.setHost(rs.getString("host"));
+                channel.setPort(rs.getInt("port"));
+                channel.setUrl(rs.getString("url"));
+                channel.setStartTimestamp(rs.getTimestamp("start_timestamp").getTime());
 
                 Time endTs = rs.getTime("end_timestamp");
-                channel.endTimestamp = (endTs != null) ? endTs.getTime() : null;
+                channel.setEndTimestamp((endTs != null) ? endTs.getTime() : null);
 
-                channel.historyId = rs.getInt("history_id");
+                channel.setHistoryId(rs.getInt("history_id"));
 
                 channels.add(channel);
             }
@@ -728,7 +728,7 @@ public class TableWebSocket extends ParosAbstractTable {
                     boolean addIdOnSuccess = false;
 
                     // first, find out if already inserted
-                    if (channelIds.contains(channel.id)) {
+                    if (channelIds.contains(channel.getId())) {
                         // proceed with update
                         stmt = psUpdateChannel;
                     } else {
@@ -738,32 +738,33 @@ public class TableWebSocket extends ParosAbstractTable {
                         logger.debug("insert channel: {}", channel);
                     }
 
-                    logger.debug("url (length {}): {}", channel.url.length(), channel.url);
+                    logger.debug(
+                            "url (length {}): {}", channel.getUrl().length(), channel.getUrl());
 
-                    stmt.setString(1, channel.host);
-                    stmt.setInt(2, channel.port);
-                    stmt.setString(3, channel.url);
+                    stmt.setString(1, channel.getHost());
+                    stmt.setInt(2, channel.getPort());
+                    stmt.setString(3, channel.getUrl());
                     stmt.setTimestamp(
                             4,
-                            (channel.startTimestamp != null)
-                                    ? new Timestamp(channel.startTimestamp)
+                            (channel.getStartTimestamp() != null)
+                                    ? new Timestamp(channel.getStartTimestamp())
                                     : null);
                     stmt.setTimestamp(
                             5,
-                            (channel.endTimestamp != null)
-                                    ? new Timestamp(channel.endTimestamp)
+                            (channel.getEndTimestamp() != null)
+                                    ? new Timestamp(channel.getEndTimestamp())
                                     : null);
                     stmt.setNull(6, Types.INTEGER);
-                    stmt.setInt(7, channel.id);
+                    stmt.setInt(7, channel.getId());
 
                     stmt.execute();
                     if (addIdOnSuccess) {
-                        channelIds.add(channel.id);
+                        channelIds.add(channel.getId());
                     }
 
-                    if (channel.historyId != null) {
-                        psUpdateHistoryFk.setInt(1, channel.historyId);
-                        psUpdateHistoryFk.setInt(2, channel.id);
+                    if (channel.getHistoryId() != null) {
+                        psUpdateHistoryFk.setInt(1, channel.getHistoryId());
+                        psUpdateHistoryFk.setInt(2, channel.getId());
                         try {
                             psUpdateHistoryFk.execute();
                         } catch (SQLException e) {
@@ -793,42 +794,43 @@ public class TableWebSocket extends ParosAbstractTable {
                 }
 
                 do {
-                    if (!channelIds.contains(message.channel.id)) {
+                    if (!channelIds.contains(message.getChannel().getId())) {
                         // maybe channel is buffered
                         if (channelsBuffer.size() > 0) {
                             insertOrUpdateChannel(channelsBuffer.poll());
                         }
-                        throw new SQLException("channel not inserted: " + message.channel.id);
+                        throw new SQLException(
+                                "channel not inserted: " + message.getChannel().getId());
                     }
 
                     logger.debug("insert message: {}", message);
 
-                    psInsertMessage.setInt(1, message.id);
-                    psInsertMessage.setInt(2, message.channel.id);
-                    psInsertMessage.setTimestamp(3, new Timestamp(message.timestamp));
-                    psInsertMessage.setInt(4, message.opcode);
+                    psInsertMessage.setInt(1, message.getId());
+                    psInsertMessage.setInt(2, message.getChannel().getId());
+                    psInsertMessage.setTimestamp(3, new Timestamp(message.getTimestamp()));
+                    psInsertMessage.setInt(4, message.getOpcode());
 
                     // write payload
-                    if (message.payload instanceof String) {
-                        psInsertMessage.setClob(5, new JDBCClob((String) message.payload));
+                    if (message.getPayload() instanceof String) {
+                        psInsertMessage.setClob(5, new JDBCClob((String) message.getPayload()));
                         psInsertMessage.setNull(6, Types.BLOB);
-                    } else if (message.payload instanceof byte[]) {
+                    } else if (message.getPayload() instanceof byte[]) {
                         psInsertMessage.setNull(5, Types.CLOB);
-                        psInsertMessage.setBlob(6, new JDBCBlob((byte[]) message.payload));
+                        psInsertMessage.setBlob(6, new JDBCBlob((byte[]) message.getPayload()));
                     } else {
                         throw new SQLException(
                                 "Attribute 'payload' of class WebSocketMessageDTO has got wrong type!");
                     }
 
-                    psInsertMessage.setInt(7, message.payloadLength);
-                    psInsertMessage.setBoolean(8, message.isOutgoing);
+                    psInsertMessage.setInt(7, message.getPayloadLength());
+                    psInsertMessage.setBoolean(8, message.isOutgoing());
                     psInsertMessage.execute();
 
                     if (message instanceof WebSocketFuzzMessageDTO) {
                         WebSocketFuzzMessageDTO fuzzMessage = (WebSocketFuzzMessageDTO) message;
                         psInsertFuzz.setInt(1, fuzzMessage.fuzzId);
-                        psInsertFuzz.setInt(2, fuzzMessage.id);
-                        psInsertFuzz.setInt(3, fuzzMessage.channel.id);
+                        psInsertFuzz.setInt(2, fuzzMessage.getId());
+                        psInsertFuzz.setInt(3, fuzzMessage.getChannel().getId());
                         psInsertFuzz.setString(4, fuzzMessage.state.toString());
                         psInsertFuzz.setString(5, fuzzMessage.fuzz);
                         psInsertFuzz.execute();
@@ -875,9 +877,9 @@ public class TableWebSocket extends ParosAbstractTable {
         List<String> where = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
-        if (criteria.id != null) {
+        if (criteria.getId() != null) {
             where.add("c.channel_id = ?");
-            params.add(criteria.id);
+            params.add(criteria.getId());
         }
 
         return buildCriteriaStatementHelper(query, where, params);

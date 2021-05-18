@@ -103,7 +103,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
         }
 
         WebSocketChannelDTO channel = new WebSocketChannelDTO();
-        channel.id = message.channel.id;
+        channel.setId(message.getChannel().getId());
 
         try {
             List<WebSocketChannelDTO> channels = extWs.getChannels(channel);

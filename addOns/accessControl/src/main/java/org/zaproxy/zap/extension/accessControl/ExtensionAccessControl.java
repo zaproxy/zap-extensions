@@ -173,7 +173,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                 activeActions.add(
                         MessageFormat.format(
                                 activeActionPrefix,
-                                scan.getStartOptions().targetContext.getName()));
+                                scan.getStartOptions().getTargetContext().getName()));
             }
         }
         return activeActions;
@@ -231,7 +231,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      */
     @SuppressWarnings("fallthrough")
     public void startScan(AccessControlScanStartOptions startOptions) {
-        int contextId = startOptions.targetContext.getId();
+        int contextId = startOptions.getTargetContext().getId();
         AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
         if (scannerThread.isRunning()) {
             log.warn("Access control scan already running for context: {}", contextId);
@@ -242,10 +242,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
             case safe:
                 throw new IllegalStateException("Access control scan is not allowed in Safe mode.");
             case protect:
-                if (!startOptions.targetContext.isInScope()) {
+                if (!startOptions.getTargetContext().isInScope()) {
                     throw new IllegalStateException(
                             "Access control scan is not allowed with a context out of scope when in Protected mode: "
-                                    + startOptions.targetContext.getName());
+                                    + startOptions.getTargetContext().getName());
                 }
             case standard:
             case attack:
@@ -306,7 +306,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
             this.threadManager.stopAllScannerThreads();
         } else if (Mode.protect.equals(mode)) {
             for (AccessControlScannerThread scan : threadManager.getAllThreads()) {
-                if (scan.isRunning() && !scan.getStartOptions().targetContext.isInScope()) {
+                if (scan.isRunning() && !scan.getStartOptions().getTargetContext().isInScope()) {
                     scan.stopScan();
                 }
             }
@@ -386,7 +386,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         // Create a sorted list of users based on id (null/unauthenticated user first)
-        List<User> users = new ArrayList<>(scanThread.getStartOptions().targetUsers);
+        List<User> users = new ArrayList<>(scanThread.getStartOptions().getTargetUsers());
         Collections.sort(
                 users,
                 (o1, o2) -> {

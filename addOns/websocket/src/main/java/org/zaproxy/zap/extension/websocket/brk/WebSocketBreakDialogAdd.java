@@ -87,6 +87,10 @@ public class WebSocketBreakDialogAdd extends WebSocketBreakDialog {
      */
     public void setMessage(WebSocketMessageDTO aMessage) {
         resetDialogValues();
-        setDialogValues(aMessage.readableOpcode, aMessage.channel.id, null, aMessage.isOutgoing);
+        setDialogValues(
+                aMessage.getReadableOpcode(),
+                aMessage.getChannel().getId(),
+                null,
+                aMessage.isOutgoing());
     }
 }

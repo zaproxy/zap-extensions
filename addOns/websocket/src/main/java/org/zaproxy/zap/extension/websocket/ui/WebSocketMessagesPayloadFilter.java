@@ -121,8 +121,8 @@ public class WebSocketMessagesPayloadFilter {
      */
     public boolean isMessageValidWithPattern(WebSocketMessageDTO webSocketMessageDTO) {
         return inverted
-                ? !payloadPattern.matcher((String) webSocketMessageDTO.payload).find()
-                : payloadPattern.matcher((String) webSocketMessageDTO.payload).find();
+                ? !payloadPattern.matcher((String) webSocketMessageDTO.getPayload()).find()
+                : payloadPattern.matcher((String) webSocketMessageDTO.getPayload()).find();
     }
 
     /**

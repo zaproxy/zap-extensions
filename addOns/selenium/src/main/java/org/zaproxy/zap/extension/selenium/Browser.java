@@ -63,11 +63,11 @@ public enum Browser {
 
     private final String id;
 
-    private boolean isHeadless = false;
+    private final boolean headless;
 
     private Browser(String id, boolean isHeadless) {
         this.id = id;
-        this.isHeadless = isHeadless;
+        this.headless = isHeadless;
     }
 
     /**
@@ -296,10 +296,6 @@ public enum Browser {
     }
 
     public boolean isHeadless() {
-        return isHeadless;
-    }
-
-    public void setHeadless(boolean isHeadless) {
-        this.isHeadless = isHeadless;
+        return headless;
     }
 }

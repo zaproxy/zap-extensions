@@ -51,7 +51,7 @@ public class SQLiPayloadManager {
     public static final int TECHNIQUE_UNION = 6;
 
     // Map for technique retrieval
-    public static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap<>();
+    static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap<>();
 
     static {
         SQLI_TECHNIQUES.put(TECHNIQUE_BOOLEAN, "boolean-based blind");

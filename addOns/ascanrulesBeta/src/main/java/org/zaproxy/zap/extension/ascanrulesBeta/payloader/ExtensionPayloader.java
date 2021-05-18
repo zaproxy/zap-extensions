@@ -61,14 +61,14 @@ public class ExtensionPayloader extends ExtensionAdaptor {
         uaCategory =
                 new PayloadCategory(
                         UserAgentScanRule.USER_AGENT_PAYLOAD_CATEGORY,
-                        UserAgentScanRule.USER_AGENTS);
+                        UserAgentScanRule.getUserAgents());
         ecp.addPayloadCategory(uaCategory);
         UserAgentScanRule.setPayloadProvider(uaCategory::getPayloadsIterator);
 
         hfCategory =
                 new PayloadCategory(
                         HiddenFilesScanRule.HIDDEN_FILE_PAYLOAD_CATEGORY,
-                        HiddenFilesScanRule.HIDDEN_FILES);
+                        HiddenFilesScanRule.getHiddenFiles());
         ecp.addPayloadCategory(hfCategory);
         HiddenFilesScanRule.setPayloadProvider(hfCategory::getPayloadsIterator);
     }

@@ -378,11 +378,11 @@ public class WebSocketAPI extends ApiImplementor {
     private boolean sendWebSocketMessage(WebSocketProxy proxy, boolean outgoing, String message)
             throws IOException {
         WebSocketMessageDTO resp = new WebSocketMessageDTO();
-        resp.channel = proxy.getDTO();
-        resp.payload = message;
-        resp.payloadLength = message.length();
-        resp.opcode = WebSocketMessage.OPCODE_TEXT;
-        resp.isOutgoing = outgoing;
+        resp.setChannel(proxy.getDTO());
+        resp.setPayload(message);
+        resp.setPayloadLength(message.length());
+        resp.setOpcode(WebSocketMessage.OPCODE_TEXT);
+        resp.setOutgoing(outgoing);
         boolean sent = proxy.send(resp, Initiator.WEB_SOCKET);
         if (sent) {
             try {
@@ -412,7 +412,7 @@ public class WebSocketAPI extends ApiImplementor {
                         extension.getChannels(new WebSocketChannelDTO());
                 for (WebSocketChannelDTO channel : channels) {
                     Map<String, String> map = new HashMap<>();
-                    map.put("id", Integer.toString(channel.id));
+                    map.put("id", Integer.toString(channel.getId()));
                     map.put("displayName", channel.toString());
                     map.put("connected", Boolean.toString(channel.isConnected()));
                     map.put("inScope", Boolean.toString(channel.isInScope()));
@@ -550,7 +550,7 @@ public class WebSocketAPI extends ApiImplementor {
                             "No currently intercepted message");
                 } else if (msg instanceof WebSocketMessageDTO) {
                     WebSocketMessageDTO ws = (WebSocketMessageDTO) msg;
-                    ws.payload = params.optString(PARAM_MESSAGE, "");
+                    ws.setPayload(params.optString(PARAM_MESSAGE, ""));
                     extBreak.getBreakpointManagementInterface()
                             .setMessage(ws, params.getBoolean(PARAM_OUTGOING));
                 } else {

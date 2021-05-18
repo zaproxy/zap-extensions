@@ -89,11 +89,11 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
     protected void performAction() throws SQLException {
         WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
         if (message != null) {
-            String url = Pattern.quote(message.channel.getContextUrl());
+            String url = Pattern.quote(message.getChannel().getContextUrl());
 
             Session session = Model.getSingleton().getSession();
             if (context == null) {
-                context = session.getNewContext(message.channel.host);
+                context = session.getNewContext(message.getChannel().getHost());
             }
             View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
 
@@ -115,7 +115,7 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
             WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
 
             if (message != null) {
-                setEnabled(isEnabledForUrl(message.channel.getContextUrl()));
+                setEnabled(isEnabledForUrl(message.getChannel().getContextUrl()));
             } else {
                 setEnabled(false);
             }

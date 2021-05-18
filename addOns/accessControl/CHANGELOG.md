@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Don't set the font color for inherited entries (Issue 6397).
 - Update minimum ZAP version to 2.10.0.
-- Maintenance changes.
+- Maintenance changes (some changes impact the visibility of variables and add getters/setters, which may impact third party add-ons or scripts).
 
 ## [6] - 2020-10-06
 

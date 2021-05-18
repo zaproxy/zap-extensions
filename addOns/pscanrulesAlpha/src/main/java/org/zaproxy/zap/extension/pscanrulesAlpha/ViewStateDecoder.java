@@ -37,7 +37,7 @@ public class ViewStateDecoder {
             Pattern.compile("[<>\\&]+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /** a pattern to use when looking at the output to check if a ViewState is protected by a MAC */
-    public static Pattern patternNoHMAC =
+    protected static final Pattern PATTERN_NO_HMAC =
             Pattern.compile(
                     "^\\s*\\<hmac\\>false\\</hmac\\>\\s*$",
                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
@@ -405,7 +405,7 @@ public class ViewStateDecoder {
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
             representation.append(getIndentation(this.indentationlevel));
-            // NOTE: if this pattern changes, change patternNoHMAC
+            // NOTE: if this pattern changes, change PATTERN_NO_HMAC
             representation.append("<hmac>false</hmac>\n");
         }
         // put in the original ViewState value, in Base64 encoded form.

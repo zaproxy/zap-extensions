@@ -75,7 +75,7 @@ public class WebSocketFuzzerTaskProcessorUtils {
 
     public boolean sendMessage(String message, boolean includeInResults) {
         WebSocketProxy wsProxy =
-                websocketFuzzer.getWebSocketProxies().get(originalMessage.channel.id);
+                websocketFuzzer.getWebSocketProxies().get(originalMessage.getChannel().getId());
         if (wsProxy == null) {
             websocketFuzzer.stopScan();
             return false;
@@ -87,8 +87,8 @@ public class WebSocketFuzzerTaskProcessorUtils {
             originalMessage.copyInto(newMessage);
 
             newMessage.fuzzId = websocketFuzzer.getId();
-            newMessage.payload = message;
-            newMessage.payloadLength = Integer.valueOf(message.length());
+            newMessage.setPayload(message);
+            newMessage.setPayloadLength(Integer.valueOf(message.length()));
             newMessage.fuzz = "";
 
             if (wsProxy.send(newMessage, Initiator.FUZZER)) {

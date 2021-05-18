@@ -138,7 +138,7 @@ public class WebSocketUiHelper {
 
         String opcodeString = (String) getOpcodeSingleSelect().getSelectedItem();
 
-        for (int opcode : WebSocketMessage.OPCODES) {
+        for (int opcode : WebSocketMessage.getOpcodes()) {
             if (WebSocketMessage.opcode2string(opcode).equals(opcodeString)) {
                 return opcode;
             }
@@ -155,7 +155,7 @@ public class WebSocketUiHelper {
 
     private JList<String> getOpcodeList() {
         if (opcodeList == null) {
-            int itemsCount = WebSocketMessage.OPCODES.length + 1;
+            int itemsCount = WebSocketMessage.getOpcodes().size() + 1;
 
             opcodeList = new JList<>(getOpcodeModel());
             opcodeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -168,13 +168,13 @@ public class WebSocketUiHelper {
 
     private String[] getOpcodeModel() {
         int i = 0;
-        String[] opcodes = new String[WebSocketMessage.OPCODES.length + 1];
+        String[] opcodes = new String[WebSocketMessage.getOpcodes().size() + 1];
 
         // all opcodes
         opcodes[i++] = SELECT_ALL_OPCODES;
 
         // specific opcode
-        for (int opcode : WebSocketMessage.OPCODES) {
+        for (int opcode : WebSocketMessage.getOpcodes()) {
             opcodes[i++] = WebSocketMessage.opcode2string(opcode);
         }
 
@@ -210,7 +210,7 @@ public class WebSocketUiHelper {
         }
 
         List<Integer> values = new ArrayList<>();
-        for (int opcode : WebSocketMessage.OPCODES) {
+        for (int opcode : WebSocketMessage.getOpcodes()) {
             if (opcodes.contains(WebSocketMessage.opcode2string(opcode))) {
                 values.add(opcode);
             }
@@ -282,7 +282,7 @@ public class WebSocketUiHelper {
         }
         WebSocketChannelDTO channel =
                 (WebSocketChannelDTO) getChannelSingleSelect().getSelectedItem();
-        return channel.id;
+        return channel.getId();
     }
 
     public WebSocketChannelDTO getSelectedChannelDTO() {
@@ -298,7 +298,7 @@ public class WebSocketUiHelper {
         if (channelId != null) {
             for (int i = 0; i < channelsModel.getSize(); i++) {
                 WebSocketChannelDTO channel = channelsModel.getElementAt(i);
-                if (channelId.equals(channel.id)) {
+                if (channelId.equals(channel.getId())) {
                     channelsComboBox.setSelectedItem(channel);
                     return;
                 }
@@ -339,7 +339,7 @@ public class WebSocketUiHelper {
         List<Integer> values = new ArrayList<>();
 
         for (WebSocketChannelDTO value : channels.getSelectedValuesList()) {
-            Integer channelId = value.id;
+            Integer channelId = value.getId();
             if (channelId == null) {
                 isSelectAll = true;
                 break;
@@ -363,7 +363,7 @@ public class WebSocketUiHelper {
             ListModel<WebSocketChannelDTO> model = channelsList.getModel();
             for (int i = 0, j = 0; i < model.getSize(); i++) {
                 WebSocketChannelDTO channel = model.getElementAt(i);
-                if (channelIds.contains(channel.id)) {
+                if (channelIds.contains(channel.getId())) {
                     selectedIndices[j++] = i;
                 }
             }

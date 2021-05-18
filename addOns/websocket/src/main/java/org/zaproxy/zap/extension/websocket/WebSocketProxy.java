@@ -730,11 +730,11 @@ public abstract class WebSocketProxy {
      */
     private void sendPongResponse(WebSocketMessage webSocketMessage) {
         WebSocketMessageDTO webSocketMessageDTO = webSocketMessage.getDTO();
-        webSocketMessageDTO.readableOpcode =
-                WebSocketMessage.opcode2string(WebSocketMessage.OPCODE_PONG);
-        webSocketMessageDTO.opcode = WebSocketMessage.OPCODE_PONG;
-        webSocketMessageDTO.isOutgoing = !webSocketMessageDTO.isOutgoing;
-        webSocketMessageDTO.hasChanged = true;
+        webSocketMessageDTO.setReadableOpcode(
+                WebSocketMessage.opcode2string(WebSocketMessage.OPCODE_PONG));
+        webSocketMessageDTO.setOpcode(WebSocketMessage.OPCODE_PONG);
+        webSocketMessageDTO.setOutgoing(!webSocketMessageDTO.isOutgoing());
+        webSocketMessageDTO.setHasChanged(true);
 
         try {
             sendAndNotify(webSocketMessageDTO, Initiator.MANUAL_REQUEST);
@@ -911,19 +911,19 @@ public abstract class WebSocketProxy {
 
     public WebSocketChannelDTO getDTO() {
         WebSocketChannelDTO dto = new WebSocketChannelDTO();
-        dto.id = getChannelId();
-        dto.host = host;
-        dto.port = port;
-        dto.startTimestamp = (start != null) ? start.getTime() : null;
-        dto.endTimestamp = (end != null) ? end.getTime() : null;
+        dto.setId(getChannelId());
+        dto.setHost(host);
+        dto.setPort(port);
+        dto.setStartTimestamp((start != null) ? start.getTime() : null);
+        dto.setEndTimestamp((end != null) ? end.getTime() : null);
 
         HistoryReference handshakeRef = getHandshakeReference();
         if (handshakeRef != null) {
-            dto.url = handshakeRef.getURI().toString();
-            dto.historyId = handshakeRef.getHistoryId();
+            dto.setUrl(handshakeRef.getURI().toString());
+            dto.setHistoryId(handshakeRef.getHistoryId());
         } else {
-            dto.url = "";
-            dto.historyId = null;
+            dto.setUrl("");
+            dto.setHistoryId(null);
         }
 
         return dto;
@@ -955,7 +955,7 @@ public abstract class WebSocketProxy {
             return localListener.getOutputStream();
         }
 
-        if (msg.isOutgoing) {
+        if (msg.isOutgoing()) {
             // an outgoing message is caught by the local listener
             // and forwarded to its output stream
             return localListener.getOutputStream();

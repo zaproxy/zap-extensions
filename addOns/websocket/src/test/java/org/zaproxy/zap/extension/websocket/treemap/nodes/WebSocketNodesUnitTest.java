@@ -94,7 +94,7 @@ class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
         WebSocketNode messageNode = new WebSocketNode(hostNode, new MessageContent(namer, message));
 
         // Then
-        assertEquals(messageNode.getMessage().id, message.id);
+        assertEquals(messageNode.getMessage().getId(), message.getId());
     }
 
     @Test
@@ -124,8 +124,8 @@ class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
         // Then
         for (int i = 0; i < expectedMessages.size(); i++) {
-            assertEquals(expectedMessages.get(i).id, messagesFromRoot.get(i).id);
-            assertEquals(expectedMessages.get(i).id, messagesFromHost.get(i).id);
+            assertEquals(expectedMessages.get(i).getId(), messagesFromRoot.get(i).getId());
+            assertEquals(expectedMessages.get(i).getId(), messagesFromHost.get(i).getId());
         }
     }
 

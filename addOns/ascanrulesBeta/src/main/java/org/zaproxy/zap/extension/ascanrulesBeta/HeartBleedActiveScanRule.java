@@ -1028,7 +1028,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             }
         } catch (Exception e) {
             // needed to catch exceptions from the "finally" statement
-            log.error("Error scanning a node for HeartBleed: " + e.getMessage(), e);
+            log.error("Error scanning a node for HeartBleed: {}", e.getMessage(), e);
         }
     }
 
@@ -1258,11 +1258,11 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
      *
      * @author 70pointer@gmail.com
      */
-    public static class SSLRecord {
-        public byte typ;
-        public short ver;
-        public short len;
-        public byte[] pay;
+    private static class SSLRecord {
+        private final byte typ;
+        private final short ver;
+        private final short len;
+        private final byte[] pay;
 
         SSLRecord(byte typ, short ver, short len, byte[] pay) {
             this.typ = typ;

@@ -43,7 +43,7 @@ public class ComboBoxChannelModel implements ComboBoxModel<WebSocketChannelDTO> 
 
         for (int i = 0; i < getSize(); i++) {
             WebSocketChannelDTO channel = getElementAt(i);
-            if (channelId.equals(channel.id)) {
+            if (channelId.equals(channel.getId())) {
                 setSelectedItem(channel);
                 return;
             }
