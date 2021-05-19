@@ -62,6 +62,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ZapMenuItem menuImportUrlOpenApi = null;
     private ImportFromFileDialog currentFileDialog = null;
     private ImportFromUrlDialog currentUrlDialog = null;
+    private ProgressPanel progressPanel = null;
     private int threadId = 1;
     private SpiderParser customSpider;
 
@@ -98,6 +99,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
+            extensionHook.getHookView().addStatusPanel(getProgressPanel());
         }
 
         extensionHook.addApiImplementor(new OpenApiAPI(this));
@@ -122,6 +124,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         if (currentUrlDialog != null) {
             currentUrlDialog.dispose();
         }
+    }
+
+    private ProgressPanel getProgressPanel() {
+        if (progressPanel == null) {
+            progressPanel = new ProgressPanel(getView());
+        }
+        return progressPanel;
     }
 
     /* Menu option to import a local OpenApi file. */
@@ -351,9 +360,18 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
                     @Override
                     public void run() {
+                        ImportPane currentImportPane = null;
                         try {
                             List<RequestModel> requestModels = converter.getRequestModels();
                             converter.setStructuralNodeModifiers(contextId);
+
+                            if (initViaUi) {
+                                currentImportPane = new ImportPane();
+                                requestor.addListener(new ImportPaneListener(currentImportPane));
+                                currentImportPane.setTotalEndpoints(requestModels.size());
+                                getProgressPanel().addImportPane(currentImportPane);
+                                getProgressPanel().setTabFocus();
+                            }
                             errors.addAll(requestor.run(requestModels));
                             // Needs to be called after converter.getRequestModels() to get loop
                             // errors
@@ -399,6 +417,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             errors.add(Constant.messages.getString("openapi.parse.error", e));
                             logErrors(errors, initViaUi);
                             LOG.warn(e.getMessage(), e);
+                        } finally {
+                            if (currentImportPane != null) {
+                                currentImportPane.completed();
+                            }
                         }
                     }
                 };
@@ -556,6 +578,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             if (currentUrlDialog != null) {
                 currentUrlDialog.clear();
             }
+            getProgressPanel().clearAndDispose();
         }
 
         @Override
