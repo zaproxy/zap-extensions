@@ -19,10 +19,13 @@
  */
 package org.zaproxy.addon.commonlib;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -38,6 +41,17 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  * @since 1.0.0
  */
 public final class CookieUtils {
+
+    private static final DateTimeFormatter FORMATTER_RFC7231 =
+            DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ROOT);
+    private static final DateTimeFormatter FORMATTER_RFC850 =
+            DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz", Locale.ROOT);
+    private static final DateTimeFormatter FORMATTER_ASCTIME =
+            DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", Locale.ROOT)
+                    .withZone(ZoneOffset.UTC);
+
+    static final List<DateTimeFormatter> DATE_FORMATTERS =
+            Arrays.asList(FORMATTER_RFC7231, FORMATTER_RFC850, FORMATTER_ASCTIME);
 
     private static final int NOT_FOUND = -1;
     private static final Logger LOGGER = LogManager.getLogger(CookieUtils.class);
@@ -226,23 +240,16 @@ public final class CookieUtils {
             return false;
         }
 
-        DateTimeFormatter df =
-                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ROOT);
-        LocalDateTime dateTime = null;
-        try {
-            dateTime = LocalDateTime.parse(expiry, df);
-        } catch (DateTimeParseException dtpe) {
-            DateTimeFormatter dfHyphen =
-                    DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz", Locale.ROOT);
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime expiresAt = null;
+        for (DateTimeFormatter formatter : DATE_FORMATTERS) {
             try {
-                dateTime = LocalDateTime.parse(expiry, dfHyphen);
-            } catch (DateTimeParseException dtpEx) {
-                LOGGER.debug("Couldn't parse LocalDateTime from: {}", headerValue, dtpEx);
+                expiresAt = ZonedDateTime.parse(expiry, formatter);
+                break;
+            } catch (DateTimeParseException ex) {
+                LOGGER.debug("Couldn't parse expire date {} with {} : {}", expiry, formatter, ex);
             }
         }
-        if (dateTime != null && dateTime.isBefore(LocalDateTime.now())) {
-            return true;
-        }
-        return false;
+        return expiresAt == null || expiresAt.isBefore(now);
     }
 }
