@@ -247,7 +247,7 @@ public class WappalyzerJsonParser {
                 if (category != null) {
                     list.add(category);
                 } else {
-                    logger.error("Failed to find category for {}", obj.toString());
+                    logger.error("Failed to find category for {}", obj);
                 }
             }
         }
@@ -273,18 +273,13 @@ public class WappalyzerJsonParser {
                         parsingExceptionHandler.handleException(
                                 new Exception("Unsupported type: " + value.getClass()));
                     }
-                } catch (NumberFormatException e) {
-                    logger.error(
-                            "Invalid field syntax {} : {}", entry.getKey(), entry.getValue(), e);
                 } catch (PatternSyntaxException e) {
                     patternErrorHandler.handleError(String.valueOf(entry.getValue()), e);
                 }
             }
         } else if (json != null) {
             logger.error(
-                    "Unexpected header type for {} {}",
-                    json.toString(),
-                    json.getClass().getCanonicalName());
+                    "Unexpected header type for {} {}", json, json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -324,13 +319,6 @@ public class WappalyzerJsonParser {
                                 nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                                 domSelectorMap.put((String) domEntryMap.getKey(), nodeSelectorMap);
                                 list.add(domSelectorMap);
-                            } catch (NumberFormatException e) {
-                                logger.error(
-                                        "Invalid field syntax "
-                                                + valueMap.getKey()
-                                                + " : "
-                                                + valueMap.getValue(),
-                                        e);
                             } catch (PatternSyntaxException e) {
                                 patternErrorHandler.handleError((String) valueMap.getValue(), e);
                             }
@@ -346,13 +334,6 @@ public class WappalyzerJsonParser {
                             nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                             domSelectorMap.put((String) (domEntryMap).getKey(), nodeSelectorMap);
                             list.add(domSelectorMap);
-                        } catch (NumberFormatException e) {
-                            logger.error(
-                                    "Invalid field syntax "
-                                            + nodeEntryMap.getKey()
-                                            + " : "
-                                            + nodeEntryMap.getValue(),
-                                    e);
                         } catch (PatternSyntaxException e) {
                             patternErrorHandler.handleError((String) nodeEntryMap.getValue(), e);
                         }
@@ -361,10 +342,7 @@ public class WappalyzerJsonParser {
             }
         } else {
             logger.error(
-                    "Unexpected header type for "
-                            + json.toString()
-                            + " "
-                            + json.getClass().getCanonicalName());
+                    "Unexpected header type for {} : {}", json, json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -418,10 +396,10 @@ public class WappalyzerJsonParser {
                 logger.error("Invalid field syntax {}", values[i], e);
             }
         }
-        if (pattern.indexOf(FIELD_CONFIDENCE) > 0) {
+        if (pattern.indexOf(FIELD_CONFIDENCE) > -1) {
             logger.warn("Confidence field in pattern?: {}", pattern);
         }
-        if (pattern.indexOf(FIELD_VERSION) > 0) {
+        if (pattern.indexOf(FIELD_VERSION) > -1) {
             logger.warn("Version field in pattern?: {}", pattern);
         }
         ap.setPattern(pattern);
@@ -429,10 +407,15 @@ public class WappalyzerJsonParser {
     }
 
     private int parseConfidence(String confidence) {
-        if (confidence.contains(".")) {
-            return (int) Double.parseDouble(confidence) * 100;
+        try {
+            if (confidence.contains(".")) {
+                return (int) Double.parseDouble(confidence) * 100;
+            }
+            return Integer.parseInt(confidence);
+        } catch (NumberFormatException nfe) {
+            logger.error("Invalid field value: {}", confidence);
+            return 0;
         }
-        return Integer.parseInt(confidence);
     }
 
     interface ParsingExceptionHandler {
