@@ -49,6 +49,8 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.select.QueryParser;
+import org.jsoup.select.Selector.SelectorParseException;
 import org.w3c.dom.svg.SVGDocument;
 
 public class WappalyzerJsonParser {
@@ -180,7 +182,7 @@ public class WappalyzerJsonParser {
         return g2d;
     }
 
-    private static ImageIcon createPngIcon(URL url) throws Exception {
+    private static ImageIcon createPngIcon(URL url) {
         ImageIcon appIcon = new ImageIcon(url);
         if (appIcon.getIconHeight() > SIZE || appIcon.getIconWidth() > SIZE) {
             BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
@@ -192,7 +194,7 @@ public class WappalyzerJsonParser {
         return appIcon;
     }
 
-    private static ImageIcon createSvgIcon(URL url) throws Exception {
+    private static ImageIcon createSvgIcon(URL url) {
         if (url == null) {
             return null;
         }
@@ -202,7 +204,7 @@ public class WappalyzerJsonParser {
         GraphicsNode svgIcon = null;
         try {
             doc = df.createSVGDocument(url.toString());
-        } catch (RuntimeException re) {
+        } catch (RuntimeException | IOException re) {
             // v1 SVGs are unsupported
             return null;
         }
@@ -317,8 +319,11 @@ public class WappalyzerJsonParser {
                                 appPat = this.strToAppPattern(type, (String) valueMap.getValue());
                                 value.put((String) valueMap.getKey(), appPat);
                                 nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
-                                domSelectorMap.put((String) domEntryMap.getKey(), nodeSelectorMap);
-                                list.add(domSelectorMap);
+                                String query = (String) domEntryMap.getKey();
+                                domSelectorMap.put(query, nodeSelectorMap);
+                                if (isValidQuery(query)) {
+                                    list.add(domSelectorMap);
+                                }
                             } catch (PatternSyntaxException e) {
                                 patternErrorHandler.handleError((String) valueMap.getValue(), e);
                             }
@@ -332,8 +337,11 @@ public class WappalyzerJsonParser {
                             appPat = this.strToAppPattern(type, (String) nodeEntryMap.getValue());
                             value.put((String) nodeEntryMap.getKey(), appPat);
                             nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
-                            domSelectorMap.put((String) (domEntryMap).getKey(), nodeSelectorMap);
-                            list.add(domSelectorMap);
+                            String query = (String) (domEntryMap).getKey();
+                            domSelectorMap.put(query, nodeSelectorMap);
+                            if (isValidQuery(query)) {
+                                list.add(domSelectorMap);
+                            }
                         } catch (PatternSyntaxException e) {
                             patternErrorHandler.handleError((String) nodeEntryMap.getValue(), e);
                         }
@@ -345,6 +353,17 @@ public class WappalyzerJsonParser {
                     "Unexpected header type for {} : {}", json, json.getClass().getCanonicalName());
         }
         return list;
+    }
+
+    private boolean isValidQuery(String query) {
+        try {
+            QueryParser.parse(query);
+        } catch (SelectorParseException spe) {
+            patternErrorHandler.handleError(
+                    query, new PatternSyntaxException(spe.getMessage(), query, -1));
+            return false;
+        }
+        return true;
     }
 
     private List<AppPattern> jsonToPatternList(String type, Object json) {

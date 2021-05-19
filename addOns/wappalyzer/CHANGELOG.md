@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Update RE2/J library to latest version (1.6).
 - Maintenance changes.
+- DOM patterns are now only attempted against HTML responses.
 
 ## [21.1.0] - 2021-03-03
 ### Changed

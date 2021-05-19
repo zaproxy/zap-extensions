@@ -163,6 +163,9 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private void checkDomElementMatches(HttpMessage message) {
+        if (!message.getResponseHeader().isHtml()) {
+            return;
+        }
         Document doc = Jsoup.parse(message.getResponseBody().toString());
         for (Map<String, Map<String, Map<String, AppPattern>>> domSelectorMap :
                 currentApp.getDom()) {

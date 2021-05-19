@@ -139,6 +139,22 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
     }
 
     @Test
+    void shouldNotMatchDomElementWithOnlyTextIfResponseNotHtml()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.modern.com\"  style=\"border: 5px groove rgb(244, 250, 88);\">Modern</a>"
+                        + "</body></html>");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/something");
+        // When
+        scan(msg);
+        // Then
+        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+    }
+
+    @Test
     void shouldMatchDomElementWithOnlyAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
