@@ -24,7 +24,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Unit test for {@link CookieUtils}. */
 class CookieUtilsUnitTest {
@@ -224,5 +232,50 @@ class CookieUtilsUnitTest {
         String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
         // Then
         assertThat(name, is(equalTo("Set-Cookie: name")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Sun, 06 Nov 1994 08:49:37 GMT",
+                "Sunday, 06-Nov-94 08:49:37 GMT",
+                "Sun Nov  6 08:49:37 1994",
+                "Unkown Format"
+            })
+    void shouldReportExpiredIfDateInThePastOrUnkownFormat(String date) {
+        // Given
+        String header = "name=value; expires=" + date;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "expiresFutureProvider")
+    void shouldReportNotExpiredIfDateInTheFuture(String date) {
+        // Given
+        String header = "name=value; expires=" + date;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "a; expires=Sun, 06 Nov 1994 08:49:37 GMT", "name=value;"})
+    void shouldReportNotExpiredIfEmptyHeaderOrInvalidCookieOrExpiresMissing(String headerValue) {
+        // Given
+        String header = headerValue;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    static Stream<String> expiresFutureProvider() {
+        ZonedDateTime future =
+                ZonedDateTime.ofInstant(Instant.now().plus(1, ChronoUnit.DAYS), ZoneOffset.UTC);
+        return CookieUtils.DATE_FORMATTERS.stream().map(e -> e.format(future));
     }
 }
