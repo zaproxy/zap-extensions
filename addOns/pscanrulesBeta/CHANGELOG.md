@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Insecure Form Post
     - Added evidence
 - Maintenance changes.
+- Reverse Tabnabbing Scan Rule will now ignore the absence of 'rel=opener'
 
 ## [24] - 2020-12-15
 ### Changed
