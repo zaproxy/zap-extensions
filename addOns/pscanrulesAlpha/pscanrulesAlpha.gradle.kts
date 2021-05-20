@@ -14,6 +14,11 @@ zapAddOn {
                 }
                 dependencies {
                     addOns {
+                        register("commonlib") {
+                            version.set(">= 1.4.0 & < 2.0.0")
+                        }
+                    }
+                    addOns {
                         register("custompayloads") {
                             version.set("0.9.*")
                         }
@@ -26,8 +31,10 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }

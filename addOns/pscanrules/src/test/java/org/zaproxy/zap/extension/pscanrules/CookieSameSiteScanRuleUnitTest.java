@@ -28,7 +28,6 @@ import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -39,6 +38,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -212,32 +212,8 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     @Test
     void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
         // Given - value empty, expiry in +1 year
-        DateTimeFormatter df =
-                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
-                        .withZone(ZoneOffset.UTC);
-        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
-        String expiry = dateTime.format(df);
-
-        HttpMessage msg = createMessage();
-        msg.getResponseHeader()
-                .setHeader(
-                        HttpResponseHeader.SET_COOKIE, "test=\"\"; expires=" + expiry + "; Path=/");
-        // Then
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
-    }
-
-    @Test
-    void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
-        // Given - value empty, expiry in +1 year
-        DateTimeFormatter df =
-                DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
-                        .withZone(ZoneOffset.UTC);
-        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
-        String expiry = dateTime.format(df);
+        String expiry =
+                HttpDateUtils.format(LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC));
 
         HttpMessage msg = createMessage();
         msg.getResponseHeader()

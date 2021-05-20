@@ -21,18 +21,12 @@ package org.zaproxy.addon.commonlib;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /**
@@ -42,19 +36,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  */
 public final class CookieUtils {
 
-    private static final DateTimeFormatter FORMATTER_RFC7231 =
-            DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ROOT);
-    private static final DateTimeFormatter FORMATTER_RFC850 =
-            DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz", Locale.ROOT);
-    private static final DateTimeFormatter FORMATTER_ASCTIME =
-            DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", Locale.ROOT)
-                    .withZone(ZoneOffset.UTC);
-
-    static final List<DateTimeFormatter> DATE_FORMATTERS =
-            Arrays.asList(FORMATTER_RFC7231, FORMATTER_RFC850, FORMATTER_ASCTIME);
-
     private static final int NOT_FOUND = -1;
-    private static final Logger LOGGER = LogManager.getLogger(CookieUtils.class);
 
     private CookieUtils() {
         // Utility class.
@@ -241,15 +223,7 @@ public final class CookieUtils {
         }
 
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        ZonedDateTime expiresAt = null;
-        for (DateTimeFormatter formatter : DATE_FORMATTERS) {
-            try {
-                expiresAt = ZonedDateTime.parse(expiry, formatter);
-                break;
-            } catch (DateTimeParseException ex) {
-                LOGGER.debug("Couldn't parse expire date {} with {} : {}", expiry, formatter, ex);
-            }
-        }
+        ZonedDateTime expiresAt = HttpDateUtils.parse(expiry);
         return expiresAt == null || expiresAt.isBefore(now);
     }
 }

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.net.URL;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +36,6 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -49,6 +50,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 
@@ -519,7 +521,6 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // closes? never?
                     // the longer the session cookie is valid, the greater the risk. alert it
                     // accordingly
-                    String cookieBack1Expiry = null;
                     int sessionExpiryRiskLevel;
                     String sessionExpiryDescription = null;
 
@@ -535,11 +536,9 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             String[] cookieBack1FlagValues = cookieBack1Flag.split("=");
                             if (cookieBack1FlagValues.length > 1) {
                                 log.debug("Cookie Expiry: {}", cookieBack1FlagValues[1]);
-                                cookieBack1Expiry = cookieBack1FlagValues[1]; // the Date String
                                 sessionExpiryDescription =
                                         cookieBack1FlagValues[1]; // the Date String
-                                cookieBack1ExpiryDate =
-                                        DateUtil.parseDate(cookieBack1Expiry); // the actual Date
+                                cookieBack1ExpiryDate = parseDate(cookieBack1FlagValues[1]);
                             }
                         }
                     }
@@ -571,11 +570,10 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 cookieBack1ExpiryDate =
                                         new Date(cookie1DropDeadMS); // the actual Date the cookie
                                 // expires (by Max-Age)
-                                cookieBack1Expiry =
-                                        DateUtil.formatDate(
-                                                cookieBack1ExpiryDate, DateUtil.PATTERN_RFC1123);
                                 sessionExpiryDescription =
-                                        cookieBack1Expiry; // needs to the Date String
+                                        HttpDateUtils.format(
+                                                Instant.ofEpochMilli(
+                                                        cookieBack1ExpiryDate.getTime()));
                             }
                         }
                     }
@@ -634,10 +632,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
                         // pass the original param value here, not the new value
                         String cookieReceivedTime =
-                                cookieBack1Expiry =
-                                        DateUtil.formatDate(
-                                                new Date(cookieBack1TimeReceived),
-                                                DateUtil.PATTERN_RFC1123);
+                                HttpDateUtils.format(Instant.ofEpochMilli(cookieBack1TimeReceived));
                         String extraInfo =
                                 Constant.messages.getString(
                                         "ascanbeta.sessionidexpiry.alert.extrainfo",
@@ -1283,6 +1278,14 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
             // if it's in English, it's still better than not having it at all.
             log.error("An error occurred checking a url for Session Fixation issues", e);
         }
+    }
+
+    private static Date parseDate(String date) {
+        ZonedDateTime parsedDate = HttpDateUtils.parse(date);
+        if (parsedDate != null) {
+            return new Date(parsedDate.toInstant().toEpochMilli());
+        }
+        return null;
     }
 
     private static void logSessionFixation(
