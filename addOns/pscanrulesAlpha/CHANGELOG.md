@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Site Isolation
   - Sub Resource Integrity
 - Maintenance changes.
+- Rename of Feature-Policy header to Permissions-Policy to follow spec change
 
 ## [30] - 2021-02-08
 
