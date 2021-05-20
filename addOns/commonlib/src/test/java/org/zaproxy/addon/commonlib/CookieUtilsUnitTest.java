@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.commonlib.http.HttpDateUtilsUnitTest;
 
 /** Unit test for {@link CookieUtils}. */
 class CookieUtilsUnitTest {
@@ -276,6 +277,6 @@ class CookieUtilsUnitTest {
     static Stream<String> expiresFutureProvider() {
         ZonedDateTime future =
                 ZonedDateTime.ofInstant(Instant.now().plus(1, ChronoUnit.DAYS), ZoneOffset.UTC);
-        return CookieUtils.DATE_FORMATTERS.stream().map(e -> e.format(future));
+        return HttpDateUtilsUnitTest.formatters().stream().map(e -> e.format(future));
     }
 }

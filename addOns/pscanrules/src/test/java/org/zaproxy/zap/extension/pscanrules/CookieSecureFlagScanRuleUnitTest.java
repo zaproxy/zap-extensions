@@ -33,6 +33,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -234,11 +235,8 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         // When
         msg.setResponseBody("<html></html>");
 
-        DateTimeFormatter df =
-                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
-                        .withZone(ZoneOffset.UTC);
-        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
-        String expiry = dateTime.format(df);
+        String expiry =
+                HttpDateUtils.format(LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC));
 
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"

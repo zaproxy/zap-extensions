@@ -22,16 +22,16 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.Date;
+import java.time.Instant;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 
 /* All test-cases should raise storeable and cacheable alerts
  * or should verfiy the absence of exceptions.
@@ -96,7 +96,7 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
                         + "Expires: 0\r\n"
                         + // http-date expected, Ex: "Wed, 21 Oct 2015 07:28:00 GMT"
                         "Date: "
-                        + DateUtil.formatDate(new Date())
+                        + HttpDateUtils.format(Instant.now())
                         + "\r\n\r\n");
         // When
         scanHttpResponseReceive(msg);

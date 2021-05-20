@@ -19,13 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.httpclient.util.DateParseException;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -33,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -701,14 +701,12 @@ public class CacheableScanRule extends PluginPassiveScanner {
         }
     }
 
-    private Date parseDate(String dateStr) {
-        Date newDate = null;
-        try {
-            newDate = DateUtil.parseDate(dateStr);
-        } catch (DateParseException dpe) {
-            // There was an error parsing the date, leave the var null
+    private static Date parseDate(String dateStr) {
+        ZonedDateTime dateTime = HttpDateUtils.parse(dateStr);
+        if (dateTime != null) {
+            return new Date(dateTime.toInstant().toEpochMilli());
         }
-        return newDate;
+        return null;
     }
 
     @Override
