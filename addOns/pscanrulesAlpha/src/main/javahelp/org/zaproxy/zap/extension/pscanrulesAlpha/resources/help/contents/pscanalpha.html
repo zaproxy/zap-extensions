@@ -84,13 +84,6 @@ For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-z
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<H2>Feature Policy Header Not Set</H2>
-This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
-and alerts if one is not found.<br>
-Redirects are ignored except at the Low threshold.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FeaturePolicyScanRule.java">FeaturePolicyScanRule.java</a>
-
 <H2>In Page Banner Information Leak</H2>
 Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
 If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
@@ -106,6 +99,13 @@ JSO should not be used by Java programs. Strong controls must be done on seriali
 JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
+
+<H2>Permissions Policy Header Not Set</H2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found.<br>
+Redirects are ignored except at the Low threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
 
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server.

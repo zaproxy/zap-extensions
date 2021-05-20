@@ -30,9 +30,9 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScanRule> {
+class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPolicyScanRule> {
 
-    private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
+    private static final String MESSAGE_PREFIX = "pscanalpha.permissionspolicymissing.";
     private HttpMessage msg;
 
     @BeforeEach
@@ -46,12 +46,12 @@ class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScan
     }
 
     @Override
-    protected FeaturePolicyScanRule createScanner() {
-        return new FeaturePolicyScanRule();
+    protected PermissionsPolicyScanRule createScanner() {
+        return new PermissionsPolicyScanRule();
     }
 
     @Test
-    void shouldRaiseAlertOnMissingFeaturePolicyHTML() throws Exception {
+    void shouldRaiseAlertOnMissingHeaderHTML() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
@@ -62,17 +62,18 @@ class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScan
     }
 
     @Test
-    void shouldRaiseAlertOnMissingFeaturePolicyJavaScript() throws Exception {
+    void shouldRaiseAlertOnMissingHeaderJavaScript() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 
     @Test
-    void shouldNotRaiseAlertOnMissingFeaturePolicyOthers() throws Exception {
+    void shouldNotRaiseAlertOnMissingHeaderOthers() throws Exception {
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
@@ -82,9 +83,9 @@ class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScan
     }
 
     @Test
-    void shouldNotRaiseAlertOnAvailableFeaturePolicy() throws Exception {
+    void shouldNotRaiseAlertOnAvailablePermissionsPolicyHeader() throws Exception {
         // Given
-        msg.getResponseHeader().addHeader("Feature-Policy", "vibrate 'none'");
+        msg.getResponseHeader().addHeader("Permissions-Policy", "vibrate 'none'");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/HTML");
         // When
         scanHttpResponseReceive(msg);
@@ -93,7 +94,19 @@ class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScan
     }
 
     @Test
-    void shouldNotRaiseAlertOnMissingFeaturePolicyRedirectMediumThreshold() throws Exception {
+    void shouldRaiseAlertOnAvailableDeprecatedFeaturePolicyHeader() throws Exception {
+        // Given
+        msg.getResponseHeader().addHeader("Feature-Policy", "vibrate 'none'");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/HTML");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "deprecated.name"));
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnMissingHeaderRedirectMediumThreshold() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
@@ -105,7 +118,7 @@ class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScan
     }
 
     @Test
-    void shouldRaiseAlertOnMissingFeaturePolicyRedirectLowThreshold() throws Exception {
+    void shouldRaiseAlertOnMissingHeaderRedirectLowThreshold() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");

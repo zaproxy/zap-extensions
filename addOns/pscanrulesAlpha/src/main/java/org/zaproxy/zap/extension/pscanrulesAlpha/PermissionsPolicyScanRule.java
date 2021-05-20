@@ -32,12 +32,15 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Feature Policy Header Missing passive scan rule https://github.com/zaproxy/zaproxy/issues/4885
+ * Permissions Policy Header Missing passive scan rule
+ * https://github.com/zaproxy/zaproxy/issues/4885
  */
-public class FeaturePolicyScanRule extends PluginPassiveScanner {
+public class PermissionsPolicyScanRule extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
-    private static final Logger LOGGER = LogManager.getLogger(FeaturePolicyScanRule.class);
+    private static final String PERMISSIONS_POLICY_HEADER = "Permissions-Policy";
+    private static final String DEPRECATED_HEADER = "Feature-Policy";
+    private static final String MESSAGE_PREFIX = "pscanalpha.permissionspolicymissing.";
+    private static final Logger LOGGER = LogManager.getLogger(PermissionsPolicyScanRule.class);
     private static final int PLUGIN_ID = 10063;
 
     @Override
@@ -62,8 +65,22 @@ public class FeaturePolicyScanRule extends PluginPassiveScanner {
         // Exploder or Safari
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#Browser_compatibility
         List<String> featurePolicyOptions =
-                httpMessage.getResponseHeader().getHeaderValues("Feature-Policy");
-        if (featurePolicyOptions.isEmpty()) {
+                httpMessage.getResponseHeader().getHeaderValues(DEPRECATED_HEADER);
+        List<String> permissionPolicyOptions =
+                httpMessage.getResponseHeader().getHeaderValues(PERMISSIONS_POLICY_HEADER);
+        if (!featurePolicyOptions.isEmpty()) {
+            newAlert()
+                    .setRisk(Alert.RISK_LOW)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setName(getAlertAttribute("deprecated.name"))
+                    .setDescription(getAlertAttribute("deprecated.desc"))
+                    .setSolution(getAlertAttribute("deprecated.soln"))
+                    .setReference(getAlertAttribute("deprecated.refs"))
+                    .setEvidence(DEPRECATED_HEADER)
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
+        } else if (permissionPolicyOptions.isEmpty()) {
             newAlert()
                     .setRisk(Alert.RISK_LOW)
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
