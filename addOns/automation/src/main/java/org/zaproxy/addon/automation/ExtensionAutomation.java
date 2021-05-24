@@ -120,8 +120,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             this.sortedJobs.forEach(
                     j -> {
                         try {
-                            fw.write(j.getConfigFileData());
-                            fw.write("\n");
+                            if (!j.isDataJob()) {
+                                fw.write(j.getConfigFileData());
+                                fw.write("\n");
+                            }
                         } catch (IOException e) {
                             CommandLine.error(
                                     Constant.messages.getString(

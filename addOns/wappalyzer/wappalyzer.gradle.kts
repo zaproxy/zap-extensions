@@ -11,6 +11,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/technology-detection/")
+        extensions {
+            register("org.zaproxy.zap.extension.wappalyzer.automation.ExtensionWappalyzerAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.wappalyzer.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set("0.*")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -20,6 +34,7 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("automation")!!)
     implementation("com.google.re2j:re2j:1.6")
 
     val batikVersion = "1.14"

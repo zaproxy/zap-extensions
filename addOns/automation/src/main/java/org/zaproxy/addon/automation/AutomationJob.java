@@ -80,6 +80,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public abstract String getParamMethodName();
 
+    /**
+     * Returns true if this job is just a way to make data available to reports - running it will do
+     * nothing.
+     */
+    public boolean isDataJob() {
+        return false;
+    }
+
     public boolean applyCustomParameter(String name, String value) {
         return false;
     }

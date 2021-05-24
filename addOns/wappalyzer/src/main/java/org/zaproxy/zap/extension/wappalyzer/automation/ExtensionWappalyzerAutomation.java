@@ -17,42 +17,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.spiderAjax.automation;
+package org.zaproxy.zap.extension.wappalyzer.automation;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
-import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
+import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer;
 
-public class ExtensionAjaxAutomation extends ExtensionAdaptor {
+public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionAjaxAutomation";
+    public static final String NAME = "ExtensionWappalyzerAutomation";
 
-    private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/spiderAjax/resources/";
+    private WappalyzerJob job;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
-    private AjaxSpiderJob job;
-
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAjax.class);
+        dependencies.add(ExtensionWappalyzer.class);
         dependencies.add(ExtensionAutomation.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    public ExtensionAjaxAutomation() {
+    public ExtensionWappalyzerAutomation() {
         super(NAME);
     }
 
@@ -66,7 +59,7 @@ public class ExtensionAjaxAutomation extends ExtensionAdaptor {
         super.hook(extensionHook);
         ExtensionAutomation extAuto =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-        job = new AjaxSpiderJob();
+        job = new WappalyzerJob();
         extAuto.registerAutomationJob(job);
     }
 
@@ -88,27 +81,13 @@ public class ExtensionAjaxAutomation extends ExtensionAdaptor {
         return DEPENDENCIES;
     }
 
-    public static String getResourceAsString(String name) {
-        try (InputStream in = ExtensionAutomation.class.getResourceAsStream(RESOURCES_DIR + name)) {
-            return new BufferedReader(new InputStreamReader(in))
-                            .lines()
-                            .collect(Collectors.joining("\n"))
-                    + "\n";
-        } catch (Exception e) {
-            CommandLine.error(
-                    Constant.messages.getString(
-                            "spiderajax.automation.error.nofile", RESOURCES_DIR + name));
-        }
-        return "";
-    }
-
     @Override
     public String getDescription() {
-        return Constant.messages.getString("spiderajax.automation.desc");
+        return Constant.messages.getString("wappalyzer.automation.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("spiderajax.automation.name");
+        return Constant.messages.getString("wappalyzer.automation.name");
     }
 }
