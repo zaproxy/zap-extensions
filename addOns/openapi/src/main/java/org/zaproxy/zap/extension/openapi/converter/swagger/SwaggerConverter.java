@@ -31,6 +31,7 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.extensions.SwaggerParserExtension;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.io.BufferedWriter;
@@ -380,5 +381,32 @@ public class SwaggerConverter implements Converter {
             operations.addAll(
                     operationHelper.getAllOperations(entry.getValue(), url + entry.getKey()));
         }
+    }
+
+    /**
+     * File based parser for v2 and v3 specs that bundles external file refs.
+     *
+     * @param file V2 or V3 OpenAPI File spec, supporting external files via ref
+     * @return Populated either with a valid OpenAPI or a list of errors
+     */
+    public static SwaggerParseResult parse(File file) {
+        ParseOptions parseOptions = new ParseOptions();
+        parseOptions.setResolve(true);
+        parseOptions.setResolveFully(true);
+
+        SwaggerParseResult swaggerParseResult = new SwaggerParseResult();
+        List<String> errors = new ArrayList<>();
+        for (SwaggerParserExtension ex : OpenAPIV3Parser.getExtensions()) {
+            swaggerParseResult = ex.readLocation(file.getAbsolutePath(), null, parseOptions);
+            OpenAPI openAPI = swaggerParseResult.getOpenAPI();
+            if (openAPI != null && swaggerParseResult.getMessages().isEmpty()) {
+                return swaggerParseResult;
+            } else {
+                errors.addAll(swaggerParseResult.getMessages());
+            }
+        }
+
+        swaggerParseResult.setMessages(errors);
+        return swaggerParseResult;
     }
 }
