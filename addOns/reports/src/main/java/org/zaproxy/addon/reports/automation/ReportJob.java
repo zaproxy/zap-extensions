@@ -72,7 +72,7 @@ public class ReportJob extends AutomationJob {
         // Work out the file name based on the pattern
         String fileName =
                 ExtensionReports.getNameFromPattern(
-                                reportFile, env.getUrlStringForContext(env.getDefaultContext()))
+                                reportFile, env.getDefaultContextWrapper().getUrls().get(0))
                         + "."
                         + template.getExtension();
 

@@ -52,6 +52,7 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
@@ -174,16 +175,15 @@ class AjaxSpiderJobUnitTest {
     void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
@@ -250,6 +250,8 @@ class AjaxSpiderJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         given(context1.isInContext(anyString())).willReturn(true);
         given(context2.isInContext(anyString())).willReturn(true);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
 
         AjaxSpiderParam options = new AjaxSpiderParam();
         FileConfiguration tempConfig = new XMLConfiguration();
@@ -276,9 +278,8 @@ class AjaxSpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-        given(env.getContext("context1")).willReturn(context1);
-        given(env.getContext("context2")).willReturn(context2);
+        given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
+        given(env.getContextWrapper("context2")).willReturn(contextWrapper2);
         given(env.getDefaultContext()).willReturn(context1);
 
         // When
@@ -345,16 +346,15 @@ class AjaxSpiderJobUnitTest {
     // @Test
     void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
@@ -376,16 +376,15 @@ class AjaxSpiderJobUnitTest {
     // @Test
     void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
@@ -407,16 +406,15 @@ class AjaxSpiderJobUnitTest {
     // @Test
     void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);

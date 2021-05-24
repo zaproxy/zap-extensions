@@ -14,7 +14,7 @@ This section of the YAML configuration file defines the applications which the r
 env:                                   # The environment, mandatory
   contexts :                           # List of 1 or more contexts, mandatory
     - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
-      url:                             # The top level url, mandatory, everything under this will be included
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
       includePaths:                    # TBA: An optional list of regexes to include
       excludePaths:                    # TBA: An optional list of regexes to exclude
       authentication:                  # TBA: In time to cover all auth configs
