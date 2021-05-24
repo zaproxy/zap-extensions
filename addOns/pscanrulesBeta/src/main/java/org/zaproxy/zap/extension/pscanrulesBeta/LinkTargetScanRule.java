@@ -48,6 +48,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
     private static final String TARGET_ATTRIBUTE = "target";
     private static final String _BLANK = "_blank";
     private static final String OPENER = "opener";
+    private static final String NOOPENER = "noopener";
     private static final String NOREFERRER = "noreferrer";
 
     private String trustedConfig = "";
@@ -152,8 +153,10 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
             String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
             if (relAtt != null) {
                 relAtt = relAtt.toLowerCase();
-                if (!relAtt.contains(OPENER) && relAtt.contains(NOREFERRER)) {
+                if (!relAtt.contains(OPENER)) {
                     // Its ok
+                    return false;
+                } else if (relAtt.contains(NOOPENER)) {
                     return false;
                 }
             }
