@@ -3,6 +3,7 @@ This project contains the addon for a connection to the SQLMap API.
 To use this addon a running instance of the SQLMap API must be provided.
 SQLMap can be downloaded from https://sqlmap.org/
 
+
 To start the SQLMap API you can use the following command:
 ![img.png](start%20sqlmap%20api.png)
 In this example the API is hosted on localhost:9091
