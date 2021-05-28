@@ -19,11 +19,15 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.HttpStatus;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
@@ -82,5 +86,42 @@ public class ReportHelper {
 
     public static boolean hasSiteStats(String site, String prefix) {
         return !getSiteStats(site, prefix).isEmpty();
+    }
+
+    public static List<Alert> getAlertsForSite(AlertNode rootNode, String site) {
+        List<Alert> list = new ArrayList<>();
+
+        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
+            AlertNode alertNode = rootNode.getChildAt(alertIndex);
+            for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                    list.add(instanceNode.getUserObject());
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public static List<Alert> getAlertInstancesForSite(
+            AlertNode rootNode, String site, int pluginId) {
+        List<Alert> list = new ArrayList<>();
+
+        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
+            AlertNode alertNode = rootNode.getChildAt(alertIndex);
+            // Only the instances have userObjects, not the top level nodes :/
+            if (alertNode.getChildAt(0) != null
+                    && alertNode.getChildAt(0).getUserObject().getPluginId() == pluginId) {
+                for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                    AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                    if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                        list.add(instanceNode.getUserObject());
+                    }
+                }
+                break;
+            }
+        }
+        return list;
     }
 }
