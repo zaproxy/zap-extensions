@@ -53,6 +53,11 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 <H2>.env Information Leak</H2>
 Checks for web accessible .env files which may leak sensitive information 
 (such as usernames, passwords, API or APP keys, etc.).
+Environment files come in many flavors but mostly they are KEY=VALUE formatted. <br>
+This rule checks for how servers deliver them by default;
+NGINX returns them as binary/octet-stream content-type Apache just returns the text
+with no content-type. This rule also check for content length over 500 characters to try and exclude
+larger, possibly intentional, files.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/EnvFileScanRule.java">EnvFileScanRule.java</a>
 
