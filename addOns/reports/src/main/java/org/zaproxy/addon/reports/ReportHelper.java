@@ -30,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
 
@@ -49,7 +50,12 @@ public class ReportHelper {
     public static String getHostForSite(String site) {
         String[] schemeHostPort = site.split(":");
         // http://www.example.com:8080 - the host will start with //
-        return schemeHostPort[1].substring(2);
+        String host = schemeHostPort[1].substring(2);
+        int slashIndex = host.indexOf("/");
+        if (slashIndex > 0) {
+            host = host.substring(0, slashIndex);
+        }
+        return host;
     }
 
     public static int getPortForSite(String site) {
@@ -123,5 +129,23 @@ public class ReportHelper {
             }
         }
         return list;
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeText(String text) {
+        return XMLStringUtil.escapeControlChrs(text);
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeParagraph(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return legacyEscapeText(
+                        "<p>"
+                                + text.replaceAll("\\r\\n", "</p><p>").replaceAll("\\n", "</p><p>")
+                                + "</p>")
+                .replace("&lt;p&gt;", "<p>")
+                .replace("&lt;/p&gt;", "</p>");
     }
 }
