@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class WSDLFilePassiveScanRuleTestCase {
+class WSDLFilePassiveScanRuleTestCase {
     private HttpMessage wsdlMsg = new HttpMessage();
 
     private static void setContentType(HttpMessage msg, String contentType) {
@@ -37,7 +37,7 @@ public class WSDLFilePassiveScanRuleTestCase {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         try {
             wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);
             wsdlMsg = Sample.setResponseHeaderContent(wsdlMsg);

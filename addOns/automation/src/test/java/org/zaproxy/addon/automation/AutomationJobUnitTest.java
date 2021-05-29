@@ -168,7 +168,7 @@ class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldSetResolvedParams() {
+    void shouldSetResolvedParams() {
         // Given
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.replaceVars(eq("${myStringParam}"))).willReturn(stringParamValue);

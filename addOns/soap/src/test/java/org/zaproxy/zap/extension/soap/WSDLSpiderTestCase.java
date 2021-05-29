@@ -27,12 +27,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class WSDLSpiderTestCase {
+class WSDLSpiderTestCase {
 
     private HttpMessage wsdlMsg = new HttpMessage();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         try {
             wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);
             wsdlMsg = Sample.setResponseHeaderContent(wsdlMsg);
