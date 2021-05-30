@@ -32,7 +32,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -131,19 +130,6 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
             return sb.toString();
         }
         return "Failed to load vulnerability reference from file";
-    }
-
-    @Override
-    public void init() {
-        // Does not work with Java 9+
-        // https://github.com/zaproxy/zaproxy/issues/4038
-        if (SystemUtils.isJavaVersionAtLeast(1.9f)) {
-            getParent()
-                    .pluginSkipped(
-                            this,
-                            Constant.messages.getString(
-                                    "ascanrules.sourcecodedisclosurewebinf.skipJava9"));
-        }
     }
 
     @Override
