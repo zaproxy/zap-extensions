@@ -442,7 +442,7 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldReplaceConfigVarsInEnv() {
+    void shouldReplaceConfigVarsInEnv() {
         // Given
         String contextStr =
                 "env:\n"
@@ -469,7 +469,7 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    public void shouldReplaceEnvVarsInJobs() {
+    void shouldReplaceEnvVarsInJobs() {
         // Given
         String contextStr =
                 "env:\n"

@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class SitesTreeHelperTestCase extends TestUtils {
+class SitesTreeHelperTestCase extends TestUtils {
     HttpMessage message;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         setUpZap();
         message = new HttpMessage();
     }

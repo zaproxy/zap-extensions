@@ -34,7 +34,7 @@ class SoapActionUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com/", "", "\"ZAP\""})
-    public void getSoapActionForSoapV1Message(String soapAction) {
+    void getSoapActionForSoapV1Message(String soapAction) {
         HttpMessage soapMsg = new HttpMessage();
         soapMsg.getRequestHeader().setHeader("SOAPAction", soapAction);
         assertThat(SoapAction.extractFrom(soapMsg), is(equalTo(soapAction)));
@@ -42,7 +42,7 @@ class SoapActionUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com/", "", "\"ZAP\""})
-    public void getSoapActionForSoapV2Message(String soapAction) {
+    void getSoapActionForSoapV2Message(String soapAction) {
         HttpMessage soapMsg = new HttpMessage();
         String contentType = "application/soap+xml;charset=utf-8;action=" + soapAction;
         soapMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
@@ -51,7 +51,7 @@ class SoapActionUnitTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com/", "", "\"ZAP\""})
-    public void getSoapActionForSoapV2MessageWithActionBeforeCharsetInContentTypeHeader(
+    void getSoapActionForSoapV2MessageWithActionBeforeCharsetInContentTypeHeader(
             String soapAction) {
         HttpMessage soapMsg = new HttpMessage();
         String contentType = "application/soap+xml;action=" + soapAction + ";charset=utf-8";

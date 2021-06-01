@@ -39,13 +39,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class WSDLCustomParserTestCase extends TestUtils {
+class WSDLCustomParserTestCase extends TestUtils {
 
     private String wsdlContent;
     private WSDLCustomParser parser;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         /* Gets test wsdl file and retrieves its content as String. */
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
