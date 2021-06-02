@@ -376,7 +376,7 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(tpc, "getBadTestParam", params, progress);
+        job.verifyOrApplyParameters(tpc, "getBadTestParam", params, progress, false);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));

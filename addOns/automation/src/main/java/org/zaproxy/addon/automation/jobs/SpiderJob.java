@@ -67,22 +67,39 @@ public class SpiderJob extends AutomationJob {
         return extSpider;
     }
 
-    public boolean applyCustomParameter(String name, String value) {
+    private boolean verifyOrApplyCustomParameter(
+            String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_CONTEXT:
-                contextName = value;
+                if (progress == null) {
+                    contextName = value;
+                }
                 return true;
             case PARAM_URL:
-                url = value;
+                if (progress == null) {
+                    url = value;
+                }
                 return true;
             case PARAM_FAIL_IF_LESS_URLS:
-                failIfFoundUrlsLessThan = Integer.parseInt(value);
+                if (progress != null) {
+                    verifyIntValue(name, value, progress);
+                } else {
+                    failIfFoundUrlsLessThan = Integer.parseInt(value);
+                }
                 return true;
             case PARAM_WARN_IF_LESS_URLS:
-                warnIfFoundUrlsLessThan = Integer.parseInt(value);
+                if (progress != null) {
+                    verifyIntValue(name, value, progress);
+                } else {
+                    warnIfFoundUrlsLessThan = Integer.parseInt(value);
+                }
                 return true;
             case PARAM_MAX_DURATION:
-                maxDuration = Integer.parseInt(value);
+                if (progress != null) {
+                    verifyIntValue(name, value, progress);
+                } else {
+                    maxDuration = Integer.parseInt(value);
+                }
                 // Don't consume this as we still want it to be applied to the spider params
                 return false;
             default:
@@ -90,6 +107,26 @@ public class SpiderJob extends AutomationJob {
                 break;
         }
         return false;
+    }
+
+    private void verifyIntValue(String name, String value, AutomationProgress progress) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.options.badint", this.getName(), name, value));
+        }
+    }
+
+    @Override
+    public boolean applyCustomParameter(String name, String value) {
+        return this.verifyOrApplyCustomParameter(name, value, null);
+    }
+
+    @Override
+    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        this.verifyOrApplyCustomParameter(name, value, progress);
     }
 
     @Override

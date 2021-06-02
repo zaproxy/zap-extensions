@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -175,10 +176,13 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         AutomationEnvironment env =
                 new AutomationEnvironment(envData, progress, Model.getSingleton().getSession());
 
+        if (env.isTimeToQuit()) {
+            return progress;
+        }
+
+        Map<AutomationJob, LinkedHashMap<?, ?>> jobsToRun = new HashMap<>();
+
         for (Object jobObj : jobsData) {
-            if (env.isTimeToQuit()) {
-                break;
-            }
             if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
                 progress.error(Constant.messages.getString("automation.error.job.data", jobObj));
                 continue;
@@ -208,23 +212,32 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             Constant.messages.getString("automation.error.job.data", paramsObj));
                     continue;
                 }
-                job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
-
-                // In case errors or warnings are encountered in the applyParameters() call above
-                if (env.isTimeToQuit()) {
-                    break;
-                }
-
-                progress.info(
-                        Constant.messages.getString("automation.info.jobstart", job.getType()));
-                job.setEnv(env);
-                job.runJob(env, jobData, progress);
-                progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+                job.verifyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
+                job.verifyJobSpecificData(jobData, progress);
+                jobsToRun.put(job, jobData);
             } else {
                 progress.error(
                         Constant.messages.getString("automation.error.job.unknown", jobType));
             }
         }
+
+        if (env.isTimeToQuit()) {
+            return progress;
+        }
+
+        for (Entry<AutomationJob, LinkedHashMap<?, ?>> jobInfo : jobsToRun.entrySet()) {
+            AutomationJob job = jobInfo.getKey();
+            LinkedHashMap<?, ?> jobData = jobInfo.getValue();
+            Object paramsObj = jobData.get("parameters");
+            job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
+            progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
+            job.runJob(env, jobData, progress);
+            if (env.isTimeToQuit()) {
+                break;
+            }
+            progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+        }
+
         return progress;
     }
 

@@ -50,9 +50,7 @@ public class PassiveScanConfigJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
-        // Configure any rules
+    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
         Object o = jobData.get("rules");
         if (o instanceof ArrayList<?>) {
             ArrayList<?> ruleData = (ArrayList<?>) o;
@@ -61,21 +59,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
                     Integer id = (Integer) ruleMap.get("id");
                     PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
-                    if (plugin != null) {
-                        AlertThreshold pluginTh =
-                                JobUtils.parseAlertThreshold(
-                                        ruleMap.get("threshold"), this.getName(), progress);
-                        if (pluginTh != null) {
-                            plugin.setAlertThreshold(pluginTh);
-                            plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
-                            progress.info(
-                                    Constant.messages.getString(
-                                            "automation.info.pscan.rule.setthreshold",
-                                            this.getName(),
-                                            id,
-                                            pluginTh.name()));
-                        }
-                    } else {
+                    if (plugin == null) {
                         progress.warn(
                                 Constant.messages.getString(
                                         "automation.error.pscan.rule.unknown", this.getName(), id));
@@ -86,6 +70,34 @@ public class PassiveScanConfigJob extends AutomationJob {
             progress.warn(
                     Constant.messages.getString(
                             "automation.error.options.badlist", this.getName(), "rules", o));
+        }
+    }
+
+    @Override
+    public void runJob(
+            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+        // Configure any rules
+        Object o = jobData.get("rules");
+        ArrayList<?> ruleData = (ArrayList<?>) o;
+        for (Object rule : ruleData) {
+            if (rule instanceof LinkedHashMap<?, ?>) {
+                LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                Integer id = (Integer) ruleMap.get("id");
+                PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
+                AlertThreshold pluginTh =
+                        JobUtils.parseAlertThreshold(
+                                ruleMap.get("threshold"), this.getName(), progress);
+                if (pluginTh != null && plugin != null) {
+                    plugin.setAlertThreshold(pluginTh);
+                    plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.info.pscan.rule.setthreshold",
+                                    this.getName(),
+                                    id,
+                                    pluginTh.name()));
+                }
+            }
         }
     }
 
