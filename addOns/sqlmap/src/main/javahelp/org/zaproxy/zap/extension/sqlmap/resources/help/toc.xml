@@ -6,8 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="SQLMap" image="simple-icon" target="simple">
-				<tocitem text="About" target="simple.about"/>
+			<tocitem text="SQLMap" image="sqlmap-icon" target="sqlmap">
+				<tocitem text="About" target="sqlmap.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
