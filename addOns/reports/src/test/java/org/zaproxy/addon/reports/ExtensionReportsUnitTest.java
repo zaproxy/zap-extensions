@@ -37,6 +37,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -537,6 +539,65 @@ class ExtensionReportsUnitTest {
 
         // Then
         assertThat(cleanReport(report), is(equalTo(cleanReport(expected))));
+    }
+
+    @Test
+    void shouldGenerateValidJsonReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json");
+        String fileName = "basic-traditional-json";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(1)));
+        assertThat(site.getJSONObject(0).getString("@name"), is(equalTo("http://example.com")));
+        assertThat(site.getJSONObject(0).getString("@host"), is(equalTo("example.com")));
+        assertThat(site.getJSONObject(0).getString("@port"), is(equalTo("80")));
+        assertThat(site.getJSONObject(0).getString("@ssl"), is(equalTo("false")));
+
+        JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alerts.getJSONObject(0).getString("pluginid"), is(equalTo("1")));
+        assertThat(alerts.getJSONObject(0).getString("alertRef"), is(equalTo("1")));
+        assertThat(alerts.getJSONObject(0).getString("alert"), is(equalTo("XSS")));
+        assertThat(alerts.getJSONObject(0).getString("name"), is(equalTo("XSS")));
+        assertThat(alerts.getJSONObject(0).getString("riskcode"), is(equalTo("3")));
+        assertThat(alerts.getJSONObject(0).getString("confidence"), is(equalTo("2")));
+        assertThat(
+                alerts.getJSONObject(0).getString("riskdesc"),
+                is(equalTo("!reports.report.risk.3! (!reports.report.confidence.2!)")));
+        assertThat(
+                alerts.getJSONObject(0).getString("desc"), is(equalTo("<p>XSS Description</p>")));
+        assertThat(alerts.getJSONObject(0).getString("count"), is(equalTo("1")));
+
+        assertThat(
+                alerts.getJSONObject(0).getString("solution"), is(equalTo("<p>Test Solution</p>")));
+        assertThat(
+                alerts.getJSONObject(0).getString("otherinfo"), is(equalTo("<p>Test Other</p>")));
+        assertThat(
+                alerts.getJSONObject(0).getString("reference"),
+                is(equalTo("<p>Test Reference</p>")));
+        assertThat(alerts.getJSONObject(0).getString("cweid"), is(equalTo("123")));
+        assertThat(alerts.getJSONObject(0).getString("wascid"), is(equalTo("456")));
+        assertThat(alerts.getJSONObject(0).getString("sourceid"), is(equalTo("0")));
+
+        JSONArray instances = alerts.getJSONObject(0).getJSONArray("instances");
+        assertThat(instances.size(), is(equalTo(1)));
+        assertThat(
+                instances.getJSONObject(0).getString("uri"),
+                is(equalTo("http://example.com/example_3")));
+        assertThat(instances.getJSONObject(0).getString("method"), is(equalTo("GET")));
+        assertThat(instances.getJSONObject(0).getString("param"), is(equalTo("Test Param")));
+        assertThat(instances.getJSONObject(0).getString("evidence"), is(equalTo("Test Evidence")));
     }
 
     private static void generateTestFile(String templateName) throws Exception {
