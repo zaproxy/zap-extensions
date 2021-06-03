@@ -365,10 +365,9 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", "Incorrect");
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
-        assertThat(policy, is(nullValue()));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.badlist!")));
@@ -530,7 +529,7 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -560,7 +559,7 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -588,7 +587,7 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -616,7 +615,7 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -645,7 +644,7 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.getScanPolicy(data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

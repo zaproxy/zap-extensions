@@ -319,7 +319,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(job1.wasRun(), is(equalTo(true)));
+        assertThat(job1.wasRun(), is(equalTo(false)));
         assertThat(job3.wasRun(), is(equalTo(false)));
     }
 

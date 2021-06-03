@@ -69,6 +69,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         this.name = name;
     }
 
+    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {}
+
     public abstract void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress);
 
@@ -88,9 +90,27 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return false;
     }
 
+    /**
+     * Applies the custom parameter for the job
+     *
+     * @param name name of the parameter
+     * @param value value of the parameter
+     * @return {@code true} if the parameter was applied/consumed, {@code false} otherwise.
+     */
     public boolean applyCustomParameter(String name, String value) {
         return false;
     }
+
+    /**
+     * Verifies the custom parameter for the job
+     *
+     * @param name name of the parameter
+     * @param value value of the parameter
+     * @param progress to store the warnings/errors which occurred during verification
+     * @since 0.3.0
+     * @see #applyCustomParameter(String, String)
+     */
+    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {}
 
     public String getTemplateDataMin() {
         return ExtensionAutomation.getResourceAsString(this.getType() + "-min.yaml");
@@ -109,15 +129,22 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public void applyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
-        applyParameters(this.getParamMethodObject(), this.getParamMethodName(), params, progress);
+        verifyOrApplyParameters(
+                this.getParamMethodObject(), this.getParamMethodName(), params, progress, false);
+    }
+
+    public void verifyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
+        verifyOrApplyParameters(
+                this.getParamMethodObject(), this.getParamMethodName(), params, progress, true);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void applyParameters(
+    void verifyOrApplyParameters(
             Object obj,
             String optionsGetterName,
             LinkedHashMap<?, ?> params,
-            AutomationProgress progress) {
+            AutomationProgress progress,
+            boolean verify) {
         if (params == null) {
             return;
         }
@@ -150,20 +177,25 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             if (param.getValue() == null) {
                 continue;
             }
+
             String resolvedValue;
             if (env != null) {
                 resolvedValue = env.replaceVars(param.getValue());
             } else {
                 resolvedValue = param.getValue().toString();
             }
-            if (applyCustomParameter(key, resolvedValue)) {
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.setparam",
-                                this.getType(),
-                                key,
-                                param.getValue().toString()));
-                continue;
+            if (!verify) {
+                if (applyCustomParameter(key, resolvedValue)) {
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.info.setparam",
+                                    this.getType(),
+                                    key,
+                                    param.getValue().toString()));
+                    continue;
+                }
+            } else {
+                verifyCustomParameter(key, resolvedValue, progress);
             }
             if (methodMap != null) {
                 String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
@@ -200,30 +232,33 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                             }
                             continue;
                         }
-                        if (value != null) {
-                            try {
-                                optMethod.invoke(options, value);
-                                progress.info(
-                                        Constant.messages.getString(
-                                                "automation.info.setparam",
-                                                this.getType(),
-                                                key,
-                                                value));
-                            } catch (Exception e) {
+                        if (!verify) {
+                            if (value != null) {
+                                try {
+                                    optMethod.invoke(options, value);
+                                    progress.info(
+                                            Constant.messages.getString(
+                                                    "automation.info.setparam",
+                                                    this.getType(),
+                                                    key,
+                                                    value));
+                                } catch (Exception e) {
+                                    progress.error(
+                                            Constant.messages.getString(
+                                                    "automation.error.options.badcall",
+                                                    obj.getClass().getCanonicalName(),
+                                                    paramMethodName,
+                                                    e.getMessage()));
+                                }
+                            } else {
                                 progress.error(
                                         Constant.messages.getString(
-                                                "automation.error.options.badcall",
+                                                "automation.error.options.badtype",
                                                 obj.getClass().getCanonicalName(),
                                                 paramMethodName,
-                                                e.getMessage()));
+                                                optMethod.getParameterTypes()[0]
+                                                        .getCanonicalName()));
                             }
-                        } else {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.options.badtype",
-                                            obj.getClass().getCanonicalName(),
-                                            paramMethodName,
-                                            optMethod.getParameterTypes()[0].getCanonicalName()));
                         }
                     }
                 } else {

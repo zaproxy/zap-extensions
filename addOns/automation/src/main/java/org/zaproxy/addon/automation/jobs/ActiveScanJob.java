@@ -70,17 +70,43 @@ public class ActiveScanJob extends AutomationJob {
         return extAScan;
     }
 
-    public boolean applyCustomParameter(String name, String value) {
+    private boolean verifyOrApplyCustomParameter(
+            String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_CONTEXT:
                 contextName = value;
                 return true;
             case PARAM_MAX_SCAN_DURATION:
-                maxDuration = Integer.parseInt(value);
+                if (progress != null) {
+                    try {
+                        Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.options.badint",
+                                        this.getType(),
+                                        name,
+                                        value));
+                    }
+                } else {
+                    maxDuration = Integer.parseInt(value);
+                }
                 // Don't consume this as we still want it to be applied to the ascan params
                 return false;
             case PARAM_POLICY:
-                policy = value;
+                if (progress != null) {
+                    try {
+                        this.getExtAScan().getPolicyManager().getPolicy(value);
+                    } catch (ConfigurationException e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.ascan.policy.name",
+                                        this.getName(),
+                                        value));
+                    }
+                } else {
+                    policy = value;
+                }
                 return true;
             default:
                 // Ignore
@@ -90,10 +116,71 @@ public class ActiveScanJob extends AutomationJob {
     }
 
     @Override
+    public boolean applyCustomParameter(String name, String value) {
+        return this.verifyOrApplyCustomParameter(name, value, null);
+    }
+
+    @Override
+    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        this.verifyOrApplyCustomParameter(name, value, progress);
+    }
+
+    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         return map;
+    }
+
+    @Override
+    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+        Object policyDefn = jobData.get("policyDefinition");
+        if (policyDefn instanceof LinkedHashMap<?, ?>) {
+            LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefn;
+            JobUtils.parseAttackStrength(
+                    policyDefnData.get("defaultStrength"), this.getName(), progress);
+            JobUtils.parseAlertThreshold(
+                    policyDefnData.get("defaultThreshold"), this.getName(), progress);
+
+            ScanPolicy scanPolicy = new ScanPolicy();
+            PluginFactory pluginFactory = scanPolicy.getPluginFactory();
+
+            Object o = policyDefnData.get("rules");
+            if (o instanceof ArrayList<?>) {
+                ArrayList<?> ruleData = (ArrayList<?>) o;
+                for (Object rule : ruleData) {
+                    if (rule instanceof LinkedHashMap<?, ?>) {
+                        LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                        Integer id = (Integer) ruleMap.get("id");
+                        Plugin plugin = pluginFactory.getPlugin(id);
+                        if (plugin != null) {
+                            JobUtils.parseAttackStrength(
+                                    ruleMap.get("strength"), this.getName(), progress);
+                            JobUtils.parseAlertThreshold(
+                                    ruleMap.get("threshold"), this.getName(), progress);
+                        } else {
+                            progress.warn(
+                                    Constant.messages.getString(
+                                            "automation.error.ascan.rule.unknown",
+                                            this.getName(),
+                                            id));
+                        }
+                    }
+                }
+            } else if (o != null) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.options.badlist", this.getName(), "rules", o));
+            }
+
+        } else if (policyDefn != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.options.badlist",
+                            this.getName(),
+                            "policyDefinition",
+                            policyDefn));
+        }
     }
 
     @Override
@@ -123,10 +210,7 @@ public class ActiveScanJob extends AutomationJob {
             try {
                 scanPolicy = this.getExtAScan().getPolicyManager().getPolicy(policy);
             } catch (ConfigurationException e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.ascan.policy.name", this.getName(), policy));
-                return;
+                // Error already raised above
             }
         } else {
             scanPolicy = this.getScanPolicy(jobData, progress);
@@ -192,15 +276,6 @@ public class ActiveScanJob extends AutomationJob {
         if (policyDefn == null) {
             return null;
         }
-        if (!(policyDefn instanceof LinkedHashMap<?, ?>)) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.options.badlist",
-                            this.getName(),
-                            "policyDefinition",
-                            policyDefn));
-            return null;
-        }
         LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefn;
         ScanPolicy scanPolicy = new ScanPolicy();
 
@@ -243,46 +318,35 @@ public class ActiveScanJob extends AutomationJob {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
                     Integer id = (Integer) ruleMap.get("id");
                     Plugin plugin = pluginFactory.getPlugin(id);
-                    if (plugin != null) {
-                        AttackStrength pluginSt =
-                                JobUtils.parseAttackStrength(
-                                        ruleMap.get("strength"), this.getName(), progress);
-                        if (pluginSt != null) {
-                            plugin.setAttackStrength(pluginSt);
-                            plugin.setEnabled(true);
-                            progress.info(
-                                    Constant.messages.getString(
-                                            "automation.info.ascan.rule.setstrength",
-                                            this.getName(),
-                                            id,
-                                            pluginSt.name()));
-                        }
-                        AlertThreshold pluginTh =
-                                JobUtils.parseAlertThreshold(
-                                        ruleMap.get("threshold"), this.getName(), progress);
-                        if (pluginTh != null) {
-                            plugin.setAlertThreshold(pluginTh);
-                            plugin.setEnabled(true);
-                            progress.info(
-                                    Constant.messages.getString(
-                                            "automation.info.ascan.rule.setthreshold",
-                                            this.getName(),
-                                            id,
-                                            pluginTh.name()));
-                        }
-                    } else {
-                        progress.warn(
+                    AttackStrength pluginSt =
+                            JobUtils.parseAttackStrength(
+                                    ruleMap.get("strength"), this.getName(), progress);
+                    if (pluginSt != null) {
+                        plugin.setAttackStrength(pluginSt);
+                        plugin.setEnabled(true);
+                        progress.info(
                                 Constant.messages.getString(
-                                        "automation.error.ascan.rule.unknown", this.getName(), id));
+                                        "automation.info.ascan.rule.setstrength",
+                                        this.getName(),
+                                        id,
+                                        pluginSt.name()));
+                    }
+                    AlertThreshold pluginTh =
+                            JobUtils.parseAlertThreshold(
+                                    ruleMap.get("threshold"), this.getName(), progress);
+                    if (pluginTh != null) {
+                        plugin.setAlertThreshold(pluginTh);
+                        plugin.setEnabled(true);
+                        progress.info(
+                                Constant.messages.getString(
+                                        "automation.info.ascan.rule.setthreshold",
+                                        this.getName(),
+                                        id,
+                                        pluginTh.name()));
                     }
                 }
             }
-        } else if (o != null) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.options.badlist", this.getName(), "rules", o));
         }
-
         return scanPolicy;
     }
 

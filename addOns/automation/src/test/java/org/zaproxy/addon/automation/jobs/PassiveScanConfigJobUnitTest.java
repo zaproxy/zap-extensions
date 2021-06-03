@@ -245,7 +245,7 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.runJob(null, data, progress);
+        job.verifyJobSpecificData(data, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -254,8 +254,6 @@ class PassiveScanConfigJobUnitTest {
         assertThat(
                 progress.getWarnings().get(0),
                 is(equalTo("!automation.error.pscan.rule.unknown!")));
-        assertThat(rule2.getAlertThreshold(), is(equalTo(AlertThreshold.MEDIUM)));
-        assertThat(rule3.getAlertThreshold(), is(equalTo(AlertThreshold.HIGH)));
     }
 
     private class TestPluginScanner extends PluginPassiveScanner {

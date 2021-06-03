@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -77,17 +78,40 @@ public class PassiveScanWaitJob extends AutomationJob {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
     }
 
-    @Override
-    public boolean applyCustomParameter(String name, String value) {
+    private boolean verifyOrApplyCustomParameter(
+            String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_MAX_DURATION:
-                maxDuration = Integer.parseInt(value);
+                if (progress != null) {
+                    try {
+                        Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.options.badint",
+                                        this.getType(),
+                                        name,
+                                        value));
+                    }
+                } else {
+                    maxDuration = Integer.parseInt(value);
+                }
                 return true;
             default:
                 // Ignore
                 break;
         }
         return false;
+    }
+
+    @Override
+    public boolean applyCustomParameter(String name, String value) {
+        return this.verifyOrApplyCustomParameter(name, value, null);
+    }
+
+    @Override
+    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        verifyOrApplyCustomParameter(name, value, progress);
     }
 
     public int getMaxDuration() {
