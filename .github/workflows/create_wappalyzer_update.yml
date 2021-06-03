@@ -25,12 +25,12 @@ jobs:
         cd ../wappalyzer
         # Setup env vars for later
         SRC_BASE="AliasIO/Wappalyzer@"$(git log -1 --format=format:%h)
-        BRANCH_STAMP="$(date +"%Y%m%d%H%M%S")"
+        BRANCH="wappalyzer-update"
         SHORT_DATE="$(date +"%Y-%m-%d")"
         export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
         # Build the feature branch
         cd ../zap-extensions
-        git checkout -b $BRANCH_STAMP
+        git checkout -b $BRANCH
         cd ..
         rm -rf zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
         chmod -R 664 wappalyzer/src/drivers/webextension/images/icons/*.*
@@ -46,7 +46,7 @@ jobs:
           git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
           git add .
           git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
-          git push --set-upstream origin $BRANCH_STAMP
+          git push --set-upstream origin $BRANCH --force
           # Open the PR
           hub pull-request --no-edit
         fi
