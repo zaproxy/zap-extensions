@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.automation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,6 +28,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
@@ -42,7 +43,7 @@ public class AutomationEnvironment {
     private static final Pattern varPattern = Pattern.compile("\\$\\{(.+?)\\}");
 
     private AutomationProgress progress;
-    private List<Context> contexts = new ArrayList<>();
+    private List<ContextWrapper> contexts = new ArrayList<>();
     private boolean failOnError = true;
     private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();
@@ -105,7 +106,7 @@ public class AutomationEnvironment {
             return;
         }
         for (Object contextObject : ((ArrayList<?>) contextsObject).toArray()) {
-            Context context = parseContextData(contextObject, progress, session);
+            ContextWrapper context = parseContextData(contextObject, progress, session);
             if (context != null) {
                 this.contexts.add(context);
                 if (this.isTimeToQuit()) {
@@ -115,7 +116,7 @@ public class AutomationEnvironment {
         }
     }
 
-    public Context parseContextData(
+    public ContextWrapper parseContextData(
             Object contextObject, AutomationProgress progress, Session session) {
         if (!(contextObject instanceof LinkedHashMap)) {
             progress.error(
@@ -123,7 +124,7 @@ public class AutomationEnvironment {
             return null;
         }
         String name = null;
-        URL url = null;
+        List<String> urls = new ArrayList<>();
         for (Entry<?, ?> cdata : ((LinkedHashMap<?, ?>) contextObject).entrySet()) {
             Object value = cdata.getValue();
             if (value == null) {
@@ -133,10 +134,37 @@ public class AutomationEnvironment {
                 case "name":
                     name = replaceVars(value);
                     break;
+                case "urls":
+                    if (!(value instanceof ArrayList)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badurlslist", value));
+
+                    } else {
+                        ArrayList<?> urlList = (ArrayList<?>) value;
+                        for (Object urlObj : urlList) {
+                            try {
+                                String url = replaceVars(urlObj);
+                                new URI(url, true);
+                                urls.add(url);
+                            } catch (URIException e) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.context.badurl", urlObj));
+                            }
+                        }
+                    }
+                    break;
                 case "url":
+                    // For backwards compatibility
                     try {
-                        url = new URL(replaceVars(value));
-                    } catch (MalformedURLException e) {
+                        String url = replaceVars(value);
+                        new URI(url, true);
+                        urls.add(url);
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.context.url.deprecated"));
+                    } catch (URIException e) {
                         progress.error(
                                 Constant.messages.getString(
                                         "automation.error.context.badurl", value.toString()));
@@ -155,14 +183,18 @@ public class AutomationEnvironment {
                     Constant.messages.getString("automation.error.context.noname", contextObject));
             return null;
         }
-        if (url == null) {
+        if (urls.isEmpty()) {
             progress.error(
                     Constant.messages.getString("automation.error.context.nourl", contextObject));
             return null;
         }
         Context context = session.getNewContext(name);
-        context.addIncludeInContextRegex(url + ".*");
-        return context;
+        ContextWrapper wrapper = new ContextWrapper(context);
+        for (String u : urls) {
+            context.addIncludeInContextRegex(u + ".*");
+            wrapper.addUrl(u);
+        }
+        return wrapper;
     }
 
     public String replaceVars(Object value) {
@@ -193,8 +225,12 @@ public class AutomationEnvironment {
         return ExtensionAutomation.getResourceAsString(YAML_FILE);
     }
 
-    public List<Context> getContexts() {
+    public List<ContextWrapper> getContextWrappers() {
         return contexts;
+    }
+
+    public List<Context> getContexts() {
+        return contexts.stream().map(ContextWrapper::getContext).collect(Collectors.toList());
     }
 
     public Map<String, String> getVars() {
@@ -205,18 +241,33 @@ public class AutomationEnvironment {
         return vars.get(name);
     }
 
-    public Context getContext(String name) {
+    public ContextWrapper getContextWrapper(String name) {
         if (name == null || name.length() == 0) {
-            return getDefaultContext();
+            return getDefaultContextWrapper();
         }
-        for (Context context : contexts) {
-            if (name.equals(context.getName())) {
+        for (ContextWrapper context : contexts) {
+            if (name.equals(context.getContext().getName())) {
                 return context;
             }
         }
         return null;
     }
 
+    public Context getContext(String name) {
+        ContextWrapper wrapper = this.getContextWrapper(name);
+        if (wrapper != null) {
+            return wrapper.getContext();
+        }
+        return null;
+    }
+
+    /**
+     * Use the methods which return a ContextWrapper and then access this list of URLs from the
+     * wrappers.
+     *
+     * @deprecated
+     */
+    @Deprecated
     public String getUrlStringForContext(Context context) {
         if (context != null) {
             String firstRegex = context.getIncludeInContextRegexs().get(0);
@@ -225,8 +276,12 @@ public class AutomationEnvironment {
         return null;
     }
 
-    public Context getDefaultContext() {
+    public ContextWrapper getDefaultContextWrapper() {
         return contexts.get(0);
+    }
+
+    public Context getDefaultContext() {
+        return contexts.get(0).getContext();
     }
 
     public void addJobData(String key, Object data) {

@@ -31,11 +31,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
-import org.zaproxy.zap.model.Context;
 
 public class AjaxSpiderJob extends AutomationJob {
 
@@ -110,38 +110,34 @@ public class AjaxSpiderJob extends AutomationJob {
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
-        Context context;
+        ContextWrapper context;
         if (contextName != null) {
-            context = env.getContext(contextName);
+            context = env.getContextWrapper(contextName);
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                env.getUrlStringForContext(context)));
+                                "automation.error.context.unknown", contextName));
                 return;
             }
         } else {
-            context = env.getDefaultContext();
+            context = env.getDefaultContextWrapper();
         }
 
+        String uriStr = url;
+        if (uriStr == null) {
+            uriStr = context.getUrls().get(0);
+        }
         URI uri = null;
         try {
-            if (url != null) {
-                uri = new URI(url);
-            } else {
-                uri = new URI(env.getUrlStringForContext(context).toString());
-            }
+            uri = new URI(url);
         } catch (Exception e1) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.context.badurl",
-                            env.getUrlStringForContext(context)));
+            progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
             return;
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
                 AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
-                        .setContext(context)
+                        .setContext(context.getContext())
                         .setInScopeOnly(inScopeOnly)
                         .setOptions(getExtSpider().getAjaxSpiderParam())
                         .setStartUri(uri)

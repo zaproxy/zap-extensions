@@ -63,6 +63,7 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -193,9 +194,8 @@ class ActiveScanJobUnitTest {
     void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -206,7 +206,7 @@ class ActiveScanJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         // When
         ActiveScanJob job = new ActiveScanJob();
@@ -253,6 +253,8 @@ class ActiveScanJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -263,9 +265,10 @@ class ActiveScanJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
         given(env.getContext("context1")).willReturn(context1);
         given(env.getContext("context2")).willReturn(context2);
+        given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
+        given(env.getContextWrapper("context2")).willReturn(contextWrapper2);
         given(env.getDefaultContext()).willReturn(context1);
 
         // When
@@ -301,9 +304,8 @@ class ActiveScanJobUnitTest {
     @Test
     void shouldExitIfActiveScanTakesTooLong() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAScan.startScan(any(), any(), any())).willReturn(1);
 
@@ -314,7 +316,7 @@ class ActiveScanJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         ActiveScanJob job = new ActiveScanJob();
 

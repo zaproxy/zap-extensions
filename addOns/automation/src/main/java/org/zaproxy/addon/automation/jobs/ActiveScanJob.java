@@ -34,11 +34,11 @@ import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 
 public class ActiveScanJob extends AutomationJob {
@@ -187,21 +187,20 @@ public class ActiveScanJob extends AutomationJob {
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
-        Context context;
+        ContextWrapper context;
         if (contextName != null) {
-            context = env.getContext(contextName);
+            context = env.getContextWrapper(contextName);
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                env.getUrlStringForContext(context)));
+                                "automation.error.context.unknown", contextName));
                 return;
             }
         } else {
-            context = env.getDefaultContext();
+            context = env.getDefaultContextWrapper();
         }
 
-        Target target = new Target(context);
+        Target target = new Target(context.getContext());
         target.setRecurse(true);
         List<Object> contextSpecificObjects = new ArrayList<>();
 

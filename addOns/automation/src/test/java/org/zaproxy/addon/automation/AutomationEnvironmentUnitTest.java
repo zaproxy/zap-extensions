@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -125,7 +126,7 @@ class AutomationEnvironmentUnitTest {
     @Test
     void shouldFailIfNoContextUrl() {
         // Given
-        String contextStr = "env:\n" + "  contexts:\n" + "    - name: test\n" + "      url: \n";
+        String contextStr = "env:\n" + "  contexts:\n" + "    - name: test\n" + "      urls: \n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
@@ -147,7 +148,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: \n"
-                        + "      url: http://www.example.com\n";
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
@@ -166,7 +168,11 @@ class AutomationEnvironmentUnitTest {
     void shouldFailIfBadContextUrl() {
         // Given
         String contextStr =
-                "env:\n" + "  contexts:\n" + "    - name: test\n" + "      url: Not a url\n";
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: test\n"
+                        + "      urls:\n"
+                        + "    - Not a url\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data =
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
@@ -179,8 +185,12 @@ class AutomationEnvironmentUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(2)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
-        assertThat(progress.getErrors().get(1), is(equalTo("!automation.error.context.nourl!")));
+        assertThat(
+                progress.getErrors().contains("!automation.error.env.badcontext!"),
+                is(equalTo(true)));
+        assertThat(
+                progress.getErrors().contains("!automation.error.context.nourl!"),
+                is(equalTo(true)));
     }
 
     @Test
@@ -194,7 +204,8 @@ class AutomationEnvironmentUnitTest {
                         + "    - name: "
                         + contextName
                         + "\n"
-                        + "      url: "
+                        + "      urls:\n"
+                        + "      - "
                         + exampleUrl
                         + "\n";
         Yaml yaml = new Yaml();
@@ -220,15 +231,70 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldSucceedWithValidContextWithMultipleUrls() {
+        // Given
+        String contextName = "context 1";
+        String exampleUrl1 = "https://www.example.com/";
+        String exampleUrl2 = "http://www.example.com/";
+        String exampleUrl3 = "https://www.example.org/";
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: "
+                        + contextName
+                        + "\n"
+                        + "      urls: \n"
+                        + "      - "
+                        + exampleUrl1
+                        + "\n"
+                        + "      - "
+                        + exampleUrl2
+                        + "\n"
+                        + "      - "
+                        + exampleUrl3
+                        + "\n"
+                        + "\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<ContextWrapper> contextWrappers = env.getContextWrappers();
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(0)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getWarnings().size(), is(equalTo(0)));
+        assertThat(contextWrappers.size(), is(equalTo(1)));
+        assertThat(contextWrappers.get(0).getUrls().size(), is(equalTo(3)));
+        assertThat(
+                contextWrappers.get(0).getUrls(), contains(exampleUrl1, exampleUrl2, exampleUrl3));
+        assertThat(contexts.size(), is(equalTo(1)));
+        verify(contexts.get(0)).addIncludeInContextRegex(exampleUrl1 + ".*");
+        verify(contexts.get(0)).addIncludeInContextRegex(exampleUrl2 + ".*");
+        verify(contexts.get(0)).addIncludeInContextRegex(exampleUrl3 + ".*");
+        assertThat(env.isFailOnError(), is(equalTo(true)));
+        assertThat(env.isFailOnWarning(), is(equalTo(false)));
+        assertThat(env.isTimeToQuit(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldSucceedWith2ValidContexts() {
         // Given
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example1.com/\n"
+                        + "      urls:\n"
+                        + "      - https://www.example1.com/\n"
                         + "    - name: context 2\n"
-                        + "      url: https://www.example2.com/\n";
+                        + "      urls:\n"
+                        + "      - https://www.example2.com/\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data =
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
@@ -259,7 +325,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnError: false\n"
                         + "    failOnWarning: true\n"
@@ -290,7 +357,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnError: false\n"
                         + "    failOnWarning: true\n"
@@ -322,7 +390,8 @@ class AutomationEnvironmentUnitTest {
                         + "  contexts:\n"
                         + "    - name: context 1\n"
                         + "      unknown2: test\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnError: false\n"
                         + "    failOnWarning: true\n"
@@ -352,7 +421,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnError: true\n";
         Yaml yaml = new Yaml();
@@ -376,7 +446,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnError: false\n";
         Yaml yaml = new Yaml();
@@ -400,7 +471,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnWarning: true\n";
         Yaml yaml = new Yaml();
@@ -424,7 +496,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
                         + "  parameters:\n"
                         + "    failOnWarning: false\n";
         Yaml yaml = new Yaml();
@@ -448,7 +521,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.${myPrefix}.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.${myPrefix}.example.com\n"
                         + "  vars:\n"
                         + "    myPrefix: prefix\n"
                         + "    myVar: ${myPrefix}.suffix\n";
@@ -475,7 +549,8 @@ class AutomationEnvironmentUnitTest {
                 "env:\n"
                         + "  contexts:\n"
                         + "    - name: context 1\n"
-                        + "      url: https://www.${myEnvVar}.example.com\n"
+                        + "      urls:\n"
+                        + "      - https://www.${myEnvVar}.example.com\n"
                         + "  vars:\n"
                         + "    myVar: ${myEnvVar}.suffix\n";
         Yaml yaml = new Yaml();
@@ -491,5 +566,31 @@ class AutomationEnvironmentUnitTest {
         // Then
         verify(contexts.get(0)).addIncludeInContextRegex("https://www.envVarValue.example.com.*");
         assertThat(env.getVar("myVar"), is(equalTo("envVarValue.suffix")));
+    }
+
+    @Test
+    public void shouldWarnOnSingleUrl() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      url: https://www.example.com\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress, session);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.error.context.url.deprecated!")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 }
