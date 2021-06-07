@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correct Context check in SQL Injection scan rule.
 - "Source Code Disclosure - /WEB-INF folder" is no longer skipped on Java 9+ (Issue 4038).
+- Fix ascan rules not enforcing MaxRuleDuration when getting IOExceptions (Issue 6647).
 
 ## [39] - 2021-05-10
 ### Changed

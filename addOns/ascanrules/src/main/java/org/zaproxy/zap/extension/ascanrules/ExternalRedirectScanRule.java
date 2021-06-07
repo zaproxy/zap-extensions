@@ -207,6 +207,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         String redirectUrl;
 
         for (int h = 0; h < targetCount; h++) {
+            if (isStop()) {
+                return;
+            }
 
             payload = REDIRECT_TARGETS[h];
 
@@ -251,13 +254,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                     // parameters on the same request (to reduce performance impact)
                     return;
                 }
-
-                // Check if the scan has been stopped
-                // if yes dispose resources and exit
-                if (isStop()) {
-                    return;
-                }
-
             } catch (IOException ex) {
                 // Do not try to internationalize this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
