@@ -37,6 +37,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
@@ -52,6 +55,9 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -598,6 +604,175 @@ class ExtensionReportsUnitTest {
         assertThat(instances.getJSONObject(0).getString("method"), is(equalTo("GET")));
         assertThat(instances.getJSONObject(0).getString("param"), is(equalTo("Test Param")));
         assertThat(instances.getJSONObject(0).getString("evidence"), is(equalTo("Test Evidence")));
+    }
+
+    @Test
+    void shouldGenerateValidXmlReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-xml");
+        String fileName = "basic-traditional-xml";
+        File f = File.createTempFile(fileName, template.getExtension());
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        Document doc = db.parse(r);
+        Element root = doc.getDocumentElement();
+        NodeList sites = doc.getElementsByTagName("site");
+        NodeList alerts = doc.getElementsByTagName("alerts");
+        NodeList alertItems = doc.getElementsByTagName("alertitem");
+
+        // Then
+        assertThat(root.getNodeName(), is(equalTo("OWASPZAPReport")));
+        assertThat(root.getAttribute("version"), is(equalTo("Dev Build")));
+        assertThat(root.getAttribute("generated").length(), is(greaterThan(20)));
+        assertThat(sites.getLength(), is(equalTo(1)));
+        assertThat(
+                sites.item(0).getAttributes().getNamedItem("name").getTextContent(),
+                is(equalTo("http://example.com")));
+        assertThat(
+                sites.item(0).getAttributes().getNamedItem("host").getTextContent(),
+                is(equalTo("example.com")));
+        assertThat(
+                sites.item(0).getAttributes().getNamedItem("port").getTextContent(),
+                is(equalTo("80")));
+        assertThat(
+                sites.item(0).getAttributes().getNamedItem("ssl").getTextContent(),
+                is(equalTo("false")));
+
+        assertThat(alerts.getLength(), is(equalTo(1)));
+        assertThat(alertItems.getLength(), is(equalTo(1)));
+
+        NodeList alertItemNodes = alertItems.item(0).getChildNodes();
+        assertThat(alertItemNodes.getLength(), is(equalTo(33)));
+
+        int i = 0;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("pluginid")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("1")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("alertRef")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("1")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("name")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("XSS")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("riskcode")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("3")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("confidence")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("2")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("riskdesc")));
+        assertThat(
+                alertItemNodes.item(i).getTextContent(),
+                is(equalTo("!reports.report.risk.3! (!reports.report.confidence.2!)")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("confidencedesc")));
+        assertThat(
+                alertItemNodes.item(i).getTextContent(),
+                is(equalTo("!reports.report.confidence.2!")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("desc")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>XSS Description</p>")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("instances")));
+        NodeList instancesChildNodes = alertItemNodes.item(i).getChildNodes();
+        assertThat(instancesChildNodes.getLength(), is(equalTo(3)));
+        assertThat(instancesChildNodes.item(0).getNodeName(), is(equalTo("#text"))); // Filler
+        assertThat(instancesChildNodes.item(1).getNodeName(), is(equalTo("instance"))); // Filler
+        assertThat(instancesChildNodes.item(2).getNodeName(), is(equalTo("#text"))); // Filler
+        NodeList instanceChildNodes = instancesChildNodes.item(1).getChildNodes();
+
+        // Check the instance details
+        assertThat(instanceChildNodes.getLength(), is(equalTo(11)));
+        int y = 0;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("uri")));
+        assertThat(
+                instanceChildNodes.item(y).getTextContent(),
+                is(equalTo("http://example.com/example_3")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("method")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("GET")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("param")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test Param")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("attack")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test Attack")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("evidence")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test Evidence")));
+        y++;
+        assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
+
+        // And back to the alertitem nodes
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("count")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("1")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("solution")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>Test Solution</p>")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("otherinfo")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>Test Other</p>")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("reference")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>Test Reference</p>")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("cweid")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("123")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("wascid")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("456")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("sourceid")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("0")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
     }
 
     private static void generateTestFile(String templateName) throws Exception {
