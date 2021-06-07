@@ -72,9 +72,11 @@ public class ReportJob extends AutomationJob {
         // Work out the file name based on the pattern
         String fileName =
                 ExtensionReports.getNameFromPattern(
-                                reportFile, env.getDefaultContextWrapper().getUrls().get(0))
-                        + "."
-                        + template.getExtension();
+                        reportFile, env.getDefaultContextWrapper().getUrls().get(0));
+
+        if (!fileName.endsWith("." + template.getExtension())) {
+            fileName += "." + template.getExtension();
+        }
 
         File file;
         if (reportDir != null && reportDir.length() > 0) {
@@ -85,6 +87,7 @@ public class ReportJob extends AutomationJob {
         reportData.setTitle(this.reportTitle);
         reportData.setDescription(this.reportDesc);
         reportData.setContexts(env.getContexts());
+        reportData.setSites(ExtensionReports.getSites());
 
         List<String> list = getJobDataList(jobData, "risks", progress);
         if (list.isEmpty()) {

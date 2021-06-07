@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -50,6 +51,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -174,6 +178,20 @@ public class ExtensionReports extends ExtensionAdaptor {
         return clone;
     }
 
+    public static List<String> getSites() {
+        List<String> list = new ArrayList<>();
+        SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
+        SiteNode root = siteMap.getRoot();
+        if (root.getChildCount() > 0) {
+            SiteNode child = (SiteNode) root.getFirstChild();
+            while (child != null) {
+                list.add(child.getName());
+                child = (SiteNode) root.getChildAfter(child);
+            }
+        }
+        return list;
+    }
+
     public static boolean isIncluded(ReportData reportData, AlertNode alertNode) {
         Alert alert = alertNode.getUserObject();
         if (alert == null) {
@@ -219,20 +237,26 @@ public class ExtensionReports extends ExtensionAdaptor {
         return true;
     }
 
+    private AlertNode getRootAlertNode()
+            throws NoSuchMethodException, SecurityException, IllegalAccessException,
+                    IllegalArgumentException, InvocationTargetException {
+        ExtensionAlert extAlert =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+
+        Method treeModelMethod = extAlert.getClass().getDeclaredMethod("getTreeModel");
+        treeModelMethod.setAccessible(true);
+
+        DefaultTreeModel treeModel = (DefaultTreeModel) treeModelMethod.invoke(extAlert);
+
+        return (AlertNode) treeModel.getRoot();
+    }
+
     public AlertNode getFilteredAlertTree(ReportData reportData) {
 
         AlertNode root = null;
 
-        ExtensionAlert extAlert =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
-
         try {
-            Method treeModelMethod = extAlert.getClass().getDeclaredMethod("getTreeModel");
-            treeModelMethod.setAccessible(true);
-
-            DefaultTreeModel treeModel = (DefaultTreeModel) treeModelMethod.invoke(extAlert);
-
-            root = (AlertNode) treeModel.getRoot();
+            root = getRootAlertNode();
 
             AlertNode filteredRoot = cloneAlertNode(root);
             AlertNode child;

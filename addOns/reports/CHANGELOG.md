@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Include all relevant alerts in XML report templates (Issue 6627).
+- Made XML reports more backwards compatible and fixed issue with generating it via the API.
 
 ## [0.3.0] - 2021-05-06
 ### Added
