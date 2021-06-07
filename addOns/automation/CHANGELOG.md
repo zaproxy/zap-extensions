@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for using variables in the config.
 - Support for data jobs.
 - Support for multiple top level URLs in a context.
+- Passive scan config enableTags parameter
 
 ### Changed
 - Maintenance changes.

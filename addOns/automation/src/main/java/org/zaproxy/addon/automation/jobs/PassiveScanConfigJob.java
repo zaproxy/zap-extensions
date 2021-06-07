@@ -24,10 +24,12 @@ import java.util.LinkedHashMap;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class PassiveScanConfigJob extends AutomationJob {
@@ -35,7 +37,10 @@ public class PassiveScanConfigJob extends AutomationJob {
     public static final String JOB_NAME = "passiveScan-config";
     private static final String OPTIONS_METHOD_NAME = "getPassiveScanParam";
 
+    private static final String PARAM_ENABLE_TAGS = "enableTags";
+
     private ExtensionPassiveScan extPScan;
+    private boolean enableTags = false;
 
     public PassiveScanConfigJob() {}
 
@@ -47,6 +52,46 @@ public class PassiveScanConfigJob extends AutomationJob {
                             .getExtension(ExtensionPassiveScan.class);
         }
         return extPScan;
+    }
+
+    @Override
+    public boolean applyCustomParameter(String name, String value) {
+        switch (name) {
+            case PARAM_ENABLE_TAGS:
+                enableTags = Boolean.parseBoolean(value);
+                return true;
+            default:
+                // Ignore
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        switch (name) {
+            case PARAM_ENABLE_TAGS:
+                String s = value.trim().toLowerCase();
+                if (!"true".equals(s) && !"false".equals(s)) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.options.badbool",
+                                    this.getName(),
+                                    name,
+                                    value));
+                }
+
+                if (Model.getSingleton().getOptionsParam().getParamSet(PassiveScanParam.class)
+                        == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.pscan.nooptions", this.getName()));
+                }
+                break;
+            default:
+                // Ignore
+                break;
+        }
     }
 
     @Override
@@ -79,25 +124,35 @@ public class PassiveScanConfigJob extends AutomationJob {
         // Configure any rules
         Object o = jobData.get("rules");
         ArrayList<?> ruleData = (ArrayList<?>) o;
-        for (Object rule : ruleData) {
-            if (rule instanceof LinkedHashMap<?, ?>) {
-                LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
-                Integer id = (Integer) ruleMap.get("id");
-                PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
-                AlertThreshold pluginTh =
-                        JobUtils.parseAlertThreshold(
-                                ruleMap.get("threshold"), this.getName(), progress);
-                if (pluginTh != null && plugin != null) {
-                    plugin.setAlertThreshold(pluginTh);
-                    plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
-                    progress.info(
-                            Constant.messages.getString(
-                                    "automation.info.pscan.rule.setthreshold",
-                                    this.getName(),
-                                    id,
-                                    pluginTh.name()));
+        if (ruleData != null) {
+            for (Object rule : ruleData) {
+                if (rule instanceof LinkedHashMap<?, ?>) {
+                    LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                    Integer id = (Integer) ruleMap.get("id");
+                    PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
+                    AlertThreshold pluginTh =
+                            JobUtils.parseAlertThreshold(
+                                    ruleMap.get("threshold"), this.getName(), progress);
+                    if (pluginTh != null && plugin != null) {
+                        plugin.setAlertThreshold(pluginTh);
+                        plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
+                        progress.info(
+                                Constant.messages.getString(
+                                        "automation.info.pscan.rule.setthreshold",
+                                        this.getName(),
+                                        id,
+                                        pluginTh.name()));
+                    }
                 }
             }
+        }
+        // enable / disable pscan tags
+        PassiveScanParam pscanParam =
+                Model.getSingleton().getOptionsParam().getParamSet(PassiveScanParam.class);
+        if (pscanParam != null) {
+            pscanParam
+                    .getAutoTagScanners()
+                    .forEach(tagScanner -> tagScanner.setEnabled(enableTags));
         }
     }
 
@@ -109,6 +164,10 @@ public class PassiveScanConfigJob extends AutomationJob {
             default:
                 return false;
         }
+    }
+
+    public boolean isEnableTags() {
+        return enableTags;
     }
 
     @Override
