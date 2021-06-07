@@ -122,6 +122,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 This scan rule checks for any dangerous JS functions present in a site response.<br>
 <strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
 They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
