@@ -51,7 +51,7 @@ function uninstall(helper) {
 }
 
 function create_window() {
-  // based on https://github.com/zaproxy/community-scripts/blob/master/standalone/window_creation_template.js
+  // based on https://github.com/zaproxy/community-scripts/blob/main/standalone/window_creation_template.js
   var absframe = Java.type("org.parosproxy.paros.view.AbstractFrame");
   var jpanel = Java.type("javax.swing.JPanel");
   var jlabel = Java.type("javax.swing.JLabel");
