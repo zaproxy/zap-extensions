@@ -101,10 +101,18 @@ class ExtensionReportsUnitTest {
 
         // When
         String dateStr = sdf.format(new Date());
-        String name = ExtensionReports.getNameFromPattern(pattern, "https://www.example.com");
+        String expectedName = dateStr + "-ZAP-Report-www.example.com";
+        String name1 = ExtensionReports.getNameFromPattern(pattern, "https://www.example.com");
+        String name2 = ExtensionReports.getNameFromPattern(pattern, "https://www.example.com/");
+        String name3 =
+                ExtensionReports.getNameFromPattern(pattern, "https://www.example.com:8443/");
+        String name4 = ExtensionReports.getNameFromPattern(pattern, "https://www.example.com/path");
 
         // Then
-        assertThat(name, is(equalTo(dateStr + "-ZAP-Report-www.example.com")));
+        assertThat(name1, is(equalTo(expectedName)));
+        assertThat(name2, is(equalTo(expectedName)));
+        assertThat(name3, is(equalTo(expectedName)));
+        assertThat(name4, is(equalTo(expectedName)));
     }
 
     @Test

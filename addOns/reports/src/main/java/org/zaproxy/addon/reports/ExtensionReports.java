@@ -517,6 +517,10 @@ public class ExtensionReports extends ExtensionAdaptor {
             if (i >= 0) {
                 site = site.substring(0, i);
             }
+            i = site.indexOf("/");
+            if (i >= 0) {
+                site = site.substring(0, i);
+            }
         }
         while (name.contains(SITE_PATTERN)) {
             name = name.replace(SITE_PATTERN, site);
