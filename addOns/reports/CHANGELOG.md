@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Handle multiple context URLs in automation.
+- Traditional plus report - link to zaproxy.org pages for passing scan rules.
 
 ### Fixed
 - Include all relevant alerts in XML report templates (Issue 6627).
