@@ -54,6 +54,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -412,6 +413,37 @@ public class ExtensionReports extends ExtensionAdaptor {
         }
 
         return alertCounts;
+    }
+
+    public List<HttpMessage> getHttpMessagesForRule(int ruleId, int max) {
+        List<HttpMessage> list = new ArrayList<>();
+
+        try {
+            Enumeration<?> alertEnum = this.getRootAlertNode().children();
+            while (alertEnum.hasMoreElements()) {
+                AlertNode alertNode = (AlertNode) alertEnum.nextElement();
+                if (alertNode.getUserObject().getPluginId() == ruleId) {
+                    Enumeration<?> instEnum = alertNode.children();
+                    while (instEnum.hasMoreElements() && list.size() < max) {
+                        AlertNode instNode = (AlertNode) instEnum.nextElement();
+                        list.add(instNode.getUserObject().getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to get HttpMessages for rule Id " + ruleId, e);
+        }
+
+        return list;
+    }
+
+    public Map<Integer, Integer> getAlertCountsByRule() {
+        try {
+            return this.getAlertCountsByRule(this.getRootAlertNode());
+        } catch (Exception e) {
+            LOGGER.error("Failed to access alerts tree", e);
+        }
+        return new HashMap<>();
     }
 
     private Map<Integer, Integer> getAlertCountsByRule(AlertNode rootNode) {
