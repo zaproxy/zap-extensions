@@ -19,13 +19,20 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 
 public class EnvFileScanRule extends AbstractAppFilePlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.envfiles.";
+
     private static final int PLUGIN_ID = 40034;
+    private static final int RESPONSE_LEN_MAX = 500;
+
+    private static final Pattern COMMENT_PATTERN =
+            Pattern.compile("^#\\s{0,10}\\w+", Pattern.MULTILINE);
+    private static final Pattern KEYVAL_PATTERN = Pattern.compile("^\\w+=\\w+", Pattern.MULTILINE);
 
     public EnvFileScanRule() {
         super(".env", MESSAGE_PREFIX);
@@ -36,10 +43,25 @@ public class EnvFileScanRule extends AbstractAppFilePlugin {
         return PLUGIN_ID;
     }
 
+    // Environment files come in many flavors but mostly they are KEY=VALUE formatted Here's the
+    // trick, NGINX returns them as binary/octet-stream content-type Apache just returns the text
+    // with no content-type Just looking for content returned with status code 200 and '#' and '='
+    // is a FP nightmare Because that's basically ALL html files
+
     @Override
     public boolean isFalsePositive(HttpMessage msg) {
         String responseBody = msg.getResponseBody().toString();
-        // It likely is a FP if the response contains neither a comment nor assignment
-        return !responseBody.contains("#") && !responseBody.contains("=");
+
+        if (responseBody.length() > RESPONSE_LEN_MAX) {
+            return true;
+        }
+
+        String contentType = msg.getResponseHeader().getNormalisedContentTypeValue();
+        if (contentType == null || contentType.equals("application/octet-stream")) {
+            boolean hasComments = COMMENT_PATTERN.matcher(responseBody).find();
+            boolean hasKeyvalue = KEYVAL_PATTERN.matcher(responseBody).find();
+            return !hasComments && !hasKeyvalue;
+        }
+        return true;
     }
 }
