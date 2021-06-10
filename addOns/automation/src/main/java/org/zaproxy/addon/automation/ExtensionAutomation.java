@@ -212,6 +212,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             Constant.messages.getString("automation.error.job.data", paramsObj));
                     continue;
                 }
+                job.setEnv(env);
                 job.verifyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
                 job.verifyJobSpecificData(jobData, progress);
                 jobsToRun.put(job, jobData);
