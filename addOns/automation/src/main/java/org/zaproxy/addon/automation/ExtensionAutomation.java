@@ -180,7 +180,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return progress;
         }
 
-        Map<AutomationJob, LinkedHashMap<?, ?>> jobsToRun = new HashMap<>();
+        Map<AutomationJob, LinkedHashMap<?, ?>> jobsToRun = new LinkedHashMap<>();
 
         for (Object jobObj : jobsData) {
             if (!(jobObj instanceof LinkedHashMap<?, ?>)) {

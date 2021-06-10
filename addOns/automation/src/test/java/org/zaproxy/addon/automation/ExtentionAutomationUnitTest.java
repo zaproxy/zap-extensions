@@ -33,9 +33,11 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -275,6 +277,83 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(job1.wasRun(), is(equalTo(true)));
         assertThat(job2.wasRun(), is(equalTo(true)));
         assertThat(job3.wasRun(), is(equalTo(true)));
+    }
+
+    @Nested
+    class PlanInOrderTests {
+
+        private AutomationJobWithRunOrder job1;
+        private AutomationJobWithRunOrder job2;
+        private AutomationJobWithRunOrder job3;
+        private AtomicInteger runCounter;
+        private ExtensionAutomation extAuto;
+
+        @BeforeEach
+        void setup() {
+            extAuto = new ExtensionAutomation();
+            runCounter = new AtomicInteger();
+            job1 =
+                    new AutomationJobWithRunOrder(runCounter) {
+                        @Override
+                        public String getType() {
+                            return "job1";
+                        }
+                    };
+            job2 =
+                    new AutomationJobWithRunOrder(runCounter) {
+                        @Override
+                        public String getType() {
+                            return "job2";
+                        }
+                    };
+            job3 =
+                    new AutomationJobWithRunOrder(runCounter) {
+                        @Override
+                        public String getType() {
+                            return "job3";
+                        }
+                    };
+        }
+
+        @Test
+        void shouldRunPlanInDefinedOrderWithSameRegOrder() {
+            // Given
+            Path filePath = getResourcePath("resources/testplan-failonerror.yaml");
+
+            // When
+            extAuto.registerAutomationJob(job1);
+            extAuto.registerAutomationJob(job2);
+            extAuto.registerAutomationJob(job3);
+            extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(job1.wasRun(), is(equalTo(true)));
+            assertThat(job2.wasRun(), is(equalTo(true)));
+            assertThat(job3.wasRun(), is(equalTo(true)));
+            assertThat(job1.getRunOrder(), is(equalTo(0)));
+            assertThat(job2.getRunOrder(), is(equalTo(1)));
+            assertThat(job3.getRunOrder(), is(equalTo(2)));
+        }
+
+        @Test
+        void shouldRunPlanInDefinedOrderWithDifferentRegOrder() {
+            // Given
+            Path filePath = getResourcePath("resources/testplan-failonerror.yaml");
+
+            // When
+            extAuto.registerAutomationJob(job3);
+            extAuto.registerAutomationJob(job1);
+            extAuto.registerAutomationJob(job2);
+            extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+            // Then
+            assertThat(job1.wasRun(), is(equalTo(true)));
+            assertThat(job2.wasRun(), is(equalTo(true)));
+            assertThat(job3.wasRun(), is(equalTo(true)));
+            assertThat(job1.getRunOrder(), is(equalTo(0)));
+            assertThat(job2.getRunOrder(), is(equalTo(1)));
+            assertThat(job3.getRunOrder(), is(equalTo(2)));
+        }
     }
 
     @Test
@@ -547,6 +626,34 @@ class ExtentionAutomationUnitTest extends TestUtils {
         @Override
         public String getParamMethodName() {
             return null;
+        }
+    }
+
+    private static class AutomationJobWithRunOrder extends AutomationJobImpl {
+
+        private final AtomicInteger runCounter;
+        private int runOrder;
+
+        public AutomationJobWithRunOrder(AtomicInteger runCounter) {
+            this.runCounter = runCounter;
+        }
+
+        public int getRunOrder() {
+            return this.runOrder;
+        }
+
+        @Override
+        public void runJob(
+                AutomationEnvironment env,
+                LinkedHashMap<?, ?> jobData,
+                AutomationProgress progress) {
+            super.runJob(env, jobData, progress);
+            this.runOrder = runCounter.getAndIncrement();
+        }
+
+        @Override
+        public Order getOrder() {
+            return Order.REPORT;
         }
     }
 }
