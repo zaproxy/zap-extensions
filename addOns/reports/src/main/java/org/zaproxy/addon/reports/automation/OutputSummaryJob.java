@@ -179,7 +179,7 @@ public class OutputSummaryJob extends AutomationJob {
     }
 
     @Override
-    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_FORMAT:
                 try {
@@ -192,7 +192,7 @@ public class OutputSummaryJob extends AutomationJob {
                                     value,
                                     Format.values()));
                 }
-                break;
+                return true;
             case PARAM_SUMMARY_FILE:
                 File parent = new File(value).getParentFile();
                 if (!parent.exists()) {
@@ -208,11 +208,12 @@ public class OutputSummaryJob extends AutomationJob {
                                     this.getName(),
                                     parent.getAbsolutePath()));
                 }
-                break;
+                return true;
             default:
                 // Ignore
                 break;
         }
+        return false;
     }
 
     @Override

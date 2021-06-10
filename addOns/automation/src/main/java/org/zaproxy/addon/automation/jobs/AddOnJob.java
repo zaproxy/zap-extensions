@@ -153,8 +153,8 @@ public class AddOnJob extends AutomationJob {
     }
 
     @Override
-    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        this.verifyOrApplyCustomParameter(name, value, progress);
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return this.verifyOrApplyCustomParameter(name, value, progress);
     }
 
     @Override

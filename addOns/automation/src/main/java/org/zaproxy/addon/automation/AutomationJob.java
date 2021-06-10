@@ -107,10 +107,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
      * @param name name of the parameter
      * @param value value of the parameter
      * @param progress to store the warnings/errors which occurred during verification
+     * @return {@code true} if the parameter was verified, {@code false} otherwise.
      * @since 0.3.0
      * @see #applyCustomParameter(String, String)
      */
-    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {}
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return false;
+    }
 
     public String getTemplateDataMin() {
         return ExtensionAutomation.getResourceAsString(this.getType() + "-min.yaml");
@@ -195,7 +198,9 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                     continue;
                 }
             } else {
-                verifyCustomParameter(key, resolvedValue, progress);
+                if (verifyCustomParameter(key, resolvedValue, progress)) {
+                    continue;
+                }
             }
             if (methodMap != null) {
                 String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
