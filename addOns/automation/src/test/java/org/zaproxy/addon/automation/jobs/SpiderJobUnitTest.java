@@ -75,11 +75,7 @@ class SpiderJobUnitTest extends TestUtils {
     private ExtensionSpider extSpider;
     private ExtensionLoader extensionLoader;
 
-    private static UrlRequester urlRequester =
-            new UrlRequester("test") {
-                @Override
-                public void requestUrl(String url, AutomationProgress progress) {}
-            };
+    private static UrlRequester urlRequester = mock(UrlRequester.class);
 
     @BeforeAll
     static void init() {
