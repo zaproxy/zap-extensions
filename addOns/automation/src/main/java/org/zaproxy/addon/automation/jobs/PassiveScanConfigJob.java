@@ -36,6 +36,7 @@ public class PassiveScanConfigJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-config";
     private static final String OPTIONS_METHOD_NAME = "getPassiveScanParam";
+    private static final String PARAM_ID = "id";
 
     private static final String PARAM_ENABLE_TAGS = "enableTags";
 
@@ -68,7 +69,7 @@ public class PassiveScanConfigJob extends AutomationJob {
     }
 
     @Override
-    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_ENABLE_TAGS:
                 String s = value.trim().toLowerCase();
@@ -87,11 +88,12 @@ public class PassiveScanConfigJob extends AutomationJob {
                             Constant.messages.getString(
                                     "automation.error.pscan.nooptions", this.getName()));
                 }
-                break;
+                return true;
             default:
                 // Ignore
                 break;
         }
+        return false;
     }
 
     @Override
@@ -102,12 +104,23 @@ public class PassiveScanConfigJob extends AutomationJob {
             for (Object rule : ruleData) {
                 if (rule instanceof LinkedHashMap<?, ?>) {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
-                    Integer id = (Integer) ruleMap.get("id");
-                    PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
-                    if (plugin == null) {
-                        progress.warn(
+                    try {
+                        int id = Integer.parseInt(ruleMap.get(PARAM_ID).toString());
+                        PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
+                        if (plugin == null) {
+                            progress.warn(
+                                    Constant.messages.getString(
+                                            "automation.error.pscan.rule.unknown",
+                                            this.getName(),
+                                            id));
+                        }
+                    } catch (NumberFormatException e) {
+                        progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.pscan.rule.unknown", this.getName(), id));
+                                        "automation.error.options.badint",
+                                        this.getType(),
+                                        PARAM_ID,
+                                        ruleMap.get(PARAM_ID)));
                     }
                 }
             }
@@ -128,7 +141,7 @@ public class PassiveScanConfigJob extends AutomationJob {
             for (Object rule : ruleData) {
                 if (rule instanceof LinkedHashMap<?, ?>) {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
-                    Integer id = (Integer) ruleMap.get("id");
+                    Integer id = (Integer) ruleMap.get(PARAM_ID);
                     PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
                     AlertThreshold pluginTh =
                             JobUtils.parseAlertThreshold(

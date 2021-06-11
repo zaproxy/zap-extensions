@@ -110,8 +110,8 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     @Override
-    public void verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        verifyOrApplyCustomParameter(name, value, progress);
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return this.verifyOrApplyCustomParameter(name, value, progress);
     }
 
     public int getMaxDuration() {

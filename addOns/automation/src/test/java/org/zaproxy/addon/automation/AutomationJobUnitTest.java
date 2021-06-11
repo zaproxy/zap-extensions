@@ -33,10 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
@@ -237,7 +234,7 @@ class AutomationJobUnitTest {
         map.put("unknownParam", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(params, progress);
+        job.verifyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -267,6 +264,51 @@ class AutomationJobUnitTest {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Nested
+    class CustomParamTests {
+
+        private AutomationJob job;
+        private AutomationProgress progress;
+        private Map map;
+
+        @BeforeEach
+        void setup() {
+            TestParamContainer tpc = new TestParamContainer();
+            job = new AutomationJobImpl(tpc);
+            progress = new AutomationProgress();
+            map = new HashMap();
+        }
+
+        @Test
+        void shouldWarnOnUnknownCustomParam() {
+            // Given
+            map.put("unknownParam", "test");
+            LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+
+            // When
+            job.verifyParameters(params, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            assertThat(progress.hasWarnings(), is(equalTo(true)));
+        }
+
+        @Test
+        void shouldNotWarnOnKnownCustomParam() {
+            // Given
+            map.put("customStringParam", stringParamValue);
+            LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+
+            // When
+            job.verifyParameters(params, progress);
+
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            assertThat(progress.hasWarnings(), is(equalTo(false)));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldFailOnBadInt() {
         // Given
@@ -278,7 +320,7 @@ class AutomationJobUnitTest {
         map.put("intParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(params, progress);
+        job.verifyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -299,7 +341,7 @@ class AutomationJobUnitTest {
         map.put("integerParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
-        job.applyParameters(params, progress);
+        job.verifyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -320,7 +362,7 @@ class AutomationJobUnitTest {
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
 
         // When
-        job.applyParameters(params, progress);
+        job.verifyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -341,7 +383,7 @@ class AutomationJobUnitTest {
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
 
         // When
-        job.applyParameters(params, progress);
+        job.verifyParameters(params, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -642,6 +684,23 @@ class AutomationJobUnitTest {
         @Override
         public String getParamMethodName() {
             return paramNameMethod;
+        }
+
+        @Override
+        public boolean verifyCustomParameter(
+                String name, String value, AutomationProgress progress) {
+            return this.verifyOrApplyCustomParameter(name, value, progress);
+        }
+
+        private boolean verifyOrApplyCustomParameter(
+                String name, String value, AutomationProgress progress) {
+            switch (name) {
+                case "customStringParam":
+                    return true;
+                default:
+                    break;
+            }
+            return false;
         }
     }
 }
