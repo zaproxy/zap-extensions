@@ -22,18 +22,20 @@ package org.zaproxy.addon.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,13 +65,15 @@ class ExtentionAutomationUnitTest extends TestUtils {
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    static void init() {
+    static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+        updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
-    static void close() {
+    static void close() throws ReflectiveOperationException {
         mockedCmdLine.close();
+        updateEnv("myEnvVar", "");
     }
 
     @BeforeEach
@@ -270,17 +274,22 @@ class ExtentionAutomationUnitTest extends TestUtils {
         extAuto.registerAutomationJob(job3);
         AutomationProgress progress =
                 extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+        List<AutomationJob> runJobs = progress.getRunJobs();
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(job1.wasRun(), is(equalTo(true)));
-        assertThat(job2.wasRun(), is(equalTo(true)));
-        assertThat(job3.wasRun(), is(equalTo(true)));
+        assertThat(runJobs.size(), is(equalTo(3)));
+        assertThat(runJobs.get(0).getName(), is(equalTo("job1")));
+        assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
+        assertThat(runJobs.get(1).getName(), is(equalTo("job2")));
+        assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
+        assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
+        assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
     }
 
     @Test
-    void shouldRunWithResolvedParams() {
+    void shouldRunWithResolvedParams() throws ReflectiveOperationException {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
         TestParamContainer tpc = new TestParamContainer();
@@ -302,11 +311,14 @@ class ExtentionAutomationUnitTest extends TestUtils {
         extAuto.registerAutomationJob(job);
         AutomationProgress progress =
                 extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+        List<AutomationJob> runJobs = progress.getRunJobs();
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(job.wasRun(), is(equalTo(true)));
+        assertThat(runJobs.size(), is(equalTo(1)));
+        assertThat(runJobs.get(0).getName(), is(equalTo("job")));
+        assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
         assertThat(tpc.getTestParam().getBoolParam(), is(equalTo(true)));
         assertThat(tpc.getTestParam().getStringParam(), is(equalTo("envVarValue")));
     }
@@ -314,32 +326,30 @@ class ExtentionAutomationUnitTest extends TestUtils {
     @Nested
     class PlanInOrderTests {
 
-        private AutomationJobWithRunOrder job1;
-        private AutomationJobWithRunOrder job2;
-        private AutomationJobWithRunOrder job3;
-        private AtomicInteger runCounter;
+        private AutomationJobImpl job1;
+        private AutomationJobImpl job2;
+        private AutomationJobImpl job3;
         private ExtensionAutomation extAuto;
 
         @BeforeEach
         void setup() {
             extAuto = new ExtensionAutomation();
-            runCounter = new AtomicInteger();
             job1 =
-                    new AutomationJobWithRunOrder(runCounter) {
+                    new AutomationJobImpl() {
                         @Override
                         public String getType() {
                             return "job1";
                         }
                     };
             job2 =
-                    new AutomationJobWithRunOrder(runCounter) {
+                    new AutomationJobImpl() {
                         @Override
                         public String getType() {
                             return "job2";
                         }
                     };
             job3 =
-                    new AutomationJobWithRunOrder(runCounter) {
+                    new AutomationJobImpl() {
                         @Override
                         public String getType() {
                             return "job3";
@@ -356,15 +366,18 @@ class ExtentionAutomationUnitTest extends TestUtils {
             extAuto.registerAutomationJob(job1);
             extAuto.registerAutomationJob(job2);
             extAuto.registerAutomationJob(job3);
-            extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+            AutomationProgress progress =
+                    extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+            List<AutomationJob> runJobs = progress.getRunJobs();
 
             // Then
-            assertThat(job1.wasRun(), is(equalTo(true)));
-            assertThat(job2.wasRun(), is(equalTo(true)));
-            assertThat(job3.wasRun(), is(equalTo(true)));
-            assertThat(job1.getRunOrder(), is(equalTo(0)));
-            assertThat(job2.getRunOrder(), is(equalTo(1)));
-            assertThat(job3.getRunOrder(), is(equalTo(2)));
+            assertThat(runJobs.size(), is(equalTo(3)));
+            assertThat(runJobs.get(0).getName(), is(equalTo("job1")));
+            assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
+            assertThat(runJobs.get(1).getName(), is(equalTo("job2")));
+            assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
+            assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
+            assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
         }
 
         @Test
@@ -376,15 +389,18 @@ class ExtentionAutomationUnitTest extends TestUtils {
             extAuto.registerAutomationJob(job3);
             extAuto.registerAutomationJob(job1);
             extAuto.registerAutomationJob(job2);
-            extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+            AutomationProgress progress =
+                    extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+            List<AutomationJob> runJobs = progress.getRunJobs();
 
             // Then
-            assertThat(job1.wasRun(), is(equalTo(true)));
-            assertThat(job2.wasRun(), is(equalTo(true)));
-            assertThat(job3.wasRun(), is(equalTo(true)));
-            assertThat(job1.getRunOrder(), is(equalTo(0)));
-            assertThat(job2.getRunOrder(), is(equalTo(1)));
-            assertThat(job3.getRunOrder(), is(equalTo(2)));
+            assertThat(runJobs.size(), is(equalTo(3)));
+            assertThat(runJobs.get(0).getName(), is(equalTo("job1")));
+            assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
+            assertThat(runJobs.get(1).getName(), is(equalTo("job2")));
+            assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
+            assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
+            assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
         }
     }
 
@@ -432,6 +448,45 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(job1.wasRun(), is(equalTo(false)));
         assertThat(job3.wasRun(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldRunPlanWithJobsWithSameType() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        String job1Name = "job1";
+
+        AutomationJobImpl job =
+                new AutomationJobImpl() {
+
+                    @Override
+                    public String getType() {
+                        return job1Name;
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        Path filePath = getResourcePath("resources/testplan-sametype.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+        List<AutomationJob> runJobs = progress.getRunJobs();
+
+        // Then
+        assertThat(runJobs.size(), is(equalTo(3)));
+        assertThat(runJobs.get(0).getName(), is(equalTo("job1")));
+        assertThat(((AutomationJobImpl) runJobs.get(0)).getOptional(), is(equalTo("run 1")));
+        assertThat(runJobs.get(1).getName(), is(equalTo("job1")));
+        assertThat(((AutomationJobImpl) runJobs.get(1)).getOptional(), is(equalTo("run 2")));
+        assertThat(runJobs.get(2).getName(), is(equalTo("job1")));
+        assertThat(((AutomationJobImpl) runJobs.get(2)).getOptional(), is(nullValue()));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
     @Test
@@ -506,24 +561,29 @@ class ExtentionAutomationUnitTest extends TestUtils {
         extAuto.registerAutomationJob(job3);
         AutomationProgress progress =
                 extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+        List<AutomationJob> runJobs = progress.getRunJobs();
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(progress.getWarnings().get(0), is(equalTo("!automation.error.job.name!")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(job1.wasRun(), is(equalTo(true)));
-        assertThat(job1.getName(), is(equalTo("Job 1")));
-        assertThat(job2.wasRun(), is(equalTo(true)));
-        assertThat(job2.getName(), is(equalTo("job2")));
-        assertThat(job3.wasRun(), is(equalTo(true)));
+
+        assertThat(runJobs.size(), is(equalTo(3)));
+        assertThat(runJobs.get(0).getName(), is(equalTo("Job 1")));
+        assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
+        assertThat(runJobs.get(1).getName(), is(equalTo("job2")));
+        assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
+        assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
+        assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
     }
 
     @Test
     void shouldFailPlanOnErrorApplyingParameters() {
         // Given
+        TestParamContainer tpc = new TestParamContainer();
         AutomationJobImpl job =
-                new AutomationJobImpl() {
+                new AutomationJobImpl(tpc) {
                     @Override
                     public String getType() {
                         return "job";
@@ -532,11 +592,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     @Override
                     public Order getOrder() {
                         return Order.EXPLORE;
-                    }
-
-                    @Override
-                    public Object getParamMethodObject() {
-                        return new TestParamContainer();
                     }
 
                     @Override
@@ -563,8 +618,10 @@ class ExtentionAutomationUnitTest extends TestUtils {
     @Test
     void shouldFailPlanOnWarningApplyingParameters() {
         // Given
+        TestParamContainer tpc = new TestParamContainer();
         AutomationJobImpl job =
-                new AutomationJobImpl() {
+                new AutomationJobImpl(tpc) {
+
                     @Override
                     public String getType() {
                         return "job";
@@ -573,11 +630,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     @Override
                     public Order getOrder() {
                         return Order.EXPLORE;
-                    }
-
-                    @Override
-                    public Object getParamMethodObject() {
-                        return new TestParamContainer();
                     }
 
                     @Override
@@ -600,6 +652,14 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
         assertThat(job.wasRun(), is(equalTo(false)));
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static void updateEnv(String name, String val) throws ReflectiveOperationException {
+        Map<String, String> env = System.getenv();
+        Field field = env.getClass().getDeclaredField("m");
+        field.setAccessible(true);
+        ((Map<String, String>) field.get(env)).put(name, val);
     }
 
     // Methods are accessed via reflection
@@ -642,6 +702,9 @@ class ExtentionAutomationUnitTest extends TestUtils {
         private boolean wasRun = false;
         private Object paramMethodObject;
         private String paramNameMethod = "getTestParam";
+        private String optional;
+        private String type;
+        private Order order = Order.REPORT;
 
         public AutomationJobImpl() {}
 
@@ -663,12 +726,12 @@ class ExtentionAutomationUnitTest extends TestUtils {
 
         @Override
         public String getType() {
-            return null;
+            return type;
         }
 
         @Override
         public Order getOrder() {
-            return null;
+            return order;
         }
 
         @Override
@@ -680,33 +743,35 @@ class ExtentionAutomationUnitTest extends TestUtils {
         public String getParamMethodName() {
             return paramNameMethod;
         }
-    }
 
-    private static class AutomationJobWithRunOrder extends AutomationJobImpl {
-
-        private final AtomicInteger runCounter;
-        private int runOrder;
-
-        public AutomationJobWithRunOrder(AtomicInteger runCounter) {
-            this.runCounter = runCounter;
-        }
-
-        public int getRunOrder() {
-            return this.runOrder;
+        @Override
+        public boolean verifyCustomParameter(
+                String name, String value, AutomationProgress progress) {
+            if (name.equals("optional")) {
+                return true;
+            }
+            return false;
         }
 
         @Override
-        public void runJob(
-                AutomationEnvironment env,
-                LinkedHashMap<?, ?> jobData,
-                AutomationProgress progress) {
-            super.runJob(env, jobData, progress);
-            this.runOrder = runCounter.getAndIncrement();
+        public boolean applyCustomParameter(String name, String value) {
+            if (name.equals("optional")) {
+                optional = value;
+                return true;
+            }
+            return false;
         }
 
-        @Override
-        public Order getOrder() {
-            return Order.REPORT;
+        public String getOptional() {
+            return this.optional;
+        }
+
+        public AutomationJob newJob() {
+            AutomationJobImpl job = new AutomationJobImpl();
+            job.paramMethodObject = this.paramMethodObject;
+            job.type = this.getType();
+            job.order = this.getOrder();
+            return job;
         }
     }
 }

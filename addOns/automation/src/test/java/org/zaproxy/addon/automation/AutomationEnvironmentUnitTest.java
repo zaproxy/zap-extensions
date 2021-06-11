@@ -52,13 +52,15 @@ class AutomationEnvironmentUnitTest {
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    static void init() {
+    static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
-    static void close() {
+    static void close() throws Exception {
         mockedCmdLine.close();
+        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "");
     }
 
     @BeforeEach

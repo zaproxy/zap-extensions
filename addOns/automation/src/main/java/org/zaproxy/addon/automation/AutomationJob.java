@@ -458,4 +458,12 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         }
         return false;
     }
+
+    public AutomationJob newJob() throws AutomationJobException {
+        try {
+            return this.getClass().getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new AutomationJobException("Failed to create new job", e);
+        }
+    }
 }
