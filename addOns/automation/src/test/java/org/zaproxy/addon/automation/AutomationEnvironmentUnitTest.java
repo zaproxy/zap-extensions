@@ -319,6 +319,226 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldFailIfBadIncludeRegexList() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      includePaths: https://www.testregex.example.com.*";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress, session);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!automation.error.context.badincludelist!")));
+    }
+
+    @Test
+    void shouldFailIfBadExcludeRegexList() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      excludePaths: https://www.testregex.example.com.*";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress, session);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!automation.error.context.badexcludelist!")));
+    }
+
+    @Test
+    void shouldFailIfBadIncludeRegexValue() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      includePaths:\n"
+                        + "      - Test\\";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress, session);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badregex!")));
+    }
+
+    @Test
+    void shouldFailIfBadExcludeRegexValue() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      excludePaths:\n"
+                        + "      - Test\\";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress, session);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badregex!")));
+    }
+
+    @Test
+    void shouldAddIncludeInContextRegexes() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      includePaths:\n"
+                        + "        - https://www.firstregex.example.com.*\n"
+                        + "        - https://www.secondregex.example.com.*\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example.com.*");
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.firstregex.example.com.*");
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.secondregex.example.com.*");
+    }
+
+    @Test
+    void shouldAddExcludeFromContextRegexes() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      excludePaths:\n"
+                        + "        - https://www.firstregex.example.com.*\n"
+                        + "        - https://www.secondregex.example.com.*\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example.com.*");
+        verify(contexts.get(0)).addExcludeFromContextRegex("https://www.firstregex.example.com.*");
+        verify(contexts.get(0)).addExcludeFromContextRegex("https://www.secondregex.example.com.*");
+    }
+
+    @Test
+    void shouldSetResolvedIncludeRegexes() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      includePaths:\n"
+                        + "        - https://www.${myPrefix}.${myEnvVar}.example.com.*\n"
+                        + "  vars:\n"
+                        + "    myPrefix: prefix\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example.com.*");
+        verify(contexts.get(0))
+                .addIncludeInContextRegex("https://www.prefix.envVarValue.example.com.*");
+    }
+
+    @Test
+    void shouldSetResolvedExcludeRegexes() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "      excludePaths:\n"
+                        + "        - https://www.${myPrefix}.${myEnvVar}.example.com.*\n"
+                        + "  vars:\n"
+                        + "    myPrefix: prefix\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.example.com.*");
+        verify(contexts.get(0))
+                .addExcludeFromContextRegex("https://www.prefix.envVarValue.example.com.*");
+    }
+
+    @Test
     void shouldSetValidParams() {
         // Given
         String contextStr =

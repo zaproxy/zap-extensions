@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -125,6 +126,8 @@ public class AutomationEnvironment {
         }
         String name = null;
         List<String> urls = new ArrayList<>();
+        ArrayList<?> includeRegexes = null;
+        ArrayList<?> excludeRegexes = null;
         for (Entry<?, ?> cdata : ((LinkedHashMap<?, ?>) contextObject).entrySet()) {
             Object value = cdata.getValue();
             if (value == null) {
@@ -170,6 +173,12 @@ public class AutomationEnvironment {
                                         "automation.error.context.badurl", value.toString()));
                     }
                     break;
+                case "includePaths":
+                    includeRegexes = verifyRegexes(value, "badincludelist", progress);
+                    break;
+                case "excludePaths":
+                    excludeRegexes = verifyRegexes(value, "badexcludelist", progress);
+                    break;
                 default:
                     progress.warn(
                             Constant.messages.getString(
@@ -189,12 +198,43 @@ public class AutomationEnvironment {
             return null;
         }
         Context context = session.getNewContext(name);
+        if (includeRegexes != null) {
+            for (Object regex : includeRegexes) {
+                context.addIncludeInContextRegex(replaceVars(regex.toString()));
+            }
+        }
+        if (excludeRegexes != null) {
+            for (Object regex : excludeRegexes) {
+                context.addExcludeFromContextRegex(replaceVars(regex.toString()));
+            }
+        }
         ContextWrapper wrapper = new ContextWrapper(context);
         for (String u : urls) {
             context.addIncludeInContextRegex(u + ".*");
             wrapper.addUrl(u);
         }
         return wrapper;
+    }
+
+    private static ArrayList<?> verifyRegexes(
+            Object value, String key, AutomationProgress progress) {
+        if (!(value instanceof ArrayList)) {
+            progress.error(Constant.messages.getString("automation.error.context." + key, value));
+            return null;
+        }
+        ArrayList<?> regexes = (ArrayList<?>) value;
+        for (Object regex : regexes) {
+            try {
+                Pattern.compile(regex.toString());
+            } catch (PatternSyntaxException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.badregex",
+                                regex.toString(),
+                                e.getMessage()));
+            }
+        }
+        return regexes;
     }
 
     public String replaceVars(Object value) {
