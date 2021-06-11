@@ -279,6 +279,38 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(job3.wasRun(), is(equalTo(true)));
     }
 
+    @Test
+    void shouldRunWithResolvedParams() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJobImpl job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.EXPLORE;
+                    }
+                };
+        Path filePath = getResourcePath("resources/testplan-applyResolvedParams.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(job.wasRun(), is(equalTo(true)));
+        assertThat(tpc.getTestParam().getBoolParam(), is(equalTo(true)));
+        assertThat(tpc.getTestParam().getStringParam(), is(equalTo("envVarValue")));
+    }
+
     @Nested
     class PlanInOrderTests {
 
@@ -586,15 +618,36 @@ class ExtentionAutomationUnitTest extends TestUtils {
     private static class TestParam {
 
         private boolean boolParam;
+        private String stringParam;
 
         public void setBoolParam(boolean boolParam) {
             this.boolParam = boolParam;
+        }
+
+        public boolean getBoolParam() {
+            return boolParam;
+        }
+
+        public void setStringParam(String stringParam) {
+            this.stringParam = stringParam;
+        }
+
+        public String getStringParam() {
+            return stringParam;
         }
     }
 
     private static class AutomationJobImpl extends AutomationJob {
 
         private boolean wasRun = false;
+        private Object paramMethodObject;
+        private String paramNameMethod = "getTestParam";
+
+        public AutomationJobImpl() {}
+
+        public AutomationJobImpl(Object paramMethodObject) {
+            this.paramMethodObject = paramMethodObject;
+        }
 
         @Override
         public void runJob(
@@ -620,12 +673,12 @@ class ExtentionAutomationUnitTest extends TestUtils {
 
         @Override
         public Object getParamMethodObject() {
-            return null;
+            return paramMethodObject;
         }
 
         @Override
         public String getParamMethodName() {
-            return null;
+            return paramNameMethod;
         }
     }
 
