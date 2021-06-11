@@ -644,6 +644,12 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().isCss()
+                || msg.getResponseHeader().isJavaScript()
+                || msg.getRequestHeader().isCss()) {
+            return;
+        }
+
         // get the body contents as a String, so we can match against it
         String responsebody = msg.getResponseBody().toString();
 
