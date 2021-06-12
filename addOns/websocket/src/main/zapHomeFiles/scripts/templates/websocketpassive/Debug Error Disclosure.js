@@ -2,7 +2,7 @@
 
 // * Based on org.zaproxy.zap.extension.pscanrules.InformationDisclosureDebugErrors
 // * Debug Error messages are equal to:
-// * * https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/zapHomeFiles/xml/debug-error-messages.txt
+// * * https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/zapHomeFiles/xml/debug-error-messages.txt
 
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 

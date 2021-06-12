@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update links to zaproxy repo.
+- Update links to zaproxy and zap-extensions repos.
 - Target 2.10 core and use new logging infrastructure (Log4j 2.x).
 - The LDAP Injection scan rule was modified to use:
   - The Dice algorithm for calculating the match percentage, thus improving its performance.

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for include/exclude regexes.
 
 ### Changed
+- Update links to repository.
 - Maintenance changes.
 
 ## [0.2.0] - 2021-04-12

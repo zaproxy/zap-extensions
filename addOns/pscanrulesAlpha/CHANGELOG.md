@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Sub Resource Integrity
 - Maintenance changes.
 - Rename of Feature-Policy header to Permissions-Policy to follow spec change.
+- Update links to repository.
 
 ### Fixed
 - Dangerous JS Function scan rule, use word boundaries to reduce false positives (Issue 6594).

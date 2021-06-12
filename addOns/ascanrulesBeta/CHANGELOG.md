@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - XPath Injection
     - Added evidence
 - The Source Code Disclosure - File Inclusion scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
+- Update links to repository.
 - Maintenance changes.
 
 ### Fixed
