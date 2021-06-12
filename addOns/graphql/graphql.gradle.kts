@@ -1,4 +1,3 @@
-version = "0.4.0"
 description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {

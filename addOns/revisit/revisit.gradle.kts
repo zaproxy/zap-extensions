@@ -1,4 +1,3 @@
-version = "4"
 description = "Revisit a site at any time in the past using the session history"
 
 zapAddOn {

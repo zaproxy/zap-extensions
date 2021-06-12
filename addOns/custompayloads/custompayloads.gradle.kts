@@ -1,4 +1,3 @@
-version = "0.10.0"
 description = "Ability to add, edit or remove payloads that are used i.e. by active scanners"
 
 zapAddOn {

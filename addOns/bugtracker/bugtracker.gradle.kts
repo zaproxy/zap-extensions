@@ -1,4 +1,3 @@
-version = "3"
 description = "Bug Tracker extension."
 
 tasks.withType<JavaCompile> {

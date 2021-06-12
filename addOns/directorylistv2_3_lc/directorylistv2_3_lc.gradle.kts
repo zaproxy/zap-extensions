@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "4"
 description = "Lists of lower case directory names to be used with Forced Browse or Fuzzer add-on."
 
 zapAddOn {
