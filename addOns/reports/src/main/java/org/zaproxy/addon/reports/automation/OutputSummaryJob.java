@@ -48,7 +48,7 @@ public class OutputSummaryJob extends AutomationJob {
     private static final String PARAM_FORMAT = "format";
     private static final String PARAM_SUMMARY_FILE = "summaryFile";
 
-    private ExtensionReportAutomation ext;
+    private ExtensionReportAutomation extReportAuto;
     private PrintStream out = System.out;
 
     private enum Format {
@@ -61,10 +61,6 @@ public class OutputSummaryJob extends AutomationJob {
     private String summaryFile;
 
     private ExtensionReports extReport;
-
-    public OutputSummaryJob(ExtensionReportAutomation ext) {
-        this.ext = ext;
-    }
 
     /**
      * Prints a summary to std out as per the packaged scans. The output is deliberately not
@@ -81,7 +77,7 @@ public class OutputSummaryJob extends AutomationJob {
         int warn = 0;
 
         // Number of URLs, as per logic behind the core.urls API endpoint
-        int numUrls = ext.countNumberOfUrls();
+        int numUrls = getExtReportAuto().countNumberOfUrls();
         if (numUrls == 0) {
             out.println(
                     "No URLs found - is the target URL accessible? Local services may not be accessible from a Docker container");
@@ -241,6 +237,16 @@ public class OutputSummaryJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_FORMAT, Format.NONE.name());
         return map;
+    }
+
+    private ExtensionReportAutomation getExtReportAuto() {
+        if (extReportAuto == null) {
+            extReportAuto =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionReportAutomation.class);
+        }
+        return extReportAuto;
     }
 
     private ExtensionReports getExtReport() {

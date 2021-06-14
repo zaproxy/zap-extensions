@@ -72,7 +72,7 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
         reportJob = new ReportJob();
         extAuto.registerAutomationJob(reportJob);
-        outputSummaryJob = new OutputSummaryJob(this);
+        outputSummaryJob = new OutputSummaryJob();
         extAuto.registerAutomationJob(outputSummaryJob);
         reportDataHandler = new ReportDataHandlerImpl(extAuto);
         Control.getSingleton()
