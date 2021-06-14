@@ -171,7 +171,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
     }
 
-    private AutomationProgress runPlan(LinkedHashMap<?, ?> envData, ArrayList<?> jobsData) {
+    private AutomationProgress runPlan(LinkedHashMap<?, ?> envData, ArrayList<?> jobsData)
+            throws AutomationJobException {
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env =
                 new AutomationEnvironment(envData, progress, Model.getSingleton().getSession());
@@ -196,6 +197,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
             AutomationJob job = jobs.get(jobType);
             if (job != null) {
+                job = job.newJob();
                 Object jobName = jobData.get("name");
                 if (jobName != null) {
                     if (jobName instanceof String) {
@@ -233,6 +235,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
             job.runJob(env, jobData, progress);
+            progress.addRunJob(job);
             if (env.isTimeToQuit()) {
                 break;
             }
@@ -242,7 +245,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return progress;
     }
 
-    public AutomationProgress runAutomation(InputStream in) {
+    public AutomationProgress runAutomation(InputStream in) throws AutomationJobException {
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(in);
         LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
