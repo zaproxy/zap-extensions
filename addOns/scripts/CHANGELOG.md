@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to choose Kotlin for syntax highlighting (requires newer ZAP version).
+
 ### Changed
 - Do not show `Null` script engine in Edit Script dialogue.
 - Now using 2.10 logging infrastructure (Log4j 2.x).
