@@ -1,4 +1,3 @@
-version = "8"
 description = "Allows you to highlight strings in the request and response tabs."
 
 zapAddOn {

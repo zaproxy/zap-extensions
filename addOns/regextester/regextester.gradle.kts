@@ -1,4 +1,3 @@
-version = "2"
 description = "Allows to test Regular Expressions"
 
 zapAddOn {

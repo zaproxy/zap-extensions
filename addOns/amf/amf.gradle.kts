@@ -1,4 +1,3 @@
-version = "3"
 description = "Adds support for AMF messages"
 
 repositories {

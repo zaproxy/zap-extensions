@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "9"
 description = "Display ZAP Tips and Tricks"
 
 zapAddOn {

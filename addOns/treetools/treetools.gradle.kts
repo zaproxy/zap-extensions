@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
 description = "Tools to add functionality to the tree view."
 
 zapAddOn {

@@ -7,7 +7,6 @@ plugins {
 
 group = "org.zaproxy.addon"
 
-version = "13.3.0"
 description = "Advanced fuzzer for manual testing"
 
 tasks.withType<JavaCompile> {

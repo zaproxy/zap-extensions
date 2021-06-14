@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "11"
 description = "Invoke external applications passing context related information such as URLs and parameters"
 
 zapAddOn {

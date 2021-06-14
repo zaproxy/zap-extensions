@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.0.1"
 description = "Import and Export functionality"
 
 zapAddOn {

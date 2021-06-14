@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "29"
 description = "Supports all JSR 223 scripting languages"
 
 zapAddOn {

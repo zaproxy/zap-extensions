@@ -1,0 +1,27 @@
+name: Prepare Release Add-on
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: 'Add-on IDs'
+        required: true
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Setup Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    - name: Prepare Release and Create Pull Request
+      env:
+        ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
+        ADD_ON_IDS: ${{ github.event.inputs.ids }}
+      run: ./gradlew :addOns:createPullRequestRelease

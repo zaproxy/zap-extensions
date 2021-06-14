@@ -1,4 +1,3 @@
-version = "0.3.0"
 description = "Automation Framework."
 
 zapAddOn {
