@@ -82,11 +82,12 @@ class OutputSummaryJobUnitTest {
         env = mock(AutomationEnvironment.class);
         progress = mock(AutomationProgress.class);
         psJobResData = mock(PassiveScanJobResultData.class);
-        job = new OutputSummaryJob(ext);
+        job = new OutputSummaryJob();
         os = new ByteArrayOutputStream();
         job.setOutput(new PrintStream(os));
 
         given(extensionLoader.getExtension(ExtensionReports.class)).willReturn(extReport);
+        given(extensionLoader.getExtension(ExtensionReportAutomation.class)).willReturn(ext);
         given(progress.getJobResultData(any())).willReturn(psJobResData);
     }
 
