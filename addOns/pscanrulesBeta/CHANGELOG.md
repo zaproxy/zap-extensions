@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Insecure Form Post
     - Added evidence
 - Maintenance changes.
+- Update links to repository.
 
 ## [24] - 2020-12-15
 ### Changed

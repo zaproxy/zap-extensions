@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Cookie SameSite Attribute scan rule now handles the value "none" (Issue 6482).
 - Content Security Policy rule has been upgraded to use version 3 of the Salvation library.
   - Messages with multiple CSPs are no longer merged/intersected instead the policies are analyzed individually.
+- Update links to repository.
 
 ## [33] - 2021-01-29
 ### Added
