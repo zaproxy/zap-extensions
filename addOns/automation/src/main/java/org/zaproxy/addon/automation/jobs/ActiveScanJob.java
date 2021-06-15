@@ -317,6 +317,10 @@ public class ActiveScanJob extends AutomationJob {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
                     Integer id = (Integer) ruleMap.get("id");
                     Plugin plugin = pluginFactory.getPlugin(id);
+                    if (plugin == null) {
+                        // Will have already warned about this
+                        continue;
+                    }
                     AttackStrength pluginSt =
                             JobUtils.parseAttackStrength(
                                     ruleMap.get("strength"), this.getName(), progress);

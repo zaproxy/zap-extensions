@@ -520,6 +520,7 @@ class ActiveScanJobUnitTest {
 
         LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
         ruleDefn.put("id", 1377);
+        ruleDefn.put("threshold", "medium");
 
         LinkedHashMap<String, List<?>> policyDefn = new LinkedHashMap<>();
 
@@ -532,6 +533,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.verifyJobSpecificData(data, progress);
+        job.getScanPolicy(data, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
