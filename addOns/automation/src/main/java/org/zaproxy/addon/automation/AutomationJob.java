@@ -112,7 +112,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
      * @see #applyCustomParameter(String, String)
      */
     public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        return false;
+        return getCustomConfigParameters().containsKey(name);
     }
 
     public String getTemplateDataMin() {

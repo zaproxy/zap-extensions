@@ -263,49 +263,75 @@ class AutomationJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Nested
-    class CustomParamTests {
+    @Test
+    void shouldWarnOnUnknownCustomParam() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+        Map<String, String> map = new HashMap<>();
+        map.put("unknownParam", "test");
+        LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
 
-        private AutomationJob job;
-        private AutomationProgress progress;
-        private Map map;
+        // When
+        job.verifyParameters(params, progress);
 
-        @BeforeEach
-        void setup() {
-            TestParamContainer tpc = new TestParamContainer();
-            job = new AutomationJobImpl(tpc);
-            progress = new AutomationProgress();
-            map = new HashMap();
-        }
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(1));
+        assertThat(progress.getWarnings().get(0), is("!automation.error.options.unknown!"));
+    }
 
-        @Test
-        void shouldWarnOnUnknownCustomParam() {
-            // Given
-            map.put("unknownParam", "test");
-            LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+    @Test
+    void shouldNotWarnOnKnownCustomParam() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public boolean verifyCustomParameter(
+                            String name, String value, AutomationProgress progress) {
+                        return "customStringParam".equals(name);
+                    }
+                };
+        AutomationProgress progress = new AutomationProgress();
+        Map<String, String> map = new HashMap<>();
+        map.put("customStringParam", stringParamValue);
+        LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
 
-            // When
-            job.verifyParameters(params, progress);
+        // When
+        job.verifyParameters(params, progress);
 
-            // Then
-            assertThat(progress.hasErrors(), is(equalTo(false)));
-            assertThat(progress.hasWarnings(), is(equalTo(true)));
-        }
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
 
-        @Test
-        void shouldNotWarnOnKnownCustomParam() {
-            // Given
-            map.put("customStringParam", stringParamValue);
-            LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+    @Test
+    void shouldNotWarnForJobsWithDefaultVerifyCustomParameterImplementation() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public Map<String, String> getCustomConfigParameters() {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("customStringParam", stringParamValue);
+                        return map;
+                    }
+                };
+        AutomationProgress progress = new AutomationProgress();
+        Map<String, String> map = new HashMap<>();
+        map.put("customStringParam", stringParamValue);
+        LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
 
-            // When
-            job.verifyParameters(params, progress);
+        // When
+        job.verifyParameters(params, progress);
 
-            // Then
-            assertThat(progress.hasErrors(), is(equalTo(false)));
-            assertThat(progress.hasWarnings(), is(equalTo(false)));
-        }
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -684,23 +710,6 @@ class AutomationJobUnitTest {
         @Override
         public String getParamMethodName() {
             return paramNameMethod;
-        }
-
-        @Override
-        public boolean verifyCustomParameter(
-                String name, String value, AutomationProgress progress) {
-            return this.verifyOrApplyCustomParameter(name, value, progress);
-        }
-
-        private boolean verifyOrApplyCustomParameter(
-                String name, String value, AutomationProgress progress) {
-            switch (name) {
-                case "customStringParam":
-                    return true;
-                default:
-                    break;
-            }
-            return false;
         }
     }
 }
