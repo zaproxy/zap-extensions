@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.HttpStatus;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -75,7 +74,7 @@ public class ReportHelper {
     }
 
     public static String getHttpStatusCodeString(int code) {
-        return HttpStatus.getStatusText(code);
+        return HttpStatusReason.get(code);
     }
 
     public static Map<String, Long> getSiteStats(String site, String prefix) {
