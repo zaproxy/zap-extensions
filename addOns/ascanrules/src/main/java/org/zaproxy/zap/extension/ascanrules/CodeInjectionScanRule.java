@@ -169,6 +169,10 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
      */
     private boolean testPhpInjection(String paramName) {
         for (String phpPayload : PHP_PAYLOADS) {
+            if (isStop()) {
+                break;
+            }
+
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
@@ -207,14 +211,6 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 // parameters on the same request (to reduce performance impact)
                 return true;
             }
-
-            // Check if the scan has been stopped
-            // if yes dispose resources and exit
-            if (isStop()) {
-                // Dispose all resources
-                // Exit the scan rule
-                break;
-            }
         }
 
         return false;
@@ -232,6 +228,10 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
         int bignum2 = RAND.nextInt(MAX_VALUE);
 
         for (String aspPayload : ASP_PAYLOADS) {
+            if (isStop()) {
+                break;
+            }
+
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
 
@@ -267,11 +267,6 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                         .setMessage(msg)
                         .raise();
                 return true;
-            }
-
-            if (isStop()) {
-                // Exit the scan rule
-                break;
             }
         }
 
