@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automation parameters are now in camelCase. This is a breaking change, and older automation configurations containing all-lowercase openapi parameters will stop working.
 - The import dialogs now show the values used in the previous import when reopened.
 - Maintenance changes.
+### Added
+- Added support for Multipart form-data (Issue 6418).
 
 ## [18] - 2021-03-09
 ### Added

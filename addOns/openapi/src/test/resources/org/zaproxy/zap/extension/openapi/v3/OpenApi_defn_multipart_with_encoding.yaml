@@ -1,0 +1,187 @@
+openapi: 3.0.0
+paths:
+  /v3/openapi/image:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                name:
+                  type: string
+                photo:
+                  type: string
+                  format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/headerString:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+            encoding:
+              person:
+                headers:
+                  X-Custom-Header:
+                    schema:
+                      type: string
+                    description: Sample String Header
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/headerNumber:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+            encoding:
+              person:
+                headers:
+                  X-Custom-Header:
+                    schema:
+                      type: number
+                    description: Sample Number Header
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/headerObject:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+            encoding:
+              person:
+                headers:
+                  X-Custom-Header:
+                    schema:
+                      type: object
+                      properties:
+                        category:
+                          type: string
+                        height:
+                          type: number
+                        weight:
+                          type: number 
+                    description: Sample Object Header
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/headerBoolean:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+            encoding:
+              person:
+                headers:
+                  X-Custom-Header:
+                    schema:
+                      type: boolean                
+                    description: Sample Boolean Header
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/headerAll:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+            encoding:
+              person:
+                headers:
+                  X-Custom-Header-One:
+                    schema:
+                      type: string
+                    description: Sample String Header
+                  X-Custom-Header-Two:
+                    schema:
+                      type: number
+                    description: Sample Number Header
+                  X-Custom-Header-Three:
+                    schema:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        age:
+                          type: number
+                    description: Sample Object Header
+                  X-Custom-Header-Four:
+                    schema:
+                      type: boolean
+                    description: Sample Boolean Header
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/imageAndHeaders:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                name:
+                  type: string
+                photo:
+                  type: string
+                  format: binary
+            encoding:
+              photo:
+                contentType: image/jpeg, image/png
+                headers:
+                  X-Custom-Header:
+                    schema:
+                      type: string
+                    description: Sample Image and Custom Header  
+      responses:
+        "200":
+          description: OK  
