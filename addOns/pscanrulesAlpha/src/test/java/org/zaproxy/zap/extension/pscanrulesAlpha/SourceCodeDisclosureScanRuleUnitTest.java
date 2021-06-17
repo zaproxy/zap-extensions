@@ -110,6 +110,17 @@ class SourceCodeDisclosureScanRuleUnitTest
     }
 
     @Test
+    void shouldNotRaiseAlertOnCssRequest() throws Exception {
+        // Given
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/styles", true));
+        msg.getRequestHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/css");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
     void shouldNotRaiseAlertOnCssResponse() throws Exception {
         // Given
         msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/styles", true));
@@ -126,6 +137,7 @@ class SourceCodeDisclosureScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/scripts", true));
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+        msg.setResponseBody("class a{ constructor(t,e)}");
         // When
         scanHttpResponseReceive(msg);
         // Then
