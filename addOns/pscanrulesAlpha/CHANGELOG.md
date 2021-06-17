@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [31] - 2021-06-17
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
@@ -267,6 +267,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v28
