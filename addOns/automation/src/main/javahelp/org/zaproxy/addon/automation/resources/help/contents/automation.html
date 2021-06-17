@@ -21,11 +21,12 @@ To use the automation framework:
 <ol>
 <li>Generate a template automation file using one of the <code>-autogen*</code> command line options
 <li>Edit the file to match your requirements
-<li>Run the file using the <code>-autorun</code> commandline option
+<li>Run the file using the <code>-autorun</code> commandline option e.g. <code>./zap.sh -cmd -autorun config.yaml</code>
 </ol>
 
-In all cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
+In most cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
 and ZAP exits as soon as it has finished generating or running the jobs defined in the file.
+However you can choose to run Automation Framework jobs using the ZAP desktop to help you debug issues.
 
 <H2>Environment</H2>
 The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
@@ -40,7 +41,8 @@ The following automation jobs are supported by this add-on:
 <li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
 </ul>
 
-This framework is plugable and so other add-ons may add support for other jobs.
+This framework is plugable and so other add-ons may add support for other jobs, see the 
+<a href="https://www.zaproxy.org/docs/automate/automation-framework/">Automation Framework</a> website pages for a more complete list.
 <p>
 The 'min' and 'max' templates include comments giving more information about the fields.
 </BODY>
