@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -132,18 +133,33 @@ public class ReportHelper {
 
     /** A method which mimics the escaping used for traditional ZAP reports */
     public static String legacyEscapeText(String text) {
-        return XMLStringUtil.escapeControlChrs(text);
+        return legacyEscapeText(text, false);
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeText(String text, boolean escapeJson) {
+        String enc = XMLStringUtil.escapeControlChrs(text);
+        if (escapeJson) {
+            return StringEscapeUtils.escapeJava(enc);
+        }
+        return enc;
     }
 
     /** A method which mimics the escaping used for traditional ZAP reports */
     public static String legacyEscapeParagraph(String text) {
+        return legacyEscapeParagraph(text, false);
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeParagraph(String text, boolean escapeJson) {
         if (text == null || text.isEmpty()) {
             return "";
         }
         return legacyEscapeText(
                         "<p>"
                                 + text.replaceAll("\\r\\n", "</p><p>").replaceAll("\\n", "</p><p>")
-                                + "</p>")
+                                + "</p>",
+                        escapeJson)
                 .replace("&lt;p&gt;", "<p>")
                 .replace("&lt;/p&gt;", "</p>");
     }

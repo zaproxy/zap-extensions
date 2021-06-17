@@ -475,11 +475,11 @@ class ExtensionReportsUnitTest {
                 desc,
                 uriStr,
                 "Test Param",
-                "Test Attack",
-                "Test Other",
+                "Test \"Attack\\\"",
+                "Test 'Other\\",
                 "Test Solution",
                 "Test Reference",
-                "Test Evidence",
+                "Test <p>Evidence",
                 123,
                 456,
                 msg);
@@ -521,6 +521,7 @@ class ExtensionReportsUnitTest {
 
     private static String cleanReport(String str) {
         return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
+                .replaceFirst("@generated\": \".*\"", "@generated\": \"DATE\"")
                 .replaceAll("basic-.*/", "dir")
                 .replaceAll("[\\n\\r\\t]", "");
     }
@@ -528,6 +529,7 @@ class ExtensionReportsUnitTest {
     @ParameterizedTest
     @ValueSource(
             strings = {
+                "traditional-json",
                 "traditional-md",
                 "traditional-xml",
                 "traditional-html",
@@ -596,7 +598,8 @@ class ExtensionReportsUnitTest {
         assertThat(
                 alerts.getJSONObject(0).getString("solution"), is(equalTo("<p>Test Solution</p>")));
         assertThat(
-                alerts.getJSONObject(0).getString("otherinfo"), is(equalTo("<p>Test Other</p>")));
+                alerts.getJSONObject(0).getString("otherinfo"),
+                is(equalTo("<p>Test 'Other\\</p>")));
         assertThat(
                 alerts.getJSONObject(0).getString("reference"),
                 is(equalTo("<p>Test Reference</p>")));
@@ -611,7 +614,10 @@ class ExtensionReportsUnitTest {
                 is(equalTo("http://example.com/example_3")));
         assertThat(instances.getJSONObject(0).getString("method"), is(equalTo("GET")));
         assertThat(instances.getJSONObject(0).getString("param"), is(equalTo("Test Param")));
-        assertThat(instances.getJSONObject(0).getString("evidence"), is(equalTo("Test Evidence")));
+        assertThat(
+                instances.getJSONObject(0).getString("attack"), is(equalTo("Test \"Attack\\\"")));
+        assertThat(
+                instances.getJSONObject(0).getString("evidence"), is(equalTo("Test <p>Evidence")));
     }
 
     @Test
@@ -734,12 +740,12 @@ class ExtensionReportsUnitTest {
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("attack")));
-        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test Attack")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test \"Attack\\\"")));
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("evidence")));
-        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test Evidence")));
+        assertThat(instanceChildNodes.item(y).getTextContent(), is(equalTo("Test <p>Evidence")));
         y++;
         assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
 
@@ -758,7 +764,7 @@ class ExtensionReportsUnitTest {
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("otherinfo")));
-        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>Test Other</p>")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("<p>Test 'Other\\</p>")));
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
@@ -811,6 +817,7 @@ class ExtensionReportsUnitTest {
             Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
             Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
+            generateTestFile("traditional-json");
             generateTestFile("traditional-md");
             generateTestFile("traditional-xml");
             generateTestFile("traditional-html");
