@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -152,8 +153,174 @@ class OutputSummaryJobUnitTest {
                 os.toString(),
                 is(
                         "Total of 3 URLs\n"
-                                + "WARN-NEW: rule1 [1] x 3\n"
+                                + "WARN-NEW: rule1 [1] x 3 \n"
                                 + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+    }
+
+    @Test
+    void shouldFailIfConfigOnRuleWithAlerts() throws Exception {
+        // Given
+        given(ext.countNumberOfUrls()).willReturn(3);
+
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        alertCounts.put(1, 3);
+        given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
+
+        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+
+        given(psJobResData.getAllRuleData()).willReturn(list);
+
+        job.applyCustomParameter("format", "LONG");
+
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", 1);
+        ruleDefn.put("action", "FAIL");
+
+        LinkedHashMap<String, List<?>> data = new LinkedHashMap<>();
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+        rulesDefn.add(ruleDefn);
+        data.put("rules", rulesDefn);
+
+        // When
+        job.runJob(env, data, progress);
+
+        // Then
+        assertThat(
+                os.toString(),
+                is(
+                        "Total of 3 URLs\n"
+                                + "FAIL-NEW: rule1 [1] x 3 \n"
+                                + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+    }
+
+    @Test
+    void shouldInfoIfConfigOnRuleWithAlerts() throws Exception {
+        // Given
+        given(ext.countNumberOfUrls()).willReturn(3);
+
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        alertCounts.put(1, 3);
+        given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
+
+        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+
+        given(psJobResData.getAllRuleData()).willReturn(list);
+
+        job.applyCustomParameter("format", "LONG");
+
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", 1);
+        ruleDefn.put("action", "INFO");
+
+        LinkedHashMap<String, List<?>> data = new LinkedHashMap<>();
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+        rulesDefn.add(ruleDefn);
+        data.put("rules", rulesDefn);
+
+        // When
+        job.runJob(env, data, progress);
+
+        // Then
+        assertThat(
+                os.toString(),
+                is(
+                        "Total of 3 URLs\n"
+                                + "INFO: rule1 [1] x 3 \n"
+                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 0\tPASS: 0\n"));
+    }
+
+    @Test
+    void shouldIgnoreIfConfigOnRuleWithAlerts() throws Exception {
+        // Given
+        given(ext.countNumberOfUrls()).willReturn(3);
+
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        alertCounts.put(1, 3);
+        given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
+
+        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+
+        given(psJobResData.getAllRuleData()).willReturn(list);
+
+        job.applyCustomParameter("format", "LONG");
+
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", 1);
+        ruleDefn.put("action", "IGNORE");
+
+        LinkedHashMap<String, List<?>> data = new LinkedHashMap<>();
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+        rulesDefn.add(ruleDefn);
+        data.put("rules", rulesDefn);
+
+        // When
+        job.runJob(env, data, progress);
+
+        // Then
+        assertThat(
+                os.toString(),
+                is(
+                        "Total of 3 URLs\n"
+                                + "IGNORE: rule1 [1] x 3 \n"
+                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 1\tPASS: 0\n"));
+    }
+
+    @Test
+    void shouldReportInOrderRulesWithAlerts() throws Exception {
+        // Given
+        given(ext.countNumberOfUrls()).willReturn(3);
+
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        alertCounts.put(1, 3);
+        alertCounts.put(2, 3);
+        alertCounts.put(3, 3);
+        alertCounts.put(4, 3);
+        given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
+
+        List<RuleData> list =
+                Arrays.asList(
+                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        new RuleData(new TestPluginPassiveScanner(3, "rule3")),
+                        new RuleData(new TestPluginPassiveScanner(4, "rule4")));
+
+        given(psJobResData.getAllRuleData()).willReturn(list);
+
+        job.applyCustomParameter("format", "LONG");
+
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+
+        LinkedHashMap<String, Object> rule1Defn = new LinkedHashMap<>();
+        rule1Defn.put("id", 1);
+        rule1Defn.put("action", "FAIL");
+        rulesDefn.add(rule1Defn);
+
+        LinkedHashMap<String, Object> rule2Defn = new LinkedHashMap<>();
+        rule2Defn.put("id", 2);
+        rule2Defn.put("action", "IGNORE");
+        rulesDefn.add(rule2Defn);
+
+        LinkedHashMap<String, Object> rule4Defn = new LinkedHashMap<>();
+        rule4Defn.put("id", 4);
+        rule4Defn.put("action", "INFO");
+        rulesDefn.add(rule4Defn);
+
+        LinkedHashMap<String, List<?>> data = new LinkedHashMap<>();
+        data.put("rules", rulesDefn);
+
+        // When
+        job.runJob(env, data, progress);
+
+        // Then
+        assertThat(
+                os.toString(),
+                is(
+                        "Total of 3 URLs\n"
+                                + "IGNORE: rule2 [2] x 3 \n"
+                                + "INFO: rule4 [4] x 3 \n"
+                                + "WARN-NEW: rule3 [3] x 3 \n"
+                                + "FAIL-NEW: rule1 [1] x 3 \n"
+                                + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 1\tPASS: 0\n"));
     }
 
     @Test
@@ -202,10 +369,10 @@ class OutputSummaryJobUnitTest {
                 os.toString(),
                 is(
                         "Total of 8 URLs\n"
-                                + "WARN-NEW: rule1 [1] x 3\n"
-                                + "\thttps://www.example.com (0)\n"
-                                + "\thttps://www.example.com/a (0)\n"
-                                + "\thttps://www.example.com/b (0)\n"
+                                + "WARN-NEW: rule1 [1] x 3 \n"
+                                + "\thttps://www.example.com (0 )\n"
+                                + "\thttps://www.example.com/a (0 )\n"
+                                + "\thttps://www.example.com/b (0 )\n"
                                 + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
     }
 
@@ -307,10 +474,10 @@ class OutputSummaryJobUnitTest {
                         "Total of 20 URLs\n"
                                 + "PASS: rule2 [2]\n"
                                 + "PASS: rule3 [3]\n"
-                                + "WARN-NEW: rule1 [1] x 3\n"
-                                + "\thttps://www.example.com (0)\n"
-                                + "\thttps://www.example.com/a (0)\n"
-                                + "\thttps://www.example.com/b (0)\n"
+                                + "WARN-NEW: rule1 [1] x 3 \n"
+                                + "\thttps://www.example.com (0 )\n"
+                                + "\thttps://www.example.com/a (0 )\n"
+                                + "\thttps://www.example.com/b (0 )\n"
                                 + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n"));
     }
 
@@ -347,7 +514,7 @@ class OutputSummaryJobUnitTest {
         assertThat(
                 os.toString(),
                 is(
-                        "WARN-NEW: rule1 [1] x 3\n"
+                        "WARN-NEW: rule1 [1] x 3 \n"
                                 + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n"));
     }
 
