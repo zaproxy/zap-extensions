@@ -24,6 +24,7 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,10 +232,12 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, reportParam.isDisplayReport());
 
         Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
+        List<String> templates = extension.getTemplateNames();
+        Collections.sort(templates);
         this.addComboField(
                 TAB_TEMPLATE,
                 FIELD_TEMPLATE,
-                extension.getTemplateNames(),
+                templates,
                 defaultTemplate != null ? defaultTemplate.getDisplayName() : null);
 
         List<String> themes = new ArrayList<>();
