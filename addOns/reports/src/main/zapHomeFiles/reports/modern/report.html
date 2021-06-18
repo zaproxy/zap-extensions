@@ -358,6 +358,42 @@
 							</table>
 						</div>
 					</th:block>
+					<th:block
+						th:if="${reportData.isIncludeSection('params') &amp;&amp; reportData.reportObjects.get('paramsData') != null &amp;&amp; reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
+						<div class="tableWrapper">
+							<table class="summary" cellspacing="0" cellpadding="0">
+								<tr>
+									<th th:text="#{report.template.params.name}">Name</th>
+									<th th:text="#{report.template.params.type}">Type</th>
+									<th th:text="#{report.template.params.flags}">Flags</th>
+									<th th:text="#{report.template.params.times}">Times Used</th>
+									<th th:text="#{report.template.params.values}"># Values</th>
+								</tr>
+								<th:block
+									th:each="param : ${reportData.reportObjects.get('paramsData').getSortedSiteParams(site)}">
+									<tr>
+										<td>
+											<div th:text="${param.name}">Name</div>
+										</td>
+										<td>
+											<div
+												th:text="${reportData.reportObjects.get('paramsData').getTypeString(param.type)}">Type</div>
+										</td>
+										<td><th:block th:each="flag : ${param.flags}">
+												<div th:text="${flag}">Flag</div>
+											</th:block></td>
+										<td>
+											<div th:text="${param.timesUsed}">Times Used</div>
+										</td>
+										<td>
+											<div th:text="${param.values.size}"># Values</div>
+										</td>
+									</tr>
+								</th:block>
+
+							</table>
+						</div>
+					</th:block>
 				</th:block>
 
 				<th:block th:if="${reportData.isIncludeSection('alertdetails')}">

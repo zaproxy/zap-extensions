@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Wappalyzer data to the traditional-html-plus report, if it is available.
 - Traditional JSON report
 - Automation job: outputSummary, aimed at mimicking the output of the packaged scans.
+- Modern template - submitted via the ZAP Reporting Competition
+- Parameter data to the traditional-html-plus report
 
 ### Changed
 - Maintenance changes.

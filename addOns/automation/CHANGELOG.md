@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for multiple top level URLs in a context.
 - Passive scan config enableTags parameter
 - Support for include/exclude regexes.
+- Support for param data job
 
 ### Changed
 - Update links to repository.
