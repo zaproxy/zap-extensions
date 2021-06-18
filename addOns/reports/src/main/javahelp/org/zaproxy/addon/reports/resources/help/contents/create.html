@@ -158,6 +158,14 @@ themes:      # An optional list of themes - different colours and styles which a
 		reports, in many cases even if the automation framework was not used.
 		See the help pages for the relevant jobs for more details.</p>
 
+	<H3>reportData : paramsData</H3>
+	An instance of the
+	<a
+		href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/ParamsJobResultData.java">ParamsJobResultData</a>
+	class that provides methods for querying the parameters used by sites.
+	This is included in the Automation add-on as a "data job" that does not
+	provide any additional functionality.
+
 	<H3>stats</H3>
 	A Map of the global statistics. The site based statistics are available
 	via the helper.

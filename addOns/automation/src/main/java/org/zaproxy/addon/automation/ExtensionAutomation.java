@@ -48,6 +48,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
+import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
@@ -82,6 +83,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         this.registerAutomationJob(new PassiveScanWaitJob());
         this.registerAutomationJob(new SpiderJob());
         this.registerAutomationJob(new ActiveScanJob());
+        this.registerAutomationJob(new ParamsJob());
     }
 
     @Override
