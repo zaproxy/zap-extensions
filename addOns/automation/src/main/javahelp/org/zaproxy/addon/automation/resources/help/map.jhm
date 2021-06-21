@@ -13,4 +13,5 @@
     <mapID target="automation.spider" url="contents/job-spider.html" />
     <mapID target="automation.ascan" url="contents/job-ascan.html" />
     <mapID target="automation.about" url="contents/about.html" />
+    <mapID target="automation.tests" url="contents/tests.html" />
 </map>

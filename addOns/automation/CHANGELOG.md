@@ -11,10 +11,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Passive scan config enableTags parameter
 - Support for include/exclude regexes.
 - Support for param data job
+- Support for job tests.
 
 ### Changed
 - Update links to repository.
 - Maintenance changes.
+
+### Deprecated
+- Spider job parameters `failIfFoundUrlsLessThan` and `warnIfFoundUrlsLessThan` in favour of the
+`automation.spider.urls.added` statistic test.
 
 ## [0.2.0] - 2021-04-12
 ### Added

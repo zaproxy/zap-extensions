@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,11 +34,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.I18N;
 
 class AutomationJobUnitTest {
@@ -199,6 +210,243 @@ class AutomationJobUnitTest {
         assertThat(tpc.getTestParam().isBoolParam(), is(equalTo(boolParamValue)));
         assertThat(tpc.getTestParam().getBooleanParam(), is(equalTo(booleanParamValue)));
         assertThat(tpc.getTestParam().getEnumParam(), is(equalTo(enumParamValue)));
+    }
+
+    @Test
+    void shouldAddStatisticsTests() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String type = "stats";
+        String statistic = "stats.job.something";
+        String operator = "==";
+        String onFail = "warn";
+        int value = 3;
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("statistic", statistic);
+        test.put("operator", operator);
+        test.put("onFail", onFail);
+        test.put("value", value);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        AutomationStatisticTest addedTest = (AutomationStatisticTest) job.getTests().get(0);
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(addedTest.name, is(equalTo(name)));
+        assertThat(addedTest.key, is(equalTo(statistic)));
+        assertThat(addedTest.operator.getSymbol(), is(equalTo(operator)));
+        assertThat(addedTest.onFail, is(equalTo(onFail)));
+    }
+
+    @Test
+    void shouldAddMultipleTestsForSameStatistic() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        when(extensionLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
+        InMemoryStats inMemoryStats = mock(InMemoryStats.class);
+        when(extStats.getInMemoryStats()).thenReturn(inMemoryStats);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+        String key = "stats.job.something";
+        long value = 10;
+        String nameOne = "test one";
+        String operatorOne = "==";
+        String onFailOne = "warn";
+        String nameTwo = "test two";
+        String operatorTwo = ">";
+        String onFailTwo = "error";
+
+        job.addTest(
+                new AutomationStatisticTest(
+                        key, nameOne, operatorOne, value, onFailOne, job.getType()));
+        job.addTest(
+                new AutomationStatisticTest(
+                        key, nameTwo, operatorTwo, value, onFailTwo, job.getType()));
+        when(inMemoryStats.getStat(key)).thenReturn(value + 1);
+
+        // When
+        job.logTestsToProgress(progress);
+
+        // Then
+        assertThat(
+                job.getTests().stream().filter(AutomationStatisticTest.class::isInstance).count(),
+                is(2L));
+        assertThat(progress.hasWarnings(), is(true));
+        assertThat(progress.getWarnings().size(), is(1));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.hasErrors(), is(false));
+    }
+
+    @Test
+    void shouldWarnIfUnknownTestType() {
+        // Given
+        ExtensionLoader extLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extLoader);
+        when(extLoader.getExtension(ExtensionStats.class)).thenReturn(mock(ExtensionStats.class));
+
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+        String type = "unknown test type";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("type", type);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(progress.hasWarnings(), is(true));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.invalidType!"));
+    }
+
+    @Test
+    void shouldWarnIfNullInMemoryStats() {
+        // Given
+        ExtensionLoader extLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extLoader);
+        when(extLoader.getExtension(ExtensionStats.class)).thenReturn(mock(ExtensionStats.class));
+
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+        String type = "stats";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("type", type);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(progress.hasWarnings(), is(true));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.nullInMemoryStats!"));
+    }
+
+    @Test
+    void shouldAllowToOverrideStatisticTests() {
+        // Given
+        ExtensionLoader extLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extLoader);
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        when(extLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
+        when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationProgress progress = new AutomationProgress();
+        String name = "regular test";
+        String type = "stats";
+        String statistic = "stats.job.regular";
+        String operator = "==";
+        String onFail = "warn";
+        int value = 3;
+
+        String filteredName = "filtered test";
+        String filteredType = "stats";
+        String filteredStatistic = "stats.job.filtered";
+        String filteredOperator = "!=";
+        String filteredOnFail = "error";
+        int filteredValue = 4;
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("statistic", statistic);
+        test.put("operator", operator);
+        test.put("onFail", onFail);
+        test.put("value", value);
+
+        LinkedHashMap<String, Object> filteredTest = new LinkedHashMap<>();
+        filteredTest.put("name", filteredName);
+        filteredTest.put("type", filteredType);
+        filteredTest.put("statistic", filteredStatistic);
+        filteredTest.put("operator", filteredOperator);
+        filteredTest.put("onFail", filteredOnFail);
+        filteredTest.put("value", filteredValue);
+
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+        tests.add(filteredTest);
+
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public void addTest(AbstractAutomationTest test) {
+                        AutomationStatisticTest statisticTest = (AutomationStatisticTest) test;
+                        if (filteredStatistic.equals(statisticTest.key)) {
+                            return;
+                        }
+                        super.addTest(statisticTest);
+                    }
+                };
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        AutomationStatisticTest addedTest = (AutomationStatisticTest) job.getTests().get(0);
+        assertThat(addedTest.name, is(equalTo(name)));
+        assertThat(addedTest.key, is(equalTo(statistic)));
+        assertThat(addedTest.operator.getSymbol(), is(equalTo(operator)));
+        assertThat(addedTest.onFail, is(equalTo(onFail)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"statistic", "operator", "value"})
+    void shouldSkipInvalidStatisticTest(String property) {
+        // Given
+        ExtensionLoader extLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extLoader);
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        when(extLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
+        when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+        AutomationProgress progress = new AutomationProgress();
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("type", "stats");
+        test.put("name", "example test");
+        test.put("statistic", "stats.example");
+        test.put("operator", "<");
+        test.put("value", 5);
+        test.put("onFail", "warn");
+        test.remove(property);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

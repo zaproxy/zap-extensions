@@ -57,10 +57,13 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.SpiderJob.UrlRequester;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.spider.SpiderParam;
@@ -97,6 +100,10 @@ class SpiderJobUnitTest extends TestUtils {
         extSpider = mock(ExtensionSpider.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionSpider.class)).willReturn(extSpider);
 
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        Mockito.lenient().when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
+
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
@@ -125,11 +132,9 @@ class SpiderJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(4)));
+        assertThat(params.size(), is(equalTo(2)));
         assertThat(params.get("context"), is(equalTo("")));
         assertThat(params.get("url"), is(equalTo("")));
-        assertThat(params.get("failIfFoundUrlsLessThan"), is(equalTo("0")));
-        assertThat(params.get("warnIfFoundUrlsLessThan"), is(equalTo("0")));
     }
 
     @Test
@@ -138,13 +143,9 @@ class SpiderJobUnitTest extends TestUtils {
         SpiderJob job = new SpiderJob();
 
         // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "10");
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "11");
         job.applyCustomParameter("maxDuration", "12");
 
         // Then
-        assertThat(job.getFailIfFoundUrlsLessThan(), is(equalTo(10)));
-        assertThat(job.getWarnIfFoundUrlsLessThan(), is(equalTo(11)));
         assertThat(job.getMaxDuration(), is(equalTo(12)));
     }
 
@@ -382,64 +383,24 @@ class SpiderJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
+    void shouldTestAddedUrlsStatistic() {
         // Given
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
         contextWrapper.addUrl("https://www.example.com");
-
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
         SpiderScan spiderScan = mock(SpiderScan.class);
-        given(spiderScan.isStopped()).willReturn(true);
         given(extSpider.getScan(1)).willReturn(spiderScan);
-
         AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
-
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
 
         // When
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
-
-        // Then
-        assertThat(job.getType(), is(equalTo("spider")));
-        assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
-        assertThat(job.getParamMethodObject(), is(extSpider));
-        assertThat(job.getParamMethodName(), is("getSpiderParam"));
-
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
-        // Given
-        Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("https://www.example.com");
-
-        given(extSpider.startScan(any(), any(), any())).willReturn(1);
-
-        SpiderScan spiderScan = mock(SpiderScan.class);
-        given(spiderScan.isStopped()).willReturn(true);
-        given(extSpider.getScan(1)).willReturn(spiderScan);
-
-        AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
-
-        SpiderJob job = new SpiderJob();
-        job.setUrlRequester(urlRequester);
-
-        // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
+        job.addTest(
+                new AutomationStatisticTest(
+                        "automation.spider.urls.added", null, ">", 1, "error", job.getType()));
+        job.logTestsToProgress(progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -449,6 +410,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(1));
+        assertThat(progress.getErrors().get(0), is("!automation.tests.stats.fail!"));
     }
 
     @Test
@@ -589,6 +552,7 @@ class SpiderJobUnitTest extends TestUtils {
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         SpiderJob job = new SpiderJob();
 
         TestServerHandler testHandler = new TestServerHandler("/", Response.Status.FORBIDDEN);

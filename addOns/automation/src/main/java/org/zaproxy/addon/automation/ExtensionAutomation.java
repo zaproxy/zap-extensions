@@ -236,8 +236,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             Object paramsObj = jobData.get("parameters");
             job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
+            job.addTests(jobData.get("tests"), progress);
             job.runJob(env, jobData, progress);
             progress.addRunJob(job);
+            job.logTestsToProgress(progress);
             if (env.isTimeToQuit()) {
                 break;
             }
