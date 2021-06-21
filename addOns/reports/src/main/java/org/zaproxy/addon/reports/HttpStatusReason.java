@@ -20,12 +20,15 @@
 package org.zaproxy.addon.reports;
 
 /**
- * The reason for the HTTP status codes.
+ * <strong>Note:</strong> Internal class. The reason for the HTTP status codes.
+ *
+ * <p>It is only public as it is used by classes in a sub-package. It should not be used by other
+ * add-ons.
  *
  * @see <a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.txt">Status
  *     Code Registry</a>
  */
-final class HttpStatusReason {
+public final class HttpStatusReason {
 
     private HttpStatusReason() {}
 
@@ -35,7 +38,7 @@ final class HttpStatusReason {
      * @param code the status code.
      * @return the reason for the given code, or an empty string if unknown.
      */
-    static String get(int code) {
+    public static String get(int code) {
         switch (code) {
             case 100:
                 return "Continue";

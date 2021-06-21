@@ -238,7 +238,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         return true;
     }
 
-    private AlertNode getRootAlertNode()
+    public AlertNode getRootAlertNode()
             throws NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
         ExtensionAlert extAlert =

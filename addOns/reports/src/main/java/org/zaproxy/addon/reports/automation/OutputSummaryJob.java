@@ -24,10 +24,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.sf.json.JSONObject;
@@ -40,6 +42,8 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.HttpStatusReason;
+import org.zaproxy.zap.extension.alert.AlertNode;
 
 public class OutputSummaryJob extends AutomationJob {
 
@@ -57,10 +61,22 @@ public class OutputSummaryJob extends AutomationJob {
         LONG
     };
 
+    private enum Result {
+        IGNORE,
+        INFO,
+        WARN_NEW,
+        FAIL_NEW
+    }
+
     private Format format = Format.NONE;
     private String summaryFile;
 
     private ExtensionReports extReport;
+    private AlertNode root;
+
+    private List<Integer> ignoreIds = new ArrayList<>();
+    private List<Integer> infoIds = new ArrayList<>();
+    private List<Integer> failIds = new ArrayList<>();
 
     /**
      * Prints a summary to std out as per the packaged scans. The output is deliberately not
@@ -74,7 +90,34 @@ public class OutputSummaryJob extends AutomationJob {
         }
 
         int pass = 0;
-        int warn = 0;
+        int warnNew = 0;
+        int failNew = 0;
+        int ignore = 0;
+        int info = 0;
+
+        if (jobData != null) {
+            // Load rule data
+            Object o = jobData.get("rules");
+            if (o instanceof ArrayList<?>) {
+                ArrayList<?> ruleData = (ArrayList<?>) o;
+                for (Object rule : ruleData) {
+                    if (rule instanceof LinkedHashMap<?, ?>) {
+                        LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                        Integer id = (Integer) ruleMap.get("id");
+                        String action = (String) ruleMap.get("action");
+                        if ("IGNORE".equals(action)) {
+                            ignoreIds.add(id);
+                        } else if ("INFO".equals(action)) {
+                            infoIds.add(id);
+                        } else if ("FAIL".equals(action)) {
+                            failIds.add(id);
+                        } else {
+                            // Default to WARN
+                        }
+                    }
+                }
+            }
+        }
 
         // Number of URLs, as per logic behind the core.urls API endpoint
         int numUrls = getExtReportAuto().countNumberOfUrls();
@@ -116,45 +159,31 @@ public class OutputSummaryJob extends AutomationJob {
                     }
                 }
 
-                // Warning rules, for now just passive, ordered by id
-                for (RuleData rule : pscanRuleArray) {
-                    if (alertCounts.containsKey(rule.getId())) {
-                        int count = alertCounts.get(rule.getId());
-                        out.println(
-                                "WARN-NEW: "
-                                        + rule.getName()
-                                        + " ["
-                                        + rule.getId()
-                                        + "] x "
-                                        + count);
-                        if (Format.LONG.equals(format)) {
-                            for (HttpMessage msg :
-                                    getExtReport().getHttpMessagesForRule(rule.getId(), 5)) {
-                                out.println(
-                                        "\t"
-                                                + msg.getRequestHeader().getURI()
-                                                + " ("
-                                                + msg.getResponseHeader().getStatusCode()
-                                                + ")");
-                            }
-                        }
-                        warn++;
-                    }
-                }
+                // Output the results in the expected order
+                ignore = outputResults(pscanRuleArray, alertCounts, Result.IGNORE);
+                info = outputResults(pscanRuleArray, alertCounts, Result.INFO);
+                warnNew = outputResults(pscanRuleArray, alertCounts, Result.WARN_NEW);
+                failNew = outputResults(pscanRuleArray, alertCounts, Result.FAIL_NEW);
             }
 
             // Obviously most of these are not supported yet :)
             out.println(
-                    "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: "
-                            + warn
-                            + "\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: "
+                    "FAIL-NEW: "
+                            + failNew
+                            + "\tFAIL-INPROG: 0\tWARN-NEW: "
+                            + warnNew
+                            + "\tWARN-INPROG: 0\tINFO: "
+                            + info
+                            + "\tIGNORE: "
+                            + ignore
+                            + "\tPASS: "
                             + pass);
 
             if (summaryFile != null) {
                 JSONObject summary = new JSONObject();
                 summary.put("pass", pass);
-                summary.put("warn", warn);
-                summary.put("fail", 0); // Not yet supported
+                summary.put("warn", warnNew);
+                summary.put("fail", failNew);
 
                 try {
                     Files.write(Paths.get(summaryFile), summary.toString().getBytes("utf-8"));
@@ -167,6 +196,97 @@ public class OutputSummaryJob extends AutomationJob {
                 }
             }
         }
+    }
+
+    private int outputResults(
+            RuleData[] pscanRuleArray, Map<Integer, Integer> alertCounts, Result result) {
+        int total = 0;
+        String resStr;
+        for (RuleData rule : pscanRuleArray) {
+            if (alertCounts.containsKey(rule.getId())) {
+                if (ignoreIds.contains(rule.getId())) {
+                    if (!Result.IGNORE.equals(result)) {
+                        continue;
+                    }
+                    resStr = "IGNORE";
+                } else if (infoIds.contains(rule.getId())) {
+                    if (!Result.INFO.equals(result)) {
+                        continue;
+                    }
+                    resStr = "INFO";
+                } else if (failIds.contains(rule.getId())) {
+                    if (!Result.FAIL_NEW.equals(result)) {
+                        continue;
+                    }
+                    resStr = "FAIL-NEW";
+                } else {
+                    if (!Result.WARN_NEW.equals(result)) {
+                        continue;
+                    }
+                    resStr = "WARN-NEW";
+                }
+                total++;
+                int count = alertCounts.get(rule.getId());
+                out.println(
+                        resStr
+                                + ": "
+                                + getAlertName(rule.getId(), rule.getName())
+                                + " ["
+                                + rule.getId()
+                                + "] x "
+                                + count
+                                + " ");
+                if (Format.LONG.equals(format)) {
+                    for (HttpMessage msg : getExtReport().getHttpMessagesForRule(rule.getId(), 5)) {
+                        int code = msg.getResponseHeader().getStatusCode();
+                        out.println(
+                                "\t"
+                                        + msg.getRequestHeader().getURI()
+                                        + " ("
+                                        + code
+                                        + " "
+                                        + HttpStatusReason.get(code)
+                                        + ")");
+                    }
+                }
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Get the name to use for the given alert. This is done by finding the first raised alert with
+     * the given ID. If multiple sites are being scanned then this will not work so well, but for
+     * the packaged scans it should be fine.
+     */
+    private String getAlertName(int pluginId, String defaultName) {
+        AlertNode node = this.getAlertNode(pluginId);
+        if (node != null) {
+            if (node.getChildCount() > 0) {
+                return ((AlertNode) node.getFirstChild()).getUserObject().getName();
+            }
+        }
+        return defaultName;
+    }
+
+    private AlertNode getAlertNode(int pluginId) {
+        try {
+            if (root == null) {
+                root = this.getExtReport().getRootAlertNode();
+            }
+            if (root.getChildCount() > 0) {
+                AlertNode child = (AlertNode) root.getFirstChild();
+                while (child != null) {
+                    if (child.getUserObject().getPluginId() == pluginId) {
+                        return child;
+                    }
+                    child = (AlertNode) root.getChildAfter(child);
+                }
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return null;
     }
 
     /** Only to be used for the unit tests. */
