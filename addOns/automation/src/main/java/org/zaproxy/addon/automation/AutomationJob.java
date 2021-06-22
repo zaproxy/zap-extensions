@@ -30,12 +30,15 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.EnumUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     private String name;
     private AutomationEnvironment env;
+    private final List<AbstractAutomationTest> tests = new ArrayList<>();
 
     public enum Order {
         RUN_FIRST,
@@ -280,6 +283,88 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                 "automation.error.options.unknown", this.getType(), key));
             }
         }
+    }
+
+    protected void addTests(Object testsObj, AutomationProgress progress) {
+        if (testsObj == null) {
+            return;
+        }
+        if (!(testsObj instanceof ArrayList<?>)) {
+            progress.error(Constant.messages.getString("automation.error.job.data", testsObj));
+            return;
+        }
+        if (((ArrayList<?>) testsObj)
+                        .stream()
+                                .map(LinkedHashMap.class::cast)
+                                .map(t -> t.get("type"))
+                                .anyMatch("stats"::equals)
+                && Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionStats.class)
+                                .getInMemoryStats()
+                        == null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.tests.stats.nullInMemoryStats", getType()));
+        }
+        for (Object testObj : (ArrayList<?>) testsObj) {
+            if (!(testObj instanceof LinkedHashMap<?, ?>)) {
+                progress.error(Constant.messages.getString("automation.error.job.data", testObj));
+                continue;
+            }
+            LinkedHashMap<?, ?> testData = (LinkedHashMap<?, ?>) testObj;
+            Object testType = testData.get("type");
+            if ("stats".equals(testType)) {
+                String statistic = safeCast(testData.get("statistic"), String.class);
+                String operator = safeCast(testData.get("operator"), String.class);
+                Number number = safeCast(testData.get("value"), Number.class);
+                String onFail = safeCast(testData.get("onFail"), String.class);
+                if (statistic == null || operator == null || number == null || onFail == null) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.tests.stats.missingOrInvalidProperties",
+                                    getType()));
+                    continue;
+                }
+                long value = number.longValue();
+                String name = safeCast(testData.get("name"), String.class);
+                if (name == null || name.isEmpty()) {
+                    name = statistic + ' ' + operator + ' ' + value;
+                }
+                progress.info(
+                        Constant.messages.getString("automation.tests.stats.add", getType(), name));
+                try {
+                    addTest(
+                            new AutomationStatisticTest(
+                                    statistic, name, operator, value, onFail, getType()));
+                } catch (IllegalArgumentException e) {
+                    progress.warn(e.getMessage());
+                    return;
+                }
+            } else {
+                progress.warn(
+                        Constant.messages.getString("automation.tests.invalidType", testType));
+            }
+        }
+    }
+
+    public void addTest(AbstractAutomationTest test) {
+        tests.add(test);
+    }
+
+    public void logTestsToProgress(AutomationProgress progress) {
+        tests.forEach(t -> t.logToProgress(progress));
+    }
+
+    private static <T> T safeCast(Object property, Class<T> clazz) {
+        if (clazz.isInstance(property)) {
+            return clazz.cast(property);
+        }
+        return null;
+    }
+
+    List<AbstractAutomationTest> getTests() {
+        return tests;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

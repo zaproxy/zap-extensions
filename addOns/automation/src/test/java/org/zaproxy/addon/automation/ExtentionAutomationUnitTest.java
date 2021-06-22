@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -664,6 +665,70 @@ class ExtentionAutomationUnitTest extends TestUtils {
         ((Map<String, String>) field.get(env)).put(name, val);
     }
 
+    @Test
+    void shouldExtractTests() {
+        // Given
+        AutomationJobImpl job =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+                };
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-withTests.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(progress.hasWarnings(), is(false));
+        assertThat(progress.getRunJobs().size(), is(1));
+        assertThat(((AutomationJobImpl) progress.getRunJobs().get(0)).testsAdded, is(true));
+    }
+
+    @Test
+    void shouldFailPlanOnLoggedTestError() {
+        // Given
+        AutomationJobImpl job1 =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job1";
+                    }
+                };
+
+        AutomationJobImpl job2 =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job2";
+                    }
+                };
+
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-failOnLoggedTestError.yaml");
+        job1.testsLogError = true;
+
+        // When
+        extAuto.registerAutomationJob(job1);
+        extAuto.registerAutomationJob(job2);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.getRunJobs().size(), is(1));
+        assertThat(progress.getRunJobs().get(0).getType(), is(job1.getType()));
+        assertThat(progress.hasWarnings(), is(false));
+        assertThat(progress.hasErrors(), is(true));
+        assertThat(
+                progress.getErrors().get(0),
+                is(((AutomationJobImpl) progress.getRunJobs().get(0)).testsLoggedString));
+    }
+
     // Methods are accessed via reflection
     @SuppressWarnings("unused")
     private static class TestParamContainer {
@@ -707,6 +772,9 @@ class ExtentionAutomationUnitTest extends TestUtils {
         private String optional;
         private String type;
         private Order order = Order.REPORT;
+        private boolean testsAdded = false;
+        private String testsLoggedString;
+        private boolean testsLogError = false;
 
         public AutomationJobImpl() {}
 
@@ -720,6 +788,19 @@ class ExtentionAutomationUnitTest extends TestUtils {
                 LinkedHashMap<?, ?> jobData,
                 AutomationProgress progress) {
             wasRun = true;
+        }
+
+        @Override
+        protected void addTests(Object testsObj, AutomationProgress progress) {
+            testsAdded = true;
+        }
+
+        @Override
+        public void logTestsToProgress(AutomationProgress progress) {
+            if (testsAdded && testsLogError) {
+                testsLoggedString = RandomStringUtils.randomAlphanumeric(20);
+                progress.error(testsLoggedString);
+            }
         }
 
         public boolean wasRun() {
@@ -773,6 +854,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
             job.paramMethodObject = this.paramMethodObject;
             job.type = this.getType();
             job.order = this.getOrder();
+            job.testsLogError = testsLogError;
             return job;
         }
     }

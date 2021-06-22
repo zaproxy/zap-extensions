@@ -13,6 +13,7 @@
 				<tocitem text="Job: passiveScanWait" target="automation.pscanwait"/>
 				<tocitem text="Job: spider" target="automation.spider"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
+				<tocitem text="Tests" target="automation.tests"/>
 				<tocitem text="About" target="automation.about"/>
 			</tocitem>
 		</tocitem>

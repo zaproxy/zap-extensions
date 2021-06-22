@@ -42,6 +42,7 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class SpiderJob extends AutomationJob {
@@ -56,9 +57,6 @@ public class SpiderJob extends AutomationJob {
     private static final String PARAM_MAX_DURATION = "maxDuration";
 
     private ExtensionSpider extSpider;
-
-    private int failIfFoundUrlsLessThan = 0;
-    private int warnIfFoundUrlsLessThan = 0;
 
     // Local copy
     private int maxDuration = 0;
@@ -92,17 +90,13 @@ public class SpiderJob extends AutomationJob {
                 }
                 return true;
             case PARAM_FAIL_IF_LESS_URLS:
-                if (progress != null) {
-                    verifyIntValue(name, value, progress);
-                } else {
-                    failIfFoundUrlsLessThan = Integer.parseInt(value);
-                }
-                return true;
             case PARAM_WARN_IF_LESS_URLS:
                 if (progress != null) {
-                    verifyIntValue(name, value, progress);
-                } else {
-                    warnIfFoundUrlsLessThan = Integer.parseInt(value);
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.spider.failIfUrlsLessThan.deprecated",
+                                    getType(),
+                                    "automation.spider.urls.added"));
                 }
                 return true;
             case PARAM_MAX_DURATION:
@@ -145,8 +139,6 @@ public class SpiderJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_URL, "");
-        map.put(PARAM_FAIL_IF_LESS_URLS, "0");
-        map.put(PARAM_WARN_IF_LESS_URLS, "0");
         return map;
     }
 
@@ -228,22 +220,7 @@ public class SpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        if (numUrlsFound < this.failIfFoundUrlsLessThan) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
-        if (numUrlsFound < this.warnIfFoundUrlsLessThan) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
+        Stats.incCounter("automation.spider.urls.added", numUrlsFound);
     }
 
     /**
@@ -266,14 +243,6 @@ public class SpiderJob extends AutomationJob {
             default:
                 return false;
         }
-    }
-
-    public int getFailIfFoundUrlsLessThan() {
-        return failIfFoundUrlsLessThan;
-    }
-
-    public int getWarnIfFoundUrlsLessThan() {
-        return warnIfFoundUrlsLessThan;
     }
 
     public int getMaxDuration() {

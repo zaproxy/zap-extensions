@@ -28,9 +28,7 @@ jobs:
     name: spider
     parameters:
       context: 
-      failIfFoundUrlsLessThan: 0
       url: 
-      warnIfFoundUrlsLessThan: 0
 
   - type: passiveScan-wait
     name: passiveScan-wait
