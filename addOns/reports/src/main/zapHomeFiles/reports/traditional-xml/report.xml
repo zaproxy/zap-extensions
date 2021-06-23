@@ -11,6 +11,7 @@
 					<alertitem>
 						<pluginid th:text="${alert.pluginId}"></pluginid>
 						<alertRef th:text="${alert.alertRef}"></alertRef>
+						<alert th:text="${alert.name}"></alert>
 						<name th:text="${alert.name}"></name>
 						<riskcode th:text="${alert.risk}"></riskcode>
 						<confidence th:text="${alert.confidence}"></confidence>

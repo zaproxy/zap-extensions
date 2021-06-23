@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<OWASPZAPReport version="Dev Build" generated="Thu, 17 Jun 2021 16:04:29">
+<OWASPZAPReport version="Dev Build" generated="Tue, 22 Jun 2021 15:11:26">
 	
 		<site name="http://example.com" host="example.com" port="80" ssl="false">
 			<alerts>
@@ -7,6 +7,7 @@
 					<alertitem>
 						<pluginid>1</pluginid>
 						<alertRef>1</alertRef>
+						<alert>XSS</alert>
 						<name>XSS</name>
 						<riskcode>3</riskcode>
 						<confidence>2</confidence>

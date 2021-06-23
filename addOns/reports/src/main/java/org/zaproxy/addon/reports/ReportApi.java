@@ -163,6 +163,8 @@ public class ReportApi extends ApiImplementor {
                     sitesList.addAll(
                             Arrays.asList(params.getString(PARAM_SITES).split(DELIMITER_REGEX)));
                     reportData.setSites(sitesList);
+                } else {
+                    reportData.setSites(ExtensionReports.getSites());
                 }
 
                 if (isContainedParam(PARAM_SECTIONS, params)) {
@@ -241,7 +243,9 @@ public class ReportApi extends ApiImplementor {
                                                 ? params.getString(PARAM_REPORT_FILE_NAME_PATTERN)
                                                 : ReportParam.DEFAULT_NAME_PATTERN,
                                         (sitesList.size() > 0 ? sitesList.get(0) : ""));
-                reportFileName += '.' + template.getExtension();
+                if (!reportFileName.endsWith(template.getExtension())) {
+                    reportFileName += '.' + template.getExtension();
+                }
                 String reportFilePath = Paths.get(paramReportDir, reportFileName).toString();
 
                 boolean display = params.optBoolean(PARAM_DISPLAY, false);

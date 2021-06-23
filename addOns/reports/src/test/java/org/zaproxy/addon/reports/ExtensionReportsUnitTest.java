@@ -660,7 +660,7 @@ class ExtensionReportsUnitTest {
         assertThat(alertItems.getLength(), is(equalTo(1)));
 
         NodeList alertItemNodes = alertItems.item(0).getChildNodes();
-        assertThat(alertItemNodes.getLength(), is(equalTo(33)));
+        assertThat(alertItemNodes.getLength(), is(equalTo(35)));
 
         int i = 0;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
@@ -672,6 +672,11 @@ class ExtensionReportsUnitTest {
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("alertRef")));
         assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("1")));
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
+        i++;
+        assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("alert")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("XSS")));
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
