@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [7] - 2021-06-23
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
