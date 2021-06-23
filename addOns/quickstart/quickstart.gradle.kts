@@ -52,10 +52,18 @@ zapAddOn {
                 }
             }
         }
+        dependencies {
+            addOns {
+                register("reports") {
+                    version.set(">= 0.4.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)
 }

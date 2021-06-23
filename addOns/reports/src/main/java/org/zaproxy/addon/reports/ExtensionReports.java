@@ -291,9 +291,71 @@ public class ExtensionReports extends ExtensionAdaptor {
         return root;
     }
 
+    /**
+     * Generate a report (default theme, all sites, all alerts)
+     *
+     * @param templateName the name of the template, e.g. traditional-html
+     * @param reportFilename the full path of the file the report will be written to
+     * @param title the title to be used in the report
+     * @param display true if the report should be displayed using the default application
+     * @return the file the report was written to
+     * @throws IOException
+     */
+    public File generateReport(
+            String templateName,
+            String reportFilename,
+            String title,
+            String description,
+            boolean display)
+            throws IOException {
+        return this.generateReport(
+                templateName, reportFilename, title, description, display, null, getSites(), null);
+    }
+
+    /**
+     * Generate a report (all alerts)
+     *
+     * @param templateName the name of the template, e.g. traditional-html
+     * @param reportFilename the full path of the file the report will be written to
+     * @param title the title to be used in the report
+     * @param display true if the report should be displayed using the default application
+     * @param theme the theme to be used
+     * @param sites a list of the sites to include
+     * @param contexts a list of the contexts to include
+     * @return the file the report was written to
+     * @throws IOException
+     */
+    public File generateReport(
+            String templateName,
+            String reportFilename,
+            String title,
+            String description,
+            boolean display,
+            String theme,
+            List<String> sites,
+            List<org.zaproxy.zap.model.Context> contexts)
+            throws IOException {
+        Template template = this.getTemplateByConfigName(templateName);
+        if (template == null) {
+            throw new IllegalArgumentException("Unknown template: " + templateName);
+        }
+        ReportData reportData = new ReportData();
+        reportData.setTitle(title);
+        reportData.setDescription(description);
+        reportData.setSites(sites);
+        reportData.setContexts(contexts);
+        reportData.setTheme(theme);
+        reportData.setSections(template.getSections());
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        reportData.setAlertTreeRootNode(getFilteredAlertTree(reportData));
+
+        return this.generateReport(reportData, template, reportFilename, display);
+    }
+
     public File generateReport(
             ReportData reportData, Template template, String reportFilename, boolean display)
-            throws IOException, DocumentException {
+            throws IOException {
         TemplateEngine templateEngine = new TemplateEngine();
         FileTemplateResolver templateResolver = new FileTemplateResolver();
         templateResolver.setTemplateMode(template.getMode());
@@ -376,7 +438,13 @@ public class ExtensionReports extends ExtensionAdaptor {
                 ITextRenderer renderer = new ITextRenderer();
                 renderer.setDocument(file);
                 renderer.layout();
-                renderer.createPDF(outputStream);
+                try {
+                    renderer.createPDF(outputStream);
+                } catch (DocumentException e) {
+                    // Throw a standard exception so that add-ons using this method don't need to
+                    // import it
+                    throw new IOException("Invalid template: " + template.getConfigName(), e);
+                }
             }
             if (!file.delete()) {
                 LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());

@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automation job: outputSummary, aimed at mimicking the output of the packaged scans.
 - Modern template - submitted via the ZAP Reporting Competition
 - Parameter data to the traditional-html-plus report
+- Methods to make it easier to generate reports from other add-ons
 
 ### Changed
 - Maintenance changes.
