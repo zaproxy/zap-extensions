@@ -33,6 +33,12 @@ import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +52,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
@@ -329,42 +334,42 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         // Localization
         Element localizationElement = doc.createElement("localization");
         rootElement.appendChild(localizationElement);
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "title",
                 Constant.messages.getString("accessControl.report.title"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "url",
                 Constant.messages.getString("accessControl.report.table.header.url"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "method",
                 Constant.messages.getString("accessControl.report.table.header.method"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "authorization",
                 Constant.messages.getString("accessControl.report.table.header.authorization"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "access-control",
                 Constant.messages.getString("accessControl.report.table.header.accessControl"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-all",
                 Constant.messages.getString("accessControl.report.button.all"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-valid",
                 Constant.messages.getString("accessControl.report.button.valid"));
-        ReportGenerator.addChildTextNode(
+        addChildTextNode(
                 doc,
                 localizationElement,
                 "show-illegal",
@@ -470,6 +475,13 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         return doc;
     }
 
+    private static void addChildTextNode(
+            Document doc, Element parent, String nodeName, String text) {
+        Element child = doc.createElement(nodeName);
+        child.appendChild(doc.createTextNode(text));
+        parent.appendChild(child);
+    }
+
     /**
      * Generate an access control report for the provided context id and save it in the output file.
      *
@@ -488,8 +500,33 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                         "xml" + File.separator + "reportAccessControl.html.xsl");
 
         // Generate the report
-        return ReportGenerator.XMLToHtml(
+        return XMLToHtml(
                 generateLastScanXMLReport(contextId), xslFile.getAbsolutePath(), outputFile);
+    }
+
+    private static File XMLToHtml(Document xmlDocument, String infilexsl, File outFile) {
+        File stylesheet = null;
+
+        outFile = new File(outFile.getAbsolutePath());
+        try {
+            stylesheet = new File(infilexsl);
+
+            DOMSource source = new DOMSource(xmlDocument);
+
+            // Use a Transformer for output
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            StreamSource stylesource = new StreamSource(stylesheet);
+            Transformer transformer = tFactory.newTransformer(stylesource);
+
+            // Make the transformation and write to the output file
+            StreamResult result = new StreamResult(outFile.getPath());
+            transformer.transform(source, result);
+
+        } catch (TransformerException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return outFile;
     }
 
     /**
