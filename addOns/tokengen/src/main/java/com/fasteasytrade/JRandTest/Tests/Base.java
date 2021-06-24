@@ -34,10 +34,14 @@
 
 package com.fasteasytrade.JRandTest.Tests;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 
-import com.fasteasytrade.JRandTest.IO.*;
-import com.fasteasytrade.JRandTest.Utils.*;
+import com.fasteasytrade.JRandTest.IO.OutputDestination;
+import com.fasteasytrade.JRandTest.IO.RandomStream;
+import com.fasteasytrade.JRandTest.Utils.Derf;
 
 /**
  * Base class for all test classes.

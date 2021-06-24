@@ -849,6 +849,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
             return this.optional;
         }
 
+        @Override
         public AutomationJob newJob() {
             AutomationJobImpl job = new AutomationJobImpl();
             job.paramMethodObject = this.paramMethodObject;

@@ -34,7 +34,7 @@
 
 package com.fasteasytrade.JRandTest.IO;
 
-import java.awt.*;
+import java.awt.TextArea;
 
 /**
  * Class implementation to enable application/applet to receive output test data
@@ -53,6 +53,7 @@ public class TextareaOutputDestination implements OutputDestination {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.OutputDestination#printf(java.lang.String)
 	 */
+	@Override
 	public void printf(String s) {
 		ta.append(s);
 	}
@@ -60,6 +61,7 @@ public class TextareaOutputDestination implements OutputDestination {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.OutputDestination#puts(java.lang.String)
 	 */
+	@Override
 	public void puts(String s) {
 		ta.append(s);
 	}

@@ -43,10 +43,12 @@ public class WappalyzerJob extends AutomationJob {
         return Collections.singletonList(new WappalyzerJobResultData(this.getName()));
     }
 
+    @Override
     public String getTemplateDataMin() {
         return "";
     }
 
+    @Override
     public String getTemplateDataMax() {
         return "";
     }

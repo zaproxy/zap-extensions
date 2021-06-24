@@ -132,6 +132,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setWascId(14); // WASC Id - Server Misconfiguration
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         alerts.add(

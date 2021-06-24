@@ -2347,6 +2347,7 @@ public class diff_match_patch {
      * Display a human-readable version of this Diff.
      * @return text version.
      */
+    @Override
     public String toString() {
       String prettyText = this.text.replace('\n', '\u00b6');
       return "Diff(" + this.operation + ",\"" + prettyText + "\")";
@@ -2403,6 +2404,7 @@ public class diff_match_patch {
      * Indicies are printed as 1-based, not 0-based.
      * @return The GNU diff string.
      */
+    @Override
     public String toString() {
       String coords1, coords2;
       if (this.length1 == 0) {

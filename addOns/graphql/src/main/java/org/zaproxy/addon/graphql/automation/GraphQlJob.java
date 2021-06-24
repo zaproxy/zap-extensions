@@ -54,6 +54,7 @@ public class GraphQlJob extends AutomationJob {
 
     public GraphQlJob() {}
 
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_ENDPOINT:
@@ -111,10 +112,12 @@ public class GraphQlJob extends AutomationJob {
         }
     }
 
+    @Override
     public String getTemplateDataMin() {
         return getResourceAsString(getName() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return getResourceAsString(getName() + "-max.yaml");
     }

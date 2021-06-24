@@ -43,10 +43,12 @@ public class ParamsJob extends AutomationJob {
         return Collections.singletonList(new ParamsJobResultData(this.getName()));
     }
 
+    @Override
     public String getTemplateDataMin() {
         return "";
     }
 
+    @Override
     public String getTemplateDataMax() {
         return "";
     }

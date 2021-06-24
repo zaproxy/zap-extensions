@@ -213,6 +213,7 @@ public class ReportJob extends AutomationJob {
         return extReport;
     }
 
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_TEMPLATE:
@@ -265,10 +266,12 @@ public class ReportJob extends AutomationJob {
         return "";
     }
 
+    @Override
     public String getTemplateDataMin() {
         return getResourceAsString(this.getType() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return getResourceAsString(this.getType() + "-max.yaml");
     }

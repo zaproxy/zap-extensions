@@ -735,6 +735,7 @@ public class ZAC5 extends Cipher {
 	 * carefull clear of buffers in ZAC5 object
 	 *  
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		System.out.println("ZAC5 finalize...");
