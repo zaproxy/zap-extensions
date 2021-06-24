@@ -91,6 +91,8 @@ class ExtensionReportsUnitTest {
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+
+        Constant.PROGRAM_VERSION = "Dev Build";
     }
 
     @Test
