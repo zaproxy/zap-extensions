@@ -115,10 +115,12 @@ public class SoapJob extends AutomationJob {
         return wsdlUrl;
     }
 
+    @Override
     public String getTemplateDataMin() {
         return getResourceAsString(getName() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return getResourceAsString(getName() + "-max.yaml");
     }

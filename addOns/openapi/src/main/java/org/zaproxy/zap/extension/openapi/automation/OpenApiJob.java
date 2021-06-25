@@ -63,6 +63,7 @@ public class OpenApiJob extends AutomationJob {
         return extOpenApi;
     }
 
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_API_URL:
@@ -144,10 +145,12 @@ public class OpenApiJob extends AutomationJob {
         }
     }
 
+    @Override
     public String getTemplateDataMin() {
         return getResourceAsString(this.getType() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return getResourceAsString(this.getType() + "-max.yaml");
     }

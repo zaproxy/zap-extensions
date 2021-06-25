@@ -87,6 +87,7 @@ public class AjaxSpiderJob extends AutomationJob {
         }
     }
 
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_CONTEXT:
@@ -225,10 +226,12 @@ public class AjaxSpiderJob extends AutomationJob {
         this.inScopeOnly = inScopeOnly;
     }
 
+    @Override
     public String getTemplateDataMin() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
