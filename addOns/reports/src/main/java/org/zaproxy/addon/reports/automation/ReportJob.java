@@ -19,23 +19,17 @@
  */
 package org.zaproxy.addon.reports.automation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.ReportParam;
@@ -44,8 +38,6 @@ import org.zaproxy.addon.reports.Template;
 public class ReportJob extends AutomationJob {
 
     private static final String JOB_NAME = "report";
-
-    private static final String RESOURCES_DIR = "/org/zaproxy/addon/reports/resources/";
 
     private static final String PARAM_TEMPLATE = "template";
     private static final String PARAM_REPORT_DIR = "reportDir";
@@ -253,27 +245,14 @@ public class ReportJob extends AutomationJob {
         return map;
     }
 
-    public static String getResourceAsString(String name) {
-        try (InputStream in = ExtensionAutomation.class.getResourceAsStream(RESOURCES_DIR + name)) {
-            return new BufferedReader(new InputStreamReader(in))
-                            .lines()
-                            .collect(Collectors.joining("\n"))
-                    + "\n";
-        } catch (Exception e) {
-            CommandLine.error(
-                    Constant.messages.getString("automation.error.nofile", RESOURCES_DIR + name));
-        }
-        return "";
-    }
-
     @Override
     public String getTemplateDataMin() {
-        return getResourceAsString(this.getType() + "-min.yaml");
+        return ExtensionReportAutomation.getResourceAsString(this.getType() + "-min.yaml");
     }
 
     @Override
     public String getTemplateDataMax() {
-        return getResourceAsString(this.getType() + "-max.yaml");
+        return ExtensionReportAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
 
     @Override
