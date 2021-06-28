@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update links to repository.
 - Maintenance changes.
 
+### Fixed
+- NPE in pscan config job when rule specified with no id (as per template).
+
 ### Deprecated
 - Spider job parameters `failIfFoundUrlsLessThan` and `warnIfFoundUrlsLessThan` in favour of the
 `automation.spider.urls.added` statistic test.

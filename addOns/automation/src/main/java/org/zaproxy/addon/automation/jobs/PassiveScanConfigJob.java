@@ -105,7 +105,14 @@ public class PassiveScanConfigJob extends AutomationJob {
                 if (rule instanceof LinkedHashMap<?, ?>) {
                     LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
                     try {
-                        int id = Integer.parseInt(ruleMap.get(PARAM_ID).toString());
+                        Object idObj = ruleMap.get(PARAM_ID);
+                        if (idObj == null) {
+                            progress.info(
+                                    Constant.messages.getString(
+                                            "automation.info.pscan.rule.noid", this.getName()));
+                            continue;
+                        }
+                        int id = Integer.parseInt(idObj.toString());
                         PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
                         if (plugin == null) {
                             progress.warn(
