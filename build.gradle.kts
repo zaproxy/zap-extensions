@@ -35,7 +35,8 @@ allprojects {
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
             "errorprone"("com.google.errorprone:error_prone_core:2.7.1")
-            if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+            // When building ZAP releases it's also used Java 8.
+            if (JavaVersion.current() == JavaVersion.VERSION_1_8 || System.getenv("ZAP_RELEASE") != null) {
                 "errorproneJavac"("com.google.errorprone:javac:9+181-r4173-1")
             }
         }
