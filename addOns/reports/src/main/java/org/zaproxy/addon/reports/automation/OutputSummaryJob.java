@@ -380,6 +380,16 @@ public class OutputSummaryJob extends AutomationJob {
     }
 
     @Override
+    public String getTemplateDataMin() {
+        return ExtensionReportAutomation.getResourceAsString(this.getType() + "-min.yaml");
+    }
+
+    @Override
+    public String getTemplateDataMax() {
+        return ExtensionReportAutomation.getResourceAsString(this.getType() + "-max.yaml");
+    }
+
+    @Override
     public String getType() {
         return JOB_NAME;
     }

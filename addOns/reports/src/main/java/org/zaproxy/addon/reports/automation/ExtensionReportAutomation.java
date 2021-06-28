@@ -19,12 +19,17 @@
  */
 package org.zaproxy.addon.reports.automation;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -44,6 +49,8 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
     public static final String NAME = "ExtensionReportAutomation";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
+
+    private static final String RESOURCES_DIR = "/org/zaproxy/addon/reports/resources/";
 
     private ReportJob reportJob;
     private OutputSummaryJob outputSummaryJob;
@@ -127,6 +134,19 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
             urls.add(childNode.getURI().toString());
             collectUrls(childNode, urls);
         }
+    }
+
+    public static String getResourceAsString(String name) {
+        try (InputStream in = ExtensionAutomation.class.getResourceAsStream(RESOURCES_DIR + name)) {
+            return new BufferedReader(new InputStreamReader(in))
+                            .lines()
+                            .collect(Collectors.joining("\n"))
+                    + "\n";
+        } catch (Exception e) {
+            CommandLine.error(
+                    Constant.messages.getString("automation.error.nofile", RESOURCES_DIR + name));
+        }
+        return "";
     }
 
     private static class ReportDataHandlerImpl implements ReportDataHandler {
