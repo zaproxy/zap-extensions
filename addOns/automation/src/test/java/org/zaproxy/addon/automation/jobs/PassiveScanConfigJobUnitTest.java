@@ -269,6 +269,34 @@ class PassiveScanConfigJobUnitTest {
     }
 
     @Test
+    void shouldIgnoreRuleWithNoId() {
+        // Given
+        String yamlStr =
+                "rules:\n" + "- id:\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
+
+        // Need to mock the extension for this test
+        extPscan = mock(ExtensionPassiveScan.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
+        TestPluginScanner rule3 = new TestPluginScanner(3);
+        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+
+        // When
+        job.verifyJobSpecificData(data, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getInfos().size(), is(equalTo(1)));
+        assertThat(progress.getInfos().get(0), is(equalTo("!automation.info.pscan.rule.noid!")));
+    }
+
+    @Test
     void shouldRejectBadEnableTagsParam() {
         // Given
         AutomationProgress progress = new AutomationProgress();
