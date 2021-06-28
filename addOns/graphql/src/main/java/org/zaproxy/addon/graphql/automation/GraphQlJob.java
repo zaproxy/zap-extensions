@@ -46,8 +46,6 @@ public class GraphQlJob extends AutomationJob {
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/graphql/resources/";
 
-    private ExtensionGraphQl extGraphQl;
-
     private String endpoint;
     private String schemaUrl;
     private String schemaFile;
@@ -87,7 +85,7 @@ public class GraphQlJob extends AutomationJob {
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
         if (endpoint == null || endpoint.isEmpty()) {
-            progress.error(Constant.messages.getString("graphql.error.emptyendurl"));
+            progress.info(Constant.messages.getString("graphql.info.emptyendurl"));
             return;
         }
 
