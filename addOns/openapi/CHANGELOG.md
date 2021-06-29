@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [19] - 2021-06-29
 ### Added
 - Added support for Multipart form-data (Issue 6418).
 
@@ -135,6 +135,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/openapi-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/openapi-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/openapi-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/openapi-v16
