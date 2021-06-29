@@ -219,6 +219,9 @@ public class BodyGenerator {
 
     @SuppressWarnings("rawtypes")
     public String generateForm(Schema<?> schema) {
+        if (schema == null) {
+            return "";
+        }
         Map<String, Schema> properties = schema.getProperties();
         if (properties != null) {
             StringBuilder formData = new StringBuilder();
@@ -238,6 +241,9 @@ public class BodyGenerator {
 
     @SuppressWarnings("rawtypes")
     public String generateMultiPart(Schema<?> schema, Map<String, Encoding> encoding) {
+        if (schema == null) {
+            return "";
+        }
         String boundary = UUID.randomUUID().toString();
         Map<String, Schema> properties = schema.getProperties();
         if (properties != null) {
