@@ -55,6 +55,7 @@ import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
+import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -105,13 +106,14 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(6)));
+        assertThat(jobs.size(), is(equalTo(7)));
         assertThat(jobs.containsKey(AddOnJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ParamsJob.JOB_NAME), is(equalTo(true)));
+        assertThat(jobs.containsKey(RequestorJob.JOB_NAME), is(equalTo(true)));
     }
 
     @Test
@@ -138,7 +140,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(7)));
+        assertThat(jobs.size(), is(equalTo(8)));
         assertThat(jobs.containsKey(jobName), is(equalTo(true)));
     }
 

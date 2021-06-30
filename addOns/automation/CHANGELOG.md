@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for include/exclude regexes.
 - Support for param data job
 - Support for job tests.
+- A new Requestor job to make specific requests.
 
 ### Changed
 - Update links to repository.

@@ -28,6 +28,13 @@ jobs:
     - id:                              # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
       name:                            # String: The name of the rule for documentation purposes - this is not required or actually used
       threshold:                       # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        method:                        # String: A non-empty request method, default: GET
+        data:                          # String: Optional data to send in the request body
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
   - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
     parameters:
       context:                         # String: Name of the context to spider, default: first context
