@@ -24,6 +24,13 @@ jobs:
     name: passiveScan-config
     parameters:
 
+  - type: requestor
+    name: requestor
+    parameters:
+    requests:
+      - url:                          # URL of the request to be made
+        method:                       # A non-empty request method
+
   - type: spider
     name: spider
     parameters:

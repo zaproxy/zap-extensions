@@ -51,6 +51,7 @@ import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
+import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -80,6 +81,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         this.registerAutomationJob(new AddOnJob());
         this.registerAutomationJob(new PassiveScanConfigJob());
+        this.registerAutomationJob(new RequestorJob());
         this.registerAutomationJob(new PassiveScanWaitJob());
         this.registerAutomationJob(new SpiderJob());
         this.registerAutomationJob(new ActiveScanJob());
