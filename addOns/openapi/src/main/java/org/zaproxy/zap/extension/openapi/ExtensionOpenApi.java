@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
+import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -59,6 +60,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ZapMenuItem menuImportUrlOpenApi = null;
     private ImportFromFileDialog currentFileDialog = null;
     private ImportFromUrlDialog currentUrlDialog = null;
+    private ProgressPanel progressPanel = null;
     private int threadId = 1;
     private SpiderParser customSpider;
 
@@ -95,6 +97,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
+            extensionHook.getHookView().addStatusPanel(getProgressPanel());
         }
 
         extensionHook.addApiImplementor(new OpenApiAPI(this));
@@ -119,6 +122,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         if (currentUrlDialog != null) {
             currentUrlDialog.dispose();
         }
+    }
+
+    private ProgressPanel getProgressPanel() {
+        if (progressPanel == null) {
+            progressPanel = new ProgressPanel(this);
+        }
+        return progressPanel;
     }
 
     /* Menu option to import a local OpenApi file. */
@@ -248,7 +258,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public OpenApiResults importOpenApiDefinitionV2(
             final File file, final String targetUrl, boolean initViaUi) {
-
         try {
             OpenApiResults results = new OpenApiResults();
             Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
@@ -286,7 +295,15 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     @Override
                     public void run() {
                         try {
-                            errors.addAll(requestor.run(converter.getRequestModels()));
+                            List<RequestModel> reqModels = converter.getRequestModels();
+                            if (initViaUi) {
+                                ImportPane currentImportPane = new ImportPane();
+                                requestor.addListener(new ImportPaneListener(currentImportPane));
+                                currentImportPane.setTotalEndpoints(reqModels.size());
+                                getProgressPanel().addImportPane(currentImportPane);
+                                getProgressPanel().setTabFocus();
+                            }
+                            errors.addAll(requestor.run(reqModels));
                             // Needs to be called after converter.getRequestModels() to get loop
                             // errors
                             errors.addAll(converter.getErrorMessages());
@@ -487,6 +504,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             if (currentUrlDialog != null) {
                 currentUrlDialog.clear();
             }
+            getProgressPanel().clearAndDispose();
         }
 
         @Override
