@@ -11566,7 +11566,7 @@
       ],
       "description": "Localised is local-first ecommerce platform.",
       "dom": {
-        "img[src='.localised.com'": {
+        "img[src='.localised.com']": {
           "attributes": {
             "src": ""
           }
