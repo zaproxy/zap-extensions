@@ -473,6 +473,35 @@ class OpenApiUnitTest extends AbstractServerTest {
         checkRequestContentTypeHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
+    @Test
+    void shouldGenerateJsonRequestsBody()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/VAmPI/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new OpenApiUnitTest.DefnServerHandler(test, defnName, "PetStore_defn.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        requestor.addListener(
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestHeader().getHeader("Accept"));
+                });
+        requestor.run(converter.getRequestModels());
+
+        assertEquals(19, converter.getRequestModels().size());
+    }
+
     private void checkRequestContentTypeHeaders(Map<String, String> accessedUrls, String host) {
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));
         assertEquals("application/json", accessedUrls.get("POST http://" + host + "/PetStore/pet"));

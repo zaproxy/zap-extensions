@@ -24,6 +24,7 @@ import java.util.List;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -31,6 +32,8 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.ApiUtils;
 
 public class OpenApiAPI extends ApiImplementor {
 
@@ -40,6 +43,7 @@ public class OpenApiAPI extends ApiImplementor {
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
     private static final String PARAM_TARGET = "target";
+    private static final String PARAM_CONTEXT_ID = "contextId";
 
     private static final String PARAM_HOST_OVERRIDE = "hostOverride";
     private ExtensionOpenApi extension = null;
@@ -55,12 +59,12 @@ public class OpenApiAPI extends ApiImplementor {
                 new ApiAction(
                         ACTION_IMPORT_FILE,
                         new String[] {PARAM_FILE},
-                        new String[] {PARAM_TARGET}));
+                        new String[] {PARAM_TARGET, PARAM_CONTEXT_ID}));
         this.addApiAction(
                 new ApiAction(
                         ACTION_IMPORT_URL,
                         new String[] {PARAM_URL},
-                        new String[] {PARAM_HOST_OVERRIDE}));
+                        new String[] {PARAM_HOST_OVERRIDE, PARAM_CONTEXT_ID}));
     }
 
     @Override
@@ -81,8 +85,9 @@ public class OpenApiAPI extends ApiImplementor {
             }
             List<String> errors;
             String target = params.optString(PARAM_TARGET, "");
+            int ctxId = getContextId(params);
             try {
-                errors = extension.importOpenApiDefinition(file, target, false);
+                errors = extension.importOpenApiDefinition(file, target, false, ctxId);
             } catch (InvalidUrlException e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_TARGET);
             }
@@ -106,7 +111,10 @@ public class OpenApiAPI extends ApiImplementor {
 
                 List<String> errors =
                         extension.importOpenApiDefinition(
-                                new URI(params.getString(PARAM_URL), false), override, false);
+                                new URI(params.getString(PARAM_URL), false),
+                                override,
+                                false,
+                                getContextId(params));
 
                 if (errors == null) {
                     throw new ApiException(
@@ -128,5 +136,17 @@ public class OpenApiAPI extends ApiImplementor {
         } else {
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }
+    }
+
+    private static int getContextId(JSONObject params) throws ApiException {
+        if (params.containsKey(PARAM_CONTEXT_ID) && !params.getString(PARAM_CONTEXT_ID).isEmpty()) {
+            return ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getId();
+        }
+
+        List<Context> contexts = Model.getSingleton().getSession().getContexts();
+        if (!contexts.isEmpty()) {
+            return contexts.get(0).getId();
+        }
+        return -1;
     }
 }
