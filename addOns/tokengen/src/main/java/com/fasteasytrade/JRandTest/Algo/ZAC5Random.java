@@ -33,7 +33,7 @@
  */
 package com.fasteasytrade.JRandTest.Algo;
 
-import com.fasteasytrade.JRandTest.IO.*;
+import com.fasteasytrade.JRandTest.IO.FileAlgoRandomStream;
 
 /**
  * ZAC5 algorithm as a random stream based on ZAC5 encryption algorithm.
@@ -69,6 +69,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setupKeys()
 	 */
+	@Override
 	public void setupKeys() {
 
 		super.setupKeys();
@@ -80,6 +81,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	 *      <p>
 	 *      makes only once a new ZAC5 object.
 	 */
+	@Override
 	public void setup() {
 
 		/**
@@ -98,6 +100,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	 *      if filename exists (not null), we open file and later will encrypt
 	 *      it. Else, algorithm will generate random data (as PRNG).
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 
 		if (filename != null)
@@ -115,6 +118,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -146,6 +150,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -166,6 +171,7 @@ public class ZAC5Random extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		if (!isOpen())
 			return -1;

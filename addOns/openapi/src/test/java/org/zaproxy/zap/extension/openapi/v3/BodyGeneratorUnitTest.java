@@ -21,8 +21,10 @@ package org.zaproxy.zap.extension.openapi.v3;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.RequestModelConverter;
+import org.zaproxy.zap.extension.openapi.generators.BodyGenerator;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 
 class BodyGeneratorUnitTest {
@@ -87,6 +90,27 @@ class BodyGeneratorUnitTest {
                 "{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\","
                         + "\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}";
         assertEquals(output, jsonString);
+    }
+
+    @Test
+    void shouldGenerateFileContents() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String fileContents =
+                generators
+                        .getBodyGenerator()
+                        .generate(
+                                ((Schema<?>)
+                                                openAPI.getPaths()
+                                                        .get("/v3/openapi/multipartBinary")
+                                                        .getPost()
+                                                        .getRequestBody()
+                                                        .getContent()
+                                                        .get("multipart/form-data")
+                                                        .getSchema())
+                                        .getProperties()
+                                        .get("file"));
+        String output = BodyGenerator.TEXT_FILE_CONTENTS;
+        assertEquals(output, fileContents);
     }
 
     @Test
@@ -157,6 +181,230 @@ class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
         assertEquals("somearray=%5B1.2%2C1.2%5D", requestBody);
+    }
+
+    @Test
+    void shouldGenerateMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/multipartMultiple",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/multipartMultiple")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        String boundary = requestBody.substring(0, 38);
+
+        assertEquals(
+                boundary
+                        + "\r\n"
+                        + "Content-Disposition: form-data; name=\"additionalMetadata\"\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n"
+                        + "\"John Doe\"\r\n"
+                        + boundary
+                        + "\r\n"
+                        + "Content-Disposition: form-data; name=\"file\"; filename=\"SampleZAPFile\"\r\n"
+                        + "Content-Type: application/octet-stream\r\n"
+                        + "\r\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur\r\n"
+                        + boundary
+                        + "--",
+                requestBody);
+    }
+
+    @Test
+    void shouldGenerateContentTypeObjectMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/multipartObject",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/multipartObject")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("Content-Type: application/json"));
+    }
+
+    @Test
+    void shouldGenerateContentTypeBinaryMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/multipartBinary",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/multipartBinary")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("Content-Type: application/octet-stream"));
+    }
+
+    @Test
+    void shouldGenerateContentTypeArrayMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/multipartArray",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/multipartArray")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("Content-Type: application/json"));
+    }
+
+    @Test
+    void shouldGenerateContentTypeOtherMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        null,
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/multipartOther")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("Content-Type: text/plain"));
+    }
+
+    @Test
+    void shouldEncodeContentTypeForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/image",
+                                        openAPI.getPaths().get("/v3/openapi/image").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains(BodyGenerator.IMAGE_FILE_CONTENTS));
+    }
+
+    @Test
+    void shouldEncodeCustomHeaderStringForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/headerString",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/headerString")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("X-Custom-Header: \"John Doe\""));
+    }
+
+    @Test
+    void shouldEncodeCustomHeaderNumberForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/headerNumber",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/headerNumber")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("X-Custom-Header: 1.2"));
+    }
+
+    @Test
+    void shouldEncodeCustomHeaderObjectForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/headerObject",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/headerObject")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(
+                requestBody.contains(
+                        "X-Custom-Header: {\"category\":\"John Doe\",\"height\":1.2,\"weight\":1.2}"));
+    }
+
+    @Test
+    void shouldEncodeCustomHeaderBooleanForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/headerBoolean",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/headerBoolean")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("X-Custom-Header: true"));
+    }
+
+    @Test
+    void shouldEncodeCustomHeaderAllForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/headerAll",
+                                        openAPI.getPaths().get("/v3/openapi/headerAll").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains("X-Custom-Header-One: \"John Doe\""));
+        assertTrue(requestBody.contains("X-Custom-Header-Two: 1.2"));
+        assertTrue(
+                requestBody.contains("X-Custom-Header-Three: {\"name\":\"John Doe\",\"age\":1.2}"));
+        assertTrue(requestBody.contains("X-Custom-Header-Four: true"));
+    }
+
+    @Test
+    void shouldEncodeContentTypeAndCustomHeaderForMultipartData() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_multipart_with_encoding.yaml");
+        String requestBody =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/imageAndHeaders",
+                                        openAPI.getPaths()
+                                                .get("/v3/openapi/imageAndHeaders")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertTrue(requestBody.contains(BodyGenerator.IMAGE_FILE_CONTENTS));
+        assertTrue(requestBody.contains("X-Custom-Header: \"John Doe\""));
     }
 
     @Test

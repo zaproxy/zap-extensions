@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "30"
 description = "Provides a tab which allows you to quickly test a target application"
 
 zapAddOn {
@@ -53,10 +52,18 @@ zapAddOn {
                 }
             }
         }
+        dependencies {
+            addOns {
+                register("reports") {
+                    version.set(">= 0.4.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)
 }

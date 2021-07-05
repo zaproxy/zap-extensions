@@ -1,4 +1,3 @@
-version = "13"
 description = "Displays HTTPS configuration information."
 
 zapAddOn {

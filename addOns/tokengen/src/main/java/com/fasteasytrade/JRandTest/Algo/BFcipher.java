@@ -34,7 +34,9 @@
 
 package com.fasteasytrade.JRandTest.Algo;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * BFcipher class - pure java implementation of Blowfish cipher
@@ -563,6 +565,7 @@ public class BFcipher extends Cipher {
 		return;
 	}
 
+	@Override
 	protected void finalize() {
 		int i;
 		for (i = 0; i < Fkey.length; i++)

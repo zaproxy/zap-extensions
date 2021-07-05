@@ -25,12 +25,12 @@ jobs:
         cd ../retire.js
         # Setup env vars for later
         SRC_BASE="RetireJS/retire.js@"$(git log -1 --format=format:%h)
-        BRANCH_STAMP="$(date +"%Y%m%d%H%M%S")"
+        BRANCH="retirejs-update"
         SHORT_DATE="$(date +"%Y-%m-%d")"
         export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
         # Build the feature branch
         cd ../zap-extensions
-        git checkout -b $BRANCH_STAMP
+        git checkout -b $BRANCH
         cd ..
         cp -f retire.js/repository/jsrepository.json zap-extensions/addOns/retire/src/main/resources/org/zaproxy/addon/retire/resources
         cd zap-extensions
@@ -42,7 +42,7 @@ jobs:
           git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
           git add .
           git commit -m "retire.js Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
-          git push --set-upstream origin $BRANCH_STAMP
+          git push --set-upstream origin $BRANCH --force
           # Open the PR
           hub pull-request --no-edit
         fi

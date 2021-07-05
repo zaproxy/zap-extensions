@@ -1,4 +1,3 @@
-version = "9"
 description = "Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server"
 
 zapAddOn {

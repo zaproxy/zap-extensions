@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "34"
 description = "The release quality Passive Scanner rules"
 
 zapAddOn {
@@ -36,7 +35,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.shapesecurity:salvation:2.7.2")
+    implementation("com.shapesecurity:salvation2:3.0.0")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 

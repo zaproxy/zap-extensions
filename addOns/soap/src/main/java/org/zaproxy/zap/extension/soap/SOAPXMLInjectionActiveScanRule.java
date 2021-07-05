@@ -55,14 +55,17 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
+    @Override
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
+    @Override
     public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
+    @Override
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }

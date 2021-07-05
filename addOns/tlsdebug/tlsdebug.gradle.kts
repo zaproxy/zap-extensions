@@ -1,4 +1,3 @@
-version = "5"
 description = "Provides a tab which allows to quickly debug a TLS/SSL connection"
 
 zapAddOn {

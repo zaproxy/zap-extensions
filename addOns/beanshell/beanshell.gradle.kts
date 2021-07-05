@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "7"
 description = "Provides a BeanShell Console"
 
 zapAddOn {

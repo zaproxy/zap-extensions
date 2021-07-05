@@ -4,11 +4,29 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.3.0] - 2021-06-28
 ### Added
 - Support for using variables in the config.
+- Support for data jobs.
+- Support for multiple top level URLs in a context.
+- Passive scan config enableTags parameter
+- Support for include/exclude regexes.
+- Support for param data job
+- Support for job tests.
+- A new Requestor job to make specific requests.
 
 ### Changed
+- Update links to repository.
 - Maintenance changes.
+
+### Fixed
+- NPE in pscan config job when rule specified with no id (as per template).
+
+### Deprecated
+- Spider job parameters `failIfFoundUrlsLessThan` and `warnIfFoundUrlsLessThan` in favour of the
+`automation.spider.urls.added` statistic test.
 
 ## [0.2.0] - 2021-04-12
 ### Added
@@ -27,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.3.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.0.1

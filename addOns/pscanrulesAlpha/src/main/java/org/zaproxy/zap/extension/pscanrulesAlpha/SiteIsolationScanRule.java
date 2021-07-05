@@ -104,6 +104,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
         return rules.stream().map(s -> s.alert("").build()).collect(Collectors.toList());
     }

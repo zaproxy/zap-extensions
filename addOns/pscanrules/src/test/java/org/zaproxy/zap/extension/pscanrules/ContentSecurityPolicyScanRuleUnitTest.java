@@ -83,10 +83,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getDescription(),
                 equalTo(
-                        "Errors:\n"
-                                + "1:12: Expecting directive-value but found U+003A (:). Non-ASCII and non-printable characters must be percent-encoded.\n"
-                                + "1:22: Unrecognised directive-name: \"report\".\n"
-                                + "1:28: Expecting directive-value but found U+005F (_). Non-ASCII and non-printable characters must be percent-encoded.\n"));
+                        "Warnings:\nUnrecognized directive default-src:\nUnrecognized directive report_uri\n"));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
@@ -98,11 +95,11 @@ class ContentSecurityPolicyScanRuleUnitTest
                 alertsRaised.get(1).getDescription(),
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined: \nscript-src, script-src-elem, script-src-attr"
-                                + ", style-src, style-src-elem, style-src-attr, img-src, connect-src, frame-src, "
-                                + "frame-ancestors, font-src, media-src, object-src, manifest-src, worker-src, prefetch-src, form-action"
-                                + "\n\nThe directive(s): frame-ancestors, form-action are among the directives that do "
-                                + "not fallback to default-src, missing/excluding them is the same as allowing anything."));
+                                + "defined, or are overly broadly defined: \nscript-src, style-src, img-src, "
+                                + "connects-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
+                                + "manifest-src, worker-src, prefetch-src, form-action\n\nThe directive(s): "
+                                + "frame-ancestors, form-action are among the directives that do not fallback "
+                                + "to default-src, missing/excluding them is the same as allowing anything."));
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
@@ -123,113 +120,12 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getDescription(),
                 equalTo(
-                        "Warnings:\n"
-                                + "1:13: This host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.\n"));
+                        "Warnings:\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.\n"));
+
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("default-src none; report-to csp-endpoint"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-    }
-
-    @Test
-    void shouldRaiseAlertAtInfoRiskWhenOnlyInformationalNotices() {
-        // Given
-        HttpMessage msg = createHttpMessage("report-uri /__cspreport__");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(2));
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_INFO));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-    }
-
-    @Test
-    void shouldIntersectMultipleCspHeaders() throws HttpMalformedHeaderException {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Security-Policy: default-src 'self'; script-src www.example.com\r\n"
-                        + "Content-Security-Policy: script-src *; style-src *:80\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
-        assertThat(
-                alertsRaised.get(0).getDescription(),
-                equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), "
-                                + "are not defined, or are overly broadly defined: \nframe-ancestors, form-action"
-                                + "\n\nThe directive(s): frame-ancestors, form-action are among the directives that "
-                                + "do not fallback to default-src, missing/excluding them is the same as allowing anything."));
-
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                equalTo("default-src 'self'; script-src www.example.com"));
-        assertThat(
-                alertsRaised.get(0).getOtherInfo(),
-                equalTo(
-                        "The response contained multiple CSP headers, "
-                                + "these were merged (intersected) into a single policy for evaluation:\ndefault-src 'self'; "
-                                + "script-src www.example.com; style-src\nNote: The highlighting and evidence for this alert "
-                                + "may be inaccurate due to these multiple headers."));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-    }
-
-    @Test
-    void shouldNotIntersectMultipleCspHeadersIfOneHasReportUri()
-            throws HttpMalformedHeaderException {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Security-Policy: default-src 'self'; script-src www.example.com\r\n"
-                        + "Content-Security-Policy: script-src *; style-src *:80; report-uri /report/ \r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
-        assertThat(
-                alertsRaised.get(0).getDescription(),
-                equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), "
-                                + "are not defined, or are overly broadly defined: \nframe-ancestors, form-action"
-                                + "\n\nThe directive(s): frame-ancestors, form-action are among the directives that "
-                                + "do not fallback to default-src, missing/excluding them is the same as allowing anything."));
-
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                equalTo("default-src 'self'; script-src www.example.com"));
-        assertThat(
-                alertsRaised.get(0).getOtherInfo(),
-                equalTo(
-                        "The response contained multiple CSP headers, one or more of them contained "
-                                + "a report-uri directive and therefore they could not be merged. "
-                                + "The first identified header/policy was analyzed."));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
@@ -308,6 +204,25 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-inline"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldRaiseAlertOnSecondCspHasIssueFirstDoesNot() {
+        // Given
+        HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
+        msg.getResponseHeader().addHeader(HTTP_HEADER_CSP, "style-src 'unsafe-inline'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(2));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("style-src 'unsafe-inline'"));
+
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-inline"));
+        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(1).getEvidence(), equalTo("style-src 'unsafe-inline'"));
     }
 
     private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {

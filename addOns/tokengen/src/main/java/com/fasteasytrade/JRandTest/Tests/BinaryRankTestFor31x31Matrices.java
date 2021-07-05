@@ -45,6 +45,7 @@ public class BinaryRankTestFor31x31Matrices extends
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help() {
 		puts("\n\t|-------------------------------------------------------------|");
 		puts("\t|This is the BINARY RANK TEST for 31x31 matrices. The leftmost|");
@@ -60,6 +61,7 @@ public class BinaryRankTestFor31x31Matrices extends
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.BinaryRankTestFor6x8Matrices#setParameters()
 	 */
+	@Override
 	public void setParameters() {
 		testName = "31x31";
 		rt = 0;

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [7] - 2021-06-23
+### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Import WSDL documents synchronously when not using the UI.
 - Maintenance changes.
@@ -56,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[7]: https://github.com/zaproxy/zap-extensions/releases/soap-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/soap-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/soap-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/soap-v4

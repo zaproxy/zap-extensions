@@ -488,6 +488,7 @@ public class ZAC3 extends Cipher {
 	 * carefull clear of buffers in ZAC3 object
 	 *  
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		System.out.println("ZAC3 finalize...");

@@ -61,6 +61,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             Constant.messages.getString("scripts.syntaxtext.syntax.html");
     public static final String CSS_SYNTAX_LABEL =
             Constant.messages.getString("scripts.syntaxtext.syntax.css");
+    private static final String KOTLIN_SYNTAX_LABEL =
+            Constant.messages.getString("scripts.syntaxtext.syntax.kotlin");
 
     private Vector<SyntaxStyle> syntaxStyles;
 
@@ -94,6 +96,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         addSyntaxStyle(SCALA_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_SCALA);
         addSyntaxStyle(HTML_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_HTML);
         addSyntaxStyle(CSS_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_CSS);
+        // TODO Use constant when available: SyntaxConstants.SYNTAX_STYLE_KOTLIN
+        addSyntaxStyle(KOTLIN_SYNTAX_LABEL, "text/kotlin");
 
         initActions();
 

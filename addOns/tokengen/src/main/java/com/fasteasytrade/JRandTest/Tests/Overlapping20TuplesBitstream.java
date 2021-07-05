@@ -53,6 +53,7 @@ public class Overlapping20TuplesBitstream extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|-------------------------------------------------------------|");
@@ -76,6 +77,7 @@ public class Overlapping20TuplesBitstream extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception
 	{
 		final int nb_pw = 20, power = 21, no_obs = 20;

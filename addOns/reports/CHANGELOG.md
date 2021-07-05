@@ -4,8 +4,27 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.4.0] - 2021-06-28
+### Added
+- Wappalyzer data to the traditional-html-plus report, if it is available.
+- Traditional JSON report
+- Automation job: outputSummary, aimed at mimicking the output of the packaged scans.
+- Modern template - submitted via the ZAP Reporting Competition
+- Parameter data to the traditional-html-plus report
+- Methods to make it easier to generate reports from other add-ons
+
 ### Changed
 - Maintenance changes.
+- Handle multiple context URLs in automation.
+- Traditional plus report - link to zaproxy.org pages for passing scan rules.
+- Update links to repository.
+
+### Fixed
+- Include all relevant alerts in XML report templates (Issue 6627).
+- Made XML reports more backwards compatible and fixed issue with generating it via the API.
+- Issue with reports for sites with trailing slashes
 
 ## [0.3.0] - 2021-05-06
 ### Added
@@ -42,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.4.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.1.0

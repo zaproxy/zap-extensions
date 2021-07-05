@@ -1,4 +1,3 @@
-version = "1"
 description = "Scan modern web applications relying heavily on Javascript."
 
 zapAddOn {

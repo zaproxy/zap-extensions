@@ -1,0 +1,4 @@
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made

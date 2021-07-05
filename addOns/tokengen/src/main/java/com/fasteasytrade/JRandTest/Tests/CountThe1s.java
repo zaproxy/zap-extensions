@@ -68,6 +68,7 @@ public class CountThe1s extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help() {
 		puts("\n\t|-------------------------------------------------------------|");
 		puts("\t|    This is the COUNT-THE-1''s TEST on a stream of bytes.    |");
@@ -105,6 +106,7 @@ public class CountThe1s extends Base {
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception {
 
 		setParameters();

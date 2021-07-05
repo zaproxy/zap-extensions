@@ -462,9 +462,6 @@ class OpenApiUnitTest extends AbstractServerTest {
                 accessedUrls.get("POST http://" + host + "/PetStore/pet/32"));
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/32"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/32"));
-        assertTrue(
-                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/32/uploadImage"));
-        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/32/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
@@ -511,7 +508,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/fsmith"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/user/fsmith"));
         // And that there arent any spurious ones
-        assertEquals(20, accessedUrls.size());
+        assertEquals(19, accessedUrls.size());
     }
 
     private class DefnServerHandler extends NanoServerHandler {

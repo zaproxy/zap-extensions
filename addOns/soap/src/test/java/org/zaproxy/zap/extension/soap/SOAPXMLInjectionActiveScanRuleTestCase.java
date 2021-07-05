@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class SOAPXMLInjectionActiveScanRuleTestCase {
+class SOAPXMLInjectionActiveScanRuleTestCase {
 
     @Test
     void craftAttackMessageTest() throws Exception {

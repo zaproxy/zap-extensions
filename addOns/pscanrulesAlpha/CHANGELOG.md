@@ -5,13 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [31] - 2021-06-17
+### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
   - Feature Policy
   - Site Isolation
   - Sub Resource Integrity
 - Maintenance changes.
-- Rename of Feature-Policy header to Permissions-Policy to follow spec change
+- Rename of Feature-Policy header to Permissions-Policy to follow spec change.
+- Update links to repository.
+
+### Fixed
+- Dangerous JS Function scan rule, use word boundaries to reduce false positives (Issue 6594).
 
 ## [30] - 2021-02-08
 
@@ -263,6 +271,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v28

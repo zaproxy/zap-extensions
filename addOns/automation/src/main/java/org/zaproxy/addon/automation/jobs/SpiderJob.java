@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,13 +28,22 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class SpiderJob extends AutomationJob {
 
@@ -48,14 +58,13 @@ public class SpiderJob extends AutomationJob {
 
     private ExtensionSpider extSpider;
 
-    private int failIfFoundUrlsLessThan = 0;
-    private int warnIfFoundUrlsLessThan = 0;
-
     // Local copy
     private int maxDuration = 0;
 
     private String contextName;
     private String url;
+
+    private UrlRequester urlRequester = new UrlRequester(this.getName());
 
     public SpiderJob() {}
 
@@ -67,22 +76,35 @@ public class SpiderJob extends AutomationJob {
         return extSpider;
     }
 
-    public boolean applyCustomParameter(String name, String value) {
+    private boolean verifyOrApplyCustomParameter(
+            String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_CONTEXT:
-                contextName = value;
+                if (progress == null) {
+                    contextName = value;
+                }
                 return true;
             case PARAM_URL:
-                url = value;
+                if (progress == null) {
+                    url = value;
+                }
                 return true;
             case PARAM_FAIL_IF_LESS_URLS:
-                failIfFoundUrlsLessThan = Integer.parseInt(value);
-                return true;
             case PARAM_WARN_IF_LESS_URLS:
-                warnIfFoundUrlsLessThan = Integer.parseInt(value);
+                if (progress != null) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.spider.failIfUrlsLessThan.deprecated",
+                                    getType(),
+                                    "automation.spider.urls.added"));
+                }
                 return true;
             case PARAM_MAX_DURATION:
-                maxDuration = Integer.parseInt(value);
+                if (progress != null) {
+                    verifyIntValue(name, value, progress);
+                } else {
+                    maxDuration = Integer.parseInt(value);
+                }
                 // Don't consume this as we still want it to be applied to the spider params
                 return false;
             default:
@@ -92,13 +114,31 @@ public class SpiderJob extends AutomationJob {
         return false;
     }
 
+    private void verifyIntValue(String name, String value, AutomationProgress progress) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.options.badint", this.getName(), name, value));
+        }
+    }
+
+    @Override
+    public boolean applyCustomParameter(String name, String value) {
+        return this.verifyOrApplyCustomParameter(name, value, null);
+    }
+
+    @Override
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return this.verifyOrApplyCustomParameter(name, value, progress);
+    }
+
     @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_URL, "");
-        map.put(PARAM_FAIL_IF_LESS_URLS, "0");
-        map.put(PARAM_WARN_IF_LESS_URLS, "0");
         return map;
     }
 
@@ -106,44 +146,50 @@ public class SpiderJob extends AutomationJob {
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
-        Context context;
+        ContextWrapper context;
         if (contextName != null) {
-            context = env.getContext(contextName);
+            context = env.getContextWrapper(contextName);
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                env.getUrlStringForContext(context)));
+                                "automation.error.context.unknown", contextName));
                 return;
             }
         } else {
-            context = env.getDefaultContext();
+            context = env.getDefaultContextWrapper();
         }
         URI uri = null;
         try {
             if (url != null) {
                 uri = new URI(url, true);
-            } else {
-                uri = new URI(env.getUrlStringForContext(context).toString(), true);
             }
         } catch (Exception e1) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.context.badurl",
-                            env.getUrlStringForContext(context)));
+            progress.error(Constant.messages.getString("automation.error.context.badurl", url));
             return;
         }
 
-        Target target = new Target(context);
+        // Request all specified URLs
+        for (String url : context.getUrls()) {
+            this.urlRequester.requestUrl(url, progress);
+        }
+
+        if (env.isTimeToQuit()) {
+            // Failed to access one of the URLs
+            return;
+        }
+
+        Target target = new Target(context.getContext());
         target.setRecurse(true);
         List<Object> contextSpecificObjects = new ArrayList<>();
-        contextSpecificObjects.add(uri);
+        if (uri != null) {
+            contextSpecificObjects.add(uri);
+        }
 
         int scanId = this.getExtSpider().startScan(target, null, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
         if (maxDuration > 0) {
-            // The spider should stop, if it doesnt we will stop it (after a few seconds leeway
+            // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
             endTime =
                     System.currentTimeMillis()
                             + TimeUnit.MINUTES.toMillis(maxDuration)
@@ -174,22 +220,16 @@ public class SpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        if (numUrlsFound < this.failIfFoundUrlsLessThan) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
-        if (numUrlsFound < this.warnIfFoundUrlsLessThan) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
+        Stats.incCounter("automation.spider.urls.added", numUrlsFound);
+    }
+
+    /**
+     * Only for use by unit tests
+     *
+     * @param urlRequester the UrlRequester to use
+     */
+    protected void setUrlRequester(UrlRequester urlRequester) {
+        this.urlRequester = urlRequester;
     }
 
     @Override
@@ -203,14 +243,6 @@ public class SpiderJob extends AutomationJob {
             default:
                 return false;
         }
-    }
-
-    public int getFailIfFoundUrlsLessThan() {
-        return failIfFoundUrlsLessThan;
-    }
-
-    public int getWarnIfFoundUrlsLessThan() {
-        return warnIfFoundUrlsLessThan;
     }
 
     public int getMaxDuration() {
@@ -235,5 +267,78 @@ public class SpiderJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return OPTIONS_METHOD_NAME;
+    }
+
+    public static class UrlRequester {
+
+        private final HttpSender httpSender;
+        private final String requester;
+
+        public UrlRequester(String requester) {
+            this.requester = requester;
+            httpSender =
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.SPIDER_INITIATOR);
+        }
+
+        public void requestUrl(String url, AutomationProgress progress) {
+            // Request the URL
+            try {
+                final HttpMessage msg = new HttpMessage(new URI(url, true));
+                httpSender.sendAndReceive(msg, true);
+
+                if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.spider.url.notok",
+                                    requester,
+                                    url,
+                                    msg.getResponseHeader().getStatusCode()));
+                    return;
+                }
+
+                ExtensionHistory extHistory =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionHistory.class);
+                extHistory.addHistory(msg, HistoryReference.TYPE_SPIDER);
+
+                ThreadUtils.invokeAndWait(
+                        () ->
+                                // Needs to be done on the EDT
+                                Model.getSingleton()
+                                        .getSession()
+                                        .getSiteTree()
+                                        .addPath(msg.getHistoryRef()));
+            } catch (UnknownHostException e1) {
+                ConnectionParam connectionParam =
+                        Model.getSingleton().getOptionsParam().getConnectionParam();
+                if (connectionParam.isUseProxyChain()
+                        && connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.spider.url.badhost.proxychain",
+                                    requester,
+                                    url,
+                                    e1.getMessage()));
+                } else {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.spider.url.badhost",
+                                    requester,
+                                    url,
+                                    e1.getMessage()));
+                }
+            } catch (Exception e1) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.spider.url.failed",
+                                requester,
+                                url,
+                                e1.getMessage()));
+            }
+        }
     }
 }

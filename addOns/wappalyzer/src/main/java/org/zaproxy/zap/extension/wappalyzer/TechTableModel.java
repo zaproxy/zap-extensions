@@ -84,19 +84,27 @@ public class TechTableModel extends AbstractTableModel {
                 obj = app.getVersion();
                 break;
             case 2:
-                obj = categoriesToString(app.getApplication().getCategories());
+                obj = getCategoriesString(app.getApplication());
                 break;
             case 3:
                 obj = app.getApplication().getWebsite();
                 break;
             case 4:
-                obj = listToString(app.getApplication().getImplies());
+                obj = getImpliesString(app.getApplication());
                 break;
             case 5:
                 obj = app.getApplication().getCpe();
                 // case 5: obj = app.getConfidence(); break;
         }
         return obj;
+    }
+
+    public String getCategoriesString(Application app) {
+        return categoriesToString(app.getCategories());
+    }
+
+    public String getImpliesString(Application app) {
+        return listToString(app.getImplies());
     }
 
     private String categoriesToString(List<String> list) {

@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "11"
 description = "Forced browsing of files and directories using code from the OWASP DirBuster tool"
 
 zapAddOn {

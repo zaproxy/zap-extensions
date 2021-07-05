@@ -150,7 +150,7 @@
 					align="center">!reports.report.alerts.list.numinstances!</th>
 			</tr>
 			<tr>
-				<td><a href="#1">XSS</a></td>
+				<td><a href="#plugin-1">XSS</a></td>
 				<td align="center" class="risk-3">!reports.report.risk.3!</td>
 				<td align="center">1</td>
 			</tr>
@@ -192,6 +192,7 @@
 			<h4>No Authentication Statistics Found</h4>
 			
 		
+		
 		<div class="spacer-lg"></div>
 	
 
@@ -201,7 +202,7 @@
 			<table class="results">
 				<tr height="24">
 					<th width="20%" class="risk-3"><a
-						id="1"></a>
+						id="plugin-1"></a>
 						<div>!reports.report.risk.3!</div></th>
 					<th class="risk-3">XSS</th>
 				</tr>
@@ -234,19 +235,19 @@
 					<tr>
 						<td width="20%"
 							class="indent2">!reports.report.alerts.detail.attack!</td>
-						<td width="80%">Test Attack</td>
+						<td width="80%">Test &quot;Attack\&quot;</td>
 					</tr>
 					<tr>
 						<td width="20%"
 							class="indent2">!reports.report.alerts.detail.evidence!</td>
-						<td width="80%">Test Evidence</td>
+						<td width="80%">Test &lt;p&gt;Evidence</td>
 					</tr>
 					<tr>
 						<td width="20%" class="indent2">
-							<div id="-1">
+							<div id="alert--1">
 								<a
-									onclick="showHide(&#39;-1&#39;);"
-									href="#-1">!reports.report.alerts.detail.showhide!</a>
+									onclick="showHide(&#39;alert--1&#39;);"
+									href="#alert--1">!reports.report.alerts.detail.showhide!</a>
 							</div>
 						</td>
 						<td width="80%"></td>
@@ -256,7 +257,7 @@
 							!reports.report.size!
 						</td>
 						<td width="80%">
-							<div id="-1reqh"
+							<div id="alert--1reqh"
 								style="display: none;">
 								
 									GET http://example.com/example_3 HTTP/1.1
@@ -288,7 +289,7 @@
 							!reports.report.size!
 						</td>
 						<td width="80%">
-							<div id="-1reqb"
+							<div id="alert--1reqb"
 								style="display: none;">
 								
 									Test Request Body
@@ -302,7 +303,7 @@
 							!reports.report.size!
 						</td>
 						<td width="80%">
-							<div id="-1resph"
+							<div id="alert--1resph"
 								style="display: none;">
 								
 									HTTP/1.0 0
@@ -319,7 +320,7 @@
 							!reports.report.size!
 						</td>
 						<td width="80%">
-							<div id="-1respb"
+							<div id="alert--1respb"
 								style="display: none;">
 								
 									Test Response Body

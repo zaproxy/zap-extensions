@@ -44,6 +44,7 @@ public class BinaryRankTestFor32x32Matrices extends
 	/*
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help() {
 		puts("\n\t|-------------------------------------------------------------|");
 		puts("\t|This is the BINARY RANK TEST for 32x32 matrices. A random 32x|");
@@ -59,6 +60,7 @@ public class BinaryRankTestFor32x32Matrices extends
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.BinaryRankTestFor6x8Matrices#setParameters()
 	 */
+	@Override
 	public void setParameters() {
 		testName = "32x32";
 		rt = 0;

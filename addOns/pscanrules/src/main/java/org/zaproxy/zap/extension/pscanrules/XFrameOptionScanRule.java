@@ -185,6 +185,7 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
         return null;
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         for (VulnType vulnType : VulnType.values()) {

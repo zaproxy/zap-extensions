@@ -90,13 +90,15 @@ public class WappalyzerAPI extends ApiImplementor {
         TechTableModel ttm = extension.getTechModelForSite(site);
         for (int i = 0; i < ttm.getRowCount(); i++) {
             Map<String, String> map = new HashMap<>();
-            map.put("name", ((Application) ttm.getValueAt(i, 0)).toString());
-            map.put("description", ttm.getApp(i).getDescription());
-            map.put("version", (String) ttm.getValueAt(i, 1));
-            map.put("category", (String) ttm.getValueAt(i, 2));
-            map.put("website", (String) ttm.getValueAt(i, 3));
-            map.put("implies", (String) ttm.getValueAt(i, 4));
-            map.put("cpe", (String) ttm.getValueAt(i, 5));
+            ApplicationMatch appMatch = ttm.getApplicationAtRow(i);
+            Application app = appMatch.getApplication();
+            map.put("name", app.getName());
+            map.put("description", app.getDescription());
+            map.put("version", appMatch.getVersion());
+            map.put("category", ttm.getCategoriesString(app));
+            map.put("website", app.getWebsite());
+            map.put("implies", ttm.getImpliesString(app));
+            map.put("cpe", app.getCpe());
             resultList.addItem(new ApiResponseSet<>("app", map));
         }
         return resultList;

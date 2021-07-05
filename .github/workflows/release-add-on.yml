@@ -2,20 +2,27 @@ name: Release Add-On
 
 on:
   push:
-    tags:
-      - '*-v*'
+    branches:
+      - main
+    paths:
+      - 'addOns/**/gradle.properties'
 
 jobs:
   release:
     name: Build and Release Add-On
-    if: github.actor == 'kingthorin' || github.actor == 'psiinon' || github.actor == 'thc202'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Build and Release Add-On
-      uses: docker://openjdk:8
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v2
       with:
-        entrypoint: ./gradlew
-        args: createReleaseFromGitHubRef
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Setup Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    - name: Generate Release State
+      run: ./gradlew :addOns:generateReleaseStateLastCommit
+    - name: Build and Release Add-On
+      env:
+        ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
+      run: ./gradlew :addOns:releaseAddOn

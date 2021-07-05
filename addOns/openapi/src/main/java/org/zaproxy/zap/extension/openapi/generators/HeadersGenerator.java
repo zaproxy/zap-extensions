@@ -47,10 +47,10 @@ public class HeadersGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    public List<HttpHeaderField> generate(OperationModel operationModel) {
+    public List<HttpHeaderField> generate(OperationModel operationModel, String requestBody) {
         List<HttpHeaderField> headerList = new LinkedList<>();
         generateAcceptHeaders(operationModel.getOperation(), headerList);
-        generateContentTypeHeaders(operationModel.getOperation(), headerList);
+        generateContentTypeHeaders(operationModel.getOperation(), headerList, requestBody);
         generateCustomHeader(operationModel.getOperation(), headerList);
         return headerList;
     }
@@ -94,7 +94,8 @@ public class HeadersGenerator {
         return new HttpHeaderField(HttpHeader.COOKIE, strBuilder.toString());
     }
 
-    void generateContentTypeHeaders(Operation operation, List<HttpHeaderField> headers) {
+    void generateContentTypeHeaders(
+            Operation operation, List<HttpHeaderField> headers, String requestBody) {
         if (operation.getRequestBody() == null || operation.getRequestBody().getContent() == null) {
             return;
         }
@@ -103,6 +104,14 @@ public class HeadersGenerator {
             String typeLc = type.toLowerCase(Locale.ROOT);
             if (typeLc.contains("json") || typeLc.contains("x-www-form-urlencoded")) {
                 headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
+                break;
+            }
+            if (typeLc.contains("multipart")) {
+                String contentTypeValue = type;
+                if (requestBody.length() > 0) {
+                    contentTypeValue += "; boundary=" + requestBody.substring(2, 38);
+                }
+                headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, contentTypeValue));
                 break;
             }
         }

@@ -33,7 +33,8 @@
  */
 package com.fasteasytrade.JRandTest.Algo;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  * Alleged RC4 implemented as RC4Key. Returns byte.
@@ -168,6 +169,7 @@ public class RC4Key extends Cipher {
 	 * carefull clear of buffers in RC4Key object
 	 *  
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();		
 		System.out.println("RC4Key finalize...");

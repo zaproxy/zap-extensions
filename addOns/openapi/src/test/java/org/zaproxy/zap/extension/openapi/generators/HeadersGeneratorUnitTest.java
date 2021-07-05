@@ -68,7 +68,7 @@ class HeadersGeneratorUnitTest {
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, not(contains(header("Content-Type"))));
     }
@@ -80,20 +80,20 @@ class HeadersGeneratorUnitTest {
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, not(contains(header("Content-Type"))));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"text/plain", "application/xml"})
-    void shouldNotGenerateContentTypeIfNotJsonNorWwwFormUrlEncoded(String mediaType) {
+    void shouldNotGenerateContentTypeIfNotSupported(String mediaType) {
         // Given
         RequestBody request = mockRequestWithMediaTypes(mediaType);
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, not(contains(header("Content-Type"))));
     }
@@ -106,7 +106,7 @@ class HeadersGeneratorUnitTest {
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, contains(header("Content-Type", mediaType)));
     }
@@ -120,9 +120,28 @@ class HeadersGeneratorUnitTest {
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, contains(header("Content-Type", mediaType)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"multipart/form-data", "multipart/mixed"})
+    void shouldGenerateMultipartContentType(String mediaType) {
+        // Given
+        RequestBody request = mockRequestWithMediaTypes(mediaType);
+        Operation operation = mockOperationWithRequest(request);
+        List<HttpHeaderField> headers = new ArrayList<>();
+        String requestBody = "BBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        // When
+        headersGenerator.generateContentTypeHeaders(operation, headers, requestBody);
+        // Then
+        assertThat(
+                headers,
+                contains(
+                        header(
+                                "Content-Type",
+                                mediaType + "; boundary=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
     }
 
     @Test
@@ -133,7 +152,7 @@ class HeadersGeneratorUnitTest {
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers);
+        headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
         assertThat(headers, contains(header("Content-Type", "application/json")));
     }
@@ -355,7 +374,7 @@ class HeadersGeneratorUnitTest {
         OperationModel operationModel = mock(OperationModel.class);
         given(operationModel.getOperation()).willReturn(operation);
         // When
-        List<HttpHeaderField> headers = headersGenerator.generate(operationModel);
+        List<HttpHeaderField> headers = headersGenerator.generate(operationModel, "");
         // Then
         assertThat(
                 headers,

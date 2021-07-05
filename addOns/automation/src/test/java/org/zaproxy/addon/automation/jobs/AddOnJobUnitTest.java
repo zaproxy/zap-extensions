@@ -147,6 +147,49 @@ class AddOnJobUnitTest {
     }
 
     @Test
+    void shouldErrorOnUnkownInstallDataFormat() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AddOnJob job = new AddOnJob();
+        String contextStr = "parameters: \n  updateAddOns: false\n" + "install: addonOne, addonTwo";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+
+        // When
+        job.verifyJobSpecificData(jobData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("!automation.error.addons.addon.data!")));
+    }
+
+    @Test
+    void shouldErrorOnUnkownUninstallDataFormat() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AddOnJob job = new AddOnJob();
+        String contextStr =
+                "parameters: \n  updateAddOns: false\n" + "uninstall: addonOne, addonTwo";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+
+        // When
+        job.verifyJobSpecificData(jobData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("!automation.error.addons.addon.data!")));
+    }
+
+    @Test
     void shouldReturnFileConfigData() {
         // Given
         AddOnJob job = new AddOnJob();

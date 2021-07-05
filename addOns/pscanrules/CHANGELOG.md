@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [34] - 2021-06-17
+### Changed
 - Cache-control scan rule no longer checks if Pragma is set or not.
 - Maintenance changes.
 - The Timestamp Disclosure scan rule now excludes values in "Report-To" or "NEL" headers (Issue 6493).
@@ -20,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - X-Content-Type-Options
 - Cache-control scan rule no longer checks CSS messages unless threshold is Low (Issue 6596).
 - Cookie SameSite Attribute scan rule now handles the value "none" (Issue 6482).
+- Content Security Policy rule has been upgraded to use version 3 of the Salvation library.
+  - Messages with multiple CSPs are no longer merged/intersected instead the policies are analyzed individually.
+- Update links to repository.
 
 ## [33] - 2021-01-29
 ### Added
@@ -240,6 +247,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v31

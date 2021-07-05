@@ -27,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.model.DefaultNameValuePair;
 import org.zaproxy.zap.model.NameValuePair;
@@ -52,6 +55,8 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
     void prepare() {
         extension = mock(ExtensionOpenApi.class);
         openApiAPI = new OpenApiAPI(extension);
+        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        Model.setSingletonForTesting(model);
     }
 
     @Test
@@ -74,7 +79,7 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
         void shouldThrowIllegalParameterIfFailedToAccessTarget() {
             // Given
             JSONObject params = params(param("url", "http://not-reachable.example.com"));
-            given(extension.importOpenApiDefinition(any(URI.class), eq(""), eq(false)))
+            given(extension.importOpenApiDefinition(any(URI.class), eq(""), eq(false), eq(-1)))
                     .willReturn(null);
             // When / Then
             ApiException exception =

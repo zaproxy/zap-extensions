@@ -2,9 +2,9 @@
 env:                                   # The environment, mandatory
   contexts :                           # List of 1 or more contexts, mandatory
     - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
-      url:                             # The top level url, mandatory, everything under this will be included
-      includePaths:                    # TBA: An optional list of regexes to include
-      excludePaths:                    # TBA: An optional list of regexes to exclude
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
       authentication:                  # TBA: In time to cover all auth configs
   vars:                                # List of 1 or more variables, can be used throughout the config
   parameters:
@@ -23,16 +23,22 @@ jobs:
       maxAlertsPerRule: 10             # Int: Maximum number of alerts to raise per rule
       scanOnlyInScope: true            # Bool: Only scan URLs in scope (recommended)
       maxBodySizeInBytesToScan:        # Int: Maximum body size to scan, default: 0 - will scan all messages
+      enableTags: false                # Bool: Enable passive scan tags, default: false - enabling them can impact performance
     rules:                             # A list of one or more passive scan rules and associated settings which override the defaults
     - id:                              # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
       name:                            # String: The name of the rule for documentation purposes - this is not required or actually used
       threshold:                       # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
+  - type: requestor                    # Used to send specific requests to targets
+    parameters:
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        method:                        # String: A non-empty request method, default: GET
+        data:                          # String: Optional data to send in the request body
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
   - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
     parameters:
       context:                         # String: Name of the context to spider, default: first context
       url:                             # String: Url to start spidering from, default: first context URL
-      failIfFoundUrlsLessThan:         # Int: Fail if spider finds less than the specified number of URLs, default: 0
-      warnIfFoundUrlsLessThan:         # Int: Warn if spider finds less than the specified number of URLs, default: 0
       maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
       maxDepth:                        # Int: The maximum tree depth to explore, default 5
       maxChildren:                     # Int: The maximum number of children to add to each node in the tree
@@ -51,6 +57,13 @@ jobs:
       sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
       threadCount:                     # Int: The number of spider threads, default: 2
       userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one
+    tests:
+      - name: 'At least X URLs found'                   # String: Name of the test, default: statistic + operator + value
+        type: 'stats'                                   # String: Type of test, only 'stats' is supported for now
+        statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
+        operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
+        value: 100                                      # Int: Change this to the number of URLs you expect to find
+        onFail: 'info'                                  # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect
   - type: passiveScan-wait             # Passive scan wait for the passive scanner to finish
     parameters:
       maxDuration: 5                   # Int: The max time to wait for the passive scanner, default: 0 unlimited

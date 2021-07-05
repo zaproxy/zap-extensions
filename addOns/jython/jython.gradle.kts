@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "12"
 description = "Allows Python to be used for ZAP scripting - templates included"
 
 zapAddOn {

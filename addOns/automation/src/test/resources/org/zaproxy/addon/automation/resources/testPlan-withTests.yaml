@@ -1,0 +1,21 @@
+env:
+  contexts:
+    - name: example
+      urls:
+      - https://www.example.com/
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: job
+    parameters:
+      optional: true
+    tests:
+    - name: 'test one'                      # Name of the test, optional
+      type: stats                           # Only type initially supported
+      statistic: 'stats.job.something'      # Name of an integer / long statistic
+      operator: '=='                        # One of '==', '!=', '>=', '>', '<', '<='
+      value: 3                              # Value to compare statistic against
+      onFail: 'warn'                        # One of 'warn', 'error', 'ignore'

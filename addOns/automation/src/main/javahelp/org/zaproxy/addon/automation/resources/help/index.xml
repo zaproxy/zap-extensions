@@ -13,4 +13,5 @@
     <indexitem text="automation - spider job" target="automation.spider" />
     <indexitem text="automation - activeScan job" target="automation.ascan" />
     <indexitem text="automation - about" target="automation.about" />
+    <indexitem text="automation - tests" target="automation.tests" />
 </index>

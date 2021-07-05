@@ -1,4 +1,3 @@
-version = "5"
 description = "Allows you to import log files from ModSecurity and files previously exported from ZAP"
 
 zapAddOn {

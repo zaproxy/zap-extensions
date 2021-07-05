@@ -304,7 +304,7 @@ class ReportApiUnitTest {
         assertAll(
                 () -> assertThat(reportData.getDescription(), is("")),
                 () -> assertThat(reportData.getContexts(), is(nullValue())),
-                () -> assertThat(reportData.getSites(), is(nullValue())),
+                () -> assertThat(reportData.getSites().size(), is(0)),
                 () -> assertThat(reportData.getSections(), is(template.getSections())),
                 () ->
                         assertThat(

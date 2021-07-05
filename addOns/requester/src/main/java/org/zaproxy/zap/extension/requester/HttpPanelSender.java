@@ -49,6 +49,7 @@ import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewModelUtils;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
@@ -63,6 +64,7 @@ public class HttpPanelSender implements MessageSender {
 
     private HttpSender delegate;
 
+    private JToggleButton fixContentLength = null;
     private JToggleButton followRedirect = null;
     private JToggleButton useTrackingSessionState = null;
     private JToggleButton useCookies = null;
@@ -77,6 +79,8 @@ public class HttpPanelSender implements MessageSender {
         requestPanel.addOptions(getButtonUseCookies(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(
                 getButtonFollowRedirects(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(
+                getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
 
         final boolean isSessionTrackingEnabled =
                 Model.getSingleton().getOptionsParam().getConnectionParam().isHttpStateEnabled();
@@ -88,6 +92,10 @@ public class HttpPanelSender implements MessageSender {
         final HttpMessage httpMessage = (HttpMessage) aMessage;
         // Reset the user before sending (e.g. Forced User mode sets the user, if needed).
         httpMessage.setRequestingUser(null);
+
+        if (getButtonFixContentLength().isSelected()) {
+            HttpPanelViewModelUtils.updateRequestContentLength(httpMessage);
+        }
         try {
             final ModeRedirectionValidator redirectionValidator = new ModeRedirectionValidator();
             boolean followRedirects = getButtonFollowRedirects().isSelected();
@@ -266,6 +274,20 @@ public class HttpPanelSender implements MessageSender {
                     e -> setUseCookies(e.getStateChange() == ItemEvent.SELECTED));
         }
         return useCookies;
+    }
+
+    private JToggleButton getButtonFixContentLength() {
+        if (fixContentLength == null) {
+            fixContentLength =
+                    new JToggleButton(
+                            new ImageIcon(
+                                    HttpPanelSender.class.getResource(
+                                            "/resource/icon/fugue/application-resize.png")),
+                            true);
+            fixContentLength.setToolTipText(
+                    Constant.messages.getString("manReq.checkBox.fixLength"));
+        }
+        return fixContentLength;
     }
 
     public void addPersistentConnectionListener(PersistentConnectionListener listener) {

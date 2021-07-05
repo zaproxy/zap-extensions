@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.6.0"
 description = "Adds encode/decode/hash dialog and support for scripted processors as well"
 
 zapAddOn {

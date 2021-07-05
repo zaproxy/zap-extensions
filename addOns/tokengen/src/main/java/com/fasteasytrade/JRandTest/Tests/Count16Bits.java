@@ -50,6 +50,7 @@ public class Count16Bits extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|-------------------------------------------------------------|");
@@ -118,6 +119,7 @@ public class Count16Bits extends Base
 	/**
 	 * @param filename input file with random data
 	 */
+	@Override
 	public void test(String filename) throws Exception{
 		printf("\t\t\tThe Count16Bits test for file " + filename + "\n");
 

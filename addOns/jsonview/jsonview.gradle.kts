@@ -1,4 +1,3 @@
-version = "2"
 description = "Adds a view that shows JSON messages nicely formatted"
 
 zapAddOn {

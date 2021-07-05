@@ -4,10 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to choose Kotlin for syntax highlighting (requires newer ZAP version).
+
 ### Changed
 - Do not show `Null` script engine in Edit Script dialogue.
 - Now using 2.10 logging infrastructure (Log4j 2.x).
-- Update links to zaproxy repo.
+- Update links to zaproxy and community-scripts repo.
 - Maintenance Changes.
 - 'Copy as curl command menu.js' is now preceded by a separator, and the Title Caps of the menu item were fixed (Issue 2000).
 

@@ -30,12 +30,15 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.EnumUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     private String name;
     private AutomationEnvironment env;
+    private final List<AbstractAutomationTest> tests = new ArrayList<>();
 
     public enum Order {
         RUN_FIRST,
@@ -69,6 +72,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         this.name = name;
     }
 
+    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {}
+
     public abstract void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress);
 
@@ -80,8 +85,37 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public abstract String getParamMethodName();
 
+    /**
+     * Returns true if this job is just a way to make data available to reports - running it will do
+     * nothing.
+     */
+    public boolean isDataJob() {
+        return false;
+    }
+
+    /**
+     * Applies the custom parameter for the job
+     *
+     * @param name name of the parameter
+     * @param value value of the parameter
+     * @return {@code true} if the parameter was applied/consumed, {@code false} otherwise.
+     */
     public boolean applyCustomParameter(String name, String value) {
         return false;
+    }
+
+    /**
+     * Verifies the custom parameter for the job
+     *
+     * @param name name of the parameter
+     * @param value value of the parameter
+     * @param progress to store the warnings/errors which occurred during verification
+     * @return {@code true} if the parameter was verified, {@code false} otherwise.
+     * @since 0.3.0
+     * @see #applyCustomParameter(String, String)
+     */
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return getCustomConfigParameters().containsKey(name);
     }
 
     public String getTemplateDataMin() {
@@ -101,15 +135,22 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public void applyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
-        applyParameters(this.getParamMethodObject(), this.getParamMethodName(), params, progress);
+        verifyOrApplyParameters(
+                this.getParamMethodObject(), this.getParamMethodName(), params, progress, false);
+    }
+
+    public void verifyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
+        verifyOrApplyParameters(
+                this.getParamMethodObject(), this.getParamMethodName(), params, progress, true);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void applyParameters(
+    void verifyOrApplyParameters(
             Object obj,
             String optionsGetterName,
             LinkedHashMap<?, ?> params,
-            AutomationProgress progress) {
+            AutomationProgress progress,
+            boolean verify) {
         if (params == null) {
             return;
         }
@@ -142,20 +183,27 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             if (param.getValue() == null) {
                 continue;
             }
+
             String resolvedValue;
             if (env != null) {
                 resolvedValue = env.replaceVars(param.getValue());
             } else {
                 resolvedValue = param.getValue().toString();
             }
-            if (applyCustomParameter(key, resolvedValue)) {
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.setparam",
-                                this.getType(),
-                                key,
-                                param.getValue().toString()));
-                continue;
+            if (!verify) {
+                if (applyCustomParameter(key, resolvedValue)) {
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.info.setparam",
+                                    this.getType(),
+                                    key,
+                                    param.getValue().toString()));
+                    continue;
+                }
+            } else {
+                if (verifyCustomParameter(key, resolvedValue, progress)) {
+                    continue;
+                }
             }
             if (methodMap != null) {
                 String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
@@ -192,30 +240,33 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                             }
                             continue;
                         }
-                        if (value != null) {
-                            try {
-                                optMethod.invoke(options, value);
-                                progress.info(
-                                        Constant.messages.getString(
-                                                "automation.info.setparam",
-                                                this.getType(),
-                                                key,
-                                                value));
-                            } catch (Exception e) {
+                        if (!verify) {
+                            if (value != null) {
+                                try {
+                                    optMethod.invoke(options, value);
+                                    progress.info(
+                                            Constant.messages.getString(
+                                                    "automation.info.setparam",
+                                                    this.getType(),
+                                                    key,
+                                                    value));
+                                } catch (Exception e) {
+                                    progress.error(
+                                            Constant.messages.getString(
+                                                    "automation.error.options.badcall",
+                                                    obj.getClass().getCanonicalName(),
+                                                    paramMethodName,
+                                                    e.getMessage()));
+                                }
+                            } else {
                                 progress.error(
                                         Constant.messages.getString(
-                                                "automation.error.options.badcall",
+                                                "automation.error.options.badtype",
                                                 obj.getClass().getCanonicalName(),
                                                 paramMethodName,
-                                                e.getMessage()));
+                                                optMethod.getParameterTypes()[0]
+                                                        .getCanonicalName()));
                             }
-                        } else {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.options.badtype",
-                                            obj.getClass().getCanonicalName(),
-                                            paramMethodName,
-                                            optMethod.getParameterTypes()[0].getCanonicalName()));
                         }
                     }
                 } else {
@@ -232,6 +283,88 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                 "automation.error.options.unknown", this.getType(), key));
             }
         }
+    }
+
+    protected void addTests(Object testsObj, AutomationProgress progress) {
+        if (testsObj == null) {
+            return;
+        }
+        if (!(testsObj instanceof ArrayList<?>)) {
+            progress.error(Constant.messages.getString("automation.error.job.data", testsObj));
+            return;
+        }
+        if (((ArrayList<?>) testsObj)
+                        .stream()
+                                .map(LinkedHashMap.class::cast)
+                                .map(t -> t.get("type"))
+                                .anyMatch("stats"::equals)
+                && Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionStats.class)
+                                .getInMemoryStats()
+                        == null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.tests.stats.nullInMemoryStats", getType()));
+        }
+        for (Object testObj : (ArrayList<?>) testsObj) {
+            if (!(testObj instanceof LinkedHashMap<?, ?>)) {
+                progress.error(Constant.messages.getString("automation.error.job.data", testObj));
+                continue;
+            }
+            LinkedHashMap<?, ?> testData = (LinkedHashMap<?, ?>) testObj;
+            Object testType = testData.get("type");
+            if ("stats".equals(testType)) {
+                String statistic = safeCast(testData.get("statistic"), String.class);
+                String operator = safeCast(testData.get("operator"), String.class);
+                Number number = safeCast(testData.get("value"), Number.class);
+                String onFail = safeCast(testData.get("onFail"), String.class);
+                if (statistic == null || operator == null || number == null || onFail == null) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.tests.stats.missingOrInvalidProperties",
+                                    getType()));
+                    continue;
+                }
+                long value = number.longValue();
+                String name = safeCast(testData.get("name"), String.class);
+                if (name == null || name.isEmpty()) {
+                    name = statistic + ' ' + operator + ' ' + value;
+                }
+                progress.info(
+                        Constant.messages.getString("automation.tests.stats.add", getType(), name));
+                try {
+                    addTest(
+                            new AutomationStatisticTest(
+                                    statistic, name, operator, value, onFail, getType()));
+                } catch (IllegalArgumentException e) {
+                    progress.warn(e.getMessage());
+                    return;
+                }
+            } else {
+                progress.warn(
+                        Constant.messages.getString("automation.tests.invalidType", testType));
+            }
+        }
+    }
+
+    public void addTest(AbstractAutomationTest test) {
+        tests.add(test);
+    }
+
+    public void logTestsToProgress(AutomationProgress progress) {
+        tests.forEach(t -> t.logToProgress(progress));
+    }
+
+    private static <T> T safeCast(Object property, Class<T> clazz) {
+        if (clazz.isInstance(property)) {
+            return clazz.cast(property);
+        }
+        return null;
+    }
+
+    List<AbstractAutomationTest> getTests() {
+        return tests;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -409,5 +542,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             }
         }
         return false;
+    }
+
+    public AutomationJob newJob() throws AutomationJobException {
+        try {
+            return this.getClass().getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new AutomationJobException("Failed to create new job", e);
+        }
     }
 }

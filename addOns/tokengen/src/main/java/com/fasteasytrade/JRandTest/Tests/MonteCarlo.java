@@ -53,6 +53,7 @@ public class MonteCarlo extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|-------------------------------------------------------------|");
@@ -65,6 +66,7 @@ public class MonteCarlo extends Base
 	/**
 	 * @param filename input file with random data
 	 */
+	@Override
 	public void test(String filename) throws Exception
 	{
 		final int square256 = 256 * 256; // square(radius) of circle(256)

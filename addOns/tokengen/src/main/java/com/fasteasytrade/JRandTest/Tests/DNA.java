@@ -45,6 +45,7 @@ public class DNA extends OverlappingPairsSparseOccupancy
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|------------------------------------------------------------ |");
@@ -63,6 +64,7 @@ public class DNA extends OverlappingPairsSparseOccupancy
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.OverlappingPairsSparseOccupancy#setParameters()
 	 */
+	@Override
 	public void setParameters()
 	{
 		testName = "DNA";

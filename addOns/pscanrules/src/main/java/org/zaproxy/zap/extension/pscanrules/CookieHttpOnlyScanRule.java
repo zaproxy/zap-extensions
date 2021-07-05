@@ -130,6 +130,7 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
         this.model = model;
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         alerts.add(buildAlert(new HttpMessage(), "").build());

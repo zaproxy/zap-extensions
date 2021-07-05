@@ -29,12 +29,12 @@ import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class SOAPMsgConfigTestCase {
+class SOAPMsgConfigTestCase {
 
     private SOAPMsgConfig soapConfig;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         /* Empty configuration object. */
         soapConfig = new SOAPMsgConfig();
         soapConfig.setWsdl(new Definitions());

@@ -90,7 +90,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
             searchPatterns(evidence, content);
         }
         if (evidence.length() > 0) {
-            this.raiseAlert(msg, id, evidence.toString());
+            this.raiseAlert(evidence.toString());
         }
     }
 
@@ -104,7 +104,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence) {
+    private void raiseAlert(String evidence) {
         newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_LOW)
@@ -157,7 +157,9 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     }
 
     private static void addPattern(String line, List<Pattern> list) {
-        list.add(Pattern.compile(Pattern.quote(line), Pattern.CASE_INSENSITIVE));
+        // Strip leading $, it's optionally included in the assembled patterns
+        line = line.replace("$", "");
+        list.add(Pattern.compile("\\b\\$?" + line + "\\b", Pattern.CASE_INSENSITIVE));
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {

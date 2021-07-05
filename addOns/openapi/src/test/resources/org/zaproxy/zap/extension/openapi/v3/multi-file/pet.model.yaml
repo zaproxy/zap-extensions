@@ -1,0 +1,42 @@
+Pet:
+  required:
+    - name
+  type: object
+  properties:
+    id:
+      type: integer
+      format: int64
+    name:
+      type: string
+      example: doggie
+    tags:
+      type: array
+      xml:
+        name: tag
+        wrapped: true
+      items:
+        $ref: '#/Tag'
+  xml:
+    name: Pet
+
+Tag:
+  type: object
+  properties:
+    id:
+      type: integer
+      format: int64
+    name:
+      type: string
+  xml:
+    name: Tag
+
+ApiResponse:
+  type: object
+  properties:
+    code:
+      type: integer
+      format: int32
+    type:
+      type: string
+    message:
+      type: string

@@ -1,4 +1,3 @@
-version = "3"
 description = "ASP/JSF ViewState Decoder and Editor"
 
 zapAddOn {

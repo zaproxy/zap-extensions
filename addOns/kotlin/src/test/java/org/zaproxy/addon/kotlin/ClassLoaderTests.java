@@ -33,7 +33,7 @@ import javax.script.ScriptEngine;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.ZAP;
 
-public class ClassLoaderTests {
+class ClassLoaderTests {
 
     private static final String testClassName = "testclasspath.TestClassOne";
 
@@ -72,7 +72,7 @@ public class ClassLoaderTests {
         Object retVal1 = cs.eval();
 
         assertSame(retVal1.getClass(), String.class);
-        assertEquals(retVal1, "testone");
+        assertEquals("testone", retVal1);
 
         String script2 = getScriptContents("classloaderTest2.kts");
         Object retVal2 = c.compile(script2).eval();

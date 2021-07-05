@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - encode-decode default template.
 
 ### Changed
-- Update links to zaproxy repo.
+- Update links to zaproxy and zap-extensions repos.
 
 ## [3.0.0] - 2020-12-15
 ### Added

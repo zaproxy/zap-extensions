@@ -190,6 +190,10 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
 
                 // for each target in turn
                 for (int i = 0; i < REMOTE_FILE_TARGETS.length; i++) {
+                    if (isStop()) {
+                        return;
+                    }
+
                     String target = REMOTE_FILE_TARGETS[i];
 
                     // get a new copy of the original message (request only) for each parameter
@@ -234,14 +238,6 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                             // parameters on the same request (to reduce performance impact)
                             return;
                         }
-                    }
-
-                    // Check if the scan has been stopped
-                    // if yes dispose resources and exit
-                    if (isStop()) {
-                        // Dispose all resources
-                        // Exit the scan rule
-                        return;
                     }
                 }
             }

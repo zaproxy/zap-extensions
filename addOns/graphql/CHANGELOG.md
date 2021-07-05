@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Report no URL specified in automation job as info instead of failure.
 
 ## [0.3.0] - 2021-03-30
 ### Changed

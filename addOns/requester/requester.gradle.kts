@@ -1,4 +1,3 @@
-version = "5"
 description = "Request numbered panel."
 
 zapAddOn {

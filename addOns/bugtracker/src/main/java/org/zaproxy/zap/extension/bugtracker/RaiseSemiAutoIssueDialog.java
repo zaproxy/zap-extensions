@@ -100,5 +100,6 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
         return null;
     }
 
+    @Override
     public void save() {}
 }

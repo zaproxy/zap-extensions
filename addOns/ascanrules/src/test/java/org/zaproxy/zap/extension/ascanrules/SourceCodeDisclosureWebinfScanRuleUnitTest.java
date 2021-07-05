@@ -32,18 +32,11 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SourceCodeDisclosureWebInfScanRule}. */
-// XXX Does not work with Java 9+ because of procyon-decompiler.
-// Refs:
-// - https://github.com/zaproxy/zaproxy/issues/4038
-// - https://bitbucket.org/mstrobel/procyon/issues/320/java-9-sunmiscurlclasspath-and
-@EnabledOnJre(JRE.JAVA_8)
 class SourceCodeDisclosureWebinfScanRuleUnitTest
         extends ActiveScannerTest<SourceCodeDisclosureWebInfScanRule> {
 

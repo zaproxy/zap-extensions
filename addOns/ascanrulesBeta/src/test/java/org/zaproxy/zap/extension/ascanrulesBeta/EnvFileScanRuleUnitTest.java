@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
@@ -36,13 +39,29 @@ import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
 
     private static final String RELEVANT_BODY =
+            "# Never expose this to the internet\n"
+                    + "DB_CONNECTION=mysql\n"
+                    + "DB_HOST=gcomlnk.solutions\n"
+                    + "DB_PORT=3306\n"
+                    + "DB_DATABASE=gcom_tbot\n"
+                    + "DB_USERNAME=gcom_french\n"
+                    + "DB_PASSWORD=secure123";
+    private static final String RELEVANT_BODY_NO_COMMENT =
             "DB_CONNECTION=mysql\n"
                     + "DB_HOST=gcomlnk.solutions\n"
                     + "DB_PORT=3306\n"
                     + "DB_DATABASE=gcom_tbot\n"
                     + "DB_USERNAME=gcom_french\n"
                     + "DB_PASSWORD=secure123";
-    private static final String IRRELEVANT_BODY = "<html><title>Some Page</title></html>";
+    private static final String IRRELEVANT_BODY =
+            "<html><title>Some Page</title>"
+                    + "<body><div id='this'><a href='#'></a></div>"
+                    + "<script> $(\"#this\").css(\"display:none;\")<script> "
+                    + "<div> Then there's at least a little more text in a webpage that would "
+                    + "make the content longer than what a env file would look like"
+                    + "<span><blink><marquee>hopefully the rule won't pick this up</marquee></blink></span>"
+                    + "yes, I know those tags don't work</div>"
+                    + "</body></html>";
 
     @Override
     protected EnvFileScanRule createScanner() {
@@ -57,13 +76,44 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
     @Override
     @Test
     public void shouldAlertWhenRequestIsSuccessful() throws Exception {
+        // Override this to do nothing
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"application/octet-stream"})
+    void shouldAlertWhenRequestIsSuccessfulWithExpectedContent(String contentType)
+            throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(Response.Status.OK, contentType, RELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(1, httpMessagesSent.size());
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_MEDIUM, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"application/octet-stream"})
+    void shouldAlertWhenRequestIsSuccessfulWithExpectedContentNoComment(String contentType)
+            throws Exception {
         // Given
         String path = "/.env";
         this.nano.addHandler(
                 createHandler(
                         path,
                         newFixedLengthResponse(
-                                Response.Status.OK, NanoHTTPD.MIME_HTML, RELEVANT_BODY)));
+                                Response.Status.OK, contentType, RELEVANT_BODY_NO_COMMENT)));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
@@ -110,6 +160,55 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
                         path,
                         newFixedLengthResponse(
                                 Response.Status.OK, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenRequestIsSuccessfulButContentIsRelevantWrongType() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, RELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenRequestIsSuccessfulButContentIsIrrelevantCorrectType() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path, newFixedLengthResponse(Response.Status.OK, null, IRRELEVANT_BODY)));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenResponseIsTooLong() throws Exception {
+        // Given
+        String path = "/.env";
+        this.nano.addHandler(
+                createHandler(
+                        path,
+                        newFixedLengthResponse(
+                                Response.Status.OK, null, IRRELEVANT_BODY + RELEVANT_BODY)));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When

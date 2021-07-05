@@ -1,7 +1,8 @@
 env:
   contexts:
     - name: example
-      url: https://www.example.com/        # The top level url, and the only mandatory parameter in the file, everything under this url will be included
+      urls: 
+      - https://www.example.com/
   parameters:
     failOnError: true                  
     failOnWarning: false               

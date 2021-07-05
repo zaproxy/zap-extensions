@@ -1,0 +1,24 @@
+env:
+  contexts:
+    - name: example
+      urls:
+        - https://www.example.com/
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: job1
+    parameters:
+      optional: true
+    tests:
+      - name: 'test one'
+        type: stats
+        statistic: 'stats.job.something'
+        operator: '=='
+        value: 3
+        onFail: 'error'
+  - type: job2
+    parameters:
+      optional: true

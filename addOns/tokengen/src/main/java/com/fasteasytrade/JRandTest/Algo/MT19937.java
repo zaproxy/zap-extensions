@@ -62,6 +62,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#getFilename()
 	 */
+	@Override
 	public String getFilename() {
 		return filename;
 	}
@@ -69,6 +70,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#setFilename(java.lang.String)
 	 */
+	@Override
 	public void setFilename(String s) {
 		filename = s;
 	}
@@ -76,6 +78,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setupKeys()
 	 */
+	@Override
 	public void setupKeys() {
 		publicKeyLength = 256;
 		privateKeyLength = 256;
@@ -85,6 +88,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setup()
 	 */
+	@Override
 	public void setup() {
 		mt = new MT19937Prng();
 
@@ -108,6 +112,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	 *      if filename exists (not null), we open file and later will encrypt
 	 *      it. Else, algorithm will generate random data (as PRNG).
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 		
 		setup(); // make sure algorithm and keys/states are reset
@@ -126,6 +131,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -161,6 +167,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -196,6 +203,7 @@ public class MT19937 extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		if (!isOpen())
 			return -1;

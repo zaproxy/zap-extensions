@@ -31,6 +31,7 @@ public class AutomationProgress {
     private List<String> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
     private List<String> infos = new ArrayList<>();
+    private List<AutomationJob> runJobs = new ArrayList<>();
     private boolean outputToStdout = false;
     private Map<String, JobResultData> jobResultDataMap = new HashMap<>();
 
@@ -99,5 +100,13 @@ public class AutomationProgress {
 
     public Collection<JobResultData> getAllJobResultData() {
         return this.jobResultDataMap.values();
+    }
+
+    void addRunJob(AutomationJob job) {
+        this.runJobs.add(job);
+    }
+
+    public List<AutomationJob> getRunJobs() {
+        return this.runJobs;
     }
 }

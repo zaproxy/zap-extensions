@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update link to repository.
 - Minimum ZAP version is now 2.10.
 - Maintenance changes.
 

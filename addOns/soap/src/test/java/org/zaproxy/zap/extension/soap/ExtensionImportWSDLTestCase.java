@@ -25,12 +25,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class ExtensionImportWSDLTestCase extends TestUtils {
+class ExtensionImportWSDLTestCase extends TestUtils {
 
     ExtensionImportWSDL extension;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         extension = new ExtensionImportWSDL();
         mockMessages(extension);
     }

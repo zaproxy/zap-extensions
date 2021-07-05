@@ -2,7 +2,7 @@
 
 // * Based on org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner
 // * Application error strings are equal to:
-// ** https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml
+// ** https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml
 
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 

@@ -1,4 +1,3 @@
-version = "6"
 description = "Gives the possibility of defining a sequence of requests to be scanned."
 
 zapAddOn {

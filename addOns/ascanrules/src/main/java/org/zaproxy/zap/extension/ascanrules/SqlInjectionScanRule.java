@@ -646,6 +646,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 for (int prefixIndex = 0;
                         prefixIndex < prefixStrings.length && !sqlInjectionFoundForUrl;
                         prefixIndex++) {
+                    // bale out if we were asked nicely
+                    if (isStop()) {
+                        log.debug("Stopping the scan due to a user request");
+                        return;
+                    }
 
                     // new message for each value we attack with
                     HttpMessage msg1 = getNewMsg();
@@ -675,6 +680,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     // Note: do NOT check the HTTP error code just yet, as the result could come
                     // back with one of various codes.
                     for (RDBMS rdbms : RDBMS.values()) {
+                        // bale out if we were asked nicely
+                        if (isStop()) {
+                            log.debug("Stopping the scan due to a user request");
+                            return;
+                        }
+
                         if (getTechSet().includes(rdbms.getTech())
                                 && checkSpecificErrors(rdbms, msg1, param, sqlErrValue)) {
                             sqlInjectionFoundForUrl = true;
@@ -683,11 +694,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             sqlInjectionAttack = sqlErrValue;
                             break;
                         }
-                        // bale out if we were asked nicely
-                        if (isStop()) {
-                            log.debug("Stopping the scan due to a user request");
-                            return;
-                        }
                     } // end of the loop to check for RDBMS specific error messages
 
                     if (this.doGenericErrorBased && !sqlInjectionFoundForUrl) {
@@ -695,6 +701,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                 RDBMS.GenericRDBMS.getErrorPatterns().iterator();
 
                         while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
+                            if (isStop()) {
+                                log.debug("Stopping the scan due to a user request");
+                                return;
+                            }
+
                             Pattern errorPattern = errorPatternIterator.next();
                             String errorPatternRDBMS = RDBMS.GenericRDBMS.getName();
 
@@ -733,11 +744,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
                                 sqlInjectionFoundForUrl = true;
                                 continue;
-                            }
-                            // bale out if we were asked nicely
-                            if (isStop()) {
-                                log.debug("Stopping the scan due to a user request");
-                                return;
                             }
                         } // end of the loop to check for RDBMS specific error messages
                     }
@@ -934,6 +940,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             && doBooleanBased
                             && countBooleanBasedRequests < doBooleanMaxRequests;
                     i++) {
+                if (isStop()) {
+                    log.debug("Stopping the scan due to a user request");
+                    return;
+                }
+
                 // needs a new message for each type of AND to be issued
                 HttpMessage msg2 = getNewMsg();
                 // ZAP: Removed getURLDecode()
@@ -971,6 +982,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 for (int booleanStrippedUnstrippedIndex = 0;
                         booleanStrippedUnstrippedIndex < 2;
                         booleanStrippedUnstrippedIndex++) {
+                    if (isStop()) {
+                        log.debug("Stopping the scan due to a user request");
+                        return;
+                    }
+
                     // if the results of the "AND 1=1" match the original query (using either the
                     // stipped or unstripped versions), we may be onto something.
                     if (andTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
@@ -1242,11 +1258,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             log.debug("DIFFS: {}", tempDiff);
                         }
                     }
-                    // bale out if we were asked nicely
-                    if (isStop()) {
-                        log.debug("Stopping the scan due to a user request");
-                        return;
-                    }
                 } // end of boolean logic output index (unstripped + stripped)
             }
             // end of check 2
@@ -1264,6 +1275,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             && doBooleanBased
                             && countBooleanBasedRequests < doBooleanMaxRequests;
                     i++) {
+                if (isStop()) {
+                    log.debug("Stopping the scan due to a user request");
+                    return;
+                }
+
                 HttpMessage msg2 = getNewMsg();
                 String sqlBooleanOrTrueValue = origParamValue + SQL_LOGIC_OR_TRUE[i];
                 String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
@@ -1376,6 +1392,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             && doUnionBased
                             && countUnionBasedRequests < doUnionMaxRequests;
                     sqlUnionStringIndex++) {
+                if (isStop()) {
+                    log.debug("Stopping the scan due to a user request");
+                    return;
+                }
 
                 // new message for each value we attack with
                 HttpMessage msg3 = getNewMsg();
@@ -1400,6 +1420,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 // TODO: maybe also try looking at a differentiation based approach?? Prone to false
                 // positives though.
                 for (RDBMS rdbms : RDBMS.values()) {
+                    if (isStop()) {
+                        log.debug("Stopping the scan due to a user request");
+                        return;
+                    }
+
                     if (getTechSet().includes(rdbms.getTech())
                             && checkUnionErrors(
                                     rdbms,
@@ -1414,11 +1439,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         // necessary
                         sqlInjectionAttack = sqlUnionValue;
                         break;
-                    }
-                    // bale out if we were asked nicely
-                    if (isStop()) {
-                        log.debug("Stopping the scan due to a user request");
-                        return;
                     }
                 } // end of the loop to check for RDBMS specific UNION error messages
             } //// for each SQL UNION combination to try
@@ -1505,6 +1525,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 for (int booleanStrippedUnstrippedIndex = 0;
                         booleanStrippedUnstrippedIndex < 2;
                         booleanStrippedUnstrippedIndex++) {
+                    if (isStop()) {
+                        log.debug("Stopping the scan due to a user request");
+                        return;
+                    }
+
                     // if the results of the modified request match the original query, we may be
                     // onto something.
                     if (ascendingBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
@@ -1593,11 +1618,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             sqlInjectionFoundForUrl = true;
                             break; // No further need to loop
                         }
-                    }
-                    // bale out if we were asked nicely
-                    if (isStop()) {
-                        log.debug("Stopping the scan due to a user request");
-                        return;
                     }
                 }
             }

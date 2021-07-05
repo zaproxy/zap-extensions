@@ -31,11 +31,12 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
-import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Stats;
 
 public class AjaxSpiderJob extends AutomationJob {
 
@@ -49,9 +50,6 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_MAX_DURATION = "maxDuration";
 
     private ExtensionAjax extSpider;
-
-    private int failIfFoundUrlsLessThan = 0;
-    private int warnIfFoundUrlsLessThan = 0;
 
     // Local copy
     private int maxDuration = 0;
@@ -71,6 +69,25 @@ public class AjaxSpiderJob extends AutomationJob {
         return extSpider;
     }
 
+    @Override
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        switch (name) {
+            case PARAM_FAIL_IF_LESS_URLS:
+            case PARAM_WARN_IF_LESS_URLS:
+                if (progress != null) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.spider.failIfUrlsLessThan.deprecated",
+                                    getType(),
+                                    "automation.spiderAjax.urls.added"));
+                }
+                return true;
+            default:
+                return super.verifyCustomParameter(name, value, progress);
+        }
+    }
+
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_CONTEXT:
@@ -80,10 +97,7 @@ public class AjaxSpiderJob extends AutomationJob {
                 url = value;
                 return true;
             case PARAM_FAIL_IF_LESS_URLS:
-                failIfFoundUrlsLessThan = Integer.parseInt(value);
-                return true;
             case PARAM_WARN_IF_LESS_URLS:
-                warnIfFoundUrlsLessThan = Integer.parseInt(value);
                 return true;
             case PARAM_MAX_DURATION:
                 maxDuration = Integer.parseInt(value);
@@ -101,8 +115,6 @@ public class AjaxSpiderJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_URL, "");
-        map.put(PARAM_FAIL_IF_LESS_URLS, "0");
-        map.put(PARAM_WARN_IF_LESS_URLS, "0");
         return map;
     }
 
@@ -110,38 +122,34 @@ public class AjaxSpiderJob extends AutomationJob {
     public void runJob(
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
-        Context context;
+        ContextWrapper context;
         if (contextName != null) {
-            context = env.getContext(contextName);
+            context = env.getContextWrapper(contextName);
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                env.getUrlStringForContext(context)));
+                                "automation.error.context.unknown", contextName));
                 return;
             }
         } else {
-            context = env.getDefaultContext();
+            context = env.getDefaultContextWrapper();
         }
 
+        String uriStr = url;
+        if (uriStr == null) {
+            uriStr = context.getUrls().get(0);
+        }
         URI uri = null;
         try {
-            if (url != null) {
-                uri = new URI(url);
-            } else {
-                uri = new URI(env.getUrlStringForContext(context).toString());
-            }
+            uri = new URI(uriStr);
         } catch (Exception e1) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.context.badurl",
-                            env.getUrlStringForContext(context)));
+            progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
             return;
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
                 AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
-                        .setContext(context)
+                        .setContext(context.getContext())
                         .setInScopeOnly(inScopeOnly)
                         .setOptions(getExtSpider().getAjaxSpiderParam())
                         .setStartUri(uri)
@@ -188,22 +196,7 @@ public class AjaxSpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        if (numUrlsFound < this.failIfFoundUrlsLessThan) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
-        if (numUrlsFound < this.warnIfFoundUrlsLessThan) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
+        Stats.incCounter("spiderAjax.urls.added", numUrlsFound);
     }
 
     @Override
@@ -217,14 +210,6 @@ public class AjaxSpiderJob extends AutomationJob {
             default:
                 return false;
         }
-    }
-
-    public int getFailIfFoundUrlsLessThan() {
-        return failIfFoundUrlsLessThan;
-    }
-
-    public int getWarnIfFoundUrlsLessThan() {
-        return warnIfFoundUrlsLessThan;
     }
 
     public int getMaxDuration() {
@@ -241,10 +226,12 @@ public class AjaxSpiderJob extends AutomationJob {
         this.inScopeOnly = inScopeOnly;
     }
 
+    @Override
     public String getTemplateDataMin() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }

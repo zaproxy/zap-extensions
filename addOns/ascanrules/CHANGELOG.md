@@ -4,11 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [40] - 2021-06-17
 ### Changed
 - The SQL Injection scan rule will raise alerts with the URI field in encoded form.
+- Update links to repository.
 
 ### Fixed
 - Correct Context check in SQL Injection scan rule.
+- "Source Code Disclosure - /WEB-INF folder" is no longer skipped on Java 9+ (Issue 4038).
+- Fix ascan rules not enforcing MaxRuleDuration when getting IOExceptions (Issue 6647).
 
 ## [39] - 2021-05-10
 ### Changed
@@ -264,6 +270,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v37

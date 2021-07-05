@@ -1,4 +1,3 @@
-version = "7"
 description = "Adds a set of tools for testing access control in web applications."
 
 zapAddOn {

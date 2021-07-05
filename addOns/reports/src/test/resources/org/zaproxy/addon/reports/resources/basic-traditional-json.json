@@ -1,0 +1,40 @@
+{
+	"@version": "Dev Build",
+	"@generated": "Thu, 17 Jun 2021 16:04:28",
+	"site":[ 
+		{
+			"@name": "http://example.com",
+			"@host": "example.com",
+			"@port": "80",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "1",
+					"alertRef": "1",
+					"alert": "XSS",
+					"name": "XSS",
+					"riskcode": "3",
+					"confidence": "2",
+					"riskdesc": "!reports.report.risk.3! (!reports.report.confidence.2!)",
+					"desc": "<p>XSS Description</p>",
+					"instances":[ 
+						{
+							"uri": "http://example.com/example_3",
+							"method": "GET",
+							"param": "Test Param",
+							"attack": "Test \"Attack\\\"",
+							"evidence": "Test <p>Evidence"
+						}
+					],
+					"count": "1",
+					"solution": "<p>Test Solution</p>",
+					"otherinfo": "<p>Test 'Other\\</p>",
+					"reference": "<p>Test Reference</p>",
+					"cweid": "123",
+					"wascid": "456",
+					"sourceid": "0"
+				}
+			]
+		}
+	]
+}

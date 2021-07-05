@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -47,8 +48,10 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
+import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
+import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -78,9 +81,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         this.registerAutomationJob(new AddOnJob());
         this.registerAutomationJob(new PassiveScanConfigJob());
+        this.registerAutomationJob(new RequestorJob());
         this.registerAutomationJob(new PassiveScanWaitJob());
         this.registerAutomationJob(new SpiderJob());
         this.registerAutomationJob(new ActiveScanJob());
+        this.registerAutomationJob(new ParamsJob());
     }
 
     @Override
@@ -120,8 +125,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             this.sortedJobs.forEach(
                     j -> {
                         try {
-                            fw.write(j.getConfigFileData());
-                            fw.write("\n");
+                            if (!j.isDataJob()) {
+                                fw.write(j.getConfigFileData());
+                                fw.write("\n");
+                            }
                         } catch (IOException e) {
                             CommandLine.error(
                                     Constant.messages.getString(
@@ -168,15 +175,19 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
     }
 
-    private AutomationProgress runPlan(LinkedHashMap<?, ?> envData, ArrayList<?> jobsData) {
+    private AutomationProgress runPlan(LinkedHashMap<?, ?> envData, ArrayList<?> jobsData)
+            throws AutomationJobException {
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env =
                 new AutomationEnvironment(envData, progress, Model.getSingleton().getSession());
 
+        if (env.isTimeToQuit()) {
+            return progress;
+        }
+
+        Map<AutomationJob, LinkedHashMap<?, ?>> jobsToRun = new LinkedHashMap<>();
+
         for (Object jobObj : jobsData) {
-            if (env.isTimeToQuit()) {
-                break;
-            }
             if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
                 progress.error(Constant.messages.getString("automation.error.job.data", jobObj));
                 continue;
@@ -190,6 +201,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
             AutomationJob job = jobs.get(jobType);
             if (job != null) {
+                job = job.newJob();
                 Object jobName = jobData.get("name");
                 if (jobName != null) {
                     if (jobName instanceof String) {
@@ -206,27 +218,40 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             Constant.messages.getString("automation.error.job.data", paramsObj));
                     continue;
                 }
-                job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
-
-                // In case errors or warnings are encountered in the applyParameters() call above
-                if (env.isTimeToQuit()) {
-                    break;
-                }
-
-                progress.info(
-                        Constant.messages.getString("automation.info.jobstart", job.getType()));
                 job.setEnv(env);
-                job.runJob(env, jobData, progress);
-                progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+                job.verifyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
+                job.verifyJobSpecificData(jobData, progress);
+                jobsToRun.put(job, jobData);
             } else {
                 progress.error(
                         Constant.messages.getString("automation.error.job.unknown", jobType));
             }
         }
+
+        if (env.isTimeToQuit()) {
+            return progress;
+        }
+
+        for (Entry<AutomationJob, LinkedHashMap<?, ?>> jobInfo : jobsToRun.entrySet()) {
+            AutomationJob job = jobInfo.getKey();
+            LinkedHashMap<?, ?> jobData = jobInfo.getValue();
+            Object paramsObj = jobData.get("parameters");
+            job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
+            progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
+            job.addTests(jobData.get("tests"), progress);
+            job.runJob(env, jobData, progress);
+            progress.addRunJob(job);
+            job.logTestsToProgress(progress);
+            if (env.isTimeToQuit()) {
+                break;
+            }
+            progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+        }
+
         return progress;
     }
 
-    public AutomationProgress runAutomation(InputStream in) {
+    public AutomationProgress runAutomation(InputStream in) throws AutomationJobException {
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(in);
         LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");

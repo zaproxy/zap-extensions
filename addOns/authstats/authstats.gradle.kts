@@ -1,4 +1,3 @@
-version = "2"
 description = "Records logged in/out statistics for all contexts in scope."
 
 zapAddOn {

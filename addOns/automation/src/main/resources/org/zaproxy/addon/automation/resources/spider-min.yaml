@@ -2,8 +2,13 @@
     parameters:
       context:                         # String: Name of the context to spider, default: first context
       url:                             # String: Url to start spidering from, default: first context URL
-      failIfFoundUrlsLessThan:         # Int: Fail if spider finds less than the specified number of URLs, default: 0
-      warnIfFoundUrlsLessThan:         # Int: Warn if spider finds less than the specified number of URLs, default: 0
       maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
       maxDepth:                        # Int: The maximum tree depth to explore
       maxChildren:                     # Int: The maximum number of children to add to each node in the tree
+    tests:
+      - name: 'At least X URLs found'                   # String: Name of the test, default: statistic + operator + value
+        type: 'stats'                                   # String: Type of test, only 'stats' is supported for now
+        statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
+        operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
+        value: 100                                      # Int: Change this to the number of URLs you expect to find
+        onFail: 'info'                                  # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect

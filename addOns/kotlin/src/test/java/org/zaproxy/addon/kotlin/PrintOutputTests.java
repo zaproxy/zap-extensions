@@ -31,12 +31,12 @@ import javax.script.ScriptEngine;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class PrintOutputTests {
+class PrintOutputTests {
 
     private static ScriptEngine se;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         se = new KotlinEngineWrapper(Thread.currentThread().getContextClassLoader()).getEngine();
     }
 

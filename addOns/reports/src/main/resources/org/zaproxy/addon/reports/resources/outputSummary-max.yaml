@@ -1,0 +1,4 @@
+  - type: outputSummary                # Print summary to stdout, primarily to mimic the behaviour of the packaged scans
+    parameters:
+      format: None                     # String: The format of the output, one of None, Short, Long, default: None
+      summaryFile:                     # String: The full path of a file into which will be written a JSON summary of the scan, default empty

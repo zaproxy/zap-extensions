@@ -1,0 +1,23 @@
+name: Modern HTML Report with themes and options
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - chart
+ - alertcount
+ - instancecount
+ - passingrules
+ - alertdetails
+ - statistics
+ - params
+themes:
+ - console
+ - construction
+ - corporate
+ - marketing
+ - mountain
+ - nature
+ - ocean
+ - plutonium
+ - skyline
+ - technology

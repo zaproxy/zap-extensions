@@ -135,7 +135,7 @@ class GraphQlJobUnitTest {
     }
 
     @Test
-    void shouldFailIfEmptyEndpoint() {
+    void shouldInfoIfEmptyEndpoint() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -143,16 +143,16 @@ class GraphQlJobUnitTest {
         // When
         GraphQlJob job = new GraphQlJob();
         job.applyCustomParameter("endpoint", "");
-        // The job should fail even if other parameters are specified
+        // The job should info even if other parameters are specified
         job.applyCustomParameter("schemaUrl", "http://example.com/schema.graphql");
         job.applyCustomParameter("schemaFile", "/home/zap/schema.graphql");
         job.runJob(env, null, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!graphql.error.emptyendurl!")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getInfos().size(), is(equalTo(1)));
+        assertThat(progress.getInfos().get(0), is(equalTo("!graphql.info.emptyendurl!")));
     }
 
     @Test

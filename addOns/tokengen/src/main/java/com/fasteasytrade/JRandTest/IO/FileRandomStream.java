@@ -32,7 +32,8 @@
 
 package com.fasteasytrade.JRandTest.IO;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 
 /**
  * This class represents an encrypted or random source file. Data, bytes or
@@ -70,6 +71,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#getFilename()
 	 */
+	@Override
 	public String getFilename() {
 		return filename;
 	}
@@ -77,6 +79,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#setFilename(java.lang.String)
 	 */
+	@Override
 	public void setFilename(String s) {
 		filename = s;
 	}
@@ -84,6 +87,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#isOpen()
 	 */
+	@Override
 	public boolean isOpen() {
 		return open;
 	}
@@ -91,6 +95,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#openInputStream()
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 		open = false;
 		if (filename == null)
@@ -110,6 +115,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#closeInputStream()
 	 */
+	@Override
 	public boolean closeInputStream() {
 		try {
 			if (infile != null)
@@ -123,6 +129,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 
 		if (!isOpen())
@@ -152,6 +159,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -169,6 +177,7 @@ public class FileRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -187,6 +196,7 @@ public class FileRandomStream implements RandomStream {
 	 * Be sure to close input file at end of processing.
 	 *  
 	 */
+	@Override
 	public void finalize() {
 		if (infile != null) {
 			try {

@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
+- Handle multiple context URLs in automation.
+
+### Deprecated
+- Automation parameters `failIfFoundUrlsLessThan` and `warnIfFoundUrlsLessThan` in favour of the
+`spiderAjax.urls.added` statistic test.
 
 ## [23.3.0] - 2021-03-09
 ### Added

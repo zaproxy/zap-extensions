@@ -1,4 +1,3 @@
-version = "10"
 description = "Allows you to view Server-Sent Events (SSE) communication."
 
 zapAddOn {

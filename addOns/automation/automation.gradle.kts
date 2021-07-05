@@ -1,4 +1,3 @@
-version = "0.3.0"
 description = "Automation Framework."
 
 zapAddOn {
@@ -16,8 +15,4 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
     implementation("org.snakeyaml:snakeyaml-engine:2.2.1")
     testImplementation(project(":testutils"))
-}
-
-tasks.test {
-    environment("myEnvVar", "envVarValue")
 }

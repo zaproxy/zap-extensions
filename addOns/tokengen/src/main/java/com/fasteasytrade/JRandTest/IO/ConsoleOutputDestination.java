@@ -50,6 +50,7 @@ public class ConsoleOutputDestination implements OutputDestination
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.OutputDestination#printf(java.lang.String)
 	 */
+	@Override
 	public void printf(String s)
 	{
 		System.out.println(s);
@@ -58,6 +59,7 @@ public class ConsoleOutputDestination implements OutputDestination
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.OutputDestination#puts(java.lang.String)
 	 */
+	@Override
 	public void puts(String s)
 	{
 		System.out.println(s);

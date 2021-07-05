@@ -165,6 +165,7 @@ class PassiveScanWaitJobUnitTest {
                         new Answer<Integer>() {
                             private int records = 5;
 
+                            @Override
                             public Integer answer(InvocationOnMock invocation) {
                                 records = records - 1;
                                 return records;

@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 
 public class ExtensionAjaxAutomation extends ExtensionAdaptor {
 
@@ -46,6 +47,7 @@ public class ExtensionAjaxAutomation extends ExtensionAdaptor {
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
+        dependencies.add(ExtensionAjax.class);
         dependencies.add(ExtensionAutomation.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }

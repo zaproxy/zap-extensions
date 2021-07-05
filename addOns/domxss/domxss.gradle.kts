@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "11"
 description = "DOM XSS Active scanner rule"
 
 zapAddOn {

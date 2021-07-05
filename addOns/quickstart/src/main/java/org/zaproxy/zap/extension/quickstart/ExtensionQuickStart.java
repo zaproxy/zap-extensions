@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Container;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.StringReader;
 import java.lang.reflect.Method;
@@ -30,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
@@ -44,11 +45,11 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.report.ReportLastScan;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
@@ -56,6 +57,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -111,8 +113,23 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private boolean showProgress = false;
     private int spinner = 0;
 
+    private ExtensionReports extReport;
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES;
+
+    static {
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
+        dependencies.add(ExtensionReports.class);
+        DEPENDENCIES = Collections.unmodifiableList(dependencies);
+    }
+
     public ExtensionQuickStart() {
         super(NAME);
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     @Override
@@ -464,17 +481,32 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         }
     }
 
-    private void saveReportTo(Path file) throws Exception {
-        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            writer.write(getScanReport());
+    private ExtensionReports getExtReport() {
+        if (extReport == null) {
+            extReport =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionReports.class);
         }
+        return extReport;
     }
 
-    private String getScanReport() throws Exception {
-        ReportLastScan report = new ReportLastScan();
-        StringBuilder rpt = new StringBuilder();
-        report.generate(rpt);
-        return rpt.toString();
+    private void saveScanReport(Path path) throws Exception {
+        String template;
+        String fileName = path.toString();
+        String fileNameLc = fileName.toLowerCase();
+
+        if (fileNameLc.endsWith(".html")) {
+            template = "traditional-html";
+        } else if (fileNameLc.endsWith(".md")) {
+            template = "traditional-md";
+        } else if (fileNameLc.endsWith(".json")) {
+            template = "traditional-json";
+        } else {
+            template = "traditional-xml";
+        }
+
+        getExtReport().generateReport(template, fileName, "OWASP ZAP Report", "", false);
     }
 
     private CommandLineArgument[] getCommandLineArguments() {
@@ -484,7 +516,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         1,
                         null,
                         "",
-                        "-quickurl [target url]: "
+                        "-quickurl <target url>   "
                                 + Constant.messages.getString("quickstart.cmdline.url.help"));
         arguments[ARG_QUICK_OUT_IDX] =
                 new CommandLineArgument(
@@ -492,7 +524,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         1,
                         null,
                         "",
-                        "-quickout [output filename]: "
+                        "-quickout <filename>     "
                                 + Constant.messages.getString("quickstart.cmdline.out.help"));
         arguments[ARG_QUICK_PROGRESS_IDX] =
                 new CommandLineArgument(
@@ -500,7 +532,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         0,
                         null,
                         "",
-                        "-quickprogress: "
+                        "-quickprogress:          "
                                 + Constant.messages.getString("quickstart.cmdline.progress.help"));
         return arguments;
     }
@@ -574,7 +606,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 return;
             }
             try {
-                saveReportTo(file);
+                saveScanReport(file);
                 View.getSingleton()
                         .showMessageDialog(
                                 Constant.messages.getString(
@@ -631,7 +663,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             }
 
             try {
-                saveReportTo(file);
+                saveScanReport(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -641,7 +673,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         public void handleNoSavedReport() {
             try {
                 // Just output to stdout
-                System.out.println(getScanReport());
+                Path tmpFile = Files.createTempFile("ZAP-cmd-line-report", ".tmp");
+                saveScanReport(tmpFile);
+                System.out.println(new String(Files.readAllBytes(tmpFile), StandardCharsets.UTF_8));
+                tmpFile.toFile().delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -46,14 +46,13 @@ public class GraphQlJob extends AutomationJob {
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/graphql/resources/";
 
-    private ExtensionGraphQl extGraphQl;
-
     private String endpoint;
     private String schemaUrl;
     private String schemaFile;
 
     public GraphQlJob() {}
 
+    @Override
     public boolean applyCustomParameter(String name, String value) {
         switch (name) {
             case PARAM_ENDPOINT:
@@ -86,7 +85,7 @@ public class GraphQlJob extends AutomationJob {
             AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
 
         if (endpoint == null || endpoint.isEmpty()) {
-            progress.error(Constant.messages.getString("graphql.error.emptyendurl"));
+            progress.info(Constant.messages.getString("graphql.info.emptyendurl"));
             return;
         }
 
@@ -111,10 +110,12 @@ public class GraphQlJob extends AutomationJob {
         }
     }
 
+    @Override
     public String getTemplateDataMin() {
         return getResourceAsString(getName() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return getResourceAsString(getName() + "-max.yaml");
     }

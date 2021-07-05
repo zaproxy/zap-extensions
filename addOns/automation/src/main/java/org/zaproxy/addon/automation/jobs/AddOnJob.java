@@ -43,6 +43,22 @@ public class AddOnJob extends AutomationJob {
 
     public AddOnJob() {}
 
+    @Override
+    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+        Object installAddOnsObj = jobData.get("install");
+        if (installAddOnsObj != null && !(installAddOnsObj instanceof ArrayList<?>)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.addons.addon.data", installAddOnsObj));
+        }
+        Object uninstallAddOnsObj = jobData.get("uninstall");
+        if (uninstallAddOnsObj != null && !(uninstallAddOnsObj instanceof ArrayList<?>)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.addons.addon.data", uninstallAddOnsObj));
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void runJob(
@@ -87,42 +103,42 @@ public class AddOnJob extends AutomationJob {
         }
         Object installAddOnsObj = jobData.get("install");
         if (installAddOnsObj != null) {
-            if (installAddOnsObj instanceof ArrayList<?>) {
-                ArrayList<?> instAddOns = (ArrayList<?>) installAddOnsObj;
-                String result = extAutoUpd.installAddOns((ArrayList<String>) instAddOns);
-                if (result.length() > 0) {
-                    progress.error(result);
-                    return;
-                }
-            } else {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.addons.addon.data", installAddOnsObj));
+            ArrayList<?> instAddOns = (ArrayList<?>) installAddOnsObj;
+            String result = extAutoUpd.installAddOns((ArrayList<String>) instAddOns);
+            if (result.length() > 0) {
+                progress.error(result);
+                return;
             }
         }
 
         Object uninstallAddOnsObj = jobData.get("uninstall");
         if (uninstallAddOnsObj != null) {
-            if (uninstallAddOnsObj instanceof ArrayList<?>) {
-                ArrayList<?> uninstAddOns = (ArrayList<?>) uninstallAddOnsObj;
-                String result = extAutoUpd.uninstallAddOns((ArrayList<String>) uninstAddOns);
-                if (result.length() > 0) {
-                    progress.error(result);
-                    return;
-                }
-            } else {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.addons.addon.data", uninstallAddOnsObj));
+            ArrayList<?> uninstAddOns = (ArrayList<?>) uninstallAddOnsObj;
+            String result = extAutoUpd.uninstallAddOns((ArrayList<String>) uninstAddOns);
+            if (result.length() > 0) {
+                progress.error(result);
+                return;
             }
         }
     }
 
-    @Override
-    public boolean applyCustomParameter(String name, String value) {
+    private boolean verifyOrApplyCustomParameter(
+            String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_UPDATE_ADDONS:
-                updateAddOns = Boolean.parseBoolean(value);
+                if (progress != null) {
+                    String s = value.trim().toLowerCase();
+                    if (!"true".equals(s) && !"false".equals(s)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.options.badbool",
+                                        this.getType(),
+                                        name,
+                                        value));
+                    }
+                } else {
+                    updateAddOns = Boolean.parseBoolean(value);
+                }
                 return true;
             default:
                 // Ignore
@@ -132,12 +148,23 @@ public class AddOnJob extends AutomationJob {
     }
 
     @Override
+    public boolean applyCustomParameter(String name, String value) {
+        return this.verifyOrApplyCustomParameter(name, value, null);
+    }
+
+    @Override
+    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+        return this.verifyOrApplyCustomParameter(name, value, progress);
+    }
+
+    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_UPDATE_ADDONS, "true");
         return map;
     }
 
+    @Override
     public String getExtraConfigFileData() {
         return "    install:                           # A list of non standard add-ons to install from the ZAP Marketplace\n"
                 + "    uninstall:                         # A list of standard add-ons to uninstall\n";
