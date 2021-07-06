@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [32] - 2021-07-06
 ### Changed
 - Maintenance changes.
 
@@ -274,6 +274,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v29
