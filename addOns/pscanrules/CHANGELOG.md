@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [35] - 2021-07-06
 ### Changed
 - Maintenance changes.
 
@@ -250,6 +250,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[35]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v32
