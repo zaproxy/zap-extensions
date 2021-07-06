@@ -122,7 +122,7 @@ class ParamsJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        job.runJob(null, null, progress);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

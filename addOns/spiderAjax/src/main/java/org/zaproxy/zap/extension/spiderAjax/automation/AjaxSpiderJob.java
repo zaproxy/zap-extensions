@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
@@ -119,8 +118,7 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
         if (contextName != null) {

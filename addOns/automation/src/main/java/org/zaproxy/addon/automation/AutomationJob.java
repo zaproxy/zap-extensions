@@ -39,6 +39,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     private String name;
     private AutomationEnvironment env;
     private final List<AbstractAutomationTest> tests = new ArrayList<>();
+    private LinkedHashMap<?, ?> jobData;
 
     public enum Order {
         RUN_FIRST,
@@ -72,10 +73,17 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         this.name = name;
     }
 
-    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {}
+    public void setJobData(LinkedHashMap<?, ?> jobData) {
+        this.jobData = jobData;
+    }
 
-    public abstract void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress);
+    public LinkedHashMap<?, ?> getJobData() {
+        return jobData;
+    }
+
+    public void verifyJobSpecificData(AutomationProgress progress) {}
+
+    public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
     public abstract String getType();
 
@@ -134,26 +142,34 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return this.env;
     }
 
-    public void applyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
+    public void applyParameters(AutomationProgress progress) {
         verifyOrApplyParameters(
-                this.getParamMethodObject(), this.getParamMethodName(), params, progress, false);
+                this.getParamMethodObject(), this.getParamMethodName(), progress, false);
     }
 
-    public void verifyParameters(LinkedHashMap<?, ?> params, AutomationProgress progress) {
+    public void verifyParameters(AutomationProgress progress) {
         verifyOrApplyParameters(
-                this.getParamMethodObject(), this.getParamMethodName(), params, progress, true);
+                this.getParamMethodObject(), this.getParamMethodName(), progress, true);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     void verifyOrApplyParameters(
-            Object obj,
-            String optionsGetterName,
-            LinkedHashMap<?, ?> params,
-            AutomationProgress progress,
-            boolean verify) {
-        if (params == null) {
+            Object obj, String optionsGetterName, AutomationProgress progress, boolean verify) {
+        if (this.jobData == null) {
             return;
         }
+        Object paramsObj = jobData.get("parameters");
+        if (paramsObj == null) {
+            return;
+        }
+        if (!(paramsObj instanceof LinkedHashMap<?, ?>)) {
+            if (verify) {
+                progress.error(Constant.messages.getString("automation.error.job.data", paramsObj));
+            }
+            return;
+        }
+        LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) paramsObj;
+
         Object options = JobUtils.getJobOptions(this, progress);
         if (progress.hasErrors()) {
             return;
@@ -314,37 +330,23 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             }
             LinkedHashMap<?, ?> testData = (LinkedHashMap<?, ?>) testObj;
             Object testType = testData.get("type");
+            AbstractAutomationTest test;
             if ("stats".equals(testType)) {
-                String statistic = safeCast(testData.get("statistic"), String.class);
-                String operator = safeCast(testData.get("operator"), String.class);
-                Number number = safeCast(testData.get("value"), Number.class);
-                String onFail = safeCast(testData.get("onFail"), String.class);
-                if (statistic == null || operator == null || number == null || onFail == null) {
-                    progress.warn(
-                            Constant.messages.getString(
-                                    "automation.tests.stats.missingOrInvalidProperties",
-                                    getType()));
-                    continue;
-                }
-                long value = number.longValue();
-                String name = safeCast(testData.get("name"), String.class);
-                if (name == null || name.isEmpty()) {
-                    name = statistic + ' ' + operator + ' ' + value;
-                }
-                progress.info(
-                        Constant.messages.getString("automation.tests.stats.add", getType(), name));
                 try {
-                    addTest(
-                            new AutomationStatisticTest(
-                                    statistic, name, operator, value, onFail, getType()));
+                    test = new AutomationStatisticTest(testData, getType());
                 } catch (IllegalArgumentException e) {
                     progress.warn(e.getMessage());
-                    return;
+                    continue;
                 }
             } else {
                 progress.warn(
                         Constant.messages.getString("automation.tests.invalidType", testType));
+                continue;
             }
+            addTest(test);
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.tests.stats.add", getType(), test.getName()));
         }
     }
 
@@ -356,14 +358,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         tests.forEach(t -> t.logToProgress(progress));
     }
 
-    private static <T> T safeCast(Object property, Class<T> clazz) {
+    public static <T> T safeCast(Object property, Class<T> clazz) {
         if (clazz.isInstance(property)) {
             return clazz.cast(property);
         }
         return null;
     }
 
-    List<AbstractAutomationTest> getTests() {
+    public List<AbstractAutomationTest> getTests() {
         return tests;
     }
 

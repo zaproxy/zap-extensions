@@ -101,7 +101,8 @@ class RequestorJobUnitTest {
         jobData.put("requests", "Incorrect");
 
         // When
-        job.verifyJobSpecificData(jobData, progress);
+        job.setJobData(jobData);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -122,7 +123,8 @@ class RequestorJobUnitTest {
         LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
 
         // When
-        job.verifyJobSpecificData(jobData, progress);
+        job.setJobData(jobData);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -144,7 +146,8 @@ class RequestorJobUnitTest {
         LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
 
         // When
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -170,7 +173,8 @@ class RequestorJobUnitTest {
         LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
 
         // When
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -198,7 +202,8 @@ class RequestorJobUnitTest {
         LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
 
         // When
-        job.verifyJobSpecificData(jobData, progress);
+        job.setJobData(jobData);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -234,7 +239,8 @@ class RequestorJobUnitTest {
                 .sendAndReceive(any());
 
         // When
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -267,7 +273,8 @@ class RequestorJobUnitTest {
                 .sendAndReceive(any());
 
         // When
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -295,7 +302,8 @@ class RequestorJobUnitTest {
         LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
 
         // When
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));

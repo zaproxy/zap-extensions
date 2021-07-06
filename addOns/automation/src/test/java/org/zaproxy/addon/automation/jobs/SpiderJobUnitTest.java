@@ -209,7 +209,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -232,7 +232,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         SpiderJob job = new SpiderJob();
         job.applyCustomParameter("url", "Not a url");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -251,7 +251,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         SpiderJob job = new SpiderJob();
         job.applyCustomParameter("context", "Unknown");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -287,7 +287,7 @@ class SpiderJobUnitTest extends TestUtils {
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
         job.applyCustomParameter("context", "context2");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         verify(extSpider, times(0))
@@ -336,7 +336,7 @@ class SpiderJobUnitTest extends TestUtils {
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
         job.applyCustomParameter("url", specifiedUrl);
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         // Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
@@ -370,7 +370,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         // When
         job.applyCustomParameter("maxDuration", "1");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -442,7 +442,7 @@ class SpiderJobUnitTest extends TestUtils {
         nano.addHandler(testHandler);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         stopServer();
 
@@ -486,7 +486,7 @@ class SpiderJobUnitTest extends TestUtils {
         nano.addHandler(testHandler3);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         stopServer();
 
@@ -521,7 +521,7 @@ class SpiderJobUnitTest extends TestUtils {
         SpiderJob job = new SpiderJob();
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -560,7 +560,7 @@ class SpiderJobUnitTest extends TestUtils {
         nano.addHandler(testHandler);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         stopServer();
 

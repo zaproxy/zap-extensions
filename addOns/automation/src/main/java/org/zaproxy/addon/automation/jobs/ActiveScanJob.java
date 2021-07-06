@@ -133,8 +133,8 @@ public class ActiveScanJob extends AutomationJob {
     }
 
     @Override
-    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
-        Object policyDefn = jobData.get("policyDefinition");
+    public void verifyJobSpecificData(AutomationProgress progress) {
+        Object policyDefn = this.getJobData().get("policyDefinition");
         if (policyDefn instanceof LinkedHashMap<?, ?>) {
             LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefn;
             JobUtils.parseAttackStrength(
@@ -184,8 +184,7 @@ public class ActiveScanJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
         if (contextName != null) {
@@ -212,7 +211,7 @@ public class ActiveScanJob extends AutomationJob {
                 // Error already raised above
             }
         } else {
-            scanPolicy = this.getScanPolicy(jobData, progress);
+            scanPolicy = this.getScanPolicy(progress);
         }
         if (scanPolicy != null) {
             contextSpecificObjects.add(scanPolicy);
@@ -267,7 +266,8 @@ public class ActiveScanJob extends AutomationJob {
         return list;
     }
 
-    protected ScanPolicy getScanPolicy(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    protected ScanPolicy getScanPolicy(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return null;
         }

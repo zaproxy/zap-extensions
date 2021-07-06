@@ -210,7 +210,7 @@ class ActiveScanJobUnitTest {
 
         // When
         ActiveScanJob job = new ActiveScanJob();
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("activeScan")));
@@ -234,7 +234,7 @@ class ActiveScanJobUnitTest {
         // When
         ActiveScanJob job = new ActiveScanJob();
         job.applyCustomParameter("context", "Unknown");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -274,7 +274,7 @@ class ActiveScanJobUnitTest {
         // When
         ActiveScanJob job = new ActiveScanJob();
         job.applyCustomParameter("context", "context2");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         verify(extAScan, times(0))
@@ -322,7 +322,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.applyCustomParameter("maxScanDurationInMins", "1");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("activeScan")));
@@ -340,7 +340,7 @@ class ActiveScanJobUnitTest {
         ActiveScanJob job = new ActiveScanJob();
 
         // When
-        ScanPolicy policy = job.getScanPolicy(null, null);
+        ScanPolicy policy = job.getScanPolicy(null);
 
         // Then
         assertThat(policy, is(nullValue()));
@@ -352,7 +352,8 @@ class ActiveScanJobUnitTest {
         ActiveScanJob job = new ActiveScanJob();
 
         // When
-        ScanPolicy policy = job.getScanPolicy(new LinkedHashMap<>(), null);
+        job.setJobData(new LinkedHashMap<>());
+        ScanPolicy policy = job.getScanPolicy(null);
 
         // Then
         assertThat(policy, is(nullValue()));
@@ -367,7 +368,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", "Incorrect");
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -385,7 +387,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", new LinkedHashMap<>());
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -407,7 +410,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -430,7 +434,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -456,7 +461,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -492,7 +498,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        ScanPolicy policy = job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -532,8 +539,9 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.verifyJobSpecificData(data, progress);
-        job.getScanPolicy(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
+        job.getScanPolicy(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -563,7 +571,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -591,7 +600,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -619,7 +629,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -648,7 +659,8 @@ class ActiveScanJobUnitTest {
         data.put("policyDefinition", policyDefn);
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

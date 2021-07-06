@@ -21,7 +21,6 @@ package org.zaproxy.addon.graphql.automation;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.parosproxy.paros.CommandLine;
@@ -81,8 +80,7 @@ public class GraphQlJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         if (endpoint == null || endpoint.isEmpty()) {
             progress.info(Constant.messages.getString("graphql.info.emptyendurl"));

@@ -44,7 +44,8 @@ public class AddOnJob extends AutomationJob {
     public AddOnJob() {}
 
     @Override
-    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void verifyJobSpecificData(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
         Object installAddOnsObj = jobData.get("install");
         if (installAddOnsObj != null && !(installAddOnsObj instanceof ArrayList<?>)) {
             progress.error(
@@ -61,9 +62,9 @@ public class AddOnJob extends AutomationJob {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
+        LinkedHashMap<?, ?> jobData = this.getJobData();
         ExtensionAutoUpdate extAutoUpd =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
         if (updateAddOns) {

@@ -101,10 +101,8 @@ class OutputSummaryJobUnitTest {
         AutomationProgress realProgress = new AutomationProgress();
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-
-        job.verifyParameters(params, realProgress);
+        job.setJobData((LinkedHashMap<?, ?>) data);
+        job.verifyParameters(realProgress);
 
         // Then
         assertThat(realProgress.hasErrors(), is(equalTo(true)));
@@ -120,10 +118,8 @@ class OutputSummaryJobUnitTest {
         AutomationProgress realProgress = new AutomationProgress();
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-
-        job.verifyParameters(params, realProgress);
+        job.setJobData((LinkedHashMap<?, ?>) data);
+        job.verifyParameters(realProgress);
 
         // Then
         assertThat(realProgress.hasErrors(), is(equalTo(true)));
@@ -146,7 +142,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -182,7 +178,8 @@ class OutputSummaryJobUnitTest {
         data.put("rules", rulesDefn);
 
         // When
-        job.runJob(env, data, progress);
+        job.setJobData(data);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -218,7 +215,8 @@ class OutputSummaryJobUnitTest {
         data.put("rules", rulesDefn);
 
         // When
-        job.runJob(env, data, progress);
+        job.setJobData(data);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -254,7 +252,8 @@ class OutputSummaryJobUnitTest {
         data.put("rules", rulesDefn);
 
         // When
-        job.runJob(env, data, progress);
+        job.setJobData(data);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -309,7 +308,8 @@ class OutputSummaryJobUnitTest {
         data.put("rules", rulesDefn);
 
         // When
-        job.runJob(env, data, progress);
+        job.setJobData(data);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -330,7 +330,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -362,7 +362,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -394,7 +394,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -425,7 +425,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -465,7 +465,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -508,7 +508,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "SHORT");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(
@@ -545,7 +545,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "NONE");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(os.toString(), is(""));
@@ -576,7 +576,7 @@ class OutputSummaryJobUnitTest {
         given(psJobResData.getAllRuleData()).willReturn(list);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(os.toString(), is(""));
@@ -604,7 +604,7 @@ class OutputSummaryJobUnitTest {
         job.applyCustomParameter("format", "LONG");
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         String summary = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
 

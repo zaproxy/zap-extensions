@@ -97,8 +97,8 @@ public class PassiveScanConfigJob extends AutomationJob {
     }
 
     @Override
-    public void verifyJobSpecificData(LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
-        Object o = jobData.get("rules");
+    public void verifyJobSpecificData(AutomationProgress progress) {
+        Object o = this.getJobData().get("rules");
         if (o instanceof ArrayList<?>) {
             ArrayList<?> ruleData = (ArrayList<?>) o;
             for (Object rule : ruleData) {
@@ -139,10 +139,9 @@ public class PassiveScanConfigJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         // Configure any rules
-        Object o = jobData.get("rules");
+        Object o = this.getJobData().get("rules");
         ArrayList<?> ruleData = (ArrayList<?>) o;
         if (ruleData != null) {
             for (Object rule : ruleData) {

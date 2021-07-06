@@ -83,8 +83,7 @@ public class OutputSummaryJob extends AutomationJob {
      * internationalised as neither was the output of the packaged scans.
      */
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         if (Format.NONE.equals(format)) {
             return;
         }
@@ -94,6 +93,8 @@ public class OutputSummaryJob extends AutomationJob {
         int failNew = 0;
         int ignore = 0;
         int info = 0;
+
+        LinkedHashMap<?, ?> jobData = this.getJobData();
 
         if (jobData != null) {
             // Load rule data

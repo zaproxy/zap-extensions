@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Infrastructure changes to support planned GUI.
 
 ## [0.3.0] - 2021-06-28
 ### Added

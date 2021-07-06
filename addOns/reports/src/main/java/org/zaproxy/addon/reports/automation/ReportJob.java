@@ -56,8 +56,7 @@ public class ReportJob extends AutomationJob {
     private ExtensionReports extReport;
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ReportData reportData = new ReportData();
         Template template = getExtReport().getTemplateByConfigName(templateName);
 
@@ -80,6 +79,8 @@ public class ReportJob extends AutomationJob {
         reportData.setDescription(this.reportDesc);
         reportData.setContexts(env.getContexts());
         reportData.setSites(ExtensionReports.getSites());
+
+        LinkedHashMap<?, ?> jobData = this.getJobData();
 
         List<String> list = getJobDataList(jobData, "risks", progress);
         if (list.isEmpty()) {

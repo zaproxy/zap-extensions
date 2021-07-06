@@ -146,7 +146,7 @@ class GraphQlJobUnitTest {
         // The job should info even if other parameters are specified
         job.applyCustomParameter("schemaUrl", "http://example.com/schema.graphql");
         job.applyCustomParameter("schemaFile", "/home/zap/schema.graphql");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -164,7 +164,7 @@ class GraphQlJobUnitTest {
         // When
         GraphQlJob job = new GraphQlJob();
         job.applyCustomParameter("endpoint", "invalid url");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -184,7 +184,7 @@ class GraphQlJobUnitTest {
         GraphQlJob job = new GraphQlJob();
         job.applyCustomParameter("endpoint", "http://example.com/graphql");
         job.applyCustomParameter("schemaUrl", schemaUrl);
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -203,7 +203,7 @@ class GraphQlJobUnitTest {
         GraphQlJob job = new GraphQlJob();
         job.applyCustomParameter("endpoint", "http://example.com/graphql");
         job.applyCustomParameter("schemaFile", "Invalid file path.");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.openapi.automation;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
@@ -92,8 +91,7 @@ public class OpenApiJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         if (this.apiFile != null && this.apiFile.length() > 0) {
             File file = new File(apiFile);

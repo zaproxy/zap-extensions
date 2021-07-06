@@ -114,9 +114,12 @@ class AddOnJobUnitTest {
         Map map = new HashMap();
         map.put("updateAddOns", "false");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(job.isUpdateAddOns(), is(equalTo(false)));
@@ -134,9 +137,12 @@ class AddOnJobUnitTest {
         map.put("updateAddOns", "true");
         map.put("test", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -157,7 +163,8 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.verifyJobSpecificData(jobData, progress);
+        job.setJobData(jobData);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -179,7 +186,8 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.verifyJobSpecificData(jobData, progress);
+        job.setJobData(jobData);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -223,8 +231,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -256,8 +265,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -286,8 +296,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -317,8 +328,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -349,8 +361,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -380,8 +393,9 @@ class AddOnJobUnitTest {
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
 
         // When
-        job.applyParameters((LinkedHashMap<?, ?>) jobData.get("parameters"), progress);
-        job.runJob(env, jobData, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));

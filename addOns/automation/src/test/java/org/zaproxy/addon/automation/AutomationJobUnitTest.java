@@ -160,8 +160,12 @@ class AutomationJobUnitTest {
         map.put("booleanParam", booleanParamValue.toString());
         map.put("enumParam", enumParamValue.toString());
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        jobData.put("parameters", params);
+
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -198,8 +202,12 @@ class AutomationJobUnitTest {
         map.put("booleanParam", "${myBooleanParam}");
         map.put("enumParam", "${myEnumParam}");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        jobData.put("parameters", params);
+
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -460,9 +468,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("enumParam", enumParamValue.toString().toLowerCase(Locale.ROOT));
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -481,8 +492,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("unknownParam", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        jobData.put("parameters", params);
+
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -503,8 +518,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("stringParam", null);
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
+
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -520,9 +539,12 @@ class AutomationJobUnitTest {
         Map<String, String> map = new HashMap<>();
         map.put("unknownParam", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -547,9 +569,12 @@ class AutomationJobUnitTest {
         Map<String, String> map = new HashMap<>();
         map.put("customStringParam", stringParamValue);
         LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -573,9 +598,12 @@ class AutomationJobUnitTest {
         Map<String, String> map = new HashMap<>();
         map.put("customStringParam", stringParamValue);
         LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -593,8 +621,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("intParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
+
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -614,8 +646,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("integerParam", "Not an int");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
+
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -634,9 +670,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("boolParam", "Not a bool");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -655,9 +694,12 @@ class AutomationJobUnitTest {
         Map map = new HashMap();
         map.put("enumParam", "Invalid enum value");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.verifyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -667,14 +709,14 @@ class AutomationJobUnitTest {
     }
 
     @Test
-    void shouldIgnoreNullParams() {
+    void shouldIgnoreUnsetParams() {
         // Given
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        job.applyParameters(null, progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -691,8 +733,12 @@ class AutomationJobUnitTest {
 
         Map map = new HashMap();
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        jobData.put("parameters", params);
+
         // When
-        job.verifyOrApplyParameters(tpc, "getBadTestParam", params, progress, false);
+        job.setJobData(jobData);
+        job.verifyOrApplyParameters(tpc, "getBadTestParam", progress, false);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -935,10 +981,7 @@ class AutomationJobUnitTest {
         }
 
         @Override
-        public void runJob(
-                AutomationEnvironment env,
-                LinkedHashMap<?, ?> jobData,
-                AutomationProgress progress) {}
+        public void runJob(AutomationEnvironment env, AutomationProgress progress) {}
 
         @Override
         public String getType() {

@@ -32,7 +32,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -785,10 +784,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         }
 
         @Override
-        public void runJob(
-                AutomationEnvironment env,
-                LinkedHashMap<?, ?> jobData,
-                AutomationProgress progress) {
+        public void runJob(AutomationEnvironment env, AutomationProgress progress) {
             wasRun = true;
         }
 

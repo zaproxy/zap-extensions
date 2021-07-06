@@ -20,7 +20,6 @@
 package org.zaproxy.addon.automation.jobs;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +42,7 @@ public class PassiveScanWaitJob extends AutomationJob {
     public PassiveScanWaitJob() {}
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ExtensionPassiveScan extPScan = getExtPassiveScan();
 
         long endTime = Long.MAX_VALUE;
