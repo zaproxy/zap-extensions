@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correct dependency requirements.
+
 ## [31] - 2021-06-17
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correct dependency requirements.
+
 ## [34] - 2021-06-17
 ### Changed
 - Cache-control scan rule no longer checks if Pragma is set or not.
