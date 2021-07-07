@@ -23,7 +23,9 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -33,13 +35,54 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link Requestor}. */
 class RequestorUnitTest extends AbstractServerTest {
+
+    static Stream<Arguments> requestMethods() {
+        return Stream.of(
+                arguments(RequestMethod.GET, "GET"),
+                arguments(RequestMethod.POST, "POST"),
+                arguments(RequestMethod.PUT, "PUT"),
+                arguments(RequestMethod.OPTIONS, "OPTIONS"),
+                arguments(RequestMethod.HEAD, "HEAD"),
+                arguments(RequestMethod.DELETE, "DELETE"),
+                arguments(RequestMethod.PATCH, "PATCH"));
+    }
+
+    @ParameterizedTest(name = "Request method: {0}")
+    @MethodSource("requestMethods")
+    void shouldUseCorrectRequestMethod(RequestMethod method, String expectedMethod) {
+        // Given
+        String baseUrl = "http://localhost:" + nano.getListeningPort() + "/";
+        this.nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse("");
+                    }
+                });
+
+        List<String> requestedMethods = new ArrayList<>();
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        RequesterListener listener =
+                (msg, initiator) -> requestedMethods.add(msg.getRequestHeader().getMethod());
+        requestor.addListener(listener);
+        // When
+        List<String> errors = requestor.run(Arrays.asList(requestModel(method, baseUrl)));
+        // Then
+        assertThat(errors, is(empty()));
+        assertThat(requestedMethods, hasSize(1));
+        assertThat(requestedMethods.get(0), is(equalTo(expectedMethod)));
+    }
 
     @Test
     void shouldNotifyAllRedirectsFollowed() {
@@ -76,7 +119,8 @@ class RequestorUnitTest extends AbstractServerTest {
                                         + msg.getResponseBody().toString());
         requestor.addListener(listener);
         // When
-        List<String> errors = requestor.run(Arrays.asList(requestModel("GET", baseUrl)));
+        List<String> errors =
+                requestor.run(Arrays.asList(requestModel(RequestMethod.GET, baseUrl)));
         // Then
         assertThat(errors, is(empty()));
         assertThat(messages.get(0), is(equalTo("GET / Root")));
@@ -85,9 +129,9 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(messages.get(3), is(equalTo("GET /final Final")));
     }
 
-    private static RequestModel requestModel(String method, String url) {
+    private static RequestModel requestModel(RequestMethod method, String url) {
         RequestModel request = new RequestModel();
-        request.setMethod(RequestMethod.GET);
+        request.setMethod(method);
         request.setUrl(url);
         request.setHeaders(Collections.emptyList());
         request.setBody("");

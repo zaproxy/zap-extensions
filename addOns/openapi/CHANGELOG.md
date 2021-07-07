@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support multi-file schema format.
 - Generate Data Driven Nodes with schema import.
 
+### Fixed
+- Fix RequestMethod enum name for OPTIONS (Issue 6666)
+
 ## [19] - 2021-06-29
 ### Added
 - Added support for Multipart form-data (Issue 6418).
