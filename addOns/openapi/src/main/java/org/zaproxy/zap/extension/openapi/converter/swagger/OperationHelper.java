@@ -46,7 +46,7 @@ public class OperationHelper {
             operations.add(new OperationModel(url, path.getHead(), RequestMethod.HEAD));
         }
         if (path.getOptions() != null) {
-            operations.add(new OperationModel(url, path.getOptions(), RequestMethod.OPTION));
+            operations.add(new OperationModel(url, path.getOptions(), RequestMethod.OPTIONS));
         }
         if (path.getDelete() != null) {
             operations.add(new OperationModel(url, path.getDelete(), RequestMethod.DELETE));
