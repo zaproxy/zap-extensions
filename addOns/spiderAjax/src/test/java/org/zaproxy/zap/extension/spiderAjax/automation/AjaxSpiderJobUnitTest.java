@@ -193,7 +193,7 @@ class AjaxSpiderJobUnitTest {
         job.setInScopeOnly(false);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));
@@ -216,7 +216,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("url", "Not a url");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -235,7 +235,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("context", "Unknown");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -289,7 +289,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("context", "context2");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         verify(extAjax, times(0))
@@ -335,7 +335,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("url", specifiedUrl);
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         // TODO Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
@@ -365,7 +365,7 @@ class AjaxSpiderJobUnitTest {
 
         // When
         job.applyCustomParameter("maxDuration", "1");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));

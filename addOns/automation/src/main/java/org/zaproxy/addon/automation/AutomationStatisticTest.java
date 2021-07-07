@@ -20,12 +20,16 @@
 package org.zaproxy.addon.automation;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
 public class AutomationStatisticTest extends AbstractAutomationTest {
+
+    public static final String TEST_TYPE = "stats";
+
     public final String key;
     public final String name;
     public final Operator operator;
@@ -53,31 +57,63 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         }
     }
 
-    public AutomationStatisticTest(
-            String key, String name, String operator, long value, String onFail, String jobType)
-            throws IllegalArgumentException {
-        super(name, onFail);
+    public AutomationStatisticTest(LinkedHashMap<?, ?> testData, String jobType) {
+        super(testData, jobType);
+        String statistic = AutomationJob.safeCast(testData.get("statistic"), String.class);
+        String operator = AutomationJob.safeCast(testData.get("operator"), String.class);
+        Number number = AutomationJob.safeCast(testData.get("value"), Number.class);
+        String onFail = AutomationJob.safeCast(testData.get("onFail"), String.class);
+        if (statistic == null || operator == null || number == null || onFail == null) {
+            throw new IllegalArgumentException(
+                    Constant.messages.getString(
+                            "automation.tests.stats.missingOrInvalidProperties", getJobType()));
+        }
+        value = number.longValue();
+        String name = AutomationJob.safeCast(testData.get("name"), String.class);
+        if (name == null || name.isEmpty()) {
+            name = statistic + ' ' + operator + ' ' + value;
+        }
+        this.name = name;
+
         if (Arrays.stream(Operator.values())
                 .map(Operator::getSymbol)
                 .noneMatch(o -> o.equals(operator))) {
             throw new IllegalArgumentException(
                     Constant.messages.getString(
-                            "automation.tests.stats.invalidOperator", jobType, name, operator));
+                            "automation.tests.stats.invalidOperator",
+                            getJobType(),
+                            name,
+                            operator));
         }
-        this.key = key;
-        this.name = name;
+        this.key = statistic;
         this.operator =
                 Arrays.stream(Operator.values())
                         .filter(o -> o.getSymbol().equals(operator))
                         .findFirst()
                         .get();
-        this.value = value;
         this.onFail = onFail;
         this.jobType = jobType;
     }
 
+    private static LinkedHashMap<?, ?> paramsToData(
+            String key, String name, String operator, long value, String onFail) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("statistic", key);
+        map.put("name", name);
+        map.put("operator", operator);
+        map.put("value", value);
+        map.put("onFail", onFail);
+        return map;
+    }
+
+    public AutomationStatisticTest(
+            String key, String name, String operator, long value, String onFail, String jobType)
+            throws IllegalArgumentException {
+        this(paramsToData(key, name, operator, value, onFail), jobType);
+    }
+
     @Override
-    public boolean hasPassed() throws RuntimeException {
+    public boolean runTest() throws RuntimeException {
         InMemoryStats inMemoryStats =
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -106,14 +142,24 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     @Override
-    protected String getTestPassedMessage() {
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getTestType() {
+        return TEST_TYPE;
+    }
+
+    @Override
+    public String getTestPassedMessage() {
         String testPassedReason = stat + " " + operator.getSymbol() + " " + value;
         return Constant.messages.getString(
                 "automation.tests.stats.pass", jobType, name, testPassedReason);
     }
 
     @Override
-    protected String getTestFailedMessage() {
+    public String getTestFailedMessage() {
         String testFailedReason = stat + " " + getInverseOperator().getSymbol() + " " + value;
         return Constant.messages.getString(
                 "automation.tests.stats.fail", jobType, name, testFailedReason);

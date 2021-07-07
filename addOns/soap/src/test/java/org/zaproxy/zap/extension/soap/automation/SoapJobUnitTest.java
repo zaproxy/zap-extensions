@@ -113,7 +113,7 @@ class SoapJobUnitTest {
         SoapJob job = new SoapJob();
         // The following URL is invalid because it is not escaped.
         job.applyCustomParameter("wsdlUrl", "https://example.com/test file.wsdl");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -131,7 +131,7 @@ class SoapJobUnitTest {
         // When
         SoapJob job = new SoapJob();
         job.applyCustomParameter("wsdlFile", "Invalid file path.");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

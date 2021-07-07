@@ -4,9 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-### Added
-- Support multi-file schema format.
-- Generate Data Driven Nodes with schema import.
+### Changed
+- Maintenance changes.
 
 ### Fixed
 - Fix RequestMethod enum name for OPTIONS (Issue 6666)

@@ -115,7 +115,7 @@ class OpenApiJobUnitTest {
         // When
         OpenApiJob job = new OpenApiJob();
         job.applyCustomParameter("apiUrl", "Invalid URL.");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -132,7 +132,7 @@ class OpenApiJobUnitTest {
         // When
         OpenApiJob job = new OpenApiJob();
         job.applyCustomParameter("apiFile", "Invalid file path.");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

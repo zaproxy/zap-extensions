@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,10 +33,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -64,10 +65,15 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
 
+    public static final ImageIcon ICON =
+            new ImageIcon(ExtensionAutomation.class.getResource(RESOURCES_DIR + "robot.png"));
+
     private static final Logger LOG = LogManager.getLogger(ExtensionAutomation.class);
 
     private Map<String, AutomationJob> jobs = new HashMap<>();
     private SortedSet<AutomationJob> sortedJobs = new TreeSet<>();
+
+    private List<AutomationPlan> plans = new ArrayList<>();
 
     private CommandLineArgument[] arguments = new CommandLineArgument[4];
     private static final int ARG_AUTO_RUN_IDX = 0;
@@ -175,17 +181,53 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
     }
 
-    private AutomationProgress runPlan(LinkedHashMap<?, ?> envData, ArrayList<?> jobsData)
+    public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress)
             throws AutomationJobException {
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env =
-                new AutomationEnvironment(envData, progress, Model.getSingleton().getSession());
+        if (resetProgress) {
+            plan.resetProgress();
+        }
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
 
         if (env.isTimeToQuit()) {
             return progress;
         }
 
-        Map<AutomationJob, LinkedHashMap<?, ?>> jobsToRun = new LinkedHashMap<>();
+        List<AutomationJob> jobsToRun = plan.getJobs();
+
+        for (AutomationJob job : jobsToRun) {
+            job.applyParameters(progress);
+            progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
+            job.runJob(env, progress);
+            job.logTestsToProgress(progress);
+            progress.addRunJob(job);
+            if (env.isTimeToQuit()) {
+                break;
+            }
+            progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+        }
+
+        return progress;
+    }
+
+    public AutomationPlan loadPlan(File f)
+            throws AutomationJobException, FileNotFoundException, IOException {
+        try (FileInputStream is = new FileInputStream(f)) {
+            return this.loadPlan(is);
+        }
+    }
+
+    public AutomationPlan loadPlan(InputStream in) throws AutomationJobException {
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(in);
+        LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
+        ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env =
+                new AutomationEnvironment(envData, progress, Model.getSingleton().getSession());
+
+        List<AutomationJob> jobsToRun = new ArrayList<>();
 
         for (Object jobObj : jobsData) {
             if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
@@ -219,46 +261,32 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     continue;
                 }
                 job.setEnv(env);
-                job.verifyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
-                job.verifyJobSpecificData(jobData, progress);
-                jobsToRun.put(job, jobData);
+                job.setJobData(jobData);
+                job.verifyParameters(progress);
+                job.verifyJobSpecificData(progress);
+                jobsToRun.add(job);
+
+                job.addTests(jobData.get("tests"), progress);
             } else {
                 progress.error(
                         Constant.messages.getString("automation.error.job.unknown", jobType));
             }
         }
 
-        if (env.isTimeToQuit()) {
-            return progress;
-        }
-
-        for (Entry<AutomationJob, LinkedHashMap<?, ?>> jobInfo : jobsToRun.entrySet()) {
-            AutomationJob job = jobInfo.getKey();
-            LinkedHashMap<?, ?> jobData = jobInfo.getValue();
-            Object paramsObj = jobData.get("parameters");
-            job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
-            progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
-            job.addTests(jobData.get("tests"), progress);
-            job.runJob(env, jobData, progress);
-            progress.addRunJob(job);
-            job.logTestsToProgress(progress);
-            if (env.isTimeToQuit()) {
-                break;
-            }
-            progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
-        }
-
-        return progress;
+        return new AutomationPlan(env, jobsToRun, progress);
     }
 
-    public AutomationProgress runAutomation(InputStream in) throws AutomationJobException {
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> data = yaml.load(in);
-        LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
-        ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
-        return runPlan(envData, jobsData);
+    public void registerPlan(AutomationPlan plan) {
+        this.plans.add(plan);
     }
 
+    /**
+     * Run the automation plan define by the given file, intended only to be used from the command
+     * line
+     *
+     * @param filename the name of the file
+     * @return the automation progress
+     */
     protected AutomationProgress runAutomationFile(String filename) {
         File f = new File(filename);
         if (!f.exists() || !f.canRead()) {
@@ -267,7 +295,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return null;
         }
         try (FileInputStream is = new FileInputStream(f)) {
-            AutomationProgress progress = runAutomation(is);
+            AutomationPlan plan = this.loadPlan(is);
+            this.runPlan(plan, false);
+            AutomationProgress progress = plan.getProgress();
 
             if (progress.hasErrors()) {
                 CommandLine.info(Constant.messages.getString("automation.out.title.fail"));

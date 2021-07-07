@@ -20,7 +20,6 @@
 package org.zaproxy.addon.automation.jobs;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -59,8 +58,7 @@ public class ParamsJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {}
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {}
 
     @Override
     public String getType() {

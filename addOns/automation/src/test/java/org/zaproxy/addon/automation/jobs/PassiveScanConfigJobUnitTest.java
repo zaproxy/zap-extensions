@@ -156,9 +156,8 @@ class PassiveScanConfigJobUnitTest {
         psp.load(new ZapXmlConfiguration());
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -186,9 +185,8 @@ class PassiveScanConfigJobUnitTest {
         psp.load(new ZapXmlConfiguration());
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -224,7 +222,8 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.runJob(null, data, progress);
+        job.setJobData(data);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -257,7 +256,8 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -287,7 +287,8 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.verifyJobSpecificData(data, progress);
+        job.setJobData(data);
+        job.verifyJobSpecificData(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -333,10 +334,9 @@ class PassiveScanConfigJobUnitTest {
         given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
-        job.runJob(null, params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.applyParameters(progress);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -364,10 +364,9 @@ class PassiveScanConfigJobUnitTest {
         given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
-        job.runJob(null, params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.applyParameters(progress);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -395,10 +394,9 @@ class PassiveScanConfigJobUnitTest {
         given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
-        job.runJob(null, params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.applyParameters(progress);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
