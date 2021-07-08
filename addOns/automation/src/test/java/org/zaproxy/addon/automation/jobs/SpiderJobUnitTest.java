@@ -411,7 +411,7 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getErrors().get(0), is("!automation.tests.fail!"));
     }
 
     @Test

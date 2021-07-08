@@ -21,15 +21,25 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 
 public class ActiveScanJobResultData extends JobResultData {
 
+    private static final Logger LOG = LogManager.getLogger(ActiveScanJobResultData.class);
+    public static final String KEY = "activeScanData";
+
     private Map<Integer, RuleData> ruleDataMap = new HashMap<>();
+    private Map<Integer, Alert> alertDataMap = new HashMap<>();
 
     public ActiveScanJobResultData(String jobName, ActiveScan activeScan) {
         super(jobName);
@@ -47,6 +57,15 @@ public class ActiveScanJobResultData extends JobResultData {
                 data.setThreshold(plugin.getAlertThreshold());
             }
         }
+        List<Integer> alertIds = activeScan.getAlertsIds();
+        for (int id : alertIds) {
+            try {
+                alertDataMap.put(
+                        id, new Alert(Model.getSingleton().getDb().getTableAlert().read(id)));
+            } catch (DatabaseException e) {
+                LOG.error("Could not read alert with id {} from the database : {}", id, e);
+            }
+        }
     }
 
     public RuleData getRuleData(int ruleId) {
@@ -58,8 +77,18 @@ public class ActiveScanJobResultData extends JobResultData {
     }
 
     @Override
+    public Alert getAlertData(int alertId) {
+        return alertDataMap.get(alertId);
+    }
+
+    @Override
+    public Collection<Alert> getAllAlertData() {
+        return alertDataMap.values();
+    }
+
+    @Override
     public String getKey() {
-        return "activeScanData";
+        return KEY;
     }
 
     public static class RuleData {

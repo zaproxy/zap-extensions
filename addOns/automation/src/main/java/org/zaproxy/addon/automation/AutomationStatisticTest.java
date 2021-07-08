@@ -35,7 +35,6 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     public final Operator operator;
     public final long value;
     public final String onFail;
-    public final String jobType;
     private long stat;
 
     enum Operator {
@@ -66,7 +65,9 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         if (statistic == null || operator == null || number == null || onFail == null) {
             throw new IllegalArgumentException(
                     Constant.messages.getString(
-                            "automation.tests.stats.missingOrInvalidProperties", getJobType()));
+                            "automation.tests.missingOrInvalidProperties",
+                            getJobType(),
+                            getTestType()));
         }
         value = number.longValue();
         String name = AutomationJob.safeCast(testData.get("name"), String.class);
@@ -92,7 +93,6 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
                         .findFirst()
                         .get();
         this.onFail = onFail;
-        this.jobType = jobType;
     }
 
     private static LinkedHashMap<?, ?> paramsToData(
@@ -113,7 +113,7 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     @Override
-    public boolean runTest() throws RuntimeException {
+    public boolean runTest(AutomationProgress progress) throws RuntimeException {
         InMemoryStats inMemoryStats =
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -155,14 +155,14 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     public String getTestPassedMessage() {
         String testPassedReason = stat + " " + operator.getSymbol() + " " + value;
         return Constant.messages.getString(
-                "automation.tests.stats.pass", jobType, name, testPassedReason);
+                "automation.tests.pass", getJobType(), getTestType(), name, testPassedReason);
     }
 
     @Override
     public String getTestFailedMessage() {
         String testFailedReason = stat + " " + getInverseOperator().getSymbol() + " " + value;
         return Constant.messages.getString(
-                "automation.tests.stats.fail", jobType, name, testFailedReason);
+                "automation.tests.fail", getJobType(), getTestType(), name, testFailedReason);
     }
 
     private Operator getInverseOperator() {

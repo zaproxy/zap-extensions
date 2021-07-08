@@ -47,6 +47,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.I18N;
@@ -223,6 +225,12 @@ class AutomationJobUnitTest {
     @Test
     void shouldAddStatisticsTests() {
         // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        when(extensionLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
+        InMemoryStats inMemoryStats = mock(InMemoryStats.class);
+        when(extStats.getInMemoryStats()).thenReturn(inMemoryStats);
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
@@ -295,7 +303,7 @@ class AutomationJobUnitTest {
                 is(2L));
         assertThat(progress.hasWarnings(), is(true));
         assertThat(progress.getWarnings().size(), is(1));
-        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.fail!"));
         assertThat(progress.hasErrors(), is(false));
     }
 
@@ -416,6 +424,7 @@ class AutomationJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getTests().size(), is(equalTo(1)));
         AutomationStatisticTest addedTest = (AutomationStatisticTest) job.getTests().get(0);
         assertThat(addedTest.name, is(equalTo(name)));
         assertThat(addedTest.key, is(equalTo(statistic)));
@@ -455,6 +464,296 @@ class AutomationJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.tests.missingOrInvalidProperties!")));
+    }
+
+    @Test
+    void shouldAddAlertTests() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionAlert extAlert = mock(ExtensionAlert.class);
+        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return ActiveScanJob.JOB_NAME;
+                    }
+                };
+
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String type = "alert";
+        Integer scanRuleId = 100;
+        String onFail = "warn";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("scanRuleId", scanRuleId);
+        test.put("onFail", onFail);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        AutomationAlertTest addedTest = (AutomationAlertTest) job.getTests().get(0);
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(addedTest.name, is(equalTo(name)));
+        assertThat(addedTest.scanRuleId, is(equalTo(100)));
+        assertThat(addedTest.onFail, is(equalTo(onFail)));
+    }
+
+    @Test
+    void shouldWarnIfInvalidJobTypeForAlertTest() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionAlert extAlert = mock(ExtensionAlert.class);
+        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String type = "alert";
+        Integer scanRuleId = 100;
+        String onFail = "warn";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("scanRuleId", scanRuleId);
+        test.put("onFail", onFail);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(job.getTests().size(), is(equalTo(0)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.tests.alert.invalidJobType!")));
+    }
+
+    @Test
+    void shouldAddMultipleTestsForSameScanRuleId() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionAlert extAlert = mock(ExtensionAlert.class);
+        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return ActiveScanJob.JOB_NAME;
+                    }
+                };
+
+        AutomationProgress progress = new AutomationProgress();
+        String type = "alert";
+        Integer scanRuleId = 100;
+
+        String nameOne = "example nameOne";
+        String onFailOne = "warn";
+
+        LinkedHashMap<String, Object> testOne = new LinkedHashMap<>();
+        testOne.put("name", nameOne);
+        testOne.put("type", type);
+        testOne.put("scanRuleId", scanRuleId);
+        testOne.put("onFail", onFailOne);
+
+        String nameTwo = "example nameTwo";
+        String onFailTwo = "error";
+
+        LinkedHashMap<String, Object> testTwo = new LinkedHashMap<>();
+        testTwo.put("name", nameTwo);
+        testTwo.put("type", type);
+        testTwo.put("scanRuleId", scanRuleId);
+        testTwo.put("onFail", onFailTwo);
+
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(testOne);
+        tests.add(testTwo);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        AutomationAlertTest addedTestOne = (AutomationAlertTest) job.getTests().get(0);
+        AutomationAlertTest addedTestTwo = (AutomationAlertTest) job.getTests().get(1);
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(addedTestOne.name, is(equalTo(nameOne)));
+        assertThat(addedTestOne.scanRuleId, is(equalTo(100)));
+        assertThat(addedTestOne.onFail, is(equalTo(onFailOne)));
+        assertThat(addedTestTwo.name, is(equalTo(nameTwo)));
+        assertThat(addedTestTwo.scanRuleId, is(equalTo(100)));
+        assertThat(addedTestTwo.onFail, is(equalTo(onFailTwo)));
+    }
+
+    @Test
+    void shouldWarnIfNullExtensionAlert() {
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return ActiveScanJob.JOB_NAME;
+                    }
+                };
+
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String type = "alert";
+        Integer scanRuleId = 100;
+        String onFail = "warn";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("scanRuleId", scanRuleId);
+        test.put("onFail", onFail);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(job.getTests().size(), is(equalTo(0)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.tests.alert.nullExtension!")));
+    }
+
+    @Test
+    void shouldAllowToOverrideAlertTests() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionAlert extAlert = mock(ExtensionAlert.class);
+        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationProgress progress = new AutomationProgress();
+        String type = "alert";
+
+        String name = "example name";
+        Integer scanRuleId = 100;
+        String onFail = "warn";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("scanRuleId", scanRuleId);
+        test.put("onFail", onFail);
+
+        String filteredName = "filtered name";
+        Integer filteredScanRuleId = 200;
+        String filteredOnFail = "error";
+
+        LinkedHashMap<String, Object> filteredTest = new LinkedHashMap<>();
+        filteredTest.put("name", filteredName);
+        filteredTest.put("type", type);
+        filteredTest.put("scanRuleId", filteredScanRuleId);
+        filteredTest.put("onFail", filteredOnFail);
+
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+        tests.add(filteredTest);
+
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return ActiveScanJob.JOB_NAME;
+                    }
+
+                    @Override
+                    public void addTest(AbstractAutomationTest test) {
+                        AutomationAlertTest alertTest = (AutomationAlertTest) test;
+                        if (filteredScanRuleId.equals(alertTest.scanRuleId)) {
+                            return;
+                        }
+                        super.addTest(alertTest);
+                    }
+                };
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(job.getTests().size(), is(equalTo(1)));
+        AutomationAlertTest addedTest = (AutomationAlertTest) job.getTests().get(0);
+        assertThat(addedTest.name, is(equalTo(name)));
+        assertThat(addedTest.scanRuleId, is(equalTo(scanRuleId)));
+        assertThat(addedTest.onFail, is(equalTo(onFail)));
+    }
+
+    @Test
+    void shouldSkipInvalidAlertTest() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionAlert extAlert = mock(ExtensionAlert.class);
+        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
+
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job =
+                new AutomationJobImpl(tpc) {
+                    @Override
+                    public String getType() {
+                        return ActiveScanJob.JOB_NAME;
+                    }
+                };
+
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String type = "alert";
+        Integer scanRuleId = 100;
+        String onFail = "warn";
+
+        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
+        test.put("name", name);
+        test.put("type", type);
+        test.put("onFail", onFail);
+        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
+        tests.add(test);
+
+        // When
+        job.addTests(tests, progress);
+
+        // Then
+        assertThat(job.getTests().size(), is(equalTo(0)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.tests.missingOrInvalidProperties!")));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

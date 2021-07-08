@@ -92,7 +92,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(test.getJobType(), is(type));
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.stats.pass!"));
+        assertThat(progress.getInfos().get(0), is("!automation.tests.pass!"));
         assertThat(test.hasRun(), is(true));
         assertThat(test.hasPassed(), is(true));
     }
@@ -127,7 +127,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(false));
         assertThat(progress.hasWarnings(), is(true));
         assertThat(progress.getWarnings().size(), is(1));
-        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.fail!"));
         assertThat(test.hasRun(), is(true));
         assertThat(test.hasPassed(), is(false));
     }
@@ -175,7 +175,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(false));
         assertThat(progress.hasWarnings(), is(true));
         assertThat(progress.getWarnings().size(), is(1));
-        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.fail!"));
     }
 
     @Test
@@ -198,7 +198,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
-        assertThat(progress.getErrors().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getErrors().get(0), is("!automation.tests.fail!"));
     }
 
     @Test
@@ -221,6 +221,6 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
         assertThat(progress.getInfos().size(), is(1));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getInfos().get(0), is("!automation.tests.fail!"));
     }
 }
