@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.automation;
 
+import java.util.Collection;
+import org.parosproxy.paros.core.scanner.Alert;
+
 public abstract class JobResultData {
 
     private String jobName;
@@ -32,4 +35,12 @@ public abstract class JobResultData {
     }
 
     public abstract String getKey();
+
+    public Alert getAlertData(int alertId) {
+        return null;
+    }
+
+    public Collection<Alert> getAllAlertData() {
+        return null;
+    }
 }

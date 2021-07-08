@@ -57,7 +57,7 @@ public abstract class AbstractAutomationTest {
     }
 
     public void logToProgress(AutomationProgress progress) throws RuntimeException {
-        this.passed = runTest();
+        this.passed = runTest(progress);
         if (passed) {
             progress.info(getTestPassedMessage());
             return;
@@ -97,7 +97,7 @@ public abstract class AbstractAutomationTest {
 
     public abstract String getTestType();
 
-    public abstract boolean runTest();
+    public abstract boolean runTest(AutomationProgress progress);
 
     public abstract String getTestPassedMessage();
 

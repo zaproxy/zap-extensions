@@ -338,15 +338,25 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                     progress.warn(e.getMessage());
                     continue;
                 }
+                addTest(test);
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.tests.add", getType(), testType, test.getName()));
+            } else if ("alert".equals(testType)) {
+                try {
+                    test = new AutomationAlertTest(testData, getType());
+                } catch (IllegalArgumentException e) {
+                    progress.warn(e.getMessage());
+                    continue;
+                }
+                addTest(test);
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.tests.add", getType(), testType, test.getName()));
             } else {
                 progress.warn(
                         Constant.messages.getString("automation.tests.invalidType", testType));
-                continue;
             }
-            addTest(test);
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.tests.stats.add", getType(), test.getName()));
         }
     }
 
