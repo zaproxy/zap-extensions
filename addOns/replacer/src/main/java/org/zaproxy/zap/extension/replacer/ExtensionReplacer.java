@@ -89,7 +89,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         return optionsReplacerPanel;
     }
 
-    protected ReplacerParam getParams() {
+    public ReplacerParam getParams() {
         if (params == null) {
             params = new ReplacerParam();
         }

@@ -23,7 +23,7 @@ import java.util.List;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.utils.Enableable;
 
-class ReplacerParamRule extends Enableable {
+public class ReplacerParamRule extends Enableable {
 
     public enum MatchType {
         REQ_HEADER,
