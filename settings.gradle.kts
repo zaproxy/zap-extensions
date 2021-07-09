@@ -76,6 +76,7 @@ var addOns = listOf(
     "spiderAjax",
     "sqliplugin",
     "sse",
+    "sstiscanner",
     "svndigger",
     "tips",
     "tlsdebug",
