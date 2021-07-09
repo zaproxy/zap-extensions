@@ -18,7 +18,6 @@
 
 package org.zaproxy.zap.extension.codedx;
 
-import org.parosproxy.paros.extension.report.ReportLastScan;
 import org.parosproxy.paros.model.SiteNode;
 
 public class ReportLastScanHttp extends ReportLastScan {
