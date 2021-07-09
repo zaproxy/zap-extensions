@@ -67,8 +67,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
         "/../../../../../../../../../../../../../../../../Windows/system.ini",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
-        // "../../../../../../../../../../../../../../../../Windows/system.ini%00.html",
-        // "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini%00.html",
+        "../../../../../../../../../../../../../../../../Windows/system.ini%00.html",
+        "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini%00.html",
         "Windows/system.ini",
         "Windows\\system.ini",
         // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
@@ -115,7 +115,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         // Path traversal intended to obtain the filesystem's root
         "../../../../../../../../../../../../../../../../etc/passwd",
         "/../../../../../../../../../../../../../../../../etc/passwd",
-        // "../../../../../../../../../../../../../../../../etc/passwd%00.html",
+        "../../../../../../../../../../../../../../../../etc/passwd%00.html",
         "etc/passwd",
         // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
         // file://host/path
