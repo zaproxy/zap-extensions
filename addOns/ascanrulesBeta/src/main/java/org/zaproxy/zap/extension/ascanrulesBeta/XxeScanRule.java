@@ -22,14 +22,18 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
+import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.callback.ExtensionCallback;
@@ -102,6 +106,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
 
     // Logger instance
     private static final Logger log = LogManager.getLogger(XxeScanRule.class);
+    private VariantMultipartFormParameters multipartVariant;
+    private boolean alertRaised = false;
 
     @Override
     public int getId() {
@@ -168,76 +174,107 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         return Alert.RISK_HIGH;
     }
 
-    /**
-     * Scan rule to check for XXE vulnerabilities. It checks both for local and remote using the ZAP
-     * API and also a new model based on parameter substitution
-     */
     @Override
     public void scan() {
         // Prepare the message
         HttpMessage msg = getBaseMsg();
         String contentType = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
-        String payload = null;
-
-        // first check if it's an XML otherwise it's useless...
+        // Check if it's an XML or multipart request otherwise it's useless...
         if ((contentType != null) && (contentType.contains("xml"))) {
+            scan(null);
+        } else if ((contentType != null) && (contentType.contains("multipart"))) {
+            multipartVariant = new VariantMultipartFormParameters();
+            multipartVariant.setMessage(getNewMsg());
+            List<String> xmlFileNames =
+                    multipartVariant.getParamList().stream()
+                            .filter(
+                                    p ->
+                                            (p.getType()
+                                                            == NameValuePair
+                                                                    .TYPE_MULTIPART_DATA_FILE_CONTENTTYPE
+                                                    && p.getValue().toLowerCase().contains("xml")))
+                            .map(p -> p.getName())
+                            .collect(Collectors.toList());
 
-            // Check #1 : XXE Remote File Inclusion Attack
-            // ------------------------------------------------------
-            // This attack is described in
-            // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
-            // using an external bouncing site, in this case we use
-            // the ZAP API as a server for the vulnerability check
-            // using a challenge/response model based on a random string
-
-            // Skip XXE Remote File Inclusion Attack when callback extension is not available.
-            if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
-                String challenge = randomString(CHALLENGE_LENGTH);
-
-                try {
-                    // Prepare the attack message
-                    msg = getNewMsg();
-                    payload = getCallbackAttackPayload(challenge);
-                    msg.setRequestBody(payload);
-
-                    // Register the callback for future actions
-                    callbackImplementor.registerCallback(challenge, this, msg);
-
-                    // All we need has been done...
-                    sendAndReceive(msg);
-
-                } catch (IOException ex) {
-                    // Do not try to internationalise this.. we need an error message in any event..
-                    // if it's in English, it's still better than not having it at all.
-                    log.warn(
-                            "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
-                            payload,
-                            ex);
+            for (NameValuePair originalPair : multipartVariant.getParamList()) {
+                if (xmlFileNames.contains(originalPair.getName())
+                        && (originalPair.getType()
+                                == NameValuePair.TYPE_MULTIPART_DATA_FILE_PARAM)) {
+                    scan(originalPair);
+                }
+                if (alertRaised) {
+                    break;
                 }
             }
-
-            // Check if we've to do only basic analysis (only remote should be done)...
-            if (this.getAttackStrength() == AttackStrength.LOW) {
-                return;
-            }
-
-            // Check #2 : XXE Local File Reflection Attack
-            localFileReflectionAttack(getNewMsg());
-
-            // Check if we've to do only medium sized analysis
-            // (only remote and reflected will be done)
-            if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-                return;
-            }
-
-            // Exit if the scan has been stopped
-            if (isStop()) {
-                return;
-            }
-
-            // Check #3 : XXE Local File Inclusion Attack
-            localFileInclusionAttack(getNewMsg());
         }
+        return;
+    }
+
+    /**
+     * Scan rule to check for XXE vulnerabilities. It checks both for local and remote using the ZAP
+     * API and also a new model based on parameter substitution
+     */
+    public void scan(NameValuePair originalPair) {
+        String payload = null;
+        // Check #1 : XXE Remote File Inclusion Attack
+        // ------------------------------------------------------
+        // This attack is described in
+        // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+        // using an external bouncing site, in this case we use
+        // the ZAP API as a server for the vulnerability check
+        // using a challenge/response model based on a random string
+
+        // Skip XXE Remote File Inclusion Attack when callback extension is not available.
+        if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
+            String challenge = randomString(CHALLENGE_LENGTH);
+            try {
+                // Prepare the attack message
+                HttpMessage msg = getNewMsg();
+                payload = getCallbackAttackPayload(challenge);
+
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
+
+                // Register the callback for future actions
+                callbackImplementor.registerCallback(challenge, this, msg);
+
+                // All we need has been done...
+                sendAndReceive(msg);
+            } catch (IOException ex) {
+                // Do not try to internationalise this.. we need an error message in any event..
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                        payload,
+                        ex);
+            }
+        }
+
+        // Check if we've to do only basic analysis (only remote should be done)...
+        if (this.getAttackStrength() == AttackStrength.LOW) {
+            return;
+        }
+
+        // Check #2 : XXE Local File Reflection Attack
+        localFileReflectionAttack(originalPair);
+
+        // Check if we've to do only medium sized analysis
+        // (only remote and reflected will be done)
+        if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+            return;
+        }
+
+        // Exit if the scan has been stopped
+        if (isStop()) {
+            return;
+        }
+
+        // Check #3 : XXE Local File Inclusion Attack
+        localFileInclusionAttack(originalPair);
     }
 
     /**
@@ -248,37 +285,52 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
      * the process is repeated by replacing one attribute at a time, for a fixed number of
      * attributes depending on the strength of the rule.
      *
-     * @param msg new HttpMessage with the same request as the base. This is used to build the
-     *     attack payload.
+     * @param originalPair The NameValuePair corresponding to the XML file content in case of a
+     *     multipart request, null otherwise.
      */
-    private void localFileReflectionAttack(HttpMessage msg) {
-        // First replace the values in all the Elements by the Attack Entity
-        String originalRequestBody = msg.getRequestBody().toString();
-        String requestBody = createLfrPayload(originalRequestBody);
-        if (localFileReflectionTest(msg, requestBody)) {
-            return;
-        }
-        // Now if no issue is found yet, then we replace the values one at a time. Do this for a
-        // fixed number of Elements, depending on the strength at which the rule is used.
-
-        // Remove original xml header
-        Matcher headerMatcher = xmlHeaderPattern.matcher(originalRequestBody);
-        String headerlessRequestBody = headerMatcher.replaceAll("");
-        int maxValuesChanged = 0;
-
-        if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
-        } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
-        } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            maxValuesChanged = Integer.MAX_VALUE;
-        }
-        Matcher tagMatcher = tagPattern.matcher(headerlessRequestBody);
-        for (int tagIdx = 1; (tagIdx <= maxValuesChanged) && tagMatcher.find(); tagIdx++) {
-            requestBody = createTagSpecificLfrPayload(headerlessRequestBody, tagMatcher);
-            if (localFileReflectionTest(msg, requestBody)) {
+    private void localFileReflectionAttack(NameValuePair originalPair) {
+        String payload = null;
+        HttpMessage msg = getNewMsg();
+        try {
+            String originalXml;
+            // First replace the values in all the Elements by the Attack Entity
+            if (originalPair != null) {
+                originalXml = originalPair.getValue();
+            } else {
+                originalXml = msg.getRequestBody().toString();
+            }
+            String requestXml = createLfrPayload(originalXml);
+            if (localFileReflectionTest(requestXml, payload, originalPair)) {
                 return;
             }
+
+            // Now if no issue is found yet, then we replace the values one at a time. Do this for a
+            // fixed number of Elements, depending on the strength at which the rule is used.
+
+            // Remove original xml header
+            Matcher headerMatcher = xmlHeaderPattern.matcher(originalXml);
+            String headerlessXml = headerMatcher.replaceAll("");
+            int maxValuesChanged = 0;
+
+            if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+                maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
+            } else if (this.getAttackStrength() == AttackStrength.HIGH) {
+                maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
+            } else if (this.getAttackStrength() == AttackStrength.INSANE) {
+                maxValuesChanged = Integer.MAX_VALUE;
+            }
+            Matcher tagMatcher = tagPattern.matcher(headerlessXml);
+            for (int tagIdx = 1; (tagIdx <= maxValuesChanged) && tagMatcher.find(); tagIdx++) {
+                requestXml = createTagSpecificLfrPayload(headerlessXml, tagMatcher);
+                if (localFileReflectionTest(requestXml, payload, originalPair)) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            log.warn(
+                    "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
+                    payload,
+                    ex);
         }
     }
 
@@ -293,16 +345,22 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
      * execute the content and then returns the content almost untouched (maybe because it applies
      * an XSLT or query it using XPath and give back the result)
      *
-     * @param msg new HttpMessage with the same request as the base. This is used to build the
-     *     attack payload.
+     * @param originalPair The NameValuePair corresponding to the XML file content in case of a
+     *     multipart request, null otherwise.
      */
-    private void localFileInclusionAttack(HttpMessage msg) {
+    private void localFileInclusionAttack(NameValuePair originalPair) {
         String payload = null;
         try {
             for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+                HttpMessage msg = getNewMsg();
                 String localFile = LOCAL_FILE_TARGETS[idx];
                 payload = MessageFormat.format(ATTACK_HEADER + ATTACK_BODY, localFile);
-                msg.setRequestBody(payload);
+                if (originalPair != null) {
+                    multipartVariant.setParameter(
+                            msg, originalPair, originalPair.getName(), payload);
+                } else {
+                    msg.setRequestBody(payload);
+                }
                 sendAndReceive(msg);
                 String response = msg.getResponseBody().toString();
                 Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
@@ -313,6 +371,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                             .setEvidence(matcher.group())
                             .setMessage(msg)
                             .raise();
+                    alertRaised = true;
                 }
                 if (isStop()) {
                     return;
@@ -337,7 +396,6 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     @Override
     public void notifyCallback(String challenge, HttpMessage targetMessage) {
         if (challenge != null) {
-
             String evidence = callbackImplementor.getCallbackUrl(challenge);
 
             newAlert()
@@ -346,6 +404,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     .setEvidence(evidence)
                     .setMessage(targetMessage)
                     .raise();
+            alertRaised = true;
         }
     }
 
@@ -355,7 +414,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     }
 
     /**
-     * Get a randomly built string with exactly lenght chars
+     * Get a randomly built string with exactly length chars
      *
      * @param length the number of chars of this string
      * @return a string element containing exactly "lenght" characters
@@ -408,20 +467,18 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         return sb.toString();
     }
 
-    private boolean localFileReflectionTest(HttpMessage msg, String requestBody) {
+    private boolean localFileReflectionTest(
+            String requestBody, String payload, NameValuePair originalPair) throws IOException {
         for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+            HttpMessage msg = getNewMsg();
             String localFile = LOCAL_FILE_TARGETS[idx];
-            String payload = MessageFormat.format(requestBody, localFile);
-            msg.setRequestBody(payload);
-            try {
-                sendAndReceive(msg);
-            } catch (IOException ex) {
-                log.warn(
-                        "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
-                        payload,
-                        ex);
-                return true;
+            payload = MessageFormat.format(requestBody, localFile);
+            if (originalPair != null) {
+                multipartVariant.setParameter(msg, originalPair, originalPair.getName(), payload);
+            } else {
+                msg.setRequestBody(payload);
             }
+            sendAndReceive(msg);
             String response = msg.getResponseBody().toString();
             Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
             if (matcher.find()) {
@@ -431,6 +488,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                         .setEvidence(matcher.group())
                         .setMessage(msg)
                         .raise();
+                alertRaised = true;
                 return true;
             }
             if (isStop()) {

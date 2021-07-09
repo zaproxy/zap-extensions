@@ -33,10 +33,12 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -194,27 +196,41 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(countMessagesSent, equalTo(0));
     }
 
+    private static Stream<Arguments> responseStatusAndContentTypeData() {
+        return Stream.of(
+                Arguments.of(NanoHTTPD.Response.Status.valueOf("OK"), "application/xml"),
+                Arguments.of(NanoHTTPD.Response.Status.valueOf("BAD_REQUEST"), "application/xml"),
+                Arguments.of(NanoHTTPD.Response.Status.valueOf("OK"), "multipart/form-data"),
+                Arguments.of(
+                        NanoHTTPD.Response.Status.valueOf("BAD_REQUEST"), "multipart/form-data"));
+    }
+
     @ParameterizedTest
-    @EnumSource(
-            value = NanoHTTPD.Response.Status.class,
-            names = {"OK", "BAD_REQUEST"})
-    void shouldAlertWhenLocalFileReflectedInResponse(NanoHTTPD.Response.Status status)
+    @MethodSource("responseStatusAndContentTypeData")
+    void shouldAlertWhenLocalFileReflectedInResponse(
+            NanoHTTPD.Response.Status status, String contentType)
             throws HttpMalformedHeaderException {
         // Given
         String test = "/test";
         String responseBody = "<foo>root:*:0:0:System Administrator:/var/root:/bin/sh</foo>";
         this.nano.addHandler(createNanoHandler(test, status, responseBody));
-        HttpMessage msg = getXmlPostMessage(test);
+        HttpMessage msg;
+        if (contentType.contains("xml")) {
+            msg = getXmlPostMessage(test);
+        } else {
+            msg = getXmlMultipartMessage(test);
+        }
         rule.init(msg, parent);
         // When
         rule.scan();
         // Then
-        String localFileInclusionAttackPayload =
+        String localFileReflectionAttackPayload =
                 MessageFormat.format(XxeScanRule.ATTACK_HEADER, "file:///etc/passwd")
                         + "<comment><text>&zapxxe;</text></comment>";
+        assertThat(alertsRaised.size(), equalTo(1));
         List<Alert> alertList =
                 alertsRaised.stream()
-                        .filter(alert -> alert.getAttack().equals(localFileInclusionAttackPayload))
+                        .filter(alert -> alert.getAttack().equals(localFileReflectionAttackPayload))
                         .collect(Collectors.toList());
         assertThat(alertList.size(), equalTo(1));
         Alert alert = alertList.get(0);
@@ -224,16 +240,20 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @ParameterizedTest
-    @EnumSource(
-            value = NanoHTTPD.Response.Status.class,
-            names = {"OK", "BAD_REQUEST"})
-    void shouldAlertWhenLocalFileIncludedInResponse(NanoHTTPD.Response.Status status)
+    @MethodSource("responseStatusAndContentTypeData")
+    void shouldAlertWhenLocalFileIncludedInResponse(
+            NanoHTTPD.Response.Status status, String contentType)
             throws HttpMalformedHeaderException {
         // Given
         String test = "/test";
         String responseBody = "[drivers]\n" + "wave=mmdrv.dll";
         this.nano.addHandler(createNanoHandler(test, status, responseBody));
-        HttpMessage msg = getXmlPostMessage(test);
+        HttpMessage msg;
+        if (contentType.contains("xml")) {
+            msg = getXmlPostMessage(test);
+        } else {
+            msg = getXmlMultipartMessage(test);
+        }
         rule.init(msg, parent);
         // When
         // Local File Inclusion Attacks is triggered only when AttackStrength is > Medium
@@ -341,6 +361,30 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         msg.setRequestBody("<?xml version=\"1.0\"?><comment><text>test</text></comment>");
         msg.getRequestHeader().setMethod("POST");
         msg.getRequestHeader().setHeader("Content-Type", "application/xml");
+        return msg;
+    }
+
+    private HttpMessage getXmlMultipartMessage(String path) throws HttpMalformedHeaderException {
+        HttpMessage msg = this.getHttpMessage(path);
+        msg.getRequestHeader().setMethod("POST");
+        msg.getRequestHeader()
+                .setHeader("Content-Type", "multipart/form-data; boundary=ZAPMultipartBoundary");
+        msg.setRequestBody(
+                "--ZAPMultipartBoundary\r\n"
+                        + "Content-Disposition: form-data; name=\"text\"\r\n"
+                        + "\r\n"
+                        + "\"Default Text\"\r\n"
+                        + "--ZAPMultipartBoundary\r\n"
+                        + "Content-Disposition: form-data; name=\"file2\"; filename=\"a.xml\"\r\n"
+                        + "Content-Type: application/xml\r\n"
+                        + "\r\n"
+                        + "<?xml version=\"1.0\"?><comment><text>test</text></comment>\r\n"
+                        + "--ZAPMultipartBoundary\r\n"
+                        + "Content-Disposition: form-data; name=\"file1\"; filename=\"SampleZAPTextFile\"\r\n"
+                        + "Content-Type: text/plain\r\n"
+                        + "\r\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur\r\n"
+                        + "--ZAPMultipartBoundary--\r\n");
         return msg;
     }
 
