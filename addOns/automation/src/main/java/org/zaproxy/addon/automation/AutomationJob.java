@@ -36,10 +36,18 @@ import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
+    public enum Status {
+        NOT_STARTED,
+        RUNNING,
+        COMPLETED
+    };
+
     private String name;
+    private Status status = Status.NOT_STARTED;
     private AutomationEnvironment env;
     private final List<AbstractAutomationTest> tests = new ArrayList<>();
     private LinkedHashMap<?, ?> jobData;
+    private AutomationPlan plan;
 
     public enum Order {
         RUN_FIRST,
@@ -79,6 +87,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public LinkedHashMap<?, ?> getJobData() {
         return jobData;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public void verifyJobSpecificData(AutomationProgress progress) {}
@@ -140,6 +156,19 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public AutomationEnvironment getEnv() {
         return this.env;
+    }
+
+    public AutomationPlan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(AutomationPlan plan) {
+        this.plan = plan;
+    }
+
+    public void reset() {
+        this.status = Status.NOT_STARTED;
+        this.tests.stream().forEach(t -> t.reset());
     }
 
     public void applyParameters(AutomationProgress progress) {

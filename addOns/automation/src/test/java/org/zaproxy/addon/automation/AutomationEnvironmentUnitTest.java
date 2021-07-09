@@ -81,7 +81,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -99,7 +99,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -117,7 +117,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -135,7 +135,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -158,7 +158,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -182,7 +182,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -217,7 +217,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -263,7 +264,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<ContextWrapper> contextWrappers = env.getContextWrappers();
         List<Context> contexts = env.getContexts();
 
@@ -304,7 +306,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -337,7 +340,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -364,7 +367,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -392,7 +395,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -418,7 +421,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -445,7 +448,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -473,7 +477,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -502,7 +507,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -531,7 +537,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -560,7 +567,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment ae = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment ae = new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -593,7 +600,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -625,7 +632,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -654,7 +661,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
         progress.error("Test");
 
         // Then
@@ -679,7 +686,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
         progress.error("Test");
 
         // Then
@@ -704,7 +711,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
         progress.warn("Test");
 
         // Then
@@ -729,7 +736,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
         progress.warn("Test");
 
         // Then
@@ -755,7 +762,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -782,7 +790,8 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress, session);
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
         List<Context> contexts = env.getContexts();
 
         // Then
@@ -805,7 +814,7 @@ class AutomationEnvironmentUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         // When
-        new AutomationEnvironment(contextData, progress, session);
+        new AutomationEnvironment(contextData, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

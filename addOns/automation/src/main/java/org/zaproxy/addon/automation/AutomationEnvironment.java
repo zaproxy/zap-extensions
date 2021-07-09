@@ -49,9 +49,12 @@ public class AutomationEnvironment {
     private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();
     private Map<String, String> vars = new HashMap<>(System.getenv());
+    private ArrayList<?> contextData;
+    private boolean created = false;
+    private boolean hasErrors = false;
+    private boolean hasWarnings = false;
 
-    public AutomationEnvironment(
-            LinkedHashMap<?, ?> envData, AutomationProgress progress, Session session) {
+    public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
         this.progress = progress;
         if (envData == null) {
             progress.error(Constant.messages.getString("automation.error.env.missing"));
@@ -106,29 +109,28 @@ public class AutomationEnvironment {
                             "automation.error.env.badcontexts", contextsObject));
             return;
         }
-        for (Object contextObject : ((ArrayList<?>) contextsObject).toArray()) {
-            ContextWrapper context = parseContextData(contextObject, progress, session);
-            if (context != null) {
-                this.contexts.add(context);
-                if (this.isTimeToQuit()) {
-                    return;
-                }
+        this.contextData = (ArrayList<?>) contextsObject;
+        for (Object contextObject : this.contextData.toArray()) {
+            if (!(contextObject instanceof LinkedHashMap)) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.env.badcontext", contextObject));
+                return;
             }
+            parseContextData((LinkedHashMap<?, ?>) contextObject, progress, null, false);
         }
     }
 
     public ContextWrapper parseContextData(
-            Object contextObject, AutomationProgress progress, Session session) {
-        if (!(contextObject instanceof LinkedHashMap)) {
-            progress.error(
-                    Constant.messages.getString("automation.error.env.badcontext", contextObject));
-            return null;
-        }
+            LinkedHashMap<?, ?> contextData,
+            AutomationProgress progress,
+            Session session,
+            boolean createSessions) {
         String name = null;
         List<String> urls = new ArrayList<>();
         ArrayList<?> includeRegexes = null;
         ArrayList<?> excludeRegexes = null;
-        for (Entry<?, ?> cdata : ((LinkedHashMap<?, ?>) contextObject).entrySet()) {
+        for (Entry<?, ?> cdata : contextData.entrySet()) {
             Object value = cdata.getValue();
             if (value == null) {
                 continue;
@@ -189,31 +191,65 @@ public class AutomationEnvironment {
         }
         if (name == null) {
             progress.error(
-                    Constant.messages.getString("automation.error.context.noname", contextObject));
+                    Constant.messages.getString("automation.error.context.noname", contextData));
             return null;
         }
         if (urls.isEmpty()) {
             progress.error(
-                    Constant.messages.getString("automation.error.context.nourl", contextObject));
+                    Constant.messages.getString("automation.error.context.nourl", contextData));
             return null;
         }
-        Context context = session.getNewContext(name);
-        if (includeRegexes != null) {
-            for (Object regex : includeRegexes) {
-                context.addIncludeInContextRegex(replaceVars(regex.toString()));
+        if (createSessions && session != null) {
+            Context oldContext = session.getContext(name);
+            if (oldContext != null) {
+                // Always delete an existing context with the same name, otherwise will fail
+                session.deleteContext(oldContext);
+            }
+
+            Context context = session.getNewContext(name);
+            if (includeRegexes != null) {
+                for (Object regex : includeRegexes) {
+                    context.addIncludeInContextRegex(replaceVars(regex.toString()));
+                }
+            }
+            if (excludeRegexes != null) {
+                for (Object regex : excludeRegexes) {
+                    context.addExcludeFromContextRegex(replaceVars(regex.toString()));
+                }
+            }
+            ContextWrapper wrapper = new ContextWrapper(context);
+            for (String u : urls) {
+                context.addIncludeInContextRegex(u + ".*");
+                wrapper.addUrl(u);
+            }
+            return wrapper;
+        }
+        return null;
+    }
+
+    public void create(Session session, AutomationProgress progress) {
+        this.created = true;
+        for (Object contextObject : this.contextData.toArray()) {
+            if (!(contextObject instanceof LinkedHashMap)) {
+                // Should have been caught before, but just in case..
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.env.badcontext", contextObject));
+                this.hasErrors = true;
+                return;
+            }
+
+            ContextWrapper context =
+                    parseContextData((LinkedHashMap<?, ?>) contextObject, progress, session, true);
+            if (context != null) {
+                this.contexts.add(context);
+                if (this.isTimeToQuit()) {
+                    this.hasErrors = progress.hasErrors();
+                    this.hasWarnings = progress.hasWarnings();
+                    return;
+                }
             }
         }
-        if (excludeRegexes != null) {
-            for (Object regex : excludeRegexes) {
-                context.addExcludeFromContextRegex(replaceVars(regex.toString()));
-            }
-        }
-        ContextWrapper wrapper = new ContextWrapper(context);
-        for (String u : urls) {
-            context.addIncludeInContextRegex(u + ".*");
-            wrapper.addUrl(u);
-        }
-        return wrapper;
     }
 
     private static ArrayList<?> verifyRegexes(
@@ -299,6 +335,18 @@ public class AutomationEnvironment {
             return wrapper.getContext();
         }
         return null;
+    }
+
+    public boolean isCreated() {
+        return created;
+    }
+
+    public boolean hasErrors() {
+        return hasErrors;
+    }
+
+    public boolean hasWarnings() {
+        return hasWarnings;
     }
 
     /**
