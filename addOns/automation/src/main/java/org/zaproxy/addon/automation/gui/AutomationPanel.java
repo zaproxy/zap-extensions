@@ -20,8 +20,11 @@
 package org.zaproxy.addon.automation.gui;
 
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -35,6 +38,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -222,6 +226,16 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             tree.setTreeTableModel(getTreeModel());
             tree.setTreeCellRenderer(new PlanTreeNodeCellRenderer());
             planScrollpane.setViewportView(tree);
+            // TODO WIP
+            tree.addMouseListener(new MouseAdapter() {
+            	@Override
+            	public void mouseClicked(MouseEvent me) {
+            		if (me.getClickCount() == 2) {
+            			int row = tree.getSelectedRow();
+            			System.out.println("SBSB Row: " + row); // TODO
+            		}
+            	}
+            });
         }
         return planScrollpane;
     }
