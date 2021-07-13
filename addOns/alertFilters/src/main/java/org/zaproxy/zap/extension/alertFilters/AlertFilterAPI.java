@@ -27,6 +27,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -53,6 +54,9 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String ACTION_REMOVE_ALERT_FILTER = "removeAlertFilter";
     private static final String ACTION_ADD_GLOBAL_ALERT_FILTER = "addGlobalAlertFilter";
     private static final String ACTION_REMOVE_GLOBAL_ALERT_FILTER = "removeGlobalAlertFilter";
+    private static final String ACTION_APPLY_ALL = "applyAll";
+    private static final String ACTION_APPLY_CONTEXT = "applyContext";
+    private static final String ACTION_APPLY_GLOBAL = "applyGlobal";
 
     private static final String PARAM_CONTEXT_ID = "contextId";
     private static final String PARAM_RULE_ID = "ruleId";
@@ -159,6 +163,18 @@ public class AlertFilterAPI extends ApiImplementor {
         removeGlobalAlertFilter.setDescriptionTag(
                 "alertFilters.api.action.removeGlobalAlertFilter");
         this.addApiAction(removeGlobalAlertFilter);
+
+        ApiAction applyAll = new ApiAction(ACTION_APPLY_ALL);
+        applyAll.setDescriptionTag("alertFilters.api.action.applyAll");
+        this.addApiAction(applyAll);
+
+        ApiAction applyContext = new ApiAction(ACTION_APPLY_CONTEXT);
+        applyContext.setDescriptionTag("alertFilters.api.action.applyContext");
+        this.addApiAction(applyContext);
+
+        ApiAction applyGlobal = new ApiAction(ACTION_APPLY_GLOBAL);
+        applyGlobal.setDescriptionTag("alertFilters.api.action.applyGlobal");
+        this.addApiAction(applyGlobal);
     }
 
     @Override
@@ -298,9 +314,38 @@ public class AlertFilterAPI extends ApiImplementor {
                 }
                 return ApiResponseElement.FAIL;
 
+            case ACTION_APPLY_ALL:
+                applyGlobalAlertFilters();
+                applyContextAlertFilters();
+                return ApiResponseElement.OK;
+
+            case ACTION_APPLY_CONTEXT:
+                applyContextAlertFilters();
+                return ApiResponseElement.OK;
+
+            case ACTION_APPLY_GLOBAL:
+                applyGlobalAlertFilters();
+                return ApiResponseElement.OK;
+
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
+    }
+
+    private void applyContextAlertFilters() {
+        Model.getSingleton().getSession().getContexts().stream()
+                .forEach(
+                        ctx ->
+                                extension.getContextAlertFilterManager(ctx.getId())
+                                        .getAlertFilters().stream()
+                                        .filter(AlertFilter::isEnabled)
+                                        .forEach(f -> extension.applyAlertFilter(f, false)));
+    }
+
+    private void applyGlobalAlertFilters() {
+        extension.getParam().getGlobalAlertFilters().stream()
+                .filter(AlertFilter::isEnabled)
+                .forEach(f -> extension.applyAlertFilter(f, false));
     }
 
     /**
