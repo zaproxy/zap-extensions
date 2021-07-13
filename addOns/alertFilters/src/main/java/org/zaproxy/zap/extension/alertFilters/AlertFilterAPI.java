@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -53,6 +55,12 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String ACTION_REMOVE_ALERT_FILTER = "removeAlertFilter";
     private static final String ACTION_ADD_GLOBAL_ALERT_FILTER = "addGlobalAlertFilter";
     private static final String ACTION_REMOVE_GLOBAL_ALERT_FILTER = "removeGlobalAlertFilter";
+    private static final String ACTION_APPLY_ALL = "applyAll";
+    private static final String ACTION_APPLY_CONTEXT = "applyContext";
+    private static final String ACTION_APPLY_GLOBAL = "applyGlobal";
+    private static final String ACTION_TEST_ALL = "testAll";
+    private static final String ACTION_TEST_CONTEXT = "testContext";
+    private static final String ACTION_TEST_GLOBAL = "testGlobal";
 
     private static final String PARAM_CONTEXT_ID = "contextId";
     private static final String PARAM_RULE_ID = "ruleId";
@@ -159,6 +167,30 @@ public class AlertFilterAPI extends ApiImplementor {
         removeGlobalAlertFilter.setDescriptionTag(
                 "alertFilters.api.action.removeGlobalAlertFilter");
         this.addApiAction(removeGlobalAlertFilter);
+
+        ApiAction applyAll = new ApiAction(ACTION_APPLY_ALL);
+        applyAll.setDescriptionTag("alertFilters.api.action.applyAll");
+        this.addApiAction(applyAll);
+
+        ApiAction applyContext = new ApiAction(ACTION_APPLY_CONTEXT);
+        applyContext.setDescriptionTag("alertFilters.api.action.applyContext");
+        this.addApiAction(applyContext);
+
+        ApiAction applyGlobal = new ApiAction(ACTION_APPLY_GLOBAL);
+        applyGlobal.setDescriptionTag("alertFilters.api.action.applyGlobal");
+        this.addApiAction(applyGlobal);
+
+        ApiAction testAll = new ApiAction(ACTION_TEST_ALL);
+        testAll.setDescriptionTag("alertFilters.api.action.testAll");
+        this.addApiAction(testAll);
+
+        ApiAction testContext = new ApiAction(ACTION_TEST_CONTEXT);
+        testContext.setDescriptionTag("alertFilters.api.action.testContext");
+        this.addApiAction(testContext);
+
+        ApiAction testGlobal = new ApiAction(ACTION_TEST_GLOBAL);
+        testGlobal.setDescriptionTag("alertFilters.api.action.testGlobal");
+        this.addApiAction(testGlobal);
     }
 
     @Override
@@ -298,9 +330,53 @@ public class AlertFilterAPI extends ApiImplementor {
                 }
                 return ApiResponseElement.FAIL;
 
+            case ACTION_APPLY_ALL:
+                Map<String, Integer> applyCountsMap = new HashMap<>(2, 1);
+                applyCountsMap.put(ACTION_TEST_GLOBAL, applyGlobalAlertFilters(false));
+                applyCountsMap.put(ACTION_TEST_CONTEXT, applyContextAlertFilters(false));
+                return new ApiResponseSet<>(name, applyCountsMap);
+
+            case ACTION_APPLY_CONTEXT:
+                return new ApiResponseElement(
+                        name, String.valueOf(applyContextAlertFilters(false)));
+
+            case ACTION_APPLY_GLOBAL:
+                return new ApiResponseElement(name, String.valueOf(applyGlobalAlertFilters(false)));
+
+            case ACTION_TEST_ALL:
+                Map<String, Integer> testCountsMap = new HashMap<>(2, 1);
+                testCountsMap.put(ACTION_TEST_GLOBAL, applyGlobalAlertFilters(true));
+                testCountsMap.put(ACTION_TEST_CONTEXT, applyContextAlertFilters(true));
+                return new ApiResponseSet<>(name, testCountsMap);
+
+            case ACTION_TEST_CONTEXT:
+                return new ApiResponseElement(name, String.valueOf(applyContextAlertFilters(true)));
+
+            case ACTION_TEST_GLOBAL:
+                return new ApiResponseElement(name, String.valueOf(applyGlobalAlertFilters(true)));
+
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
+    }
+
+    private int applyContextAlertFilters(boolean testOnly) {
+        return Model.getSingleton().getSession().getContexts().stream()
+                .map(
+                        ctx ->
+                                extension.getContextAlertFilterManager(ctx.getId())
+                                        .getAlertFilters().stream()
+                                        .filter(AlertFilter::isEnabled)
+                                        .map(f -> extension.applyAlertFilter(f, testOnly))
+                                        .collect(Collectors.summingInt(Integer::intValue)))
+                .collect(Collectors.summingInt(Integer::intValue));
+    }
+
+    private int applyGlobalAlertFilters(boolean testOnly) {
+        return extension.getParam().getGlobalAlertFilters().stream()
+                .filter(AlertFilter::isEnabled)
+                .map(f -> extension.applyAlertFilter(f, testOnly))
+                .collect(Collectors.summingInt(Integer::intValue));
     }
 
     /**
