@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="authenticationhelper-icon" url="contents/images/key.png" />
+    <mapID target="authenticationhelper" url="contents/introduction.html" />
+    <mapID target="authenticationhelper.about" url="contents/about.html" />
+    <mapID target="authenticationhelper.auto" url="contents/automated-configuration.html" />
+    <mapID target="authenticationhelper.guide" url="contents/guided-configuration.html" />
+    <mapID target="authenticationhelper.scan" url="contents/authentication-status-scanning.html" />
+    <mapID target="authenticationhelper.dialog" url="contents/authentication-helper-dialog.html" />
+    <mapID target="authenticationhelper.tab" url="contents/authentication-status-tab.html" />
+    <mapID target="authenticationhelper.options" url="contents/authentication-helper-options.html" />
+</map>

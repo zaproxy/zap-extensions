@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="authentication helper" image="authenticationhelper-icon" target="authenticationhelper">
+				<tocitem text="guided configuration" target="authenticationhelper.guide"/>
+				<tocitem text="authentication status scan" target="authenticationhelper.scan"/>
+				<tocitem text="automated configuration" target="authenticationhelper.auto"/>
+				<tocitem text="tab" target="authenticationhelper.tab"/>
+				<tocitem text="dialog" target="authenticationhelper.dialog"/>
+				<tocitem text="options" target="authenticationhelper.options"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

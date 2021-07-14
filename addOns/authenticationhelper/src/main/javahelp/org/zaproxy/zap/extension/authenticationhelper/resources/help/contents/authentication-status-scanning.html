@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Status scanning</title>
+</head>
+<body>
+	<h1>Authentication status scanning</h1>
+	<p>Having a good configuration does not necessarily mean
+		authentication is successful. What if the credentials are wrong or
+		provided logged in/out indicator is misleading. With this feature, you
+		can check the authentication status of each URI. The scan results are
+		shown in authentication status tab as shown in this picture</p>
+	<br>
+	<img src="images/status-scan.png" />
+	<p>
+		Authentication status scanning is started using <a
+			href="authentication-helper-dialog.html">authentication helper
+			dialog</a>.
+	</p>
+
+	<h2 id="status">Authentication status</h2>
+	<p>Authentication status indicates whether ZAP can authenticate
+		with the web application successfully or not. Unfortunately, for
+		non-HTTP based authentication schemes, there is no perfect approach to
+		determine authentication status programmatically. ZAP uses logged in
+		indicator and logged out indicator to assess the authentication
+		status. For each HTTP(S) request that is proxied through ZAP, the
+		response message(both header and body) is scanned to match provided
+		logged in and logged out indicators. Based on this result the
+		authentication status is determined. As a result of this, the
+		determined authentication status is just ZAP's understanding of
+		authentication state, and it purely depends on the provided
+		indicators.</p>
+	<p>As you already guessed, based on the presence of provided logged
+		in indicator and logged out indicator in the response message, the
+		authentication status can have four states. It must be noted that it
+		is not necessary to define both indicators, however at least one of
+		the indicator should be defined to start checking the authentication
+		status.</p>
+	<p>Below table illustrates the four authentication states.</p>
+	<br>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>Authentication Status</th>
+				<th>Icon</th>
+				<th>Logged in indicator</th>
+				<th>Logged out indicator</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Successful authentication</td>
+				<td align="center"><img src="images/tick-circle.png" /></td>
+				<td>Found</td>
+				<td>Not found or not defined</td>
+			</tr>
+			<tr>
+				<td>Failed authentication</td>
+				<td align="center"><img src="images/cross-circle.png" /></td>
+				<td>Not found or not defined</td>
+				<td>Found</td>
+			</tr>
+			<tr>
+				<td>Conflicting authentication</td>
+				<td align="center"><img src="images/exclamation-circle.png" /></td>
+				<td>Found</td>
+				<td>Found</td>
+			</tr>
+			<tr>
+				<td>Unknown authentication</td>
+				<td align="center"><img src="images/question-white.png" /></td>
+				<td>Not found</td>
+				<td>Not found</td>
+			</tr>
+		</tbody>
+	</table>
+	<h2>Indicator status</h2>
+	<p>As described earlier the authentication status is determined by
+		the presence of logged in and logged out indicators in the response
+		message. Below table describes the different state of an indicator.</p>
+	<br>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>Indicator Status</th>
+				<th>Icon</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Found</td>
+				<td align="center"><img src="images/tick.png" /></td>
+				<td>The indicator is found in the response message</td>
+			</tr>
+			<tr>
+				<td>Not found</td>
+				<td align="center"><img src="images/cross.png" /></td>
+				<td>The indicator is not found in the response message</td>
+			</tr>
+			<tr>
+				<td>Not defined</td>
+				<td align="center"><img src="images/ash-circle.png" /></td>
+				<td>User has not provided the indicator</td>
+			</tr>
+			<tr>
+				<td>Could not verify</td>
+				<td align="center"><img src="images/red-circle.png" /></td>
+				<td>ZAP was unable to determine the indicator state</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
