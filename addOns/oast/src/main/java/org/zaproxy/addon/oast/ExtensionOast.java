@@ -19,12 +19,25 @@
  */
 package org.zaproxy.addon.oast;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.oast.base.OastServer;
+import org.zaproxy.addon.oast.boast.BoastServer;
+import org.zaproxy.addon.oast.callback.CallbackServer;
+import org.zaproxy.addon.oast.ui.OastPanel;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 
 public class ExtensionOast extends ExtensionAdaptor {
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
+
+    private final Map<String, OastServer> servers = new HashMap<>();
+    private OastParam param;
+    private OastOptionsPanel oastOptionsPanel;
+    private OastPanel oastPanel;
 
     public ExtensionOast() {
         super(NAME);
@@ -33,11 +46,78 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+        registerOastServer(new BoastServer());
+        registerOastServer(new CallbackServer(this));
         extensionHook.addApiImplementor(new OastApi());
+        extensionHook.addOptionsParamSet(getParam());
+        getOastServers().values().forEach(t -> t.hook(extensionHook));
+        if (hasView()) {
+            extensionHook.getHookView().addStatusPanel(getOastPanel());
+            extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
+            ExtensionHelp.enableHelpKey(getOastPanel(), "ui.tabs.callbacks");
+        }
+    }
+
+    @Override
+    public void optionsLoaded() {
+        getOastServers().values().forEach(OastServer::optionsLoaded);
+    }
+
+    @Override
+    public void postInit() {
+        getOastServers().values().forEach(OastServer::postInit);
     }
 
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+        servers.values().forEach(this::unregisterOastServer);
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    public void registerOastServer(OastServer server) {
+        servers.put(server.getName(), server);
+    }
+
+    public void unregisterOastServer(OastServer server) {
+        servers.remove(server.getName());
+    }
+
+    public Map<String, OastServer> getOastServers() {
+        return Collections.unmodifiableMap(servers);
+    }
+
+    public void deleteAllCallbacks() {
+        getOastServers().values().forEach(OastServer::deleteCallbacks);
+    }
+
+    OastParam getParam() {
+        if (param == null) {
+            param = new OastParam();
+        }
+        return param;
+    }
+
+    private OastOptionsPanel getOastOptionsPanel() {
+        if (oastOptionsPanel == null) {
+            oastOptionsPanel = new OastOptionsPanel(this);
+        }
+        return oastOptionsPanel;
+    }
+
+    public OastPanel getOastPanel() {
+        if (oastPanel == null) {
+            oastPanel = new OastPanel(this);
+        }
+        return oastPanel;
     }
 }
