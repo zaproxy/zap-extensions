@@ -1,4 +1,4 @@
-description = "OAST Support: Exploit Out-Of-Band Vulnerabilities"
+description = "Allows you to exploit out-of-band vulnerabilities"
 
 zapAddOn {
     addOnName.set("OAST Support")
@@ -21,4 +21,8 @@ crowdin {
         tokens.put("%messagesPath%", resourcesPath)
         tokens.put("%helpPath%", resourcesPath)
     }
+}
+
+dependencies {
+    testImplementation(project(":testutils"))
 }
