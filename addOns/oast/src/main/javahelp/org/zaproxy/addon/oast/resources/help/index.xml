@@ -5,4 +5,5 @@
 
 <index version="2.0">
     <indexitem text="OAST" target="oast"/>
+    <indexitem text="OAST Options" target="oast.options"/>
 </index>

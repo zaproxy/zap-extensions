@@ -7,6 +7,7 @@
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="OAST Support" image="oast-icon" target="oast">
+                <tocitem text = "Options" image="oast-icon" target="oast.options" />
             </tocitem>
         </tocitem>
     </tocitem>

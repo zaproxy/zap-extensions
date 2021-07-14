@@ -11,6 +11,16 @@ zapAddOn {
 
     apiClientGen {
         api.set("org.zaproxy.addon.oast.OastApi")
+        options.set("org.zaproxy.addon.oast.OastParam")
         messages.set(file("src/main/resources/org/zaproxy/addon/oast/resources/Messages.properties"))
     }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly("org.zaproxy:zap:2.11.0-SNAPSHOT")
 }
