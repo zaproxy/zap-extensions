@@ -104,7 +104,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.CONFIGS)));
         assertThat(job.getParamMethodObject(), is(extPscan));
         assertThat(job.getParamMethodName(), is("getPassiveScanParam"));
-        assertThat(job.isEnableTags(), is(equalTo(false)));
+        assertThat(job.getParameters().getEnableTags(), is(equalTo(false)));
     }
 
     @Test
@@ -157,6 +157,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -165,7 +166,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(psp.getMaxAlertsPerRule(), is(equalTo(2)));
         assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
         assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
-        assertThat(job.isEnableTags(), is(equalTo(true)));
+        assertThat(job.getParameters().getEnableTags(), is(equalTo(true)));
     }
 
     @Test
@@ -186,6 +187,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -223,6 +225,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(data);
+        // job.verifyParameters(progress); TODO
         job.runJob(null, progress);
 
         // Then
@@ -335,6 +338,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(null, progress);
 
@@ -365,6 +369,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(null, progress);
 
@@ -395,6 +400,7 @@ class PassiveScanConfigJobUnitTest {
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(null, progress);
 

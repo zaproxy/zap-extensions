@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -34,10 +35,12 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.gui.SpiderJobDialog;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
@@ -53,15 +56,10 @@ public class SpiderJob extends AutomationJob {
     private static final String PARAM_URL = "url";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
-    private static final String PARAM_MAX_DURATION = "maxDuration";
 
     private ExtensionSpider extSpider;
 
-    // Local copy
-    private int maxDuration = 0;
-
-    private String contextName;
-    private String url;
+    private Parameters parameters = new Parameters();
 
     private UrlRequester urlRequester = new UrlRequester(this.getName());
 
@@ -75,63 +73,89 @@ public class SpiderJob extends AutomationJob {
         return extSpider;
     }
 
-    private boolean verifyOrApplyCustomParameter(
-            String name, String value, AutomationProgress progress) {
-        switch (name) {
-            case PARAM_CONTEXT:
-                if (progress == null) {
-                    contextName = value;
-                }
-                return true;
-            case PARAM_URL:
-                if (progress == null) {
-                    url = value;
-                }
-                return true;
-            case PARAM_FAIL_IF_LESS_URLS:
-            case PARAM_WARN_IF_LESS_URLS:
-                if (progress != null) {
-                    progress.warn(
-                            Constant.messages.getString(
-                                    "automation.error.spider.failIfUrlsLessThan.deprecated",
-                                    getType(),
-                                    "automation.spider.urls.added"));
-                }
-                return true;
-            case PARAM_MAX_DURATION:
-                if (progress != null) {
-                    verifyIntValue(name, value, progress);
-                } else {
-                    maxDuration = Integer.parseInt(value);
-                }
-                // Don't consume this as we still want it to be applied to the spider params
-                return false;
-            default:
-                // Ignore
-                break;
+    @Override
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
         }
-        return false;
-    }
-
-    private void verifyIntValue(String name, String value, AutomationProgress progress) {
-        try {
-            Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.options.badint", this.getName(), name, value));
-        }
+        // TODO support and warn on IF_LESS vars
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
     }
 
     @Override
-    public boolean applyCustomParameter(String name, String value) {
-        return this.verifyOrApplyCustomParameter(name, value, null);
+    public void applyParameters(AutomationProgress progress) {
+        JobUtils.applyObjectToObject(
+                this.parameters,
+                JobUtils.getJobOptions(this, progress),
+                this.getName(),
+                null,
+                progress);
     }
+    /*
+        private boolean verifyOrApplyCustomParameter(
+                String name, String value, AutomationProgress progress) {
+            switch (name) {
+                case PARAM_CONTEXT:
+                    if (progress == null) {
+                        //contextName = value;
+                    	parameters.setContext(value);
+                    }
+                    return true;
+                case PARAM_URL:
+                    if (progress == null) {
+                    	parameters.setUrl(value);
+                        //url = value;
+                    }
+                    return true;
+                case PARAM_FAIL_IF_LESS_URLS:
+                case PARAM_WARN_IF_LESS_URLS:
+                    if (progress != null) {
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.spider.failIfUrlsLessThan.deprecated",
+                                        getType(),
+                                        "automation.spider.urls.added"));
+                    }
+                    return true;
+                case PARAM_MAX_DURATION:
+                   	//maxDuration = verifyIntValue(name, value, progress);
+                	parameters.setMaxDuration(verifyIntValue(name, value, progress));
 
-    @Override
-    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        return this.verifyOrApplyCustomParameter(name, value, progress);
-    }
+                    // Don't consume this as we still want it to be applied to the spider params
+                    return false;
+                default:
+                    // Ignore
+                    break;
+            }
+            return false;
+        }
+        private Integer verifyIntValue(String name, String value, AutomationProgress progress) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.options.badint", this.getName(), name, value));
+            }
+            return 0;
+        }
+
+        @Override
+        public boolean applyCustomParameter(String name, String value) {
+            return this.verifyOrApplyCustomParameter(name, value, null);
+        }
+
+        @Override
+        public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
+            return this.verifyOrApplyCustomParameter(name, value, progress);
+        }
+    */
 
     @Override
     public Map<String, String> getCustomConfigParameters() {
@@ -145,18 +169,19 @@ public class SpiderJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
-        if (contextName != null) {
-            context = env.getContextWrapper(contextName);
+        if (parameters.getContext() != null) {
+            context = env.getContextWrapper(parameters.getContext());
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown", contextName));
+                                "automation.error.context.unknown", parameters.getContext()));
                 return;
             }
         } else {
             context = env.getDefaultContextWrapper();
         }
         URI uri = null;
+        String url = parameters.getUrl();
         try {
             if (url != null) {
                 uri = new URI(url, true);
@@ -167,8 +192,8 @@ public class SpiderJob extends AutomationJob {
         }
 
         // Request all specified URLs
-        for (String url : context.getUrls()) {
-            this.urlRequester.requestUrl(url, progress);
+        for (String u : context.getUrls()) {
+            this.urlRequester.requestUrl(u, progress);
         }
 
         if (env.isTimeToQuit()) {
@@ -186,11 +211,11 @@ public class SpiderJob extends AutomationJob {
         int scanId = this.getExtSpider().startScan(target, null, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
-        if (maxDuration > 0) {
+        if (parameters.getMaxDuration() != null && parameters.getMaxDuration() > 0) {
             // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
             endTime =
                     System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(maxDuration)
+                            + TimeUnit.MINUTES.toMillis(parameters.getMaxDuration())
                             + TimeUnit.SECONDS.toMillis(5);
         }
 
@@ -243,8 +268,19 @@ public class SpiderJob extends AutomationJob {
         }
     }
 
-    public int getMaxDuration() {
-        return maxDuration;
+    public int getMaxDuration() { // TODO remove?
+        return parameters.getMaxDuration();
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    @Override
+    public void showDialog() {
+        new SpiderJobDialog(this).setVisible(true);
+        ;
     }
 
     @Override
@@ -337,6 +373,219 @@ public class SpiderJob extends AutomationJob {
                                 url,
                                 e1.getMessage()));
             }
+        }
+    }
+
+    @Override
+    public AutomationData getData() {
+        return new Data(this.getName(), this.parameters);
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+
+        public Data() {
+            super(JOB_NAME, JOB_NAME);
+        }
+
+        public Data(String name, Parameters parameters) {
+            super(JOB_NAME, name);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private String context;
+        private String url;
+        private Integer maxDuration;
+        private Integer maxDepth;
+        private Integer maxChildren;
+        private Boolean acceptCookies;
+        private Boolean handleODataParametersVisited;
+        private String handleParameters;
+        private Integer maxParseSizeBytes;
+        private Boolean parseComments;
+        private Boolean parseGit;
+        private Boolean parseRobotsTxt;
+        private Boolean parseSitemapXml;
+        private Boolean parseSVNEntries;
+        private Boolean postForm;
+        private Boolean processForm;
+        private Integer requestWaitTime;
+        private Boolean sendRefererHeader;
+        private Integer threadCount;
+        private String userAgent;
+
+        public Parameters() {
+            super();
+        }
+
+        public void setMaxDuration(int maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
+        public Integer getMaxDuration() {
+            return maxDuration;
+        }
+
+        public String getContext() {
+            return context;
+        }
+
+        public void setContext(String context) {
+            this.context = context;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Integer getMaxDepth() {
+            return maxDepth;
+        }
+
+        public void setMaxDepth(Integer maxDepth) {
+            this.maxDepth = maxDepth;
+        }
+
+        public Integer getMaxChildren() {
+            return maxChildren;
+        }
+
+        public void setMaxChildren(Integer maxChildren) {
+            this.maxChildren = maxChildren;
+        }
+
+        public Boolean getAcceptCookies() {
+            return acceptCookies;
+        }
+
+        public void setAcceptCookies(Boolean acceptCookies) {
+            this.acceptCookies = acceptCookies;
+        }
+
+        public Boolean getHandleODataParametersVisited() {
+            return handleODataParametersVisited;
+        }
+
+        public void setHandleODataParametersVisited(Boolean handleODataParametersVisited) {
+            this.handleODataParametersVisited = handleODataParametersVisited;
+        }
+
+        public void setMaxDuration(Integer maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
+        public String getHandleParameters() {
+            return handleParameters;
+        }
+
+        public void setHandleParameters(String handleParameters) {
+            this.handleParameters = handleParameters;
+        }
+
+        public Integer getMaxParseSizeBytes() {
+            return maxParseSizeBytes;
+        }
+
+        public void setMaxParseSizeBytes(Integer maxParseSizeBytes) {
+            this.maxParseSizeBytes = maxParseSizeBytes;
+        }
+
+        public Boolean getParseComments() {
+            return parseComments;
+        }
+
+        public void setParseComments(Boolean parseComments) {
+            this.parseComments = parseComments;
+        }
+
+        public Boolean getParseGit() {
+            return parseGit;
+        }
+
+        public void setParseGit(Boolean parseGit) {
+            this.parseGit = parseGit;
+        }
+
+        public Boolean getParseRobotsTxt() {
+            return parseRobotsTxt;
+        }
+
+        public void setParseRobotsTxt(Boolean parseRobotsTxt) {
+            this.parseRobotsTxt = parseRobotsTxt;
+        }
+
+        public Boolean getParseSitemapXml() {
+            return parseSitemapXml;
+        }
+
+        public void setParseSitemapXml(Boolean parseSitemapXml) {
+            this.parseSitemapXml = parseSitemapXml;
+        }
+
+        public Boolean getParseSVNEntries() {
+            return parseSVNEntries;
+        }
+
+        public void setParseSVNEntries(Boolean parseSVNEntries) {
+            this.parseSVNEntries = parseSVNEntries;
+        }
+
+        public Boolean getPostForm() {
+            return postForm;
+        }
+
+        public void setPostForm(Boolean postForm) {
+            this.postForm = postForm;
+        }
+
+        public Boolean getProcessForm() {
+            return processForm;
+        }
+
+        public void setProcessForm(Boolean processForm) {
+            this.processForm = processForm;
+        }
+
+        public Integer getRequestWaitTime() {
+            return requestWaitTime;
+        }
+
+        public void setRequestWaitTime(Integer requestWaitTime) {
+            this.requestWaitTime = requestWaitTime;
+        }
+
+        public Boolean getSendRefererHeader() {
+            return sendRefererHeader;
+        }
+
+        public void setSendRefererHeader(Boolean sendRefererHeader) {
+            this.sendRefererHeader = sendRefererHeader;
+        }
+
+        public Integer getThreadCount() {
+            return threadCount;
+        }
+
+        public void setThreadCount(Integer threadCount) {
+            this.threadCount = threadCount;
+        }
+
+        public String getUserAgent() {
+            return userAgent;
+        }
+
+        public void setUserAgent(String userAgent) {
+            this.userAgent = userAgent;
         }
     }
 }

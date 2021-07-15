@@ -24,7 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -38,7 +37,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -52,6 +50,7 @@ import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class AutomationPanel extends AbstractPanel implements EventConsumer {
@@ -59,23 +58,36 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final long serialVersionUID = 1L;
 
     private static final ImageIcon PLAY_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/131.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/131.png")));
+    private static final ImageIcon LOAD_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/047.png")));
+    private static final ImageIcon SAVE_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
     protected static final ImageIcon GREEN_BALL_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/152.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/152.png")));
     protected static final ImageIcon RED_BALL_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/151.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/151.png")));
     protected static final ImageIcon YELLOW_BALL_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/154.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/154.png")));
     protected static final ImageIcon ORANGE_BALL_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/156.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/156.png")));
     protected static final ImageIcon WHITE_BALL_ICON =
-            new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png"));
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png")));
 
     private ExtensionAutomation ext;
     private JToolBar toolbar;
     private JScrollPane planScrollpane;
     private JButton loadPlanButton;
     private JButton runPlanButton;
+    private JButton savePlanButton;
     private JTabbedPane tabbedPane;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
@@ -104,6 +116,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar = new JToolBar();
             toolbar.setFloatable(false);
             toolbar.add(this.getLoadPlanButton());
+            toolbar.add(this.getSavePlanButton());
             toolbar.add(this.getRunPlanButton());
         }
         return toolbar;
@@ -135,11 +148,26 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return runPlanButton;
     }
 
+    private JButton getSavePlanButton() {
+        if (savePlanButton == null) {
+            savePlanButton = new JButton();
+            savePlanButton.setIcon(SAVE_ICON);
+            savePlanButton.setEnabled(false);
+            savePlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        currentPlan.save();
+                    });
+        }
+        return savePlanButton;
+    }
+
     private JButton getLoadPlanButton() {
         if (loadPlanButton == null) {
             loadPlanButton = new JButton();
-            loadPlanButton.setIcon(
-                    new ImageIcon(getClass().getResource("/resource/icon/16/047.png")));
+            loadPlanButton.setIcon(LOAD_ICON);
             loadPlanButton.addActionListener(
                     e -> {
                         final JFileChooser chooser =
@@ -208,6 +236,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         currentPlan = plan;
         getTreeModel().setPlan(currentPlan);
         getRunPlanButton().setEnabled(currentPlan != null);
+        getSavePlanButton().setEnabled(currentPlan != null);
     }
 
     private JTabbedPane getTabbedPane() {
@@ -226,16 +255,21 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             tree.setTreeTableModel(getTreeModel());
             tree.setTreeCellRenderer(new PlanTreeNodeCellRenderer());
             planScrollpane.setViewportView(tree);
-            // TODO WIP
-            tree.addMouseListener(new MouseAdapter() {
-            	@Override
-            	public void mouseClicked(MouseEvent me) {
-            		if (me.getClickCount() == 2) {
-            			int row = tree.getSelectedRow();
-            			System.out.println("SBSB Row: " + row); // TODO
-            		}
-            	}
-            });
+            tree.addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            if (me.getClickCount() == 2) {
+                                int row = tree.getSelectedRow();
+                                if (row == 0) {
+                                    currentPlan.getEnv().showDialog();
+                                } else {
+                                    AutomationJob job = currentPlan.getJob(row - 1);
+                                    job.showDialog();
+                                }
+                            }
+                        }
+                    });
         }
         return planScrollpane;
     }

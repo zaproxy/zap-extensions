@@ -21,7 +21,6 @@ package org.zaproxy.addon.automation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,7 +46,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
-import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
@@ -250,67 +248,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     public AutomationPlan loadPlan(File f)
             throws AutomationJobException, FileNotFoundException, IOException {
-        try (FileInputStream is = new FileInputStream(f)) {
-            return this.loadPlan(is);
-        }
-    }
-
-    public AutomationPlan loadPlan(InputStream in) throws AutomationJobException {
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> data = yaml.load(in);
-        LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");
-        ArrayList<?> jobsData = (ArrayList<?>) data.get("jobs");
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = new AutomationEnvironment(envData, progress);
-
-        List<AutomationJob> jobsToRun = new ArrayList<>();
-
-        for (Object jobObj : jobsData) {
-            if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
-                progress.error(Constant.messages.getString("automation.error.job.data", jobObj));
-                continue;
-            }
-            LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) jobObj;
-
-            Object jobType = jobData.get("type");
-            if (jobType == null) {
-                progress.error(Constant.messages.getString("automation.error.job.notype", jobType));
-                continue;
-            }
-            AutomationJob job = jobs.get(jobType);
-            if (job != null) {
-                job = job.newJob();
-                Object jobName = jobData.get("name");
-                if (jobName != null) {
-                    if (jobName instanceof String) {
-                        job.setName((String) jobName);
-                    } else {
-                        progress.warn(
-                                Constant.messages.getString("automation.error.job.name", jobName));
-                    }
-                }
-
-                Object paramsObj = jobData.get("parameters");
-                if (paramsObj != null && !(paramsObj instanceof LinkedHashMap<?, ?>)) {
-                    progress.error(
-                            Constant.messages.getString("automation.error.job.data", paramsObj));
-                    continue;
-                }
-                job.setEnv(env);
-                job.setJobData(jobData);
-                job.verifyParameters(progress);
-                job.verifyJobSpecificData(progress);
-                jobsToRun.add(job);
-
-                job.addTests(jobData.get("tests"), progress);
-            } else {
-                progress.error(
-                        Constant.messages.getString("automation.error.job.unknown", jobType));
-            }
-        }
-
-        return new AutomationPlan(env, jobsToRun, progress);
+        return new AutomationPlan(this, f);
     }
 
     public void registerPlan(AutomationPlan plan) {
@@ -335,8 +273,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
             return null;
         }
-        try (FileInputStream is = new FileInputStream(f)) {
-            AutomationPlan plan = this.loadPlan(is);
+        try {
+            AutomationPlan plan = new AutomationPlan(this, f);
             if (View.isInitialised()) {
                 this.getAutomationPanel().setCurrentPlan(plan);
             }
@@ -385,6 +323,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     public Map<String, AutomationJob> getAutomationJobs() {
         return Collections.unmodifiableMap(jobs);
+    }
+
+    public AutomationJob getAutomationJob(String type) {
+        return jobs.get(type);
     }
 
     public List<JobResultData> getJobResultData() {

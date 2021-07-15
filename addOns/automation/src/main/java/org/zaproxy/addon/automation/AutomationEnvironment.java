@@ -34,6 +34,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.automation.gui.EnvironmentDialog;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.model.Context;
 
 public class AutomationEnvironment {
@@ -45,14 +47,14 @@ public class AutomationEnvironment {
 
     private AutomationProgress progress;
     private List<ContextWrapper> contexts = new ArrayList<>();
-    private boolean failOnError = true;
-    private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();
-    private Map<String, String> vars = new HashMap<>(System.getenv());
-    private ArrayList<?> contextData;
+    private Map<String, String> vars =
+            new HashMap<>(System.getenv()); // TODO need to save configs and apply later..
     private boolean created = false;
     private boolean hasErrors = false;
     private boolean hasWarnings = false;
+
+    private Data data = new Data();
 
     public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
         this.progress = progress;
@@ -75,28 +77,8 @@ public class AutomationEnvironment {
         }
 
         LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) envData.get("parameters");
-        if (params != null) {
-            for (Entry<?, ?> param : params.entrySet()) {
-                switch (param.getKey().toString()) {
-                    case "failOnError":
-                        failOnError = Boolean.parseBoolean(param.getValue().toString());
-                        break;
-                    case "failOnWarning":
-                        failOnWarning = Boolean.parseBoolean(param.getValue().toString());
-                        break;
-                    case "progressToStdout":
-                        progress.setOutputToStdout(
-                                Boolean.parseBoolean(param.getValue().toString()));
-                        break;
-                    default:
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.options.unknown",
-                                        AUTOMATION_CONTEXT_NAME,
-                                        param.getKey().toString()));
-                }
-            }
-        }
+        JobUtils.applyParamsToObject(
+                params, this.getData().getParameters(), "Environment TODO", null, progress); // TODO
 
         Object contextsObject = envData.get("contexts");
         if (contextsObject == null) {
@@ -109,23 +91,23 @@ public class AutomationEnvironment {
                             "automation.error.env.badcontexts", contextsObject));
             return;
         }
-        this.contextData = (ArrayList<?>) contextsObject;
-        for (Object contextObject : this.contextData.toArray()) {
+        ArrayList<?> contextData = (ArrayList<?>) contextsObject;
+        for (Object contextObject : contextData.toArray()) {
             if (!(contextObject instanceof LinkedHashMap)) {
                 progress.error(
                         Constant.messages.getString(
                                 "automation.error.env.badcontext", contextObject));
                 return;
             }
-            parseContextData((LinkedHashMap<?, ?>) contextObject, progress, null, false);
+            ContextWrapper cdw = parseContextData((LinkedHashMap<?, ?>) contextObject, progress);
+            if (cdw != null) {
+                this.contexts.add(cdw);
+            }
         }
     }
 
-    public ContextWrapper parseContextData(
-            LinkedHashMap<?, ?> contextData,
-            AutomationProgress progress,
-            Session session,
-            boolean createSessions) {
+    public ContextWrapper parseContextData( // TODO move into constructor?
+            LinkedHashMap<?, ?> contextData, AutomationProgress progress) {
         String name = null;
         List<String> urls = new ArrayList<>();
         ArrayList<?> includeRegexes = null;
@@ -149,7 +131,7 @@ public class AutomationEnvironment {
                         ArrayList<?> urlList = (ArrayList<?>) value;
                         for (Object urlObj : urlList) {
                             try {
-                                String url = replaceVars(urlObj);
+                                String url = replaceVars(urlObj); // TODO cant do this here!
                                 new URI(url, true);
                                 urls.add(url);
                             } catch (URIException e) {
@@ -163,7 +145,7 @@ public class AutomationEnvironment {
                 case "url":
                     // For backwards compatibility
                     try {
-                        String url = replaceVars(value);
+                        String url = replaceVars(value); // TODO ditto
                         new URI(url, true);
                         urls.add(url);
                         progress.warn(
@@ -199,55 +181,36 @@ public class AutomationEnvironment {
                     Constant.messages.getString("automation.error.context.nourl", contextData));
             return null;
         }
-        if (createSessions && session != null) {
-            Context oldContext = session.getContext(name);
-            if (oldContext != null) {
-                // Always delete an existing context with the same name, otherwise will fail
-                session.deleteContext(oldContext);
-            }
+        ContextWrapper.Data data = new ContextWrapper.Data();
+        data.setName(name);
+        data.setUrls(urls);
 
-            Context context = session.getNewContext(name);
-            if (includeRegexes != null) {
-                for (Object regex : includeRegexes) {
-                    context.addIncludeInContextRegex(replaceVars(regex.toString()));
-                }
+        List<String> incUrls = new ArrayList<>();
+        if (includeRegexes != null) {
+            for (Object regex : includeRegexes) {
+                incUrls.add(replaceVars(regex.toString()));
             }
-            if (excludeRegexes != null) {
-                for (Object regex : excludeRegexes) {
-                    context.addExcludeFromContextRegex(replaceVars(regex.toString()));
-                }
-            }
-            ContextWrapper wrapper = new ContextWrapper(context);
-            for (String u : urls) {
-                context.addIncludeInContextRegex(u + ".*");
-                wrapper.addUrl(u);
-            }
-            return wrapper;
         }
-        return null;
+        data.setIncludePaths(incUrls);
+        List<String> excUrls = new ArrayList<>();
+        if (excludeRegexes != null) {
+            for (Object regex : excludeRegexes) {
+                excUrls.add(replaceVars(regex.toString()));
+            }
+        }
+        data.setExcludePaths(excUrls);
+        return new ContextWrapper(data);
     }
 
     public void create(Session session, AutomationProgress progress) {
         this.created = true;
-        for (Object contextObject : this.contextData.toArray()) {
-            if (!(contextObject instanceof LinkedHashMap)) {
-                // Should have been caught before, but just in case..
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.env.badcontext", contextObject));
-                this.hasErrors = true;
-                return;
-            }
 
-            ContextWrapper context =
-                    parseContextData((LinkedHashMap<?, ?>) contextObject, progress, session, true);
-            if (context != null) {
-                this.contexts.add(context);
-                if (this.isTimeToQuit()) {
-                    this.hasErrors = progress.hasErrors();
-                    this.hasWarnings = progress.hasWarnings();
-                    return;
-                }
+        for (ContextWrapper context : this.contexts) {
+            context.createContext(session);
+            if (this.isTimeToQuit()) {
+                this.hasErrors = progress.hasErrors();
+                this.hasWarnings = progress.hasWarnings();
+                return;
             }
         }
     }
@@ -301,12 +264,29 @@ public class AutomationEnvironment {
         return ExtensionAutomation.getResourceAsString(YAML_FILE);
     }
 
+    public void addContext(ContextWrapper.Data contextData) {
+        this.contexts.add(new ContextWrapper(contextData));
+    }
+
     public List<ContextWrapper> getContextWrappers() {
         return contexts;
     }
 
+    public void setContexts(List<ContextWrapper> contexts) {
+        this.contexts = contexts;
+    }
+
     public List<Context> getContexts() {
         return contexts.stream().map(ContextWrapper::getContext).collect(Collectors.toList());
+    }
+
+    public List<String> getContextNames() {
+        return contexts.stream()
+                .map(ContextWrapper::getData)
+                .collect(Collectors.toList())
+                .stream()
+                .map(ContextWrapper.Data::getName)
+                .collect(Collectors.toList());
     }
 
     public Map<String, String> getVars() {
@@ -365,10 +345,16 @@ public class AutomationEnvironment {
     }
 
     public ContextWrapper getDefaultContextWrapper() {
+        if (contexts.isEmpty()) {
+            return null;
+        }
         return contexts.get(0);
     }
 
     public Context getDefaultContext() {
+        if (contexts.isEmpty()) {
+            return null;
+        }
         return contexts.get(0).getContext();
     }
 
@@ -385,14 +371,98 @@ public class AutomationEnvironment {
     }
 
     public boolean isFailOnError() {
-        return failOnError;
+        return this.getData().getParameters().isFailOnError();
     }
 
     public boolean isFailOnWarning() {
-        return failOnWarning;
+        return this.getData().getParameters().isFailOnWarning();
     }
 
     public boolean isTimeToQuit() {
-        return (failOnError && progress.hasErrors()) || (failOnWarning && progress.hasWarnings());
+        return (isFailOnError() && progress.hasErrors())
+                || (isFailOnWarning() && progress.hasWarnings());
+    }
+
+    public void showDialog() {
+        new EnvironmentDialog(this).setVisible(true);
+    }
+
+    public Data getData() {
+        // The contexts are maintained locally
+        this.data.setContexts(
+                this.contexts.stream().map(ContextWrapper::getData).collect(Collectors.toList()));
+        return this.data;
+    }
+
+    public static class Data extends AutomationData {
+        private List<ContextWrapper.Data> contexts = new ArrayList<>();
+        private Parameters parameters;
+
+        public Data() {
+            setParameters(new Parameters());
+        }
+
+        public List<ContextWrapper.Data> getContexts() {
+            return contexts;
+        }
+
+        public void setContexts(List<ContextWrapper.Data> contexts) {
+            this.contexts = contexts;
+        }
+        /*
+        		public void addContext(ContextWrapper.Data context) {
+                    this.contexts.add(context);
+                }
+
+                public void removeContext(ContextWrapper.Data context) {
+                    this.contexts.remove(context);
+                }
+        */
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Parameters parameters) {
+            this.parameters = parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private boolean failOnError;
+        private boolean failOnWarning;
+        private boolean progressToStdout;
+
+        public Parameters() {}
+
+        public Parameters(boolean failOnError, boolean failOnWarning, boolean progressToStdout) {
+            super();
+            this.failOnError = failOnError;
+            this.failOnWarning = failOnWarning;
+            this.progressToStdout = progressToStdout;
+        }
+
+        public boolean isFailOnError() {
+            return failOnError;
+        }
+
+        public boolean isFailOnWarning() {
+            return failOnWarning;
+        }
+
+        public boolean isProgressToStdout() {
+            return progressToStdout;
+        }
+
+        public void setFailOnError(boolean failOnError) {
+            this.failOnError = failOnError;
+        }
+
+        public void setFailOnWarning(boolean failOnWarning) {
+            this.failOnWarning = failOnWarning;
+        }
+
+        public void setProgressToStdout(boolean progressToStdout) {
+            this.progressToStdout = progressToStdout;
+        }
     }
 }

@@ -125,6 +125,7 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -147,6 +148,7 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -223,6 +225,7 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 

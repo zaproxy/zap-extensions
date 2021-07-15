@@ -25,10 +25,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.automation.gui.PassiveScanWaitJobDialog;
+import org.zaproxy.addon.automation.jobs.SpiderJob.Parameters;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 
 public class PassiveScanWaitJob extends AutomationJob {
@@ -37,7 +40,9 @@ public class PassiveScanWaitJob extends AutomationJob {
 
     private static final String PARAM_MAX_DURATION = "maxDuration";
 
-    private int maxDuration = 0;
+    private Parameters parameters = new Parameters();
+
+    // private int maxDuration = 0;
 
     public PassiveScanWaitJob() {}
 
@@ -46,7 +51,8 @@ public class PassiveScanWaitJob extends AutomationJob {
         ExtensionPassiveScan extPScan = getExtPassiveScan();
 
         long endTime = Long.MAX_VALUE;
-        if (maxDuration > 0) {
+        Integer maxDuration = this.parameters.getMaxDuration();
+        if (maxDuration != null && maxDuration > 0) {
             endTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(maxDuration);
         }
 
@@ -80,19 +86,15 @@ public class PassiveScanWaitJob extends AutomationJob {
             String name, String value, AutomationProgress progress) {
         switch (name) {
             case PARAM_MAX_DURATION:
-                if (progress != null) {
-                    try {
-                        Integer.parseInt(value);
-                    } catch (NumberFormatException e) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.options.badint",
-                                        this.getType(),
-                                        name,
-                                        value));
-                    }
-                } else {
-                    maxDuration = Integer.parseInt(value);
+                try {
+                    this.parameters.setMaxDuration(Integer.parseInt(value));
+                } catch (NumberFormatException e) {
+                    progress.error( // TODO should be warn?
+                            Constant.messages.getString(
+                                    "automation.error.options.badint",
+                                    this.getType(),
+                                    name,
+                                    value));
                 }
                 return true;
             default:
@@ -113,7 +115,10 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     public int getMaxDuration() {
-        return maxDuration;
+        if (parameters.getMaxDuration() == null) {
+            return 0;
+        }
+        return parameters.getMaxDuration();
     }
 
     @Override
@@ -121,6 +126,21 @@ public class PassiveScanWaitJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_MAX_DURATION, "0");
         return map;
+    }
+
+    @Override
+    public Data getData() {
+        return new Data(this.getName(), this.parameters);
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    @Override
+    public void showDialog() {
+        new PassiveScanWaitJobDialog(this).setVisible(true);
     }
 
     @Override
@@ -141,5 +161,37 @@ public class PassiveScanWaitJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return null;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+
+        public Data(String name, Parameters parameters) {
+            super(JOB_NAME, name);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private Integer maxDuration;
+
+        public Parameters() {}
+
+        public Parameters(int maxDuration) {
+            super();
+            this.maxDuration = maxDuration;
+        }
+
+        public void setMaxDuration(int maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
+        public Integer getMaxDuration() {
+            return maxDuration;
+        }
     }
 }

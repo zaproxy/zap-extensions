@@ -362,6 +362,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyJobSpecificData(progress); // TODO added, didnt help :/
         job.applyParameters(progress);
         job.runJob(env, progress);
 

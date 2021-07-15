@@ -21,16 +21,23 @@ package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
 
 public class ContextWrapper {
 
-    private final Context context;
+    private Context context;
 
-    private final List<String> urls = new ArrayList<>();
+    private Data data;
 
+    public ContextWrapper(Data data) {
+        this.data = data;
+    }
+
+    // TODO remove, once tests fixed
     public ContextWrapper(Context context) {
         this.context = context;
+        this.data = new Data();
     }
 
     public Context getContext() {
@@ -38,10 +45,72 @@ public class ContextWrapper {
     }
 
     public void addUrl(String url) {
-        this.urls.add(url);
+        this.data.getUrls().add(url);
     }
 
     public List<String> getUrls() {
-        return this.urls;
+        return this.data.getUrls();
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public void createContext(Session session) {
+        Context oldContext = session.getContext(getData().getName());
+        if (oldContext != null) {
+            session.deleteContext(oldContext);
+        }
+        this.context = session.getNewContext(getData().getName());
+        for (String url : getData().getUrls()) {
+            this.context.addIncludeInContextRegex(url + ".*");
+        }
+        for (String path : getData().getIncludePaths()) {
+            this.context.addIncludeInContextRegex(path);
+        }
+        this.context.setExcludeFromContextRegexs(getData().getExcludePaths());
+    }
+
+    public static class Data {
+        private String name;
+        private List<String> urls = new ArrayList<>();
+        private List<String> includePaths;
+        private List<String> excludePaths;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<String> getUrls() {
+            return urls;
+        }
+
+        public void setUrls(List<String> urls) {
+            this.urls = urls;
+        }
+
+        public List<String> getIncludePaths() {
+            return includePaths;
+        }
+
+        public void setIncludePaths(List<String> includePaths) {
+            this.includePaths = includePaths;
+        }
+
+        public List<String> getExcludePaths() {
+            return excludePaths;
+        }
+
+        public void setExcludePaths(List<String> excludePaths) {
+            this.excludePaths = excludePaths;
+        }
     }
 }

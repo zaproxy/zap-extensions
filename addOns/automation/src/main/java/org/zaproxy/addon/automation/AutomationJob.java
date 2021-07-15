@@ -99,6 +99,16 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void verifyJobSpecificData(AutomationProgress progress) {}
 
+    public AutomationData getData() {
+        return null;
+    }
+
+    public AutomationData getParameters() {
+        return null;
+    }
+
+    public void showDialog() {}
+
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
     public abstract String getType();

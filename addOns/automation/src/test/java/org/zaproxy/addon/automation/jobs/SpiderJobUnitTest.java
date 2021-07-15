@@ -560,6 +560,7 @@ class SpiderJobUnitTest extends TestUtils {
         nano.addHandler(testHandler);
 
         // When
+
         job.runJob(env, progress);
 
         stopServer();
