@@ -281,7 +281,10 @@ public class WappalyzerJsonParser {
             }
         } else if (json != null) {
             logger.error(
-                    "Unexpected header type for {} {}", json, json.getClass().getCanonicalName());
+                    "Unexpected JSON type for {} pattern: {} {}",
+                    type,
+                    json,
+                    json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -349,8 +352,11 @@ public class WappalyzerJsonParser {
                 }
             }
         } else {
-            logger.error(
-                    "Unexpected header type for {} : {}", json, json.getClass().getCanonicalName());
+            logger.debug(
+                    "Unexpected JSON type for {} pattern: {} {}",
+                    type,
+                    json,
+                    json.getClass().getCanonicalName());
         }
         return list;
     }
