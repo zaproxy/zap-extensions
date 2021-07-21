@@ -17,8 +17,6 @@
  */
 package org.zaproxy.zap.extension.codedx;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,9 +30,9 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.report.ReportLastScan.ReportType;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.codedx.ReportLastScan.ReportType;
 import org.zaproxy.zap.extension.codedx.security.SSLConnectionSocketFactoryFactory;
 import org.zaproxy.zap.view.ZapMenuItem;
 
