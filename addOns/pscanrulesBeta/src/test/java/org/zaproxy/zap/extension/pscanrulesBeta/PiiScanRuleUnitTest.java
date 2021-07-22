@@ -192,6 +192,29 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
     }
 
     @Test
+    void shouldNotRaiseAlertOnImageRequest() throws Exception {
+        // Given
+        HttpMessage msg = createMsg("4111111111111111");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/image.gif", true));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnImageResponse() throws Exception {
+        // Given
+        HttpMessage msg = createMsg("4111111111111111");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/image", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/gif");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
     void shouldNotRaiseAlertOnResponseContainingCcLikeStyleAttribute() throws Exception {
         // Given
         String content = "margin-left:85.36370249136206%";
