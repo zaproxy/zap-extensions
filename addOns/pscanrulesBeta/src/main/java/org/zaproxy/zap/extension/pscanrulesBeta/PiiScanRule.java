@@ -30,6 +30,7 @@ import net.htmlparser.jericho.StartTag;
 import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.PiiUtils;
 import org.zaproxy.addon.commonlib.binlist.BinList;
@@ -100,6 +101,10 @@ public class PiiScanRule extends PluginPassiveScanner {
                 Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
                     String evidence = matcher.group();
+                    if (isDecimal(candidate.getContainingString())
+                            && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
+                        return;
+                    }
                     if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
                         BinRecord binRec = BinList.getSingleton().get(evidence);
                         raiseAlert(msg, evidence, cc.name, binRec);
@@ -139,6 +144,18 @@ public class PiiScanRule extends PluginPassiveScanner {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Checks whether a particular {@code String} input appears to be a decimal number. Ex:
+     * 2.14111111111111111, 8.46786664623715, 3.14111111111117293
+     *
+     * @param containingString the value to be checked.
+     * @return {@code true} if the matched value seems to be part of a decimal, {@code false}
+     *     otherwise.
+     */
+    private static boolean isDecimal(String containingString) {
+        return containingString.contains(".");
     }
 
     private void raiseAlert(HttpMessage msg, String evidence, String cardType, BinRecord binRec) {
@@ -198,7 +215,10 @@ public class PiiScanRule extends PluginPassiveScanner {
                             matcher.group().replaceAll("\\s+", ""),
                             inputString
                                     .substring(
-                                            matcher.start(),
+                                            // Include 3 leading characters if possible
+                                            matcher.start() - 3 > 0
+                                                    ? matcher.start() - 3
+                                                    : matcher.start(),
                                             inputString.length() > proposedEnd
                                                     ? matcher.end() + 3
                                                     : inputString.length())

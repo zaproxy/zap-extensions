@@ -31,7 +31,10 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -41,7 +44,9 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
 
     @Override
     protected PiiScanRule createScanner() {
-        return new PiiScanRule();
+        PiiScanRule rule = new PiiScanRule();
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        return rule;
     }
 
     private static Stream<Arguments> cardData() {
@@ -143,12 +148,52 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         assertThat(alertsRaised.size(), is(0));
     }
 
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void shouldNotRaiseAlertInDecimalNumbers(AlertThreshold alertThreshold) throws Exception {
+        // Given
+        String content = "2.4111111111111111"; // Visa - Valid ahead of exponent
+        HttpMessage msg = createMsg(content);
+        // When
+        rule.setAlertThreshold(alertThreshold);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
     @Test
-    void shouldRaiseAlertInPlausiblePeriodDelimitedContent() throws Exception {
+    void shouldRaiseAlertInDecimalNumbersAtLowThreshold() throws Exception {
+        // Given
+        String content = "2.4111111111111111"; // Visa - Valid ahead of exponent
+        HttpMessage msg = createMsg(content);
+        // When
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    void shouldRaiseAlertInPlausiblePeriodDelimitedContentAtLowThreshold() throws Exception {
         // Given
         String content = "1121.4111111111111111.John Smith.808"; // Visa
         HttpMessage msg = createMsg(content);
         // When
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    void shouldRaiseAlertInPlausibleCsvContent() throws Exception {
+        // Given
+        String content = "1121,4111111111111111,John Smith,808"; // Visa
+        HttpMessage msg = createMsg(content);
+        // When
+        rule.setAlertThreshold(AlertThreshold.LOW);
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
