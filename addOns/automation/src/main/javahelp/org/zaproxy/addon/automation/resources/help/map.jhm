@@ -6,6 +6,7 @@
 <map version="1.0">
 	<mapID target="automation-icon" url="contents/images/robot.png" />
     <mapID target="automation" url="contents/automation.html" />
+    <mapID target="automation.gui" url="contents/gui.html" />
     <mapID target="automation.env" url="contents/environment.html" />
     <mapID target="automation.addons" url="contents/job-addons.html" />
     <mapID target="automation.pscanconf" url="contents/job-pscanconf.html" />

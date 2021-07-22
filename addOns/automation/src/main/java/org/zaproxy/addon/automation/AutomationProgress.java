@@ -31,6 +31,7 @@ public class AutomationProgress {
     private List<String> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
     private List<String> infos = new ArrayList<>();
+    private List<String> allMessages = new ArrayList<>();
     private List<AutomationJob> runJobs = new ArrayList<>();
     private boolean outputToStdout = false;
     private Map<String, JobResultData> jobResultDataMap = new HashMap<>();
@@ -43,23 +44,32 @@ public class AutomationProgress {
 
     public void error(String error) {
         this.errors.add(error);
+        this.allMessages.add(error);
         if (outputToStdout) {
             CommandLine.error(error);
         }
+        AutomationEventPublisher.publishMessageEvent(
+                AutomationEventPublisher.PLAN_ERROR_MESSAGE, error);
     }
 
     public void warn(String warning) {
         this.warnings.add(warning);
+        this.allMessages.add(warning);
         if (outputToStdout) {
             CommandLine.info(warning);
         }
+        AutomationEventPublisher.publishMessageEvent(
+                AutomationEventPublisher.PLAN_WARNING_MESSAGE, warning);
     }
 
     public void info(String info) {
         this.infos.add(info);
+        this.allMessages.add(info);
         if (outputToStdout) {
             CommandLine.info(info);
         }
+        AutomationEventPublisher.publishMessageEvent(
+                AutomationEventPublisher.PLAN_INFO_MESSAGE, info);
     }
 
     public List<String> getErrors() {
@@ -72,6 +82,10 @@ public class AutomationProgress {
 
     public List<String> getInfos() {
         return infos;
+    }
+
+    public List<String> getAllMessages() {
+        return allMessages;
     }
 
     public boolean hasErrors() {
@@ -160,6 +174,14 @@ public class AutomationProgress {
         return new ArrayList<>();
     }
 
+    public Map<String, String> toMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("errors.count", Integer.toString(this.errors.size()));
+        map.put("warnings.count", Integer.toString(this.warnings.size()));
+        map.put("infos.count", Integer.toString(this.infos.size()));
+        return map;
+    }
+
     public class JobResults {
 
         private List<String> errors;
@@ -182,6 +204,14 @@ public class AutomationProgress {
 
         public List<String> getInfos() {
             return infos;
+        }
+
+        public Map<String, String> toMap() {
+            Map<String, String> map = new HashMap<>();
+            map.put("errors.count", Integer.toString(this.errors.size()));
+            map.put("warnings.count", Integer.toString(this.warnings.size()));
+            map.put("infos.count", Integer.toString(this.infos.size()));
+            return map;
         }
     }
 }
