@@ -20,17 +20,22 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
@@ -46,19 +51,17 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_URL = "url";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
-    private static final String PARAM_MAX_DURATION = "maxDuration";
 
     private ExtensionAjax extSpider;
 
-    // Local copy
-    private int maxDuration = 0;
-
-    private String contextName;
-    private String url;
-
     private boolean inScopeOnly = true;
 
-    public AjaxSpiderJob() {}
+    private Data data;
+    private Parameters parameters = new Parameters();
+
+    public AjaxSpiderJob() {
+        this.data = new Data(this, parameters);
+    }
 
     private ExtensionAjax getExtSpider() {
         if (extSpider == null) {
@@ -69,44 +72,36 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
-    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        switch (name) {
-            case PARAM_FAIL_IF_LESS_URLS:
-            case PARAM_WARN_IF_LESS_URLS:
-                if (progress != null) {
-                    progress.warn(
-                            Constant.messages.getString(
-                                    "automation.error.spider.failIfUrlsLessThan.deprecated",
-                                    getType(),
-                                    "automation.spiderAjax.urls.added"));
-                }
-                return true;
-            default:
-                return super.verifyCustomParameter(name, value, progress);
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
+        }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
+        if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
+                || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.spider.failIfUrlsLessThan.deprecated",
+                            getName(),
+                            "automation.spiderAjax.urls.added"));
         }
     }
 
     @Override
-    public boolean applyCustomParameter(String name, String value) {
-        switch (name) {
-            case PARAM_CONTEXT:
-                contextName = value;
-                return true;
-            case PARAM_URL:
-                url = value;
-                return true;
-            case PARAM_FAIL_IF_LESS_URLS:
-            case PARAM_WARN_IF_LESS_URLS:
-                return true;
-            case PARAM_MAX_DURATION:
-                maxDuration = Integer.parseInt(value);
-                // Don't consume this as we still want it to be applied to the spider params
-                return false;
-            default:
-                // Ignore
-                break;
-        }
-        return false;
+    public void applyParameters(AutomationProgress progress) {
+        JobUtils.applyObjectToObject(
+                this.parameters,
+                JobUtils.getJobOptions(this, progress),
+                this.getName(),
+                new String[] {PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS},
+                progress,
+                this.getPlan().getEnv());
     }
 
     @Override
@@ -121,6 +116,7 @@ public class AjaxSpiderJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
+        String contextName = this.getParameters().getContext();
         if (contextName != null) {
             context = env.getContextWrapper(contextName);
             if (context == null) {
@@ -133,7 +129,7 @@ public class AjaxSpiderJob extends AutomationJob {
             context = env.getDefaultContextWrapper();
         }
 
-        String uriStr = url;
+        String uriStr = this.getParameters().getUrl();
         if (uriStr == null) {
             uriStr = context.getUrls().get(0);
         }
@@ -165,11 +161,11 @@ public class AjaxSpiderJob extends AutomationJob {
         new Thread(spiderThread, "ZAP-AjaxSpiderAuto").start();
 
         long endTime = Long.MAX_VALUE;
-        if (maxDuration > 0) {
+        if (JobUtils.unBox(this.getParameters().getMaxDuration() > 0)) {
             // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
             endTime =
                     System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(maxDuration)
+                            + TimeUnit.MINUTES.toMillis(this.getParameters().getMaxDuration())
                             + TimeUnit.SECONDS.toMillis(5);
         }
 
@@ -208,10 +204,6 @@ public class AjaxSpiderJob extends AutomationJob {
             default:
                 return false;
         }
-    }
-
-    public int getMaxDuration() {
-        return maxDuration;
     }
 
     /**
@@ -272,5 +264,177 @@ public class AjaxSpiderJob extends AutomationJob {
 
         @Override
         public void spiderStopped() {}
+    }
+
+    @Override
+    public void showDialog() {
+        new AjaxSpiderJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getSummary() {
+        String context = this.getParameters().getContext();
+        if (StringUtils.isEmpty(context)) {
+            context = Constant.messages.getString("spiderajax.automation.default");
+        }
+        return Constant.messages.getString(
+                "spiderajax.automation.dialog.summary",
+                context,
+                JobUtils.unBox(this.getParameters().getUrl(), "''"));
+    }
+
+    @Override
+    public AutomationData getData() {
+        return data;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+
+        public Data(AutomationJob job, Parameters parameters) {
+            super(job);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private String context;
+        private String url;
+        private Integer maxDuration;
+        private Integer maxCrawlDepth;
+        private Integer numberOfBrowsers;
+
+        private String browserId;
+        private Integer maxCrawlStates;
+        private Integer eventWait;
+        private Integer reloadWait;
+        private Boolean clickDefaultElems;
+        private Boolean clickElemsOnce;
+        private Boolean randomInputs;
+
+        // These 2 fields are deprecated
+        private Boolean failIfFoundUrlsLessThan;
+        private Boolean warnIfFoundUrlsLessThan;
+
+        public String getContext() {
+            return context;
+        }
+
+        public void setContext(String context) {
+            this.context = context;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Integer getMaxDuration() {
+            return maxDuration;
+        }
+
+        public void setMaxDuration(Integer maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
+        public Integer getMaxCrawlDepth() {
+            return maxCrawlDepth;
+        }
+
+        public void setMaxCrawlDepth(Integer maxCrawlDepth) {
+            this.maxCrawlDepth = maxCrawlDepth;
+        }
+
+        public Integer getNumberOfBrowsers() {
+            return numberOfBrowsers;
+        }
+
+        public void setNumberOfBrowsers(Integer numberOfBrowsers) {
+            this.numberOfBrowsers = numberOfBrowsers;
+        }
+
+        public String getBrowserId() {
+            return browserId;
+        }
+
+        public void setBrowserId(String browserId) {
+            this.browserId = browserId;
+        }
+
+        public Boolean getClickDefaultElems() {
+            return clickDefaultElems;
+        }
+
+        public void setClickDefaultElems(Boolean clickDefaultElems) {
+            this.clickDefaultElems = clickDefaultElems;
+        }
+
+        public Boolean getClickElemsOnce() {
+            return clickElemsOnce;
+        }
+
+        public void setClickElemsOnce(Boolean clickElemsOnce) {
+            this.clickElemsOnce = clickElemsOnce;
+        }
+
+        public Integer getEventWait() {
+            return eventWait;
+        }
+
+        public void setEventWait(Integer eventWait) {
+            this.eventWait = eventWait;
+        }
+
+        public Integer getMaxCrawlStates() {
+            return maxCrawlStates;
+        }
+
+        public void setMaxCrawlStates(Integer maxCrawlStates) {
+            this.maxCrawlStates = maxCrawlStates;
+        }
+
+        public Boolean getRandomInputs() {
+            return randomInputs;
+        }
+
+        public void setRandomInputs(Boolean randomInputs) {
+            this.randomInputs = randomInputs;
+        }
+
+        public Integer getReloadWait() {
+            return reloadWait;
+        }
+
+        public void setReloadWait(Integer reloadWait) {
+            this.reloadWait = reloadWait;
+        }
+
+        public Boolean getFailIfFoundUrlsLessThan() {
+            return failIfFoundUrlsLessThan;
+        }
+
+        public void setFailIfFoundUrlsLessThan(Boolean failIfFoundUrlsLessThan) {
+            this.failIfFoundUrlsLessThan = failIfFoundUrlsLessThan;
+        }
+
+        public Boolean getWarnIfFoundUrlsLessThan() {
+            return warnIfFoundUrlsLessThan;
+        }
+
+        public void setWarnIfFoundUrlsLessThan(Boolean warnIfFoundUrlsLessThan) {
+            this.warnIfFoundUrlsLessThan = warnIfFoundUrlsLessThan;
+        }
     }
 }

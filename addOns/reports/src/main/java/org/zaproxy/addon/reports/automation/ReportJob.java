@@ -27,12 +27,14 @@ import java.util.Map;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
-import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 
 public class ReportJob extends AutomationJob {
@@ -40,72 +42,139 @@ public class ReportJob extends AutomationJob {
     private static final String JOB_NAME = "report";
 
     private static final String PARAM_TEMPLATE = "template";
+    private static final String PARAM_THEME = "theme";
     private static final String PARAM_REPORT_DIR = "reportDir";
     private static final String PARAM_REPORT_FILE = "reportFile";
     private static final String PARAM_REPORT_TITLE = "reportTitle";
     private static final String PARAM_REPORT_DESC = "reportDescription";
     private static final String PARAM_DISPLAY_REPORT = "displayReport";
 
-    private String templateName = "traditional-html";
-    private String reportDir = null;
-    private String reportFile = ReportParam.DEFAULT_NAME_PATTERN;
-    private String reportTitle = null;
-    private String reportDesc = null;
-    private boolean displayReport = false;
-
     private ExtensionReports extReport;
+
+    private Parameters parameters = new Parameters();
+    private Data data;
+
+    public ReportJob() {
+        data = new Data(this, this.parameters);
+    }
+
+    @Override
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
+        }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
+
+        List<String> list = getJobDataList(jobData, "risks", progress);
+        if (!list.isEmpty()) {
+            // Validate
+            list.stream().map(risk -> riskStringToInt(risk, progress));
+            this.getData().setRisks(list);
+        }
+
+        list = getJobDataList(jobData, "confidences", progress);
+        if (!list.isEmpty()) {
+            // Validate
+            list.stream().map(conf -> confidenceStringToInt(conf, progress));
+            this.getData().setConfidences(list);
+        }
+
+        Template template =
+                getExtReport().getTemplateByConfigName(this.getParameters().getTemplate());
+        if (template == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "reports.automation.error.badtemplate",
+                            this.getName(),
+                            this.getParameters().getTemplate()));
+        }
+
+        list = getJobDataList(jobData, "sections", progress);
+        if (!list.isEmpty()) {
+            if (template != null) {
+                // Validate
+                List<String> validSections = template.getSections();
+                for (String section : list) {
+                    if (!validSections.contains(section)) {
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "reports.automation.error.badsection",
+                                        this.getName(),
+                                        section,
+                                        template.getConfigName(),
+                                        validSections));
+                    }
+                }
+            }
+            this.getData().setSections(list);
+        }
+    }
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ReportData reportData = new ReportData();
-        Template template = getExtReport().getTemplateByConfigName(templateName);
+        Template template =
+                getExtReport().getTemplateByConfigName(this.getParameters().getTemplate());
+
+        if (template == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "reports.automation.error.badtemplate",
+                            this.getName(),
+                            this.getParameters().getTemplate()));
+            return;
+        }
+        reportData.setTheme(this.getParameters().getTheme());
 
         // Work out the file name based on the pattern
         String fileName =
                 ExtensionReports.getNameFromPattern(
-                        reportFile, env.getDefaultContextWrapper().getUrls().get(0));
+                        this.getParameters().getReportFile(),
+                        env.getDefaultContextWrapper().getUrls().get(0));
 
         if (!fileName.endsWith("." + template.getExtension())) {
             fileName += "." + template.getExtension();
         }
 
         File file;
+        String reportDir = this.getParameters().getReportDir();
         if (reportDir != null && reportDir.length() > 0) {
             file = new File(reportDir, fileName);
         } else {
             file = new File(fileName);
         }
-        reportData.setTitle(this.reportTitle);
-        reportData.setDescription(this.reportDesc);
+        reportData.setTitle(this.getParameters().getReportTitle());
+        reportData.setDescription(this.getParameters().getReportDescription());
         reportData.setContexts(env.getContexts());
         reportData.setSites(ExtensionReports.getSites());
 
-        LinkedHashMap<?, ?> jobData = this.getJobData();
-
-        List<String> list = getJobDataList(jobData, "risks", progress);
-        if (list.isEmpty()) {
+        if (this.getData().getRisks() == null) {
             reportData.setIncludeAllRisks(true);
         } else {
-            for (String risk : list) {
+            for (String risk : this.getData().getRisks()) {
                 reportData.setIncludeRisk(riskStringToInt(risk, progress), true);
             }
         }
 
-        list = getJobDataList(jobData, "confidences", progress);
-        if (list.isEmpty()) {
+        if (this.getData().getConfidences() == null) {
             reportData.setIncludeAllConfidences(true);
         } else {
-            for (String confidence : list) {
+            for (String confidence : this.getData().getConfidences()) {
                 reportData.setIncludeConfidence(confidenceStringToInt(confidence, progress), true);
             }
         }
 
-        list = getJobDataList(jobData, "sections", progress);
-        if (list.isEmpty()) {
+        if (this.getData().getSections() == null) {
             reportData.setSections(template.getSections());
         } else {
             List<String> validSections = template.getSections();
-            for (String section : list) {
+            for (String section : this.getData().getSections()) {
                 if (validSections.contains(section)) {
                     reportData.addSection(section);
                 } else {
@@ -119,13 +188,17 @@ public class ReportJob extends AutomationJob {
                 }
             }
         }
+
         reportData.setAlertTreeRootNode(getExtReport().getFilteredAlertTree(reportData));
 
         try {
             file =
                     getExtReport()
                             .generateReport(
-                                    reportData, template, file.getAbsolutePath(), displayReport);
+                                    reportData,
+                                    template,
+                                    file.getAbsolutePath(),
+                                    JobUtils.unBox(this.getParameters().getDisplayReport()));
             progress.info(
                     Constant.messages.getString(
                             "reports.automation.info.reportgen",
@@ -207,42 +280,17 @@ public class ReportJob extends AutomationJob {
     }
 
     @Override
-    public boolean applyCustomParameter(String name, String value) {
-        switch (name) {
-            case PARAM_TEMPLATE:
-                templateName = value;
-                return true;
-            case PARAM_REPORT_DIR:
-                reportDir = value;
-                return true;
-            case PARAM_REPORT_FILE:
-                reportFile = value;
-                return true;
-            case PARAM_REPORT_TITLE:
-                reportTitle = value;
-                return true;
-            case PARAM_REPORT_DESC:
-                reportDesc = value;
-                return true;
-            case PARAM_DISPLAY_REPORT:
-                displayReport = Boolean.parseBoolean(value);
-                return true;
-            default:
-                // Ignore
-                break;
-        }
-        return false;
-    }
-
-    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
-        map.put(PARAM_TEMPLATE, templateName);
-        map.put(PARAM_REPORT_DIR, null);
-        map.put(PARAM_REPORT_FILE, this.reportFile);
-        map.put(PARAM_REPORT_TITLE, this.reportTitle);
-        map.put(PARAM_REPORT_DESC, this.reportDesc);
-        map.put(PARAM_DISPLAY_REPORT, Boolean.toString(displayReport));
+        map.put(PARAM_TEMPLATE, this.getParameters().getTemplate());
+        map.put(PARAM_THEME, this.getParameters().getTheme());
+        map.put(PARAM_REPORT_DIR, this.getParameters().getReportDir());
+        map.put(PARAM_REPORT_FILE, this.getParameters().getReportFile());
+        map.put(PARAM_REPORT_TITLE, this.getParameters().getReportTitle());
+        map.put(PARAM_REPORT_DESC, this.getParameters().getReportDescription());
+        map.put(
+                PARAM_DISPLAY_REPORT,
+                Boolean.toString(JobUtils.unBox(this.getParameters().getDisplayReport())));
         return map;
     }
 
@@ -274,5 +322,136 @@ public class ReportJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return null;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    @Override
+    public void showDialog() {
+        new ReportJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getSummary() {
+        return Constant.messages.getString(
+                "reports.automation.dialog.summary", this.getParameters().getTemplate());
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+        private List<String> risks;
+        private List<String> confidences;
+        private List<String> sections;
+
+        public Data(AutomationJob job, Parameters parameters) {
+            super(job);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public List<String> getRisks() {
+            return risks;
+        }
+
+        public void setRisks(List<String> risks) {
+            this.risks = risks;
+        }
+
+        public List<String> getConfidences() {
+            return confidences;
+        }
+
+        public void setConfidences(List<String> confidences) {
+            this.confidences = confidences;
+        }
+
+        public List<String> getSections() {
+            return sections;
+        }
+
+        public void setSections(List<String> sections) {
+            this.sections = sections;
+        }
+
+        public void setParameters(Parameters parameters) {
+            this.parameters = parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private String template;
+        private String theme;
+        private String reportDir;
+        private String reportFile;
+        private String reportTitle;
+        private String reportDescription;
+        private Boolean displayReport;
+
+        public String getTemplate() {
+            return template;
+        }
+
+        public void setTemplate(String template) {
+            this.template = template;
+        }
+
+        public String getTheme() {
+            return theme;
+        }
+
+        public void setTheme(String theme) {
+            this.theme = theme;
+        }
+
+        public String getReportDir() {
+            return reportDir;
+        }
+
+        public void setReportDir(String reportDir) {
+            this.reportDir = reportDir;
+        }
+
+        public String getReportFile() {
+            return reportFile;
+        }
+
+        public void setReportFile(String reportFile) {
+            this.reportFile = reportFile;
+        }
+
+        public String getReportTitle() {
+            return reportTitle;
+        }
+
+        public void setReportTitle(String reportTitle) {
+            this.reportTitle = reportTitle;
+        }
+
+        public String getReportDescription() {
+            return reportDescription;
+        }
+
+        public void setReportDescription(String reportDescription) {
+            this.reportDescription = reportDescription;
+        }
+
+        public Boolean getDisplayReport() {
+            return displayReport;
+        }
+
+        public void setDisplayReport(Boolean displayReport) {
+            this.displayReport = displayReport;
+        }
     }
 }

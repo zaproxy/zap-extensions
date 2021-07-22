@@ -122,6 +122,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                 case TYPE_INDEX:
                     return "env";
                 case INFO_INDEX:
+                    // TODO
                     return "";
                 default:
             }
@@ -171,8 +172,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                                 "automation.panel.table.info.warning",
                                 jobResults.getWarnings().toString());
                     } else if (job.getStatus().equals(AutomationJob.Status.NOT_STARTED)) {
-                        return Constant.messages.getString(
-                                "automation.panel.table.info.config", job.getJobData().toString());
+                        return job.getSummary();
                     } else {
                         return Constant.messages.getString(
                                 "automation.panel.table.info.ok", jobResults.getInfos().toString());

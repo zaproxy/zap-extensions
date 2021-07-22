@@ -27,6 +27,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -90,20 +92,34 @@ class GraphQlJobUnitTest {
     @Test
     void shouldApplyCustomConfigParams() {
         // Given
-        GraphQlJob job = new GraphQlJob();
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
         String endpoint = "https://example.com/graphql/";
         String schemaFile = "C:\\Users\\ZAPBot\\Documents\\test schema.graphql";
         String schemaUrl = "https://example.com/test%20file.graphql";
+        String yamlStr =
+                "parameters:\n"
+                        + "  endpoint: "
+                        + endpoint
+                        + "\n"
+                        + "  schemaFile: "
+                        + schemaFile
+                        + "\n"
+                        + "  schemaUrl: "
+                        + schemaUrl;
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        GraphQlJob job = new GraphQlJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        job.applyCustomParameter("endpoint", endpoint);
-        job.applyCustomParameter("schemaFile", schemaFile);
-        job.applyCustomParameter("schemaUrl", schemaUrl);
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(job.getEndpoint(), is(equalTo(endpoint)));
-        assertThat(job.getSchemaFile(), is(equalTo(schemaFile)));
-        assertThat(job.getSchemaUrl(), is(equalTo(schemaUrl)));
+        assertThat(job.getParameters().getEndpoint(), is(equalTo(endpoint)));
+        assertThat(job.getParameters().getSchemaFile(), is(equalTo(schemaFile)));
+        assertThat(job.getParameters().getSchemaUrl(), is(equalTo(schemaUrl)));
     }
 
     @Test
@@ -158,12 +174,18 @@ class GraphQlJobUnitTest {
     @Test
     void shouldFailIfInvalidEndpoint() {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr = "parameters:\n" + "  endpoint: 'invalid url'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        GraphQlJob job = new GraphQlJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        GraphQlJob job = new GraphQlJob();
-        job.applyCustomParameter("endpoint", "invalid url");
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -177,13 +199,22 @@ class GraphQlJobUnitTest {
     @ValueSource(strings = {"", "https://example.com/test file.graphql"})
     void shouldFailIfInvalidSchemaUrl(String schemaUrl) {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr =
+                "parameters:\n"
+                        + "  endpoint: 'http://example.com/graphql'\n"
+                        + "  schemaUrl: "
+                        + schemaUrl;
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        GraphQlJob job = new GraphQlJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        GraphQlJob job = new GraphQlJob();
-        job.applyCustomParameter("endpoint", "http://example.com/graphql");
-        job.applyCustomParameter("schemaUrl", schemaUrl);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -196,13 +227,21 @@ class GraphQlJobUnitTest {
     @Test
     void shouldFailIfInvalidSchemaFile() {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr =
+                "parameters:\n"
+                        + "  endpoint: 'http://example.com/graphql'\n"
+                        + "  schemaFile: 'Invalid file path.'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        GraphQlJob job = new GraphQlJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        GraphQlJob job = new GraphQlJob();
-        job.applyCustomParameter("endpoint", "http://example.com/graphql");
-        job.applyCustomParameter("schemaFile", "Invalid file path.");
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then

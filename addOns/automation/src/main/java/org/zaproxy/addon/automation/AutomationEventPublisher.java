@@ -42,9 +42,15 @@ public class AutomationEventPublisher implements EventPublisher {
 
     public static final String PLAN_INFO_MESSAGE = "plan.info";
 
+    public static final String PLAN_CHANGED = "plan.changed";
+
+    public static final String PLAN_SAVED = "plan.saved";
+
     public static final String JOB_STARTED = "job.started";
 
     public static final String JOB_FINISHED = "job.finished";
+
+    public static final String JOB_CHANGED = "job.changed";
 
     public static final String JOB_ID = "jobId";
     public static final String JOB_NAME = "jobName";
@@ -69,8 +75,11 @@ public class AutomationEventPublisher implements EventPublisher {
                             PLAN_ERROR_MESSAGE,
                             PLAN_WARNING_MESSAGE,
                             PLAN_INFO_MESSAGE,
+                            PLAN_CHANGED,
+                            PLAN_SAVED,
                             JOB_STARTED,
-                            JOB_FINISHED);
+                            JOB_FINISHED,
+                            JOB_CHANGED);
         }
         return publisher;
     }

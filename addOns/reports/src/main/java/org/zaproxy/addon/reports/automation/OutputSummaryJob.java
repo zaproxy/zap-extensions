@@ -30,15 +30,17 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
@@ -50,33 +52,85 @@ public class OutputSummaryJob extends AutomationJob {
     public static final String JOB_NAME = "outputSummary";
 
     private static final String PARAM_FORMAT = "format";
-    private static final String PARAM_SUMMARY_FILE = "summaryFile";
 
     private ExtensionReportAutomation extReportAuto;
     private PrintStream out = System.out;
 
-    private enum Format {
+    protected enum Format {
         NONE,
         SHORT,
         LONG
     };
 
-    private enum Result {
+    protected enum Result {
         IGNORE,
         INFO,
         WARN_NEW,
         FAIL_NEW
     }
 
-    private Format format = Format.NONE;
-    private String summaryFile;
+    private Data data;
+    private Parameters parameters = new Parameters();
 
     private ExtensionReports extReport;
     private AlertNode root;
 
-    private List<Integer> ignoreIds = new ArrayList<>();
-    private List<Integer> infoIds = new ArrayList<>();
-    private List<Integer> failIds = new ArrayList<>();
+    public OutputSummaryJob() {
+        this.data = new Data(this, parameters);
+    }
+
+    @Override
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
+        }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
+
+        if (this.getParameters().getSummaryFile() == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "reports.automation.error.noparent", this.getName(), ""));
+
+        } else {
+            File parent = new File(this.getParameters().getSummaryFile()).getParentFile();
+            if (!parent.exists()) {
+                progress.error(
+                        Constant.messages.getString(
+                                "reports.automation.error.noparent",
+                                this.getName(),
+                                parent.getAbsolutePath()));
+            } else if (!parent.canWrite()) {
+                progress.error(
+                        Constant.messages.getString(
+                                "reports.automation.error.roparent",
+                                this.getName(),
+                                parent.getAbsolutePath()));
+            }
+        }
+
+        // Load rule data
+        Object o = jobData.get("rules");
+        if (o instanceof ArrayList<?>) {
+            ArrayList<?> ruleData = (ArrayList<?>) o;
+            for (Object rule : ruleData) {
+                if (rule instanceof LinkedHashMap<?, ?>) {
+                    LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
+                    this.getData()
+                            .getRules()
+                            .add(
+                                    new Rule(
+                                            (Integer) ruleMap.get("id"),
+                                            (String) ruleMap.get("action")));
+                }
+            }
+        }
+    }
 
     /**
      * Prints a summary to std out as per the packaged scans. The output is deliberately not
@@ -84,6 +138,8 @@ public class OutputSummaryJob extends AutomationJob {
      */
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+        String summaryFile = this.getParameters().getSummaryFile();
+        Format format = this.getParameters().getFormat();
         if (Format.NONE.equals(format)) {
             return;
         }
@@ -94,29 +150,22 @@ public class OutputSummaryJob extends AutomationJob {
         int ignore = 0;
         int info = 0;
 
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        List<Integer> ignoreIds = new ArrayList<>();
+        List<Integer> infoIds = new ArrayList<>();
+        List<Integer> failIds = new ArrayList<>();
 
-        if (jobData != null) {
-            // Load rule data
-            Object o = jobData.get("rules");
-            if (o instanceof ArrayList<?>) {
-                ArrayList<?> ruleData = (ArrayList<?>) o;
-                for (Object rule : ruleData) {
-                    if (rule instanceof LinkedHashMap<?, ?>) {
-                        LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) rule;
-                        Integer id = (Integer) ruleMap.get("id");
-                        String action = (String) ruleMap.get("action");
-                        if ("IGNORE".equals(action)) {
-                            ignoreIds.add(id);
-                        } else if ("INFO".equals(action)) {
-                            infoIds.add(id);
-                        } else if ("FAIL".equals(action)) {
-                            failIds.add(id);
-                        } else {
-                            // Default to WARN
-                        }
-                    }
-                }
+        for (Rule rule : this.getData().getRules()) {
+            switch (rule.getAction()) {
+                case "IGNORE":
+                    ignoreIds.add(rule.getId());
+                    break;
+                case "INFO":
+                    infoIds.add(rule.getId());
+                    break;
+                case "FAIL":
+                    failIds.add(rule.getId());
+                    break;
+                default: // Default to WARN
             }
         }
 
@@ -151,20 +200,48 @@ public class OutputSummaryJob extends AutomationJob {
                             }
                         });
 
-                for (RuleData rule : pscanRuleArray) {
-                    if (!alertCounts.containsKey(rule.getId())) {
+                for (RuleData psRule : pscanRuleArray) {
+                    if (!alertCounts.containsKey(psRule.getId())) {
                         if (Format.LONG.equals(format)) {
-                            out.println("PASS: " + rule.getName() + " [" + rule.getId() + "]");
+                            out.println("PASS: " + psRule.getName() + " [" + psRule.getId() + "]");
                         }
                         pass++;
                     }
                 }
 
                 // Output the results in the expected order
-                ignore = outputResults(pscanRuleArray, alertCounts, Result.IGNORE);
-                info = outputResults(pscanRuleArray, alertCounts, Result.INFO);
-                warnNew = outputResults(pscanRuleArray, alertCounts, Result.WARN_NEW);
-                failNew = outputResults(pscanRuleArray, alertCounts, Result.FAIL_NEW);
+                ignore =
+                        outputResults(
+                                pscanRuleArray,
+                                alertCounts,
+                                ignoreIds,
+                                infoIds,
+                                failIds,
+                                Result.IGNORE);
+                info =
+                        outputResults(
+                                pscanRuleArray,
+                                alertCounts,
+                                ignoreIds,
+                                infoIds,
+                                failIds,
+                                Result.INFO);
+                warnNew =
+                        outputResults(
+                                pscanRuleArray,
+                                alertCounts,
+                                ignoreIds,
+                                infoIds,
+                                failIds,
+                                Result.WARN_NEW);
+                failNew =
+                        outputResults(
+                                pscanRuleArray,
+                                alertCounts,
+                                ignoreIds,
+                                infoIds,
+                                failIds,
+                                Result.FAIL_NEW);
             }
 
             // Obviously most of these are not supported yet :)
@@ -200,7 +277,12 @@ public class OutputSummaryJob extends AutomationJob {
     }
 
     private int outputResults(
-            RuleData[] pscanRuleArray, Map<Integer, Integer> alertCounts, Result result) {
+            RuleData[] pscanRuleArray,
+            Map<Integer, Integer> alertCounts,
+            List<Integer> ignoreIds,
+            List<Integer> infoIds,
+            List<Integer> failIds,
+            Result result) {
         int total = 0;
         String resStr;
         for (RuleData rule : pscanRuleArray) {
@@ -237,7 +319,7 @@ public class OutputSummaryJob extends AutomationJob {
                                 + "] x "
                                 + count
                                 + " ");
-                if (Format.LONG.equals(format)) {
+                if (Format.LONG.equals(this.getParameters().getFormat())) {
                     for (HttpMessage msg : getExtReport().getHttpMessagesForRule(rule.getId(), 5)) {
                         int code = msg.getResponseHeader().getStatusCode();
                         out.println(
@@ -296,64 +378,6 @@ public class OutputSummaryJob extends AutomationJob {
     }
 
     @Override
-    public boolean verifyCustomParameter(String name, String value, AutomationProgress progress) {
-        switch (name) {
-            case PARAM_FORMAT:
-                try {
-                    Format.valueOf(value.toUpperCase(Locale.ROOT));
-                } catch (Exception e) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "reports.automation.error.badformat",
-                                    this.getName(),
-                                    value,
-                                    Format.values()));
-                }
-                return true;
-            case PARAM_SUMMARY_FILE:
-                File parent = new File(value).getParentFile();
-                if (!parent.exists()) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "reports.automation.error.noparent",
-                                    this.getName(),
-                                    parent.getAbsolutePath()));
-                } else if (!parent.canWrite()) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "reports.automation.error.roparent",
-                                    this.getName(),
-                                    parent.getAbsolutePath()));
-                }
-                return true;
-            default:
-                // Ignore
-                break;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean applyCustomParameter(String name, String value) {
-        switch (name) {
-            case PARAM_FORMAT:
-                format = Format.valueOf(value.toUpperCase(Locale.ROOT));
-                return true;
-            case PARAM_SUMMARY_FILE:
-                summaryFile = value;
-                return true;
-            default:
-                // Ignore
-                break;
-        }
-        return false;
-    }
-
-    public String getFormat() {
-        return format.name();
-    }
-
-    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_FORMAT, Format.NONE.name());
@@ -408,5 +432,86 @@ public class OutputSummaryJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return null;
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+        private List<Rule> rules = new ArrayList<>();
+
+        public Data(AutomationJob job, Parameters parameters) {
+            super(job);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public List<Rule> getRules() {
+            return rules;
+        }
+
+        public void setRules(List<Rule> rules) {
+            this.rules = rules;
+        }
+    }
+
+    public static class Rule extends AutomationData {
+        private Integer Id;
+        private String action;
+
+        public Rule(Integer id, String action) {
+            super();
+            Id = id;
+            this.action = action;
+        }
+
+        public Integer getId() {
+            return Id;
+        }
+
+        public void setId(Integer id) {
+            Id = id;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+
+        private Format format = Format.NONE;
+        private String summaryFile;
+
+        public Format getFormat() {
+            return format;
+        }
+
+        public void setFormat(Format format) {
+            this.format = format;
+        }
+
+        public String getSummaryFile() {
+            return summaryFile;
+        }
+
+        public void setSummaryFile(String summaryFile) {
+            this.summaryFile = summaryFile;
+        }
     }
 }

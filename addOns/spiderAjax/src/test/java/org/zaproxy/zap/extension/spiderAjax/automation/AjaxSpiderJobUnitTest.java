@@ -141,7 +141,7 @@ class AjaxSpiderJobUnitTest {
         job.applyCustomParameter("maxDuration", "12");
 
         // Then
-        assertThat(job.getMaxDuration(), is(equalTo(12)));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(12)));
     }
 
     // @Test
@@ -390,7 +390,7 @@ class AjaxSpiderJobUnitTest {
         // When
         job.addTest(
                 new AutomationStatisticTest(
-                        "spiderAjax.urls.added", null, ">", 1, "warn", job.getType()));
+                        "spiderAjax.urls.added", null, ">", 1, "warn", job, progress));
         job.logTestsToProgress(progress);
 
         // Then

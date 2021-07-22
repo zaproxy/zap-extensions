@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -84,27 +83,6 @@ class AddOnJobUnitTest {
         assertThat(params.containsValue("true"), is(equalTo(true)));
     }
 
-    @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        AddOnJob job = new AddOnJob();
-
-        // When
-        job.applyCustomParameter("updateAddOns", "false");
-
-        // Then
-        assertThat(job.isUpdateAddOns(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldIgnoreUnknownCustomConfigParams() {
-        // Given
-        AddOnJob job = new AddOnJob();
-
-        // When / Than
-        assertFalse(job.applyCustomParameter("test", "test"));
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldApplyParams() {
@@ -119,6 +97,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -142,6 +121,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -164,7 +144,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -187,7 +167,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -232,6 +212,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 
@@ -266,6 +247,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 
@@ -297,6 +279,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 
@@ -329,6 +312,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 
@@ -362,6 +346,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 
@@ -394,6 +379,7 @@ class AddOnJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 

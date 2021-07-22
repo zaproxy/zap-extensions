@@ -13,5 +13,4 @@ env:
 jobs:
   - type: job
     parameters:
-      boolParam: ${myVarOne}
-      stringParam: ${myEnvVar}
+      stringParam: ${myVarOne}

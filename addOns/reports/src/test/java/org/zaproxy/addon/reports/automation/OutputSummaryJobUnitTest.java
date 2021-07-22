@@ -55,6 +55,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.automation.OutputSummaryJob.Format;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.I18N;
@@ -106,7 +107,11 @@ class OutputSummaryJobUnitTest {
 
         // Then
         assertThat(realProgress.hasErrors(), is(equalTo(true)));
-        assertThat(realProgress.getErrors(), contains("!reports.automation.error.badformat!"));
+        assertThat(
+                realProgress.getErrors(),
+                contains(
+                        "!automation.error.options.badenum!",
+                        "!reports.automation.error.noparent!"));
     }
 
     @Test
@@ -139,7 +144,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -166,7 +171,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
         ruleDefn.put("id", 1);
@@ -179,6 +184,7 @@ class OutputSummaryJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -203,7 +209,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
         ruleDefn.put("id", 1);
@@ -216,6 +222,7 @@ class OutputSummaryJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -240,7 +247,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
         ruleDefn.put("id", 1);
@@ -253,6 +260,7 @@ class OutputSummaryJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -285,8 +293,6 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
-
         ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
 
         LinkedHashMap<String, Object> rule1Defn = new LinkedHashMap<>();
@@ -309,6 +315,8 @@ class OutputSummaryJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
+        job.getData().getParameters().setFormat(Format.LONG);
         job.runJob(env, progress);
 
         // Then
@@ -327,7 +335,7 @@ class OutputSummaryJobUnitTest {
     void shouldWarnOnNoURLs() throws Exception {
         // Given
         given(ext.countNumberOfUrls()).willReturn(0);
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -359,7 +367,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -391,7 +399,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -422,7 +430,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -462,7 +470,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);
@@ -505,7 +513,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "SHORT");
+        job.getData().getParameters().setFormat(Format.SHORT);
 
         // When
         job.runJob(env, progress);
@@ -542,7 +550,7 @@ class OutputSummaryJobUnitTest {
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
-        job.applyCustomParameter("format", "NONE");
+        job.getData().getParameters().setFormat(Format.NONE);
 
         // When
         job.runJob(env, progress);
@@ -600,8 +608,8 @@ class OutputSummaryJobUnitTest {
         given(psJobResData.getAllRuleData()).willReturn(list);
 
         File f = File.createTempFile("zap.reports.outputsummary", "json");
-        job.applyCustomParameter("summaryFile", f.getAbsolutePath());
-        job.applyCustomParameter("format", "LONG");
+        job.getData().getParameters().setSummaryFile(f.getAbsolutePath());
+        job.getData().getParameters().setFormat(Format.LONG);
 
         // When
         job.runJob(env, progress);

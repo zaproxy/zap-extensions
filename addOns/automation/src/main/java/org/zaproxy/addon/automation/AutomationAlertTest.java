@@ -27,13 +27,18 @@ import java.util.stream.Collectors;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.automation.gui.AlertTestDialog;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class AutomationAlertTest extends AbstractAutomationTest {
+
+    public static final String ACTION_PASS_IF_ABSENT = "passIfAbsent";
+    public static final String ACTION_PASS_IF_PRESENT = "passIfPresent";
 
     static final String PARAM_SCAN_RULE_ID = "scanRuleId";
     static final String PARAM_ON_FAIL = "onFail";
@@ -51,106 +56,79 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
     public static final String TEST_TYPE = "alert";
 
-    public final Integer scanRuleId;
-    public final String action;
-    public final String name;
-    public Pattern alertName;
-    public Pattern url;
-    public Pattern method;
-    public Pattern attack;
-    public Pattern param;
-    public Pattern evidence;
-    public Integer confidence;
-    public Integer risk;
-    public Pattern otherInfo;
-    public final String onFail;
+    private Data data;
 
-    public AutomationAlertTest(LinkedHashMap<?, ?> testData, String jobType) {
-        super(testData, jobType);
+    public AutomationAlertTest(
+            LinkedHashMap<?, ?> testData, AutomationJob job, AutomationProgress progress) {
+        super(testData, job);
+        data = new Data(this);
         if (Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class)
                 == null) {
-            throw new IllegalArgumentException(
-                    Constant.messages.getString("automation.tests.alert.nullExtension", jobType));
-        }
-        if (!(jobType.equals(ActiveScanJob.JOB_NAME)
-                || jobType.equals(PassiveScanWaitJob.JOB_NAME))) {
-            throw new IllegalArgumentException(
-                    Constant.messages.getString("automation.tests.alert.invalidJobType", jobType));
-        }
-        Integer scanRuleId =
-                AutomationJob.safeCast(testData.get(PARAM_SCAN_RULE_ID), Integer.class);
-        String onFail = AutomationJob.safeCast(testData.get(PARAM_ON_FAIL), String.class);
-        String action = AutomationJob.safeCast(testData.get(PARAM_ACTION), String.class);
-        if (isNullOrEmpty(action)) {
-            action = "passIfAbsent";
-        }
-        if (scanRuleId == null
-                || onFail == null
-                || !(action.equals("passIfPresent") || action.equals("passIfAbsent"))) {
-            throw new IllegalArgumentException(
+            progress.error(
                     Constant.messages.getString(
-                            "automation.tests.missingOrInvalidProperties", jobType, getTestType()));
+                            "automation.tests.alert.nullExtension", job.getType()));
         }
-        String name = AutomationJob.safeCast(testData.get(PARAM_NAME), String.class);
-        if (isNullOrEmpty(name)) {
-            name = scanRuleId + ' ' + action;
+        if (!(job.getType().equals(ActiveScanJob.JOB_NAME)
+                || job.getType().equals(PassiveScanWaitJob.JOB_NAME))) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.alert.invalidJobType", job.getType()));
         }
+        JobUtils.applyParamsToObject(testData, this.getData(), this.getName(), null, progress);
 
-        this.scanRuleId = scanRuleId;
-        this.action = action;
-        this.name = name;
-
-        String alertName = AutomationJob.safeCast(testData.get(PARAM_ALERT_NAME), String.class);
-        String url = AutomationJob.safeCast(testData.get(PARAM_URL), String.class);
-        String method = AutomationJob.safeCast(testData.get(PARAM_METHOD), String.class);
-        String attack = AutomationJob.safeCast(testData.get(PARAM_ATTACK), String.class);
-        String param = AutomationJob.safeCast(testData.get(PARAM_PARAM), String.class);
-        String evidence = AutomationJob.safeCast(testData.get(PARAM_EVIDENCE), String.class);
-        String confidence = AutomationJob.safeCast(testData.get(PARAM_CONFIDENCE), String.class);
-        String risk = AutomationJob.safeCast(testData.get(PARAM_RISK), String.class);
-        String otherInfo = AutomationJob.safeCast(testData.get(PARAM_OTHER_INFO), String.class);
-
-        this.alertName = compilePattern(alertName);
-        this.url = compilePattern(url);
-        this.method = compilePattern(method);
-        this.attack = compilePattern(attack);
-        this.param = compilePattern(param);
-        this.evidence = compilePattern(evidence);
-
-        Pattern confPattern = compilePattern(confidence);
-        if (confPattern != null) {
-            int idx = findIndexInArray(confPattern, Alert.MSG_CONFIDENCE);
-            if (idx == -1) {
-                throw new IllegalArgumentException(
-                        Constant.messages.getString(
-                                "automation.tests.alert.invalidConfidence",
-                                jobType,
-                                name,
-                                confidence));
-            }
-            this.confidence = idx;
-        }
-        Pattern riskPattern = compilePattern(risk);
-        if (riskPattern != null) {
-            int idx = findIndexInArray(riskPattern, Alert.MSG_RISK);
-            if (idx == -1) {
-                throw new IllegalArgumentException(
-                        Constant.messages.getString(
-                                "automation.tests.alert.invalidRisk", jobType, name, risk));
-            }
-            this.risk = idx;
+        if (this.getData().getOnFail() == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.error.badonfail", getJobType(), this.getName()));
         }
 
-        this.otherInfo = compilePattern(otherInfo);
-        this.onFail = onFail;
+        if (data.getScanRuleId() <= 0) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.alert.error.noscanruleid",
+                            getJobType(),
+                            this.getName()));
+        }
+
+        if (isNullOrEmpty(this.getData().getAction())) {
+            this.getData().setAction(ACTION_PASS_IF_ABSENT);
+        }
+        if (!(this.getData().getAction().equals(ACTION_PASS_IF_PRESENT)
+                || this.getData().getAction().equals(ACTION_PASS_IF_ABSENT))) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.alert.error.badaction",
+                            getJobType(),
+                            this.getName(),
+                            this.getData().getAction()));
+            this.getData().setAction(ACTION_PASS_IF_ABSENT);
+        }
+
+        JobUtils.parseAlertConfidence(this.getData().getConfidence(), this.getName(), progress);
+        JobUtils.parseAlertRisk(this.getData().getRisk(), this.getName(), progress);
+
+        if (isNullOrEmpty(this.getData().getName())) {
+            this.getData()
+                    .setName(this.getData().getScanRuleId() + ' ' + this.getData().getAction());
+        }
+
+        compilePattern(this.getData().getAlertName(), progress);
+        compilePattern(this.getData().getUrl(), progress);
+        compilePattern(this.getData().getMethod(), progress);
+        compilePattern(this.getData().getAttack(), progress);
+        compilePattern(this.getData().getParam(), progress);
+        compilePattern(this.getData().getEvidence(), progress);
+        compilePattern(this.getData().getConfidence(), progress);
+        compilePattern(this.getData().getRisk(), progress);
+        compilePattern(this.getData().getOtherInfo(), progress);
     }
 
-    private Pattern compilePattern(String val) {
+    private Pattern compilePattern(String val, AutomationProgress progress) {
         if (!isNullOrEmpty(val)) {
             try {
                 return Pattern.compile(val);
             } catch (PatternSyntaxException e) {
-                throw new IllegalArgumentException(
+                progress.warn(
                         Constant.messages.getString(
                                 "automation.tests.alert.badregex",
                                 getJobType(),
@@ -166,20 +144,6 @@ public class AutomationAlertTest extends AbstractAutomationTest {
         return val == null || val.isEmpty();
     }
 
-    private static int findIndexInArray(Pattern pattern, String[] array) {
-        for (int i = 0; i < array.length; i++) {
-            if (pattern.matcher(array[i]).matches()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
     @Override
     public String getTestType() {
         return TEST_TYPE;
@@ -187,7 +151,7 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
     @Override
     public boolean runTest(AutomationProgress progress) {
-        boolean passIfAbsent = this.action.equals("passIfAbsent");
+        boolean passIfAbsent = this.getData().getAction().equals(ACTION_PASS_IF_ABSENT);
         String key =
                 (getJobType().equals(ActiveScanJob.JOB_NAME))
                         ? ActiveScanJobResultData.KEY
@@ -195,48 +159,60 @@ public class AutomationAlertTest extends AbstractAutomationTest {
         JobResultData resultData = progress.getJobResultData(key);
         List<Alert> alerts =
                 resultData.getAllAlertData().stream()
-                        .filter(t -> (t.getPluginId() == this.scanRuleId))
+                        .filter(t -> (t.getPluginId() == this.getData().getScanRuleId()))
                         .collect(Collectors.toList());
 
         if (alerts.size() == 0) {
             return passIfAbsent;
         }
 
+        Pattern alertNamePattern = compilePattern(this.getData().getAlertName(), progress);
+        Pattern urlPattern = compilePattern(this.getData().getUrl(), progress);
+        Pattern methodPattern = compilePattern(this.getData().getMethod(), progress);
+        Pattern attackPattern = compilePattern(this.getData().getAttack(), progress);
+        Pattern paramPattern = compilePattern(this.getData().getParam(), progress);
+        Pattern evidencePattern = compilePattern(this.getData().getEvidence(), progress);
+        Pattern otherInfoPattern = compilePattern(this.getData().getOtherInfo(), progress);
+        Integer confidence =
+                JobUtils.parseAlertConfidence(
+                        this.getData().getConfidence(), this.getName(), progress);
+        Integer risk = JobUtils.parseAlertRisk(this.getData().getRisk(), this.getName(), progress);
+
         for (Alert alert : alerts) {
 
-            if (matches(this.alertName, alert.getName(), passIfAbsent)) {
+            if (matches(alertNamePattern, alert.getName(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.url, alert.getUri(), passIfAbsent)) {
+            if (matches(urlPattern, alert.getUri(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.method, alert.getMethod(), passIfAbsent)) {
+            if (matches(methodPattern, alert.getMethod(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.attack, alert.getAttack(), passIfAbsent)) {
+            if (matches(attackPattern, alert.getAttack(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.param, alert.getParam(), passIfAbsent)) {
+            if (matches(paramPattern, alert.getParam(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.evidence, alert.getEvidence(), passIfAbsent)) {
+            if (matches(evidencePattern, alert.getEvidence(), passIfAbsent)) {
                 return false;
             }
 
-            if (matchesInt(this.confidence, alert.getConfidence(), passIfAbsent)) {
+            if (matchesInt(confidence, alert.getConfidence(), passIfAbsent)) {
                 return false;
             }
 
-            if (matchesInt(this.risk, alert.getRisk(), passIfAbsent)) {
+            if (matchesInt(risk, alert.getRisk(), passIfAbsent)) {
                 return false;
             }
 
-            if (matches(this.otherInfo, alert.getOtherInfo(), passIfAbsent)) {
+            if (matches(otherInfoPattern, alert.getOtherInfo(), passIfAbsent)) {
                 return false;
             }
         }
@@ -254,19 +230,157 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
     @Override
     public String getTestPassedMessage() {
-        String reason = this.action.equals("passIfAbsent") ? "absent" : "present";
+        String reason =
+                this.getData().getAction().equals(ACTION_PASS_IF_ABSENT) ? "absent" : "present";
         String testPassedReason =
-                Constant.messages.getString("automation.tests.alert.reason", scanRuleId, reason);
+                Constant.messages.getString(
+                        "automation.tests.alert.reason", this.getData().getScanRuleId(), reason);
         return Constant.messages.getString(
-                "automation.tests.pass", getJobType(), getTestType(), name, testPassedReason);
+                "automation.tests.pass",
+                getJobType(),
+                getTestType(),
+                this.getData().getName(),
+                testPassedReason);
     }
 
     @Override
     public String getTestFailedMessage() {
-        String reason = this.action.equals("passIfAbsent") ? "present" : "absent";
+        String reason =
+                this.getData().getAction().equals(ACTION_PASS_IF_ABSENT) ? "present" : "absent";
         String testFailedReason =
-                Constant.messages.getString("automation.tests.alert.reason", scanRuleId, reason);
+                Constant.messages.getString(
+                        "automation.tests.alert.reason", this.getData().getScanRuleId(), reason);
         return Constant.messages.getString(
-                "automation.tests.fail", getJobType(), getTestType(), name, testFailedReason);
+                "automation.tests.fail",
+                getJobType(),
+                getTestType(),
+                this.getData().getName(),
+                testFailedReason);
+    }
+
+    @Override
+    public void showDialog() {
+        new AlertTestDialog(this).setVisible(true);
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    public static class Data extends TestData {
+
+        private AbstractAutomationTest.OnFail onFail;
+        private int scanRuleId;
+        private String action;
+        private String alertName;
+        private String url;
+        private String method;
+        private String attack;
+        private String param;
+        private String evidence;
+        private String confidence;
+        private String risk;
+        private String otherInfo;
+
+        public Data(AutomationAlertTest test) {
+            super(test);
+        }
+
+        public AbstractAutomationTest.OnFail getOnFail() {
+            return onFail;
+        }
+
+        public void setOnFail(AbstractAutomationTest.OnFail onFail) {
+            this.onFail = onFail;
+        }
+
+        public int getScanRuleId() {
+            return scanRuleId;
+        }
+
+        public void setScanRuleId(int scanRuleId) {
+            this.scanRuleId = scanRuleId;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public String getAlertName() {
+            return alertName;
+        }
+
+        public void setAlertName(String alertName) {
+            this.alertName = alertName;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(String method) {
+            this.method = method;
+        }
+
+        public String getAttack() {
+            return attack;
+        }
+
+        public void setAttack(String attack) {
+            this.attack = attack;
+        }
+
+        public String getParam() {
+            return param;
+        }
+
+        public void setParam(String param) {
+            this.param = param;
+        }
+
+        public String getEvidence() {
+            return evidence;
+        }
+
+        public void setEvidence(String evidence) {
+            this.evidence = evidence;
+        }
+
+        public String getConfidence() {
+            return confidence;
+        }
+
+        public void setConfidence(String confidence) {
+            this.confidence = confidence;
+        }
+
+        public String getRisk() {
+            return risk;
+        }
+
+        public void setRisk(String risk) {
+            this.risk = risk;
+        }
+
+        public String getOtherInfo() {
+            return otherInfo;
+        }
+
+        public void setOtherInfo(String otherInfo) {
+            this.otherInfo = otherInfo;
+        }
     }
 }

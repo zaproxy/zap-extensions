@@ -25,19 +25,44 @@ import org.parosproxy.paros.Constant;
 
 public abstract class AbstractAutomationTest {
 
-    enum OnFail {
+    public enum OnFail {
         WARN,
         ERROR,
-        INFO
+        INFO;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case ERROR:
+                    return Constant.messages.getString("automation.dialog.test.onfail.error");
+                case INFO:
+                    return Constant.messages.getString("automation.dialog.test.onfail.info");
+                case WARN:
+                    return Constant.messages.getString("automation.dialog.test.onfail.warn");
+                default:
+                    return null;
+            }
+        }
+
+        public static OnFail i18nToOnFail(String str) {
+            for (OnFail o : OnFail.values()) {
+                if (o.toString().equals(str)) {
+                    return o;
+                }
+            }
+            return null;
+        }
     }
 
     private LinkedHashMap<?, ?> testData;
     private final OnFail onFail;
-    private final String jobType;
+    private final AutomationJob job;
     private Boolean passed;
+    private String name;
 
-    public AbstractAutomationTest(LinkedHashMap<?, ?> testData, String jobType) {
+    public AbstractAutomationTest(LinkedHashMap<?, ?> testData, AutomationJob job) {
         this.testData = testData;
+        this.job = job;
         String onFailStr = AutomationJob.safeCast(testData.get("onFail"), String.class);
 
         if (!EnumUtils.isValidEnumIgnoreCase(OnFail.class, onFailStr)) {
@@ -46,16 +71,15 @@ public abstract class AbstractAutomationTest {
                             "automation.tests.invalidOnFail", getJobType(), onFailStr));
         }
         this.onFail = EnumUtils.getEnumIgnoreCase(OnFail.class, onFailStr);
-        this.jobType = jobType;
     }
 
-    public AbstractAutomationTest(String name, String onFail, String jobType) {
+    public AbstractAutomationTest(String name, String onFail, AutomationJob job) {
+        this.job = job;
         if (!EnumUtils.isValidEnumIgnoreCase(OnFail.class, onFail)) {
             throw new IllegalArgumentException(
                     Constant.messages.getString("automation.tests.invalidOnFail", name, onFail));
         }
         this.onFail = EnumUtils.getEnumIgnoreCase(OnFail.class, onFail);
-        this.jobType = jobType;
     }
 
     public void logToProgress(AutomationProgress progress) throws RuntimeException {
@@ -79,8 +103,12 @@ public abstract class AbstractAutomationTest {
         }
     }
 
+    public final AutomationJob getJob() {
+        return this.job;
+    }
+
     public final String getJobType() {
-        return this.jobType;
+        return this.job.getType();
     }
 
     public boolean hasPassed() {
@@ -99,7 +127,23 @@ public abstract class AbstractAutomationTest {
         return testData;
     }
 
-    public abstract String getName();
+    public void showDialog() {}
+
+    public AutomationData getData() {
+        return null;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSummary() {
+        return "";
+    };
 
     public abstract String getTestType();
 

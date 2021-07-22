@@ -38,6 +38,7 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.net.MalformedURLException;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +55,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -138,18 +140,6 @@ class SpiderJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        SpiderJob job = new SpiderJob();
-
-        // When
-        job.applyCustomParameter("maxDuration", "12");
-
-        // Then
-        assertThat(job.getMaxDuration(), is(equalTo(12)));
-    }
-
-    @Test
     void shouldReturnConfigParams() throws MalformedURLException {
         // Given
         SpiderJob job = new SpiderJob();
@@ -231,7 +221,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("url", "Not a url");
+        job.getParameters().setUrl("Not a url");
         job.runJob(env, progress);
 
         // Then
@@ -250,7 +240,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("context", "Unknown");
+        job.getParameters().setContext("Unknown");
         job.runJob(env, progress);
 
         // Then
@@ -286,7 +276,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
-        job.applyCustomParameter("context", "context2");
+        job.getParameters().setContext("context2");
         job.runJob(env, progress);
 
         // Then
@@ -335,7 +325,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         SpiderJob job = new SpiderJob();
         job.setUrlRequester(urlRequester);
-        job.applyCustomParameter("url", specifiedUrl);
+        job.getParameters().setUrl(specifiedUrl);
         job.runJob(env, progress);
 
         // Then
@@ -369,7 +359,7 @@ class SpiderJobUnitTest extends TestUtils {
         job.setUrlRequester(urlRequester);
 
         // When
-        job.applyCustomParameter("maxDuration", "1");
+        job.getParameters().setMaxDuration(1);
         job.runJob(env, progress);
 
         // Then
@@ -399,7 +389,7 @@ class SpiderJobUnitTest extends TestUtils {
         // When
         job.addTest(
                 new AutomationStatisticTest(
-                        "automation.spider.urls.added", null, ">", 1, "error", job.getType()));
+                        "automation.spider.urls.added", null, ">", 1, "error", job, progress));
         job.logTestsToProgress(progress);
 
         // Then
@@ -560,6 +550,7 @@ class SpiderJobUnitTest extends TestUtils {
         nano.addHandler(testHandler);
 
         // When
+
         job.runJob(env, progress);
 
         stopServer();
@@ -569,6 +560,117 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(testHandler.wasCalled(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.spider.url.notok!")));
+    }
+
+    @Test
+    void shouldVerifyAllOfTheParameters() {
+        String yamlStr =
+                "parameters:\n"
+                        + "  context: context1\n"
+                        + "  url: url1\n"
+                        + "  maxDuration: 2\n"
+                        + "  maxDepth: 2\n"
+                        + "  maxChildren: 2\n"
+                        + "  acceptCookies: true\n"
+                        + "  handleODataParametersVisited: true\n"
+                        + "  handleParameters: ignore_completely\n"
+                        + "  maxParseSizeBytes: 2\n"
+                        + "  parseComments: true\n"
+                        + "  parseGit: true\n"
+                        + "  parseRobotsTxt: true\n"
+                        + "  parseSitemapXml: true\n"
+                        + "  parseSVNEntries: true\n"
+                        + "  postForm: true\n"
+                        + "  processForm: true\n"
+                        + "  requestWaitTime: 2\n"
+                        + "  sendRefererHeader: true\n"
+                        + "  threadCount: 2\n"
+                        + "  userAgent: ua2";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(job.getParameters().getContext(), is(equalTo("context1")));
+        assertThat(job.getParameters().getUrl(), is(equalTo("url1")));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(2)));
+        assertThat(job.getParameters().getMaxDepth(), is(equalTo(2)));
+        assertThat(job.getParameters().getMaxChildren(), is(equalTo(2)));
+        assertThat(job.getParameters().getAcceptCookies(), is(equalTo(true)));
+        assertThat(job.getParameters().getHandleODataParametersVisited(), is(equalTo(true)));
+        assertThat(job.getParameters().getHandleParameters(), is(equalTo("ignore_completely")));
+        assertThat(job.getParameters().getMaxParseSizeBytes(), is(equalTo(2)));
+        assertThat(job.getParameters().getParseComments(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseGit(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseRobotsTxt(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseSitemapXml(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseSVNEntries(), is(equalTo(true)));
+        assertThat(job.getParameters().getPostForm(), is(equalTo(true)));
+        assertThat(job.getParameters().getProcessForm(), is(equalTo(true)));
+        assertThat(job.getParameters().getRequestWaitTime(), is(equalTo(2)));
+        assertThat(job.getParameters().getSendRefererHeader(), is(equalTo(true)));
+        assertThat(job.getParameters().getThreadCount(), is(equalTo(2)));
+        assertThat(job.getParameters().getUserAgent(), is(equalTo("ua2")));
+    }
+
+    @Test
+    void shouldWarnOnDeprecatedFields() {
+        String yamlStr =
+                "parameters:\n"
+                        + "  context: context1\n"
+                        + "  failIfFoundUrlsLessThan: true\n"
+                        + "  warnIfFoundUrlsLessThan: true";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.error.spider.failIfUrlsLessThan.deprecated!")));
+        assertThat(job.getParameters().getFailIfFoundUrlsLessThan(), is(equalTo(true)));
+        assertThat(job.getParameters().getWarnIfFoundUrlsLessThan(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldWarnOnUnknownFields() {
+        String yamlStr = "parameters:\n" + "  context: context1\n" + "  unknown: true\n";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
     }
 
     private static class TestServerHandler extends NanoServerHandler {

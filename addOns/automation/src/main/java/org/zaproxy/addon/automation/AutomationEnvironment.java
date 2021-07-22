@@ -34,6 +34,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.automation.gui.EnvironmentDialog;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.model.Context;
 
 public class AutomationEnvironment {
@@ -45,14 +47,14 @@ public class AutomationEnvironment {
 
     private AutomationProgress progress;
     private List<ContextWrapper> contexts = new ArrayList<>();
-    private boolean failOnError = true;
-    private boolean failOnWarning = false;
     private Map<String, Object> jobData = new HashMap<>();
-    private Map<String, String> vars = new HashMap<>(System.getenv());
-    private ArrayList<?> contextData;
+    private Map<String, String> combinedVars;
     private boolean created = false;
     private boolean hasErrors = false;
     private boolean hasWarnings = false;
+    private AutomationPlan plan;
+
+    private Data data = new Data();
 
     public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
         this.progress = progress;
@@ -64,39 +66,19 @@ public class AutomationEnvironment {
         LinkedHashMap<?, ?> configVars = (LinkedHashMap<?, ?>) envData.get("vars");
         if (configVars != null) {
             for (Entry<?, ?> configVar : configVars.entrySet()) {
-                if (vars.containsKey(configVar.getKey().toString())) {
-                    continue;
-                }
-                vars.put(configVar.getKey().toString(), configVar.getValue().toString());
-            }
-            for (Entry<String, String> unresolvedVar : vars.entrySet()) {
-                vars.put(unresolvedVar.getKey(), replaceVars(unresolvedVar.getValue()));
+                this.getData()
+                        .getVars()
+                        .put(configVar.getKey().toString(), configVar.getValue().toString());
             }
         }
 
         LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) envData.get("parameters");
-        if (params != null) {
-            for (Entry<?, ?> param : params.entrySet()) {
-                switch (param.getKey().toString()) {
-                    case "failOnError":
-                        failOnError = Boolean.parseBoolean(param.getValue().toString());
-                        break;
-                    case "failOnWarning":
-                        failOnWarning = Boolean.parseBoolean(param.getValue().toString());
-                        break;
-                    case "progressToStdout":
-                        progress.setOutputToStdout(
-                                Boolean.parseBoolean(param.getValue().toString()));
-                        break;
-                    default:
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.options.unknown",
-                                        AUTOMATION_CONTEXT_NAME,
-                                        param.getKey().toString()));
-                }
-            }
-        }
+        JobUtils.applyParamsToObject(
+                params,
+                this.getData().getParameters(),
+                Constant.messages.getString("automation.env.name"),
+                null,
+                progress);
 
         Object contextsObject = envData.get("contexts");
         if (contextsObject == null) {
@@ -109,23 +91,23 @@ public class AutomationEnvironment {
                             "automation.error.env.badcontexts", contextsObject));
             return;
         }
-        this.contextData = (ArrayList<?>) contextsObject;
-        for (Object contextObject : this.contextData.toArray()) {
+        ArrayList<?> contextData = (ArrayList<?>) contextsObject;
+        for (Object contextObject : contextData.toArray()) {
             if (!(contextObject instanceof LinkedHashMap)) {
                 progress.error(
                         Constant.messages.getString(
                                 "automation.error.env.badcontext", contextObject));
                 return;
             }
-            parseContextData((LinkedHashMap<?, ?>) contextObject, progress, null, false);
+            ContextWrapper cdw = parseContextData((LinkedHashMap<?, ?>) contextObject, progress);
+            if (cdw != null) {
+                this.contexts.add(cdw);
+            }
         }
     }
 
-    public ContextWrapper parseContextData(
-            LinkedHashMap<?, ?> contextData,
-            AutomationProgress progress,
-            Session session,
-            boolean createSessions) {
+    public ContextWrapper parseContextData( // TODO move into constructor?
+            LinkedHashMap<?, ?> contextData, AutomationProgress progress) {
         String name = null;
         List<String> urls = new ArrayList<>();
         ArrayList<?> includeRegexes = null;
@@ -149,8 +131,11 @@ public class AutomationEnvironment {
                         ArrayList<?> urlList = (ArrayList<?>) value;
                         for (Object urlObj : urlList) {
                             try {
-                                String url = replaceVars(urlObj);
-                                new URI(url, true);
+                                String url = urlObj.toString();
+                                if (!url.contains("${")) {
+                                    // Cannot validate urls containing envvars
+                                    new URI(url, true);
+                                }
                                 urls.add(url);
                             } catch (URIException e) {
                                 progress.error(
@@ -163,8 +148,11 @@ public class AutomationEnvironment {
                 case "url":
                     // For backwards compatibility
                     try {
-                        String url = replaceVars(value);
-                        new URI(url, true);
+                        String url = value.toString();
+                        if (!url.contains("${")) {
+                            // Cannot validate urls containing envvars
+                            new URI(url, true);
+                        }
                         urls.add(url);
                         progress.warn(
                                 Constant.messages.getString(
@@ -199,55 +187,39 @@ public class AutomationEnvironment {
                     Constant.messages.getString("automation.error.context.nourl", contextData));
             return null;
         }
-        if (createSessions && session != null) {
-            Context oldContext = session.getContext(name);
-            if (oldContext != null) {
-                // Always delete an existing context with the same name, otherwise will fail
-                session.deleteContext(oldContext);
-            }
+        ContextWrapper.Data data = new ContextWrapper.Data();
+        data.setName(name);
+        data.setUrls(urls);
 
-            Context context = session.getNewContext(name);
-            if (includeRegexes != null) {
-                for (Object regex : includeRegexes) {
-                    context.addIncludeInContextRegex(replaceVars(regex.toString()));
-                }
+        List<String> incUrls = new ArrayList<>();
+        if (includeRegexes != null) {
+            for (Object regex : includeRegexes) {
+                incUrls.add(regex.toString());
             }
-            if (excludeRegexes != null) {
-                for (Object regex : excludeRegexes) {
-                    context.addExcludeFromContextRegex(replaceVars(regex.toString()));
-                }
-            }
-            ContextWrapper wrapper = new ContextWrapper(context);
-            for (String u : urls) {
-                context.addIncludeInContextRegex(u + ".*");
-                wrapper.addUrl(u);
-            }
-            return wrapper;
         }
-        return null;
+        data.setIncludePaths(incUrls);
+        List<String> excUrls = new ArrayList<>();
+        if (excludeRegexes != null) {
+            for (Object regex : excludeRegexes) {
+                excUrls.add(regex.toString());
+            }
+        }
+        data.setExcludePaths(excUrls);
+        return new ContextWrapper(data);
     }
 
     public void create(Session session, AutomationProgress progress) {
-        this.created = true;
-        for (Object contextObject : this.contextData.toArray()) {
-            if (!(contextObject instanceof LinkedHashMap)) {
-                // Should have been caught before, but just in case..
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.env.badcontext", contextObject));
-                this.hasErrors = true;
-                return;
-            }
 
-            ContextWrapper context =
-                    parseContextData((LinkedHashMap<?, ?>) contextObject, progress, session, true);
-            if (context != null) {
-                this.contexts.add(context);
-                if (this.isTimeToQuit()) {
-                    this.hasErrors = progress.hasErrors();
-                    this.hasWarnings = progress.hasWarnings();
-                    return;
-                }
+        this.created = true;
+        this.combinedVars = new HashMap<>(System.getenv());
+        this.combinedVars.putAll(this.getData().getVars());
+
+        for (ContextWrapper context : this.contexts) {
+            context.createContext(session, this);
+            if (this.isTimeToQuit()) {
+                this.hasErrors = progress.hasErrors();
+                this.hasWarnings = progress.hasWarnings();
+                return;
             }
         }
     }
@@ -279,7 +251,7 @@ public class AutomationEnvironment {
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
-            String val = this.getVars().get(matcher.group(1));
+            String val = this.combinedVars.get(matcher.group(1));
             if (val != null) {
                 matcher.appendReplacement(sb, "");
                 sb.append(val);
@@ -301,20 +273,29 @@ public class AutomationEnvironment {
         return ExtensionAutomation.getResourceAsString(YAML_FILE);
     }
 
+    public void addContext(ContextWrapper.Data contextData) {
+        this.contexts.add(new ContextWrapper(contextData));
+    }
+
     public List<ContextWrapper> getContextWrappers() {
         return contexts;
+    }
+
+    public void setContexts(List<ContextWrapper> contexts) {
+        this.contexts = contexts;
     }
 
     public List<Context> getContexts() {
         return contexts.stream().map(ContextWrapper::getContext).collect(Collectors.toList());
     }
 
-    public Map<String, String> getVars() {
-        return vars;
-    }
-
-    public String getVar(String name) {
-        return vars.get(name);
+    public List<String> getContextNames() {
+        return contexts.stream()
+                .map(ContextWrapper::getData)
+                .collect(Collectors.toList())
+                .stream()
+                .map(ContextWrapper.Data::getName)
+                .collect(Collectors.toList());
     }
 
     public ContextWrapper getContextWrapper(String name) {
@@ -349,6 +330,14 @@ public class AutomationEnvironment {
         return hasWarnings;
     }
 
+    public AutomationPlan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(AutomationPlan plan) {
+        this.plan = plan;
+    }
+
     /**
      * Use the methods which return a ContextWrapper and then access this list of URLs from the
      * wrappers.
@@ -365,10 +354,16 @@ public class AutomationEnvironment {
     }
 
     public ContextWrapper getDefaultContextWrapper() {
+        if (contexts.isEmpty()) {
+            return null;
+        }
         return contexts.get(0);
     }
 
     public Context getDefaultContext() {
+        if (contexts.isEmpty()) {
+            return null;
+        }
         return contexts.get(0).getContext();
     }
 
@@ -385,14 +380,99 @@ public class AutomationEnvironment {
     }
 
     public boolean isFailOnError() {
-        return failOnError;
+        return this.getData().getParameters().getFailOnError();
     }
 
     public boolean isFailOnWarning() {
-        return failOnWarning;
+        return this.getData().getParameters().getFailOnWarning();
     }
 
     public boolean isTimeToQuit() {
-        return (failOnError && progress.hasErrors()) || (failOnWarning && progress.hasWarnings());
+        return (isFailOnError() && progress.hasErrors())
+                || (isFailOnWarning() && progress.hasWarnings());
+    }
+
+    public void showDialog() {
+        new EnvironmentDialog(this).setVisible(true);
+    }
+
+    public Data getData() {
+        // The contexts are maintained locally
+        this.data.setContexts(
+                this.contexts.stream().map(ContextWrapper::getData).collect(Collectors.toList()));
+        return this.data;
+    }
+
+    public static class Data extends AutomationData {
+        private List<ContextWrapper.Data> contexts = new ArrayList<>();
+        private Parameters parameters;
+        private Map<String, String> vars = new LinkedHashMap<>();
+
+        public Data() {
+            setParameters(new Parameters());
+        }
+
+        public List<ContextWrapper.Data> getContexts() {
+            return contexts;
+        }
+
+        public void setContexts(List<ContextWrapper.Data> contexts) {
+            this.contexts = contexts;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Parameters parameters) {
+            this.parameters = parameters;
+        }
+
+        public Map<String, String> getVars() {
+            return vars;
+        }
+
+        public void setVars(Map<String, String> vars) {
+            this.vars = vars;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private boolean failOnError = true;
+        private boolean failOnWarning;
+        private boolean progressToStdout;
+
+        public Parameters() {}
+
+        public Parameters(boolean failOnError, boolean failOnWarning, boolean progressToStdout) {
+            super();
+            this.failOnError = failOnError;
+            this.failOnWarning = failOnWarning;
+            this.progressToStdout = progressToStdout;
+        }
+
+        public boolean getFailOnError() {
+            return failOnError;
+        }
+
+        public boolean getFailOnWarning() {
+            return failOnWarning;
+        }
+
+        public boolean getProgressToStdout() {
+            return progressToStdout;
+        }
+
+        public void setFailOnError(boolean failOnError) {
+            this.failOnError = failOnError;
+        }
+
+        public void setFailOnWarning(boolean failOnWarning) {
+            this.failOnWarning = failOnWarning;
+        }
+
+        public void setProgressToStdout(boolean progressToStdout) {
+            this.progressToStdout = progressToStdout;
+        }
     }
 }
