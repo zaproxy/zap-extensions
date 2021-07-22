@@ -31,11 +31,13 @@ public abstract class AbstractAutomationTest {
         INFO
     }
 
+    private LinkedHashMap<?, ?> testData;
     private final OnFail onFail;
     private final String jobType;
     private Boolean passed;
 
     public AbstractAutomationTest(LinkedHashMap<?, ?> testData, String jobType) {
+        this.testData = testData;
         String onFailStr = AutomationJob.safeCast(testData.get("onFail"), String.class);
 
         if (!EnumUtils.isValidEnumIgnoreCase(OnFail.class, onFailStr)) {
@@ -91,6 +93,10 @@ public abstract class AbstractAutomationTest {
 
     public void reset() {
         this.passed = null;
+    }
+
+    public LinkedHashMap<?, ?> getTestData() {
+        return testData;
     }
 
     public abstract String getName();

@@ -23,16 +23,21 @@ import java.util.List;
 
 public class AutomationPlan {
 
+    private static int nextId = 0;
+
     private AutomationProgress progress;
     private AutomationEnvironment env;
     private List<AutomationJob> jobs;
+    private final int id;
 
     public AutomationPlan(
-            AutomationEnvironment env, List<AutomationJob> jobsToRun, AutomationProgress progress) {
+            AutomationEnvironment env, List<AutomationJob> jobs, AutomationProgress progress) {
         super();
         this.progress = progress;
         this.env = env;
-        this.jobs = jobsToRun;
+        this.jobs = jobs;
+        this.id = nextId++;
+        jobs.stream().forEach(j -> j.setPlan(this));
     }
 
     public AutomationProgress getProgress() {
@@ -42,6 +47,7 @@ public class AutomationPlan {
     /** This will create a new AutomationProgress object so the old one will no longer be updated */
     public void resetProgress() {
         progress = new AutomationProgress();
+        jobs.stream().forEach(j -> j.reset());
     }
 
     public AutomationEnvironment getEnv() {
@@ -56,7 +62,15 @@ public class AutomationPlan {
         return jobs.size();
     }
 
+    public int getJobIndex(AutomationJob job) {
+        return jobs.indexOf(job);
+    }
+
     public AutomationJob getJob(int index) {
         return jobs.get(index);
+    }
+
+    public int getId() {
+        return id;
     }
 }
