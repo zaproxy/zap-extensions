@@ -25,4 +25,11 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
+    }
+}
+
 sourceSets["main"].output.dir(mapOf("builtBy" to processFiles), svndiggerDir)

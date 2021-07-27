@@ -14,3 +14,10 @@ zapAddOn {
         }
     }
 }
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
+    }
+}

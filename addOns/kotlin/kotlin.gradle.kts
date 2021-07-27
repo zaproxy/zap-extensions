@@ -13,6 +13,14 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}
+
 dependencies {
     val ktVersion = "1.3.72"
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$ktVersion")

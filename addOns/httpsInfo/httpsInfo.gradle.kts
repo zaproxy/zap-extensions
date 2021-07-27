@@ -17,3 +17,13 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 }
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/zap/extension/httpsinfo/resources/"
+        tokens.set(mutableMapOf(
+            "%addOnId%" to zapAddOn.addOnId.get(),
+            "%messagesPath%" to resourcesPath,
+            "%helpPath%" to resourcesPath))
+    }
+}

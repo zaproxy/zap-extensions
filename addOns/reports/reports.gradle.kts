@@ -37,6 +37,14 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}
+
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     implementation("org.thymeleaf:thymeleaf:3.0.12.RELEASE")

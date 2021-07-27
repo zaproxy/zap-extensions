@@ -21,6 +21,12 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     val graalJsVersion = "20.2.0"
     implementation("org.graalvm.js:js:$graalJsVersion")

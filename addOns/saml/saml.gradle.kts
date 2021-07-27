@@ -15,6 +15,12 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 }
