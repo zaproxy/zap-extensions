@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.spotless") version "5.12.1"
+    id("com.diffplug.spotless") version "5.14.2"
 }
 
 repositories {
@@ -30,7 +30,7 @@ tasks.withType<JavaCompile>().configureEach {
 dependencies {
     implementation("commons-codec:commons-codec:1.15")
     implementation("io.github.bonigarcia:webdrivermanager:3.7.1")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.12.1")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.14.2")
 }
 
 java {
