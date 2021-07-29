@@ -26,11 +26,6 @@ val parentProjects = listOf(
     "webdrivers"
 )
 
-val jacocoToolVersion = "0.8.5"
-jacoco {
-    toolVersion = jacocoToolVersion
-}
-
 val ghReleaseDataProvider = provider {
     subprojects.first().zapAddOn.gitHubRelease
 }
@@ -93,10 +88,6 @@ subprojects {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
-    }
-
-    jacoco {
-        toolVersion = jacocoToolVersion
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {

@@ -26,7 +26,7 @@ dependencies {
     api("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     api("org.junit.jupiter:junit-jupiter-params:$jupiterVersion")
     runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
-    api("org.mockito:mockito-junit-jupiter:3.6.28")
+    api("org.mockito:mockito-junit-jupiter:3.11.2")
 
     api("org.nanohttpd:nanohttpd-webserver:$nanohttpdVersion")
     api("org.nanohttpd:nanohttpd-websocket:$nanohttpdVersion")
