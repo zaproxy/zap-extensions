@@ -22,7 +22,7 @@ crowdin {
     configuration {
         val resourcesPath = "org/zaproxy/zap/extension/httpsinfo/resources/"
         tokens.set(mutableMapOf(
-            "%addOnId%" to zapAddOn.addOnId.get(),
+            "%addOnId%" to "httpsinfo",
             "%messagesPath%" to resourcesPath,
             "%helpPath%" to resourcesPath))
     }
