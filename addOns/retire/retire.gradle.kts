@@ -21,6 +21,14 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}
+
 dependencies {
         implementation("com.google.code.gson:gson:2.8.6")
 

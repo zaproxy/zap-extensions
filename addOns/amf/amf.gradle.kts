@@ -19,6 +19,12 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
+
 val blazedsVersion = "4.0.0.14931"
 
 dependencies {

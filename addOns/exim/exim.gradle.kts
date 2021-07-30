@@ -18,6 +18,13 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     testImplementation(project(":testutils"))
 }

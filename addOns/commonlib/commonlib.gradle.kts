@@ -27,6 +27,13 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     implementation("commons-io:commons-io:2.6")
     implementation("org.apache.commons:commons-csv:1.8")

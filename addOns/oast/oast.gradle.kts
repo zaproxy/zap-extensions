@@ -14,3 +14,11 @@ zapAddOn {
         messages.set(file("src/main/resources/org/zaproxy/addon/oast/resources/Messages.properties"))
     }
 }
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}

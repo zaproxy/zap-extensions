@@ -13,11 +13,13 @@ import org.zaproxy.gradle.addon.internal.tasks.GenerateReleaseStateLastCommit
 import org.zaproxy.gradle.addon.internal.tasks.HandleRelease
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
+import org.zaproxy.gradle.crowdin.CrowdinExtension
 
 plugins {
     eclipse
     jacoco
-    id("org.zaproxy.add-on") version "0.6.0" apply false
+    id("org.zaproxy.add-on") version "0.7.0" apply false
+    id("org.zaproxy.crowdin") version "0.1.0" apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -58,15 +60,27 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
 
 val releaseAddOn by tasks.registering
 
+val crowdinExcludedProjects = setOf(
+    childProjects.get("importLogFiles"),
+    childProjects.get("importurls"),
+    childProjects.get("saverawmessage"),
+    childProjects.get("savexmlmessage")
+)
+
 subprojects {
     if (parentProjects.contains(project.name)) {
         return@subprojects
     }
 
+    val useCrowdin = !crowdinExcludedProjects.contains(project)
+
     apply(plugin = "eclipse")
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
     apply(plugin = "org.zaproxy.add-on")
+    if (useCrowdin) {
+        apply(plugin = "org.zaproxy.crowdin")
+    }
 
     val compileOnlyEclipse by configurations.creating {
         extendsFrom(configurations.get("compileOnly"))
@@ -121,6 +135,24 @@ subprojects {
         }
     }
 
+    if (useCrowdin) {
+        crowdin {
+            credentials {
+                token.set(System.getenv("CROWDIN_AUTH_TOKEN"))
+            }
+
+            configuration {
+                file.set(file("$rootDir/gradle/crowdin.yml"))
+                val addOnId = zapAddOn.addOnId.get()
+                val resourcesPath = "org/zaproxy/zap/extension/$addOnId/resources/"
+                tokens.set(mutableMapOf(
+                    "%addOnId%" to addOnId,
+                    "%messagesPath%" to resourcesPath,
+                    "%helpPath%" to resourcesPath))
+            }
+        }
+    }
+
     val projectInfo = ProjectInfo.from(project)
     generateReleaseStateLastCommit {
         projects.add(projectInfo)
@@ -142,6 +174,10 @@ subprojects {
 
             dependsOn(handleRelease)
             dependsOn(createPullRequestNextDevIter)
+
+            if (useCrowdin) {
+                dependsOn("crowdinUploadSourceFiles")
+            }
         }
 
         val addOnRelease = AddOnRelease.from(project)
@@ -159,6 +195,24 @@ subprojects {
         }
         prepareNextDevIter {
             dependsOn(prepareNextDevIterAddOn)
+        }
+    }
+}
+
+val crowdinUploadSourceFiles by tasks.registering {
+    System.getenv("ADD_ON_IDS")?.let {
+        val projects = it.split(Pattern.compile(" *, *")).map { name ->
+            val project = subprojects.find { it.name == name }
+            require(project != null) { "Add-on with project name $name not found." }
+            require(!crowdinExcludedProjects.contains(project)) {
+                "Add-on with project name $name is excluded from Crowdin."
+            }
+
+            project
+        }
+
+        projects.forEach {
+            dependsOn(it.tasks.named("crowdinUploadSourceFiles"))
         }
     }
 }
@@ -265,6 +319,12 @@ val Project.zapAddOn: AddOnPluginExtension get() =
 
 val AddOnPluginExtension.gitHubRelease: GitHubReleaseExtension get() =
     (this as ExtensionAware).extensions.getByName("gitHubRelease") as GitHubReleaseExtension
+
+fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("crowdin", configure)
+
+val Project.crowdin: CrowdinExtension get() =
+    (this as ExtensionAware).extensions.getByName("crowdin") as CrowdinExtension
 
 fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("manifest", configure)

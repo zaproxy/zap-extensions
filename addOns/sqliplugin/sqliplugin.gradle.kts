@@ -18,6 +18,12 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     implementation("org.jdom:jdom:2.0.2")
 }

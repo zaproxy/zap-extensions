@@ -12,3 +12,11 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/encode-decode-hash/")
     }
 }
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}

@@ -15,6 +15,12 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
+
 dependencies {
     implementation("org.tinyjee.jgraphx:jgraphx:3.4.1.3")
 }

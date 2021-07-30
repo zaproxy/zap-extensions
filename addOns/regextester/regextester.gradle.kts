@@ -14,3 +14,9 @@ zapAddOn {
         }
     }
 }
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
+    }
+}
