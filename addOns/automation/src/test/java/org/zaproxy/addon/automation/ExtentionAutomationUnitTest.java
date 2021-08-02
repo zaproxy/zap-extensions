@@ -323,8 +323,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(runJobs.size(), is(equalTo(1)));
         assertThat(runJobs.get(0).getName(), is(equalTo("job")));
         assertThat(((AutomationJobImpl) runJobs.get(0)).wasRun(), is(equalTo(true)));
-        assertThat(tpc.getTestParam().getBoolParam(), is(equalTo(true)));
-        assertThat(tpc.getTestParam().getStringParam(), is(equalTo("envVarValue")));
+        assertThat(tpc.getTestParam().getStringParam(), is(equalTo("true")));
     }
 
     @Nested
@@ -813,6 +812,11 @@ class ExtentionAutomationUnitTest extends TestUtils {
         @Override
         public Order getOrder() {
             return order;
+        }
+
+        @Override
+        public String getSummary() {
+            return "";
         }
 
         @Override

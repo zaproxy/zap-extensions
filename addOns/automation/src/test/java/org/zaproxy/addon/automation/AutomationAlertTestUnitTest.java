@@ -51,7 +51,6 @@ public class AutomationAlertTestUnitTest extends TestUtils {
     private final String name = "example name";
     private final Integer scanRuleId = 100;
     private final String onFail = "warn";
-    private final String jobType = ActiveScanJob.JOB_NAME;
     private LinkedHashMap<String, Object> testData = new LinkedHashMap<>();
     private ActiveScanJobResultData data;
     private Alert alert;
@@ -98,7 +97,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         Object resolvedValue = setupAlert(alert, key, value);
 
         testData.put(key, resolvedValue);
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
 
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
@@ -110,7 +109,8 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.pass!"));
+        assertThat(progress.getInfos().size(), is(6));
+        assertThat(progress.getInfos().get(5), is("!automation.tests.pass!"));
         assertThat(test.runTest(progress), is(true));
     }
 
@@ -127,7 +127,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         Object resolvedValue = setupAlert(alert, key, value);
 
         testData.put(key, resolvedValue);
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
 
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
@@ -209,7 +209,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         }
 
         testData.put(key, resolvedValue);
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
 
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
@@ -221,7 +221,8 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.pass!"));
+        assertThat(progress.getInfos().size(), is(6));
+        assertThat(progress.getInfos().get(5), is("!automation.tests.pass!"));
         assertThat(test.runTest(progress), is(true));
     }
 
@@ -249,7 +250,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         }
 
         testData.put(key, resolvedValue);
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
 
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
@@ -276,7 +277,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         testData.put(AutomationAlertTest.PARAM_ON_FAIL, "warn");
         testData.put(AutomationAlertTest.PARAM_ALERT_NAME, "exampleAlertName");
 
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
         progress.addJobResultData(data);
@@ -296,14 +297,13 @@ public class AutomationAlertTestUnitTest extends TestUtils {
     void shouldLogErrorsIfSpecifiedErrorOnFail() {
         // Given
         String action = "passIfPresent";
-        String onFail = "error";
         Map<Integer, Alert> alertDataMap = new HashMap<>();
         AutomationProgress progress = new AutomationProgress();
         testData.put(AutomationAlertTest.PARAM_ACTION, action);
         testData.put(AutomationAlertTest.PARAM_ON_FAIL, "error");
         testData.put(AutomationAlertTest.PARAM_ALERT_NAME, "exampleAlertName");
 
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
         progress.addJobResultData(data);
@@ -323,14 +323,13 @@ public class AutomationAlertTestUnitTest extends TestUtils {
     void shouldLogInfoIfSpecifiedInfoOnFail() {
         // Given
         String action = "passIfPresent";
-        String onFail = "info";
         Map<Integer, Alert> alertDataMap = new HashMap<>();
         AutomationProgress progress = new AutomationProgress();
         testData.put(AutomationAlertTest.PARAM_ACTION, action);
         testData.put(AutomationAlertTest.PARAM_ON_FAIL, "info");
         testData.put(AutomationAlertTest.PARAM_ALERT_NAME, "exampleAlertName");
 
-        AutomationAlertTest test = new AutomationAlertTest(testData, jobType);
+        AutomationAlertTest test = new AutomationAlertTest(testData, new ActiveScanJob(), progress);
         alertDataMap.put(alert.getAlertId(), alert);
         given(data.getAllAlertData()).willReturn(alertDataMap.values());
         progress.addJobResultData(data);
@@ -341,7 +340,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().size(), is(1));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.fail!"));
+        assertThat(progress.getInfos().size(), is(6));
+        assertThat(progress.getInfos().get(5), is("!automation.tests.fail!"));
     }
 }

@@ -19,8 +19,12 @@
  */
 package org.zaproxy.addon.automation.gui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,10 +40,15 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.AbstractAutomationTest;
+import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationEventPublisher;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationJobException;
@@ -62,6 +71,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final ImageIcon LOAD_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/047.png")));
+    private static final ImageIcon SAVE_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
     protected static final ImageIcon GREEN_BALL_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/152.png")));
@@ -78,11 +90,14 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png")));
 
+    private static final Logger LOG = LogManager.getLogger(AutomationPanel.class);
+
     private ExtensionAutomation ext;
     private JToolBar toolbar;
     private JScrollPane planScrollpane;
     private JButton loadPlanButton;
     private JButton runPlanButton;
+    private JButton savePlanButton;
     private JTabbedPane tabbedPane;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
@@ -111,6 +126,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar = new JToolBar();
             toolbar.setFloatable(false);
             toolbar.add(this.getLoadPlanButton());
+            toolbar.add(this.getSavePlanButton());
             toolbar.add(this.getRunPlanButton());
         }
         return toolbar;
@@ -140,6 +156,31 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     });
         }
         return runPlanButton;
+    }
+
+    private JButton getSavePlanButton() {
+        if (savePlanButton == null) {
+            savePlanButton = new JButton();
+            savePlanButton.setIcon(SAVE_ICON);
+            savePlanButton.setEnabled(false);
+            savePlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        try {
+                            currentPlan.save();
+                        } catch (JsonProcessingException | FileNotFoundException e1) {
+                            LOG.error(e1.getMessage(), e1);
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "automation.dialog.error.save",
+                                                    e1.getMessage()));
+                        }
+                    });
+        }
+        return savePlanButton;
     }
 
     private JButton getLoadPlanButton() {
@@ -203,6 +244,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             }
 
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
@@ -214,6 +256,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         currentPlan = plan;
         getTreeModel().setPlan(currentPlan);
         getRunPlanButton().setEnabled(currentPlan != null);
+        getSavePlanButton().setEnabled(false);
     }
 
     private JTabbedPane getTabbedPane() {
@@ -232,6 +275,31 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             tree.setTreeTableModel(getTreeModel());
             tree.setTreeCellRenderer(new PlanTreeNodeCellRenderer());
             planScrollpane.setViewportView(tree);
+            tree.addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            if (me.getClickCount() == 2) {
+                                TreePath path = tree.getPathForRow(tree.getSelectedRow());
+                                Object node = path.getLastPathComponent();
+                                if (node instanceof DefaultMutableTreeNode) {
+                                    Object userObj =
+                                            ((DefaultMutableTreeNode) node).getUserObject();
+                                    if (userObj instanceof AutomationEnvironment) {
+                                        ((AutomationEnvironment) userObj).showDialog();
+                                    } else if (userObj instanceof AutomationJob) {
+                                        ((AutomationJob) userObj).showDialog();
+                                    } else if (userObj instanceof AbstractAutomationTest) {
+                                        ((AbstractAutomationTest) userObj).showDialog();
+                                    } else if (userObj != null) {
+                                        LOG.error(
+                                                "Unsupported automation framework tree node class "
+                                                        + userObj.getClass().getCanonicalName());
+                                    }
+                                }
+                            }
+                        }
+                    });
         }
         return planScrollpane;
     }
@@ -326,6 +394,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     }
 
     private void handleEvent(Event event) {
+        AutomationPlan plan;
         switch (event.getEventType()) {
             case AutomationEventPublisher.PLAN_STARTED:
                 this.getOutputArea().setText("");
@@ -345,10 +414,25 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             case AutomationEventPublisher.PLAN_ENV_CREATED:
                 getTreeModel().envChanged();
                 break;
+            case AutomationEventPublisher.PLAN_CHANGED:
+                plan = this.getPlan(event);
+                if (plan != null && plan.equals(this.currentPlan)) {
+                    getSavePlanButton().setEnabled(true);
+                }
+                break;
+            case AutomationEventPublisher.PLAN_SAVED:
+                plan = this.getPlan(event);
+                if (plan != null && plan.equals(this.currentPlan)) {
+                    getSavePlanButton().setEnabled(false);
+                }
+                break;
             case AutomationEventPublisher.JOB_STARTED:
                 updateJob(event);
                 break;
             case AutomationEventPublisher.JOB_FINISHED:
+                updateJob(event);
+                break;
+            case AutomationEventPublisher.JOB_CHANGED:
                 updateJob(event);
                 break;
             default:

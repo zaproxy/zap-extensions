@@ -21,8 +21,11 @@ package org.zaproxy.addon.automation;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.gui.StatisticTestDialog;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
@@ -30,14 +33,10 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
 
     public static final String TEST_TYPE = "stats";
 
-    public final String key;
-    public final String name;
-    public final Operator operator;
-    public final long value;
-    public final String onFail;
     private long stat;
+    private Data data;
 
-    enum Operator {
+    public enum Operator {
         LESS("<"),
         GREATER(">"),
         LESS_OR_EQUAL("<="),
@@ -56,43 +55,46 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         }
     }
 
-    public AutomationStatisticTest(LinkedHashMap<?, ?> testData, String jobType) {
-        super(testData, jobType);
-        String statistic = AutomationJob.safeCast(testData.get("statistic"), String.class);
-        String operator = AutomationJob.safeCast(testData.get("operator"), String.class);
-        Number number = AutomationJob.safeCast(testData.get("value"), Number.class);
-        String onFail = AutomationJob.safeCast(testData.get("onFail"), String.class);
-        if (statistic == null || operator == null || number == null || onFail == null) {
-            throw new IllegalArgumentException(
-                    Constant.messages.getString(
-                            "automation.tests.missingOrInvalidProperties",
-                            getJobType(),
-                            getTestType()));
-        }
-        value = number.longValue();
-        String name = AutomationJob.safeCast(testData.get("name"), String.class);
-        if (name == null || name.isEmpty()) {
-            name = statistic + ' ' + operator + ' ' + value;
-        }
-        this.name = name;
+    public AutomationStatisticTest(
+            LinkedHashMap<?, ?> testData, AutomationJob job, AutomationProgress progress) {
+        super(testData, job);
+        data = new Data(this);
+        JobUtils.applyParamsToObject(testData, this.getData(), this.getName(), null, progress);
 
-        if (Arrays.stream(Operator.values())
+        if (this.getData().getOnFail() == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.error.badonfail", getJobType(), this.getName()));
+        }
+        String operator = this.getData().getOperator();
+        if (StringUtils.isEmpty(operator)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.stats.error.nooperator",
+                            getJobType(),
+                            this.getName()));
+        } else if (Arrays.stream(Operator.values())
                 .map(Operator::getSymbol)
                 .noneMatch(o -> o.equals(operator))) {
-            throw new IllegalArgumentException(
+            progress.error(
                     Constant.messages.getString(
-                            "automation.tests.stats.invalidOperator",
+                            "automation.tests.stats.error.badoperator",
                             getJobType(),
-                            name,
+                            this.getName(),
                             operator));
         }
-        this.key = statistic;
-        this.operator =
-                Arrays.stream(Operator.values())
-                        .filter(o -> o.getSymbol().equals(operator))
-                        .findFirst()
-                        .get();
-        this.onFail = onFail;
+        if (StringUtils.isEmpty(data.getStatistic())) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.stats.error.nostatistic",
+                            getJobType(),
+                            this.getName()));
+        }
+        if (this.getData().getValue() == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.stats.error.novalue", getJobType(), this.getName()));
+        }
     }
 
     private static LinkedHashMap<?, ?> paramsToData(
@@ -107,13 +109,26 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     public AutomationStatisticTest(
-            String key, String name, String operator, long value, String onFail, String jobType)
+            String key,
+            String name,
+            String operator,
+            long value,
+            String onFail,
+            AutomationJob job,
+            AutomationProgress progress)
             throws IllegalArgumentException {
-        this(paramsToData(key, name, operator, value, onFail), jobType);
+        this(paramsToData(key, name, operator, value, onFail), job, progress);
     }
 
     @Override
     public boolean runTest(AutomationProgress progress) throws RuntimeException {
+        if (this.getData().getValue() == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.tests.stats.error.novalue", getJobType(), this.getName()));
+            return false;
+        }
+
         InMemoryStats inMemoryStats =
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -121,29 +136,33 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
                         .getInMemoryStats();
         stat =
                 inMemoryStats != null
-                        ? inMemoryStats.getStat(key) != null ? inMemoryStats.getStat(key) : 0
+                        ? inMemoryStats.getStat(this.getData().getStatistic()) != null
+                                ? inMemoryStats.getStat(this.getData().getStatistic())
+                                : 0
                         : 0;
+
+        Operator operator =
+                Arrays.stream(Operator.values())
+                        .filter(o -> o.getSymbol().equals(this.getData().getOperator()))
+                        .findFirst()
+                        .get();
+
         switch (operator) {
             case LESS:
-                return stat < value;
+                return stat < this.getData().getValue();
             case GREATER:
-                return stat > value;
+                return stat > this.getData().getValue();
             case LESS_OR_EQUAL:
-                return stat <= value;
+                return stat <= this.getData().getValue();
             case GREATER_OR_EQUAL:
-                return stat >= value;
+                return stat >= this.getData().getValue();
             case EQUAL:
-                return stat == value;
+                return stat == this.getData().getValue();
             case NOT_EQUAL:
-                return stat != value;
+                return stat != this.getData().getValue();
             default:
-                throw new RuntimeException("Unexpected operator " + operator);
+                throw new RuntimeException("Unexpected operator " + this.getData().getOperator());
         }
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
     }
 
     @Override
@@ -153,19 +172,35 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
 
     @Override
     public String getTestPassedMessage() {
-        String testPassedReason = stat + " " + operator.getSymbol() + " " + value;
+        String testPassedReason =
+                stat + " " + this.getData().getOperator() + " " + this.getData().getValue();
         return Constant.messages.getString(
-                "automation.tests.pass", getJobType(), getTestType(), name, testPassedReason);
+                "automation.tests.pass",
+                getJobType(),
+                getTestType(),
+                this.getName(),
+                testPassedReason);
     }
 
     @Override
     public String getTestFailedMessage() {
-        String testFailedReason = stat + " " + getInverseOperator().getSymbol() + " " + value;
+        String testFailedReason =
+                stat + " " + getInverseOperator().getSymbol() + " " + this.getData().getValue();
         return Constant.messages.getString(
-                "automation.tests.fail", getJobType(), getTestType(), name, testFailedReason);
+                "automation.tests.fail",
+                getJobType(),
+                getTestType(),
+                this.getName(),
+                testFailedReason);
     }
 
     private Operator getInverseOperator() {
+        Operator operator =
+                Arrays.stream(Operator.values())
+                        .filter(o -> o.getSymbol().equals(this.getData().getOperator()))
+                        .findFirst()
+                        .get();
+
         switch (operator) {
             case LESS:
                 return Operator.GREATER_OR_EQUAL;
@@ -180,7 +215,61 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
             case NOT_EQUAL:
                 return Operator.EQUAL;
             default:
-                throw new RuntimeException("Unexpected operator " + operator);
+                throw new RuntimeException("Unexpected operator " + this.getData().getOperator());
+        }
+    }
+
+    @Override
+    public void showDialog() {
+        new StatisticTestDialog(this).setVisible(true);
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    public static class Data extends TestData {
+
+        private AbstractAutomationTest.OnFail onFail;
+        private String statistic;
+        private String operator;
+        private Long value;
+
+        public Data(AutomationStatisticTest test) {
+            super(test);
+        }
+
+        public AbstractAutomationTest.OnFail getOnFail() {
+            return onFail;
+        }
+
+        public void setOnFail(AbstractAutomationTest.OnFail onFail) {
+            this.onFail = onFail;
+        }
+
+        public String getStatistic() {
+            return statistic;
+        }
+
+        public void setStatistic(String key) {
+            this.statistic = key;
+        }
+
+        public String getOperator() {
+            return operator;
+        }
+
+        public void setOperator(String operator) {
+            this.operator = operator;
+        }
+
+        public Long getValue() {
+            return value;
+        }
+
+        public void setValue(Long value) {
+            this.value = value;
         }
     }
 }

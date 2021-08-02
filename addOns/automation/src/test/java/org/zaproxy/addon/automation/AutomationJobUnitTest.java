@@ -38,8 +38,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
@@ -47,6 +45,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.AbstractAutomationTest.OnFail;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -258,10 +257,10 @@ class AutomationJobUnitTest {
         AutomationStatisticTest addedTest = (AutomationStatisticTest) job.getTests().get(0);
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(addedTest.name, is(equalTo(name)));
-        assertThat(addedTest.key, is(equalTo(statistic)));
-        assertThat(addedTest.operator.getSymbol(), is(equalTo(operator)));
-        assertThat(addedTest.onFail, is(equalTo(onFail)));
+        assertThat(addedTest.getData().getName(), is(equalTo(name)));
+        assertThat(addedTest.getData().getStatistic(), is(equalTo(statistic)));
+        assertThat(addedTest.getData().getOperator(), is(equalTo(operator)));
+        assertThat(addedTest.getData().getOnFail(), is(equalTo(OnFail.WARN)));
     }
 
     @Test
@@ -288,10 +287,10 @@ class AutomationJobUnitTest {
 
         job.addTest(
                 new AutomationStatisticTest(
-                        key, nameOne, operatorOne, value, onFailOne, job.getType()));
+                        key, nameOne, operatorOne, value, onFailOne, job, progress));
         job.addTest(
                 new AutomationStatisticTest(
-                        key, nameTwo, operatorTwo, value, onFailTwo, job.getType()));
+                        key, nameTwo, operatorTwo, value, onFailTwo, job, progress));
         when(inMemoryStats.getStat(key)).thenReturn(value + 1);
 
         // When
@@ -411,7 +410,7 @@ class AutomationJobUnitTest {
                     @Override
                     public void addTest(AbstractAutomationTest test) {
                         AutomationStatisticTest statisticTest = (AutomationStatisticTest) test;
-                        if (filteredStatistic.equals(statisticTest.key)) {
+                        if (filteredStatistic.equals(statisticTest.getData().getStatistic())) {
                             return;
                         }
                         super.addTest(statisticTest);
@@ -426,47 +425,10 @@ class AutomationJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(job.getTests().size(), is(equalTo(1)));
         AutomationStatisticTest addedTest = (AutomationStatisticTest) job.getTests().get(0);
-        assertThat(addedTest.name, is(equalTo(name)));
-        assertThat(addedTest.key, is(equalTo(statistic)));
-        assertThat(addedTest.operator.getSymbol(), is(equalTo(operator)));
-        assertThat(addedTest.onFail, is(equalTo(onFail)));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"statistic", "operator", "value"})
-    void shouldSkipInvalidStatisticTest(String property) {
-        // Given
-        ExtensionLoader extLoader = mock(ExtensionLoader.class);
-        Control.initSingletonForTesting(mock(Model.class), extLoader);
-        ExtensionStats extStats = mock(ExtensionStats.class);
-        when(extLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
-        when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
-
-        TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job = new AutomationJobImpl(tpc);
-        AutomationProgress progress = new AutomationProgress();
-
-        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
-        test.put("type", "stats");
-        test.put("name", "example test");
-        test.put("statistic", "stats.example");
-        test.put("operator", "<");
-        test.put("value", 5);
-        test.put("onFail", "warn");
-        test.remove(property);
-        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
-        tests.add(test);
-
-        // When
-        job.addTests(tests, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings().size(), is(equalTo(1)));
-        assertThat(
-                progress.getWarnings().get(0),
-                is(equalTo("!automation.tests.missingOrInvalidProperties!")));
+        assertThat(addedTest.getData().getName(), is(equalTo(name)));
+        assertThat(addedTest.getData().getStatistic(), is(equalTo(statistic)));
+        assertThat(addedTest.getData().getOperator(), is(equalTo(operator)));
+        assertThat(addedTest.getData().getOnFail(), is(equalTo(OnFail.WARN)));
     }
 
     @Test
@@ -507,9 +469,10 @@ class AutomationJobUnitTest {
         AutomationAlertTest addedTest = (AutomationAlertTest) job.getTests().get(0);
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(addedTest.name, is(equalTo(name)));
-        assertThat(addedTest.scanRuleId, is(equalTo(100)));
-        assertThat(addedTest.onFail, is(equalTo(onFail)));
+        assertThat(addedTest.getData().getName(), is(equalTo(name)));
+        assertThat(addedTest.getData().getScanRuleId(), is(equalTo(100)));
+        assertThat(
+                addedTest.getData().getOnFail(), is(equalTo(AbstractAutomationTest.OnFail.WARN)));
     }
 
     @Test
@@ -541,11 +504,12 @@ class AutomationJobUnitTest {
         job.addTests(tests, progress);
 
         // Then
-        assertThat(job.getTests().size(), is(equalTo(0)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(job.getTests().size(), is(equalTo(1)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0),
+                progress.getErrors().get(0),
                 is(equalTo("!automation.tests.alert.invalidJobType!")));
     }
 
@@ -600,16 +564,20 @@ class AutomationJobUnitTest {
         AutomationAlertTest addedTestTwo = (AutomationAlertTest) job.getTests().get(1);
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(addedTestOne.name, is(equalTo(nameOne)));
-        assertThat(addedTestOne.scanRuleId, is(equalTo(100)));
-        assertThat(addedTestOne.onFail, is(equalTo(onFailOne)));
-        assertThat(addedTestTwo.name, is(equalTo(nameTwo)));
-        assertThat(addedTestTwo.scanRuleId, is(equalTo(100)));
-        assertThat(addedTestTwo.onFail, is(equalTo(onFailTwo)));
+        assertThat(addedTestOne.getData().getName(), is(equalTo(nameOne)));
+        assertThat(addedTestOne.getData().getScanRuleId(), is(equalTo(100)));
+        assertThat(
+                addedTestOne.getData().getOnFail(),
+                is(equalTo(AbstractAutomationTest.OnFail.WARN)));
+        assertThat(addedTestTwo.getData().getName(), is(equalTo(nameTwo)));
+        assertThat(addedTestTwo.getData().getScanRuleId(), is(equalTo(100)));
+        assertThat(
+                addedTestTwo.getData().getOnFail(),
+                is(equalTo(AbstractAutomationTest.OnFail.ERROR)));
     }
 
     @Test
-    void shouldWarnIfNullExtensionAlert() {
+    void shouldErrorIfNullExtensionAlert() {
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
 
@@ -640,12 +608,11 @@ class AutomationJobUnitTest {
         job.addTests(tests, progress);
 
         // Then
-        assertThat(job.getTests().size(), is(equalTo(0)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(job.getTests().size(), is(equalTo(1)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(
-                progress.getWarnings().get(0),
-                is(equalTo("!automation.tests.alert.nullExtension!")));
+                progress.getErrors().get(0), is(equalTo("!automation.tests.alert.nullExtension!")));
     }
 
     @Test
@@ -694,7 +661,7 @@ class AutomationJobUnitTest {
                     @Override
                     public void addTest(AbstractAutomationTest test) {
                         AutomationAlertTest alertTest = (AutomationAlertTest) test;
-                        if (filteredScanRuleId.equals(alertTest.scanRuleId)) {
+                        if (filteredScanRuleId.equals(alertTest.getData().getScanRuleId())) {
                             return;
                         }
                         super.addTest(alertTest);
@@ -709,51 +676,10 @@ class AutomationJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(job.getTests().size(), is(equalTo(1)));
         AutomationAlertTest addedTest = (AutomationAlertTest) job.getTests().get(0);
-        assertThat(addedTest.name, is(equalTo(name)));
-        assertThat(addedTest.scanRuleId, is(equalTo(scanRuleId)));
-        assertThat(addedTest.onFail, is(equalTo(onFail)));
-    }
-
-    @Test
-    void shouldSkipInvalidAlertTest() {
-        // Given
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
-        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
-        ExtensionAlert extAlert = mock(ExtensionAlert.class);
-        when(extensionLoader.getExtension(ExtensionAlert.class)).thenReturn(extAlert);
-
-        TestParamContainer tpc = new TestParamContainer();
-        AutomationJob job =
-                new AutomationJobImpl(tpc) {
-                    @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
-                    }
-                };
-
-        AutomationProgress progress = new AutomationProgress();
-        String name = "example name";
-        String type = "alert";
-        Integer scanRuleId = 100;
-        String onFail = "warn";
-
-        LinkedHashMap<String, Object> test = new LinkedHashMap<>();
-        test.put("name", name);
-        test.put("type", type);
-        test.put("onFail", onFail);
-        ArrayList<LinkedHashMap<String, Object>> tests = new ArrayList<>();
-        tests.add(test);
-
-        // When
-        job.addTests(tests, progress);
-
-        // Then
-        assertThat(job.getTests().size(), is(equalTo(0)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(addedTest.getData().getName(), is(equalTo(name)));
+        assertThat(addedTest.getData().getScanRuleId(), is(equalTo(scanRuleId)));
         assertThat(
-                progress.getWarnings().get(0),
-                is(equalTo("!automation.tests.missingOrInvalidProperties!")));
+                addedTest.getData().getOnFail(), is(equalTo(AbstractAutomationTest.OnFail.WARN)));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -1290,6 +1216,11 @@ class AutomationJobUnitTest {
         @Override
         public Order getOrder() {
             return null;
+        }
+
+        @Override
+        public String getSummary() {
+            return "";
         }
 
         @Override

@@ -97,7 +97,19 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         this.status = status;
     }
 
-    public void verifyJobSpecificData(AutomationProgress progress) {}
+    public AutomationData getData() {
+        return null;
+    }
+
+    public AutomationData getParameters() {
+        return null;
+    }
+
+    public String getSummary() {
+        return "";
+    }
+
+    public void showDialog() {}
 
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
@@ -160,6 +172,11 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public AutomationPlan getPlan() {
         return plan;
+    }
+
+    public void setChanged() {
+        AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_CHANGED, this, null);
+        this.plan.setChanged();
     }
 
     public void setPlan(AutomationPlan plan) {
@@ -230,7 +247,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             }
 
             String resolvedValue;
-            if (env != null) {
+            if (env != null && !verify) {
                 resolvedValue = env.replaceVars(param.getValue());
             } else {
                 resolvedValue = param.getValue().toString();
@@ -362,7 +379,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             AbstractAutomationTest test;
             if ("stats".equals(testType)) {
                 try {
-                    test = new AutomationStatisticTest(testData, getType());
+                    test = new AutomationStatisticTest(testData, this, progress);
                 } catch (IllegalArgumentException e) {
                     progress.warn(e.getMessage());
                     continue;
@@ -373,7 +390,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                 "automation.tests.add", getType(), testType, test.getName()));
             } else if ("alert".equals(testType)) {
                 try {
-                    test = new AutomationAlertTest(testData, getType());
+                    test = new AutomationAlertTest(testData, this, progress);
                 } catch (IllegalArgumentException e) {
                     progress.warn(e.getMessage());
                     continue;
@@ -414,6 +431,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             return (T) str;
         } else if (Integer.class.equals(t) || int.class.equals(t)) {
             return (T) (Object) Integer.parseInt(str);
+        } else if (Long.class.equals(t) || long.class.equals(t)) {
+            return (T) (Object) Long.parseLong(str);
         } else if (Boolean.class.equals(t) || boolean.class.equals(t)) {
             // Don't use Boolean.parseBoolean as it won't reject illegal values
             String s = str.trim().toLowerCase();
@@ -442,6 +461,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             return (String) val;
         } else if (Integer.class.isInstance(val)) {
             return val.toString();
+        } else if (Long.class.isInstance(val)) {
+            return val.toString();
         } else if (int.class.isInstance(val)) {
             return val.toString();
         } else if (Boolean.class.isInstance(val)) {
@@ -460,6 +481,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             if (String.class.equals(c)
                     || Integer.class.equals(c)
                     || int.class.equals(c)
+                    || Long.class.equals(c)
+                    || long.class.equals(c)
                     || Boolean.class.equals(c)
                     || boolean.class.equals(c)
                     || Enum.class.isAssignableFrom(c)) {

@@ -21,7 +21,6 @@ package org.zaproxy.addon.automation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -56,6 +55,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
+import org.zaproxy.zap.ZAP;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
 
@@ -126,6 +126,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     @Override
     public void unload() {
         super.unload();
+        ZAP.getEventBus().unregisterPublisher(AutomationEventPublisher.getPublisher());
     }
 
     private AutomationPanel getAutomationPanel() {
@@ -250,9 +251,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     public AutomationPlan loadPlan(File f)
             throws AutomationJobException, FileNotFoundException, IOException {
-        try (FileInputStream is = new FileInputStream(f)) {
-            return this.loadPlan(is);
-        }
+        return new AutomationPlan(this, f);
     }
 
     public AutomationPlan loadPlan(InputStream in) throws AutomationJobException {
@@ -300,7 +299,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 job.setEnv(env);
                 job.setJobData(jobData);
                 job.verifyParameters(progress);
-                job.verifyJobSpecificData(progress);
                 jobsToRun.add(job);
 
                 job.addTests(jobData.get("tests"), progress);
@@ -335,8 +333,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
             return null;
         }
-        try (FileInputStream is = new FileInputStream(f)) {
-            AutomationPlan plan = this.loadPlan(is);
+        try {
+            AutomationPlan plan = new AutomationPlan(this, f);
             if (View.isInitialised()) {
                 this.getAutomationPanel().setCurrentPlan(plan);
             }
@@ -385,6 +383,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     public Map<String, AutomationJob> getAutomationJobs() {
         return Collections.unmodifiableMap(jobs);
+    }
+
+    public AutomationJob getAutomationJob(String type) {
+        return jobs.get(type);
     }
 
     public List<JobResultData> getJobResultData() {

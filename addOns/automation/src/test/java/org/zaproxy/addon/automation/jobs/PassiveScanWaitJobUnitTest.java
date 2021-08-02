@@ -125,10 +125,11 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
-        assertThat(job.getMaxDuration(), is(equalTo(duration)));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(duration)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -147,6 +148,7 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
@@ -223,6 +225,7 @@ class PassiveScanWaitJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.applyParameters(progress);
         job.runJob(env, progress);
 

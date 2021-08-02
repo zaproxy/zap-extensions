@@ -19,8 +19,9 @@ crowdin {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.0")
-    implementation("org.snakeyaml:snakeyaml-engine:2.2.1")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.6")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.12.0")
+    api("org.snakeyaml:snakeyaml-engine:2.2.1")
     testImplementation(project(":testutils"))
 }

@@ -61,6 +61,11 @@ public class ParamsJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {}
 
     @Override
+    public String getSummary() {
+        return "";
+    }
+
+    @Override
     public String getType() {
         return JOB_NAME;
     }

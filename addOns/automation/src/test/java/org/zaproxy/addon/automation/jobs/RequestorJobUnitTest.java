@@ -102,7 +102,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -110,6 +110,27 @@ class RequestorJobUnitTest {
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
                 progress.getErrors().get(0), is(equalTo("!automation.error.requestor.badlist!")));
+    }
+
+    @Test
+    void shouldFailIfMissingUrl() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        RequestorJob job = new RequestorJob();
+
+        String yamlStr = "requests:\n" + "- method: GET\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.requestor.badurl!")));
     }
 
     @Test
@@ -124,7 +145,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
@@ -147,6 +168,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -174,6 +196,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -188,7 +211,7 @@ class RequestorJobUnitTest {
     }
 
     @Test
-    void shouldWarnIfInvalidResponseCode() {
+    void shouldErrorIfInvalidResponseCode() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         RequestorJob job = new RequestorJob();
@@ -203,7 +226,32 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badint!")));
+    }
+
+    @Test
+    void shouldWarnIfUnexpectedResponseCode() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        RequestorJob job = new RequestorJob();
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  method: GET\n"
+                        + "  responseCode: 999\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -240,6 +288,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -274,6 +323,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then
@@ -303,6 +353,7 @@ class RequestorJobUnitTest {
 
         // When
         job.setJobData(jobData);
+        job.verifyParameters(progress);
         job.runJob(env, progress);
 
         // Then

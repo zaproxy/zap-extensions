@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
@@ -60,6 +59,7 @@ import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -137,27 +137,44 @@ class ActiveScanJobUnitTest {
     @Test
     void shouldApplyCustomConfigParams() {
         // Given
+        String yamlStr = "parameters:\n" + "  maxScanDurationInMins: 12\n" + "  policy: testPolicy";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
         ActiveScanJob job = new ActiveScanJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        job.applyCustomParameter("maxScanDurationInMins", "12");
-        job.applyCustomParameter("policy", "testPolicy");
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(job.getMaxDuration(), is(equalTo(12)));
-        assertThat(job.getPolicy(), is(equalTo("testPolicy")));
+        assertThat(job.getParameters().getMaxScanDurationInMins(), is(equalTo(12)));
+        assertThat(job.getParameters().getPolicy(), is(equalTo("testPolicy")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
     void shouldFailWithUnknownConfigParam() {
         // Given
+        String yamlStr = "parameters:\n" + "  blah: 12\n" + "  policy: testPolicy";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
         ActiveScanJob job = new ActiveScanJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        boolean result = job.applyCustomParameter("blah", "12");
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(result, is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
     }
 
     @Test
@@ -233,7 +250,7 @@ class ActiveScanJobUnitTest {
 
         // When
         ActiveScanJob job = new ActiveScanJob();
-        job.applyCustomParameter("context", "Unknown");
+        job.getParameters().setContext("Unknown");
         job.runJob(env, progress);
 
         // Then
@@ -273,7 +290,7 @@ class ActiveScanJobUnitTest {
 
         // When
         ActiveScanJob job = new ActiveScanJob();
-        job.applyCustomParameter("context", "context2");
+        job.getParameters().setContext("context2");
         job.runJob(env, progress);
 
         // Then
@@ -321,7 +338,7 @@ class ActiveScanJobUnitTest {
         ActiveScanJob job = new ActiveScanJob();
 
         // When
-        job.applyCustomParameter("maxScanDurationInMins", "1");
+        job.getParameters().setMaxScanDurationInMins(1);
         job.runJob(env, progress);
 
         // Then
@@ -335,31 +352,6 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldReturnNullScanPolicyForNullData() throws MalformedURLException {
-        // Given
-        ActiveScanJob job = new ActiveScanJob();
-
-        // When
-        ScanPolicy policy = job.getScanPolicy(null);
-
-        // Then
-        assertThat(policy, is(nullValue()));
-    }
-
-    @Test
-    void shouldReturnNullScanPolicyForEmptyData() throws MalformedURLException {
-        // Given
-        ActiveScanJob job = new ActiveScanJob();
-
-        // When
-        job.setJobData(new LinkedHashMap<>());
-        ScanPolicy policy = job.getScanPolicy(null);
-
-        // Then
-        assertThat(policy, is(nullValue()));
-    }
-
-    @Test
     void shouldReturnWarningForBadScanPolicyData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
@@ -369,7 +361,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -388,6 +380,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
@@ -411,6 +404,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
@@ -435,33 +429,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        ScanPolicy policy = job.getScanPolicy(progress);
-
-        // Then
-        assertThat(policy, is(notNullValue()));
-        assertThat(policy.getPluginFactory(), is(notNullValue()));
-        assertThat(policy.getPluginFactory().getAllPlugin(), is(notNullValue()));
-        assertThat(policy.getPluginFactory().getAllPlugin().size(), is(1));
-        assertThat(policy.getPluginFactory().getAllPlugin().get(0), is(notNullValue()));
-        assertThat(policy.getPluginFactory().getAllPlugin().get(0).isEnabled(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldDisableAllRulesWithBoolean() throws MalformedURLException {
-        // There is one built in rule, and mocking more is tricky outside of the package :/
-
-        // Given
-        ActiveScanJob job = new ActiveScanJob();
-        AutomationProgress progress = new AutomationProgress();
-        LinkedHashMap<String, Boolean> policyDefn = new LinkedHashMap<>();
-        policyDefn.put("defaultThreshold", Boolean.FALSE);
-        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
-        data.put("policyDefinition", policyDefn);
-
-        // When
-        job.setJobData(data);
+        job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
@@ -499,6 +467,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
         // Then
@@ -540,7 +509,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
         job.getScanPolicy(progress);
 
         // Then
@@ -572,7 +541,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -601,7 +570,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -630,7 +599,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -660,7 +629,7 @@ class ActiveScanJobUnitTest {
 
         // When
         job.setJobData(data);
-        job.verifyJobSpecificData(progress);
+        job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

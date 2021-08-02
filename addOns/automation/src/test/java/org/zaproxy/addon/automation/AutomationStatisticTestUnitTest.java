@@ -35,6 +35,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -76,9 +77,9 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String name = "example name";
         String key = "stats.job.something";
         String onFail = "warn";
-        String type = "job1";
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, name, operator, value, onFail, type);
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
 
         // When
         boolean hasRunFirst = test.hasRun();
@@ -89,10 +90,11 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(hasRunFirst, is(false));
         assertThat(test.getName(), is(name));
         assertThat(test.getTestType(), is(AutomationStatisticTest.TEST_TYPE));
-        assertThat(test.getJobType(), is(type));
+        assertThat(test.getJobType(), is("activeScan"));
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.pass!"));
+        assertThat(progress.getInfos().size(), is(6));
+        assertThat(progress.getInfos().get(5), is("!automation.tests.pass!"));
         assertThat(test.hasRun(), is(true));
         assertThat(test.hasPassed(), is(true));
     }
@@ -117,7 +119,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String key = "stats.job.something";
         String onFail = "warn";
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, name, operator, value, onFail, null);
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(statValue);
@@ -139,7 +142,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String key = "stats.job.something";
         long value = 5;
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, "example name", "==", value, "warn", "job1");
+                new AutomationStatisticTest(
+                        key, "example name", "==", value, "warn", new ActiveScanJob(), progress);
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value);
@@ -165,7 +169,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String onFail = "warn";
         long value = 10;
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, name, operator, value, onFail, null);
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -188,7 +193,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String onFail = "error";
         long value = 10;
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, name, operator, value, onFail, null);
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -211,7 +217,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         String onFail = "info";
         long value = 10;
         AutomationStatisticTest test =
-                new AutomationStatisticTest(key, name, operator, value, onFail, null);
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -220,7 +227,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().size(), is(1));
-        assertThat(progress.getInfos().get(0), is("!automation.tests.fail!"));
+        assertThat(progress.getInfos().size(), is(6));
+        assertThat(progress.getInfos().get(5), is("!automation.tests.fail!"));
     }
 }

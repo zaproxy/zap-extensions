@@ -22,6 +22,8 @@ package org.zaproxy.addon.automation.jobs;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -33,20 +35,19 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.gui.RequestorJobDialog;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class RequestorJob extends AutomationJob {
 
     public static final String JOB_NAME = "requestor";
     private static final String REQUESTS = "requests";
-    private static final String URL = "url";
-    private static final String METHOD = "method";
-    private static final String RESPONSECODE = "responseCode";
-    private static final String NAME = "name";
-    private static final String DATA = "data";
+
+    private Data data;
 
     private static final Logger LOG = LogManager.getLogger(RequestorJob.class);
     private HttpSender httpSender =
@@ -55,14 +56,17 @@ public class RequestorJob extends AutomationJob {
                     true,
                     HttpSender.MANUAL_REQUEST_INITIATOR);
 
-    public RequestorJob() {}
+    public RequestorJob() {
+        this.data = new Data(this);
+    }
 
     public RequestorJob(HttpSender httpSender) {
+        this();
         this.httpSender = httpSender;
     }
 
     @Override
-    public void verifyJobSpecificData(AutomationProgress progress) {
+    public void verifyParameters(AutomationProgress progress) {
         LinkedHashMap<?, ?> jobData = this.getJobData();
         Object o = jobData.get(REQUESTS);
         if (o == null) {
@@ -75,124 +79,86 @@ public class RequestorJob extends AutomationJob {
         ArrayList<?> requests = (ArrayList<?>) o;
         for (Object request : requests) {
             if (request instanceof LinkedHashMap<?, ?>) {
-                LinkedHashMap<?, ?> requestMap = (LinkedHashMap<?, ?>) request;
-                Object url = requestMap.get(URL);
-                if (url instanceof String) {
-                    String mUrl = (String) url;
+                Request req = new Request();
+                JobUtils.applyParamsToObject(
+                        (LinkedHashMap<?, ?>) request, req, this.getName(), null, progress);
+                if (req.getUrl() == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.requestor.badurl",
+                                    this.getName(),
+                                    req.getUrl(),
+                                    request));
+                    continue;
+                } else if (!req.getUrl().contains("${")) {
                     try {
-                        new URI(mUrl, true);
+                        new URI(req.getUrl(), true);
                     } catch (URIException e) {
                         progress.error(
                                 Constant.messages.getString(
                                         "automation.error.requestor.badurl",
                                         this.getName(),
-                                        mUrl,
+                                        req.getUrl(),
                                         request));
                     }
-                } else {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.requestor.badurl",
-                                    this.getName(),
-                                    url,
-                                    request));
                 }
-                Object method = requestMap.get(METHOD);
-                if (method != null && !(method instanceof String)) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.requestor.invalidmethod",
-                                    this.getName(),
-                                    method,
-                                    request));
-                }
-                Object responseCode = requestMap.get(RESPONSECODE);
-                if (responseCode instanceof String) {
-                    String mResponseCode = (String) responseCode;
-                    try {
-                        int code = Integer.parseInt(mResponseCode);
-                        if (code < 100 || code > 599) {
-                            progress.warn(
-                                    Constant.messages.getString(
-                                            "automation.error.requestor.badcode",
-                                            this.getName(),
-                                            mResponseCode,
-                                            request));
-                        }
-                    } catch (NumberFormatException e) {
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.requestor.badcode",
-                                        this.getName(),
-                                        mResponseCode,
-                                        request));
-                    }
-                } else if (responseCode != null) {
+                if (req.getResponseCode() != null
+                        && (req.getResponseCode() < 100 || req.getResponseCode() > 599)) {
                     progress.warn(
                             Constant.messages.getString(
                                     "automation.error.requestor.badcode",
                                     this.getName(),
-                                    responseCode,
+                                    req.getResponseCode(),
                                     request));
                 }
+                this.getData().addRequest(req);
             }
         }
     }
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
-        ArrayList<?> requests = (ArrayList<?>) jobData.get(REQUESTS);
-        if (requests != null) {
-            for (Object request : requests) {
-                LinkedHashMap<?, ?> requestMap = (LinkedHashMap<?, ?>) request;
-                HttpMessage msg = new HttpMessage();
-                String method = (String) requestMap.get(METHOD);
-                if (method == null || method.isEmpty()) {
-                    method = "GET";
-                }
-                msg.getRequestHeader().setMethod(method);
-                try {
-                    msg.getRequestHeader().setURI(new URI((String) requestMap.get(URL), true));
-                } catch (URIException e) {
-                    // Handled above
-                }
-                String name;
-                if (requestMap.get(NAME) != null) {
-                    name = (String) requestMap.get(NAME);
-                } else {
-                    name =
-                            msg.getRequestHeader().getMethod()
-                                    + msg.getRequestHeader().getURI().toString();
-                }
-                if (requestMap.get(DATA) != null) {
-                    msg.getRequestBody().setBody((String) requestMap.get(DATA));
-                    msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-                }
-                try {
-                    httpSender.sendAndReceive(msg);
-                } catch (IOException e) {
+
+        for (Request req : this.getData().getRequests()) {
+            HttpMessage msg = new HttpMessage();
+            String method = req.getMethod();
+            if (method == null || method.isEmpty()) {
+                method = "GET";
+            }
+            msg.getRequestHeader().setMethod(method);
+            try {
+                msg.getRequestHeader().setURI(new URI(req.getUrl(), true));
+            } catch (URIException e) {
+                // Handled above
+            }
+            String name = req.getName();
+            if (name == null) {
+                name =
+                        msg.getRequestHeader().getMethod()
+                                + msg.getRequestHeader().getURI().toString();
+            }
+            if (req.getData() != null) {
+                msg.getRequestBody().setBody(req.getData());
+                msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+            }
+            try {
+                httpSender.sendAndReceive(msg);
+            } catch (IOException e) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.requestor.badnetwork", this.getName(), name, e));
+                return;
+            }
+            persistToHistoryAndSitesTree(msg);
+            if (req.getResponseCode() != null) {
+                int receivedCode = msg.getResponseHeader().getStatusCode();
+                if (receivedCode != req.getResponseCode()) {
                     progress.warn(
                             Constant.messages.getString(
-                                    "automation.error.requestor.badnetwork",
-                                    this.getName(),
-                                    name,
-                                    e));
-                    return;
-                }
-                persistToHistoryAndSitesTree(msg);
-                Object o = requestMap.get(RESPONSECODE);
-                if (o instanceof Integer) {
-                    int expectedCode = (Integer) o;
-                    int receivedCode = msg.getResponseHeader().getStatusCode();
-                    if (receivedCode != expectedCode) {
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.requestor.codemismatch",
-                                        msg,
-                                        expectedCode,
-                                        receivedCode));
-                    }
+                                    "automation.error.requestor.codemismatch",
+                                    msg,
+                                    req.getResponseCode(),
+                                    receivedCode));
                 }
             }
         }
@@ -247,5 +213,103 @@ public class RequestorJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return null;
+    }
+
+    @Override
+    public void showDialog() {
+        new RequestorJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getSummary() {
+        return Constant.messages.getString(
+                "automation.dialog.requestor.summary", this.getData().getRequests().size());
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    public static class Data extends JobData {
+        private List<Request> requests = new ArrayList<>();
+
+        public Data(AutomationJob job) {
+            super(job);
+        }
+
+        public List<Request> getRequests() {
+            return requests.stream().map(r -> r.copy()).collect(Collectors.toList());
+        }
+
+        public void setRequests(List<Request> requests) {
+            this.requests = requests;
+        }
+
+        public void addRequest(Request req) {
+            this.requests.add(req);
+        }
+    }
+
+    public static class Request extends AutomationData {
+        private String url;
+        private String name;
+        private String method;
+        private String data;
+        private Integer responseCode;
+
+        public Request() {}
+
+        public Request(String url, String name, String method, String data, Integer responseCode) {
+            this.url = url;
+            this.name = name;
+            this.method = method;
+            this.data = data;
+            this.responseCode = responseCode;
+        }
+
+        public Request copy() {
+            return new Request(url, name, method, data, responseCode);
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(String method) {
+            this.method = method;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
+            this.data = data;
+        }
+
+        public Integer getResponseCode() {
+            return responseCode;
+        }
+
+        public void setResponseCode(Integer responseCode) {
+            this.responseCode = responseCode;
+        }
     }
 }

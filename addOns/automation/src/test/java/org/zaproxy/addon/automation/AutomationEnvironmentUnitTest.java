@@ -767,8 +767,11 @@ class AutomationEnvironmentUnitTest {
         List<Context> contexts = env.getContexts();
 
         // Then
-        assertThat(env.getVar("myPrefix"), is(equalTo("prefix")));
-        assertThat(env.getVar("myVar"), is(equalTo("prefix.suffix")));
+        assertThat(env.getData().getVars().get("myPrefix"), is(equalTo("prefix")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertThat(contexts.size(), is(equalTo(1)));
         verify(contexts.get(0)).addIncludeInContextRegex("https://www.prefix.example.com.*");
     }
 
@@ -796,7 +799,7 @@ class AutomationEnvironmentUnitTest {
 
         // Then
         verify(contexts.get(0)).addIncludeInContextRegex("https://www.envVarValue.example.com.*");
-        assertThat(env.getVar("myVar"), is(equalTo("envVarValue.suffix")));
+        assertThat(env.getData().getVars().get("myVar"), is(equalTo("${myEnvVar}.suffix")));
     }
 
     @Test
