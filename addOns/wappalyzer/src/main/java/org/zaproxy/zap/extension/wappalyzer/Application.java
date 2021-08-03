@@ -33,6 +33,7 @@ public class Application {
     private List<String> categories = new ArrayList<>();
     private String cpe;
     private List<Map<String, AppPattern>> headers;
+    private List<Map<String, AppPattern>> cookies;
     private List<AppPattern> url = new ArrayList<>();
     private List<AppPattern> html = new ArrayList<>();
     private List<Map<String, AppPattern>> metas;
@@ -86,6 +87,10 @@ public class Application {
         this.headers = headers;
     }
 
+    public void setCookies(List<Map<String, AppPattern>> cookies) {
+        this.cookies = cookies;
+    }
+
     public void setUrl(List<AppPattern> url) {
         this.url = url;
     }
@@ -120,6 +125,10 @@ public class Application {
 
     public List<Map<String, AppPattern>> getHeaders() {
         return headers;
+    }
+
+    public List<Map<String, AppPattern>> getCookies() {
+        return cookies;
     }
 
     public void addHeaders(Map<String, AppPattern> header) {

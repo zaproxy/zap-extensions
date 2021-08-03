@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Reduce logging of "Unexpected header type" messages from error to debug (related to Issue 6607).
 
+### Added
+- Support for cookie patterns.
+
 ## [21.2.0] - 2021-06-17
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.

@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -105,7 +106,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         // When
         scan(msg);
         // Then
-        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -151,7 +152,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         // When
         scan(msg);
         // Then
-        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -180,7 +181,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         // When
         scan(msg);
         // Then
-        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -193,7 +194,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         // When
         scan(msg);
         // Then
-        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -261,7 +262,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         // When
         scan(msg);
         // Then
-        assertNotFound("https://www.example.com");
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -290,6 +291,108 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         assertFoundApp("https://www.example.com", "Test Entry");
     }
 
+    @Test
+    void shouldMatchCookieNameWithPhp() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Set-Cookie: PHPSESSID=foo");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "PHP");
+    }
+
+    @Test
+    void shouldMatchCookieNameInRequestWithPhp() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "PHPSESSID=foo");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "PHP");
+    }
+
+    @Test
+    void shouldMatchCookieNameAndValueWithTestEntry() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Set-Cookie: foo=bar");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    void shouldMatchCookieNameAndValueInRequestWithTestEntry() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "foo=bar");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    void shouldNotMatchCookieNameAndWrongValueWithTestEntry() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Set-Cookie: foo=foo");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
+    }
+
+    @Test
+    void shouldNotMatchCookieNameAndWrongValueInRequestWithTestEntry()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "foo=foo");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
+    }
+
+    @Test
+    void shouldNotMatchOnlyCookieNameWhenValueIsAlsoExpected() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Set-Cookie: foo");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
+    }
+
+    @Test
+    void shouldNotMatchOnlyCookieNameInRequestWhenValueIsAlsoExpected()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "foo");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
+    }
+
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
@@ -308,7 +411,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
         return httpMessage;
     }
 
-    private void assertNotFound(String site) {
+    private void assertNothingFound(String site) {
         List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
         assertNull(appsForSite);
     }
