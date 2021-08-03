@@ -37,6 +37,15 @@ public class ContextWrapper {
     public ContextWrapper(Context context) {
         this.context = context;
         this.data = new Data();
+        this.data.setName(context.getName());
+        this.data.setIncludePaths(context.getIncludeInContextRegexs());
+        this.data.setExcludePaths(context.getExcludeFromContextRegexs());
+        // Contexts dont actually define the starting URL, but we need at least one
+        for (String url : context.getIncludeInContextRegexs()) {
+            if (url.endsWith(".*")) {
+                this.addUrl(url.substring(0, url.length() - 2));
+            }
+        }
     }
 
     public Context getContext() {

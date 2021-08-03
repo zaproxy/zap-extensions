@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation;
 public abstract class TestData extends AutomationData {
 
     private AbstractAutomationTest test;
+    private AbstractAutomationTest.OnFail onFail;
 
     public TestData(AbstractAutomationTest test) {
         this.test = test;
@@ -49,5 +50,13 @@ public abstract class TestData extends AutomationData {
 
     public void setName(String name) {
         this.test.setName(name);
+    }
+
+    public AbstractAutomationTest.OnFail getOnFail() {
+        return onFail;
+    }
+
+    public void setOnFail(AbstractAutomationTest.OnFail onFail) {
+        this.onFail = onFail;
     }
 }

@@ -37,12 +37,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 import org.zaproxy.addon.reports.automation.ReportJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -103,12 +105,13 @@ public class ReportJobDialog extends StandardFieldsDialog {
         this.addTextField(TAB_SCOPE, FIELD_TITLE, params.getReportTitle());
 
         this.addTextField(TAB_SCOPE, FIELD_REPORT_NAME, params.getReportFile());
+
+        String dir = params.getReportDir();
+        if (StringUtils.isEmpty(dir)) {
+            dir = ReportParam.DEFAULT_TEMPLATES_DIR;
+        }
         this.addFileSelectField(
-                TAB_SCOPE,
-                FIELD_REPORT_DIR,
-                new File(params.getReportDir()),
-                JFileChooser.DIRECTORIES_ONLY,
-                null);
+                TAB_SCOPE, FIELD_REPORT_DIR, new File(dir), JFileChooser.DIRECTORIES_ONLY, null);
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
         this.addCheckBoxField(
                 TAB_SCOPE, FIELD_DISPLAY_REPORT, JobUtils.unBox(params.getDisplayReport()));
@@ -244,8 +247,9 @@ public class ReportJobDialog extends StandardFieldsDialog {
         job.getData().getParameters().setReportDir(this.getStringValue(FIELD_REPORT_DIR));
         job.getData().getParameters().setReportDescription(this.getStringValue(FIELD_DESCRIPTION));
         job.getData().getParameters().setDisplayReport(this.getBoolValue(FIELD_DISPLAY_REPORT));
-
-        job.getData().getParameters().setTheme(this.getStringValue(FIELD_THEME));
+        job.getData()
+                .getParameters()
+                .setTheme(template.getThemeForName(this.getStringValue(FIELD_THEME)));
 
         List<String> sections = new ArrayList<>();
         for (Entry<String, JCheckBox> entry : sectionsMap.entrySet()) {
@@ -263,7 +267,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
         List<String> risks = new ArrayList<>();
         for (int i = 0; i < riskFields.length; i++) {
             if (this.getBoolValue(riskFields[i])) {
-                risks.add(Alert.MSG_RISK[i].toLowerCase());
+                risks.add(ReportJob.riskIntToString(i));
             }
         }
         if (risks.size() == 0) {
@@ -282,7 +286,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
         List<String> confs = new ArrayList<>();
         for (int i = 0; i < confFields.length; i++) {
             if (this.getBoolValue(confFields[i])) {
-                confs.add(Alert.MSG_CONFIDENCE[i].toLowerCase());
+                confs.add(ReportJob.confidenceIntToString(i));
             }
         }
         if (confs.size() == 0) {

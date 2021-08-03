@@ -50,14 +50,18 @@ public class AutomationEnvironment {
     private Map<String, Object> jobData = new HashMap<>();
     private Map<String, String> combinedVars;
     private boolean created = false;
-    private boolean hasErrors = false;
-    private boolean hasWarnings = false;
+    private List<String> errors = new ArrayList<>();
+    private List<String> warnings = new ArrayList<>();
     private AutomationPlan plan;
 
     private Data data = new Data();
 
-    public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
+    public AutomationEnvironment(AutomationProgress progress) {
         this.progress = progress;
+    }
+
+    public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
+        this(progress);
         if (envData == null) {
             progress.error(Constant.messages.getString("automation.error.env.missing"));
             return;
@@ -79,6 +83,7 @@ public class AutomationEnvironment {
                 Constant.messages.getString("automation.env.name"),
                 null,
                 progress);
+        this.progress.setOutputToStdout(this.getData().getParameters().getProgressToStdout());
 
         Object contextsObject = envData.get("contexts");
         if (contextsObject == null) {
@@ -208,20 +213,37 @@ public class AutomationEnvironment {
         return new ContextWrapper(data);
     }
 
+    public void addContext(Context context) {
+        this.contexts.add(new ContextWrapper(context));
+    }
+
     public void create(Session session, AutomationProgress progress) {
 
         this.created = true;
         this.combinedVars = new HashMap<>(System.getenv());
         this.combinedVars.putAll(this.getData().getVars());
+        boolean hasUrls = false;
+        this.errors.clear();
+        this.warnings.clear();
 
         for (ContextWrapper context : this.contexts) {
             context.createContext(session, this);
+            if (context.getUrls().size() > 0) {
+                hasUrls = true;
+            }
             if (this.isTimeToQuit()) {
-                this.hasErrors = progress.hasErrors();
-                this.hasWarnings = progress.hasWarnings();
+                this.errors.addAll(progress.getErrors());
+                this.warnings.addAll(progress.getWarnings());
                 return;
             }
         }
+        if (contexts.size() == 0) {
+            progress.error(Constant.messages.getString("automation.env.error.nocontexts"));
+        } else if (!hasUrls) {
+            progress.error(Constant.messages.getString("automation.env.error.nourls"));
+        }
+        this.errors.addAll(progress.getErrors());
+        this.warnings.addAll(progress.getWarnings());
     }
 
     private static ArrayList<?> verifyRegexes(
@@ -263,6 +285,11 @@ public class AutomationEnvironment {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    protected void setProgress(AutomationProgress progress) {
+        this.progress = progress;
+        this.progress.setOutputToStdout(this.getData().getParameters().getProgressToStdout());
     }
 
     public static String getConfigFileData() {
@@ -318,16 +345,36 @@ public class AutomationEnvironment {
         return null;
     }
 
+    public String getSummary() {
+        if (this.contexts.size() == 0) {
+            return Constant.messages.getString("automation.env.error.nocontexts");
+        }
+        return Constant.messages.getString(
+                "automation.dialog.env.summary",
+                this.contexts.stream()
+                        .map(c -> c.getData().getName())
+                        .collect(Collectors.toList())
+                        .toString());
+    }
+
     public boolean isCreated() {
         return created;
     }
 
     public boolean hasErrors() {
-        return hasErrors;
+        return !this.errors.isEmpty();
     }
 
     public boolean hasWarnings() {
-        return hasWarnings;
+        return !this.warnings.isEmpty();
+    }
+
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
     }
 
     public AutomationPlan getPlan() {
@@ -440,7 +487,7 @@ public class AutomationEnvironment {
     public static class Parameters extends AutomationData {
         private boolean failOnError = true;
         private boolean failOnWarning;
-        private boolean progressToStdout;
+        private boolean progressToStdout = true;
 
         public Parameters() {}
 

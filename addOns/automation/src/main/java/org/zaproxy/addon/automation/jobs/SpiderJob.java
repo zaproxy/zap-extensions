@@ -36,10 +36,12 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.gui.SpiderJobDialog;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -261,6 +263,22 @@ public class SpiderJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return OPTIONS_METHOD_NAME;
+    }
+
+    @Override
+    public int addDefaultTests(AutomationProgress progress) {
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        "automation.spider.urls.added",
+                        Constant.messages.getString(
+                                "automation.dialog.spider.tests.stats.defaultname", 100),
+                        AutomationStatisticTest.Operator.GREATER_OR_EQUAL.getSymbol(),
+                        100,
+                        AbstractAutomationTest.OnFail.INFO.name(),
+                        this,
+                        progress);
+        this.addTest(test);
+        return 1;
     }
 
     public static class UrlRequester {

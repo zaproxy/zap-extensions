@@ -21,10 +21,16 @@ package org.zaproxy.addon.automation.gui;
 
 import java.awt.Component;
 import javax.swing.JTextField;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.utils.ZapTextArea;
+import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class AddRequestDialog extends StandardFieldsDialog {
@@ -69,6 +75,22 @@ public class AddRequestDialog extends StandardFieldsDialog {
         this.addMultilineField(DATA_PARAM, rule.getData());
         this.addNumberField(
                 CODE_PARAM, 0, Integer.MAX_VALUE, JobUtils.unBox(rule.getResponseCode()));
+    }
+
+    @Override
+    public void siteNodeSelected(String field, SiteNode node) {
+        // Fill in the rest of the fields from the node selected
+        HistoryReference hr = node.getHistoryReference();
+        if (hr != null) {
+            ((ZapTextField) this.getField(METHOD_PARAM)).setText(hr.getMethod());
+            ((ZapNumberSpinner) this.getField(CODE_PARAM)).setValue(hr.getStatusCode());
+            try {
+                HttpMessage msg = hr.getHttpMessage();
+                ((ZapTextArea) this.getField(DATA_PARAM)).setText(msg.getRequestBody().toString());
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
     }
 
     @Override

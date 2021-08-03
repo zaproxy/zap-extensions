@@ -123,6 +123,13 @@ public class AutomationAlertTest extends AbstractAutomationTest {
         compilePattern(this.getData().getOtherInfo(), progress);
     }
 
+    public AutomationAlertTest(AutomationJob job, AutomationProgress progress)
+            throws IllegalArgumentException {
+        super("", AbstractAutomationTest.OnFail.INFO.name(), job);
+        data = new Data(this);
+        data.setOnFail(AbstractAutomationTest.OnFail.INFO);
+    }
+
     private Pattern compilePattern(String val, AutomationProgress progress) {
         if (!isNullOrEmpty(val)) {
             try {
@@ -270,7 +277,6 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
     public static class Data extends TestData {
 
-        private AbstractAutomationTest.OnFail onFail;
         private int scanRuleId;
         private String action;
         private String alertName;
@@ -285,14 +291,6 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
         public Data(AutomationAlertTest test) {
             super(test);
-        }
-
-        public AbstractAutomationTest.OnFail getOnFail() {
-            return onFail;
-        }
-
-        public void setOnFail(AbstractAutomationTest.OnFail onFail) {
-            this.onFail = onFail;
         }
 
         public int getScanRuleId() {

@@ -155,7 +155,7 @@ public class ActiveScanJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_POLICY},
+                new String[] {PARAM_POLICY, PARAM_CONTEXT},
                 progress,
                 this.getPlan().getEnv());
     }
@@ -189,7 +189,7 @@ public class ActiveScanJob extends AutomationJob {
         List<Object> contextSpecificObjects = new ArrayList<>();
 
         ScanPolicy scanPolicy = null;
-        if (this.getParameters().getPolicy() != null) {
+        if (!StringUtils.isEmpty(this.getParameters().getPolicy())) {
             try {
                 scanPolicy =
                         this.getExtAScan()
