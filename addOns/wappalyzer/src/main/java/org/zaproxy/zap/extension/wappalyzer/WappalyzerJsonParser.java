@@ -138,6 +138,7 @@ public class WappalyzerJsonParser {
                 app.setCategories(
                         this.jsonToCategoryList(result.getCategories(), appData.get("cats")));
                 app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
+                app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
                 app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
                 app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
                 app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));

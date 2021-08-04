@@ -24,6 +24,9 @@
           "Generator 2"
         ]
       },
+      "cookies": {
+        "foo": "bar"
+      },
       "dom": {
         "a[href='https://www.example.com'][title*='version']": {
           "attributes": {
