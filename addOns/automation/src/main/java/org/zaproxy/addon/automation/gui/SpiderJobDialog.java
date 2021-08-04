@@ -59,7 +59,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     private static final String FIELD_ADVANCED = "automation.dialog.spider.advanced";
 
     private static final String ACCEPT_COOKIES_PARAM = "automation.dialog.spider.acceptcookies";
-    private static final String HANDLE_OODATA_PARAM = "automation.dialog.spider.handleoodata";
+    private static final String HANDLE_ODATA_PARAM = "automation.dialog.spider.handleodata";
     private static final String HANDLE_PARAMS_PARAM = "automation.dialog.spider.handleparams";
     private static final String MAX_PARSE_PARAM = "automation.dialog.spider.maxparse";
     private static final String PARSE_COMMENTS_PARAM = "automation.dialog.spider.parsecomments";
@@ -210,7 +210,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 JobUtils.unBox(this.job.getParameters().getAcceptCookies()));
         this.addCheckBoxField(
                 2,
-                HANDLE_OODATA_PARAM,
+                HANDLE_ODATA_PARAM,
                 JobUtils.unBox(this.job.getParameters().getHandleODataParametersVisited()));
 
         this.addCheckBoxField(
@@ -268,7 +268,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setAcceptCookies(this.getBoolValue(ACCEPT_COOKIES_PARAM));
             this.job
                     .getParameters()
-                    .setHandleODataParametersVisited(this.getBoolValue(HANDLE_OODATA_PARAM));
+                    .setHandleODataParametersVisited(this.getBoolValue(HANDLE_ODATA_PARAM));
             this.job.getParameters().setMaxParseSizeBytes(this.getIntValue(MAX_PARSE_PARAM));
             this.job.getParameters().setParseComments(this.getBoolValue(PARSE_COMMENTS_PARAM));
             this.job.getParameters().setParseGit(this.getBoolValue(PARSE_GIT_PARAM));
