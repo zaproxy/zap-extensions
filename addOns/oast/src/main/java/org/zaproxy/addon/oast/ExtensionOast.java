@@ -63,13 +63,15 @@ public class ExtensionOast extends ExtensionAdaptor {
     public void init() {
         boastService = new BoastService();
         callbackService = new CallbackService();
-        registerOastService(boastService);
-        registerOastService(callbackService);
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        registerOastService(boastService);
+        registerOastService(callbackService);
+
         extensionHook.addApiImplementor(new OastApi());
         extensionHook.addSessionListener(new OastSessionChangedListener());
 

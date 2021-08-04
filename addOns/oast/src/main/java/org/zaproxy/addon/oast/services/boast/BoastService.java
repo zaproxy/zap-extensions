@@ -24,14 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.oast.OastService;
 
 public class BoastService extends OastService {
 
+    private static final Logger LOGGER = LogManager.getLogger(BoastService.class);
+
     private List<BoastServer> registeredServers = new ArrayList<>();
-    private List<ScheduledFuture<?>> scheduledFutures = new ArrayList<>();
     private final ScheduledExecutorService executorService =
             Executors.newSingleThreadScheduledExecutor();
 
@@ -42,9 +44,9 @@ public class BoastService extends OastService {
 
     @Override
     public void startService() {
+        LOGGER.debug("Starting BOAST Service.");
         BoastPoller boastPoller = new BoastPoller(this);
-        scheduledFutures.add(
-                executorService.scheduleAtFixedRate(boastPoller, 0, 1, TimeUnit.MINUTES));
+        executorService.scheduleAtFixedRate(boastPoller, 0, 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -54,8 +56,6 @@ public class BoastService extends OastService {
 
     @Override
     public void sessionChanged() {
-        scheduledFutures.forEach(f -> f.cancel(true));
-        scheduledFutures = new ArrayList<>();
         registeredServers = new ArrayList<>();
     }
 
@@ -64,6 +64,7 @@ public class BoastService extends OastService {
     }
 
     BoastServer register(String boastUri) throws IOException {
+        LOGGER.debug("Registering BOAST Server.");
         BoastServer boastServer = new BoastServer(boastUri);
         registeredServers.add(boastServer);
         return boastServer;
