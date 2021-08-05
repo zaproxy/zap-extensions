@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -62,6 +63,21 @@ public class ParamsJobResultData extends JobResultData {
     }
 
     public List<HtmlParameterStats> getSortedSiteParams(String site) {
+        List<String> allParamSites = getAllParamSites();
+        for (String paramSite : allParamSites) {
+            // add protocol, if site url does not have it
+            if (site.split("://").length == 1) {
+                site = "http://" + site;
+            }
+            if (paramSite.split("://").length == 1) {
+                paramSite = "http://" + paramSite;
+            }
+            // if sites are the same, replace with url from params addon, which includes port number
+            if (site.split(":")[1].equals(paramSite.split(":")[1])
+                    && paramSite.split(":").length > 2) {
+                site = paramSite;
+            }
+        }
         SiteParameters siteParams = this.getSiteParameters(site);
         if (siteParams != null) {
             List<HtmlParameterStats> params = siteParams.getParams();
@@ -76,6 +92,15 @@ public class ParamsJobResultData extends JobResultData {
             return extensionParams.getAllSiteParameters();
         }
         return null;
+    }
+
+    public List<String> getAllParamSites() {
+        Collection<SiteParameters> siteParamsCollection = this.getAllSiteParameters();
+        List<String> allSites = new ArrayList<String>();
+        for (SiteParameters siteParams : siteParamsCollection) {
+            allSites.add(siteParams.getSite());
+        }
+        return allSites;
     }
 
     public static String getTypeString(String type) {
