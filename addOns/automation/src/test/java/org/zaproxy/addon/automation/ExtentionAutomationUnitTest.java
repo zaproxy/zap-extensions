@@ -83,6 +83,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
 
     @Test

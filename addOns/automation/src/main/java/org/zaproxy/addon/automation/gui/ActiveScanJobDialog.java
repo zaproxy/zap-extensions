@@ -230,7 +230,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                 .getData()
                 .getPolicyDefinition()
                 .setDefaultThreshold(
-                        JobUtils.i18nToStrength(this.getStringValue(DEFAULT_THRESHOLD_PARAM)));
+                        JobUtils.i18nToThreshold(this.getStringValue(DEFAULT_THRESHOLD_PARAM)));
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             this.job.getParameters().setDelayInMs(this.getIntValue(DELAY_IN_MS_PARAM));

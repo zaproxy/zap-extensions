@@ -50,6 +50,15 @@ public class AutomationPlan {
 
     private static final Logger LOG = LogManager.getLogger(AutomationPlan.class);
 
+    public AutomationPlan() {
+        super();
+        this.progress = new AutomationProgress();
+        this.env = new AutomationEnvironment(this.progress);
+        this.jobs = new ArrayList<>();
+        this.id = nextId++;
+        env.setPlan(this);
+    }
+
     public AutomationPlan(ExtensionAutomation ext, File file)
             throws FileNotFoundException, IOException {
         super();
@@ -142,6 +151,7 @@ public class AutomationPlan {
     /** This will create a new AutomationProgress object so the old one will no longer be updated */
     public void resetProgress() {
         progress = new AutomationProgress();
+        this.getEnv().setProgress(progress);
         jobs.stream().forEach(j -> j.reset());
     }
 
@@ -151,6 +161,32 @@ public class AutomationPlan {
 
     public List<AutomationJob> getJobs() {
         return jobs;
+    }
+
+    public void addJob(AutomationJob job) {
+        job.setPlan(this);
+        job.setEnv(this.getEnv());
+        try {
+            for (AutomationJob j : jobs) {
+                if (job.getOrder().compareTo(j.getOrder()) < 0) {
+                    jobs.add(this.getJobIndex(j), job);
+                    return;
+                }
+            }
+            jobs.add(job);
+        } finally {
+            this.changed = true;
+            AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_ADDED, job, null);
+        }
+    }
+
+    public boolean removeJob(AutomationJob job) {
+        boolean result = this.jobs.remove(job);
+        if (result) {
+            AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_REMOVED, job, null);
+            this.changed = true;
+        }
+        return result;
     }
 
     public int getJobsCount() {
@@ -165,8 +201,36 @@ public class AutomationPlan {
         return jobs.get(index);
     }
 
+    public boolean moveJobUp(AutomationJob job) {
+        int index = this.getJobIndex(job);
+        if (index <= 0) {
+            return false;
+        }
+        jobs.remove(index);
+        jobs.add(index - 1, job);
+        return true;
+    }
+
+    public boolean moveJobDown(AutomationJob job) {
+        int index = this.getJobIndex(job);
+        if (index == jobs.size() - 1) {
+            return false;
+        }
+        jobs.remove(index);
+        jobs.add(index + 1, job);
+        return true;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public boolean isChanged() {

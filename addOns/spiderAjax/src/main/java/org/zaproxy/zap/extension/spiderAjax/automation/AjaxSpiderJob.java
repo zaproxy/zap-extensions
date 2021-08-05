@@ -29,10 +29,12 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
@@ -161,7 +163,7 @@ public class AjaxSpiderJob extends AutomationJob {
         new Thread(spiderThread, "ZAP-AjaxSpiderAuto").start();
 
         long endTime = Long.MAX_VALUE;
-        if (JobUtils.unBox(this.getParameters().getMaxDuration() > 0)) {
+        if (JobUtils.unBox(this.getParameters().getMaxDuration()) > 0) {
             // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
             endTime =
                     System.currentTimeMillis()
@@ -269,6 +271,22 @@ public class AjaxSpiderJob extends AutomationJob {
     @Override
     public void showDialog() {
         new AjaxSpiderJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public int addDefaultTests(AutomationProgress progress) {
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        "spiderAjax.urls.added",
+                        Constant.messages.getString(
+                                "spiderajax.automation.tests.stats.defaultname", 100),
+                        AutomationStatisticTest.Operator.GREATER_OR_EQUAL.getSymbol(),
+                        100,
+                        AbstractAutomationTest.OnFail.INFO.name(),
+                        this,
+                        progress);
+        this.addTest(test);
+        return 1;
     }
 
     @Override

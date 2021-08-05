@@ -120,6 +120,13 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         this(paramsToData(key, name, operator, value, onFail), job, progress);
     }
 
+    public AutomationStatisticTest(AutomationJob job, AutomationProgress progress)
+            throws IllegalArgumentException {
+        super("", AbstractAutomationTest.OnFail.INFO.name(), job);
+        data = new Data(this);
+        data.setOnFail(AbstractAutomationTest.OnFail.INFO);
+    }
+
     @Override
     public boolean runTest(AutomationProgress progress) throws RuntimeException {
         if (this.getData().getValue() == null) {
@@ -194,6 +201,16 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
                 testFailedReason);
     }
 
+    @Override
+    public String getSummary() {
+        return Constant.messages.getString(
+                "automation.tests.stats.summary",
+                this.getData().getOnFail().toString(),
+                this.getData().getStatistic(),
+                this.getData().getOperator(),
+                this.getData().getValue());
+    }
+
     private Operator getInverseOperator() {
         Operator operator =
                 Arrays.stream(Operator.values())
@@ -231,21 +248,12 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
 
     public static class Data extends TestData {
 
-        private AbstractAutomationTest.OnFail onFail;
         private String statistic;
         private String operator;
         private Long value;
 
         public Data(AutomationStatisticTest test) {
             super(test);
-        }
-
-        public AbstractAutomationTest.OnFail getOnFail() {
-            return onFail;
-        }
-
-        public void setOnFail(AbstractAutomationTest.OnFail onFail) {
-            this.onFail = onFail;
         }
 
         public String getStatistic() {

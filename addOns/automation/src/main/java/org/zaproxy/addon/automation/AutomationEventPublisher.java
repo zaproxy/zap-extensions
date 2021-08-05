@@ -30,6 +30,8 @@ public class AutomationEventPublisher implements EventPublisher {
     private static AutomationEventPublisher publisher = null;
 
     /** Indicates that a plan has started to run. */
+    public static final String PLAN_CREATED = "plan.created";
+
     public static final String PLAN_STARTED = "plan.started";
 
     public static final String PLAN_ENV_CREATED = "plan.env.created";
@@ -50,7 +52,15 @@ public class AutomationEventPublisher implements EventPublisher {
 
     public static final String JOB_FINISHED = "job.finished";
 
+    public static final String JOB_ADDED = "job.added";
+
     public static final String JOB_CHANGED = "job.changed";
+
+    public static final String JOB_REMOVED = "job.removed";
+
+    public static final String TEST_ADDED = "test.added";
+
+    public static final String TEST_REMOVED = "test.removed";
 
     public static final String JOB_ID = "jobId";
     public static final String JOB_NAME = "jobName";
@@ -69,6 +79,7 @@ public class AutomationEventPublisher implements EventPublisher {
             ZAP.getEventBus()
                     .registerPublisher(
                             publisher,
+                            PLAN_CREATED,
                             PLAN_STARTED,
                             PLAN_ENV_CREATED,
                             PLAN_FINISHED,
@@ -79,7 +90,11 @@ public class AutomationEventPublisher implements EventPublisher {
                             PLAN_SAVED,
                             JOB_STARTED,
                             JOB_FINISHED,
-                            JOB_CHANGED);
+                            JOB_ADDED,
+                            JOB_CHANGED,
+                            JOB_REMOVED,
+                            TEST_ADDED,
+                            TEST_REMOVED);
         }
         return publisher;
     }

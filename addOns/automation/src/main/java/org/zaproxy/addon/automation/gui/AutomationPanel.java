@@ -25,15 +25,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -74,6 +78,42 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final ImageIcon SAVE_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
+    private static final ImageIcon ADD_PLAN_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "clipboard--plus.png")));
+    private static final ImageIcon DOWN_ARROW_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "task-move-down.png")));
+    private static final ImageIcon UP_ARROW_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "task-move-up.png")));
+    private static final ImageIcon ADD_JOB_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "task--plus.png")));
+    private static final ImageIcon REMOVE_JOB_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "task--minus.png")));
+    private static final ImageIcon ADD_TEST_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "question-plus.png")));
+    private static final ImageIcon REMOVE_TEST_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "question-minus.png")));
+
     protected static final ImageIcon GREEN_BALL_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/152.png")));
@@ -96,9 +136,16 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JToolBar toolbar;
     private JScrollPane planScrollpane;
     private JButton loadPlanButton;
+    private JButton addPlanButton;
     private JButton runPlanButton;
     private JButton savePlanButton;
+    private JButton jobUpButton;
+    private JButton jobDownButton;
+    private JButton addJobButton;
+    private JButton removeJobButton;
     private JTabbedPane tabbedPane;
+    private JButton addTestButton;
+    private JButton removeTestButton;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
     private JScrollPane outputScrollpane;
@@ -125,9 +172,17 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         if (toolbar == null) {
             toolbar = new JToolBar();
             toolbar.setFloatable(false);
-            toolbar.add(this.getLoadPlanButton());
-            toolbar.add(this.getSavePlanButton());
-            toolbar.add(this.getRunPlanButton());
+            toolbar.add(getAddPlanButton());
+            toolbar.add(getLoadPlanButton());
+            toolbar.add(getSavePlanButton());
+            toolbar.add(getRunPlanButton());
+            toolbar.addSeparator();
+            toolbar.add(getAddJobButton());
+            toolbar.add(getRemoveJobButton());
+            toolbar.add(getJobUpButton());
+            toolbar.add(getJobDownButton());
+            toolbar.add(getAddTestButton());
+            toolbar.add(getRemoveTestButton());
         }
         return toolbar;
     }
@@ -136,6 +191,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         if (runPlanButton == null) {
             runPlanButton = new JButton();
             runPlanButton.setIcon(PLAY_ICON);
+            runPlanButton.setToolTipText(Constant.messages.getString("automation.dialog.plan.run"));
             runPlanButton.setEnabled(false);
             runPlanButton.addActionListener(
                     e -> {
@@ -162,6 +218,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         if (savePlanButton == null) {
             savePlanButton = new JButton();
             savePlanButton.setIcon(SAVE_ICON);
+            savePlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.save"));
             savePlanButton.setEnabled(false);
             savePlanButton.addActionListener(
                     e -> {
@@ -169,6 +227,40 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                             return;
                         }
                         try {
+                            if (currentPlan.getFile() == null) {
+                                final JFileChooser chooser =
+                                        new JFileChooser(ext.getParam().getPlanDirectory());
+                                chooser.setAcceptAllFileFilterUsed(false);
+                                chooser.addChoosableFileFilter(
+                                        new FileFilter() {
+
+                                            @Override
+                                            public boolean accept(File f) {
+                                                String lcFileName = f.getName().toLowerCase();
+                                                return (f.isDirectory()
+                                                        || lcFileName.endsWith(".yaml")
+                                                        || lcFileName.endsWith(".yml"));
+                                            }
+
+                                            @Override
+                                            public String getDescription() {
+                                                return Constant.messages.getString(
+                                                        "automation.panel.load.yaml");
+                                            }
+                                        });
+                                int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
+                                if (rc == JFileChooser.APPROVE_OPTION) {
+                                    ext.getParam()
+                                            .setPlanDirectory(
+                                                    chooser.getSelectedFile()
+                                                            .getParentFile()
+                                                            .getAbsolutePath());
+                                    currentPlan.setFile(chooser.getSelectedFile());
+                                } else {
+                                    // they cancelled the dialog
+                                    return;
+                                }
+                            }
                             currentPlan.save();
                         } catch (JsonProcessingException | FileNotFoundException e1) {
                             LOG.error(e1.getMessage(), e1);
@@ -187,6 +279,8 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         if (loadPlanButton == null) {
             loadPlanButton = new JButton();
             loadPlanButton.setIcon(LOAD_ICON);
+            loadPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.load"));
             loadPlanButton.addActionListener(
                     e -> {
                         final JFileChooser chooser =
@@ -252,11 +346,223 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         }
     }
 
+    private Object setSelectedItem() {
+        TreePath path = tree.getPathForRow(tree.getSelectedRow());
+        if (path != null) {
+            Object node = path.getLastPathComponent();
+            if (node instanceof DefaultMutableTreeNode) {
+                return ((DefaultMutableTreeNode) node).getUserObject();
+            }
+        }
+        return null;
+    }
+
+    private JButton getAddPlanButton() {
+        if (addPlanButton == null) {
+            addPlanButton = new JButton();
+            addPlanButton.setIcon(ADD_PLAN_ICON);
+            addPlanButton.setToolTipText(Constant.messages.getString("automation.dialog.plan.new"));
+            addPlanButton.addActionListener(
+                    e -> {
+                        if (currentPlan != null && currentPlan.isChanged()) {
+                            if (JOptionPane.OK_OPTION
+                                    != View.getSingleton()
+                                            .showConfirmDialog(
+                                                    Constant.messages.getString(
+                                                            "automation.dialog.plan.loosechanges"))) {
+                                return;
+                            }
+                        }
+                        new NewPlanDialog().setVisible(true);
+                    });
+        }
+        return addPlanButton;
+    }
+
+    private JButton getJobUpButton() {
+        if (jobUpButton == null) {
+            jobUpButton = new JButton();
+            jobUpButton.setIcon(UP_ARROW_ICON);
+            jobUpButton.setToolTipText(Constant.messages.getString("automation.dialog.job.moveup"));
+            jobUpButton.setEnabled(false);
+            jobUpButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        int row = tree.getSelectedRow();
+                        if (row <= 1) {
+                            // The environment or first job
+                            return;
+                        }
+                        Object userObj = setSelectedItem();
+                        if (userObj instanceof AutomationJob) {
+                            AutomationJob job = (AutomationJob) userObj;
+                            if (currentPlan.moveJobUp(job)) {
+                                getTreeModel().moveJobUp(job);
+                                // TODO this isnt working :(
+                                tree.setRowSelectionInterval(row - 1, row - 1);
+                                job.setChanged();
+                            }
+                        }
+                    });
+        }
+        return jobUpButton;
+    }
+
+    private JButton getJobDownButton() {
+        if (jobDownButton == null) {
+            jobDownButton = new JButton();
+            jobDownButton.setIcon(DOWN_ARROW_ICON);
+            jobDownButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.job.movedown"));
+            jobDownButton.setEnabled(false);
+            jobDownButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        int row = tree.getSelectedRow();
+                        if (row <= 0) {
+                            // The environment
+                            return;
+                        }
+                        if (row == currentPlan.getJobsCount()) {
+                            // The last node (the env will be index 0)
+                            return;
+                        }
+                        Object userObj = setSelectedItem();
+                        if (userObj instanceof AutomationJob) {
+                            AutomationJob job = (AutomationJob) userObj;
+                            if (currentPlan.moveJobDown(job)) {
+                                getTreeModel().moveJobDown(job);
+                                // TODO this isnt working :(
+                                tree.setRowSelectionInterval(row + 1, row + 1);
+                                job.setChanged();
+                            }
+                        }
+                    });
+        }
+        return jobDownButton;
+    }
+
+    private JButton getAddJobButton() {
+        if (addJobButton == null) {
+            addJobButton = new JButton();
+            addJobButton.setIcon(ADD_JOB_ICON);
+            addJobButton.setToolTipText(Constant.messages.getString("automation.dialog.job.add"));
+            addJobButton.setEnabled(false);
+            addJobButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        new AddJobDialog(currentPlan).setVisible(true);
+                    });
+        }
+        return addJobButton;
+    }
+
+    private JButton getRemoveJobButton() {
+        if (removeJobButton == null) {
+            removeJobButton = new JButton();
+            removeJobButton.setIcon(REMOVE_JOB_ICON);
+            removeJobButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.job.remove"));
+            removeJobButton.setEnabled(false);
+            removeJobButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        Object userObj = setSelectedItem();
+                        if (userObj instanceof AutomationJob) {
+                            AutomationJob job = (AutomationJob) userObj;
+                            if (JOptionPane.OK_OPTION
+                                    == View.getSingleton()
+                                            .showConfirmDialog(
+                                                    Constant.messages.getString(
+                                                            "automation.dialog.job.remove.confirm"))) {
+                                if (currentPlan.removeJob(job)) {
+                                    getTreeModel().removeJob(job);
+                                }
+                            }
+                        }
+                    });
+        }
+        return removeJobButton;
+    }
+
+    private JButton getAddTestButton() {
+        if (addTestButton == null) {
+            addTestButton = new JButton();
+            addTestButton.setIcon(ADD_TEST_ICON);
+            addTestButton.setToolTipText(Constant.messages.getString("automation.dialog.test.add"));
+            addTestButton.setEnabled(false);
+            addTestButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        Object userObj = setSelectedItem();
+                        if (userObj instanceof AutomationJob) {
+                            AutomationJob job = (AutomationJob) userObj;
+                            new AddTestDialog(job).setVisible(true);
+                        }
+                    });
+        }
+        return addTestButton;
+    }
+
+    private JButton getRemoveTestButton() {
+        if (removeTestButton == null) {
+            removeTestButton = new JButton();
+            removeTestButton.setIcon(REMOVE_TEST_ICON);
+            removeTestButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.test.remove"));
+            removeTestButton.setEnabled(false);
+            removeTestButton.addActionListener(
+                    e -> {
+                        if (currentPlan == null) {
+                            return;
+                        }
+                        Object userObj = setSelectedItem();
+                        if (userObj instanceof AbstractAutomationTest) {
+                            AbstractAutomationTest test = (AbstractAutomationTest) userObj;
+                            if (JOptionPane.OK_OPTION
+                                    == View.getSingleton()
+                                            .showConfirmDialog(
+                                                    Constant.messages.getString(
+                                                            "automation.dialog.test.remove.confirm"))) {
+                                if (test.getJob().removeTest(test)) {
+                                    AutomationEventPublisher.publishEvent(
+                                            AutomationEventPublisher.TEST_REMOVED,
+                                            test.getJob(),
+                                            null);
+                                    getTreeModel().removeTest(test);
+                                }
+                            }
+                        }
+                    });
+        }
+        return removeTestButton;
+    }
+
     public void setCurrentPlan(AutomationPlan plan) {
         currentPlan = plan;
         getTreeModel().setPlan(currentPlan);
         getRunPlanButton().setEnabled(currentPlan != null);
+        getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
+    }
+
+    public List<String> getUnsavedPlans() {
+        if (currentPlan != null && currentPlan.isChanged()) {
+            List<String> list = new ArrayList<>();
+            list.add(Constant.messages.getString("automation.plan.current.unsaved"));
+            return list;
+        }
+        return null;
     }
 
     private JTabbedPane getTabbedPane() {
@@ -280,28 +586,57 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         @Override
                         public void mouseClicked(MouseEvent me) {
                             if (me.getClickCount() == 2) {
-                                TreePath path = tree.getPathForRow(tree.getSelectedRow());
-                                Object node = path.getLastPathComponent();
-                                if (node instanceof DefaultMutableTreeNode) {
-                                    Object userObj =
-                                            ((DefaultMutableTreeNode) node).getUserObject();
-                                    if (userObj instanceof AutomationEnvironment) {
-                                        ((AutomationEnvironment) userObj).showDialog();
-                                    } else if (userObj instanceof AutomationJob) {
-                                        ((AutomationJob) userObj).showDialog();
-                                    } else if (userObj instanceof AbstractAutomationTest) {
-                                        ((AbstractAutomationTest) userObj).showDialog();
-                                    } else if (userObj != null) {
-                                        LOG.error(
-                                                "Unsupported automation framework tree node class "
-                                                        + userObj.getClass().getCanonicalName());
-                                    }
+                                Object userObj = setSelectedItem();
+                                if (userObj instanceof AutomationEnvironment) {
+                                    ((AutomationEnvironment) userObj).showDialog();
+                                } else if (userObj instanceof AutomationJob) {
+                                    ((AutomationJob) userObj).showDialog();
+                                } else if (userObj instanceof AbstractAutomationTest) {
+                                    ((AbstractAutomationTest) userObj).showDialog();
+                                } else if (userObj != null) {
+                                    LOG.error(
+                                            "Unsupported automation framework tree node class {}",
+                                            userObj.getClass().getCanonicalName());
                                 }
                             }
                         }
                     });
+            tree.getSelectionModel()
+                    .addListSelectionListener(
+                            new ListSelectionListener() {
+
+                                @Override
+                                public void valueChanged(ListSelectionEvent e) {
+                                    int row = tree.getSelectedRow();
+                                    if (currentPlan == null || row < 0) {
+                                        disableJobAndTestButtons();
+                                        return;
+                                    }
+                                    Object userObj = setSelectedItem();
+                                    if (userObj instanceof AutomationJob) {
+                                        getJobUpButton().setEnabled(row > 1);
+                                        getJobDownButton()
+                                                .setEnabled(row < currentPlan.getJobsCount());
+                                        getRemoveJobButton().setEnabled(true);
+                                        getAddTestButton().setEnabled(true);
+                                    } else if (userObj instanceof AbstractAutomationTest) {
+                                        disableJobAndTestButtons();
+                                        getRemoveTestButton().setEnabled(true);
+                                    } else {
+                                        disableJobAndTestButtons();
+                                    }
+                                }
+                            });
         }
         return planScrollpane;
+    }
+
+    private void disableJobAndTestButtons() {
+        getJobUpButton().setEnabled(false);
+        getJobDownButton().setEnabled(false);
+        getRemoveJobButton().setEnabled(false);
+        getAddTestButton().setEnabled(false);
+        getRemoveTestButton().setEnabled(false);
     }
 
     private JScrollPane getOutputScrollpane() {
@@ -395,7 +730,14 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private void handleEvent(Event event) {
         AutomationPlan plan;
+        LOG.debug("Event: {}", event.getEventType());
         switch (event.getEventType()) {
+            case AutomationEventPublisher.PLAN_CREATED:
+                plan = this.getPlan(event);
+                if (plan != null && plan.equals(this.currentPlan)) {
+                    getSavePlanButton().setEnabled(true);
+                }
+                break;
             case AutomationEventPublisher.PLAN_STARTED:
                 this.getOutputArea().setText("");
                 break;
@@ -432,8 +774,16 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             case AutomationEventPublisher.JOB_FINISHED:
                 updateJob(event);
                 break;
+            case AutomationEventPublisher.JOB_ADDED:
+                plan = this.getPlan(event);
+                getTreeModel().setPlan(plan);
+                break;
             case AutomationEventPublisher.JOB_CHANGED:
                 updateJob(event);
+                break;
+            case AutomationEventPublisher.TEST_ADDED:
+                plan = this.getPlan(event);
+                getTreeModel().setPlan(plan);
                 break;
             default:
                 // Ignore

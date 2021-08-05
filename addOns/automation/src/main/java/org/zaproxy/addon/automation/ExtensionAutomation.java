@@ -40,12 +40,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
@@ -56,6 +56,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
 
@@ -65,7 +66,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     // The i18n prefix
     public static final String PREFIX = "automation";
 
-    private static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
+    public static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
 
     public static final ImageIcon ICON =
             new ImageIcon(ExtensionAutomation.class.getResource(RESOURCES_DIR + "robot.png"));
@@ -127,6 +128,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public void unload() {
         super.unload();
         ZAP.getEventBus().unregisterPublisher(AutomationEventPublisher.getPublisher());
+    }
+
+    @Override
+    public List<String> getUnsavedResources() {
+        if (this.hasView()) {
+            return getAutomationPanel().getUnsavedPlans();
+        }
+        return null;
     }
 
     private AutomationPanel getAutomationPanel() {
@@ -204,24 +213,37 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
     }
 
+    private void clearStats() {
+        // Clear stats for any stats tests
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+        if (extStats != null && extStats.getInMemoryStats() != null) {
+            extStats.getInMemoryStats().allCleared();
+        }
+    }
+
     public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress)
             throws AutomationJobException {
         if (resetProgress) {
             plan.resetProgress();
         }
+        clearStats();
+
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = plan.getEnv();
 
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_STARTED, plan, null);
         env.create(Model.getSingleton().getSession(), progress);
 
-        if (env.isTimeToQuit()) {
+        AutomationEventPublisher.publishEvent(
+                AutomationEventPublisher.PLAN_ENV_CREATED, plan, null);
+
+        if (progress.hasErrors() || env.isTimeToQuit()) {
+            // If the environment reports an error then no point in continuing
             AutomationEventPublisher.publishEvent(
                     AutomationEventPublisher.PLAN_FINISHED, plan, plan.getProgress().toMap());
             return progress;
         }
-        AutomationEventPublisher.publishEvent(
-                AutomationEventPublisher.PLAN_ENV_CREATED, plan, null);
 
         List<AutomationJob> jobsToRun = plan.getJobs();
 
@@ -315,6 +337,13 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         this.plans.put(plan.getId(), plan);
     }
 
+    public void displayPlan(AutomationPlan plan) {
+        if (this.hasView()) {
+            this.getAutomationPanel().setCurrentPlan(plan);
+        }
+        this.plans.put(plan.getId(), plan);
+    }
+
     public AutomationPlan getPlan(int planId) {
         return this.plans.get(planId);
     }
@@ -335,7 +364,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
         try {
             AutomationPlan plan = new AutomationPlan(this, f);
-            if (View.isInitialised()) {
+            if (this.hasView()) {
                 this.getAutomationPanel().setCurrentPlan(plan);
             }
             this.runPlan(plan, false);

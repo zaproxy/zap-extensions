@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation.gui;
 
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -43,7 +44,7 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
                 MAX_DURATION_PARAM,
                 0,
                 Integer.MAX_VALUE,
-                this.job.getParameters().getMaxDuration());
+                JobUtils.unBox(this.job.getParameters().getMaxDuration()));
         this.addPadding();
     }
 

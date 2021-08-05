@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation;
 
 import java.util.LinkedHashMap;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 
 public abstract class AbstractAutomationTest {
@@ -55,7 +56,6 @@ public abstract class AbstractAutomationTest {
     }
 
     private LinkedHashMap<?, ?> testData;
-    private final OnFail onFail;
     private final AutomationJob job;
     private Boolean passed;
     private String name;
@@ -70,7 +70,6 @@ public abstract class AbstractAutomationTest {
                     Constant.messages.getString(
                             "automation.tests.invalidOnFail", getJobType(), onFailStr));
         }
-        this.onFail = EnumUtils.getEnumIgnoreCase(OnFail.class, onFailStr);
     }
 
     public AbstractAutomationTest(String name, String onFail, AutomationJob job) {
@@ -79,7 +78,6 @@ public abstract class AbstractAutomationTest {
             throw new IllegalArgumentException(
                     Constant.messages.getString("automation.tests.invalidOnFail", name, onFail));
         }
-        this.onFail = EnumUtils.getEnumIgnoreCase(OnFail.class, onFail);
     }
 
     public void logToProgress(AutomationProgress progress) throws RuntimeException {
@@ -88,7 +86,7 @@ public abstract class AbstractAutomationTest {
             progress.info(getTestPassedMessage());
             return;
         }
-        switch (onFail) {
+        switch (getData().getOnFail()) {
             case WARN:
                 progress.warn(getTestFailedMessage());
                 break;
@@ -99,7 +97,7 @@ public abstract class AbstractAutomationTest {
                 progress.info(getTestFailedMessage());
                 break;
             default:
-                throw new RuntimeException("Unexpected onFail value " + onFail);
+                throw new RuntimeException("Unexpected onFail value " + getData().getOnFail());
         }
     }
 
@@ -129,12 +127,15 @@ public abstract class AbstractAutomationTest {
 
     public void showDialog() {}
 
-    public AutomationData getData() {
+    public TestData getData() {
         return null;
     }
 
     public String getName() {
-        return this.name;
+        if (!StringUtils.isEmpty(this.name)) {
+            return this.name;
+        }
+        return this.getJob().getName() + "/" + this.getTestType();
     }
 
     public void setName(String name) {

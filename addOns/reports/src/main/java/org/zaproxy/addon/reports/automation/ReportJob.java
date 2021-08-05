@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -35,6 +36,7 @@ import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
+import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 
 public class ReportJob extends AutomationJob {
@@ -56,6 +58,8 @@ public class ReportJob extends AutomationJob {
 
     public ReportJob() {
         data = new Data(this, this.parameters);
+        this.getParameters().setTemplate(ReportParam.DEFAULT_TEMPLATE);
+        this.getParameters().setReportDir(System.getProperty("user.home"));
     }
 
     @Override
@@ -85,14 +89,21 @@ public class ReportJob extends AutomationJob {
             this.getData().setConfidences(list);
         }
 
-        Template template =
-                getExtReport().getTemplateByConfigName(this.getParameters().getTemplate());
+        String templateName = this.getParameters().getTemplate();
+        if (StringUtils.isEmpty(templateName)) {
+            templateName = ReportParam.DEFAULT_TEMPLATE;
+            this.getParameters().setTemplate(templateName);
+        }
+        Template template = getExtReport().getTemplateByConfigName(templateName);
         if (template == null) {
             progress.error(
                     Constant.messages.getString(
                             "reports.automation.error.badtemplate",
                             this.getName(),
                             this.getParameters().getTemplate()));
+        }
+        if (StringUtils.isEmpty(this.getParameters().getReportDir())) {
+            this.getParameters().setReportDir(System.getProperty("user.home"));
         }
 
         list = getJobDataList(jobData, "sections", progress);
@@ -117,10 +128,19 @@ public class ReportJob extends AutomationJob {
     }
 
     @Override
+    public void applyParameters(AutomationProgress progress) {
+        // Nothing to do
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ReportData reportData = new ReportData();
-        Template template =
-                getExtReport().getTemplateByConfigName(this.getParameters().getTemplate());
+
+        String templateName = this.getParameters().getTemplate();
+        if (StringUtils.isEmpty(templateName)) {
+            templateName = ReportParam.DEFAULT_TEMPLATE;
+        }
+        Template template = getExtReport().getTemplateByConfigName(templateName);
 
         if (template == null) {
             progress.error(
@@ -130,13 +150,20 @@ public class ReportJob extends AutomationJob {
                             this.getParameters().getTemplate()));
             return;
         }
-        reportData.setTheme(this.getParameters().getTheme());
+        String theme = this.getParameters().getTheme();
+        if (StringUtils.isEmpty(theme) && template.getThemes().size() > 0) {
+            theme = template.getThemes().get(0);
+        }
+        reportData.setTheme(theme);
 
         // Work out the file name based on the pattern
+        String filePattern = this.getParameters().getReportFile();
+        if (StringUtils.isEmpty(filePattern)) {
+            filePattern = ReportParam.DEFAULT_NAME_PATTERN;
+        }
         String fileName =
                 ExtensionReports.getNameFromPattern(
-                        this.getParameters().getReportFile(),
-                        env.getDefaultContextWrapper().getUrls().get(0));
+                        filePattern, env.getDefaultContextWrapper().getUrls().get(0));
 
         if (!fileName.endsWith("." + template.getExtension())) {
             fileName += "." + template.getExtension();
@@ -230,6 +257,21 @@ public class ReportJob extends AutomationJob {
         return -2;
     }
 
+    public static String riskIntToString(int i) {
+        switch (i) {
+            case 0:
+                return "info";
+            case 1:
+                return "low";
+            case 2:
+                return "medium";
+            case 3:
+                return "high";
+            default:
+                return "";
+        }
+    }
+
     private int confidenceStringToInt(String str, AutomationProgress progress) {
         switch (str.toLowerCase()) {
             case "high":
@@ -240,11 +282,30 @@ public class ReportJob extends AutomationJob {
                 return Alert.CONFIDENCE_LOW;
             case "falsepositive":
                 return Alert.CONFIDENCE_FALSE_POSITIVE;
+            case "confirmed":
+                return Alert.CONFIDENCE_USER_CONFIRMED;
         }
         progress.warn(
                 Constant.messages.getString(
-                        "reports.automation.error.badrisk", this.getName(), str));
+                        "reports.automation.error.badconf", this.getName(), str));
         return -2;
+    }
+
+    public static String confidenceIntToString(int i) {
+        switch (i) {
+            case 0:
+                return "falsepositive";
+            case 1:
+                return "low";
+            case 2:
+                return "medium";
+            case 3:
+                return "high";
+            case 4:
+                return "confirmed";
+            default:
+                return "";
+        }
     }
 
     private List<String> getJobDataList(

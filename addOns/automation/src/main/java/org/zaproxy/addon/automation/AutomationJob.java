@@ -109,6 +109,10 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return "";
     }
 
+    public int addDefaultTests(AutomationProgress progress) {
+        return 0;
+    }
+
     public void showDialog() {}
 
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
@@ -408,6 +412,10 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void addTest(AbstractAutomationTest test) {
         tests.add(test);
+    }
+
+    public boolean removeTest(AbstractAutomationTest test) {
+        return tests.remove(test);
     }
 
     public void logTestsToProgress(AutomationProgress progress) {

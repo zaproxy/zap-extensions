@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.treetable.TreeTableModel;
@@ -122,8 +123,18 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                 case TYPE_INDEX:
                     return "env";
                 case INFO_INDEX:
-                    // TODO
-                    return "";
+                    if (!env.isCreated()) {
+                        return env.getSummary();
+                    } else if (env.hasErrors()) {
+                        return Constant.messages.getString(
+                                "automation.panel.table.info.error", env.getErrors().toString());
+                    } else if (env.hasWarnings()) {
+                        return Constant.messages.getString(
+                                "automation.panel.table.info.warning",
+                                env.getWarnings().toString());
+                    } else {
+                        return env.getSummary();
+                    }
                 default:
             }
         } else if (obj instanceof AutomationJob) {
@@ -202,9 +213,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                                     "automation.panel.table.type.test", test.getTestType());
                 case INFO_INDEX:
                     if (!test.hasRun()) {
-                        return Constant.messages.getString(
-                                "automation.panel.table.info.config",
-                                test.getTestData().toString());
+                        return test.getSummary();
                     } else if (test.hasPassed()) {
                         return INDENT + test.getTestPassedMessage();
                     } else {
@@ -249,5 +258,61 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     public void jobChanged(AutomationJob job) {
         this.fireTreeNodesChanged(job, this.getPathToRoot(map.get(job)), null, null);
+    }
+
+    public void moveJobUp(AutomationJob job) {
+        TreeNode[] nodes = this.getPathToRoot(map.get(job));
+        if (nodes.length < 2) {
+            return;
+        }
+        DefaultMutableTreeNode jobNode = (DefaultMutableTreeNode) nodes[nodes.length - 1];
+        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) nodes[nodes.length - 2];
+        int index = parentNode.getIndex(jobNode);
+        parentNode.remove(jobNode);
+        parentNode.insert(jobNode, index - 1);
+        this.fireTreeStructureChanged(this, null, null, null);
+    }
+
+    public void moveJobDown(AutomationJob job) {
+        TreeNode[] nodes = this.getPathToRoot(map.get(job));
+        if (nodes.length < 2) {
+            return;
+        }
+        DefaultMutableTreeNode jobNode = (DefaultMutableTreeNode) nodes[nodes.length - 1];
+        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) nodes[nodes.length - 2];
+        int index = parentNode.getIndex(jobNode);
+        parentNode.remove(jobNode);
+        parentNode.insert(jobNode, index + 1);
+        this.fireTreeStructureChanged(this, null, null, null);
+    }
+
+    public void removeJob(AutomationJob job) {
+        for (int i = 0; i < this.getRoot().getChildCount(); i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.getRoot().getChildAt(i);
+            if (job.equals(node.getUserObject())) {
+                this.getRoot().remove(node);
+                this.fireTreeNodesRemoved(
+                        node,
+                        this.getPathToRoot(this.getRoot()),
+                        new int[] {i},
+                        new Object[] {node});
+                break;
+            }
+        }
+    }
+
+    public void removeTest(AbstractAutomationTest test) {
+        for (int i = 0; i < this.getRoot().getChildCount(); i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.getRoot().getChildAt(i);
+            for (int j = 0; j < node.getChildCount(); j++) {
+                DefaultMutableTreeNode testNode = (DefaultMutableTreeNode) node.getChildAt(j);
+                if (test.equals(testNode.getUserObject())) {
+                    node.remove(testNode);
+                    this.fireTreeNodesRemoved(
+                            node, this.getPathToRoot(node), new int[] {j}, new Object[] {testNode});
+                    break;
+                }
+            }
+        }
     }
 }
