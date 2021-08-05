@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.4.0] - 2021-08-05
 ### Added
 - Automation Framework GUI
 
@@ -186,6 +186,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.4.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.4.0
 [23.3.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.3.0
 [23.2.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.2.0
 [23.1.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.1.0
