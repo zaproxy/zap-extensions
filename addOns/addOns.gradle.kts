@@ -169,6 +169,8 @@ subprojects {
             tagMessage.set(message)
             title.set(message)
         }
+
+        val crowdinUploadSourceFiles = if (useCrowdin) project.tasks.named("crowdinUploadSourceFiles") else null
         releaseAddOn {
             dependsOn(createReleaseAddOn)
 
@@ -176,7 +178,7 @@ subprojects {
             dependsOn(createPullRequestNextDevIter)
 
             if (useCrowdin) {
-                dependsOn("crowdinUploadSourceFiles")
+                dependsOn(crowdinUploadSourceFiles)
             }
         }
 
