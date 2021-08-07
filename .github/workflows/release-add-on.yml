@@ -25,4 +25,5 @@ jobs:
     - name: Build and Release Add-On
       env:
         ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
+        CROWDIN_AUTH_TOKEN: ${{ secrets.ZAPBOT_CROWDIN_TOKEN }}
       run: ./gradlew :addOns:releaseAddOn
