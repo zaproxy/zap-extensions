@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+ - Address errors when running an automation plan with spiders and passive scan config.
 
 ## [0.4.1] - 2021-08-07
 ### Added

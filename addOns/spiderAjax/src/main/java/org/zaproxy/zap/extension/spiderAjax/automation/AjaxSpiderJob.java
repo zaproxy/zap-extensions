@@ -101,7 +101,9 @@ public class AjaxSpiderJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS},
+                new String[] {
+                    PARAM_CONTEXT, PARAM_URL, PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS
+                },
                 progress,
                 this.getPlan().getEnv());
     }
