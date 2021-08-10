@@ -217,7 +217,7 @@ class SpiderJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
 
         // When
         SpiderJob job = new SpiderJob();
@@ -236,7 +236,7 @@ class SpiderJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
 
         // When
         SpiderJob job = new SpiderJob();
@@ -308,7 +308,8 @@ class SpiderJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("https://www.example.com");
+        String url = "https://www.example.com";
+        contextWrapper.addUrl(url);
 
         String specifiedUrl = "https://www.example.com/url";
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
@@ -321,6 +322,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+        given(env.replaceVars(specifiedUrl)).willReturn(specifiedUrl);
 
         // When
         SpiderJob job = new SpiderJob();
@@ -412,7 +415,8 @@ class SpiderJobUnitTest extends TestUtils {
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("http://localhost:" + nano.getListeningPort() + "/top");
+        String url = "http://localhost:" + nano.getListeningPort() + "/top";
+        contextWrapper.addUrl(url);
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -424,6 +428,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
 
         SpiderJob job = new SpiderJob();
 
@@ -450,9 +455,12 @@ class SpiderJobUnitTest extends TestUtils {
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("http://localhost:" + nano.getListeningPort() + "/1");
-        contextWrapper.addUrl("http://localhost:" + nano.getListeningPort() + "/2");
-        contextWrapper.addUrl("http://localhost:" + nano.getListeningPort() + "/3");
+        String url1 = "http://localhost:" + nano.getListeningPort() + "/1";
+        String url2 = "http://localhost:" + nano.getListeningPort() + "/2";
+        String url3 = "http://localhost:" + nano.getListeningPort() + "/3";
+        contextWrapper.addUrl(url1);
+        contextWrapper.addUrl(url2);
+        contextWrapper.addUrl(url3);
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -464,6 +472,9 @@ class SpiderJobUnitTest extends TestUtils {
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url1)).willReturn(url1);
+        given(env.replaceVars(url2)).willReturn(url2);
+        given(env.replaceVars(url3)).willReturn(url3);
 
         SpiderJob job = new SpiderJob();
 
@@ -495,7 +506,8 @@ class SpiderJobUnitTest extends TestUtils {
 
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("http://null.example.com/");
+        String url = "http://null.example.com/";
+        contextWrapper.addUrl(url);
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -507,6 +519,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
 
         SpiderJob job = new SpiderJob();
 
@@ -529,7 +542,8 @@ class SpiderJobUnitTest extends TestUtils {
         startServer();
         Context context = mock(Context.class);
         ContextWrapper contextWrapper = new ContextWrapper(context);
-        contextWrapper.addUrl("http://localhost:" + nano.getListeningPort() + "/top");
+        String url = "http://localhost:" + nano.getListeningPort() + "/top";
+        contextWrapper.addUrl(url);
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -541,6 +555,7 @@ class SpiderJobUnitTest extends TestUtils {
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         SpiderJob job = new SpiderJob();

@@ -137,6 +137,7 @@ public class AjaxSpiderJob extends AutomationJob {
         if (uriStr == null) {
             uriStr = context.getUrls().get(0);
         }
+        uriStr = env.replaceVars(uriStr);
         URI uri = null;
         try {
             uri = new URI(uriStr);

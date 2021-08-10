@@ -220,8 +220,7 @@ public class AutomationEnvironment {
     public void create(Session session, AutomationProgress progress) {
 
         this.created = true;
-        this.combinedVars = new HashMap<>(System.getenv());
-        this.combinedVars.putAll(this.getData().getVars());
+        this.combinedVars = null; // So that they are recreated
         boolean hasUrls = false;
         this.errors.clear();
         this.warnings.clear();
@@ -246,8 +245,7 @@ public class AutomationEnvironment {
         this.warnings.addAll(progress.getWarnings());
     }
 
-    private static ArrayList<?> verifyRegexes(
-            Object value, String key, AutomationProgress progress) {
+    private ArrayList<?> verifyRegexes(Object value, String key, AutomationProgress progress) {
         if (!(value instanceof ArrayList)) {
             progress.error(Constant.messages.getString("automation.error.context." + key, value));
             return null;
@@ -255,7 +253,11 @@ public class AutomationEnvironment {
         ArrayList<?> regexes = (ArrayList<?>) value;
         for (Object regex : regexes) {
             try {
-                Pattern.compile(regex.toString());
+                String regexStr = regex.toString();
+                if (!regexStr.contains("${")) {
+                    // Only validate the regex if it doesnt contain vars
+                    Pattern.compile(regexStr);
+                }
             } catch (PatternSyntaxException e) {
                 progress.error(
                         Constant.messages.getString(
@@ -268,6 +270,10 @@ public class AutomationEnvironment {
     }
 
     public String replaceVars(Object value) {
+        if (this.combinedVars == null) {
+            this.combinedVars = new HashMap<>(System.getenv());
+            this.combinedVars.putAll(this.getData().getVars());
+        }
         String text = value.toString();
         Matcher matcher = varPattern.matcher(text);
         StringBuffer sb = new StringBuffer();

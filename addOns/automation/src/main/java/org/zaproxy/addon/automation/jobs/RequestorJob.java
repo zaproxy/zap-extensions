@@ -19,13 +19,13 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -126,10 +126,15 @@ public class RequestorJob extends AutomationJob {
                 method = "GET";
             }
             msg.getRequestHeader().setMethod(method);
+            String url = env.replaceVars(req.getUrl());
             try {
-                msg.getRequestHeader().setURI(new URI(req.getUrl(), true));
+                msg.getRequestHeader().setURI(new URI(url, true));
             } catch (URIException e) {
-                // Handled above
+                // Will not have been reported above if the URL contains envvars
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.requestor.badurl", this.getName(), url, e));
+                return;
             }
             String name = req.getName();
             if (name == null) {
@@ -137,13 +142,18 @@ public class RequestorJob extends AutomationJob {
                         msg.getRequestHeader().getMethod()
                                 + msg.getRequestHeader().getURI().toString();
             }
-            if (req.getData() != null) {
-                msg.getRequestBody().setBody(req.getData());
+            if (!StringUtils.isEmpty(req.getData())) {
+                msg.getRequestBody().setBody(env.replaceVars(req.getData()));
                 msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
             }
             try {
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.requrl",
+                                this.getName(),
+                                msg.getRequestHeader().getURI()));
                 httpSender.sendAndReceive(msg);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 progress.warn(
                         Constant.messages.getString(
                                 "automation.error.requestor.badnetwork", this.getName(), name, e));

@@ -158,7 +158,7 @@ class RequestorJobUnitTest {
     void shouldDefaultMethodToGetIfNull() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
@@ -186,7 +186,7 @@ class RequestorJobUnitTest {
     void shouldDefaultMethodToGetIfEmpty() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
@@ -265,7 +265,7 @@ class RequestorJobUnitTest {
     void shouldNotWarnIfCodeMatches() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
@@ -300,7 +300,7 @@ class RequestorJobUnitTest {
     void shouldWarnIfCodeMismatch() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
@@ -339,7 +339,7 @@ class RequestorJobUnitTest {
     void shouldSendMessageWithSetValues() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
@@ -366,5 +366,40 @@ class RequestorJobUnitTest {
                 is(equalTo("https://www.example.com")));
         assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("POST")));
         assertThat(argument.getValue().getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=ddd")));
+    }
+
+    @Test
+    void shouldHandleUrlsWithEnvVarValues() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://${urlvar}\n"
+                        + "  method: POST\n"
+                        + "  data: aaa=bbb&ccc=${postvar}";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        env.getData().getVars().put("urlvar", "www.example.com");
+        env.getData().getVars().put("postvar", "xxx");
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(
+                argument.getValue().getRequestHeader().getURI().toString(),
+                is(equalTo("https://www.example.com")));
+        assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("POST")));
+        assertThat(argument.getValue().getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=xxx")));
     }
 }

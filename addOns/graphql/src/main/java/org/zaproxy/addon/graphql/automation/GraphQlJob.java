@@ -100,22 +100,29 @@ public class GraphQlJob extends AutomationJob {
         }
 
         try {
+            String endpointUrl = env.replaceVars(endpoint);
             GraphQlParser parser =
-                    new GraphQlParser(endpoint, HttpSender.MANUAL_REQUEST_INITIATOR, true);
+                    new GraphQlParser(endpointUrl, HttpSender.MANUAL_REQUEST_INITIATOR, true);
             parser.addRequesterListener(new HistoryPersister());
 
             String schemaFile = this.getParameters().getSchemaFile();
             String schemaUrl = this.getParameters().getSchemaUrl();
 
             if (schemaFile != null && !schemaFile.isEmpty()) {
-                progress.info(Constant.messages.getString("graphql.automation.info.import.file"));
+                progress.info(
+                        Constant.messages.getString(
+                                "graphql.automation.info.import.file", schemaFile, endpointUrl));
                 parser.importFile(schemaFile);
             } else if (schemaUrl != null && !schemaUrl.isEmpty()) {
-                progress.info(Constant.messages.getString("graphql.automation.info.import.url"));
-                parser.importUrl(schemaUrl);
+                String url = env.replaceVars(schemaUrl);
+                progress.info(
+                        Constant.messages.getString(
+                                "graphql.automation.info.import.url", url, endpointUrl));
+                parser.importUrl(url);
             } else {
                 progress.info(
-                        Constant.messages.getString("graphql.automation.info.import.introspect"));
+                        Constant.messages.getString(
+                                "graphql.automation.info.import.introspect", endpointUrl));
                 parser.introspect();
             }
         } catch (IOException e) {

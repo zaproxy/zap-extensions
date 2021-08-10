@@ -154,7 +154,7 @@ class GraphQlJobUnitTest {
     void shouldInfoIfEmptyEndpoint() {
         // Given
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
 
         // When
         GraphQlJob job = new GraphQlJob();
@@ -176,7 +176,7 @@ class GraphQlJobUnitTest {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         String yamlStr = "parameters:\n" + "  endpoint: 'invalid url'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -201,7 +201,7 @@ class GraphQlJobUnitTest {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         String yamlStr =
                 "parameters:\n"
                         + "  endpoint: 'http://example.com/graphql'\n"
@@ -229,7 +229,7 @@ class GraphQlJobUnitTest {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
         String yamlStr =
                 "parameters:\n"
                         + "  endpoint: 'http://example.com/graphql'\n"
