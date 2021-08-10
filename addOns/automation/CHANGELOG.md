@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for exclude regexes to active scan config job.
 
+### Changed
+- Job remains selected when moved in the GUI.
+
 ## [0.50.0] - 2025-06-20
 ### Added
 - Add support for the wait time of the Client Script Based Authentication.
