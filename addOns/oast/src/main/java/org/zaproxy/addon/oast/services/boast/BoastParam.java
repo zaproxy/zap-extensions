@@ -19,20 +19,29 @@
  */
 package org.zaproxy.addon.oast.services.boast;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class BoastParam extends VersionedAbstractParam {
 
     private static final int PARAM_CURRENT_VERSION = 1;
+    private static final Logger LOGGER = LogManager.getLogger(BoastParam.class);
 
     private static final String PARAM_BASE_KEY = "oast.boast";
-    private static final String PARAM_BOAST_URI = PARAM_BASE_KEY + ".uri";
+    static final String PARAM_BOAST_URI = PARAM_BASE_KEY + ".uri";
+    static final String PARAM_POLLING_FREQUENCY = PARAM_BASE_KEY + ".pollingFrequency";
+
+    static final int MINIMUM_POLLING_FREQUENCY = 10;
 
     private String boastUri;
+    private int pollingFrequency;
 
     @Override
     protected void parseImpl() {
         boastUri = getString(PARAM_BOAST_URI, "https://odiss.eu:1337/events");
+        setPollingFrequency(getInt(PARAM_POLLING_FREQUENCY, 60));
     }
 
     public String getBoastUri() {
@@ -42,6 +51,21 @@ public class BoastParam extends VersionedAbstractParam {
     public void setBoastUri(String boastUri) {
         this.boastUri = boastUri;
         getConfig().setProperty(PARAM_BOAST_URI, boastUri);
+    }
+
+    public int getPollingFrequency() {
+        return pollingFrequency;
+    }
+
+    public void setPollingFrequency(int pollingFrequency) {
+        if (pollingFrequency < MINIMUM_POLLING_FREQUENCY) {
+            LOGGER.info(
+                    Constant.messages.getString(
+                            "oast.boast.param.info.minPollingFrequency", pollingFrequency));
+            pollingFrequency = MINIMUM_POLLING_FREQUENCY;
+        }
+        this.pollingFrequency = pollingFrequency;
+        getConfig().setProperty(PARAM_POLLING_FREQUENCY, pollingFrequency);
     }
 
     @Override

@@ -24,18 +24,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.oast.OastService;
 
-public class BoastService extends OastService {
+public class BoastService extends OastService implements OptionsChangedListener {
 
     private static final Logger LOGGER = LogManager.getLogger(BoastService.class);
 
     private List<BoastServer> registeredServers = new ArrayList<>();
     private final ScheduledExecutorService executorService =
             Executors.newSingleThreadScheduledExecutor();
+
+    private BoastParam boastParam;
+    private int currentPollingFrequency;
+    private ScheduledFuture<?> pollingSchedule;
 
     @Override
     public String getName() {
@@ -45,8 +52,14 @@ public class BoastService extends OastService {
     @Override
     public void startService() {
         LOGGER.debug("Starting BOAST Service.");
-        BoastPoller boastPoller = new BoastPoller(this);
-        executorService.scheduleAtFixedRate(boastPoller, 0, 1, TimeUnit.MINUTES);
+        if (pollingSchedule == null || pollingSchedule.isDone()) {
+            pollingSchedule =
+                    executorService.scheduleAtFixedRate(
+                            new BoastPoller(this),
+                            getParam().getPollingFrequency(),
+                            getParam().getPollingFrequency(),
+                            TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -57,6 +70,27 @@ public class BoastService extends OastService {
     @Override
     public void sessionChanged() {
         registeredServers = new ArrayList<>();
+    }
+
+    public void optionsLoaded() {
+        currentPollingFrequency = getParam().getPollingFrequency();
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        if (currentPollingFrequency != getParam().getPollingFrequency()) {
+            pollingSchedule.cancel(false);
+            startService();
+            currentPollingFrequency = getParam().getPollingFrequency();
+            LOGGER.debug("Updated BOAST Polling frequency to {} seconds.", currentPollingFrequency);
+        }
+    }
+
+    public BoastParam getParam() {
+        if (boastParam == null) {
+            boastParam = new BoastParam();
+        }
+        return boastParam;
     }
 
     public List<BoastServer> getRegisteredServers() {

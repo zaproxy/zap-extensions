@@ -34,7 +34,6 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
-import org.zaproxy.addon.oast.services.boast.BoastParam;
 import org.zaproxy.addon.oast.services.boast.BoastService;
 import org.zaproxy.addon.oast.services.callback.CallbackOptionsPanelTab;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
@@ -75,9 +74,10 @@ public class ExtensionOast extends ExtensionAdaptor {
         extensionHook.addApiImplementor(new OastApi());
         extensionHook.addSessionListener(new OastSessionChangedListener());
 
-        extensionHook.addOptionsParamSet(new BoastParam());
+        extensionHook.addOptionsParamSet(boastService.getParam());
         extensionHook.addOptionsParamSet(callbackService.getParam());
 
+        extensionHook.addOptionsChangedListener(boastService);
         extensionHook.addOptionsChangedListener(callbackService);
 
         if (hasView()) {
@@ -91,6 +91,7 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
+        boastService.optionsLoaded();
         callbackService.optionsLoaded();
     }
 
@@ -134,6 +135,14 @@ public class ExtensionOast extends ExtensionAdaptor {
         return Collections.unmodifiableMap(services);
     }
 
+    public BoastService getBoastService() {
+        return boastService;
+    }
+
+    public CallbackService getCallbackService() {
+        return callbackService;
+    }
+
     private OastOptionsPanel getOastOptionsPanel() {
         if (oastOptionsPanel == null) {
             oastOptionsPanel = new OastOptionsPanel();
@@ -175,6 +184,15 @@ public class ExtensionOast extends ExtensionAdaptor {
                         addCallbacksFromDatabaseIntoCallbackPanel(session);
                     });
             getOastServices().values().forEach(OastService::sessionChanged);
+            getOastServices().values().forEach(OastService::clearOastRequestHandlers);
+            if (hasView()) {
+                getOastServices()
+                        .values()
+                        .forEach(
+                                s ->
+                                        s.addOastRequestHandler(
+                                                o -> getOastPanel().addOastRequest(o)));
+            }
         }
 
         private void addCallbacksFromDatabaseIntoCallbackPanel(Session session) {

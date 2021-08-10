@@ -23,12 +23,16 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.AbstractTableModel;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.oast.ui.OastOptionsPanelTab;
 import org.zaproxy.zap.utils.ThreadUtils;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -38,8 +42,9 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
 
     private final BoastService boastService;
     private ZapTextField boastUri;
-    private JTextField boastId;
-    private JTextField boastCanary;
+    private ZapNumberSpinner pollingFrequencySpinner;
+    private JXTable boastServersTable;
+    private BoastServersTableModel boastServersTableModel;
     private JButton boastRegisterButton;
 
     public BoastOptionsPanelTab(BoastService boastService) {
@@ -47,35 +52,36 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
 
         this.boastService = boastService;
 
+        int rowIndex = -1;
+
         JLabel boastUriLabel =
                 new JLabel(Constant.messages.getString("oast.boast.options.label.uri"));
         boastUriLabel.setLabelFor(getBoastUri());
-        int rowIndex = -1;
         this.add(boastUriLabel, LayoutHelper.getGBC(0, ++rowIndex, 1, 0.4, new Insets(2, 2, 2, 2)));
         this.add(getBoastUri(), LayoutHelper.getGBC(1, rowIndex, 1, 0.6, new Insets(2, 2, 2, 2)));
 
-        JLabel boastIdLabel =
-                new JLabel(Constant.messages.getString("oast.boast.options.label.id"));
-        boastIdLabel.setLabelFor(getBoastId());
-        this.add(boastIdLabel, LayoutHelper.getGBC(0, ++rowIndex, 1, 0.4, new Insets(2, 2, 2, 2)));
-        this.add(getBoastId(), LayoutHelper.getGBC(1, rowIndex, 1, 0.6, new Insets(2, 2, 2, 2)));
-
-        JLabel boastCanaryLabel =
-                new JLabel(Constant.messages.getString("oast.boast.options.label.canary"));
-        boastCanaryLabel.setLabelFor(getBoastCanary());
+        JLabel pollingFrequencyLabel =
+                new JLabel(
+                        Constant.messages.getString("oast.boast.options.label.pollingFrequency"));
+        pollingFrequencyLabel.setLabelFor(getPollingFrequencySpinner());
         this.add(
-                boastCanaryLabel,
+                pollingFrequencyLabel,
                 LayoutHelper.getGBC(0, ++rowIndex, 1, 0.4, new Insets(2, 2, 2, 2)));
         this.add(
-                getBoastCanary(), LayoutHelper.getGBC(1, rowIndex, 1, 0.6, new Insets(2, 2, 2, 2)));
+                getPollingFrequencySpinner(),
+                LayoutHelper.getGBC(1, rowIndex, 1, 0.6, new Insets(2, 2, 2, 2)));
 
         this.add(
                 getBoastRegisterButton(),
                 LayoutHelper.getGBC(1, ++rowIndex, 1, 0, new Insets(2, 2, 2, 2)));
 
+        JScrollPane boastServersScrollPane = new JScrollPane(getBoastServersTable());
+        boastServersScrollPane.setBorder(
+                new TitledBorder(
+                        Constant.messages.getString("oast.boast.options.label.activeServers")));
         this.add(
-                new JLabel(),
-                LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 0, 1.0));
+                boastServersScrollPane,
+                LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 1.0));
     }
 
     ZapTextField getBoastUri() {
@@ -85,20 +91,28 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
         return boastUri;
     }
 
-    JTextField getBoastId() {
-        if (boastId == null) {
-            boastId = new JTextField();
-            boastId.setEditable(false);
+    ZapNumberSpinner getPollingFrequencySpinner() {
+        if (pollingFrequencySpinner == null) {
+            pollingFrequencySpinner =
+                    new ZapNumberSpinner(
+                            BoastParam.MINIMUM_POLLING_FREQUENCY, 60, Integer.MAX_VALUE);
         }
-        return boastId;
+        return pollingFrequencySpinner;
     }
 
-    JTextField getBoastCanary() {
-        if (boastCanary == null) {
-            boastCanary = new JTextField();
-            boastCanary.setEditable(false);
+    private JXTable getBoastServersTable() {
+        if (boastServersTable == null) {
+            boastServersTable = new JXTable(getBoastServersTableModel());
+            boastServersTable.setCellSelectionEnabled(true);
         }
-        return boastCanary;
+        return boastServersTable;
+    }
+
+    private BoastServersTableModel getBoastServersTableModel() {
+        if (boastServersTableModel == null) {
+            boastServersTableModel = new BoastServersTableModel();
+        }
+        return boastServersTableModel;
     }
 
     private JButton getBoastRegisterButton() {
@@ -113,9 +127,8 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
 
     private void registerButtonAction() {
         try {
-            BoastServer server = boastService.register(getBoastUri().getText());
-            getBoastId().setText(server.getId());
-            getBoastCanary().setText(server.getCanary());
+            boastService.register(getBoastUri().getText());
+            getBoastServersTableModel().fireTableDataChanged();
         } catch (Exception exception) {
             View.getSingleton().showWarningDialog(this, exception.getLocalizedMessage());
         }
@@ -125,11 +138,59 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
     public void initParam(OptionsParam options) {
         final BoastParam param = options.getParamSet(BoastParam.class);
         getBoastUri().setText(param.getBoastUri());
+        getPollingFrequencySpinner().setValue(param.getPollingFrequency());
+        boastServersTableModel = null;
+        getBoastServersTable().setModel(getBoastServersTableModel());
     }
 
     @Override
     public void saveParam(OptionsParam options) {
         final BoastParam param = options.getParamSet(BoastParam.class);
         param.setBoastUri(getBoastUri().getText());
+        param.setPollingFrequency(getPollingFrequencySpinner().getValue());
+    }
+
+    private class BoastServersTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public int getRowCount() {
+            return boastService.getRegisteredServers().size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 2;
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return Constant.messages.getString("oast.boast.options.activeServers.payload");
+                case 1:
+                    return Constant.messages.getString("oast.boast.options.activeServers.canary");
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return boastService.getRegisteredServers().get(rowIndex).getPayload();
+                case 1:
+                    return boastService.getRegisteredServers().get(rowIndex).getCanary();
+                default:
+                    return "";
+            }
+        }
     }
 }
