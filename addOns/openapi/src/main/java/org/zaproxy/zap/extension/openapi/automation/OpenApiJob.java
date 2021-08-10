@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -94,10 +95,14 @@ public class OpenApiJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         String apiFile = this.getParameters().getApiFile();
-        String apiUrl = this.getParameters().getApiUrl();
-        String targetUrl = this.getParameters().getTargetUrl();
+        String apiStr = this.getParameters().getApiUrl();
+        String targetStr = this.getParameters().getTargetUrl();
+        String targetUrl = null;
+        if (!StringUtils.isEmpty(targetStr)) {
+            targetUrl = env.replaceVars(targetStr);
+        }
 
-        if (apiFile != null && apiFile.length() > 0) {
+        if (!StringUtils.isEmpty(apiFile)) {
             File file = new File(apiFile);
             if (file.exists() && file.canRead()) {
                 OpenApiResults results =
@@ -107,7 +112,10 @@ public class OpenApiJob extends AutomationJob {
                     for (String error : errors) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "openapi.automation.error.misc", this.getName(), error));
+                                        "openapi.automation.error.misc",
+                                        this.getName(),
+                                        targetUrl,
+                                        error));
                     }
                 }
                 progress.info(
@@ -118,10 +126,14 @@ public class OpenApiJob extends AutomationJob {
             } else {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.file", this.getName(), apiFile));
+                                "openapi.automation.error.file",
+                                this.getName(),
+                                targetUrl,
+                                apiFile));
             }
         }
-        if (apiUrl != null && apiUrl.length() > 0) {
+        if (!StringUtils.isEmpty(apiStr)) {
+            String apiUrl = env.replaceVars(apiStr);
             try {
                 URI uri = new URI(apiUrl, true);
                 OpenApiResults results =
@@ -131,7 +143,10 @@ public class OpenApiJob extends AutomationJob {
                     for (String error : errors) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "openapi.automation.error.misc", this.getName(), error));
+                                        "openapi.automation.error.misc",
+                                        this.getName(),
+                                        targetUrl,
+                                        error));
                     }
                 }
                 progress.info(
@@ -142,7 +157,7 @@ public class OpenApiJob extends AutomationJob {
             } catch (Exception e) {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.url", this.getName(), apiUrl));
+                                "openapi.automation.error.url", this.getName(), targetUrl, apiUrl));
             }
         }
     }

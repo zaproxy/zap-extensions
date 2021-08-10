@@ -96,7 +96,7 @@ public class SpiderJob extends AutomationJob {
             progress.warn(
                     Constant.messages.getString(
                             "automation.error.spider.failIfUrlsLessThan.deprecated",
-                            getType(),
+                            getName(),
                             "automation.spider.urls.added"));
         }
     }
@@ -138,19 +138,23 @@ public class SpiderJob extends AutomationJob {
             context = env.getDefaultContextWrapper();
         }
         URI uri = null;
-        String url = parameters.getUrl();
+        String urlStr = parameters.getUrl();
         try {
-            if (url != null) {
-                uri = new URI(url, true);
+            if (urlStr != null) {
+                urlStr = env.replaceVars(urlStr);
+                uri = new URI(urlStr, true);
             }
         } catch (Exception e1) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", url));
+            progress.error(Constant.messages.getString("automation.error.context.badurl", urlStr));
             return;
         }
 
         // Request all specified URLs
         for (String u : context.getUrls()) {
-            this.urlRequester.requestUrl(u, progress);
+            urlStr = env.replaceVars(u);
+            progress.info(
+                    Constant.messages.getString("automation.info.requrl", this.getName(), urlStr));
+            this.urlRequester.requestUrl(urlStr, progress);
         }
 
         if (env.isTimeToQuit()) {
@@ -199,7 +203,7 @@ public class SpiderJob extends AutomationJob {
         int numUrlsFound = scan.getNumberOfURIsFound();
         progress.info(
                 Constant.messages.getString(
-                        "automation.info.urlsfound", this.getType(), numUrlsFound));
+                        "automation.info.urlsfound", this.getName(), numUrlsFound));
         Stats.incCounter("automation.spider.urls.added", numUrlsFound);
     }
 

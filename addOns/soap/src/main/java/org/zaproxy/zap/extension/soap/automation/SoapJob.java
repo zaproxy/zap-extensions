@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
+import org.apache.groovy.parser.antlr4.util.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -91,7 +92,7 @@ public class SoapJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         String wsdlFile = this.getParameters().getWsdlFile();
-        if (wsdlFile != null && !wsdlFile.isEmpty()) {
+        if (!StringUtils.isEmpty(wsdlFile)) {
             File file = new File(wsdlFile);
             if (!file.exists() || !file.canRead()) {
                 progress.error(Constant.messages.getString("soap.automation.error.file", wsdlFile));
@@ -100,8 +101,9 @@ public class SoapJob extends AutomationJob {
             }
         }
 
-        String wsdlUrl = this.getParameters().getWsdlUrl();
-        if (wsdlUrl != null && !wsdlUrl.isEmpty()) {
+        String wsdlStr = this.getParameters().getWsdlUrl();
+        if (!StringUtils.isEmpty(wsdlStr)) {
+            String wsdlUrl = env.replaceVars(wsdlStr);
             try {
                 new URI(wsdlUrl, true);
                 getExtSoap().syncImportWsdlUrl(wsdlUrl);

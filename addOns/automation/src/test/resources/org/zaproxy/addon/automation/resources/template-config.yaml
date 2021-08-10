@@ -6,7 +6,7 @@ env:                                   # The environment, mandatory
       includePaths:                    # An optional list of regexes to include
       excludePaths:                    # An optional list of regexes to exclude
       authentication:                  # TBA: In time to cover all auth configs
-  vars:                                # List of 1 or more variables, can be used throughout the config
+  vars:                                # List of 1 or more variables, can be used in urls and selected other parameters
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
