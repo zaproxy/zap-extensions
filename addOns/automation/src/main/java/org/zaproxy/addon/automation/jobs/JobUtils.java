@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -321,7 +322,10 @@ public class JobUtils {
         }
         List<String> ignoreList = Collections.emptyList();
         if (ignore != null) {
-            ignoreList = Arrays.asList(ignore);
+            ignoreList =
+                    Arrays.asList(ignore).stream()
+                            .map(e -> "get" + e.toUpperCase().charAt(0) + e.substring(1))
+                            .collect(Collectors.toList());
         }
 
         try {
