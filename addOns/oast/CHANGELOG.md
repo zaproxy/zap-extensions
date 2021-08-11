@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- An option to allow changing the polling frequency of BOAST servers.
+- A table that lists the payloads and canary values of all registered BOAST servers.
 
+### Removed
+- The _ID_ and the _Canary Value_ fields, in favour of the _Active Servers_ table in the BOAST options window.
 
 ## [0.1.1] - 2021-08-04
 ### Fixed

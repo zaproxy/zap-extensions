@@ -29,6 +29,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -90,6 +91,17 @@ public class BoastServer {
 
     public URI getUri() {
         return uri;
+    }
+
+    public String getPayload() {
+        try {
+            return id + "." + uri.getHost();
+        } catch (URIException e) {
+            LOGGER.warn(
+                    Constant.messages.getString(
+                            "oast.boast.error.payload", e.getLocalizedMessage()));
+            return "";
+        }
     }
 
     public String getId() {

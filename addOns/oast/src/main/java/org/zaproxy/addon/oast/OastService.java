@@ -44,4 +44,8 @@ public abstract class OastService {
             handler.handle(oastRequest);
         }
     }
+
+    public void clearOastRequestHandlers() {
+        oastRequestHandlerList.clear();
+    }
 }
