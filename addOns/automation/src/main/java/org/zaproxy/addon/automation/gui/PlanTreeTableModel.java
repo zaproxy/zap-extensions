@@ -267,10 +267,11 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
         }
         DefaultMutableTreeNode jobNode = (DefaultMutableTreeNode) nodes[nodes.length - 1];
         DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) nodes[nodes.length - 2];
-        int index = parentNode.getIndex(jobNode);
+        int currentIndex = parentNode.getIndex(jobNode);
+        int previousIndex = currentIndex - 1;
         parentNode.remove(jobNode);
-        parentNode.insert(jobNode, index - 1);
-        this.fireTreeStructureChanged(this, null, null, null);
+        parentNode.insert(jobNode, previousIndex);
+        this.fireTreeNodesChanged(this, null, new int[] {previousIndex, currentIndex}, null);
     }
 
     public void moveJobDown(AutomationJob job) {
@@ -280,10 +281,11 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
         }
         DefaultMutableTreeNode jobNode = (DefaultMutableTreeNode) nodes[nodes.length - 1];
         DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) nodes[nodes.length - 2];
-        int index = parentNode.getIndex(jobNode);
+        int currentIndex = parentNode.getIndex(jobNode);
+        int nextIndex = currentIndex + 1;
         parentNode.remove(jobNode);
-        parentNode.insert(jobNode, index + 1);
-        this.fireTreeStructureChanged(this, null, null, null);
+        parentNode.insert(jobNode, nextIndex);
+        this.fireTreeNodesChanged(this, null, new int[] {currentIndex, nextIndex}, null);
     }
 
     public void removeJob(AutomationJob job) {

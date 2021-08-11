@@ -400,7 +400,6 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                             AutomationJob job = (AutomationJob) userObj;
                             if (currentPlan.moveJobUp(job)) {
                                 getTreeModel().moveJobUp(job);
-                                // TODO this isnt working :(
                                 tree.setRowSelectionInterval(row - 1, row - 1);
                                 job.setChanged();
                             }
@@ -436,7 +435,6 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                             AutomationJob job = (AutomationJob) userObj;
                             if (currentPlan.moveJobDown(job)) {
                                 getTreeModel().moveJobDown(job);
-                                // TODO this isnt working :(
                                 tree.setRowSelectionInterval(row + 1, row + 1);
                                 job.setChanged();
                             }
