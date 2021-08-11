@@ -132,6 +132,11 @@ public class OutputSummaryJob extends AutomationJob {
         }
     }
 
+    @Override
+    public void applyParameters(AutomationProgress progress) {
+        // Nothing to do
+    }
+
     /**
      * Prints a summary to std out as per the packaged scans. The output is deliberately not
      * internationalised as neither was the output of the packaged scans.
