@@ -22,7 +22,6 @@ package org.zaproxy.addon.automation.gui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
@@ -64,6 +63,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String GRAPHQL_PROFILE_NAME = "automation.dialog.newplan.profile.graphql";
     private static final String SOAP_PROFILE_NAME = "automation.dialog.newplan.profile.soap";
     private static final String FULL_SCAN_PROFILE_NAME = "automation.dialog.newplan.profile.full";
+    private static final String REPORT_JOB_NAME = "report";
 
     private static final String[] BASELINE_PROFILE = {
         AddOnJob.JOB_NAME,
@@ -71,7 +71,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         SpiderJob.JOB_NAME,
         "spiderAjax",
         PassiveScanWaitJob.JOB_NAME,
-        "report"
+        REPORT_JOB_NAME
     };
     private static final String[] OPENAPI_PROFILE = {
         AddOnJob.JOB_NAME,
@@ -79,7 +79,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "openapi",
         PassiveScanWaitJob.JOB_NAME,
         ActiveScanJob.JOB_NAME,
-        "report"
+        REPORT_JOB_NAME
     };
     private static final String[] GRAPHQL_PROFILE = {
         AddOnJob.JOB_NAME,
@@ -87,7 +87,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "graphql",
         PassiveScanWaitJob.JOB_NAME,
         ActiveScanJob.JOB_NAME,
-        "report"
+        REPORT_JOB_NAME
     };
     private static final String[] SOAP_PROFILE = {
         AddOnJob.JOB_NAME,
@@ -95,7 +95,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "soap",
         PassiveScanWaitJob.JOB_NAME,
         ActiveScanJob.JOB_NAME,
-        "report"
+        REPORT_JOB_NAME
     };
     private static final String[] FULL_SCAN_PROFILE = {
         AddOnJob.JOB_NAME,
@@ -104,7 +104,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "spiderAjax",
         PassiveScanWaitJob.JOB_NAME,
         ActiveScanJob.JOB_NAME,
-        "report"
+        REPORT_JOB_NAME
     };
 
     private JList<String> contextList;
@@ -136,20 +136,10 @@ public class NewPlanDialog extends StandardFieldsDialog {
                         .filter(j -> !j.isDataJob())
                         .collect(Collectors.toList());
 
-        Collections.sort(
-                jobs,
-                new Comparator<AutomationJob>() {
+        Collections.sort(jobs);
 
-                    @Override
-                    public int compare(AutomationJob j1, AutomationJob j2) {
-                        if (j1.getOrder().equals(j2.getOrder())) {
-                            return j1.getName().compareTo(j2.getName());
-                        }
-                        return j1.getOrder().compareTo(j2.getOrder());
-                    }
-                });
-
-        List<String> jobNames = jobs.stream().map(j -> j.getName()).collect(Collectors.toList());
+        List<String> jobNames =
+                jobs.stream().map(AutomationJob::getName).collect(Collectors.toList());
         List<String> profiles = new ArrayList<>();
 
         profiles.add(Constant.messages.getString(CUSTOM_PROFILE_NAME));

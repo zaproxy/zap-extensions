@@ -126,22 +126,22 @@ public class EnvVarTableModel extends AbstractTableModel {
     }
 
     public static class EnvVar {
-        private String Key;
+        private String key;
         private String value;
 
         public EnvVar() {}
 
         public EnvVar(String key, String value) {
-            Key = key;
+            this.key = key;
             this.value = value;
         }
 
         public String getKey() {
-            return Key;
+            return key;
         }
 
         public void setKey(String key) {
-            Key = key;
+            this.key = key;
         }
 
         public String getValue() {

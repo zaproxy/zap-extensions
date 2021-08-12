@@ -74,9 +74,10 @@ public class RequestModelConverter {
                 schema = content.get("application/x-www-form-urlencoded").getSchema();
                 return generators.getBodyGenerator().generateForm(schema);
             }
-            if (content.containsKey("multipart/form-data")) {
-                schema = content.get("multipart/form-data").getSchema();
-                Map<String, Encoding> encoding = content.get("multipart/form-data").getEncoding();
+            String formdataType = "multipart/form-data";
+            if (content.containsKey(formdataType)) {
+                schema = content.get(formdataType).getSchema();
+                Map<String, Encoding> encoding = content.get(formdataType).getEncoding();
                 return generators.getBodyGenerator().generateMultiPart(schema, encoding);
             }
 

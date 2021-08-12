@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class AutomationEnvironment {
         this.progress = progress;
     }
 
-    public AutomationEnvironment(LinkedHashMap<?, ?> envData, AutomationProgress progress) {
+    public AutomationEnvironment(Map<?, ?> envData, AutomationProgress progress) {
         this(progress);
         if (envData == null) {
             progress.error(Constant.messages.getString("automation.error.env.missing"));
@@ -112,11 +113,11 @@ public class AutomationEnvironment {
     }
 
     public ContextWrapper parseContextData( // TODO move into constructor?
-            LinkedHashMap<?, ?> contextData, AutomationProgress progress) {
+            Map<?, ?> contextData, AutomationProgress progress) {
         String name = null;
         List<String> urls = new ArrayList<>();
-        ArrayList<?> includeRegexes = null;
-        ArrayList<?> excludeRegexes = null;
+        List<?> includeRegexes = null;
+        List<?> excludeRegexes = null;
         for (Entry<?, ?> cdata : contextData.entrySet()) {
             Object value = cdata.getValue();
             if (value == null) {
@@ -192,9 +193,9 @@ public class AutomationEnvironment {
                     Constant.messages.getString("automation.error.context.nourl", contextData));
             return null;
         }
-        ContextWrapper.Data data = new ContextWrapper.Data();
-        data.setName(name);
-        data.setUrls(urls);
+        ContextWrapper.Data ctxWrapperData = new ContextWrapper.Data();
+        ctxWrapperData.setName(name);
+        ctxWrapperData.setUrls(urls);
 
         List<String> incUrls = new ArrayList<>();
         if (includeRegexes != null) {
@@ -202,15 +203,15 @@ public class AutomationEnvironment {
                 incUrls.add(regex.toString());
             }
         }
-        data.setIncludePaths(incUrls);
+        ctxWrapperData.setIncludePaths(incUrls);
         List<String> excUrls = new ArrayList<>();
         if (excludeRegexes != null) {
             for (Object regex : excludeRegexes) {
                 excUrls.add(regex.toString());
             }
         }
-        data.setExcludePaths(excUrls);
-        return new ContextWrapper(data);
+        ctxWrapperData.setExcludePaths(excUrls);
+        return new ContextWrapper(ctxWrapperData);
     }
 
     public void addContext(Context context) {
@@ -227,7 +228,7 @@ public class AutomationEnvironment {
 
         for (ContextWrapper context : this.contexts) {
             context.createContext(session, this);
-            if (context.getUrls().size() > 0) {
+            if (!context.getUrls().isEmpty()) {
                 hasUrls = true;
             }
             if (this.isTimeToQuit()) {
@@ -236,7 +237,7 @@ public class AutomationEnvironment {
                 return;
             }
         }
-        if (contexts.size() == 0) {
+        if (contexts.isEmpty()) {
             progress.error(Constant.messages.getString("automation.env.error.nocontexts"));
         } else if (!hasUrls) {
             progress.error(Constant.messages.getString("automation.env.error.nourls"));
@@ -245,10 +246,10 @@ public class AutomationEnvironment {
         this.warnings.addAll(progress.getWarnings());
     }
 
-    private ArrayList<?> verifyRegexes(Object value, String key, AutomationProgress progress) {
+    private List<?> verifyRegexes(Object value, String key, AutomationProgress progress) {
         if (!(value instanceof ArrayList)) {
             progress.error(Constant.messages.getString("automation.error.context." + key, value));
-            return null;
+            return Collections.emptyList();
         }
         ArrayList<?> regexes = (ArrayList<?>) value;
         for (Object regex : regexes) {
@@ -352,7 +353,7 @@ public class AutomationEnvironment {
     }
 
     public String getSummary() {
-        if (this.contexts.size() == 0) {
+        if (this.contexts.isEmpty()) {
             return Constant.messages.getString("automation.env.error.nocontexts");
         }
         return Constant.messages.getString(

@@ -19,12 +19,15 @@
  */
 package org.zaproxy.addon.automation;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 
 public abstract class AbstractAutomationTest {
+
+    private static final String EMPTY_SUMMARY = "";
 
     public enum OnFail {
         WARN,
@@ -41,7 +44,7 @@ public abstract class AbstractAutomationTest {
                 case WARN:
                     return Constant.messages.getString("automation.dialog.test.onfail.warn");
                 default:
-                    return null;
+                    return "";
             }
         }
 
@@ -55,12 +58,12 @@ public abstract class AbstractAutomationTest {
         }
     }
 
-    private LinkedHashMap<?, ?> testData;
+    private Map<?, ?> testData;
     private final AutomationJob job;
     private Boolean passed;
     private String name;
 
-    public AbstractAutomationTest(LinkedHashMap<?, ?> testData, AutomationJob job) {
+    public AbstractAutomationTest(Map<?, ?> testData, AutomationJob job) {
         this.testData = testData;
         this.job = job;
         String onFailStr = AutomationJob.safeCast(testData.get("onFail"), String.class);
@@ -83,7 +86,7 @@ public abstract class AbstractAutomationTest {
 
     public void logToProgress(AutomationProgress progress) throws RuntimeException {
         this.passed = runTest(progress);
-        if (passed) {
+        if (JobUtils.unBox(passed)) {
             progress.info(getTestPassedMessage());
             return;
         }
@@ -111,7 +114,7 @@ public abstract class AbstractAutomationTest {
     }
 
     public boolean hasPassed() {
-        return this.passed == null ? false : this.passed;
+        return JobUtils.unBox(passed);
     }
 
     public boolean hasRun() {
@@ -122,7 +125,7 @@ public abstract class AbstractAutomationTest {
         this.passed = null;
     }
 
-    public LinkedHashMap<?, ?> getTestData() {
+    public Map<?, ?> getTestData() {
         return testData;
     }
 
@@ -144,7 +147,7 @@ public abstract class AbstractAutomationTest {
     }
 
     public String getSummary() {
-        return "";
+        return EMPTY_SUMMARY;
     };
 
     public abstract String getTestType();

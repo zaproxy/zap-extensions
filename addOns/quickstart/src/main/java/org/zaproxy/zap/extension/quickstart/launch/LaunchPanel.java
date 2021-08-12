@@ -65,7 +65,6 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private ExtensionQuickStartLaunch extLaunch;
     private JXPanel contentPanel;
-    private JButton selectButton;
     private JComboBox<String> urlField;
     private JButton launchButton;
     private JComboBox<ProvidedBrowserUI> browserComboBox;
@@ -86,9 +85,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                 .registerConsumer(
                         this,
                         "org.zaproxy.zap.extension.hud.HudEventPublisher",
-                        new String[] {
-                            EVENT_HUD_ENABLED_FOR_DESKTOP, EVENT_HUD_DISABLED_FOR_DESKTOP
-                        });
+                        EVENT_HUD_ENABLED_FOR_DESKTOP,
+                        EVENT_HUD_DISABLED_FOR_DESKTOP);
     }
 
     @Override
@@ -131,7 +129,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                     LayoutHelper.getGBC(0, ++offset, 1, 0.0D, new Insets(5, 5, 5, 5)));
 
             JPanel urlSelectPanel = new JPanel(new GridBagLayout());
-            selectButton = new JButton(Constant.messages.getString("all.button.select"));
+            JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
             selectButton.setIcon(
                     DisplayUtils.getScaledIcon(
                             new ImageIcon(

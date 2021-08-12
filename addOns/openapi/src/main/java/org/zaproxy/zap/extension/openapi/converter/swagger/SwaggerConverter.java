@@ -38,6 +38,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,7 +64,7 @@ public class SwaggerConverter implements Converter {
     /** The base key for internationalised messages. */
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
 
-    private static Logger LOG = LogManager.getLogger(SwaggerConverter.class);
+    private static final Logger LOG = LogManager.getLogger(SwaggerConverter.class);
     private static final Pattern PATH_PART_PATTERN = Pattern.compile("\\{.*}");
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
@@ -129,14 +131,13 @@ public class SwaggerConverter implements Converter {
                     e);
         }
 
-        if (!this.definitionUriBuilder.isEmpty()) {
-            if (this.definitionUriBuilder.getScheme() == null
-                    || this.definitionUriBuilder.getAuthority() == null) {
-                throw new InvalidUrlException(
-                        definitionUrl,
-                        Constant.messages.getString(
-                                BASE_KEY_I18N + "definitionurl.missingcomponents", definitionUrl));
-            }
+        if (!this.definitionUriBuilder.isEmpty()
+                && (this.definitionUriBuilder.getScheme() == null
+                        || this.definitionUriBuilder.getAuthority() == null)) {
+            throw new InvalidUrlException(
+                    definitionUrl,
+                    Constant.messages.getString(
+                            BASE_KEY_I18N + "definitionurl.missingcomponents", definitionUrl));
         }
 
         generators = new Generators(valueGenerator);
@@ -199,18 +200,19 @@ public class SwaggerConverter implements Converter {
         options.setResolve(true);
         options.setResolveFully(true);
 
-        OpenAPI openAPI = new OpenAPIV3Parser().readContents(this.defn, null, options).getOpenAPI();
+        OpenAPI openApiDefn =
+                new OpenAPIV3Parser().readContents(this.defn, null, options).getOpenAPI();
 
-        if (openAPI == null) {
+        if (openApiDefn == null) {
             // try v2
             Swagger swagger = new SwaggerParser().parse(this.defn);
             if (swagger == null) {
                 convertV1ToV2();
             }
             // parse v2
-            openAPI = parseV2(options);
+            openApiDefn = parseV2(options);
         }
-        return openAPI;
+        return openApiDefn;
     }
 
     private void convertV1ToV2() throws SwaggerException {
@@ -225,11 +227,8 @@ public class SwaggerConverter implements Converter {
             bw.close();
 
             swagger = new SwaggerCompatConverter().read(temp.getAbsolutePath());
-            if (!temp.delete()) {
-                String msg = "Failed to delete " + temp.getAbsolutePath();
-                LOG.warn(msg);
-                this.errors.add(msg);
-            }
+
+            cleanup(temp.toPath());
             this.defn = Json.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
 
         } catch (IOException e) {
@@ -240,19 +239,26 @@ public class SwaggerConverter implements Converter {
         }
     }
 
-    private OpenAPI parseV2(ParseOptions options) {
-        OpenAPI openAPI;
+    private void cleanup(Path path) {
         try {
-            openAPI = new OpenAPIParser().readContents(this.defn, null, options).getOpenAPI();
+            Files.delete(path);
+        } catch (IOException e) {
+            LOG.debug("Failed to delete {}", path);
+        }
+    }
+
+    private OpenAPI parseV2(ParseOptions options) {
+        OpenAPI api;
+        try {
+            api = new OpenAPIParser().readContents(this.defn, null, options).getOpenAPI();
             // parse again to resolve refs , may be there is a cleaner way
-            String string =
-                    Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
-            openAPI = new OpenAPIV3Parser().readContents(string, null, options).getOpenAPI();
+            String string = Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(api);
+            api = new OpenAPIV3Parser().readContents(string, null, options).getOpenAPI();
         } catch (JsonProcessingException e) {
             LOG.warn(e.getMessage());
-            openAPI = null;
+            api = null;
         }
-        return openAPI;
+        return api;
     }
 
     // Package access for testing.

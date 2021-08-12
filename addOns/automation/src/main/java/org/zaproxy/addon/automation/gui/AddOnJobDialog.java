@@ -150,15 +150,9 @@ public class AddOnJobDialog extends StandardFieldsDialog {
             addOnsInstallTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            e -> {
-                                if (getAddOnsInstallTable().getSelectedRowCount() == 0) {
-                                    removeInstButton.setEnabled(false);
-                                } else if (getAddOnsInstallTable().getSelectedRowCount() == 1) {
-                                    removeInstButton.setEnabled(true);
-                                } else {
-                                    removeInstButton.setEnabled(false);
-                                }
-                            });
+                            e ->
+                                    removeInstButton.setEnabled(
+                                            getAddOnsInstallTable().getSelectedRowCount() == 1));
         }
         return addOnsInstallTable;
     }
@@ -178,15 +172,9 @@ public class AddOnJobDialog extends StandardFieldsDialog {
             addOnsUninstallTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            e -> {
-                                if (getAddOnsUninstallTable().getSelectedRowCount() == 0) {
-                                    removeUninstButton.setEnabled(false);
-                                } else if (getAddOnsUninstallTable().getSelectedRowCount() == 1) {
-                                    removeUninstButton.setEnabled(true);
-                                } else {
-                                    removeUninstButton.setEnabled(false);
-                                }
-                            });
+                            e ->
+                                    removeUninstButton.setEnabled(
+                                            getAddOnsUninstallTable().getSelectedRowCount() == 1));
         }
         return addOnsUninstallTable;
     }
@@ -204,13 +192,13 @@ public class AddOnJobDialog extends StandardFieldsDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setUpdateAddOns(this.getBoolValue(UPDATE_ADDONS_PARAM));
         List<String> addOns = this.getAddOnsInstallModel().getAddOns();
-        if (addOns.size() == 0) {
+        if (addOns.isEmpty()) {
             this.job.getData().setInstall(null);
         } else {
             this.job.getData().setInstall(addOns);
         }
         addOns = this.getAddOnsUninstallModel().getAddOns();
-        if (addOns.size() == 0) {
+        if (addOns.isEmpty()) {
             this.job.getData().setUninstall(null);
         } else {
             this.job.getData().setUninstall(addOns);

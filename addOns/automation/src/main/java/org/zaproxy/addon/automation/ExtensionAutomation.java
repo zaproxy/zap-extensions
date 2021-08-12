@@ -21,7 +21,6 @@ package org.zaproxy.addon.automation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -136,7 +135,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (this.hasView()) {
             return getAutomationPanel().getUnsavedPlans();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private AutomationPanel getAutomationPanel() {
@@ -223,8 +222,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
     }
 
-    public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress)
-            throws AutomationJobException {
+    public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress) {
         if (resetProgress) {
             plan.resetProgress();
         }
@@ -275,22 +273,13 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public void runPlanAsync(AutomationPlan plan) {
         new Thread(
                         () -> {
-                            try {
-                                this.runPlan(plan, true);
-                            } catch (AutomationJobException e1) {
-                                if (hasView()) {
-                                    getView().showWarningDialog(e1.getMessage());
-                                } else {
-                                    LOG.warn(e1.getMessage());
-                                }
-                            }
+                            this.runPlan(plan, true);
                         },
                         "ZAP-Automation")
                 .start();
     }
 
-    public AutomationPlan loadPlan(File f)
-            throws AutomationJobException, FileNotFoundException, IOException {
+    public AutomationPlan loadPlan(File f) throws IOException {
         return new AutomationPlan(this, f);
     }
 
@@ -534,7 +523,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     @Override
     public List<String> getHandledExtensions() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

@@ -36,17 +36,21 @@ import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
 
+    private static final String EMPTY_SUMMARY = "";
+    private static final String NO_EXTRA_CONFIGS = "";
+    private static final int ZERO_TESTS = 0;
+
     public enum Status {
         NOT_STARTED,
         RUNNING,
         COMPLETED
-    };
+    }
 
     private String name;
     private Status status = Status.NOT_STARTED;
     private AutomationEnvironment env;
     private final List<AbstractAutomationTest> tests = new ArrayList<>();
-    private LinkedHashMap<?, ?> jobData;
+    private Map<?, ?> jobData;
     private AutomationPlan plan;
 
     public enum Order {
@@ -62,7 +66,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         AFTER_ATTACK,
         REPORT,
         RUN_LAST
-    };
+    }
 
     @Override
     public int compareTo(AutomationJob o) {
@@ -81,11 +85,11 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         this.name = name;
     }
 
-    public void setJobData(LinkedHashMap<?, ?> jobData) {
+    public void setJobData(Map<?, ?> jobData) {
         this.jobData = jobData;
     }
 
-    public LinkedHashMap<?, ?> getJobData() {
+    public Map<?, ?> getJobData() {
         return jobData;
     }
 
@@ -106,11 +110,11 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public String getSummary() {
-        return "";
+        return EMPTY_SUMMARY;
     }
 
     public int addDefaultTests(AutomationProgress progress) {
-        return 0;
+        return ZERO_TESTS;
     }
 
     public void showDialog() {}
@@ -189,7 +193,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void reset() {
         this.status = Status.NOT_STARTED;
-        this.tests.stream().forEach(t -> t.reset());
+        this.tests.stream().forEach(AbstractAutomationTest::reset);
     }
 
     public void applyParameters(AutomationProgress progress) {
@@ -462,18 +466,18 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return null;
     }
 
-    private <T> String valueToYaml(Object val) {
+    private String valueToYaml(Object val) {
         if (val == null) {
             return "";
-        } else if (String.class.isInstance(val)) {
+        } else if (val instanceof String) {
             return (String) val;
-        } else if (Integer.class.isInstance(val)) {
+        } else if (val instanceof Integer) {
             return val.toString();
-        } else if (Long.class.isInstance(val)) {
+        } else if (val instanceof Long) {
             return val.toString();
         } else if (int.class.isInstance(val)) {
             return val.toString();
-        } else if (Boolean.class.isInstance(val)) {
+        } else if (val instanceof Boolean) {
             return val.toString();
         } else if (boolean.class.isInstance(val)) {
             return val.toString();
@@ -521,7 +525,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public String getExtraConfigFileData() {
-        return "";
+        return NO_EXTRA_CONFIGS;
     }
 
     public String getConfigFileData() {

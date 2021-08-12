@@ -116,8 +116,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     /** The scanner threads manager. */
     private AccessControlScannerThreadManager threadManager;
 
-    private AccessControlAPI api;
-
     public ExtensionAccessControl() {
         super(NAME);
         this.setOrder(601);
@@ -133,8 +131,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         extensionHook.addContextDataFactory(this);
         extensionHook.addSessionListener(this);
 
-        this.api = new AccessControlAPI(this);
-        extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new AccessControlAPI(this));
 
         if (getView() != null) {
             ExtensionHookView viewHook = extensionHook.getHookView();

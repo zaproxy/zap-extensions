@@ -48,7 +48,7 @@ public class StatisticTestDialog extends StandardFieldsDialog {
         this.addComboField(
                 ON_FAIL_PARAM,
                 Arrays.asList(OnFail.values()).stream()
-                        .map(o -> o.toString())
+                        .map(OnFail::toString)
                         .toArray(String[]::new),
                 test.getData().getOnFail().toString());
         int i = 0;
@@ -65,7 +65,7 @@ public class StatisticTestDialog extends StandardFieldsDialog {
         this.addComboField(
                 OPERATOR_PARAM,
                 Arrays.asList(Operator.values()).stream()
-                        .map(o -> o.getSymbol())
+                        .map(Operator::getSymbol)
                         .toArray(String[]::new),
                 test.getData().getOperator());
 

@@ -179,16 +179,10 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                     .getSelectionModel()
                     .addListSelectionListener(
                             e -> {
-                                if (getContextsTable().getSelectedRowCount() == 0) {
-                                    modifyContextButton.setEnabled(false);
-                                    removeContextButton.setEnabled(false);
-                                } else if (getContextsTable().getSelectedRowCount() == 1) {
-                                    modifyContextButton.setEnabled(true);
-                                    removeContextButton.setEnabled(true);
-                                } else {
-                                    modifyContextButton.setEnabled(false);
-                                    removeContextButton.setEnabled(false);
-                                }
+                                boolean singleRowSelected =
+                                        getContextsTable().getSelectedRowCount() == 1;
+                                modifyContextButton.setEnabled(singleRowSelected);
+                                removeContextButton.setEnabled(singleRowSelected);
                             });
             contextsTable.addMouseListener(
                     new MouseAdapter() {
@@ -277,16 +271,10 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                     .getSelectionModel()
                     .addListSelectionListener(
                             e -> {
-                                if (getEnvVarsTable().getSelectedRowCount() == 0) {
-                                    modifyEnvVarButton.setEnabled(false);
-                                    removeEnvVarButton.setEnabled(false);
-                                } else if (getEnvVarsTable().getSelectedRowCount() == 1) {
-                                    modifyEnvVarButton.setEnabled(true);
-                                    removeEnvVarButton.setEnabled(true);
-                                } else {
-                                    modifyEnvVarButton.setEnabled(false);
-                                    removeEnvVarButton.setEnabled(false);
-                                }
+                                boolean singleRowSelected =
+                                        getEnvVarsTable().getSelectedRowCount() == 1;
+                                modifyEnvVarButton.setEnabled(singleRowSelected);
+                                removeEnvVarButton.setEnabled(singleRowSelected);
                             });
             envVarTable.addMouseListener(
                     new MouseAdapter() {

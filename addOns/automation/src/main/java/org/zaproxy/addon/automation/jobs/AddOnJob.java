@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class AddOnJob extends AutomationJob {
     @SuppressWarnings("unchecked")
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return;
         }
@@ -148,18 +149,17 @@ public class AddOnJob extends AutomationJob {
                 return;
             }
         }
-        if (this.data.getInstall() != null) {
+        if (!this.data.getInstall().isEmpty()) {
             String result = extAutoUpd.installAddOns(this.data.getInstall());
             if (result.length() > 0) {
                 progress.error(result);
                 return;
             }
         }
-        if (this.data.getUninstall() != null) {
+        if (!this.data.getUninstall().isEmpty()) {
             String result = extAutoUpd.uninstallAddOns(this.data.getUninstall());
             if (result.length() > 0) {
                 progress.error(result);
-                return;
             }
         }
     }
@@ -210,8 +210,8 @@ public class AddOnJob extends AutomationJob {
     public String getSummary() {
         return Constant.messages.getString(
                 "automation.dialog.addon.summary",
-                this.getData().getInstall() == null ? "[]" : this.getData().getInstall(),
-                this.getData().getUninstall() == null ? "[]" : this.getData().getUninstall());
+                this.getData().getInstall().toString(),
+                this.getData().getUninstall().toString());
     }
 
     @Override
@@ -240,7 +240,7 @@ public class AddOnJob extends AutomationJob {
 
         public List<String> getInstall() {
             if (install == null) {
-                return null;
+                return Collections.emptyList();
             }
             return install.stream().collect(Collectors.toList());
         }
@@ -251,7 +251,7 @@ public class AddOnJob extends AutomationJob {
 
         public List<String> getUninstall() {
             if (uninstall == null) {
-                return null;
+                return Collections.emptyList();
             }
             return uninstall.stream().collect(Collectors.toList());
         }

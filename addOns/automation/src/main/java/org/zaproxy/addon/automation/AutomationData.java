@@ -35,7 +35,7 @@ public abstract class AutomationData {
             Method method = this.getClass().getMethod(getter);
             return method.invoke(this) == null;
         } catch (Exception e) {
-            LOG.debug("Class " + this.getClass().getCanonicalName() + " no getter " + getter);
+            LOG.debug("Class {} no getter {}", this.getClass().getCanonicalName(), getter);
         }
         return false;
     }

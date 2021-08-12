@@ -183,16 +183,10 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
                     .getSelectionModel()
                     .addListSelectionListener(
                             e -> {
-                                if (getRulesTable().getSelectedRowCount() == 0) {
-                                    modifyButton.setEnabled(false);
-                                    removeButton.setEnabled(false);
-                                } else if (getRulesTable().getSelectedRowCount() == 1) {
-                                    modifyButton.setEnabled(true);
-                                    removeButton.setEnabled(true);
-                                } else {
-                                    modifyButton.setEnabled(false);
-                                    removeButton.setEnabled(false);
-                                }
+                                boolean singleRowSelected =
+                                        getRulesTable().getSelectedRowCount() == 1;
+                                modifyButton.setEnabled(singleRowSelected);
+                                removeButton.setEnabled(singleRowSelected);
                             });
             rulesTable.addMouseListener(
                     new MouseAdapter() {

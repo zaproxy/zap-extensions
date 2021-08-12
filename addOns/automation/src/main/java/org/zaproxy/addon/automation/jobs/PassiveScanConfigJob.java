@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -65,7 +66,7 @@ public class PassiveScanConfigJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return;
         }

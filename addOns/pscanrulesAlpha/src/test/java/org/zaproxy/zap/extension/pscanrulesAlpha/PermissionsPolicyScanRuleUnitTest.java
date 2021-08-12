@@ -57,7 +57,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 
@@ -68,7 +68,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 
@@ -79,7 +79,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -90,7 +90,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -101,7 +101,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "deprecated.name"));
     }
 
@@ -114,7 +114,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -126,7 +126,7 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 }
