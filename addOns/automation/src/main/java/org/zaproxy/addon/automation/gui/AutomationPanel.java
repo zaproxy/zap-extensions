@@ -283,6 +283,15 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     Constant.messages.getString("automation.dialog.plan.load"));
             loadPlanButton.addActionListener(
                     e -> {
+                        if (currentPlan != null && currentPlan.isChanged()) {
+                            if (JOptionPane.OK_OPTION
+                                    != View.getSingleton()
+                                            .showConfirmDialog(
+                                                    Constant.messages.getString(
+                                                            "automation.dialog.plan.loosechanges"))) {
+                                return;
+                            }
+                        }
                         final JFileChooser chooser =
                                 new JFileChooser(ext.getParam().getPlanDirectory());
                         chooser.setAcceptAllFileFilterUsed(false);
@@ -723,6 +732,13 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         }
     }
 
+    private void updateSaveButton(Event event, boolean enable) {
+        AutomationPlan plan = this.getPlan(event);
+        if (plan != null && plan.equals(this.currentPlan)) {
+            getSavePlanButton().setEnabled(enable);
+        }
+    }
+
     @Override
     public void eventReceived(Event event) {
         SwingUtilities.invokeLater(() -> handleEvent(event));
@@ -733,10 +749,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         LOG.debug("Event: {}", event.getEventType());
         switch (event.getEventType()) {
             case AutomationEventPublisher.PLAN_CREATED:
-                plan = this.getPlan(event);
-                if (plan != null && plan.equals(this.currentPlan)) {
-                    getSavePlanButton().setEnabled(true);
-                }
+                updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.PLAN_STARTED:
                 this.getOutputArea().setText("");
@@ -757,16 +770,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 getTreeModel().envChanged();
                 break;
             case AutomationEventPublisher.PLAN_CHANGED:
-                plan = this.getPlan(event);
-                if (plan != null && plan.equals(this.currentPlan)) {
-                    getSavePlanButton().setEnabled(true);
-                }
+                updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.PLAN_SAVED:
-                plan = this.getPlan(event);
-                if (plan != null && plan.equals(this.currentPlan)) {
-                    getSavePlanButton().setEnabled(false);
-                }
+                updateSaveButton(event, false);
                 break;
             case AutomationEventPublisher.JOB_STARTED:
                 updateJob(event);
@@ -777,13 +784,16 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             case AutomationEventPublisher.JOB_ADDED:
                 plan = this.getPlan(event);
                 getTreeModel().setPlan(plan);
+                updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.JOB_CHANGED:
                 updateJob(event);
+                updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.TEST_ADDED:
                 plan = this.getPlan(event);
                 getTreeModel().setPlan(plan);
+                updateSaveButton(event, true);
                 break;
             default:
                 // Ignore
