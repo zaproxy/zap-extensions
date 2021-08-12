@@ -6,7 +6,7 @@
 HTTP Message Processors
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>HTTP Message Processors</h1>
 The HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
 <p>
@@ -29,6 +29,10 @@ Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow yo
 <li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
 <li>Raise alerts</li>
 </ul>
+
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
 
 <h3>Payload Reflection Detector</h3>
 Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>

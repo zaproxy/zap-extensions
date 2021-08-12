@@ -4,56 +4,69 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenium</h1>
 
 	<p>El complemento de Selenium proporciona WebDrivers, para permitir que otros complementos pueden invocar y controlar navegadores web de forma remota. También incluye HtmlUnit, un navegador web sin cabeza construido en Java.
-	<p>Este complemento también agrega una opción de click derecho a los paneles ZAP que enumera URLs (como el historial y el mapa del sitio) lo que permite abrir el URL seleccionado con cualquiera de los navegadores compatibles.
+		
+	<p>It adds a 'Selenium' script type - these scripts are invoked whenever selenium launches a browser,
+	for example for the Ajax Spider or for manual browsing. 
+	
+	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
+	which allows you to open the selected URL in any of the supported browsers. The Selenium scripts have access to the 
+	launched browser and can interact with it, for example, run JavaScript scripts, access URLs, fill forms, click buttons...
+	<br><strong>Note:</strong> The Selenium scripts are executed synchronously for the AJAX Spider, to prevent interferences
+	with the crawler later, it's up to the scripts to access the required URLs.
 
-	<h2>Navegadores compatibles</h2>
+	<h2>Supported Browsers</h2>
 
 	
-	<p>Los siguientes navegadores web son compatibles:
+	<p>The following web browsers are supported:
 	<table border="2">
 		<tr>
 			<th>Name</th>
 			<th>ID</th>
-			<th>Requerimientos/Notas</th>
+			<th>Requirements/Notes</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Se sabe que funcionan las siguientes versiones: 59 y 60 (las versiones anteriores podrían funcionar
-				también). Requiere ChromeDriver, si no está en el PATH del sistema, pude ser configurado en las
-				opciones. Para más información sobre ChromeDriver y cómo obtenerlo, consulte el <a
-				href="https://sites.google.com/a/chromium.org/chromedriver/">sitio web de ChromeDriver</a>.
+			<td>The following versions are known to work: 59 and 60 (older versions might work
+				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on ChromeDriver and how to obtain it refer to the <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 			</td>
+		</tr>
+		<tr>
+			<td>Chrome Headless</td>
+			<td>chrome-headless</td>
+			<td>Starts Chrome without GUI.</td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>Se sabe que funcionan las siguientes versiones: 45 (ESR), 46, 47.0.1, 54, y 55 (las versiones anteriores podrían funcionar también). Se sabe que algunas versiones no funcionan, por ejemplo. 47.0. Versiones más recientes (&ge; 48) requieren de geckodriver, el cual puede ser configurado en las opciones. Para más información sobre geckodriver y cómo obtenerlo, consulte el <a
-				href="https://github.com/mozilla/geckodriver">sitio web de geckodriver </a> (consulta la advertencia sobre el uso de geckodriver al pie de página).
+			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
+				versions might work too). Some versions are known to not work, for example, 47.0. Newer
+				versions (&ge; 48) require geckodriver, it can be set in the options. For more
+				information on geckodriver and how to obtain it refer to the <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
+				for caveat when using geckodriver).
 			</td>
+		</tr>
+		<tr>
+			<td>Firefox Headless</td>
+			<td>firefox-headless</td>
+			<td>Starts Firefox without GUI.</td>
 		</tr>
 		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
-			<td>Navegador incluido, no tiene ningún requerimiento.</td>
-		</tr>
-		<tr>
-			<td>Internet Explorer</td>
-			<td>ie</td>
-			<td>Se sabe que funciona la siguiente version: 11 (las versiones anteriores podrían funcionar también).
-				Requiere IEDriverServer, si no está en el PATH del sistema, pude ser configurado en las opciones.
-				Para más información sobre IEDriverServer y cómo obtenerlo, consulte el <a
-				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">sitio web de IEDriverServer </a> (consulta la advertencia al usar Internet Explorer al pie de página).
-			</td>
+			<td>Bundled browser, does not have any requirement.</td>
 		</tr>
 		<tr>
 			<td>Opera</td>
 			<td>opera</td>
-			<td>Temporalmente sin funcionamiento.</td>
+			<td>Temporarily not working.</td>
 		</tr>
 		<tr>
 			<td>PhantomJS</td>
@@ -71,13 +84,22 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>Para utilizar Firefox, Chrome, Internet Explorer, Opera, PhantomJS y Safari, debe tenerlos instalados en su sistema. El ID del navegador puede ser utilizado para elegir el navegador al configurar el ZAP a través de la línea de comando, o utilizando el API de ZAP (por ejemplo, para fijar el AJAX Spider para que funcione con algún navegador en específico).
+	<p>To use Firefox, Chrome, Opera, PhantomJS and Safari, you must
+		have them installed in your system. The ID of the browser can be used to choose the
+		browser when configuring ZAP through the command line or using the ZAP API (for example,
+		to set the AJAX Spider to use one or other browser).
 	<p>
-		Algunos de los requisitos (por ejemplo, WebDrivers) de los navegadores pueden configurarse en la <a
-			href="options.html">Pantalla de Opciones de Selenium</a>.
+		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
+			href="options.html">Options Selenium screen</a>.
 
-	<h2>WebDrivers incluidos</h2>
-ZAP proporciona complementos con los WebDrivers, cuando se instalan estos complementos, ZAP intentará utilizarlos de forma predeterminada. Algunos sistemas operativos pueden no tener WebDriver para algunos navegadores, en esos casos ZAP informará en el panel de opciones que no se encuentra disponible un WebDriver incorporado. Los WebDrivers incorporados también pueden ser fijados (nuevamente) con el botón "Incorporados" (Por ejemplo, si otro WebDriver ya fue fijado manualmente). No todas las versiones de navegadores son compatibles con los WebDrivers incorporados, se recomienda usar las versiones más recientes de los navegadores cuando sea posible.
+	<h2>Bundled WebDrivers</h2>
+	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
+	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
+	for some of the browsers, in those cases ZAP will inform, in the options panel, that
+	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
+	browser versions are supported with the bundled WebDrivers, it's recommended that
+	newer/latest versions of the browsers be used whenever possible.
 
 	<p>
 		<strong>Note:</strong> ZAP add-ons can add additional browsers.
@@ -93,11 +115,6 @@ ZAP proporciona complementos con los WebDrivers, cuando se instalan estos comple
 		available is advised to not use it in those cases. Some add-ons might choose to show
 		warning message when that happens. As workaround one could define, in the <code>hosts</code>
 		file, a domain name mapping to the local address and use that domain name instead.
-	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to the <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
 
 	<h2>See also</h2>
 	<table>

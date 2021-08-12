@@ -6,96 +6,158 @@
 Aturan Pengamatan Aktif
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Aktifkan Aturan Pemindaian</h1>
-Berikut kualitas perilisan aktif aturan-aturan pemindaian termasuk tambahan ini:
+<body>
+<h1>Active Scan Rules</h1>
+The following release quality active scan rules are included in this add-on:
 
-<h2>Luapan Penyangga</h2>
+<h2>.htaccess Information Leak</h2>
+Checks for web accessible .htaccess files which may leak sensitive information 
+(such as usernames, error handling, redirects, directory listing settings, etc.).
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HtAccessScanRule.java">HtAccessScanRule.java</a>
 
-untuk melihat indikator-indikator dari luapan dalam kode terkompilasi.  Hal ini dilakukan dengan menempatkan string teks masukan yang besar dan mencari kode yang rusak
-dan penutupan sesi abnormal.
+<h2>Buffer Overflow</h2>
 
-<h2>Kode injeksi</h2>
+Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
+and abnormal session closure.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflowScanRule.java">BufferOverflowScanRule.java</a>
 
-Aturan ini diajukan PHP dan ASP menyerang senar sebagai nilai untuk URL parameter dalam sebuah permintaan dan memeriksa respon untuk lihat jika nilai itu telah dievaluasi oleh server. Pertama, permintaan dibuat dan dikirim berisi petunjuk PHP yang disuntikkan
-untuk mencetak token. Jika terjadi benturan antara token dan isi dari respons body, pemindai menimbulkan peringatan dan segera kembali.
-Jika tidak ada pertandingan, pemindaian akan membuat permintaan dengan beberapa string ASP yang disuntikkan yang menginstruksikan server untuk menulis produk
-dari dua bilangan bulat yang dihasilkan secara acak dalam responnya. Jika respon tubuh cocok dengan produk, peringatan akan dinaikan.
+<h2>Code Injection</h2>
 
-<h2>Injeksi Perintah</h2>
+This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
+see if those values have been evaluated by the server. First, requests are constructed and sent containing injected PHP instructions
+to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
+If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
+of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CodeInjectionScanRule.java">CodeInjectionScanRule.java</a>
 
-aturan ini mengajukan *NIX dan Windows OS perintah sebagai nilai parameter URL untuk menentukan apakah atau tidakkah aplikasi web dilewati tidak di periksa
-input pengguna secara langsung untuk OS yang mendasarinya. String injeksi terdiri dari meta-karakter yang bisa diinterpretasikan oleh OS
-sebagai perintah join beserta payload yang seharusnya menghasilkan output dalam respon jika aplikasi tersebut rentan. Jika isi dari response body
-sesuai dengan muatan, pemindai menimbulkan peringatan dan segeralah kembali. Dalam hal ini tidak ada kesalahan berdasar yang sesuai berusaha mengembalikan output dalam respon scanner akan melakukan serangan injeksi buta dengan mengajukan instruksi tidur sebagai muatan dan membandingkan waktu yang berlalu antara mengirimkan permintaan dan menerima respon terhadap batas bawah waktu tunda heuristik. Jika waktu berlalu lebih cepat dari batas ini, peringatan akan meningkat dengan kepercayaan diri sedang
-dan pemindai segera kembali.
+<h2>Command Injection</h2>
+
+This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
+as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
+matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
+return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
+and the scanner returns immediately.
 <br>
-Post 2.5.0 anda dapat mengubah jangka waktu yang digunakan untuk serangan injeksi buta dengan mengganti parameter <code>rules.common.sleep</code> melalui Opsi panel 'Rule configuration'.
+Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScaRule.java">CommandInjectionScaRule.java</a>
 
-<h2>Cache Browser Klien</h2>
+<h2>Cross Site Scripting (Reflected)</h2>
 
-Aturan ini memeriksa header dari keamanan halaman dan laporan-laporan sebuah peringatan jika mereka mengizinkan sebuah browser untuk halaman cache.
+This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
+It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
+including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. <br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java">CrossSiteScriptingScanRule.java</a>
 
-<h2>Cross Site Scripting (refleksi)</h2>
+<h2>Cross Site Scripting (persistent)</h2>
 
-Aturan ini dimulai dengan mengirimkan sebuah nilai 'safe' dan menganalisis semua dari lokasi dimana nilai terjadi di dalam respon (jika ada). <br>
-Ini kemudian melakukan seri dari serangan khususnya ditargetkan di lokasi di mana masing-masing kasus terjadi, 
-termasuk menandai atribut, URL atribut, atribut dalam menandai yang mendukung src atribut, html komentar etc. 
+This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
+It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
+target locations in other pages.<br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssPrimeScanRule.java">PersistentXssPrimeScanRule.java</a>, 
+<a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssSpiderScanRule.java">PersistentXssSpiderScanRule.java</a>, 
+<a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PersistentXssScanRule.java">PersistentXssScanRule.java</a>
 
-<h2>Penaskahan Situs Sebrang (tetap)</h2>
+<h2>CRLF Injection</h2>
 
-Aturan ini dimulai oleh sebuah nilai unik yang 'aman' dan kemudian laba-laba keseluruhan aplikasi untuk menemukan semua lokasi di mana nilainya terjadi.<br>
-Kemudian melakukan serangkaian serangan dengan cara yang sama seperti versi 'tercermin' namun dalam kasus ini memeriksa semua 
-target lokasi dalam halaman lain. 
+This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
+an alert is raised and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrlfInjectionScanRule.java">CrlfInjectionScanRule.java</a>
 
-<h2>Injeksi CRLF</h2>
+<h2>Directory Browsing</h2>
 
-Aturan ini mengajukan variasi-variasi karakter spesial CRLF sebelum header "Set-Cookie" yang disuntikkan sebagai parameter ke server. Jika tanggapan berisi header Set-Cookie yang identik,
-peringatan akan dinaikkan dan pemindai akan segera kembali.
+This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
+and other web server software.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
 
+<h2>ELMAH Information Leak</h2>
+Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
+developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The ELMAH scan rule targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.<br>
+Files are only reported if they contain the text "Error Log for" unless a LOW alert threshold is set.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ElmahScanRule.java">ElmahScanRule.java</a>
 
-<h2>Direktori Browsing</h2>
+<h2>External Redirect</h2>
 
-Aturan ini memeriksa untuk melihat jika permintaan akan menyediakan akses ke daftar direktori dengan memeriksa respon badan untuk pola yang digunakan dengan Apache, IIS dan software server web lain.
+This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
+whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
+and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExternalRedirectScanRule.java">ExternalRedirectScanRule.java</a>
 
-<h2>Pengalihan Eksternal</h2>
+<h2>Format String Error</h2>
+Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
+compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/FormatStringScanRule.java">FormatStringScanRule.java</a>
 
-Aturan ini mengajukan sebuah variasi dari URL pengalihan syarat sebagai nilai parameter dalam sebuah permohinan, kemudian gabungkan antara kepala dan tubuh dari respon-respon untuk menentukan
-apakah atau tidakkah sebuah pengalihan terjadi dan dari jenis apa. Penyebab redirect adalah mencari di "Lokasi" dan "Refresh" header kolom, serta dengan HTML meta tag
-dan Javascript dalam tubuh respon. Peringatan dimunculkan termasuk jenis pengalihan dan pemindai mengembalikan segera.
+<h2>Parameter Tampering</h2>
 
-<h2>Kesalahan Format string</h2>
-mencari indikator dari format kesalahan penanganan string dalam kode dikompilasi.  Hal ini dilakukan dengan meletakkan string input teks berdasarkan karakter yang dikompilasi kode C yang mengantisipasi untuk output produk yang diformat dan mencari kode rusak dan penutup sesi yang tidak normal.
+This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Responses are checked to make sure that they return
+a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
+of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
+the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ParameterTamperScanRule.java">ParameterTamperScanRule.java</a>
 
+<h2>Path Traversal</h2>
 
-<h2>Gangguan Parameter</h2>
+This rule attempts to access files and directories outside of the web document root by constructing various combinations of pathname prefixes
+and local file targets for Windows and *NIX systems as well as Java servlets. If the body of the response matches a pattern corresponding to the
+current target file an alert is raised and the scanner returns immediately. If none of the common local file targets succeed, path traversal is 
+attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
+and the scanner returns immediately.
+<p>
+Note: This scan rule has one check that is excluded at High Alert Threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PathTraversalScanRule.java">PathTraversalScanRule.java</a>
 
-Aturan ini mengajukan permohonan dengan nilai parameter untuk mengetahui sebab kesalahan untuk ditampilkan untuk pengguna jika pengendalian tidak layak. Respon diperiksa untuk memastikan bahwa mereka mengembalikan
+<h2>Remote File Include</h2>
 
-Kode status kesalahan server, kemudian membandingkan dengan respon HTTP normal untuk memastikannya tidak memunculkan peringatan parameter buruk tidak berpengaruh pada output. Akhirnya, konten respon tubuh dibandingkan dengan berbagai pola yang mungkin ditemukan di Java servlet, Microsoft VBScript, OLE, JET, PHP dan kesalahan Tomcat. Jika kecocokan ditemukan, peringatan akan muncul dan pemindai mengembalikan segera.
+This rule submits a series of requests with external URLs as parameter values and looks for a match between the response body and the title of the page
+hosted at those URLs. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
+returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/RemoteFileIncludeScanRule.java">RemoteFileIncludeScanRule.java</a>
 
-<h2>Jalan Traversal</h2>
+<h2>Server Side Include</h2>
 
-Aturan ini mencoba mengakses file dan direktori diluar dari akar web dokumen oleh berbagai bangunan kombinasi oleh jalan nama awalan dan target file lokal untuk windows dan *NIX sistem sama seperti Java servlets. Jika respon tubuh sesuai dengan pola yang sesuai dengan berkas target saat ini peringatan dimunculkan dan pemindai mengembalikan segera. Jika tidak ada umum setempat berkas target berhasil, jalan traversal adalah 
-percobaan menggunakan nama berkas di URL. Selama mengirimkan nama file sewenang-wenang tidak mengembalikan kode status OK tapi nama file yang benar melakukannya, peringatan dimunculkan dan pemindai mengembalikan segera.
+This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. If the response body matches
+a pattern indicating the SSI was successful, an alert is raised and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ServerSideIncludeScanRule.java">ServerSideIncludeScanRule.java</a>
 
-<h2>Termasuk File Terpencil</h2>
+<h2>Source Code Disclosure - /WEB-INF</h2>
+Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SourceCodeDisclosureWebInfScanRule.java">SourceCodeDisclosureWebInfScanRule.java</a>
 
-Aturan ini mengajukan sebuat seri dari permohonan dengan URLs eksternal sebagai nilai parameter dan mencari sebuah kecocokan host pada URLs itu. Jika ada kecocokan antara string yang diharapkan dan respon badan, dan header mengembalikan kode status 200, peringatan dimunculkan dan pemindai
+<h2>SQL Injection</h2>
 
-Mengembalikan segera.
-
-<h2>Termasuk Server Samping</h2>
-
-Aturan ini memeriksa untuk melihat apa server OS yang sedang di jalankan, kemudian mengirim permohonan dengan dengan direktif HTML SSI sesuai sebagau nilai parameter. Jika respon badan sesuai dengan pola yang menunjukkan SISI berhasil, peringatan dimunculkan dan pemindai mengembalikan segera.
-
-<h2>Injeksi SQL</h2>
-
-Pemindai ini memindai kerentanan SQL Injection dengan cara RDBMS-independen,
-dengan menyerang parameter url dan formulir parameter dengan fragmen sintaks SQL yang valid dan tidak valid, menggunakan kesalahan dasar,
-dasar boolean, kesatuan dasar, dan di tumpuk teknik-teknik injeksi SQL. <br>
-Pemindai ini mungkin bisa untuk sidik jari RDBMS jika aplikasi melemparkan yang diketahui RDBMS tertentu kesalahan pesan. <br>
-Pemindai ini tidak memanfaatkan apapun RDBMS cara tertentu, dan begitu juga yang terbaik SQL suntikan pemindai untuk digunakan sebagai titik awal. 
+This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
+by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
+boolean based, Union based, and stacked query SQL Injection techniques. <br>
+This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
+This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionScanRule.java">SqlInjectionScanRule.java</a>
 
 </body>
 </html>

@@ -4,9 +4,11 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="DOM XSS Active Scan Rule" target="domxss"/>
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+		<tocitem text="アドオン" tocid="addons">
+			<tocitem text="DOM XSS 動的 スキャン ルール" target="domxss">
+				<tocitem text="About" target="domxss.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

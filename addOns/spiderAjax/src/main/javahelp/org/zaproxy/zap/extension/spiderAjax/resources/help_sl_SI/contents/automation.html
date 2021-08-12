@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Ajax Spider Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Ajax Spider Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+
+<H2>Job: spiderAjax</H2>
+The spiderAjax job allows you to run the Ajax Spider - it is slower than the traditional spider but handles modern web applications well.
+<pre>
+  - type: spiderAjax                   # The ajax spider - slower than the spider but handles modern apps well
+    parameters:
+      context:                         # String: Name of the context to spider, default: first context
+      url:                             # String: Url to start spidering from, default: first context URL
+      maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
+      maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
+      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 1
+      browserId:                       # String: Browser Id to use, default: firefox-headless
+      clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and input, default: true
+      clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
+      eventWait:                       # Int: The time in millseconds to wait after a client side event is fired, default: 1000
+      maxCrawlStates:                  # Int: The maximum number of crawl states the crawler should crawl, default: 0 unlimited
+      randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
+      reloadWait:                      # Int: The time in millseconds to wait after the URL is loaded, default: 1000
+    tests:
+      - name: 'At least 100 URLs found'      # String: Name of the test, default: statistic + operator + value
+        type: 'stats'                        # String: Type of test, only 'stats' is supported for now
+        statistic: 'spiderAjax.urls.added'   # String: Name of an integer / long statistic, currently supported: 'spiderAjax.urls.added'
+        operator: '>='                       # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
+        value: 100                           # Int: Change this to the number of URLs you expect to find
+        onFail: 'info'                       # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect
+</pre>
+
+</BODY>
+</HTML>

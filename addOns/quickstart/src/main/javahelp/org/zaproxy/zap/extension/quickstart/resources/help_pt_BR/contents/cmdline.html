@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Linha de comando</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Linha de comando</h1>
 	Complemento para início rápido, suporta as seguintes opções de linha de comando:
 	<table>
@@ -16,7 +16,9 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickout</td>
-			<td>Especifica o arquivo para gravar o relatório XML. Se não for definido em modos 'inline' e daemon, o relatório é gravado no fluxo de saída default.</td>
+			<td>Specifies the file to write the report to. The report format will depend on the file extension - supported file extensions are 
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. If none of these extensions are used then the format will be XML. 
+			If not set in 'inline' and daemon modes the report is written to default output stream.</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -28,9 +30,11 @@
 	<br>
 	<p>Exemplos:
 	<ul>
-		<li>Iniciar o ZAP no modo 'inline' com barras de progresso do ascii, atacar o aplicativo alvo http://example.com/ e escrever o relatório de fluxo de saída padrão: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
+			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
-		<li>Iniciar o ZAP com UI, atacar o aplicativo alvo http://example.com/ e salvar o relatório em um arquivo escolhido pelo usuário: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		<li>Start ZAP with UI, attack the target application http://example.com/ and save
+			the report to a file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>
 	</ul>
 

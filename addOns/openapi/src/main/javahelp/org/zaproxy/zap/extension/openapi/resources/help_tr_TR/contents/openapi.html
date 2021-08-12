@@ -3,47 +3,95 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Open API Specification Desteği
+OpenAPI Support
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Open API Specification Desteği</h1>
-Bu eklenti OpenAPI (Swagger) tanımlamalarını (1.2 ve 2.0 versiyonları) spider'lamanızı ve içe aktarmanızı sağlar.
+<body>
+<h1>OpenAPI Support</h1>
+This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, and 3.0.
 <br><br>
-Bu eklenti, kapsamda oldukları sürece otomatik olarak herhangi bir Open API tanımlamasını algılayacak ve spider'layacaktır.
+The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
+<br><br>
+It also supports the <a href="automation.html">Automation Framework</a>.
 
 <h2>Kullanıcı Arayüzü</h2>
-Araçlar menüsüne 2 menü öğresi eklenir:
+2 menu items are added to the Import menu:
 <ul>
-<li>Yerel dosya sisteminden bir Open API tanımlaması içe aktar</li>
-<li>Bir URL'den Open API tanımlaması içe aktar</li>
+<li>Import an OpenAPI definition from the local file system</li>
+<li>Import an OpenAPI definition from a URL</li>
 </ul>
-URL İçe Aktarma iletişim kutusu, tanımdaki Ana Bilgisayarı (ve bağlantı noktasını) sizin sağladığınız alternatif bir sunucu ile geçersiz kılmanıza izin veren isteğe bağlı bir ek alanı destekler.<br>
-Yerel bir dosyayı farklı bir host kullanmak için değiştirmek kolay olduğundan bu seçenek dosya içe aktarımı için sağlanmaz.
+Both dialogues allow to override the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
+
+<h3>Target URL Format</h3>
+The Target URL has the following format:<br>
+<code>scheme://authority/path</code><br>
+with all URI components optional. Note: while all URI components are optional the scheme and authority become mandatory when not importing from URL and the definition does not specify them (for example, it has no servers or schemes).<br>
+Following some examples, overriding:
+<ul>
+<li>The authority and path: <code>localhost/api/</code></li>
+<li>Just the scheme: <code>https://</code></li>
+<li>Just the authority: <code>qa.example.com:9090</code></li>
+<li>Just the path: <code>/dev/v3/</code></li>
+</ul>
 
 <h2>API</h2>
-API'ya aşağıdaki işlemler eklenir:
+The following operations are added to the API:
 <ul>
-<li>EYLEM importFile (file)</li>
-<li>EYLEM importUrl (url, hostOverride)</li>
+<li>ACTION importFile (file, target)</li>
+<li>ACTION importUrl (url, hostOverride)</li>
 </ul>
+Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
 
-Tanımlamalar eş zamanlı olarak içe aktarılacaktır ve tüm uyarılar döndürülecektir. 
+The definitions will be imported synchronously and any warnings will be returned.
 
+<h3>Data Driven Nodes</h3>
+<span style="white-space: pre;">
+When the OpenAPI schema contains path params the plugin will automatically generate data driven nodes in either the default context or for the context from the provided <code>contextId</code>.
+
+For example, the following OpenAPI definition will result in at least one data driven node.
+
+<strong>openapi.yml</strong>
+<code >
+    ...
+    /users/v1/{username}/email:
+      ...
+      parameters:
+        - name: username
+        in: path
+        description: username to update email
+        required: true
+        schema:
+          type: string
+    ...
+</code>
+
+<strong>Default Context > Structure > Structural Modifiers</strong>
+<code>
+    DDN0: (/)(.+?)(/.*)
+    DDN1: (/users/v1/)(.+?)(/.*)
+</code>
+</span>
 <h2>Komut Satırı</h2>
-Aşağıdaki Komut Satırı seçenekleri eklenir:
+The following Command Line options are added:
 <ul>
-<li>-openapifile &lt;filename&gt;  : Belirtilen dosya isminden bir Open API tanımlaması içe aktar</li>
-<li>-openapiurl &lt;url&gt;  : Belirtilen URL'den bir Open API tanımlaması içe aktar</li>
+<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
+<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
+<li>-openapitargeturl &lt;url&gt;  : The Target URL, to override the server URL present in the OpenAPI definition</li>
 </ul>
 
-Tanımlar eşzamanlı olarak içe aktarılacak ve uyarılar komut satırında görüntülenecektir.
+The definitions will be imported synchronously and any warnings will be displayed on the command line.
 
 <h2>Kullanıcı Belirli Değerler</h2>
-Varsayılan değerler açık API tanımlarını içe aktarırken kullanılır.<br>
-Bu, kendi değerlerinizi belirtmenizi sağlayan Form Handler eklentisi kullanarak override edilebilir.<br>
-Çoğu durumda bunlar basit değerler (string ve tam sayılar gibi) olacaktır ama bazı durumlarda yapılandırılmış değerler belirtmeniz gerekebilir,
-örneğin <pre>{ "id": 0, "name": "Freda" }</pre>
+Default values are used when importing OpenAPI definitions.<br>
+These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
+In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
+e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+<h2>Statistics</h2>
+The add-on maintains the following statistics:
+<ul>
+    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+</ul>
 
 </body>
 </html>

@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Basit Örnek" image="simple-icon" target="simple"/>
+			<tocitem text="Basit Örnek" image="simple-icon" target="simple">
+				<tocitem text="About" target="simple.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

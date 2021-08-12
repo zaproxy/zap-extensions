@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Front-End Scanner
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Front-End Scanner</H1>
+
+When installed and enabled, the Front-End Scanner add-on tampers with all HTTP responses passing through ZAP to inject a piece of JavaScript code containing custom logic, utility functions and scripts that ZAP users wish to run in the browser to help them audit front-end applications.
+
+<STRONG>Note:</STRONG> to be able to fully work, the add-on automatically removes CSP headers from webpages.
+
+
+<H2>Add a script to be run in the browser</H2>
+
+<STRONG>Note:</STRONG> as for now, only "Client-Side Passive" scripts are injected in web pages.
+
+<P>
+To add a passive script, go to the "Scripts" pane and right click on "Client-side Passive Rules", then "New Script...".
+Give your script a meaningful name, make sure that you use the template "scan.js" and save.
+</P>
+<P>
+As they will be executed in a web browser, scripts need to be written in Javascript.
+For the same reason, they can make use of the <a href="https://developer.mozilla.org/en-US/docs/Web/API">Web APIs</a> exposed by the browser that you use.
+</P>
+<P>
+Each user script, written via ZAP's interface, ends up wrapped in a function in the front-end, receiving a Javascript object (FrontEndScanner) as a parameter. Thus, scripts have access to what this object exposes:
+<UL>
+  <LI>ZAP constants to help scripts create alerts,</LI>
+  <LI>the “mailbox”: a “publish-subscribe” mechanism to help scripts react to events happening in the browser (such as user interactions, Storage accesses, etc.),</LI>
+  <LI>a helper function to report findings back to ZAP.</LI>
+</UL>
+All the functions containing user (passive) scripts will be executed automatically in the browser.
+</P>
+
+
+<H2>Enabling - Disabling</H2>
+
+To toggle the add-on, go to "Tools" then "Toggle Front-End Scanner" (note that the add-on is turned off by default).
+
+<P>
+<STRONG>Note:</STRONG> Only enabled scripts will be injected in the targeted web pages.
+To enable (or disable) particular scripts, right click on them in the "Scripts" pane, then "Enable Script(s)" (or respectively "Disable Script(s)").
+</P>
+
+
+<H2>Getting Involved</H2>
+
+ZAP is a community project and so we are always very keen to hear from anyone who'd like to contribute, have a look at the <a href="https://github.com/zaproxy/zaproxy/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%5BFrontEndScanner%5D">known issues on Github</a>, or just post to the <a href="https://groups.google.com/group/zaproxy-develop">ZAP Dev Group</a>.
+
+</BODY>
+</HTML>

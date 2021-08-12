@@ -5,175 +5,127 @@
 Passive Scan Rules - Alpha
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Passive Scan Rules - Alpha</h1>
 The following alpha quality passive scan rules are included in this add-on:
 
-<h2>ASP.NET ViewState Disclosure</h2>
-An ASP.NET ViewState was disclosed by the application/web server
-
-<h2>ASP.NET ViewState Integrity</h2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+<h2>An example passive scan rule which loads data from a file</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
 <h2>Base64 Disclosure</h2>
-Base64 encoded data was disclosed by the application/web server
-
-<h2>Missing Content Security Policy Header</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+<ul>
+ <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
+ <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
+ <li><b>Base64 Disclosure:</b> Base64 encoded data was disclosed by the application/web server</li>
+</ul>
+<strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
-that is actively being refined or developed, or one which is only partially implemented.
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
-<h2>Cookie Poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
-
-<h2>Cookie Without SameSite Attribute</h2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
-
-<h2>Cross Domain Misconfiguration</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
-
-<h2>Directory Browsing</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
-
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
-
-<h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
-
-<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
-
-<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
-
-<h2>Insecure Component</h2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
-Currently, the following server side products are supported:<br>
-Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
-Apache web server<br>
-mod_auth_radius Apache module<br>
-mod_fcgid Apache module<br>
-mod_imap Apache module<br>
-mod_jk Apache module<br>
-mod_perl Apache module<br>
-mod_python Apache module<br>
-mod_ssl Apache module<br>
-OpenSSL Apache module<br>
-Perl Apache module<br>
-Python Apache module<br>
-IBM HTTP Server<br>
-JBoss application server<br>
-Jetty web server / application server<br>
-LiteSpeed web server<br>
-Lighttpd web server<br>
-Microsoft IIS web server<br>
-Netscape Enterprise web server<br>
-Nginx web server<br>
-OpenCMS<br>
-Oracle Application Server<br>
-Oracle Web Cache<br>
-PHP<br>
-Phusion_Passenger<br>
-Squid proxy server<br>
-Sun One web server<br>
-Sun Java System Web Server<br>
-TornadoServer web server<br>
-WordPress<br>
-
-<h2>Image Location Scanner</h2>
-<p>Passively scans for GPS location exposure in images during normal security
-assessments of websites.  Image Location Scanner assists in situations where
-end users may post profile images and possibly give away their home location,
-e.g. a dating site or children's chatroom.  A whitepaper on this can be found
-at http://veggiespam.com/ils/</p>
-
-<p>Note: In order for this plug-in to operate, ZAP must be configured to
-receive and process images.  To do this, go to the ZAP Options panel (Tools
-&rarr; Options), choose Display, and enable the checkbox for "Process images in
-HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
-the settings "Global Exclude URL" or the Session Properties for "Exclude from
-Proxy". </p>
-
-<h2>Open Redirect</h2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
-
-<h2>HTTP Server Response Header Scanner</h2>
-This checks response headers for the presence of a server header that contains version details.
-At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
-
-<h2>Source Code Disclosure</h2>
-Application Source Code was disclosed by the web server
-
-<h2>Strict Transport Security Header Scanner</h2>
-This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
-alerting if they're found.
-
+<h2>Content Cacheability</h2>
+This scan rule analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+<p>
 Alerts generated:
 <ul>
- <li><b>Strict-Transport-Security Header Not Set: </b> If the response is HTTPS and the header is completely missing.</li>
- <li><b>Strict-Transport-Security Disabled: </b> If the response is HTTPS and the max-age value is set to zero, thus resetting the browser's HSTS information for the site.</li>
- <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> If the response is HTTPS and there is more than one HSTS header on the response.</li>
- <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> If the response is HTTPS, a HSTS header is specified but the max-age value does not contain a number.</li>
- <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec): </b> If the response body includes a META tag which attempts to define HSTS.</li>
- <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> If the response is HTTP and the HSTS header is present.</li>
- <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec): </b> If the response is HTTPS and the HSTS header is present, but there are quotes preceding the max-age directive (quotes are allowed around the max-age value, but not around the directive itself).</li>
- <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
 </ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
 
-<h2>Timestamp Disclosure</h2>
-A timestamp was disclosed by the application/web server
+<h2>Site Isolation Scan Rule</h2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measures is to prevent sensitive data
+from entering the memory and to separate trusted and untrusted documents in
+different browsing contexts. Three headers have been defined to enable that:
+<ul>
+ <li>Cross-Origin-Resource-Policy</li>
+ <li>Cross-Origin-Embedder-Policy</li>
+ <li>Cross-Origin-Opener-Policy</li>
+</ul>
+The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
+ loading any non-same-origin resources which don't explicitly grant the document
+ permission to be loaded.</q> (from
+<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
+<blockquote cite="https://resourcepolicy.fyi/">
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
+</blockquote>
+For example, an attacker site can include an image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
 
-<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
+multiple browsing contexts to separate trusted and untrusted documents.
 
-<h2>User Controllable Charset</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
+mechanism managed independently by the browser.
 
-<h2>User Controllable Javascript Event (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
 
-<h2>User Controllable Javascript Property (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Example Passive Scan Rule: Denial of Service</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>Username Hash Found</h2>
-If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
-Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
+<h2>In Page Banner Information Leak</h2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
 
-<h2>X-Powered-By Header Information Leak</h2>
-This checks response headers for the presence of X-Powered-By details.
+<h2>Java Serialization Object</h2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
 
-<h2>X-Backend-Server Header Information Leak</h2>
-This checks response headers for the presence of X-Backend-Server details.
+<h2>Permissions Policy Header Not Set</h2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found.<br>
+Redirects are ignored except at the Low threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
 
-<h2>Big Redirect</h2>
-This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+<h2>Source Code Disclosure</h2>
+Application Source Code was disclosed by the web server.<br>
+NOTE: Ignores CSS and JavaScript files.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
-<h2>X-ChromeLogger-Data Header Information Leak</h2>
-This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+<h2>Sub Resource Integrity Attribute Missing</h2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 
-<h2>X-Debug-Token Information Leak</h2>
-This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
-Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
-
-<h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
-This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
-
+<h2>Dangerous JS Functions</h2>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
 </body>
 </html>

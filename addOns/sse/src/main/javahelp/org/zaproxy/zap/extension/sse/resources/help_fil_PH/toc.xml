@@ -6,8 +6,7 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Ang Server-Napadala na mga pangyayari" image="html5connectivity" >
-		    	<tocitem text="Panimula" target="sse.introduction"/>
+			<tocitem text="Ang Server-Napadala na mga pangyayari" target="sse.introduction" image="html5connectivity" >
 				<tocitem text="Tab" target="sse.tab"/>
 			</tocitem>
 		</tocitem>

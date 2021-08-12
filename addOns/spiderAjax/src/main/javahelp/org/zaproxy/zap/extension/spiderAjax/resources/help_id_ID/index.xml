@@ -5,6 +5,7 @@
 
 <index version="2.0">
     <indexitem text="Laba-laba AJAX" target="addon.spiderajax.concepts" />
-    <indexitem text="Dialog Spider AJAX" target="addon.spiderajax.dialog"/>
-    <indexitem text="Tab Spider AJAX" target="addon.spiderajax.tab"/>
+    <indexitem text="AJAX Spider automation" target="addon.spiderajax.automate"/>
+    <indexitem text="AJAX Spider dialog" target="addon.spiderajax.dialog"/>
+    <indexitem text="AJAX Spider tab" target="addon.spiderajax.tab"/>
 </index>

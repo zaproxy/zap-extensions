@@ -6,7 +6,7 @@
 Replacer
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Reemplazador</h1>
 El reemplazador es una manera fácil de reemplazar cadenas en las solicitudes y respuestas.
 <p>
@@ -45,14 +45,20 @@ La cadena que se utilizará para identificar lo que debe ser reemplazado. Para m
 <h3>Coincidencia Regex</h3>
 Si se configura entonces la cadena de coincidencia se tratará como una expresión regex.
 Esta opción está deshabilitada al coincidir con encabezados reales.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>Cadena de reemplazo</h3> La nueva cadena que reemplazará la selección especificada.
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Habilitar</h3>
-Si no está establecido, entonces la regla no aplicará.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>Avanzado</h3> Si se configura aparecerá una pestaña adicional que permite especificar a cuales "iniciadores" se debe aplicar la regla.
-Cada componente ZAP que puede enviar y recibir mensajes en un iniciador separado, esto da un control detallado sobre cuando exactamente debe aplicarse la regla.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Si se necesita aún mas control sobre cuándo y cómo el texto debe ser reemplazado, se puede utilizar la consola de script ZAP que ofrece un control completo sobre los mensajes ZAP.

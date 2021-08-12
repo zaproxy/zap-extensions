@@ -4,32 +4,45 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Detecção de Tecnologia</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Deteção de Tecnologia usando o Wappalyzer</h1>
 <p>
-O complemento de deteção de tecnologia utiliza as regras do Wappalyzer (http://wappalyzer.com/) para detectar as tecnologias usadas por aplicativos.<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 Ele funciona de maneira muito semelhante aos complementos do navegador Wappalyzer com as seguintes exceções:
 <ul>
 <li>Ele não usa as 'variáveis JavaScript Globais' porque são difíceis de testar sem um navegador 'completo'</li>
-<li>Não não mostra as versões - isto ainda não foi desenvolvido</li>
-<li>Ele não mostra a confiança - isso ainda não foi desenvolvido</li>
+<li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Ele permite que você veja as 'provas' usadas para detectar as tecnologias</li>
 </ul>
 <h2>Aba de tecnologia</h2>
 Esta aba mostra todas as tecnologias detectadas no site selecionado.<br>
 Clicando com o botão direito em uma tecnologia irá exibir o menu 'Mostrar provas' com todos os regexes usados para detectá-la.<br>
-Selecionar um regex abre guia 'Pesquisa' para busca na história desse regex.
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>Links externos</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
-	<td>Homepage do Wappalyzer</td></tr>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
-	<td>Repositório do Wappalyzer</td>
+	<td>The Wappalyzer Repository</td>
 </tr>
 </table>
 

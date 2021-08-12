@@ -2,23 +2,26 @@
 <html>
 <head>
 <title>
-HTTPS Info Add-on
+HTTPS Info
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Complemento HTTPS Info</h1>
+<body>
+<h1>HTTPS Info</h1>
 
 <p>
 El complemento HTTPS Info es accedido mediante el menú de contexto dentro del Árbol de Sitios o en la tabla de Historial. 
-Muestra un cuadro de diálogo en el cual se muestra información variada resumida sobre el certificado HTTPS del servidor destino, y el conjunto SSL/TLS cipher proporcionado.
+It displays tabs in a status panel, in which various summary information is displayed
+regarding the target server's HTTPS certificate, and the offered SSL/TLS cipher suites.
 </p>
 
 <p>
-Este complemento utiliza otro proyecto OWASP: <a href="https://www.owasp.org/index.php/OWASP_DeepViolet_TLS/SSL_Scanner">Deep Violet</a> para realizar el certificado y la recopilación de información del conjunto cipher.
+This add-on leverages another OWASP project: 
+<a href="https://github.com/spoofzu/DeepViolet/">Deep Violet</a> 
+to perform it's certificate and cipher suite information gathering.
 </p>
 
 <h2>General</h2>
-La parte superior del cuadro de diálogo está dedicada a los detalles generales del certificado SSL/TLS presentado por el servidor. Como:
+The top portion of a tab is devoted to general details of the SSL/TLS certificate presented by the server. Such as:
 <ul>
 <li>Subject DN</li>
 <li>Signing Algorithm</li>
@@ -30,7 +33,8 @@ La parte superior del cuadro de diálogo está dedicada a los detalles generales
 </ul>
 
 <h2>Conjuntos de Cipher</h2>
-La parte inferior del cuadro de diálogo está dedicada a la enumeración o la creación de una lista de los conjuntos Cipher específicos que ofrece el servidor destino, agrupado por el protocolo de enlace (SSLv2, SSLv3, TLSv1, TLSv1.1 etc.).
+The bottom portion of a tab is devoted to enumeration/listing of the specific Cipher Suites the 
+target server offers, grouped by handshake protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
 
 </body>
 </html>

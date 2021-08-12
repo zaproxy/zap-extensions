@@ -4,62 +4,78 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenium</h1>
 
 	<p>Selenium add-on menyediakan WebDrivers, untuk add-ons lainnya, untuk memohon dan remote kontrol browser web. Hal ini juga dibundel HtmlUnit web browser, aplikasi headless berbasis Java web browser.
-	<p>Add-on juga menambahkan opsi klik kanan ke panel ZAP yang menautkan daftar URL (seperti pada Riwayat dan Situs) yang memungkinkan anda membuka URL terpilih pada salah satu peramban yang didukung.
+		
+	<p>It adds a 'Selenium' script type - these scripts are invoked whenever selenium launches a browser,
+	for example for the Ajax Spider or for manual browsing. 
+	
+	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
+	which allows you to open the selected URL in any of the supported browsers. The Selenium scripts have access to the 
+	launched browser and can interact with it, for example, run JavaScript scripts, access URLs, fill forms, click buttons...
+	<br><strong>Note:</strong> The Selenium scripts are executed synchronously for the AJAX Spider, to prevent interferences
+	with the crawler later, it's up to the scripts to access the required URLs.
 
-	<h2>Peramban yang Didukung</h2>
+	<h2>Supported Browsers</h2>
 
 	
-	<p>Berikut peramban web yang didukung:
+	<p>The following web browsers are supported:
 	<table border="2">
 		<tr>
-			<th>Nama</th>
+			<th>Name</th>
 			<th>ID</th>
-			<th>Persyaratan/Catatan</th>
+			<th>Requirements/Notes</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Versi berikut diketahui dapat bekerja: 59 dan 60 (versi yang lebih usang mungkin bekerja juga). Membutuhkan ChromeDriver, jika tidak pada sistem PATH, itu dapat ditetapkan dalam pilihan. Untuk informasi selengkapnya tentang ChromeDriver dan bagaimana cara untuk mendapatkannya, merujuk pada <a
+			<td>The following versions are known to work: 59 and 60 (older versions might work
+				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on ChromeDriver and how to obtain it refer to the <a
 				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 			</td>
 		</tr>
 		<tr>
+			<td>Chrome Headless</td>
+			<td>chrome-headless</td>
+			<td>Starts Chrome without GUI.</td>
+		</tr>
+		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>Versi berikut diketahui dapat bekerja: 45 (ESR), 46, 47.0.1, 54, dan 55 (versi yang lebih usang mungkin juga berfungsi). Beberapa versi diketahui tidak bisa berfungsi, sebagai contoh, 47.0. Versi yang lebih baru (&ge; 48) membutuhkan geckodriver, itu bisa diatur dalam pilihan. Untuk informasi selengkapnya tentang geckodriver dan bagaimana cara untuk mendapatkannya, lihat situs <a
-				href="https://github.com/mozilla/geckodriver">geckodriver</a> (lihat catatan kaki untuk peringatan ketika menggunakan geckodriver).
+			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
+				versions might work too). Some versions are known to not work, for example, 47.0. Newer
+				versions (&ge; 48) require geckodriver, it can be set in the options. For more
+				information on geckodriver and how to obtain it refer to the <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
+				for caveat when using geckodriver).
 			</td>
+		</tr>
+		<tr>
+			<td>Firefox Headless</td>
+			<td>firefox-headless</td>
+			<td>Starts Firefox without GUI.</td>
 		</tr>
 		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
-			<td>Mengubah pengaturan browser, tidak memiliki persyaratan.</td>
-		</tr>
-		<tr>
-			<td>Internet Explorer</td>
-			<td>ie</td>
-			<td>Versi berikut diketahui dapat bekerja: 11 (versi yang lebih usang mungkin berfungsi juga).
-				Membutuhkan IEDriverServer, jika tidak ada pada sistem PATH, itu dapat ditetapkan dalam pilihan.
-				Untuk informasi selengkapnya tentang IEDriverServer lihat <a
-				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">situs web IEDriverServer</a> (lihat catatan kaki untuk peringatan ketika menggunakan Internet Explorer).
-			</td>
+			<td>Bundled browser, does not have any requirement.</td>
 		</tr>
 		<tr>
 			<td>Opera</td>
 			<td>opera</td>
-			<td>Untuk sementara tidak berfungsi.</td>
+			<td>Temporarily not working.</td>
 		</tr>
 		<tr>
 			<td>PhantomJS</td>
 			<td>phantomjs</td>
-			<td>Versi berikut diketahui dapat bekerja: 2.1.1 (versi yang lebih usang mungkin berfungsi juga).
-				Membutuhkan biner PhantomJS, jika bukanpada sistem PATH, itu dapat diatur dalam pilihan.
-				Untuk informasi selengkapnya tentang PhantomJS dan bagaimana cara untuk mendapatkannya lihat <a
-				href="http://phantomjs.org/">situs PhantomJS</a> (lihat catatan kaki untuk peringatan ketika menggunakan PhantomJS).
+			<td>The following version is known to work: 2.1.1 (older versions might work too).
+				Requires PhantomJS binary, if not on the system's PATH, it can be set in the options.
+				For more information on PhantomJS and how to obtain it refer to the <a
+				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
+				using PhantomJS).
 			</td>
 		</tr>
 		<tr>
@@ -68,25 +84,37 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>Untuk menggunakan Firefox, Chrome, Internet Explorer, Opera, PhantomJS dan Safari, anda harus melakukan pemasangan terlebih dahulu di sistem anda. ID peramban bisa digunakan untuk memilih peramban saat mengkonfigurasi ZAP melalui baris perintah atau menggunakan API ZAP (contohnya, untuk mengatur Spider AJAX menggunakan salah satu atau peramban lainnya).
+	<p>To use Firefox, Chrome, Opera, PhantomJS and Safari, you must
+		have them installed in your system. The ID of the browser can be used to choose the
+		browser when configuring ZAP through the command line or using the ZAP API (for example,
+		to set the AJAX Spider to use one or other browser).
 	<p>
-		Beberapa persyaratan (misalnya WebDrivers) dari peramban bisa dikonfigurasi pada layar <a
-			href="options.html">Pilihan Layar Selenium</a>.
+		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
+			href="options.html">Options Selenium screen</a>.
 
-	<h2>Dibundel WebDrivers</h2> ZAP menyediakan add-ons dengan WebDrivers, ketika mereka add-ons yang terinstal ZAP akan mencoba untuk menggunakan mereka dibundel WebDrivers secara default. Beberapa OS bisa saja tidak memiliki WebDriver untuk beberapa peramban, dalam kasus tersebut ZAP akan memberi tahu, pada panel pilihan tidak ada bundel WebDriver yang tersedia. Paket WebDrivers juga dapat (kembali)ditetapkan dengan 'Paket' tombol (misalnya, jika lain WebDriver itu diatur secara manual). Tidak semua versi peramban didukung dengan bundel WebDrivers, sebaiknya versi baru/usang dari peramban bisa digunakan bila memungkinkan.
+	<h2>Bundled WebDrivers</h2>
+	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
+	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
+	for some of the browsers, in those cases ZAP will inform, in the options panel, that
+	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
+	browser versions are supported with the bundled WebDrivers, it's recommended that
+	newer/latest versions of the browsers be used whenever possible.
 
 	<p>
-		<strong>Catatan:</strong> add-on ZAP dapat menambahkan peramban tambahan.
+		<strong>Note:</strong> ZAP add-ons can add additional browsers.
 
 	<p>
-		<strong>Firefox/geckodriver Catatan:</strong> Ada masalah (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) yang mencegah situs HTTPS dari yang digunakan di versi &ge; 48 dan &lt; 52.
+		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
+		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
 	<p>
-		<strong>PhantomJS Catatan:</strong> Ada masalah (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Masalah #11342</a>) yang mencegah situs-situs di localhost, 127.0.0.1 dan ::1 dari yang diproksi melalui ZAP. Sampai ada perbaikan tersedia, disarankan untuk tidak menggunakannya dalam kasus tersebut. Beberapa add-on lebih memilih untuk menampilkan pesan peringatan ketika itu terjadi. Sebagai solusi yang bisa menentukan, dalam <code>host</code> file, pemetaan nama domain ke alamat lokal dan menggunakan nama domain bukan.
-	<p>
-		<strong>Catatan Internet Explorer:</strong> Tidak semua versi Internet Explorer dapat berfungsi, merujuk pada <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">Situs web IEDriverServer</a> untuk rincian lebih lengkap tentang bagaimana cara mengkonfigurasinya.
+		<strong>PhantomJS Note:</strong> There's an issue (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
+		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
+		available is advised to not use it in those cases. Some add-ons might choose to show
+		warning message when that happens. As workaround one could define, in the <code>hosts</code>
+		file, a domain name mapping to the local address and use that domain name instead.
 
 	<h2>Lihat juga</h2>
 	<table>

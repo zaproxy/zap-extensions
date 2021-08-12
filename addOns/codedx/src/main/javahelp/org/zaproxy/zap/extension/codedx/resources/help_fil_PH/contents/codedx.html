@@ -5,15 +5,60 @@
 Code Dx
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Code Dx</h1>
-Ang Code Dx na add-on ay magpapahintulot sa iyo na gumawa ng magkabagay na mga report at i-upload ang mga ito sa Code Dx na server. Mayroong dalawang pagpipilian sa ilalim ng Report na menu.
+The Code Dx add-on allows you to generate compatible reports and upload them to a Code Dx server. There are two options under the Report menu.
+<p>
+Contributed by <a href="https://www.codedx.com/">https://www.codedx.com/</a>
 
-<h2>Code Dx: Pag-upload ng Report</h2>
-Ang pagpipiliang ito ay gagawa ng isang report para sa iyo at i-upload ito sa Code Dx na server. Ang pagpili nito ay magpapasabi sa iyo para sa URL ng Server at API na Key. Pagkatapos maparami ang mga field, ang pagpindot ng refresh na button upang makuha ang listahan ng mga proyekto na magagamit ng API na Key. Pagkatapos ay ipindot ang Upload na button upang ipadala ang mga resulta sa Code Dx na server.
+<h2>Code Dx: Upload Report</h2>
+This option will generate a report for you and upload it to a Code Dx server. Selecting it will prompt you for the Server URL and API Key. After populating the fields, click the refresh button to get a list of projects available to the API Key. Then click the Upload button to send results to the Code Dx server.
 
-<h2>Code Dx: Gumawa ng XML na Report</h2>
-Ang pagpipiliang ito ay gagawa ng pamantayang XML na report na magpapasama ng HTTP na rekwest at pagtugon na datos.
+<h2>Code Dx: Generate XML Report</h2>
+This option will generate a standard XML report that includes the HTTP request and response data.
 
+<h1>API</h1>
+<h2>Actions</h2>
+
+<h3>uploadReport</h3>
+Uploads a report to Code Dx. Note that uploading an empty report with no alerts will cause an Exception to be thrown as Code Dx won't be able to read it and will return a non-200 response.
+<br><br>
+<i>Parameters</i>
+<ul>
+    <li>filePath: Absolute path to the report file</li>
+    <li>serverUrl: Code Dx server URL</li>
+    <li>codeDxApiKey: Code Dx API Key</li>
+    <li>projectId: Code Dx Project ID</li>
+    <li>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</li>
+    <li>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</li>
+</ul>
+<i>Returns</i>
+<br>
+"OK" if the report is uploaded successfully.
+
+<h3>generateAndUpload</h3>
+Generates a Code Dx report, saves it to a temporary file, uploads to Code Dx, then deletes the file.
+<br><br>
+<i>Parameters</i>
+<ul>
+    <li>serverUrl: Code Dx server URL</li>
+    <li>codeDxApiKey: Code Dx API Key</li>
+    <li>projectId: Code Dx Project ID</li>
+    <li>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</li>
+    <li>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</li>
+</ul>
+<i>Returns</i>
+<br>
+"OK" if the report is uploaded successfully.
+<br>
+"EMPTY" if the generated report is empty. The report will not be uploaded to Code Dx.
+
+<h2>Views</h2>
+<h3>generateReport</h3>
+Generates an XML report with request and response data.
+<br><br>
+<i>Returns</i>
+<br>
+An XML report String.
 </body>
 </html>

@@ -6,7 +6,7 @@
 Ang Palitan
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Ang Palitan</h1>
 Ang palitan ay isang madaling paraan para mapalitan ang mga string sa mga kahilingan at mga tugon.
 <p>
@@ -54,16 +54,20 @@ Ang string na gagamitin para malaman kung ano ang dapat palita - tingnan ang Kap
 <h3>Tugma na RegexMatch Regex</h3>
 Kung itakda pagkatapos sa tugma na string ay ituturing bilang isang regex na expression.
 Ang opsyon na ito ay hindi pinagana kapag ang pagkumpara sa kasalukuyang mga header.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>Pagpapalit ng String</h3>
-Ang bagong string na magpapalit sa itinutukoy na pagpipilian.
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Paganahin</h3>
-Kung hindi nakatakda saka ang patakaran ay hindi mag-apply.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>Advanced</h3>
-Kung itakda saka ang dagdag na tab ay makikita na nagbibigay-daan sa iyo para tumukoy kung sino ang 'mga initiator' ang patakaran ay dapat naka-apply.
-Bawat ZAP na komponent na maaaring magpapadala at tumanggap ng mga mensahe ay isang hiwalay na pagsimula, kaya ito ay nagbibigay sa iyo ng pinaka maayos na butil na kontrol sa eksakto kapag ang patakaran ay dapat ginawa.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Kung ikaw ay nangangailangan nang mas maraming kontrol kapag at papaano ang teksto na dapat mapalitan pagkatapos ikaw ay gumamit ng ZAP Script na console na nagbibigay sayo ng kumpletong kontrol sa ZAP na mga mensahe.

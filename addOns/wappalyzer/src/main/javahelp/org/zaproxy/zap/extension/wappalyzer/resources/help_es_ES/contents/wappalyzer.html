@@ -4,27 +4,40 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Technology Detection</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Technology Detection Using Wappalyzer</h1>
 <p>
-El complemento Technology Detection utiliza las reglas de Wappalyzer (http://wappalyzer.com/) para detectar las tecnologias utilizadas por las aplicaciones.<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 Funciona de forma muy similar a los complementos del navegador Wappalyzer con las siguientes excepciones:
 <ul>
 <li>No utiliza las "Variables JavaScript Globales" debido a que son difíciles de probar sin un navegador "completo"</li>
-<li>No muestra las versiones - todavía esta por hacer</li>
 <li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Permite ver la "evidencia" utilizada para detectar las tecnologias</li>
 </ul>
 <h2>La pestaña Tecnología</h2>
 Esta pestaña muestra todas las tecnologías detectadas en el sitio seleccionado.<br>
 Hacer clic derecho en una tecnología mostrara un menú "Mostrar evidencia" debajo del cual están todos los regexes utilizados para detectarlo.<br>
-Seleccionar un regex cambiará la pestaña "Buscar" y buscará en el historial ese regex.
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>Enlaces externos</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
 	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

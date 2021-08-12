@@ -6,7 +6,7 @@
 Mga Processor ng Mensahe ng HTTP
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Mga Processor ng Mensahe ng HTTP</h1>
 Ang mga processor ng mensahe ng HTTP ay maaaring mag-access at magbago sa mga mensahe ng HTTP na naging fuzz, makontrol ang mga proseso ng pagpa-fuzz at makipag-ugnayan sa ZAP UI.
 <p>
@@ -29,19 +29,25 @@ Nagpapahintulot na pumili ng gumaganang script ng Fuzzer HTTP Processor. Ang scr
 <li>Magtaas ng mga alerto</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Detektor ng Panganganinag ng Kargamento</h3>
-Ipinapahiwatig sa kulumna ng Estado ng talahanayan ng mga resulta kapag ang isa sa mga itinurok na mga kargamento ay nahap sa tugon, gamit ang<img src="images/reflected_icon.png"> Naisalarawan".<br>
-<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor.
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Paalala:</strong> This processor is automatically added to the list of processors.
 
 <h3>Taga-update ng haba ng nilalaman ng kahilingan</h3>
-Nag-a-update (o nagdadagdag, kapag hndi pa naroon) ang <code>Haba ng nilalaman</code> ng header ng kahilingan gamit ang haba ng laman ng kahilingan, para sa lahat ng mga paraan ng kahilingan. Walang pagbabago ang gagawin kapag ang laki ng laman ng kahilingan ay zero at ang header ay hindi pa naroon.<br>
-<strong>Paalala:</strong> Ang processor na ito ay awtomatikong idinagdag sa listahan ng mga processor.
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Paalala:</strong> This processor is automatically added to the list of processors.
 
 <h3>Tagapaglikha ng Tag</h3>
-Nagpapahintulot sa iyo na magdagdag ng pasadyang 'tags', batay sa mga nilalaman ng tugon, sa kulumna ng Estado ng talahanayan ng mga resulta
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
 
 <h3>Processor ng Mensahe ng Gumagamit</h3>
-Nagpapahintulot na i-fuzz bilang gumagamit, gamit ang isa sa mga tinukoy ng mga gumagamit sa mga konteksto na kinabibilangan ng mensahe ng HTTP na naging fuzz. Ang mga gumagamit ay dapat umiiral upang makapili at makadagdag sa processor na ito.
+Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
 
 <p>
 Ang ibang mga add-on ay maaaring magtukoy ng karagdagang processor ng mga mensahe ng HTTP.

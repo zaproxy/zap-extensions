@@ -4,55 +4,59 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenyum Seçenekler ekranı</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenyum Seçenekler ekranı</h1>
 
 	Bu ekran, bazı WebDriverların gereksinimlerini ayarlamanızı sağlar.
 	<br />
-	<h2>Yapılandırma seçeneği açıklaması</h2>
+	<h2>Configuration Options</h2>
+	<h3>WebDrivers</h3>
 	<table border="2">
 		<tr>
-			<th colspan="3">Yapılandırma Seçenekleri</th>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
 		</tr>
 		<tr>
-			<th>Alan</th>
-			<th>Ayrıntılar</th>
-			<th>Varsayılan</th>
-		</tr>
-		<tr>
-			<th colspan="3">WebSürücüleri</th>
-		</tr>
-		<tr>
-			<td>ChromeSürücüsü</td>
-			<td>Bu, ChromeDriver'ın konumunu seçmenize olanak verir.</td>
-			<td align="center">Donanımla gelen WebDriver'ın yolu, Eğer mevcutsa.</td>
+			<td>ChromeDriver</td>
+			<td>This allows you to select the location of ChromeDriver.</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.chromeDriver</code><br>Value: file system path to the ChromeDriver</td>
 		</tr>
 		<tr>
 			<td>geckodriver</td>
-			<td>Bu, geckodriver ın (Firefox sürücüsü) konumunu seçmenize olanak verir.</td>
-			<td align="center">Donanımla gelen WebDriver'ın yolu, Eğer mevcutsa.</td>
+			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
+			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Key: <code>selenium.firefoxDriver</code><br>Value: file system path to the geckodriver</td>
 		</tr>
+	</table>
+
+	<h3>Binaries</h3>
+	<table border="2">
 		<tr>
-			<td>IEDriverServer</td>
-			<td>Bu, IEDriverServer'ın konumunu seçmenize yardımcı olur.</td>
-			<td align="center">Donanımla gelen WebDriver'ın yolu, Eğer mevcutsa.</td>
-		</tr>
-		<tr>
-			<th colspan="3">İkililer</th>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+			<th>Config File</th>
 		</tr>
 		<tr>
 			<td>Firefox</td>
-			<td>Bu Firefox ikilisinin konumunu seçmenize izin verir (örneğin, sistem
-				varsayılanından farklı bir sürüm kullanmak için).</td>
-			<td align="center">(Yok)</td>
+			<td>This allows you to select the location of Firefox binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
 		</tr>
 		<tr>
 			<td>PhantomJS</td>
-			<td>Bu PhantomJS ikilisinin konumunu seçmenize izin verir.</td>
-			<td align="center">(Yok)</td>
+			<td>This allows you to select the location of PhantomJS binary.</td>
+			<td align="center">(None)</td>
+			<td>Key: <code>selenium.phantomJsBinary</code><br>Value: file system path to the PhantomJS binary</td>
 		</tr>
 	</table>
-	<strong>Not:</strong> Yukarıdaki konumların (ikili dosyalar ve Web Sürücüleri) Java sistem özelliklerini kullanarak da ayarlanması mümkündür, bu durumda yukarıdaki seçenekler geçersiz olur ve bunun yerine gösterilen değerler gelir.
+	<strong>Not:</strong> It's also possible to set the above locations (binaries and
+	WebDrivers) using Java system properties, in which case the above options will be
+	overridden and those values shown instead.
 
 	<p>
 	Paketlenmiş WebDrivers hakkında daha fazla detay genel bakış sayfasında bulunabilir.
