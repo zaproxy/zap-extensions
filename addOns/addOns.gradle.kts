@@ -19,7 +19,7 @@ plugins {
     eclipse
     jacoco
     id("org.zaproxy.add-on") version "0.7.0" apply false
-    id("org.zaproxy.crowdin") version "0.2.0" apply false
+    id("org.zaproxy.crowdin") version "0.2.1" apply false
 }
 
 description = "Common configuration of the add-ons."
