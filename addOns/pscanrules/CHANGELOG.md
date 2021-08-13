@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Fixed reference URL on CORS misconfiguration.
+- Reduce false positives from Private IP Disclosure scan rule (Issue 6749).
 
 ## [35] - 2021-07-06
 ### Changed
