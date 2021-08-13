@@ -4,20 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Pilihan Aplikasi layar</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Pilihan Aplikasi layar</h1>
 	<p>
-		Layar ini memungkinkan anda untuk mengkonfigurasi <a href="concepts.html">aplikasi</a> yang dapat dipanggil.<br> Secara default tidak ada aplikasi yang tersedia, Anda perlu menambahkan
-semua aplikasi yang ingin anda gunakan.
+		Layar ini memungkinkan anda untuk mengkonfigurasi <a href="concepts.html">aplikasi</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
 	<h3>Tampilan Nama</h3>
 	Nama yang akan digunakan untuk aplikasi ini didalam ZAP.
 	<br>
 
 	<h3>Perintah Penuh</h3>
 	Path lengkap dari aplikasi yang anda inginkan untuk memanggil.
-	<br> Hanya satu perintah dapat ditentukan. Jika anda ingin menjalankan beberapa perintah sekaligus
-pergi, atau atur variabel lingkungan, lalu 
-anda harus membuat skrip atau berkas batch dan kemudian panggil ini dari ZAP.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
 
 	<h3>Parameter</h3>
 	Parameter yang harus dilalui ZAP ke perintah.
@@ -53,17 +54,28 @@ anda harus membuat skrip atau berkas batch dan kemudian panggil ini dari ZAP.
 			<td>%postdata%</td>
 			<td>data POST yang dikirimkan, jika ada, dengan setiap baris diganti dengan "\n"</td>
 		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
 	</table>
 	Jadi jika perintah diterima menggunakan URL '-u' Anda akan menentukan parameter sebagai: '-u %url%'
 
 	<h3>Menangkap Output</h3>
 	Jika dicek lalu perintah berjalan dan setiap output yang dihasilkan akan ditampilkan di
 	<i>Tab keluaran</i>.
-	<br> Anda harus selalu menggunakan pilihan ini saat menjalankan skrip atau perintah yang tidak
-memiliki UI.
-	<br> Anda juga bisa menggunakan pilihan ini untuk penyelesaian masalah 
-- jika aplikasi tidak
- berjalan seperti yang diharapkan kemudian salin jalankan perintah dan mencobanya dari baris perintah cepat.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
 
 	<h3>Keluaran ke Catatan</h3>
 	Jika dicentang kemudian output akan ditambahkan

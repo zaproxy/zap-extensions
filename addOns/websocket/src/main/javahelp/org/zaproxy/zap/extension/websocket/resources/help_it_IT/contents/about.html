@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Web Sockets - About
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Web Sockets - About</H1>
+
+<H2>Source Code</H2>
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket">https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket</a>
+
+<H2>Authors</H2>
+ZAP Dev Team
+
+<H2>History</H2>
+
+<H3>Version 19 - 2019-06-07</H3>
+<ul>
+	<li>Fix exceptions when handling/dispatching events.</li>
+	<li>Add wrapper to websocket API responses.</li>
+	<li>Fix exception when handling API request with no API implementor.</li>
+	<li>Correct output stream used in server mode.</li>
+	<li>Add support for 'other' API operations.</li>
+	<li>Handle API options.</li>
+	<li>Validate the Origin for API connections.</li>
+	<li>Generate websocket events.</li>
+	<li>Add break API endpoints.</li>
+	<li>Scale fonts and icons correctly</li>
+</ul>
+
+
+<H3>Version 18 - 2018/08/01</H3>
+<ul>
+	<li>Allow to reopen WebSocket connection to (re)send messages (Issue 4290).</li>
+</ul>
+
+<H3>Version 17 - 2018/07/13</H3>
+<ul>
+	<li>Register WebSocket Sender script type also in daemon mode.</li>
+	<li>Fix an exception when dispatching events.</li>
+	<li>Fix an exception while uninstalling the add-on with no GUI (Issue 4815).</li>
+	<li>Remove event consumers when channel is no longer in expected state.</li>
+</ul>
+
+<H3>Version 16 - 2018/06/05</H3>
+<ul>
+	<li>Tweak About help page.</li>
+	<li>Remove event consumers when the channel is closed.</li>
+	<li>Don't enable the sender scripts by default.</li>
+	<li>Fix send of CLOSE messages with message editor (Issue 4657).</li>
+	<li>Add missing error message.</li>
+	<li>Fix removal of pop up menu items.</li>
+	<li>Allow to filter by payload in WebSocket tab (Issue 1382).</li>
+	<li>Show string representation of binary payloads in WebSocket tab and message panels.</li>
+</ul>
+
+<H3>Version 15</H3>
+<ul>
+	<li>Remove usage of core filter functionality.</li>
+	<li>Do not set messages when switching views if text view shows an error message (Issue 4108)</li>
+	<li>Add rewind to fix issue #4149</li>
+	<li>Added Websocket Sender script interface</li>
+	<li>Added API support</li>
+</ul>
+
+<H3>Version 14</H3>
+<ul>
+	<li>Updated for 2.7.0.</li>
+</ul>
+
+<H3>Version 13</H3>
+
+<ul>
+	<li>Fix context include/exclude pop up menu items.</li>
+	<li>Fix/correct help buttons.</li>
+	<li>Set fuzzer script type enabled by default (Issue 2997).</li>
+	<li>Normalise the Session Properties panel Exclude from WebSockets.</li>
+	<li>Implements WebSocketSenderListener.</li>
+	<li>Use JRE decoder for UTF-8 conversions and log (debug) invalid payloads (related to Issue 3324).</li>
+	<li>Focus WebSockets tab just once (Issue 3747).</li>
+	<li>Minor code adjustment to align with core changes.</li>
+	<li>Code changes for Java 9 (Issue 2602).</li>
+	<li>Remove header Sec-WebSocket-Extensions (Issue 3324).</li>
+	<li>Add description to Fuzzer WebSocket Processor script type.</li>
+	<li>Update fuzzer template (use JSDoc and fix typos).</li>
+</ul>
+</BODY>
+</HTML>

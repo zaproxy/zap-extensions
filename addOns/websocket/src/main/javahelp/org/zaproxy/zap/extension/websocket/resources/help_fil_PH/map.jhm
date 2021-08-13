@@ -11,6 +11,7 @@
  	<mapID target="websocket.options" url="contents/options.html" />
  	<mapID target="websocket.sessionProperties" url="contents/sessionProperties.html" />
  	<mapID target="websocket.script" url="contents/script.html" />
+  <mapID target="websocket.pscanrules" url="contents/pscanrules.html" />
  	<mapID target="websocket.api" url="contents/api.html" />
  	<mapID target="websocket.about" url="contents/about.html" />
 </map>

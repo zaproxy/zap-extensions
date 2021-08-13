@@ -6,7 +6,7 @@
         Pagsubok ng pag-kontrol sa pag-access
     </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Paggsubok sa Access Kontrol</h1>
 
 <p>
@@ -54,8 +54,30 @@
     <li>nasa kaukulan ng StatusTab, ang paglalahad ng mga resulta, kung alin sa mga pahina ang nagpapakita ng matagumpay na pag access ng kung alin sa mga gumagamit at ang kaso ay minamarkahan kapag ang mga patakaran ng access kung saan hindi nasunod.
     </li>
 </ul>
+<strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
 
-<h2>Maaari ring tingnan sa</h2>
+<h2>API</h2>
+
+The Addon exposes the following API endpoints:
+
+<h3>Actions</h3>
+	<h4>scan</h4>
+	Starts an Access Control scan with the given context ID and user ID (can be comma separated list of IDs). 
+	(Optional parameters: boolean identifying if an unauthenticated user should be included (default false), boolean 
+	identifying whether or not Alerts are raised (default true), and the Risk level for the Alerts (default High).) 
+	[<strong>Note:</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
+
+	<h4>writeHTMLreport</h4>
+	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
+
+<h3>Views</h3>
+	<h4>getScanProgress</h4>
+	Gets the Access Control scan progress (percentage integer) for the given context ID.
+
+	<h4>getScanStatus</h4>
+	Gets the Access Control scan status (description string) for the given context ID.
+
+<h2>See also</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

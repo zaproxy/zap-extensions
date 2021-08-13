@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Panduan pengguna ZAP" tocid="toplevelitem">
 		<tocitem text="Add-On" tocid="addons">
-			<tocitem text="Penulisan Python" image="python-logo" target="jython"/>
+			<tocitem text="Penulisan Python" image="python-logo" target="jython">
+				<tocitem text="Options" target="jython.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

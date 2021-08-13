@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP Korisničko Upustvo" tocid="toplevelitem">
 		<tocitem text="Dodaci" tocid="addons">
-			<tocitem text="Python Scripting" image="python-logo" target="jython"/>
+			<tocitem text="Python Scripting" image="python-logo" target="jython">
+				<tocitem text="Options" target="jython.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

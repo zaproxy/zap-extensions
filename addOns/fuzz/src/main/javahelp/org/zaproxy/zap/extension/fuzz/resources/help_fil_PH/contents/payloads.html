@@ -6,7 +6,7 @@
 Diyalogo ng mga Kargamento
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Diyalogo ng mga Kargamento</h1>
 Ito ay nagpapahintulot sa iyo na pumili ng mga tag-buo ng kargamento na magagamit kapag <a href="concepts.html">nagpa-fuzz</a> ng isang kahilingan.
 <br><br>
@@ -16,11 +16,12 @@ Ang mga sumusunod na uri ng mga taga-buo ay ibinigay bilang default:
 <ul>
 <li>Walang laman/Null - bumubuo ng napiling kargamento nang maraming beses, nag-iiwan sa mensahe ng walang pagbabago. Ang taga-buo ng kargamento na ito ay kapaki-pakinabang upang magpadala ng maraming mga mensahe na ipoproseso mamaya, halimbawa, gamit ang <a href="httpmessageprocessors.html">Processor ng HTTP ng Fuzzer (Script)</a>.</li>
 <li>File - pumili ng anumang lokal na file para sa isa sa mga atake</li>
-<li>Mga Fuzzer ng File - pumili ng anumang kombinasyon ng pagpa-fuzz ng mga file na nakarehistro sa ZAP, halimbawa sa pamamagitan ng mga add-on tulad ng fuzzdb</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
 <li>Numberzz - nagpapahintulot na madaling mabauo ang pagkasunod-sunod ng mga numero, na may pasadyang pagtaas</li>
 <li>Regex - bumuo ng mga atake batay sa mga pattern ng regex</li>
 <li>Strings - mga sariwang string, na maaaring ipasok nang manu-mano o idikit</li>
 <li>Script - mga pasadyang script na maaaring bumuo ng anumang kargamento na kinakailangan</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
 </ul>
 Maaari mong isulat ang mga script sa taga-buo ng pasadyang kargamento - ang mga ito ay maaaring makabigay ng anumang kargamento na kailangan mo.
 <br><br>

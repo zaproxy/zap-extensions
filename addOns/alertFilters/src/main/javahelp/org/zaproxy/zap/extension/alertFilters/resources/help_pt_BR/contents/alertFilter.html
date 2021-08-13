@@ -2,35 +2,31 @@
 <html>
 <head>
 <title>
-Filtros de alerta de contexto
+Alert Filters
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Filtros de alerta de contexto</h1>
+<body>
+<h1>Alert Filters</h1>
 <p>
-Filtros de alerta de contexto permitem que você contorne automaticamente os níveis de risco de quaisquer alertas gerados pelas regras varreduras ativa e passiva dentro de um contexto.
-</p>
+Alert Filters allow you to automatically override the risk levels
+of any alerts raised by the active and passive scan.
 <p>
-Este complemento adiciona um painel de 'Filtros de Alerta' para a caixa de diálogo de contextos. <br>O painel mostra uma lista de todos os filtros de alerta junto com botões para adicionar, remover e excluir.
-</p>
-<p>
-Para usar este complemento que você precisará:
+There are 2 different types of Alert Filter:
+
 <ul>
-<li>Adicionar a seu aplicativo para um contexto</li>
-<li>Abra a caixa de diálogo Propriedades da sessão (por exemplo, clicando duas vezes sobre o contexto)</li>
-<li>Selecione o painel de 'Filtros de Alerta' dos contextos</li>
-<li>Clique em 'Adicionar' e preencha os detalhes para cada alerta que você deseja substituir</li>
+<li><a href="contextAlertFilter.html">Context Alert Filters</a></li>
+<li><a href="globalAlertFilter.html">Global Alert Filters</a></li>
 </ul>
-Nota: Os filtros de alerta serão aplicados somente para novos alertas, não para qualquer alertas que já estavam presentes quando o filtro foi criado. 
+
 </p>
 <p>
-As caixas de diálogo 'Adicionar' e 'Modificar' têm os seguintes campos: <h3>Alerta</h3> Menu pull down que contém todas as regras de alerta ativas e passivas atualmente instaladas.
-
-<h3>Novo nível de risco</h3> O novo nível a ser atribuído a qualquer alerta gerado que corresponde aos critérios definidos pela regra.
- 
-<h3>URL</h3> Um URL opcional. <br>Se especificado, então esta regra será aplicada se a URL coincide com a URL de um alerta. <br><h3>URL é regex?</h3> Se ligado, e uma URL for especificada, em seguida, a URL será tratada como uma expressão regex quando comparada com a URL do alerta. <br>Se não estiver ligado então qualquer URL especificada deve corresponder exatamente à URL do alerta.
-
-<h3>Parâmetro</h3> Um parâmetro opcional. <br>Se especificado, então esta regra será aplicada se o parâmetro corresponde exatamente ao parâmetro de alerta. <br><h3>Habilitado</h3> Se ligado/setado, então esta regra será aplicada a todos os alertas  em um determinado contexto.
+The easiest way to create Alert Filters is to right click an alert and select 
+the 'Create Alert Filter...' option. This will display the 
+<a href="alertFilterDialog.html">Alert Filter Dialog</a>.<br>
+You can also create Alert Filter manually.
+</p>
+By default Alert Filters only apply to new alerts, 
+but you can both test and apply the Alert Filters to existing alerts.
 
 </body>
 </html>

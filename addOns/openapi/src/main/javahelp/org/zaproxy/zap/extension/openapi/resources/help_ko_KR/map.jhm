@@ -6,4 +6,5 @@
 <map version="1.0">
     <mapID target="openapi-icon" url="contents/images/openapi.png" />
     <mapID target="openapi" url="contents/openapi.html" />
+    <mapID target="openapi.automation" url="contents/automation.html" />
 </map>

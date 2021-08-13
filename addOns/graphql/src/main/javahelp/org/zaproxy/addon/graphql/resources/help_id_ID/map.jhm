@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="graphql-icon" url="contents/images/graphql.png" />
+    <mapID target="graphql" url="contents/graphql.html" />
+    <mapID target="graphql.options" url="contents/options.html" />
+    <mapID target="graphql.script" url="contents/script.html" />
+    <mapID target="graphql.automation" url="contents/automation.html" />
+</map>

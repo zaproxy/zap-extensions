@@ -6,7 +6,7 @@
 Substituto
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Substituto</h1>
 O substituto (replacer) é uma maneira fácil de substituir strings em solicitações e respostas.
 <p>
@@ -40,13 +40,20 @@ Se ele estiver presente no corpo da resposta então ele será substituído pelo 
 
 <h3>Comparação em Regex</h3> Se definido/set, a string de comparação será tratada como uma expressão regex.
 Esta opção é desabilitada na comparação de cabeçalhos verdadeiros.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>String de substituição</h3> A nova sequência que substituirá a seleção especificada.
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Habilitar</h3> Se não for definido, então a regra não será aplicada.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>Avançado</h3> Se habilitado, uma aba adicional irá aparecer e permitir que você especifique a quais 'iniciadores' a regra deverá ser aplicável.
-Cada componente ZAP que pode enviar e receber mensagens é um iniciador separado, então isto dá-lhe um controle muito fino sobre exatamente quando a regra deve ser aplicada.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Se precisar de mais controle sobre quando e como o texto deve ser substituído, você pode usar o Console de Script ZAP que lhe dá total controle sobre as mensagens do ZAP.

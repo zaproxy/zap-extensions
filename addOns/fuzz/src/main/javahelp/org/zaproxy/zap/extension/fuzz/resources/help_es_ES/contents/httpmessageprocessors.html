@@ -6,7 +6,7 @@
 Procesadores de mensajes
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Procesadores de mensajes HTTP</h1>
 Los procesadores de mensajes HTTP pueden acceder y cambiar los mensajes HTTP que se están difuminando, controlar el proceso de fuzzing e interactuar con la interfaz de usuario de ZAP.
 <p>
@@ -29,21 +29,25 @@ Permite seleccionar las secuencias de comandos del procesador Fuzzer HTTP habili
 <li>Levantar alertas</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Detector de reflexión de carga útil</h3>
-Indica en la columna Estado de la tabla de resultados si una de las cargas útiles de inyección encontró en la respuesta, utilizando "<img src="images/reflected_icon.png"> Reflejado".<br>
-<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Nota:</strong> This processor is automatically added to the list of processors.
 
 <h3>Solicitud de actualización de longitud de contenido</h3>
-Actualizaciones (o añadir, si no está presente) el <code>Largo del contenido</code> encabezado de solicitud con la longitud del cuerpo de la solicitud
-para todos los métodos de solicitud. No se realiza ningún cambio si el tamaño del cuerpo de la solicitud es cero y el encabezado aún no está presente.<br>
-<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Nota:</strong> This processor is automatically added to the list of processors.
 
 <h3>Creador de etiqueta</h3>
-Permite agregar 'etiquetas' personalizadas, basadas en el contenido de la respuesta, a la columna Estado de la tabla de resultados
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
 
 <h3>Procesador de mensajes del usuario</h3>
-Permite buscar fuzz como usuario, utilizando uno de los usuarios definidos en los contextos que incluyen el mensaje HTTP que se difumina. Los usuarios deben
-existen para poder seleccionar y agregar este procesador.
+Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
 
 <p>
 Otros complementos pueden definir procesadores de mensajes HTTP adicionales.

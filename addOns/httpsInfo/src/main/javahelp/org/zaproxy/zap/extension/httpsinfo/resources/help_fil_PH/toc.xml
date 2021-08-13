@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="HTTPS na Add-on ng Impormasyon" image="httpsinfo.icon" target="httpsinfo" />
+			<tocitem text="HTTPS Info" image="httpsinfo.icon" target="httpsinfo" />
 		</tocitem>
 	</tocitem>
 </toc>

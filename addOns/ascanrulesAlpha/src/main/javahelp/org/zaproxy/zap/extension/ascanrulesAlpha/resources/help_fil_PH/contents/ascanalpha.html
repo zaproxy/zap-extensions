@@ -2,79 +2,49 @@
 <html>
 <head>
 <title>
-Aktibong Pag-Scan Panuntunan - alpha
+Active Scan Rules - Alpha
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Aktibong Pag-scan ng mga Panuntunan - alpha</h1>
-Kasama sa sumusunod na mga panuntunan ang mga sumusunod na alituntunin ng kalidad ng alpha na kasama sa ganitong magdagdag: 
+<body>
+<h1>Active Scan Rules - Alpha</h1>
+The following alpha quality active scan rules are included in this add-on:
 
-<h2>Apache Scan Rules DoS (CVE-2011-3192)</h2>
-Mga pagsusuri upang makita kung ang server ay maaaring mahina sa isyu ng Apache Range Header Denial of Service, sa pamamagitan ng paghiling ng labing-isang (11)
-iba't ibang mga hanay ng byte. Ang labing isang hanay ay isa pang higit sa tinatanggap ng mga patched / fixed server.
+<h2>An example active scan rule which loads data from a file</h2>
+This implements an example active scan rule that loads strings from a file that the user can edit.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
 
-<h2>Cookie Slack Detector</h2>
-Sinusuri ng mga cookies upang makita kung ang ilan ba ay walang epekto sa laki ng tugon kapag tinanggal, lalung-lalo na ang mga cookies na naglalaman ng pangalang "session" o "userid"
-
-<h2>ELMAH Scanner</h2>
-Mga pagsusuri upang makita kung ang Modyul ng Pag-log ay Error at Handler (elmah.axd) ay magagamit ng HTTP Module. Kahit na ang modyul na ito ay madaling gamitin
-ang mga tagapag-paunlad at iba pang mga stakeholder ay maaari din itong tumagas ng isang malaking halaga ng impormasyon kung saan isang 
-seguridad analyst o malisyosong indibidwal
-maaaring interesado sa. <br> <br>
-Ang ELMAH scanner ay nagta-target ng mga teknolohiyang batay sa Microsoft: IIS, Windows, ASP, at MSSQL.
-
-<h2> Halimbawa ng Aktibong Scanner ng File </>
-Ito ay nagpapatupad ng isang halimbawa ng aktibong pag-scan ng panuntunan na nag-load ng mga string mula sa isang file na maaaring i-edit ng user. <br>
-Para sa higit pang mga detalye tingnan: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
-
-<h2> Halimbawa Simple Active Scanner </>
-Ito ay nagpapatupad ng isang napaka-simpleng halimbawa ng aktibong i-scan ang panuntunan. <br>
-Para sa higit pang mga detalye tingnan: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
-
-<h2> Pagpapahiwatig ng Wika Pagpapahayag </>
-Ang software ay gumagawa ng lahat o bahagi ng pahayag na wika (EL) na pahayag sa isang Java Server Page (JSP) na gumagamit ng eksternal na naimpluwensiyang input mula sa isang upstream component, ngunit hindi ito neutralisahin o hindi tama ang neutralizes ng mga espesyal na elemento na maaaring baguhin ang inilaan na pahayag ng EL bago ito ay pinaandar. Sa ilang mga bersyon ng Spring 3.0.5 at mas maaga, nagkaroon ng kahinaan (CVE-2011-2730) kung saan ang Mga Tag ng Mga Wika ng Pagpapahayag ay masuri nang dalawang beses, na epektibong nailantad ang anumang aplikasyon sa EL injection. Gayunpaman, kahit na para sa mga susunod na bersyon, ang kahinaan na ito ay posible pa rin depende sa pagsasaayos.
-
-<h2>GET for POST Scanner</h2>
-Ang scanner na ito ay tumatagal ng <code> application / x-www-form-urlencoded</>POST na mga kahilingan, binabago ang mga parameter mula sa POST sa GET at muling ipinapadala ang kahilingan. 
-Kung ang Tugon ng GET ay katulad ng orihinal na sagot ng POST pagkatapos ang isang alerto ay tataas. Habang ito ay hindi kinakailangan
-kumatawan sa isang kahinaan sa seguridad sa sarili nito ay maaaring ipahiwatig na ang iba pang mga pag-atake o kahinaan ay maaaring pinalawak o pinadali.
-(Tulad ng POST nakabase sa Cross-Site Scripting (XSS) ang atake ay nagbabago saGET.)
-
-<h2> Site ng HTTP lamang </>
-Sinusuri ng aktibong scanner kung ang isang HTTP site ay nagsilbi sa ilalim ng HTTPS.
-
-<h2>Httpoxy</h2>
-Ang mga aktibong scanner na ito ay sumusuri kung ang isang site ay gumagamit ng HTTP Proxy header na tinukoy sa kahilingan. <br>
-Nagtatakda ito ng HTTP proxy na nakikinig sa lahat ng mga interface sa isang random na itinalagang libreng port.
-Pagkatapos ay nagpapadala ito ng isang serye ng mga kahilingan sa target server gamit ang HTTP Proxy header na nakatakda sa bawat isa sa mga magagamit
-IP address at ang port na ito ay nakikinig sa.
-Kung ang isang kahilingan ay natanggap sa bagong port, malamang na mahina ang server. <br>
-<b> IMPORTANTENG </> - ang computer na tumatakbo sa ZAP ay dapat tumanggap ng mga papasok na kahilingan sa mga di-makatwirang mga port -
-kung pinipigilan ng isang firewall ang mga papasok na koneksyon, hindi gagana ang panuntunang ito. 
-
-<h2>HTTPS As HTTP Scanner</h2>
-Tinatangka ng aktibong scanner na ma-access ang nilalaman na orihinal na na-access sa pamamagitan ng HTTPS (SSL / TLS) sa pamamagitan ng HTTP.
+<h2>Example Active Scan Rule: Denial of Service</h2>
+This implements a very simple example active scan rule.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
 
 <h2>LDAP Injection</h2>
-LDAP Iniksyon ay maaring posible. Maaaring posible para sa isang magsasalakay na laktawan ang mga kontrol ng pagpapatunay, at upang tingnan at baguhin ang di-makatwirang data sa direktoryo ng LDAP.
+LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 
-<h2>SQL Injection - MsSQL</h2>
-Ang aktibong scanner ay sumusubok na mag-iniksyon ng mga partikular na mga utos ng pagtulog ng MsSQL sa mga halaga ng parameter at pinag-aaralan ang oras ng pagtugon ng server upang makita kung ang pagtulog ay epektibo na isinasagawa sa server (na nagpapahiwatig ng isang matagumpay na pag-atake ng SQL iniksyon).
+<h2>NoSQL Injection - MongoDB</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
+It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
 
-<h2>Source Code Disclosure - File Inclusion</h2>
-Gumagamit ng mga diskarte sa pagsasama ng lokal na file upang i-scan para sa mga file na naglalaman ng source code sa web server.
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
 
-<h2>Source Code Disclosure - Git</h2>
-Gumagamit ng Git source code repository metadata upang i-scan para sa mga file na naglalaman ng pinag-mulan ng code sa web server.
+<h2>CORS Header</h2>
+This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
 
-<h2>Trace.axd Scanner</h2>
-Suriin upang makita kung ang Trace Viewer (trace.axd) ay magagamit. Kahit na bahagi na ito ay maginhawa para sa mga developer at
-ang iba pang mga stakeholder ito ay maaaring tumagas ng malaking halaga ng impormasyon na isang analyst ng seguridad o malisyosong indibidwal
-maaaring interesado sa. <br> <br>
-Ang trace.axd scanner ay nagta-target ng mga teknolohiya batay sa Microsoft: IIS, Windows, ASP, at MSSQL.
-
-<h2>User Agent Fuzzer</h2>
-Ang aktibong scanner ay nagsusuri para sa mga pagkakaiba sa tugon batay sa fuzzed User Agent (eg. mobile na mga site, ma-access bilang isang Search Engine Crawler). Ang scanner na ito ay nakukumpara sa tugon ng statuscode at ang harshcode ng tugon ng katawan ay may orihinal na tugon.
+<h2>Web Cache Deception</h2>
+This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<ul>
+    <li>User must be authenticated before using this rule</li>
+</ul>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 
 </body>
 </html>

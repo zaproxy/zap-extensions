@@ -4,32 +4,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Pestaña de Consola de Script</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Pestaña de Consola de Script</h1>
 <p>
 La Consola de Scripts le permite escribir scripts que se ejecutan en ZAP.<br/>
 Está compuesta por:
 <ul>
 <li>Una barra de herramientas</li>
-<li>Un área en el que puede escribir sus scripts</li>
-<li>Un área para mensajes de depuración y error</li>
+<li>A text area (top) in which you can write your scripts</li>
+<li>An output text area (bottom) for debug and error messages, with "print" statements.</li>
 </ul>
-You can run 'Stand alone' scripts from within this tab using the 'Run' button on the tab toolbar.<br/>
+You can run 'Stand Alone' scripts from within this tab using the 'Run' button on the tab toolbar.<br/>
 Todos los demás tipos de scripts serán ejecutados cuando sean habilitados o si son explícitamente invocados.<br/><br/>
-Para crear un nuevo script de cargar o cambiar scripts vea la <a href="tree.html">The Scripts 'tree' tab</a>.  
+To create a new script or to load or switch scripts see the <a href="tree.html">The Scripts 'tree' tab</a>.  
 <p>
 Haga click derecho en el área del script para opciones de visualización y edición.
 <p>
-Plantillas pueden verse en la consola pero no pueden ser editadas.<br/>
+In ZAP versions after 2.7.0 if the script currently displayed in the console is changed by another program then you 
+will be given the option to keep the script in the console or replace it with the changed script.<br>
+If a script is changed by another program when it is not being displayed and has not previously been changed in the script console 
+then that script will be loaded and the new contents will be used when the script is run.
+<p>
+Templates can be viewed in the console but cannot be edited.<br/>
 
-<h3>Auto-completar</h3>
-La consola soporta una forma limitada de auto-completado, controlada por un botón en la barra de herramientas.<br/>
-Cuando está activado, aparecerá una ventana emergente cuando usted escriba el nombre de uno de los parámetros definidos, seguidos por un punto - esto le mostrará todos los métodos disponibles para que los llame. 
-Seleccionas uno de ellos insertará el método y los parámetros en su script.
-Si usted escribe otro punto inmediatamente después de la llamada al método, entonces le será mostrado otro aviso para los métodos disponibles para el tipo de devolución, si hubiera. Usted podrá seguir ampliando los tipos devueltos hasta que empiece a escribir otra cosa.
+<h3>Auto-complete</h3>
+The console supports a limited form of auto-complete, controlled by a button on the toolbar.<br/>
+When enabled a popup will be shown when you type the name of one of the defined parameters followed by a dot -
+this will show you all of the methods available for you to call. 
+Selecting one of them will insert the method and parameters into your script.
+If you type another dot immediately after the method call then you will be shown another prompt for the methods
+available to the return type, if any. You will be able to keep expanding the types returned until you start typing something else.
  
 
-<h2>Véase También</h2>
+<h2>See also</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

@@ -6,7 +6,7 @@
 Diálogo de cargas útiles
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Diálogo de cargas útiles</h1>
 Esto le permite seleccionar los generadores de carga útil para usarse cuando <a href="concepts.html">fuzzing</a> lo solicite.
 <br><br>
@@ -16,11 +16,12 @@ Los siguientes tipos de generadores se proporcionan por defecto:
 <ul>
 <li>Vacío / nulo: genera la carga seleccionada varias veces, dejando el mensaje sin cambios. Este generador de carga útil es útil para enviar mensajes múltiples que luego se procesan, por ejemplo, con un <a href="httpmessageprocessors.html"> Procesador HTTP Fuzzer (Script) </>.</li>
 <li>Archivo: seleccione cualquier archivo local para realizar ataques únicos</li>
-<li>Archivos Fuzzers: seleccione cualquier combinación de los archivos fuzzing registrados en ZAP, por ejemplo, Mediante add-ons como fuzzdb</li>
+<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
 <li>Numberzz - permite generar fácilmente una secuencia de números, con incrementos personalizados</li>
 <li>Regex: genera ataques basados en patrones de expresiones regulares</li>
 <li>Cadenas: cadenas sin formato, que pueden ingresarse manualmente o pegarse en</li>
 <li>Script: scripts personalizados que pueden generar cualquier carga útil requerida</li>
+<li>Json - generate attacks by fuzzing the provided json</li>
 </ul>
 Puede escribir scripts de generador de carga útil personalizados; estos pueden suministrar cualquier carga útil que necesite.
 <br><br>

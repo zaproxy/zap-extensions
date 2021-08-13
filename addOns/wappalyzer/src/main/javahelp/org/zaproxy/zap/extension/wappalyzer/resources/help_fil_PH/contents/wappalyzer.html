@@ -4,32 +4,45 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Ang Pagtukoy ng Teknolohiya</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Ang Pagtuklas ng Teknolohiya Gamit ang Wappalyzer</h1>
 <p>
-Ang Pagtuklas ng Teknolohiya na add-on ay gumagamit ng Wappalyzer (http://wappalyzer.com/) na mga patakaran upang malaman ang mga teknolohiyang ginamit ng mga aplikasyon.<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 Ito ay gumagana sa paraang katulad ng Wappalyzer na browser na mga add-on na may sumusunod na mga eksepsyon:
 <ul>
 <li>Hindi ito gumagamit ng 'Global JavaScript na mga variable' habang ang mga ito ay mahirap subukan kung walang isang 'ganap' na browser</li>
-<li>Ito ay hindi nagpapakita ng mga bersyon - ito ay gagawin pa</li>
-<li>Ito ay hindi nagpapakita ng tiwala sa sarili - ito ay gagawin pa</li>
+<li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Ito ay nagbibigay-daan sa iyo upang tingnan ang 'katibayan' na ginamit sa pagtuklas ng mga teknolohiya</li>
 </ul>
 <h2>Ang tab ng teknolohiya</h2>
 Ang tab na ito ay nagpapakita ng lahat ng mga natukoy na mga teknolohiya para sa napiling site.<br>
 Kanang pag-klik sa isang teknolohiya ay nagpapakita ng isang 'Magpakita ng katibayan' na menu sa ilalim na kung saan ang lahat ng mga regexes na ginagamit ay makita ito.<br>
-Pagpili ng isang regex ay lumipat sa 'Paghahanap' na tab ay hanapin ang buong kasaysayan para sa regex.
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>Ang Panlabas na mga link</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
-	<td>Ang Homepage ng Wappalyzer</td></tr>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
-	<td>Ang Repository ng Wappalyzer</td>
+	<td>The Wappalyzer Repository</td>
 </tr>
 </table>
 

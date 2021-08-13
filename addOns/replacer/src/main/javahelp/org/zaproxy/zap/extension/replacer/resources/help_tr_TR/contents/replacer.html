@@ -6,7 +6,7 @@
 Yerine geçen
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Yerine geçen</h1>
 Değiştirici, sorgu ve yanıtlarda string değiştirmek için kolay bir yoldur.
 <p>
@@ -54,16 +54,20 @@ Neyin değiştirilmesi gerektiğini belirlemek için kullanılacak dize - Ayrın
 <h3>Eşleşme Düzenli İfadeleri</h3>
 Eğer ayarlanırsa Eşleşme Dizesi bir düzenli ifade olarak değerlendirilir.
 Asıl başlıkları eşleştirirken bu seçenek devre dışı bırakılır.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>Değiştirme Dizesi</h3>
-Verilen seçimin yerini alacak yeni dize.
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Etkinleştir</h3>
-Belirlenmezse, kural geçerli olmayacaktır.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>İleri</h3>
-Eğer belirlenirse kuralın hangi 'başlatıcılar' için uygulanmasını belirlemenize izin veren ek bir sekme gösterilir.
-Mesaj gönderebilen ve alabilen her ZAP bileşeni ayrı bir başlatıcıdır, bu nedenle kuralın tam olarak ne zaman uygulanacağı konusunda çok ince bir tane kontrolü sağlar.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Eğer metin ne zaman ve nasıl değiştireleceği ile ilgili daha fazla kontrole ihtiyacınız var ise, Zam Komut Dosyası Konsolu'nu kullanabilirsiniz.

@@ -6,9 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP Panduan Pengguna" tocid="toplevelitem">
 		<tocitem text="Menambahkan Ons" tocid="addons">
-			<tocitem text="Wadah Penghidang-Mengirim-Kejadian" image="html5connectivity" >
-		    	<tocitem text="Perkenalan" target="sse.introduction"/>
-				<tocitem text="Biaya" target="sse.tab"/>
+			<tocitem text="Wadah Penghidang-Mengirim-Kejadian" target="sse.introduction" image="html5connectivity" >
+				<tocitem text="Tab" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

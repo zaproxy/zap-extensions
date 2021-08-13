@@ -10,6 +10,10 @@
          		<tocitem text="Tab" target="websocket.tab"/>
 				<tocitem text="Mga Opsyon" target="websocket.options"/>
 				<tocitem text="Mga katangian ng Sesyon" target="websocket.sessionProperties"/>
+				<tocitem text="Scripts" target="websocket.script"/>
+				<tocitem text="API" target="websocket.api"/>
+        <tocitem text="Passive Scan Rules" target="websocket.pscanrules"/>
+				<tocitem text="About" target="websocket.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

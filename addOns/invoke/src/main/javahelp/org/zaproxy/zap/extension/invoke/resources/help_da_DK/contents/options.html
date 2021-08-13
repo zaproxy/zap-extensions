@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Options Applications screen</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Options Applications screen</h1>
 	<p>
 		This screen allows you to configure the <a href="concepts.html">applications</a> that
@@ -53,6 +53,18 @@
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
 			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
 		</tr>
 	</table>
 	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'

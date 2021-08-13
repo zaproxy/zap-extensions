@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Options Token Generator Screen</TITLE>
+</HEAD>
+<BODY>
+    <H1>Options Token Generator screen</H1>
+    <p>
+        This screen allows you to configure the <a href="tokengen.html">Token Generator</a>.
+    <h2>Configuration Options</h2>
+    <table border="2">
+        <tr>
+            <th>Field</th>
+            <th>Details</th>
+            <th>Default</th>
+            <th>Config File</th>
+        </tr>
+        <tr>
+            <td>Number of Threads</td>
+            <td>The number of threads used during the token generation.
+            </td>
+            <td align="center">5</td>
+            <td>Key: <code>tokengen.threadsPerScan</code><br>Value: a non-negative integer.</td>
+        </tr>
+        <tr>
+            <td>Request Delay (in milliseconds)</td>
+            <td>
+                The time to wait before sending each request, to avoid overloading the target server.
+                <p>
+                <strong>Note:</strong> Given the high number of requests sent during the Token
+                Generation increasing the delay might have a high impact on the time that the
+                generation will take to complete.
+            </td>
+            <td align="center">0</td>
+            <td>Key: <code>tokengen.requestDelayInMs</code><br>Value: a non-negative integer.</td>
+        </tr>
+    </table>
+
+</BODY>
+</HTML>

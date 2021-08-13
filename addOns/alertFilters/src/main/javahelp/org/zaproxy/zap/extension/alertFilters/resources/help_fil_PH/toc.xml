@@ -6,7 +6,10 @@
 <toc version="2.0">
 	<tocitem text="Gabay ng Gumagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Mga Filter ng Konteksto na Alerto" image="flags-icon" target="addon.alertFilter"/>
+			<tocitem text="Alert Filters" target="addon.alertFilter" image="flags-icon">
+				<tocitem text="Context Alert Filters" target="addon.contextAlertFilter"/>
+				<tocitem text="Global Alert Filters" target="addon.globalAlertFilter"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

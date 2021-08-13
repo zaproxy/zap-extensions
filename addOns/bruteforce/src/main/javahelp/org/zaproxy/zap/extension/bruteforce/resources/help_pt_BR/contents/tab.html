@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Guia de navegação forçada</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Aba de navegação forçada</h1>
 
 	A aba de navegação forçada permite que você execute uma varredura com
@@ -16,47 +16,52 @@
 	<br> A barra de ferramentas fornece um conjunto de botões que permitem iniciar, parar, pausar e continuar a verificação.
 	<br> Uma barra de progresso mostra o quanto progrediu a verificação do site selecionado.
 	<br> O indicador 'Varreduras em andamento' mostra quantas varreduras estão ativas - passar o cursor sobre esse valor irá mostrar num pop-up uma lista dos sites que estão sendo examinados.
+	<br> The toolbar also includes a button to export the displayed content as CSV.
 
 	<h2>Menu do botão direito</h2>
-	Clique com o botão direito em uma ou mais linhas, e aparecerá um menu que lhe permitirá:
+	Right clicking on one or more rows will bring up a menu which will allow you to:
 
 	<h3>Excluir de</h3>
-	Este menu possui os seguintes submenus:
+	This menu has the following submenus:
 
 	<h4>Proxy</h4>
-	Isto irá excluir do proxy os nós selecionados. Eles ainda passarão pelo ZAP, mas não serão exibidos em qualquer uma das guias.
-	<br /> Isto pode ser usado para ignorar URLs que você sabe que não são relevantes para o sistema que você está testando.
-	<br /> Os nós podem ser incluídos novamente através do diálogo
-	<i>Propriedades da Sessão</i> .
+	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
+	but will not be shown in any of the tabs.
+	<br /> This can be used to ignore URLs that you know are not relevant to the system you
+	are currently testing.
+	<br /> The nodes can be included again via the
+	<i>Propriedades da Sessão</i> dialog
 
 	<h4>Scanner</h4>
-	Isto irá impedir que os nós selecionados entrem na varredura ativa.
-	<br /> Os nós podem ser incluídos novamente através do diálogo
-	<i>Propriedades da Sessão</i> .
+	This will prevent the selected notes from being actively scanned.
+	<br /> The nodes can be included again via the
+	<i>Propriedades da Sessão</i> dialog
 
 	<h4>Spider</h4>
-	Isto irá impedir que os nós selecionados sejam percorridos pelo spider.
-	<br /> Os nós podem ser incluídos novamente através do diálogo
-	<i>Propriedades da Sessão</i> .
+	This will prevent the selected nodes from being spidered.
+	<br /> The nodes can be included again via the
+	<i>Propriedades da Sessão</i> dialog
 
 	<h3>Copiar</h3>
-	Isso irá copiar as URLs selecionadas para a área de transferência.
+	This will copy the selected URLs to the clipboard.
 
 	<h3>Reenviar...</h3>
-	Isso irá abrir o
-	<i>Diálogo de reenvio</i> que lhe permite reenviar o request depois de fazer quaisquer alterações que você deseja.
+	This will bring up the
+	<i>Diálogo de reenvio</i> which allows you to resend the request after making any changes to
+	it that you want to.
 
 	<h3>Novo Alerta...</h3>
-	Isso irá abrir o
-	<i>diálogo Acrescentar Alerta</i> que permite a você registrar manualmente um novo
-	<i>alerta</i> para este request.
+	This will bring up the
+	<i>diálogo Acrescentar Alerta</i> which allows you to manually record a new
+	<i>alerta</i> against this request.
 
 	<h3>Ver no Navegador</h3>
-	Isto irá abrir a URL do nó selecionado em seu navegador padrão.
+	This will open the URL of the selected node in your default browser.
 
 	<h3>Gerar formulário de teste anti CSRF</h3>
-	Isto irá abrir a URL de um formulário destinado à detecção de problemas de CSRF.
-	<br> Ele só vai ser habilitado para solicitações POST - caso o API esteja habilitado e se o Java suportar a abertura de URLs em um navegador na sua plataforma.
+	This will open a URL which will give you a generated form for testing for CSRF issues.
+	<br> It will only be enabled for POST requests, if the API is enabled and if Java
+	supports the opening of URLs in a browser on your platform.
 
 	<h2>Veja também</h2>
 	<table>

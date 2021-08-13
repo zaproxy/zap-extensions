@@ -2,64 +2,49 @@
 <html>
 <head>
 <title>
-Active Scan Rules - alpha
+Active Scan Rules - Alpha
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1> Reglas de Análisis Activo - alpha</h1>
-Las siguientes reglas de análisis activo de calidad alfa están incluidas en este complemento:
+<body>
+<h1>Active Scan Rules - Alpha</h1>
+The following alpha quality active scan rules are included in this add-on:
 
-<h2> Encabezado Dos de Apache Range (CVE-2011-3192) </h2>
-Comprueba si el servidor es vulnerable al problema de denegación de servicio del encabezado de rango Apache, solicitando once (11)
-diferentes rangos de bytes. Once rangos es uno más de lo aceptado por los servidores parcheados / fijos.
+<h2>An example active scan rule which loads data from a file</h2>
+This implements an example active scan rule that loads strings from a file that the user can edit.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
 
-<h2>Detector de cookie flojo</h2>
-Evalúa los cookies para detectar si alguno no tiene efecto en tamaño receptivo cuando se omite, especialmente los cookie que contienen el nombre "session" o "userid"
+<h2>Example Active Scan Rule: Denial of Service</h2>
+This implements a very simple example active scan rule.<br>
+For more details see: 
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
 
-<h2>Escaner de ELMAH</h2>
-Evalúa si los módulos de error de registro y los manejadores (elmah.axd) del módulo HTTP están disponibles. A pesar de que este módulo es util para desarrolladores y otros interesados, este también puede filtrar una cantidad importante de información que algún analista de seguridad o individuo malicioso podría estar interesado.<br><br> El escaner ELMAH tiene como objetivo tecnologías basadas en Microsoft: IIS, Windows, ASP, y MSSQL.
+<h2>LDAP Injection</h2>
+LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 
-<h2>Ejemplo archivo activo explorador</h2>
-Esto implementa una regla de exploración activa de ejemplo que carga cadenas de un archivo que el usuario puede editar. <br>Para más detalles ven: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html 
+<h2>NoSQL Injection - MongoDB</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
+It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
 
-<h2>Scanner activo Simple ejemplo</h2> 
-Esto implementa una regla de exploración activa de ejemplo muy simple. <br>Para más detalles ven: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html 
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
 
-<h2>Expresión lenguaje inyección</h2> 
-El software construye todo o parte de una instrucción de lenguaje (EL) de expresión un Java Server Page (JSP) con entrada influenciado externamente de un componente ascendente, pero este no neutralizar o neutraliza incorrectamente elementos especiales que podrían modificar la instrucción del "EL" previsto antes de ejecutarse. En ciertas versiones de Spring 3.0.5 y anteriores, había una vulnerabilidad (CVE-2011-2730) en la que la expresión del lenguaje de las etiquetas podía ser evaluado dos veces, lo que efectivamente exponía cualquier aplicación a la inyección de EL. Sin embargo, aun en versiones posteriores, esta debilidad is aun posible dependiendo de la configuración.
+<h2>CORS Header</h2>
+This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
 
-<h2>GET for POST Scanner</h2>
-This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
-Si la respuesta GET es la misma que la respuesta POST original aparece una alerta. A pesar de que esto no necesariamente representa una debilidad de seguridad en sí mismo, puede indicar que otros ataques o debilidades pueden expandirse o simplificarse.
-(Como un POST basado en un ataque Cross-Site Scripting (XSS) que cambie a GET.)
-
-<h2>HTTP Only Site</h2>
-Este escáner activo comprueba si un sitio HTTP sirve bajo HTTPS.
-
-<h2>Httpoxy</h2>
-Este escáner activo comprueba si un sitio está utilizando el encabezado HTTP Proxy especificado en la solicitud.<br>
-Configura un proxy HTTP el cual escucha todas las interfaces de un puerto libre asignado aleatoriamente.
-Luego envía una serie de solicitudes al servidor destino con el encabezado Proxy HTTP configurado a cada uno de las direcciones de IP disponibles y el puerto que está siendo escuchado.
-Si una solicitud es recibida en el nuevo puerto, entonces el posible que el servidor sea vulnerable.<br>
-<b>IMPORTANTE</b> - la computadora donde se ejecuta ZAP debe aceptar las solicitudes entrantes en puertos arbitrarios. Si un firewall evita conexiones entrantes esta regla no funcionará. 
-
-<h2>HTTPS como un escáner HTTP </h2> Este escáner activo intenta acceder al contenido que originalmente fue accedido a través de HTTPS (SSL/TLS) mediante HTTP.
-
-<h2>Inyección LDAP</h2>
-La inyección LDAP puede ser posible. Puede ser posible para un atacante eludir los controles de autenticación, y ver y modificar datos arbitrarios en el directorio LDAP.
-
-<h2>Inyección SQL - MsSQL</h2> Este escáner activo intenta inyectar comandos MsSQL específicos de suspensión en valores de los parámetros y analiza el tiempo de respuesta del servidor para ver si la suspensión se ejecuto con éxito en el servidor (indicando un exitoso ataque de inyección SQL).
-
-<h2>Revelación del código fuente - Inclusión de archivo</h2>
-Utiliza las técnicas de inclusión de archivo local para analizar archivos que contengan el código fuente en el servidor de la web.
-
-<h2>Revelación del código fuente - Git</h2>
-Utiliza los metadatos del repositorio del código fuente de Git para analizar archivos que contengan el código fuente en el servidor web.
-
-<h2>Escáner de Trace.axd</h2> Comprueba si el visor Trace (trace.axd) está disponible. A pesar de que este componente sea conveniente para los desarrolladores y otros interesados, puede filtrar una cantidad importante de información, la cual puede interesarle a un analista de seguridad o a un individuo malicioso. <br><br> El escáner trace.axd tiene como objetivo las tecnologías basadas en Microsof: IIS, Windows, ASP, y MSSQL.
-
-<h2>User Agent Fuzzer</h2>
-Este escáner comprueba las diferencias de respuesta basado en agente de usuario inexacto (por ejemplo. sitios móviles, acceso como un rastreador de motor de búsqueda). Este escáner compara la respuesta de statuscode y el hascode del cuerpo de la respuesta con la respuesta original.
+<h2>Web Cache Deception</h2>
+This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<ul>
+    <li>User must be authenticated before using this rule</li>
+</ul>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 
 </body>
 </html>

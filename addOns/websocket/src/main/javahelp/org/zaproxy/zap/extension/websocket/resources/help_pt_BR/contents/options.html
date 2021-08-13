@@ -6,7 +6,7 @@
 Opções específicas de WebSocket
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Opções específicas de WebSocket</h1>
 <p>
 Esta tela permite que você configure as opções de WebSockets:
@@ -39,9 +39,8 @@ Se esta opção estiver desativada nenhuma mensagem de <i>PING</i> ou <i>PONG</i
 </ul>
 Essa configuração não afeta os pontos de interrupção são definidos explicitamente para <i>PING</i> ou <i>PONG</i> mensagens. Você pode exibir esses pontos de interrupção explícitos na <i>Aba dos pontos de interrupção</i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
+<h3>Remover cabeçalho <code>Sec-WebSocket-Extensions</code></h3>
+Permite remover o cabeçalho <code>Sec-WebSocket-Extensions</code> das mensagens de handshake, assim nenhuma transformação é feita às mensagens WebSocket enviadas/recebidas.<br>
 This option should always be enabled unless the client or the server under test requires them. The WebSocket
 messages might not be correctly processed by ZAP when extensions are used.
 

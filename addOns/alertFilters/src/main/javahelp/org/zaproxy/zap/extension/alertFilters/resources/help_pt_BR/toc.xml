@@ -6,7 +6,10 @@
 <toc version="2.0">
 	<tocitem text="Guia do Usuário do ZAP" tocid="toplevelitem">
 		<tocitem text="Complementos" tocid="addons">
-			<tocitem text="Filtros de alerta de contexto" image="flags-icon" target="addon.alertFilter"/>
+			<tocitem text="Alert Filters" target="addon.alertFilter" image="flags-icon">
+				<tocitem text="Context Alert Filters" target="addon.contextAlertFilter"/>
+				<tocitem text="Global Alert Filters" target="addon.globalAlertFilter"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

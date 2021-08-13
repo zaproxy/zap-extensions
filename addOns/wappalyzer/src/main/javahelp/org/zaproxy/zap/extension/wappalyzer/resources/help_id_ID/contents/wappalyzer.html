@@ -4,28 +4,41 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Teknologi Deteksi</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Teknologi Deteksi Menggunakan Wappalyzer</h1>
 <p>
-Teknologi Deteksi add-on menggunakan aturan wappalyzer (http://wappalyzer.com/) untuk mendeteksi teknologi yang digunakan dengan aplikasi.<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 Berfungsi dalam cara yang sama dengan pengaya browser Wappalyzer dengan pengecualian berikut:
 <ul>
 <li>Tidak menggunakan 'variabel global JavaScript' karena ada kesulitan untuk menguji tanpa browser lengkap</li>
-<li>Tidak menampilkan versi - ini masih todo</li>
-<li>Tidak menampilkan keyakinan - ini masih todo</li>
+<li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Memungkinkan anda untuk melihat 'bukti' yang digunakan untuk mendeteksi teknologi</li>
 </ul>
 <h2>Tab Teknologi</h2>
 Tab ini menampilkan semua teknologi yang terdeteksi untuk situs yang dipilih.<br>
 Klik kanan pada teknologi akan menampilkan menu 'Tampilan bukti' dimana semua regexes yang digunakan untuk mendeteksinya.<br>
-Memilih regex akan beralih ke tab 'penelusuran' dan menelusuri melalui riwayat untuk regex tersebut.
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>Tautan Eksternal</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
-	<td>Beranda Wappalyzer</td></tr>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
