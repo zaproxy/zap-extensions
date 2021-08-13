@@ -2,7 +2,7 @@ projects:
   - id: 32705
     sources:
       - dir: "src/main/javahelp/%helpPath%help"
-        outputDir: "src/main/javahelp/%helpPath%resources"
+        outputDir: "src/main/javahelp/%helpPath%"
         crowdinPath:
           dir: "/addons/%addOnId%"
           filename: "%file_pathname%"
