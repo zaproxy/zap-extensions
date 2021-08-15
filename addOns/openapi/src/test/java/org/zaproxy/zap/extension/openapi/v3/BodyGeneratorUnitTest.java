@@ -319,6 +319,22 @@ class BodyGeneratorUnitTest {
     }
 
     @Test
+    void shouldUseExamples() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-examples",
+                                        openAPI.getPaths().get("/pets-with-examples").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        assertEquals("{\"age\":6,\"name\":\"Big Fluffy\"}", request);
+    }
+
+    @Test
     void shouldGenerateArraysFromExamples() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
