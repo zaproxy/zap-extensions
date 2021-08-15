@@ -21,19 +21,24 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,6 +84,11 @@ public class BodyGenerator {
                             put(Element.OUTER_SEPARATOR, ",");
                         }
                     });
+
+    public String generate(MediaType mediaType) {
+        String exampleBody = extractExampleBody(mediaType);
+        return exampleBody == null ? this.generate(mediaType.getSchema()) : exampleBody;
+    }
 
     public String generate(Schema<?> schema) {
         if (schema == null) {
@@ -338,5 +348,15 @@ public class BodyGenerator {
             // Shouldn't happen, standard charset.
             return "";
         }
+    }
+
+    private static String extractExampleBody(MediaType mediaType) {
+        return Optional.ofNullable(mediaType.getExamples())
+                .map(Map::values)
+                .map(Collection::stream)
+                .map(stream -> stream.map(Example::getValue).filter(Objects::nonNull).findFirst())
+                .orElse(Optional.ofNullable(mediaType.getExample()))
+                .map(Object::toString)
+                .orElse(null);
     }
 }

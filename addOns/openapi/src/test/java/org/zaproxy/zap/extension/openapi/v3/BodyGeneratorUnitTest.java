@@ -567,6 +567,42 @@ class BodyGeneratorUnitTest {
     }
 
     @Test
+    void shouldUseJsonMediaTypeExamples() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-examples",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-json-media-type-examples")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        assertEquals("{\"age\":6,\"name\":\"Big Fluffy\"}", request);
+    }
+
+    @Test
+    void shouldUseJsonMediaTypeExample() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-examples",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-json-media-type-example")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        assertEquals("{\"age\":1,\"name\":\"Small Fluffy\"}", request);
+    }
+
+    @Test
     void shouldGenerateArraysFromExamples() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
