@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "14"
 description = "An advanced active injection bundle for SQLi (derived by SQLMap)"
 
 zapAddOn {
@@ -16,6 +15,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }
 

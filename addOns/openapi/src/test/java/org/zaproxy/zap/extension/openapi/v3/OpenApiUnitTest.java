@@ -315,7 +315,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         requestor.run(converter.getRequestModels());
 
         // what is the expected behavior?
-        assertEquals(accessedUrls.size(), 20);
+        assertEquals(accessedUrls.size(), 19);
     }
 
     @Test
@@ -473,6 +473,35 @@ class OpenApiUnitTest extends AbstractServerTest {
         checkRequestContentTypeHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
+    @Test
+    void shouldGenerateJsonRequestsBody()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/VAmPI/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new OpenApiUnitTest.DefnServerHandler(test, defnName, "PetStore_defn.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        requestor.addListener(
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestHeader().getHeader("Accept"));
+                });
+        requestor.run(converter.getRequestModels());
+
+        assertEquals(19, converter.getRequestModels().size());
+    }
+
     private void checkRequestContentTypeHeaders(Map<String, String> accessedUrls, String host) {
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));
         assertEquals("application/json", accessedUrls.get("POST http://" + host + "/PetStore/pet"));
@@ -499,10 +528,6 @@ class OpenApiUnitTest extends AbstractServerTest {
                 accessedUrls.get("POST http://" + host + "/PetStore/pet/10"));
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/10"));
         assertEquals(null, accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
-        assertTrue(
-                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
-        assertEquals(
-                null, accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
@@ -575,11 +600,6 @@ class OpenApiUnitTest extends AbstractServerTest {
         assertEquals("*/*", accessedUrls.get("POST http://" + host + "/PetStore/pet/10"));
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/10"));
         assertEquals("*/*", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
-        assertTrue(
-                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
-        assertEquals(
-                "application/json",
-                accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals(
                 "application/json",
@@ -657,9 +677,6 @@ class OpenApiUnitTest extends AbstractServerTest {
                 accessedUrls.get("POST http://" + host + "/PetStore/pet/32"));
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/32"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/32"));
-        assertTrue(
-                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/32/uploadImage"));
-        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/32/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
@@ -706,7 +723,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/fsmith"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/user/fsmith"));
         // And that there arent any spurious ones
-        assertEquals(20, accessedUrls.size());
+        assertEquals(19, accessedUrls.size());
     }
 
     private class DefnServerHandler extends NanoServerHandler {

@@ -7,8 +7,9 @@
 	<tocitem text="Gabay ng Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
 			<tocitem text="Ang Ajax Spider" image="addon.spiderajax.icon" target="addon.spiderajax.concepts">
-				<tocitem text="Ang diyalogo" target="addon.spiderajax.dialog" />
-				<tocitem text="Mga Opsyon" target="addon.spiderajax.options" />
+				<tocitem text="Automation" target="addon.spiderajax.automate" />
+				<tocitem text="Dialog" target="addon.spiderajax.dialog" />
+				<tocitem text="Options" target="addon.spiderajax.options" />
 				<tocitem text="Tab" target="addon.spiderajax.tab" />
 			</tocitem>
 		</tocitem>

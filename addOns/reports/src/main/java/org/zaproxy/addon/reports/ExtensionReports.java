@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -50,6 +51,10 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -174,6 +179,20 @@ public class ExtensionReports extends ExtensionAdaptor {
         return clone;
     }
 
+    public static List<String> getSites() {
+        List<String> list = new ArrayList<>();
+        SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
+        SiteNode root = siteMap.getRoot();
+        if (root.getChildCount() > 0) {
+            SiteNode child = (SiteNode) root.getFirstChild();
+            while (child != null) {
+                list.add(child.getName());
+                child = (SiteNode) root.getChildAfter(child);
+            }
+        }
+        return list;
+    }
+
     public static boolean isIncluded(ReportData reportData, AlertNode alertNode) {
         Alert alert = alertNode.getUserObject();
         if (alert == null) {
@@ -219,20 +238,26 @@ public class ExtensionReports extends ExtensionAdaptor {
         return true;
     }
 
+    public AlertNode getRootAlertNode()
+            throws NoSuchMethodException, SecurityException, IllegalAccessException,
+                    IllegalArgumentException, InvocationTargetException {
+        ExtensionAlert extAlert =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+
+        Method treeModelMethod = extAlert.getClass().getDeclaredMethod("getTreeModel");
+        treeModelMethod.setAccessible(true);
+
+        DefaultTreeModel treeModel = (DefaultTreeModel) treeModelMethod.invoke(extAlert);
+
+        return (AlertNode) treeModel.getRoot();
+    }
+
     public AlertNode getFilteredAlertTree(ReportData reportData) {
 
         AlertNode root = null;
 
-        ExtensionAlert extAlert =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
-
         try {
-            Method treeModelMethod = extAlert.getClass().getDeclaredMethod("getTreeModel");
-            treeModelMethod.setAccessible(true);
-
-            DefaultTreeModel treeModel = (DefaultTreeModel) treeModelMethod.invoke(extAlert);
-
-            root = (AlertNode) treeModel.getRoot();
+            root = getRootAlertNode();
 
             AlertNode filteredRoot = cloneAlertNode(root);
             AlertNode child;
@@ -266,9 +291,71 @@ public class ExtensionReports extends ExtensionAdaptor {
         return root;
     }
 
+    /**
+     * Generate a report (default theme, all sites, all alerts)
+     *
+     * @param templateName the name of the template, e.g. traditional-html
+     * @param reportFilename the full path of the file the report will be written to
+     * @param title the title to be used in the report
+     * @param display true if the report should be displayed using the default application
+     * @return the file the report was written to
+     * @throws IOException
+     */
+    public File generateReport(
+            String templateName,
+            String reportFilename,
+            String title,
+            String description,
+            boolean display)
+            throws IOException {
+        return this.generateReport(
+                templateName, reportFilename, title, description, display, null, getSites(), null);
+    }
+
+    /**
+     * Generate a report (all alerts)
+     *
+     * @param templateName the name of the template, e.g. traditional-html
+     * @param reportFilename the full path of the file the report will be written to
+     * @param title the title to be used in the report
+     * @param display true if the report should be displayed using the default application
+     * @param theme the theme to be used
+     * @param sites a list of the sites to include
+     * @param contexts a list of the contexts to include
+     * @return the file the report was written to
+     * @throws IOException
+     */
+    public File generateReport(
+            String templateName,
+            String reportFilename,
+            String title,
+            String description,
+            boolean display,
+            String theme,
+            List<String> sites,
+            List<org.zaproxy.zap.model.Context> contexts)
+            throws IOException {
+        Template template = this.getTemplateByConfigName(templateName);
+        if (template == null) {
+            throw new IllegalArgumentException("Unknown template: " + templateName);
+        }
+        ReportData reportData = new ReportData();
+        reportData.setTitle(title);
+        reportData.setDescription(description);
+        reportData.setSites(sites);
+        reportData.setContexts(contexts);
+        reportData.setTheme(theme);
+        reportData.setSections(template.getSections());
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        reportData.setAlertTreeRootNode(getFilteredAlertTree(reportData));
+
+        return this.generateReport(reportData, template, reportFilename, display);
+    }
+
     public File generateReport(
             ReportData reportData, Template template, String reportFilename, boolean display)
-            throws IOException, DocumentException {
+            throws IOException {
         TemplateEngine templateEngine = new TemplateEngine();
         FileTemplateResolver templateResolver = new FileTemplateResolver();
         templateResolver.setTemplateMode(template.getMode());
@@ -351,7 +438,13 @@ public class ExtensionReports extends ExtensionAdaptor {
                 ITextRenderer renderer = new ITextRenderer();
                 renderer.setDocument(file);
                 renderer.layout();
-                renderer.createPDF(outputStream);
+                try {
+                    renderer.createPDF(outputStream);
+                } catch (DocumentException e) {
+                    // Throw a standard exception so that add-ons using this method don't need to
+                    // import it
+                    throw new IOException("Invalid template: " + template.getConfigName(), e);
+                }
             }
             if (!file.delete()) {
                 LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
@@ -388,6 +481,37 @@ public class ExtensionReports extends ExtensionAdaptor {
         }
 
         return alertCounts;
+    }
+
+    public List<HttpMessage> getHttpMessagesForRule(int ruleId, int max) {
+        List<HttpMessage> list = new ArrayList<>();
+
+        try {
+            Enumeration<?> alertEnum = this.getRootAlertNode().children();
+            while (alertEnum.hasMoreElements()) {
+                AlertNode alertNode = (AlertNode) alertEnum.nextElement();
+                if (alertNode.getUserObject().getPluginId() == ruleId) {
+                    Enumeration<?> instEnum = alertNode.children();
+                    while (instEnum.hasMoreElements() && list.size() < max) {
+                        AlertNode instNode = (AlertNode) instEnum.nextElement();
+                        list.add(instNode.getUserObject().getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to get HttpMessages for rule Id " + ruleId, e);
+        }
+
+        return list;
+    }
+
+    public Map<Integer, Integer> getAlertCountsByRule() {
+        try {
+            return this.getAlertCountsByRule(this.getRootAlertNode());
+        } catch (Exception e) {
+            LOGGER.error("Failed to access alerts tree", e);
+        }
+        return new HashMap<>();
     }
 
     private Map<Integer, Integer> getAlertCountsByRule(AlertNode rootNode) {
@@ -490,6 +614,10 @@ public class ExtensionReports extends ExtensionAdaptor {
                 site = site.substring(i + 2);
             }
             i = site.indexOf(":");
+            if (i >= 0) {
+                site = site.substring(0, i);
+            }
+            i = site.indexOf("/");
             if (i >= 0) {
                 site = site.substring(0, i);
             }

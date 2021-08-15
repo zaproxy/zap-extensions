@@ -1,11 +1,12 @@
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
+import org.zaproxy.gradle.crowdin.CrowdinExtension
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
 description = "Common configuration of the WebDriver add-ons."
 
 val geckodriverVersion = "0.29.1"
-val chromeDriverVersion = "90.0.4430.24"
+val chromeDriverVersion = "91.0.4472.101"
 
 fun configureDownloadTask(outputDir: File, targetOs: DownloadWebDriver.OS, task: DownloadWebDriver) {
     val geckodriver = task.browser.get() == DownloadWebDriver.Browser.FIREFOX
@@ -31,6 +32,12 @@ fun configureDownloadTask(outputDir: File, targetOs: DownloadWebDriver.OS, task:
 }
 
 subprojects {
+    crowdin {
+        configuration {
+            file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        }
+    }
+
     afterEvaluate {
         val webdriversDir = file("$buildDir/webdrivers/")
         val targetOs = project.extra["targetOs"] as DownloadWebDriver.OS
@@ -59,3 +66,9 @@ fun Project.zapAddOn(configure: AddOnPluginExtension.() -> Unit): Unit =
 
 fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("manifest", configure)
+
+fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("crowdin", configure)
+
+val Project.crowdin: CrowdinExtension get() =
+    (this as ExtensionAware).extensions.getByName("crowdin") as CrowdinExtension

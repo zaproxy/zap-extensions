@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Opcije Forsirani pregled ekran</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Opcije Forsirani pregled ekran</h1>
 	<p>
 		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
@@ -26,5 +26,36 @@
 	<br> These should be text files with one file or directory name per line.
 	<br> Files are added to the 'dirbuster' directory underneath the ZAP home directory.
 
+    <h3>Force Browse files without extension</h3>
+    If selected then in addition to brute forcing directories, files without extension will also be brute forced.
+    <br> The URI of the file to be brute forced is derived by appending to the base path the entries of the selected forced browse text file.
+    <br> By default this option is unchecked.
+    <br> Enabling this will increase the scanning time.
+
+	<h3>Force Browse files</h3>
+	If checked then in addition to brute forcing directories, the files will also be brute forced.
+    <br> The URI of the file to be brute forced is derived by appending given extensions to the entries of selected forced browse text file.
+    <br> Users do not need to worry whether the entry already ends with an extension or not. The conflict is handled internally.
+    <br> By default this option is unchecked.
+    <br> Enabling this will increase the scanning time.
+    
+    <h3>File extensions</h3>
+    If Force Browse files option is checked, then you can specify the file extensions that need to be brute forced.
+    <br> When specifying multiple extensions separate each extension with a comma(,).
+    <br> If no value is specified, "php" will be used as the default extension.
+    
+    <h3>File extensions to ignore</h3>
+    The scanner parses the response body to filter existing links.
+    <br> The extracted links are then used to make new requests.
+    <br> If file extensions to ignore is specified then links ending with those extensions are ignored from making requests.
+    <br> When specifying multiple extensions separate each extension with a comma(,).
+    <br> By default, this is set to "jpg, gif, jpeg, ico, tiff, png, bmp".
+    
+    <h3>Fail Case String</h3>
+    The scanner will request for every file type in every directory that it finds with the given fail case string appended.
+    <br> The response from this page is used to determine whether or not a guessed file/directory is there.
+    <br> By default, this is set to "thereIsNoWayThat-You-CanBeThere".
+    <br> If you’re getting strange results, consider changing this.
+  
 </body>
 </html>

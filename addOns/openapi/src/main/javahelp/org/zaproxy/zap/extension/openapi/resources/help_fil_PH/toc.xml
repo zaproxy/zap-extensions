@@ -3,7 +3,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Pagsuporta sa Bukas na Ispesisikasyon ng API" image="openapi-icon" target="openapi"/>
+			<tocitem text="OpenAPI Support" image="openapi-icon" target="openapi">
+				<tocitem text="Automation" target="openapi.automation"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

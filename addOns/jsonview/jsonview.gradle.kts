@@ -1,4 +1,3 @@
-version = "2"
 description = "Adds a view that shows JSON messages nicely formatted"
 
 zapAddOn {
@@ -13,5 +12,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }

@@ -33,10 +33,13 @@
  */
 package com.fasteasytrade.JRandTest.Algo;
 
-import com.fasteasytrade.JRandTest.IO.*;
-import java.util.*;
-import java.security.*;
-import javax.crypto.spec.*;
+import java.security.Key;
+import java.util.Set;
+
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import com.fasteasytrade.JRandTest.IO.FileAlgoRandomStream;
 
 /**
  * Simple java DES algorithm as a random stream.
@@ -79,6 +82,7 @@ public class DES extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setupKeys()
 	 */
+	@Override
 	public void setupKeys() {
 
 		super.setupKeys();
@@ -88,6 +92,7 @@ public class DES extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setup()
 	 */
+	@Override
 	public void setup() {
 
 		try {
@@ -119,6 +124,7 @@ public class DES extends FileAlgoRandomStream {
 	 *      if filename exists (not null), we open file and later will encrypt
 	 *      it. Else, algorithm will generate random data (as PRNG).
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 
 		if (filename != null)
@@ -136,6 +142,7 @@ public class DES extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -180,6 +187,7 @@ public class DES extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -200,6 +208,7 @@ public class DES extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		if (!isOpen())
 			return -1;

@@ -1,0 +1,33 @@
+projects:
+  - id: 32705
+    sources:
+      - dir: "src/main/javahelp/%helpPath%help"
+        outputDir: "src/main/javahelp/%helpPath%"
+        crowdinPath:
+          dir: "/addons/%addOnId%"
+          filename: "%file_pathname%"
+        exportPattern:
+          dir: "/zaproxy/addons/%addOnId%"
+          filename: "help_%locale_with_underscore%/%file_pathname%"
+        includes:
+          - pattern: "contents/***.html"
+          - pattern: "helpset.hs"
+            crowdinPathFilename: "%file_name%.xml"
+            exportPatternFilename: "help_%locale_with_underscore%/%file_name%_%locale_with_underscore%%file_extension%"
+            translatableElements:
+              - "/helpset/title"
+              - "/helpset/presentation/title"
+              - "/helpset/view/label"
+          - pattern: "toc.xml"
+            translatableElements:
+              # Crowdin doesn't support descendant axis
+              # "/toc/descendant::tocitem[@text]"
+              # Define manually some:
+              - "/toc/tocitem[@text]"
+              - "/toc/tocitem/tocitem[@text]"
+              - "/toc/tocitem/tocitem/tocitem[@text]"
+              - "/toc/tocitem/tocitem/tocitem/tocitem[@text]"
+              - "/toc/tocitem/tocitem/tocitem/tocitem/tocitem[@text]"
+          - pattern: "index.xml"
+            translatableElements:
+              - "/index/indexitem[@text]"

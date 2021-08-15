@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
 description = "Adds an option to import a file of URLs. The file must be plain text with one URL per line."
 
 zapAddOn {

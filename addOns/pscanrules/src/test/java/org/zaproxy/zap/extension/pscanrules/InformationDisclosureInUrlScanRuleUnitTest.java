@@ -135,8 +135,7 @@ class InformationDisclosureInUrlScanRuleUnitTest
 
     @Test
     @Disabled(value = "Scanner does not yet eliminate dashes when looking for credit card numbers.")
-    public void creditCardDashesInURLParamValue()
-            throws HttpMalformedHeaderException, URIException {
+    void creditCardDashesInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = URI + "?docid=6011-0009-9013-9424&hl=en";

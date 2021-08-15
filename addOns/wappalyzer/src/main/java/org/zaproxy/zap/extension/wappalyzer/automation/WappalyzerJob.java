@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.wappalyzer.automation;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -43,10 +42,12 @@ public class WappalyzerJob extends AutomationJob {
         return Collections.singletonList(new WappalyzerJobResultData(this.getName()));
     }
 
+    @Override
     public String getTemplateDataMin() {
         return "";
     }
 
+    @Override
     public String getTemplateDataMax() {
         return "";
     }
@@ -57,8 +58,7 @@ public class WappalyzerJob extends AutomationJob {
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {}
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {}
 
     @Override
     public String getType() {

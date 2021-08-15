@@ -4,9 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [11] - 2021-07-29
 ### Changed
 - Update minimum ZAP version to 2.10.0.
 - Maintenance changes.
+
+### Added
+- API endpoints "applyAll", "applyContext", and "applyGlobal" to apply enabled Alert Filters to existing alerts (Issue 5966).
+- API endpoints "testAll", "testContext", and "testGlobal" to test enabled Alert Filters against existing alerts.
 
 ## [10] - 2020-01-17
 ### Added
@@ -59,6 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[11]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v8

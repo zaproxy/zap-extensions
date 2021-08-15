@@ -2,25 +2,26 @@
 <html>
 <head>
 <title>
-HTTPS na Add-on ng Impormasyon
+HTTPS Info
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>HTTPS na Add-on ng Impormasyon</h1>
+<body>
+<h1>HTTPS Info</h1>
 
 <p>
 Ang HTTPS na add-on na impormasyon ay mapapasok sa pamamagitan ng kontekstong menu sa loob ng Sites na Tree o sa table ng Kasyasayan. 
-Ito ay magpapakita ng dialogo kung saan ang iba't ibang mga buod ng impormasyon ay makikita patungkol sa HTTPs sertipiko ng target na server, at nag-aalok ng SSL/TLS cipher na mga suite.
+It displays tabs in a status panel, in which various summary information is displayed
+regarding the target server's HTTPS certificate, and the offered SSL/TLS cipher suites.
 </p>
 
 <p>
-Ang add-on na ito ay nagleleberahe ng ibang OWASP na proyekto: 
-<a href="https://www.owasp.org/index.php/OWASP_DeepViolet_TLS/SSL_Scanner">Malalim na Bayolet</a>
-upang maisagawa ang sertipikong ito at masayper suite ang pagkukuha ng impormasyon.
+This add-on leverages another OWASP project: 
+<a href="https://github.com/spoofzu/DeepViolet/">Deep Violet</a> 
+to perform it's certificate and cipher suite information gathering.
 </p>
 
 <h2>Pangkalahatan</h2>
-Ang porsyon sa ibabaw ng dialogo ay inilalaan para sa pangkalahatang mga detalye ng SSL/TLS na sertipiko na piniresenta ng server. Kagaya ng:
+The top portion of a tab is devoted to general details of the SSL/TLS certificate presented by the server. Such as:
 <ul>
 <li>Paksa ng DN</li>
 <li>Ang Lumalagdang Algoritmo</li>
@@ -32,8 +33,8 @@ Ang porsyon sa ibabaw ng dialogo ay inilalaan para sa pangkalahatang mga detalye
 </ul>
 
 <h2>Mga Sayper na Suite</h2>
-Ang pinakamababang porsyon ng dialogo ay nakalaan para sa enumerasyon/paglilista ng natukoy ng Sayper na Suite na
-binibigay ng target na server, ginrupo kada protokol ng handshake(SSLv2, SSLv3, TLSv1, TLSv1.1, at iba pa.).
+The bottom portion of a tab is devoted to enumeration/listing of the specific Cipher Suites the 
+target server offers, grouped by handshake protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
 
 </body>
 </html>

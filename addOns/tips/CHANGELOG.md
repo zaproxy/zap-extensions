@@ -4,9 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [8] - 2021-05-28
 ### Changed
 - Update minimum ZAP version to 2.10.0.
 - Update docker refs to use zaproxy.org instead of GitHub wiki.
+- Update IRC link to Libera Chat.
 - Maintenance changes.
 
 ## [7] - 2020-01-17
@@ -44,5 +48,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/tips-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/tips-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/tips-v6

@@ -4,21 +4,26 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Aba do Console de Script</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Aba do Console de Script</h1>
 <p>
 O Console de Scripts permite que você escreva scripts que são executados dentro do ZAP.<br/>
 Ele é composto de:
 <ul>
 <li>Uma barra de ferramentas</li>
-<li>Uma área em que você pode escrever seus scripts</li>
-<li>Uma área para depurar e mensagens de erro</li>
+<li>A text area (top) in which you can write your scripts</li>
+<li>An output text area (bottom) for debug and error messages, with "print" statements.</li>
 </ul>
-Você pode executar scripts 'stand alone' de dentro desta guia, usando o botão 'Run' na barra de ferramentas da aba.<br/>
+You can run 'Stand Alone' scripts from within this tab using the 'Run' button on the tab toolbar.<br/>
 Todos os outros tipos de scripts serão executados quando habilitados ou se invocados explicitamente.<br/><br/>
-Para criar, carregar ou trocar de script, veja a <a href="tree.html">Aba da Árvore de Scripts</a>.  
+To create a new script or to load or switch scripts see the <a href="tree.html">Aba da Árvore de Scripts</a>.  
 <p>
 Right-click in the script area for display and editing options.
+<p>
+In ZAP versions after 2.7.0 if the script currently displayed in the console is changed by another program then you 
+will be given the option to keep the script in the console or replace it with the changed script.<br>
+If a script is changed by another program when it is not being displayed and has not previously been changed in the script console 
+then that script will be loaded and the new contents will be used when the script is run.
 <p>
 Templates can be viewed in the console but cannot be edited.<br/>
 

@@ -1,4 +1,3 @@
-version = "7"
 description = "Imports and scans WSDL files containing SOAP endpoints."
 
 zapAddOn {
@@ -16,7 +15,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set("0.*")
+                            version.set(">=0.4.0")
                         }
                     }
                 }

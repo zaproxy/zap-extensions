@@ -28,6 +28,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -89,17 +91,24 @@ class SoapJobUnitTest {
     @Test
     void shouldApplyCustomConfigParams() {
         // Given
-        SoapJob job = new SoapJob();
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
         String wsdlFile = "C:\\Users\\ZAPBot\\Documents\\test file.wsdl";
         String wsdlUrl = "https://example.com/test%20file.wsdl";
+        String yamlStr =
+                "parameters:\n" + "  wsdlUrl: " + wsdlUrl + "\n" + "  wsdlFile: " + wsdlFile;
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SoapJob job = new SoapJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        job.applyCustomParameter("wsdlFile", wsdlFile);
-        job.applyCustomParameter("wsdlUrl", wsdlUrl);
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(job.getWsdlFile(), is(equalTo(wsdlFile)));
-        assertThat(job.getWsdlUrl(), is(equalTo(wsdlUrl)));
+        assertThat(job.getParameters().getWsdlFile(), is(equalTo(wsdlFile)));
+        assertThat(job.getParameters().getWsdlUrl(), is(equalTo(wsdlUrl)));
     }
 
     @Test
@@ -108,12 +117,16 @@ class SoapJobUnitTest {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr = "parameters:\n" + "  wsdlUrl: 'https://example.com/test file.wsdl'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SoapJob job = new SoapJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        SoapJob job = new SoapJob();
-        // The following URL is invalid because it is not escaped.
-        job.applyCustomParameter("wsdlUrl", "https://example.com/test file.wsdl");
-        job.runJob(env, null, progress);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -127,11 +140,16 @@ class SoapJobUnitTest {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr = "parameters:\n" + "  wsdlFile: 'Invalid file path'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SoapJob job = new SoapJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        SoapJob job = new SoapJob();
-        job.applyCustomParameter("wsdlFile", "Invalid file path.");
-        job.runJob(env, null, progress);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

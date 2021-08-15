@@ -28,6 +28,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -50,6 +52,7 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -59,6 +62,7 @@ class PassiveScanConfigJobUnitTest {
 
     private ExtensionLoader extensionLoader;
     private ExtensionPassiveScan extPscan;
+    private PassiveScanParam pscanParam;
 
     @BeforeAll
     static void init() {
@@ -76,6 +80,11 @@ class PassiveScanConfigJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
+        OptionsParam optionsParam = mock(OptionsParam.class);
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        pscanParam = mock(PassiveScanParam.class);
+        given(optionsParam.getParamSet(PassiveScanParam.class)).willReturn(pscanParam);
+
         extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         extPscan = new ExtensionPassiveScan();
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
@@ -95,6 +104,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.CONFIGS)));
         assertThat(job.getParamMethodObject(), is(extPscan));
         assertThat(job.getParamMethodName(), is("getPassiveScanParam"));
+        assertThat(job.getParameters().getEnableTags(), is(equalTo(false)));
     }
 
     @Test
@@ -135,7 +145,8 @@ class PassiveScanConfigJobUnitTest {
                 "parameters:\n"
                         + "  maxAlertsPerRule: 2\n"
                         + "  scanOnlyInScope: true\n"
-                        + "  maxBodySizeInBytesToScan: 1000";
+                        + "  maxBodySizeInBytesToScan: 1000\n"
+                        + "  enableTags: true";
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -145,9 +156,9 @@ class PassiveScanConfigJobUnitTest {
         psp.load(new ZapXmlConfiguration());
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -155,6 +166,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(psp.getMaxAlertsPerRule(), is(equalTo(2)));
         assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
         assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
+        assertThat(job.getParameters().getEnableTags(), is(equalTo(true)));
     }
 
     @Test
@@ -174,9 +186,9 @@ class PassiveScanConfigJobUnitTest {
         psp.load(new ZapXmlConfiguration());
 
         // When
-        LinkedHashMap<?, ?> params =
-                (LinkedHashMap<?, ?>) ((LinkedHashMap<?, ?>) data).get("parameters");
-        job.applyParameters(params, progress);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -185,7 +197,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
         assertThat(psp.getMaxAlertsPerRule(), is(equalTo(2)));
-        assertThat(psp.isScanOnlyInScope(), is(equalTo(false)));
+        assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
         assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
     }
 
@@ -212,7 +224,10 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.runJob(null, data, progress);
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -245,7 +260,9 @@ class PassiveScanConfigJobUnitTest {
         PassiveScanConfigJob job = new PassiveScanConfigJob();
 
         // When
-        job.runJob(null, data, progress);
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -254,8 +271,152 @@ class PassiveScanConfigJobUnitTest {
         assertThat(
                 progress.getWarnings().get(0),
                 is(equalTo("!automation.error.pscan.rule.unknown!")));
-        assertThat(rule2.getAlertThreshold(), is(equalTo(AlertThreshold.MEDIUM)));
-        assertThat(rule3.getAlertThreshold(), is(equalTo(AlertThreshold.HIGH)));
+    }
+
+    @Test
+    void shouldIgnoreRuleWithNoId() {
+        // Given
+        String yamlStr =
+                "rules:\n" + "- id:\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
+
+        // Need to mock the extension for this test
+        extPscan = mock(ExtensionPassiveScan.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
+        TestPluginScanner rule3 = new TestPluginScanner(3);
+        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getInfos().size(), is(equalTo(1)));
+        assertThat(progress.getInfos().get(0), is(equalTo("!automation.info.pscan.rule.noid!")));
+    }
+
+    @Test
+    void shouldRejectBadEnableTagsParam() {
+        // Given
+        String yamlStr = "parameters:\n" + "  enableTags: test";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
+        psp.load(new ZapXmlConfiguration());
+
+        // When
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badbool!")));
+    }
+
+    @Test
+    void shouldEnableTags() {
+        // Given
+        String yamlStr = "parameters:\n" + "  enableTags: true";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
+        psp.load(new ZapXmlConfiguration());
+
+        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        tag1.setEnabled(false);
+        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        tag2.setEnabled(false);
+        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+
+        // When
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(tag1.isEnabled(), is(equalTo(true)));
+        assertThat(tag2.isEnabled(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldDisableTags() {
+        // Given
+        String yamlStr = "parameters:\n" + "  enableTags: false";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
+        psp.load(new ZapXmlConfiguration());
+
+        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        tag1.setEnabled(true);
+        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        tag2.setEnabled(true);
+        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+
+        // When
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(tag1.isEnabled(), is(equalTo(false)));
+        assertThat(tag2.isEnabled(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldDisableTagsByDefault() {
+        // Given
+        String yamlStr = "parameters:\n" + "  enableTags: ";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
+        psp.load(new ZapXmlConfiguration());
+
+        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        tag1.setEnabled(true);
+        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        tag2.setEnabled(true);
+        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+
+        // When
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(tag1.isEnabled(), is(equalTo(false)));
+        assertThat(tag2.isEnabled(), is(equalTo(false)));
     }
 
     private class TestPluginScanner extends PluginPassiveScanner {

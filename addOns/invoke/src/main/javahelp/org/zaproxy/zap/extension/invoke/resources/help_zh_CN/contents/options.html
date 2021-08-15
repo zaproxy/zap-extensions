@@ -4,18 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>选项应用程序屏幕</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>选项应用程序屏幕</h1>
 	<p>
 		此屏幕允许您配置 <a href="concepts.html">应用程序</a> that
-		can be invoked.<br> 默认情况下没有可用的应用程序，您需要添加所有要使用的应用程序。
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
 	<h3>显示名称</h3>
 	将在ZAP中用于此应用程序的名称。
 	<br>
 
 	<h3>完整的命令</h3>
 	要调用的应用程序的完整路径。
-	<br> 只能指定一个命令。如果您想要一次运行多个命令，或者设置环境变量，则应该创建一个脚本或批处理文件，然后从ZAP中调用它。
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
 
 	<h3>参数</h3>
 	ZAP应传递给命令的参数。
@@ -50,6 +53,18 @@
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
 			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
 		</tr>
 	</table>
 	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'

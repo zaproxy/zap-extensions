@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "14"
 description = "Translations of the core language files"
 
 zapAddOn {

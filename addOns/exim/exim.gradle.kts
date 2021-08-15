@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.0.1"
 description = "Import and Export functionality"
 
 zapAddOn {
@@ -16,6 +15,13 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
+        tokens.put("%helpPath%", "")
     }
 }
 

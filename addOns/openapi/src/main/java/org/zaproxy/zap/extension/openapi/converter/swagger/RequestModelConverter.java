@@ -21,16 +21,19 @@ package org.zaproxy.zap.extension.openapi.converter.swagger;
 
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
@@ -53,13 +56,13 @@ public class RequestModelConverter {
         requestModel.setUrl(this.generatePath());
         requestModel.setBody(this.generateBody());
         requestModel.setMethod(operationModel.getRequestMethod());
-        requestModel.setHeaders(this.generateHeaders());
+        requestModel.setHeaders(this.generateHeaders(requestModel.getBody()));
         return requestModel;
     }
 
-    private List<HttpHeaderField> generateHeaders() {
+    private List<HttpHeaderField> generateHeaders(String requestBody) {
         HeadersGenerator headersGenerator = new HeadersGenerator(generators.getDataGenerator());
-        return headersGenerator.generate(operationModel);
+        return headersGenerator.generate(operationModel, requestBody);
     }
 
     private String generatePath() {
@@ -79,13 +82,18 @@ public class RequestModelConverter {
                 String generatedBody = exampleBody == null ? generators.getBodyGenerator().generate(schema) : exampleBody;
                 return generatedBody;
             }
+            if (content.containsKey("application/octet-stream")) {
+                schema = content.get("application/octet-stream").getSchema();
+                return generators.getBodyGenerator().generate(schema);
+            }
             if (content.containsKey("application/x-www-form-urlencoded")) {
                 schema = content.get("application/x-www-form-urlencoded").getSchema();
                 return generators.getBodyGenerator().generateForm(schema);
             }
-            if (content.containsKey("application/octet-stream")
-                    || content.containsKey("multipart/form-data")) {
-                return "";
+            if (content.containsKey("multipart/form-data")) {
+                schema = content.get("multipart/form-data").getSchema();
+                Map<String, Encoding> encoding = content.get("multipart/form-data").getEncoding();
+                return generators.getBodyGenerator().generateMultiPart(schema, encoding);
             }
 
             if (!content.isEmpty()) {

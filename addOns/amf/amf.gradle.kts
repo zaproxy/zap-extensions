@@ -1,4 +1,3 @@
-version = "3"
 description = "Adds support for AMF messages"
 
 repositories {
@@ -17,6 +16,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }
 

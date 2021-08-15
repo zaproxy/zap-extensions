@@ -19,20 +19,26 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.refEq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.net.MalformedURLException;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -47,23 +53,34 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.Session;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
+import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.jobs.SpiderJob.UrlRequester;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.spider.SpiderParam;
+import org.zaproxy.zap.testutils.NanoServerHandler;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class SpiderJobUnitTest {
+class SpiderJobUnitTest extends TestUtils {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionSpider extSpider;
+    private ExtensionLoader extensionLoader;
+
+    private static UrlRequester urlRequester = mock(UrlRequester.class);
 
     @BeforeAll
     static void init() {
@@ -81,9 +98,13 @@ class SpiderJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         extSpider = mock(ExtensionSpider.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionSpider.class)).willReturn(extSpider);
+
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        Mockito.lenient().when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
@@ -113,27 +134,9 @@ class SpiderJobUnitTest {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(4)));
+        assertThat(params.size(), is(equalTo(2)));
         assertThat(params.get("context"), is(equalTo("")));
         assertThat(params.get("url"), is(equalTo("")));
-        assertThat(params.get("failIfFoundUrlsLessThan"), is(equalTo("0")));
-        assertThat(params.get("warnIfFoundUrlsLessThan"), is(equalTo("0")));
-    }
-
-    @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        SpiderJob job = new SpiderJob();
-
-        // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "10");
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "11");
-        job.applyCustomParameter("maxDuration", "12");
-
-        // Then
-        assertThat(job.getFailIfFoundUrlsLessThan(), is(equalTo(10)));
-        assertThat(job.getWarnIfFoundUrlsLessThan(), is(equalTo(11)));
-        assertThat(job.getMaxDuration(), is(equalTo(12)));
     }
 
     @Test
@@ -178,9 +181,9 @@ class SpiderJobUnitTest {
     void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        contextWrapper.addUrl("https://www.example.com");
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -191,11 +194,12 @@ class SpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         // When
         SpiderJob job = new SpiderJob();
-        job.runJob(env, null, progress);
+        job.setUrlRequester(urlRequester);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -213,12 +217,12 @@ class SpiderJobUnitTest {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("url", "Not a url");
-        job.runJob(env, null, progress);
+        job.getParameters().setUrl("Not a url");
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -232,12 +236,12 @@ class SpiderJobUnitTest {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
 
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("context", "Unknown");
-        job.runJob(env, null, progress);
+        job.getParameters().setContext("Unknown");
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -249,13 +253,14 @@ class SpiderJobUnitTest {
     void shouldUseSpecifiedContext() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context1 = mock(Context.class);
         Context context2 = mock(Context.class);
-        given(session.getNewContext("context1")).willReturn(context1);
-        given(session.getNewContext("context2")).willReturn(context2);
         Target target1 = new Target(context1);
         Target target2 = new Target(context2);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
+        contextWrapper1.addUrl("https://www.example.com");
+        contextWrapper2.addUrl("https://www.example.com");
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -266,15 +271,13 @@ class SpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-        given(env.getContext("context1")).willReturn(context1);
-        given(env.getContext("context2")).willReturn(context2);
-        given(env.getDefaultContext()).willReturn(context1);
+        given(env.getContextWrapper("context2")).willReturn(contextWrapper2);
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("context", "context2");
-        job.runJob(env, null, progress);
+        job.setUrlRequester(urlRequester);
+        job.getParameters().setContext("context2");
+        job.runJob(env, progress);
 
         // Then
         verify(extSpider, times(0))
@@ -303,11 +306,11 @@ class SpiderJobUnitTest {
     @Test
     void shouldUseSpecifiedUrl() throws MalformedURLException {
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url = "https://www.example.com";
+        contextWrapper.addUrl(url);
 
-        String defaultUrl = "https://www.example.com";
         String specifiedUrl = "https://www.example.com/url";
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -318,17 +321,19 @@ class SpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn(defaultUrl);
-        given(env.getContext(any())).willReturn(context);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+        given(env.replaceVars(specifiedUrl)).willReturn(specifiedUrl);
 
         // When
         SpiderJob job = new SpiderJob();
-        job.applyCustomParameter("url", specifiedUrl);
-        job.runJob(env, null, progress);
+        job.setUrlRequester(urlRequester);
+        job.getParameters().setUrl(specifiedUrl);
+        job.runJob(env, progress);
 
         // Then
-        // TODO Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
-        // work using aryEq or matchers :(
+        // Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
+        // work using aryEq or matchers :( However later tests _do_ check the exact URLs
         verify(extSpider, times(1)).startScan(any(), any(), refEq(new Object[] {specifiedUrl}));
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -338,9 +343,9 @@ class SpiderJobUnitTest {
     @Test
     void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        contextWrapper.addUrl("https://www.example.com");
 
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
@@ -351,13 +356,14 @@ class SpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         SpiderJob job = new SpiderJob();
+        job.setUrlRequester(urlRequester);
 
         // When
-        job.applyCustomParameter("maxDuration", "1");
-        job.runJob(env, null, progress);
+        job.getParameters().setMaxDuration(1);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -370,62 +376,24 @@ class SpiderJobUnitTest {
     }
 
     @Test
-    void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
+    void shouldTestAddedUrlsStatistic() {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
-
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        contextWrapper.addUrl("https://www.example.com");
         given(extSpider.startScan(any(), any(), any())).willReturn(1);
 
         SpiderScan spiderScan = mock(SpiderScan.class);
-        given(spiderScan.isStopped()).willReturn(true);
         given(extSpider.getScan(1)).willReturn(spiderScan);
-
         AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-
         SpiderJob job = new SpiderJob();
+        job.setUrlRequester(urlRequester);
 
         // When
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
-
-        // Then
-        assertThat(job.getType(), is(equalTo("spider")));
-        assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
-        assertThat(job.getParamMethodObject(), is(extSpider));
-        assertThat(job.getParamMethodName(), is("getSpiderParam"));
-
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
-        // Given
-        Session session = mock(Session.class);
-        Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
-
-        given(extSpider.startScan(any(), any(), any())).willReturn(1);
-
-        SpiderScan spiderScan = mock(SpiderScan.class);
-        given(spiderScan.isStopped()).willReturn(true);
-        given(extSpider.getScan(1)).willReturn(spiderScan);
-
-        AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-
-        SpiderJob job = new SpiderJob();
-
-        // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
+        job.addTest(
+                new AutomationStatisticTest(
+                        "automation.spider.urls.added", null, ">", 1, "error", job, progress));
+        job.logTestsToProgress(progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
@@ -435,5 +403,313 @@ class SpiderJobUnitTest {
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(1));
+        assertThat(progress.getErrors().get(0), is("!automation.tests.fail!"));
+    }
+
+    @Test
+    void shouldRequestContextUrl() throws Exception {
+        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+
+        startServer();
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url = "http://localhost:" + nano.getListeningPort() + "/top";
+        contextWrapper.addUrl(url);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+
+        SpiderJob job = new SpiderJob();
+
+        TestServerHandler testHandler = new TestServerHandler("/");
+
+        nano.addHandler(testHandler);
+
+        // When
+        job.runJob(env, progress);
+
+        stopServer();
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(testHandler.wasCalled(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldRequestContextUrls() throws Exception {
+        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+
+        startServer();
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url1 = "http://localhost:" + nano.getListeningPort() + "/1";
+        String url2 = "http://localhost:" + nano.getListeningPort() + "/2";
+        String url3 = "http://localhost:" + nano.getListeningPort() + "/3";
+        contextWrapper.addUrl(url1);
+        contextWrapper.addUrl(url2);
+        contextWrapper.addUrl(url3);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url1)).willReturn(url1);
+        given(env.replaceVars(url2)).willReturn(url2);
+        given(env.replaceVars(url3)).willReturn(url3);
+
+        SpiderJob job = new SpiderJob();
+
+        TestServerHandler testHandler1 = new TestServerHandler("/1");
+        TestServerHandler testHandler2 = new TestServerHandler("/2");
+        TestServerHandler testHandler3 = new TestServerHandler("/3");
+
+        nano.addHandler(testHandler1);
+        nano.addHandler(testHandler2);
+        nano.addHandler(testHandler3);
+
+        // When
+        job.runJob(env, progress);
+
+        stopServer();
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(testHandler1.wasCalled(), is(equalTo(true)));
+        assertThat(testHandler2.wasCalled(), is(equalTo(true)));
+        assertThat(testHandler3.wasCalled(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldFailIfInvalidHost() throws Exception {
+        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url = "http://null.example.com/";
+        contextWrapper.addUrl(url);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+
+        SpiderJob job = new SpiderJob();
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("!automation.error.spider.url.badhost!")));
+    }
+
+    @Test
+    void shouldFailIfForbiddenResponse() throws Exception {
+        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+
+        startServer();
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url = "http://localhost:" + nano.getListeningPort() + "/top";
+        contextWrapper.addUrl(url);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        SpiderJob job = new SpiderJob();
+
+        TestServerHandler testHandler = new TestServerHandler("/", Response.Status.FORBIDDEN);
+
+        nano.addHandler(testHandler);
+
+        // When
+
+        job.runJob(env, progress);
+
+        stopServer();
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(testHandler.wasCalled(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.spider.url.notok!")));
+    }
+
+    @Test
+    void shouldVerifyAllOfTheParameters() {
+        String yamlStr =
+                "parameters:\n"
+                        + "  context: context1\n"
+                        + "  url: url1\n"
+                        + "  maxDuration: 2\n"
+                        + "  maxDepth: 2\n"
+                        + "  maxChildren: 2\n"
+                        + "  acceptCookies: true\n"
+                        + "  handleODataParametersVisited: true\n"
+                        + "  handleParameters: ignore_completely\n"
+                        + "  maxParseSizeBytes: 2\n"
+                        + "  parseComments: true\n"
+                        + "  parseGit: true\n"
+                        + "  parseRobotsTxt: true\n"
+                        + "  parseSitemapXml: true\n"
+                        + "  parseSVNEntries: true\n"
+                        + "  postForm: true\n"
+                        + "  processForm: true\n"
+                        + "  requestWaitTime: 2\n"
+                        + "  sendRefererHeader: true\n"
+                        + "  threadCount: 2\n"
+                        + "  userAgent: ua2";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(job.getParameters().getContext(), is(equalTo("context1")));
+        assertThat(job.getParameters().getUrl(), is(equalTo("url1")));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(2)));
+        assertThat(job.getParameters().getMaxDepth(), is(equalTo(2)));
+        assertThat(job.getParameters().getMaxChildren(), is(equalTo(2)));
+        assertThat(job.getParameters().getAcceptCookies(), is(equalTo(true)));
+        assertThat(job.getParameters().getHandleODataParametersVisited(), is(equalTo(true)));
+        assertThat(job.getParameters().getHandleParameters(), is(equalTo("ignore_completely")));
+        assertThat(job.getParameters().getMaxParseSizeBytes(), is(equalTo(2)));
+        assertThat(job.getParameters().getParseComments(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseGit(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseRobotsTxt(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseSitemapXml(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseSVNEntries(), is(equalTo(true)));
+        assertThat(job.getParameters().getPostForm(), is(equalTo(true)));
+        assertThat(job.getParameters().getProcessForm(), is(equalTo(true)));
+        assertThat(job.getParameters().getRequestWaitTime(), is(equalTo(2)));
+        assertThat(job.getParameters().getSendRefererHeader(), is(equalTo(true)));
+        assertThat(job.getParameters().getThreadCount(), is(equalTo(2)));
+        assertThat(job.getParameters().getUserAgent(), is(equalTo("ua2")));
+    }
+
+    @Test
+    void shouldWarnOnDeprecatedFields() {
+        String yamlStr =
+                "parameters:\n"
+                        + "  context: context1\n"
+                        + "  failIfFoundUrlsLessThan: true\n"
+                        + "  warnIfFoundUrlsLessThan: true";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("!automation.error.spider.failIfUrlsLessThan.deprecated!")));
+        assertThat(job.getParameters().getFailIfFoundUrlsLessThan(), is(equalTo(true)));
+        assertThat(job.getParameters().getWarnIfFoundUrlsLessThan(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldWarnOnUnknownFields() {
+        String yamlStr = "parameters:\n" + "  context: context1\n" + "  unknown: true\n";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+    }
+
+    private static class TestServerHandler extends NanoServerHandler {
+
+        private boolean called = false;
+        private Status status = Response.Status.OK;
+
+        public TestServerHandler(String name) {
+            super(name);
+        }
+
+        public TestServerHandler(String name, Status status) {
+            super(name);
+            this.status = status;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            called = true;
+            return newFixedLengthResponse(status, NanoHTTPD.MIME_HTML, "<html></html>");
+        }
+
+        public boolean wasCalled() {
+            return called;
+        }
     }
 }

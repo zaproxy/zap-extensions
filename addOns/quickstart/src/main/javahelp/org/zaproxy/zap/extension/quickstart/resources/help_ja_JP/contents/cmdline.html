@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>コマンドライン</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>コマンドライン</h1>
 	クイックスタートアドオンは、次のコマンドラインオプションをサポートしています。
 	<table>
@@ -16,7 +16,9 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickout</td>
-			<td>XMLレポートを書き込むファイルを指定します。「インライン」かつデーモンモードで設定されていない場合、レポートは規定の出力ストリームに書き込まれます。</td>
+			<td>Specifies the file to write the report to. The report format will depend on the file extension - supported file extensions are 
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. If none of these extensions are used then the format will be XML. 
+			If not set in 'inline' and daemon modes the report is written to default output stream.</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -28,9 +30,11 @@
 	<br>
 	<p>例:
 	<ul>
-		<li>「インライン」モードのZAPとascii進捗バーを起動し、ターゲットアプリケーション[http://example.com/]を攻撃後、レポートをデフォルトの出力ストリームに書き込みます： <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
+			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
-		<li>ZAPをUIにて開始、対象アプリケーション「http://example.com/」を攻撃、ファイルにレポートを書き込む。 <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		<li>Start ZAP with UI, attack the target application http://example.com/ and save
+			the report to a file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>
 	</ul>
 

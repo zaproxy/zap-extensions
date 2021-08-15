@@ -1,7 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.ProcessSvnDiggerFiles
 
-version = "4"
 description = "SVN Digger files which can be used with ZAP forced browsing"
 
 val svndiggerDir = file("$buildDir/zapAddOn/homeFiles/")
@@ -23,6 +22,13 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }
 

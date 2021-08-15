@@ -23,19 +23,26 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.automation.AbstractAutomationTest;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
+import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
-import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Stats;
 
 public class AjaxSpiderJob extends AutomationJob {
 
@@ -46,22 +53,17 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_URL = "url";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
-    private static final String PARAM_MAX_DURATION = "maxDuration";
 
     private ExtensionAjax extSpider;
 
-    private int failIfFoundUrlsLessThan = 0;
-    private int warnIfFoundUrlsLessThan = 0;
-
-    // Local copy
-    private int maxDuration = 0;
-
-    private String contextName;
-    private String url;
-
     private boolean inScopeOnly = true;
 
-    public AjaxSpiderJob() {}
+    private Data data;
+    private Parameters parameters = new Parameters();
+
+    public AjaxSpiderJob() {
+        this.data = new Data(this, parameters);
+    }
 
     private ExtensionAjax getExtSpider() {
         if (extSpider == null) {
@@ -71,29 +73,39 @@ public class AjaxSpiderJob extends AutomationJob {
         return extSpider;
     }
 
-    public boolean applyCustomParameter(String name, String value) {
-        switch (name) {
-            case PARAM_CONTEXT:
-                contextName = value;
-                return true;
-            case PARAM_URL:
-                url = value;
-                return true;
-            case PARAM_FAIL_IF_LESS_URLS:
-                failIfFoundUrlsLessThan = Integer.parseInt(value);
-                return true;
-            case PARAM_WARN_IF_LESS_URLS:
-                warnIfFoundUrlsLessThan = Integer.parseInt(value);
-                return true;
-            case PARAM_MAX_DURATION:
-                maxDuration = Integer.parseInt(value);
-                // Don't consume this as we still want it to be applied to the spider params
-                return false;
-            default:
-                // Ignore
-                break;
+    @Override
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
         }
-        return false;
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
+        if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
+                || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.spider.failIfUrlsLessThan.deprecated",
+                            getName(),
+                            "automation.spiderAjax.urls.added"));
+        }
+    }
+
+    @Override
+    public void applyParameters(AutomationProgress progress) {
+        JobUtils.applyObjectToObject(
+                this.parameters,
+                JobUtils.getJobOptions(this, progress),
+                this.getName(),
+                new String[] {
+                    PARAM_CONTEXT, PARAM_URL, PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS
+                },
+                progress,
+                this.getPlan().getEnv());
     }
 
     @Override
@@ -101,47 +113,42 @@ public class AjaxSpiderJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_URL, "");
-        map.put(PARAM_FAIL_IF_LESS_URLS, "0");
-        map.put(PARAM_WARN_IF_LESS_URLS, "0");
         return map;
     }
 
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
-        Context context;
+        ContextWrapper context;
+        String contextName = this.getParameters().getContext();
         if (contextName != null) {
-            context = env.getContext(contextName);
+            context = env.getContextWrapper(contextName);
             if (context == null) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                env.getUrlStringForContext(context)));
+                                "automation.error.context.unknown", contextName));
                 return;
             }
         } else {
-            context = env.getDefaultContext();
+            context = env.getDefaultContextWrapper();
         }
 
+        String uriStr = this.getParameters().getUrl();
+        if (uriStr == null) {
+            uriStr = context.getUrls().get(0);
+        }
+        uriStr = env.replaceVars(uriStr);
         URI uri = null;
         try {
-            if (url != null) {
-                uri = new URI(url);
-            } else {
-                uri = new URI(env.getUrlStringForContext(context).toString());
-            }
+            uri = new URI(uriStr);
         } catch (Exception e1) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.context.badurl",
-                            env.getUrlStringForContext(context)));
+            progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
             return;
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
                 AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
-                        .setContext(context)
+                        .setContext(context.getContext())
                         .setInScopeOnly(inScopeOnly)
                         .setOptions(getExtSpider().getAjaxSpiderParam())
                         .setStartUri(uri)
@@ -159,11 +166,11 @@ public class AjaxSpiderJob extends AutomationJob {
         new Thread(spiderThread, "ZAP-AjaxSpiderAuto").start();
 
         long endTime = Long.MAX_VALUE;
-        if (maxDuration > 0) {
+        if (JobUtils.unBox(this.getParameters().getMaxDuration()) > 0) {
             // The spider should stop, if it doesnt we will stop it (after a few seconds leeway)
             endTime =
                     System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(maxDuration)
+                            + TimeUnit.MINUTES.toMillis(this.getParameters().getMaxDuration())
                             + TimeUnit.SECONDS.toMillis(5);
         }
 
@@ -188,22 +195,7 @@ public class AjaxSpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        if (numUrlsFound < this.failIfFoundUrlsLessThan) {
-            progress.error(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
-        if (numUrlsFound < this.warnIfFoundUrlsLessThan) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.urlsfound",
-                            this.getType(),
-                            numUrlsFound,
-                            this.failIfFoundUrlsLessThan));
-        }
+        Stats.incCounter("spiderAjax.urls.added", numUrlsFound);
     }
 
     @Override
@@ -219,18 +211,6 @@ public class AjaxSpiderJob extends AutomationJob {
         }
     }
 
-    public int getFailIfFoundUrlsLessThan() {
-        return failIfFoundUrlsLessThan;
-    }
-
-    public int getWarnIfFoundUrlsLessThan() {
-        return warnIfFoundUrlsLessThan;
-    }
-
-    public int getMaxDuration() {
-        return maxDuration;
-    }
-
     /**
      * Sets whether the ajax spider should only load URLs that are in scope - only intended to use
      * for testing
@@ -241,10 +221,12 @@ public class AjaxSpiderJob extends AutomationJob {
         this.inScopeOnly = inScopeOnly;
     }
 
+    @Override
     public String getTemplateDataMin() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-min.yaml");
     }
 
+    @Override
     public String getTemplateDataMax() {
         return ExtensionAjaxAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
@@ -287,5 +269,193 @@ public class AjaxSpiderJob extends AutomationJob {
 
         @Override
         public void spiderStopped() {}
+    }
+
+    @Override
+    public void showDialog() {
+        new AjaxSpiderJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public int addDefaultTests(AutomationProgress progress) {
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        "spiderAjax.urls.added",
+                        Constant.messages.getString(
+                                "spiderajax.automation.tests.stats.defaultname", 100),
+                        AutomationStatisticTest.Operator.GREATER_OR_EQUAL.getSymbol(),
+                        100,
+                        AbstractAutomationTest.OnFail.INFO.name(),
+                        this,
+                        progress);
+        this.addTest(test);
+        return 1;
+    }
+
+    @Override
+    public String getSummary() {
+        String context = this.getParameters().getContext();
+        if (StringUtils.isEmpty(context)) {
+            context = Constant.messages.getString("spiderajax.automation.default");
+        }
+        return Constant.messages.getString(
+                "spiderajax.automation.dialog.summary",
+                context,
+                JobUtils.unBox(this.getParameters().getUrl(), "''"));
+    }
+
+    @Override
+    public AutomationData getData() {
+        return data;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+
+        public Data(AutomationJob job, Parameters parameters) {
+            super(job);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private String context;
+        private String url;
+        private Integer maxDuration;
+        private Integer maxCrawlDepth;
+        private Integer numberOfBrowsers;
+
+        private String browserId;
+        private Integer maxCrawlStates;
+        private Integer eventWait;
+        private Integer reloadWait;
+        private Boolean clickDefaultElems;
+        private Boolean clickElemsOnce;
+        private Boolean randomInputs;
+
+        // These 2 fields are deprecated
+        private Boolean failIfFoundUrlsLessThan;
+        private Boolean warnIfFoundUrlsLessThan;
+
+        public String getContext() {
+            return context;
+        }
+
+        public void setContext(String context) {
+            this.context = context;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Integer getMaxDuration() {
+            return maxDuration;
+        }
+
+        public void setMaxDuration(Integer maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
+        public Integer getMaxCrawlDepth() {
+            return maxCrawlDepth;
+        }
+
+        public void setMaxCrawlDepth(Integer maxCrawlDepth) {
+            this.maxCrawlDepth = maxCrawlDepth;
+        }
+
+        public Integer getNumberOfBrowsers() {
+            return numberOfBrowsers;
+        }
+
+        public void setNumberOfBrowsers(Integer numberOfBrowsers) {
+            this.numberOfBrowsers = numberOfBrowsers;
+        }
+
+        public String getBrowserId() {
+            return browserId;
+        }
+
+        public void setBrowserId(String browserId) {
+            this.browserId = browserId;
+        }
+
+        public Boolean getClickDefaultElems() {
+            return clickDefaultElems;
+        }
+
+        public void setClickDefaultElems(Boolean clickDefaultElems) {
+            this.clickDefaultElems = clickDefaultElems;
+        }
+
+        public Boolean getClickElemsOnce() {
+            return clickElemsOnce;
+        }
+
+        public void setClickElemsOnce(Boolean clickElemsOnce) {
+            this.clickElemsOnce = clickElemsOnce;
+        }
+
+        public Integer getEventWait() {
+            return eventWait;
+        }
+
+        public void setEventWait(Integer eventWait) {
+            this.eventWait = eventWait;
+        }
+
+        public Integer getMaxCrawlStates() {
+            return maxCrawlStates;
+        }
+
+        public void setMaxCrawlStates(Integer maxCrawlStates) {
+            this.maxCrawlStates = maxCrawlStates;
+        }
+
+        public Boolean getRandomInputs() {
+            return randomInputs;
+        }
+
+        public void setRandomInputs(Boolean randomInputs) {
+            this.randomInputs = randomInputs;
+        }
+
+        public Integer getReloadWait() {
+            return reloadWait;
+        }
+
+        public void setReloadWait(Integer reloadWait) {
+            this.reloadWait = reloadWait;
+        }
+
+        public Boolean getFailIfFoundUrlsLessThan() {
+            return failIfFoundUrlsLessThan;
+        }
+
+        public void setFailIfFoundUrlsLessThan(Boolean failIfFoundUrlsLessThan) {
+            this.failIfFoundUrlsLessThan = failIfFoundUrlsLessThan;
+        }
+
+        public Boolean getWarnIfFoundUrlsLessThan() {
+            return warnIfFoundUrlsLessThan;
+        }
+
+        public void setWarnIfFoundUrlsLessThan(Boolean warnIfFoundUrlsLessThan) {
+            this.warnIfFoundUrlsLessThan = warnIfFoundUrlsLessThan;
+        }
     }
 }

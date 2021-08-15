@@ -1,4 +1,3 @@
-version = "2"
 description = "A simple extension example."
 
 zapAddOn {
@@ -7,5 +6,13 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+    }
+}
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
     }
 }

@@ -4,9 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Removed
+- Apache Range Header DoS (CVE-2011-3192) scan rule has been retired (Issue 6516)
+
+## [35] - 2021-07-06
+### Fixed
+- Correct dependency requirements.
+
+## [34] - 2021-06-17
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
-- The .env file scan rule now performs a simple content check to reduce false positives (Issue 6099).
+- The .env file scan rule now performs even better checks to reduce false positives (Issue 6099, 6629).
 - The trace.axd file scan rule now performs a content check to reduce false positives (Issue 6517).
 - XML External Entity Attack scan rule changed to detect a possible XML File Reflection Attack when XML validation is present. (Issue 6204)
 - Added/updated the details of some alerts (some changes might break Alert Filters)
@@ -38,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - XPath Injection
     - Added evidence
 - The Source Code Disclosure - File Inclusion scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
+- Update links to repository.
 - Maintenance changes.
 
 ### Fixed
@@ -298,6 +307,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[35]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v35
+[34]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v31

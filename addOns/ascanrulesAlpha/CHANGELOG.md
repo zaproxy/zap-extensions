@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update links to zaproxy repo.
+- Maintenance changes.
+
+## [31] - 2021-06-17
+### Changed
+- Update links to zaproxy and zap-extensions repos.
 - Target 2.10 core and use new logging infrastructure (Log4j 2.x).
 - The LDAP Injection scan rule was modified to use:
   - The Dice algorithm for calculating the match percentage, thus improving its performance.
@@ -238,6 +242,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v28

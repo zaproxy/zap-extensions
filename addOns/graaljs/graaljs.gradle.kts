@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.2.0"
 description = "Provides the GraalVM JavaScript engine for ZAP scripting."
 
 zapAddOn {
@@ -19,6 +18,12 @@ zapAddOn {
         bundledLibs {
             libs.from(configurations.runtimeClasspath)
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }
 

@@ -1,4 +1,3 @@
-version = "13"
 description = "Displays HTTPS configuration information."
 
 zapAddOn {
@@ -16,5 +15,15 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
+    }
+}
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/zap/extension/httpsinfo/resources/"
+        tokens.set(mutableMapOf(
+            "%addOnId%" to "httpsinfo",
+            "%messagesPath%" to resourcesPath,
+            "%helpPath%" to resourcesPath))
     }
 }

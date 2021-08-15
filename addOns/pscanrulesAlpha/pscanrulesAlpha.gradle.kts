@@ -1,4 +1,3 @@
-version = "31"
 description = "The alpha quality Passive Scanner rules"
 
 zapAddOn {
@@ -7,6 +6,13 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.4.0 & < 2.0.0")
+                }
+            }
+        }
         extensions {
             register("org.zaproxy.zap.extension.pscanrulesAlpha.payloader.ExtensionPayloader") {
                 classnames {
@@ -14,13 +20,8 @@ zapAddOn {
                 }
                 dependencies {
                     addOns {
-                        register("commonlib") {
-                            version.set(">= 1.4.0 & < 2.0.0")
-                        }
-                    }
-                    addOns {
                         register("custompayloads") {
-                            version.set("0.9.*")
+                            version.set(">= 0.9.0 & < 1.0.0")
                         }
                     }
                 }

@@ -2,7 +2,7 @@
 
 // * Is based on: org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureSuspiciousComments
 // ** And the comment list is copied from
-// *** https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/zapHomeFiles/xml/suspicious-comments.txt
+// *** https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/zapHomeFiles/xml/suspicious-comments.txt
 
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 

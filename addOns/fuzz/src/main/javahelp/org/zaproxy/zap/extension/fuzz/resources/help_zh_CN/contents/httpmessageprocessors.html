@@ -6,7 +6,7 @@
 HTTP 消息处理器
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>HTTP消息处理器</h1>
 HTTP消息处理器可以访问和更改被模糊的HTTP信息，控制模糊处理并与ZAP UI进行交互。
 <p>
@@ -29,17 +29,21 @@ HTTP消息处理器可以访问和更改被模糊的HTTP信息，控制模糊处
 <li>引发警报</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>有效负载反射探测器</h3>
-Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> 反映"。<br>
-<strong>注意:</strong> 此处理器自动添加到处理器列表中。
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>注意:</strong> This processor is automatically added to the list of processors.
 
 <h3>请求内容长度更新器</h3>
-更新(或添加，如果尚未出现) <code>内容长度</code> request header with the length of the request body,
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
 for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
-<strong>注意:</strong> 此处理器自动添加到处理器列表中。
+<strong>注意:</strong> This processor is automatically added to the list of processors.
 
 <h3>Tag Creator</h3>
-允许将基于响应的内容将自定义"标记"添加到结果表的状态列
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
 
 <h3>用户消息处理器</h3>
 Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must

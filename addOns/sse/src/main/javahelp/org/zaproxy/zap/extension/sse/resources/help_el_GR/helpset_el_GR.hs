@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="el-GR">
-  <title>Server-Sent Events | ZAP Extension</title>
+  <title>Server-Sent Events Add-on</title>
 
   <maps>
-     <homeID>top</homeID>
+     <homeID>sse.introduction</homeID>
      <mapref location="map.jhm"/>
   </maps>
 

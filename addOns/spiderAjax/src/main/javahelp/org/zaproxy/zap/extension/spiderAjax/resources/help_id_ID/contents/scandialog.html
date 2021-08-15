@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>AJAX laba-Laba dialog</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>AJAX laba-Laba dialog</h1>
 
 Dialog ini meluncurkan AJAX laba-Laba. 
@@ -12,7 +12,7 @@ Dialog ini meluncurkan AJAX laba-Laba.
 <h2>Cakupan</h2>
 Tab pertama memungkinkan anda untuk mengubah fitur utama seperti:
 
-<h3>Titik awal</h3>
+<h3>Starting Point</h3>
 
 URL yang AJAX laba-laba akan mulai merangkak dari, atau konteks (dalam hal ini
 akan digunakan salah satu Url yang berada dalam konteks sebagai titik awal).
@@ -23,11 +23,11 @@ Memungkinkan untuk memilih Konteks spidered.
 <h3>Pengguna</h3>
 Memungkinkan untuk memilih salah satu pengguna yang tersedia dari yang dipilih konteks, untuk melakukan spider scan sebagai pengguna (ZAP akan (kembali)mengotentikasi sebagai pengguna bila diperlukan).
 
-<h3>Hanya di lingkup</h3>
+<h3>Just In Scope</h3>
 
 Jika ditetapkan maka setiap Url yang di luar dari ruang lingkup yang akan diabaikan.
 <p>
-<strong>Catatan:</strong> Pilihan <code>Hanya di lingkup</code> saling eksklusif dengan <code>Konteks</code> pilihan, jika yang satu digunakan yang lain adalah diabaikan.
+<strong>Catatan:</strong> Pilihan <code>Just In Scope</code> saling eksklusif dengan <code>Konteks</code> pilihan, jika yang satu digunakan yang lain adalah diabaikan.
 
 <h3>Laba-laba hanya subpepohon</h3>
 Jika diatur kemudian laba-laba hanya akan mengakses sumber daya yang berada di bawah titik awal (URI).
@@ -39,38 +39,41 @@ Jenis browser yang akan digunakan.<br>
 Browser hanya akan ditampilkan jika ZAP telah cukup konfigurasi untuk menjalankan mereka.<br>
 Mereka mungkin masih gagal untuk dijalankan jika browser tidak dapat ditemukan atau jika informasi konfigurasi yang salah.
 
-<h3>Tampilkan pilihan lanjutan</h3>
+<h3>Show Advanced Options</h3>
 
 Jika dipilih maka tab Options akan ditampilkan.
 
 <h2>Pilihan</h2>
 Tab ini memungkinkan anda untuk mengubah pilihan, termasuk:
 
-<h3>Jumlah jendela dari browser yang terbuka</h3>
+<h3>Number of Browser Windows to Open</h3>
 Anda dapat mengonfigurasikan jumlah dari jendela yang akan digunakan oleh AJAX Spider.<br>
 Semakin banyak jendela, semakin cepat prosesnya.
 
-<h3>Kedalaman penjelajahan maksimum</h3>
+<h3>Maximum Crawl Depth</h3>
 Kedalaman maksimum crawler dapat mencapai. Nol berarti kedalaman tak terbatas.
 
-<h3>Penjelajah maksimum negara bagian</h3>
+<h3>Maximum Crawl States</h3>
 Jumlah maksimum menyatakan bahwa crawler harus merangkak. Nol berarti tidak terbatas merangkak serikat. 
 
-<h3>Durasi maksimum</h3>
+<h3>Maximum Duration</h3>
 Waktu maksimum yang crawler yang diperbolehkan untuk berjalan. Nol berarti tak terbatas waktu berjalan.
 
-<h3>Waktu tunggu acara</h3>
+<h3>Event Wait Time</h3>
 Waktu untuk menunggu setelah sebuah acara sisi klien yang dipecat.
 
-<h3>Muat ulang waktu tunggu</h3>
+<h3>Reload Wait Time</h3>
 Waktu untuk menunggu setelah URL dimuat.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
 	
 	<h2>Lihat juga</h2>
 	<table>
 		<tr>
-			&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">Laba-laba AJAX</a></td>
-			<td>untuk sebuah ikhtisar dari Spider AJAX</td>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>for an overview of the AJAX Spider</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

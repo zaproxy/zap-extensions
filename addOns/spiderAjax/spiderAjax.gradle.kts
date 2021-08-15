@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "23.4.0"
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
 val minimumZapVersion = "2.10.0"
@@ -21,7 +20,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set("0.*")
+                            version.set(">=0.4.0")
                         }
                     }
                 }

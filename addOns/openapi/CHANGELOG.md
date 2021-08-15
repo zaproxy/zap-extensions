@@ -4,12 +4,32 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+ - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
+
+## [20] - 2021-08-05
+### Added
+- Automation Framework GUI
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Fix RequestMethod enum name for OPTIONS (Issue 6666)
+
+## [19] - 2021-06-29
+### Added
+- Added support for Multipart form-data (Issue 6418).
+
 ### Changed
 - Always use enum values when defined (Issue 6489).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Automation parameters are now in camelCase. This is a breaking change, and older automation configurations containing all-lowercase openapi parameters will stop working.
 - The import dialogs now show the values used in the previous import when reopened.
 - Maintenance changes.
+
+### Fixed
+- NPE if form has no schema element. 
 
 ## [18] - 2021-03-09
 ### Added
@@ -129,6 +149,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/openapi-v20
+[19]: https://github.com/zaproxy/zap-extensions/releases/openapi-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/openapi-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/openapi-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/openapi-v16

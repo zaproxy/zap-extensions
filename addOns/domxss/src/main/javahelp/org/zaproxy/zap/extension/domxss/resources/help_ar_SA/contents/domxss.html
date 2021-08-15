@@ -5,28 +5,35 @@
 دوم XSS المسح الضوئي النشطة القاعدة
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>دوم XSS المسح الضوئي النشطة القاعدة</h1>
 <p>
 قاعدة "أحدث مسح" للكشف عن الثغرات XSS دوم.
 <p>
-أنها تطلق إطارات المستعرض ويرسل حمولات الهجوم على جميع عناصر DOM ذات الصلة. <br>كما أنها تطلق إطارات المستعرض ليست مناسبة لبيئات مقطوعة الرأس، وسوف يستغرق وقتاً أطول كثيرا من قواعد أخرى (غير المتصفح على أساس). 
+It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
+As it launches browser windows it will take significantly longer than other (non browser based) rules. 
 </p>
 <p>
-ويدعم هذا الإصدار فقط فايرفوكس. وقد دعم <br>المستقبل إصدارات المستعرضات الأخرى.
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
 </p>
 <p>
-دعم قوة الهجوم التالي، والمتصلة مباشرة بعدد الحمولات الهجوم المستخدمة:
+The following Attack Strengths are supported, and related directly to the number of attack payloads used
+for URL fragment and form input field injections (eg: http://example.com/index.html?foo=bar#injection):
 <ul>
+<li>LOW: 1 attack payloads 
+<li>MEDIUM: 3 attack payloads 
 <li>منخفض: 2 الهجوم حمولات 
-<li>منخفض: 2 الهجوم حمولات 
-<li>منخفض: 2 الهجوم حمولات 
-<li>منخفض: 2 الهجوم حمولات 
+<li>INSANE: 9 attack payloads 
 </ul>
+The scanner will also attempt URL/query parameter injections which are not impacted by the selected strength.
 </p>
 <p>
 القاعدة فقط تقريرا واحد دوم XSS الضعف كل عقده، ما لم يتم استخدام عتبة "تنبيه منخفضة"، في هذه الحالة فإنه سوف تحاول أن تبقى جميع الحمولات المحدد. 
 </p>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
 
 </body>
 </html>

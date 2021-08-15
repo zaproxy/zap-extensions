@@ -1,4 +1,3 @@
-version = "0.4.0"
 description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
@@ -16,7 +15,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set("0.*")
+                            version.set(">=0.4.0")
                         }
                     }
                 }
@@ -28,6 +27,14 @@ zapAddOn {
         api.set("org.zaproxy.addon.graphql.GraphQlApi")
         options.set("org.zaproxy.addon.graphql.GraphQlParam")
         messages.set(file("src/main/resources/org/zaproxy/addon/graphql/resources/Messages.properties"))
+    }
+}
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
     }
 }
 

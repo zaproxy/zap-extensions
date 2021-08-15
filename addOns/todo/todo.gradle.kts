@@ -1,4 +1,3 @@
-version = "1"
 description = "Provides a tab which allows you to view the list of test cases"
 
 zapAddOn {
@@ -13,5 +12,11 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }

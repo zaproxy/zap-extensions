@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.8.0"
 description = "Retire.js"
 
 zapAddOn {
@@ -19,6 +18,14 @@ zapAddOn {
             baseName.set("org.zaproxy.addon.retire.resources.help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
     }
 }
 

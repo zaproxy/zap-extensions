@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "5"
 description = "List of directory names to be used with Forced Browse or Fuzzer add-on."
 
 zapAddOn {
@@ -16,5 +15,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }

@@ -3,7 +3,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="SOAP Tarayıcısı" image="soap-icon" target="soap"/>
+			<tocitem text="SOAP Support" image="soap-icon" target="soap">
+				<tocitem text="Automation" image="soap-icon" target="soap.automation"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

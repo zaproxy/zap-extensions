@@ -28,6 +28,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -88,34 +90,53 @@ class OpenApiJobUnitTest {
     }
 
     @Test
-    void shouldApplyCustomConfigParams() {
-        // Given
-        OpenApiJob job = new OpenApiJob();
+    void shouldApplyParams() {
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
         String apiFile = "C:\\Users\\ZAPBot\\Documents\\test file.json";
         String apiUrl = "https://example.com/test%20file.json";
         String targetUrl = "https://example.com/endpoint/";
+        String yamlStr =
+                "parameters:\n"
+                        + "  apiUrl: "
+                        + apiUrl
+                        + "\n"
+                        + "  apiFile: "
+                        + apiFile
+                        + "\n"
+                        + "  targetUrl: "
+                        + targetUrl;
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        OpenApiJob job = new OpenApiJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        job.applyCustomParameter("apiFile", apiFile);
-        job.applyCustomParameter("apiUrl", apiUrl);
-        job.applyCustomParameter("targetUrl", targetUrl);
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(job.getApiFile(), is(equalTo(apiFile)));
-        assertThat(job.getApiUrl(), is(equalTo(apiUrl)));
-        assertThat(job.getTargetUrl(), is(equalTo(targetUrl)));
+        assertThat(job.getParameters().getApiFile(), is(equalTo(apiFile)));
+        assertThat(job.getParameters().getApiUrl(), is(equalTo(apiUrl)));
+        assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
     }
 
     @Test
     void shouldFailIfInvalidUrl() {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr = "parameters:\n" + "  apiUrl: 'Invalid URL.'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        OpenApiJob job = new OpenApiJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        OpenApiJob job = new OpenApiJob();
-        job.applyCustomParameter("apiUrl", "Invalid URL.");
-        job.runJob(env, null, progress);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -126,13 +147,19 @@ class OpenApiJobUnitTest {
     @Test
     void shouldFailIfInvalidFile() {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        OpenApiJob job = new OpenApiJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        OpenApiJob job = new OpenApiJob();
-        job.applyCustomParameter("apiFile", "Invalid file path.");
-        job.runJob(env, null, progress);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

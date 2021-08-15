@@ -126,8 +126,8 @@
 					align="center">Number of Instances</th>
 			</tr>
 			<tr th:each="alert: ${alertTree.children}">
-				<td><a th:href="'#' + ${alert.userObject.pluginId}"
-					th:text="${alert.nodeName}" href="#oluginId">Alert Name</a></td>
+				<td><a th:href="'#plugin-' + ${alert.userObject.pluginId}"
+					th:text="${alert.nodeName}" href="#plugin-pluginId">Alert Name</a></td>
 				<td align="center" th:class="${'risk-' + alert.risk}"
 					th:text="${helper.getRiskString(alert.risk)}">Risk</td>
 				<td align="center" th:text="${alert.childCount}">Count</td>
@@ -153,8 +153,10 @@
 				<th:block
 					th:each="ascan : ${reportData.reportObjects.get('activeScanData').allRuleData}">
 					<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
-						<td><a th:href="'#' + ${ascan.id}" th:text="${ascan.name}"
-							href="#pluginId">Alert Name</a></td>
+						<td><a
+							th:href="'https://www.zaproxy.org/docs/alerts/' + ${ascan.id} + '/'"
+							th:if="${ascan.id &gt;= 0}" th:text="${ascan.name}">Alert
+								Name</a></td>
 						<td th:text="#{report.template.pass.type.active}" align="center">Active</td>
 						<td align="center" th:text="${ascan.threshold}">Threshold</td>
 						<td align="center" th:text="${ascan.strength}">Strength</td>
@@ -164,8 +166,9 @@
 			<th:block
 				th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
 				<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
-					<td><a th:href="'#' + ${pscan.id}" th:text="${pscan.name}"
-						href="#pluginId">Alert Name</a></td>
+					<td><a
+						th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
+						th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert Name</a></td>
 					<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
 					<td align="center" th:text="${pscan.threshold}">Threshold</td>
 					<td align="center">-</td>
@@ -261,6 +264,42 @@
 				</th:block>
 			</table>
 		</th:block>
+
+		<th:block
+			th:if="${reportData.isIncludeSection('params') &amp;&amp; reportData.reportObjects.get('paramsData') != null &amp;&amp; reportData.reportObjects.get('paramsData').getSiteParameters(site)}">
+			<table class="summary">
+				<tr>
+					<th th:text="#{report.template.params.name}">Name</th>
+					<th th:text="#{report.template.params.type}">Type</th>
+					<th th:text="#{report.template.params.flags}">Flags</th>
+					<th th:text="#{report.template.params.times}">Times Used</th>
+					<th th:text="#{report.template.params.values}"># Values</th>
+				</tr>
+
+				<th:block
+					th:each="param : ${reportData.reportObjects.get('paramsData').getSortedSiteParams(site)}">
+					<tr>
+						<td>
+							<div th:text="${param.name}">Name</div>
+						</td>
+						<td>
+							<div
+								th:text="${reportData.reportObjects.get('paramsData').getTypeString(param.type)}">Type</div>
+						</td>
+						<td><th:block th:each="flag : ${param.flags}">
+								<div th:text="${flag}">Flag</div>
+							</th:block></td>
+						<td>
+							<div th:text="${param.timesUsed}">Times Used</div>
+						</td>
+						<td>
+							<div th:text="${param.values.size}"># Values</div>
+						</td>
+					</tr>
+				</th:block>
+			</table>
+		</th:block>
+
 		<div class="spacer-lg"></div>
 	</th:block>
 
@@ -270,7 +309,7 @@
 			<table class="results">
 				<tr height="24">
 					<th width="20%" th:class="${'risk-' + alert.risk}"><a
-						th:id="${alert.userObject.pluginId}"></a>
+						th:id="${'plugin-' + alert.userObject.pluginId}"></a>
 						<div th:text="${helper.getRiskString(alert.risk)}">Risk</div></th>
 					<th th:text="${alert.nodeName}" th:class="${'risk-' + alert.risk}">Alert
 						Name</th>
@@ -315,10 +354,10 @@
 					</tr>
 					<tr>
 						<td width="20%" class="indent2">
-							<div th:id="${instance.userObject.alertId}">
+							<div th:id="${'alert-' + instance.userObject.alertId}">
 								<a
-									th:onclick="'showHide(\'' + ${instance.userObject.alertId} + '\');'"
-									th:href="'#' + ${instance.userObject.alertId}"
+									th:onclick="'showHide(\'alert-' + ${instance.userObject.alertId} + '\');'"
+									th:href="'#alert-' + ${instance.userObject.alertId}"
 									th:text="#{report.alerts.detail.showhide}">Show/hide</a>
 							</div>
 						</td>
@@ -331,7 +370,7 @@
 								th:text="#{report.size(${instance.userObject.message.requestHeader.toString.length})}">Size</th:block>
 						</td>
 						<td width="80%">
-							<div th:id="${instance.userObject.alertId + 'reqh'}"
+							<div th:id="${'alert-' + instance.userObject.alertId + 'reqh'}"
 								style="display: none;">
 								<th:block
 									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.requestHeader, '\n')}">
@@ -348,7 +387,7 @@
 								th:text="#{report.size(${instance.userObject.message.requestBody.length})}">Size</th:block>
 						</td>
 						<td width="80%">
-							<div th:id="${instance.userObject.alertId + 'reqb'}"
+							<div th:id="${'alert-' + instance.userObject.alertId + 'reqb'}"
 								style="display: none;">
 								<th:block
 									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.requestBody, '\n')}">
@@ -365,7 +404,7 @@
 								th:text="#{report.size(${instance.userObject.message.responseHeader.toString.length})}">Size</th:block>
 						</td>
 						<td width="80%">
-							<div th:id="${instance.userObject.alertId + 'resph'}"
+							<div th:id="${'alert-' + instance.userObject.alertId + 'resph'}"
 								style="display: none;">
 								<th:block
 									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.responseHeader, '\n')}">
@@ -382,7 +421,7 @@
 								th:text="#{report.size(${instance.userObject.message.responseBody.length})}">Size</th:block>
 						</td>
 						<td width="80%">
-							<div th:id="${instance.userObject.alertId + 'respb'}"
+							<div th:id="${'alert-' + instance.userObject.alertId + 'respb'}"
 								style="display: none;">
 								<th:block
 									th:each="desc, state: ${#strings.arraySplit(instance.userObject.message.responseBody, '\n')}">

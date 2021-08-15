@@ -4,13 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Mga Pagpipilian sa Port Scan screen</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Mga Pagpipilian sa Port Scan screen</h1>
-	<p>Screen na ito ay nagpapahintulot sa iyo na magkumpigura ng mga opsiyon para sa mga port iskan: <h3>pinakamataas na numero ng port na i-scan</h3> ZAP ay magsisimula mula 1 at gawain sa numero ng port na ito.
+	<p>This screen allows you to configure the port scan options:
+	<h3>Highest port number to scan</h3>
+	ZAP will start from 1 and work up to this port number.
 	<br>Pagpili ng isang mataas na bilang ay makabuluhang dagdagan ang oras na kailangan ng port magsuri.
 
-	<h3>Kasabay ng pag-scan thread kada host</h3> Ang bilang ng mga thread na ang scanner ay gagamit ng bawat host.
-	<br>Ang pagtaas ng bilang ng mga thread ay bumibilis ang scan ngunit maaaring maglagay ng ekstrang pinagmanahan sa computer tumatakbo sa ZAP at hukbo ng target.
+	<h3>Concurrent scanning threads per host</h3>
+	The number of threads the scanner will use per host.
+	<br> Increasing the number of threads will speed up the scan but may put extra
+	strain on the computer ZAP is running on and the target host.
 
 </body>
 </html>

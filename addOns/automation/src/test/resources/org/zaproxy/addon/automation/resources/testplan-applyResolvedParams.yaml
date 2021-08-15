@@ -1,0 +1,16 @@
+env:
+  contexts:
+    - name: example
+      urls:
+        - https://www.example.com/
+  vars:
+    myVarOne: true
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: job
+    parameters:
+      stringParam: ${myVarOne}

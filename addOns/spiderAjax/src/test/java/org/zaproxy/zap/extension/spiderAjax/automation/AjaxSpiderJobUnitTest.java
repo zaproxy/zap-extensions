@@ -52,9 +52,13 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.AutomationStatisticTest;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -63,6 +67,7 @@ class AjaxSpiderJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     // Disdabled due to build issues
+    private ExtensionLoader extensionLoader;
     private ExtensionAjax extAjax;
     private AjaxSpiderParam ajaxSpiderParam;
 
@@ -83,12 +88,16 @@ class AjaxSpiderJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         // extAjax = mock(ExtensionAjax.class, withSettings().lenient());
         extAjax = new ExtensionAjax();
         given(extensionLoader.getExtension(ExtensionAjax.class)).willReturn(extAjax);
         ajaxSpiderParam = new AjaxSpiderParam();
         given(extAjax.getAjaxSpiderParam()).willReturn(ajaxSpiderParam);
+
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        Mockito.lenient().when(extStats.getInMemoryStats()).thenReturn(mock(InMemoryStats.class));
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
@@ -129,14 +138,10 @@ class AjaxSpiderJobUnitTest {
         AjaxSpiderJob job = new AjaxSpiderJob();
 
         // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "10");
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "11");
         job.applyCustomParameter("maxDuration", "12");
 
         // Then
-        assertThat(job.getFailIfFoundUrlsLessThan(), is(equalTo(10)));
-        assertThat(job.getWarnIfFoundUrlsLessThan(), is(equalTo(11)));
-        assertThat(job.getMaxDuration(), is(equalTo(12)));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(12)));
     }
 
     // @Test
@@ -174,22 +179,21 @@ class AjaxSpiderJobUnitTest {
     void shouldRunValidJob() throws MalformedURLException {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));
@@ -212,7 +216,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("url", "Not a url");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -231,7 +235,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("context", "Unknown");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -250,6 +254,8 @@ class AjaxSpiderJobUnitTest {
         given(session.getNewContext("context2")).willReturn(context2);
         given(context1.isInContext(anyString())).willReturn(true);
         given(context2.isInContext(anyString())).willReturn(true);
+        ContextWrapper contextWrapper1 = new ContextWrapper(context1);
+        ContextWrapper contextWrapper2 = new ContextWrapper(context2);
 
         AjaxSpiderParam options = new AjaxSpiderParam();
         FileConfiguration tempConfig = new XMLConfiguration();
@@ -276,15 +282,14 @@ class AjaxSpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-        given(env.getContext("context1")).willReturn(context1);
-        given(env.getContext("context2")).willReturn(context2);
+        given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
+        given(env.getContextWrapper("context2")).willReturn(contextWrapper2);
         given(env.getDefaultContext()).willReturn(context1);
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("context", "context2");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         verify(extAjax, times(0))
@@ -330,7 +335,7 @@ class AjaxSpiderJobUnitTest {
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.applyCustomParameter("url", specifiedUrl);
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         // TODO Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
@@ -345,23 +350,22 @@ class AjaxSpiderJobUnitTest {
     // @Test
     void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
 
         // When
         job.applyCustomParameter("maxDuration", "1");
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));
@@ -374,25 +378,20 @@ class AjaxSpiderJobUnitTest {
     }
 
     // @Test
-    void shouldWarnIfLessUrlsFoundThanExpected() throws MalformedURLException {
+    void shouldTestAddedUrlsStatistic() throws MalformedURLException {
         // Given
-        Session session = mock(Session.class);
-        Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
-
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.setInScopeOnly(false);
 
         // When
-        job.applyCustomParameter("warnIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
+        job.addTest(
+                new AutomationStatisticTest(
+                        "spiderAjax.urls.added", null, ">", 1, "warn", job, progress));
+        job.logTestsToProgress(progress);
 
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));
@@ -400,38 +399,9 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getParamMethodObject(), is(extAjax));
         assertThat(job.getParamMethodName(), is("getAjaxSpiderParam"));
 
+        assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    // @Test
-    void shouldErrorIfLessUrlsFoundThanExpected() throws MalformedURLException {
-        // Given
-        Session session = mock(Session.class);
-        Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
-
-        given(extAjax.isSpiderRunning()).willReturn(false);
-
-        AutomationProgress progress = new AutomationProgress();
-
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn("https://www.example.com");
-
-        AjaxSpiderJob job = new AjaxSpiderJob();
-        job.setInScopeOnly(false);
-
-        // When
-        job.applyCustomParameter("failIfFoundUrlsLessThan", "1");
-        job.runJob(env, null, progress);
-
-        // Then
-        assertThat(job.getType(), is(equalTo("spiderAjax")));
-        assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
-        assertThat(job.getParamMethodObject(), is(extAjax));
-        assertThat(job.getParamMethodName(), is("getAjaxSpiderParam"));
-
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(1));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
     }
 }

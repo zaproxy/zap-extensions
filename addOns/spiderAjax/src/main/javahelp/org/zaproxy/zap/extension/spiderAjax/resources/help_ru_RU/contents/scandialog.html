@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>AJAX Spider dialog</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>AJAX Spider dialog</h1>
 
 Этот диалог запускает Паука "Аякс". 
@@ -12,7 +12,7 @@
 <h2>Scope</h2>
 Первая вкладка позволяет изменять ключевые функции, такие как:
 
-<h3>Starting point</h3>
+<h3>Starting Point</h3>
 
 URL-адрес, с которого AJAX spider начнет сканирование, или контекст (в этом случае
 будет использоваться один из URL, которые находятся в контексте в качестве отправной точки).
@@ -23,11 +23,11 @@ URL-адрес, с которого AJAX spider начнет сканирова�
 <h3>User</h3>
 Позволяет выбрать один из существующих пользователей из выбранного контекста, чтобы выполнить сканирование паук как пользователь (зап будем (пере)авторизуйтесь как пользователь в случае необходимости).
 
-<h3>Just in scope</h3>
+<h3>Just In Scope</h3>
 
 If set then any URLs which are out of scope will be ignored.
 <p>
-<strong>Note:</strong> The option <code>Just in scope</code> is mutually exclusive with <code>Context</code> option, if one is used the other is ignored.
+<strong>Note:</strong> The option <code>Just In Scope</code> is mutually exclusive with <code>Context</code> option, if one is used the other is ignored.
 
 <h3>Spider Subtree Only</h3>
 If set then the spider will only access resources that are under the starting point (URI).
@@ -39,36 +39,39 @@ The type of browser to use.<br>
 Browsers will only be shown if ZAP has sufficient configuration to run them.<br>
 They may still fail to run if the browsers cannot be found or if the configuration information is incorrect.
 
-<h3>Show advanced options</h3>
+<h3>Show Advanced Options</h3>
 
 If selected then the Options tab will be shown.
 
 <h2>Options</h2>
 This tab allows you to change options including:
 
-<h3>Number of browser windows to open</h3>
+<h3>Number of Browser Windows to Open</h3>
 You can configure the number of windows to be used by AJAX Spider.<br>
 The more windows, the faster the process will be.
 
-<h3>Maximum crawl depth</h3>
+<h3>Maximum Crawl Depth</h3>
 The maximum depth that the crawler can reach. Zero means unlimited depth.
 
-<h3>Maximum crawl states</h3>
+<h3>Maximum Crawl States</h3>
 The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. 
 
-<h3>Maximum duration</h3>
+<h3>Maximum Duration</h3>
 The maximum time that the crawler is allowed to run. Zero means unlimited running time.
 
-<h3>Event wait time</h3>
+<h3>Event Wait Time</h3>
 The time to wait after a client side event is fired.
 
-<h3>Reload wait time</h3>
+<h3>Reload Wait Time</h3>
 The time to wait after URL is loaded.
+
+<h3>Allowed Resources</h3>
+The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
 	
 	<h2>See also</h2>
 	<table>
 		<tr>
-			&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="concepts.html">AJAX Spider</a></td>
 			<td>for an overview of the AJAX Spider</td>
 		</tr>

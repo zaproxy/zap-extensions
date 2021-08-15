@@ -2,26 +2,26 @@
 <html>
 <head>
 <title>
-HTTPS Info Add-on
+HTTPS Info
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>HTTPS Info Add-on</h1>
+<body>
+<h1>HTTPS Info</h1>
 
 <p>
 The HTTPS Info add-on is accessed via the context menu within the Sites Tree or History table. 
-It displays a dialog in which various summary information is displayed
+It displays tabs in a status panel, in which various summary information is displayed
 regarding the target server's HTTPS certificate, and the offered SSL/TLS cipher suites.
 </p>
 
 <p>
 This add-on leverages another OWASP project: 
-<a href="https://www.owasp.org/index.php/OWASP_DeepViolet_TLS/SSL_Scanner">Deep Violet</a> 
+<a href="https://github.com/spoofzu/DeepViolet/">Deep Violet</a> 
 to perform it's certificate and cipher suite information gathering.
 </p>
 
 <h2>General</h2>
-The top portion of the dialog is devoted to general details of the SSL/TLS certificate presented by the server. Such as:
+The top portion of a tab is devoted to general details of the SSL/TLS certificate presented by the server. Such as:
 <ul>
 <li>Subject DN</li>
 <li>Signing Algorithm</li>
@@ -33,7 +33,7 @@ The top portion of the dialog is devoted to general details of the SSL/TLS certi
 </ul>
 
 <h2>Cipher Suites</h2>
-The bottom portion of the dialog is devoted to enumeration/listing of the specific Cipher Suites the 
+The bottom portion of a tab is devoted to enumeration/listing of the specific Cipher Suites the 
 target server offers, grouped by handshake protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
 
 </body>

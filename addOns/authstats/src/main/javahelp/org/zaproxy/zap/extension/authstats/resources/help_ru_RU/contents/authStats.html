@@ -6,11 +6,12 @@
 Authentication Statistics
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Authentication Statistics</h1>
 This add-on records authentication related statistics for all contexts that are in scope.<br>
 The statistics are recorded on a per site basis and cover:
 <table>
+<tr><td>stats.auth.<i>component</i>.state.noauth</td><td>The context does not have an authentication method</td></tr>
 <tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>Non HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
 <tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Unsuccessful HTML responses (which are unlikely to have logged in/out indicators)</td></tr>
 <tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>No logged in/out indicators have been defined</td></tr>

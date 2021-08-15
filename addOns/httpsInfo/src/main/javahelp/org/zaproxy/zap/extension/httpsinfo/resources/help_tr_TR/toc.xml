@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="HTTPS Bilgi Eklentisi" image="httpsinfo.icon" target="httpsinfo" />
+			<tocitem text="HTTPS Info" image="httpsinfo.icon" target="httpsinfo" />
 		</tocitem>
 	</tocitem>
 </toc>

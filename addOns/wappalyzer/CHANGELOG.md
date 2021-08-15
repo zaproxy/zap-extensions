@@ -4,14 +4,24 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-## Added
-- Support for automation job data to make it available in reports.
-
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
+- Maintenance changes.
+- Reduce logging of "Unexpected header type" messages from error to debug (related to Issue 6607).
+
+### Added
+- Support for cookie patterns.
+
+## [21.2.0] - 2021-06-17
+### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+- Update link to repository.
 - Update RE2/J library to latest version (1.6).
 - Maintenance changes.
 - DOM patterns are now only attempted against HTML responses.
+
+### Added
+- Support for automation job data to make it available in reports.
 
 ## [21.1.0] - 2021-03-03
 ### Changed
@@ -169,6 +179,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.2.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.2.0
 [21.1.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.1.0
 [21.0.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.0.0
 [20.3.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v20.3.0

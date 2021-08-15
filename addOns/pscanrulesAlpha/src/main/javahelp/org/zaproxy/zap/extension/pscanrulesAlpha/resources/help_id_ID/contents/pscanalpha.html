@@ -5,169 +5,127 @@
 Aturan Pindai Pasif - alfa
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Aturan Pindai Pasif - Alfa</h1>
 Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
-<h2>Konten untuk Terjemahan
-ASP.NET penampilan pembukaan</h2>
-Sebuah ASP.NET viewstate ditemukan oleh aplikasi / server web
-
-<h2>Integritas ASP.NET viewstate</h2>
-Aplikasi ini tidak bisa menggunakan Message Authentication Code (MAC) untuk melindungi keutuhan ASP.NET ViewState, yang dapat diubah oleh pelanggan yang pendendam
-
-<h2>Paparan base64</h2>
-Sebuah timestamp telah diungkapkan oleh aplikasi/server web
-
-<h2>Konten yang hilang merupakan kebijakan keamanan header</h2>
-Ini memeriksa HTML reaksi header untuk kehadiran keamanan kebijakan header.<br>
-Secara sederhana tentu saja ini mengatur pemeriksaan kedekatan header "substansi-kebijakan-keamanan".
-Terlebih lagi, pada batas rendah juga memeriksa header "X-Content-Security-Policy" dan "X-WebKit-CSP".
+<h2>An example passive scan rule which loads data from a file</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Jika header "Substansi Keamanan-Kebijakan-Laporan-Saja" ditemukan pada sebuah reaksi, peringatan sebuah info akan meningkat. Ini mungkin berbicara tentang wewenang penguasaan
-yang saat ini sedang disempurnakan atau diciptakan, atau yang baru setengah diterapkan.
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
-<h2>Keracunan Cookie</h2>
-Pemeriksaan ini mengamati usulan yang diberi oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi parameter cookie yang mungkin dikendalikan. Ini dikenal sebagai serangan yang merugikan, dan bisa saja dimanfaatkan ketika penyerang bisa memanipulasi cookie dengan berbagai cara. Dalam sebagian kasus, ini tak akan dapat dieksploitasi, melainkan memungkinkan parameter URL untuk memutuskan poin cookie lazimnya yang dianggap sebagai bug.
-
-<h2>Cookie Tanpa Atribut Situs yang serupa</h2>
-Ini melaporkan tiap cookie yang mempunyai atribut Situs yang sama atau yang tak{mempunyai poin valid yang dikenali untuk atribut itu.
-
-<h2>Kesalahan konfigurasi lintas domain</h2>
-secara tidak langsung memindai tanggapan untuk Kesalahan konfigurasi lintas domain, yang melonggarkan Kebijakan awal persamaan pada web browser, umpamanya<br> Implementasi dikala nampak pada header CORS yang terlalu permisif.
-
-<h2>Menjelajah Direktori</h2>
-Secara pasif memindai respons untuk tandatangan yang menunjukkan bahwa Menjelajah Direktori bisa dilakukan.
-
-<h2>Contoh pengamatan file Pasif</h2>
-Ini menerapkan contoh aturan pemindaian pasif yang memuat string dari file yang dapat diedit oleh pengguna.<br>
-Untuk lebih lengkapnya kunjungi: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Contoh pengamatan pasif sederhana</h2>
-Ini menerapkan contoh pengamatan pasif yang sederhana.<br>
-Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html.
-
-<h2>penyingkapan hash</h2>
-Secara pasif memindai segala hash password yang diungkapkan oleh server web. <br>
-mencakup berbagai format, termasuk beberapa format seperti MD4, MD5, dan SHA *, yang terkadang digunakan untuk tujuan selain berisi hash kata sandi. 
-
-<h2>kerusakan inti</h2>
-Pemindaian secara pasif terhadap tanggapan header HTTP yang mungkin menunjukkan bahwa server rentan terhadap kerentanan OpenSUSE LDB kritis. 
-
-<h2>HTTP ke HTTPS Transisi tidak aman pada bentuk Post</h2>
-Pemeriksaan ini mencari halaman HTTP yang tidak aman yang menjadi tuan rumah formulir HTTPS. Masalahnya adalah halaman HTTP yang tidak aman dapat dengan mudah dibajak melalui MITM dan formulir HTTPS yang aman dapat diganti atau dipalsukan.
-
-<h2>HTTPS ke HTTP tempat Transisi yang Tidak Aman</h2>. Masalahnya yaitu halaman yang aman sedang bertransisi ke halaman yang tidak aman saat data diunggah melalui formulir. Pengguna mungkin mengira mereka mengirimkan data ke halaman yang aman padahal sebenarnya tidak demikian.
-
-<h2>Komponen yang Tidak Aman</h2>
-Secara pasif memindai tajuk respons peladen dan konten pembuat tubuh untuk versi-versi produk, yang kemudian akan dilakukan referensi silang terhadap daftar versi produk yang dikenal rentan terhadap berbagai macam CVE. 
-Sebuah daftar yang berisi peringkat nilai keparahan CVE dan CVSS merupakan hasil untuk tiap produk yang dianggap rentan. 
-Saat ini, produk sampingan peladen berikut ini didukung:<br>
-Peladen aplikasi Apache Tomcat (fungsionalitas terbatas karena terbatasnya kebocoran informasi oleh Tomcat)<br>
-Peladen web Apache<br>
-modul Apache mod_auth_radius<br>
-modul Apache mod_fcgid<br>
-modul Apache mod_imap<br>
-modul Apache mod_jk<br>
-modul Apache mod_perl<br>
-modul Apache mod_python<br>
-modul Apache mod_ssl<br>
-modul Apache OpenSSL<br>
-modul Apache Perl<br>
-modul Apache Python<br>
-Peladen HTTP IBM<br>
-peladen aplikasi JBoss<br>
-peladen web / aplikasi Jetty<br>
-peladen web LiteSpeed<br>
-peladen web Lighttpd<br>
-peladen web Microsoft IIS<br>
-peladen web Netscape Enterprise<br>
-peladen web Nginx<br>
-OpenCMS<br>
-peladen aplikasi Oracle<br>
-singgahan web Oracle<br>
-PHP<br>
-Phusion_Passenger<br>
-peladen proksi Squid<br>
-peladen web Sun One<br>
-Peladen Web Sun Java System<br>
-peladen web TornadoServer<br>
-WordPress<br>
-
-<h2>Pemindai Lokasi Gambar</h2>
-<p>Secara pasif memindai pemajanan lokasi GPS dalam gambar selama penilaian keamanan normal berbagai laman.  Pemindai Lokasi Gambar membantu dalam situasi di mana
-pengguna dapat memasang foto profil dan memberikan lokasi rumah mereka,
-misalnya situs kencan atau ruang chat anak-anak.  Buku Putih tentang hal ini dapat ditemukan
-di http://veggiespam.com/ils/</p>
-
-<p>Catatan: Agar plug-in ini dapat beroperasi, ZAP harus dikonfigurasi untuk menerima dan memproses gambar.  Untuk melakukannya, pergi ke panel Pilihan ZAP (Perkakas
-&rarr; Opsi), pilih Tampilkan, dan aktifkan kontak centang untuk "Proses gambar dalam permintaan/respon HTTP".  Sebagai tambahan, gambar ZAP tidak dapat disaring melalui pengaturan "URL Peniadaan Global" atau Properti Sesi untuk "Tiadakan dari Proksi". </p>
-
-<h2>Buka pengalihan</h2>
-Pengalihan terbuka adalah salah satu dari Sepuluh Teratas kerentanan OWASP 2010. Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilakukan. Pengalihan terbuka terjadi ketika suatu aplikasi mengizinkan masukan yang diberikan oleh pengguna (misalnya http://nottrusted.com) untuk mengendalikan pengalihan di luar situs. Biasanya cara ini cukup akurat untuk menemukan di mana pengalihan 301 atau 302 dapat dimanfaatkan oleh pelaku spam atau serangan phishing
-
-<h2>Pemindai Tajuk Respon Peladen HTTP</h2>
-Ini akan memeriksa tajuk respons akan kehadiran tajuk peladen yang berisi rincian versi.
-Ambang batas RENDAH akan meningkatkan kewaspadaan terhadap kehadiran bidang tajuk apakah string versi terdeteksi atau tidak.
-
-<h2>Pengungkapan Kode Sumber</h2>
-Kode Sumber Aplikasi telah diungkapkan oleh server web
-
-<h2>Pemindai Tajuk Keamanan Transportasi Ketat</h2>
-Pemindai ini memeriksa respons HTTPS akan kehadiran tajuk Keamanan Transportasi Ketat HTTP (HSTS) dan melakukan tes terhadap berbagai masalah implementasi,
-memberikan peringatan jika ditemukan.
-
-Peringatan-peringatan yang diberikan:
+<h2>Base64 Disclosure</h2>
 <ul>
- <li><b>Strict-Transport-Security Header Not Set: </b> Jika respons berupa HTTPS dan tajuknya hilang sama sekali.</li>
- <li><b>Strict-Transport-Security Disabled: </b> Jika respons berupa HTTPS dan nilai maksimal umur diatur ke nol, maka informasi HSTS peramban untuk situs akan ditata ulang.</li>
- <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> Jika respons berupa HTTPS dan ada lebih dari satu tajuk HSTS pada respons.</li>
- <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> Jika respons berupa HTTPS, sebuah tajuk HTST ditentukan tapi nilai maks-umur tidak mengandung angka.</li>
- <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec):</b> Jika tubuh respons termasuk tag META yang berusaha menentukan HSTS.</li>
- <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> Jika respons berupa HTTP dan ada tajuk HSTS.</li>
- <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec):</b> Jika respons berupa HTTPS dan ada tajuk HSTS, tapi ada tanda kutip sebelum petunjuk umur maksimal (tanda kutip diperbolehkan di sekitar nilai maksimal, tapi tidak pada petunjuk itu sendiri).</li>
- <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> Jika respons berupa HTTPS dan ada tajuk HSTS, tapi ada beberapa konten yang tak terduga (seperti tanda kutip kurawal). Harapannya adalah konten berupa ASCII yang bisa dicetak.</li>
+ <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
+ <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
+ <li><b>Base64 Disclosure:</b> Base64 encoded data was disclosed by the application/web server</li>
 </ul>
+<strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
-<h2>Pengungkapan Timestamp</h2>
-Sebuah timestamp telah diungkapkan oleh aplikasi/server web
+<h2>Content Cacheability</h2>
+This scan rule analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+<p>
+Alerts generated:
+<ul>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
 
-<h2>Atribut Elemen HTML yang dapat dikontrol klien (potensi XSS)</h2>
-Pemeriksaan ini memperhatikan usulan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana pengalihan terbuka mungkin dikerjakan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan membutuhkan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.
+<h2>Site Isolation Scan Rule</h2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measures is to prevent sensitive data
+from entering the memory and to separate trusted and untrusted documents in
+different browsing contexts. Three headers have been defined to enable that:
+<ul>
+ <li>Cross-Origin-Resource-Policy</li>
+ <li>Cross-Origin-Embedder-Policy</li>
+ <li>Cross-Origin-Opener-Policy</li>
+</ul>
+The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
+ loading any non-same-origin resources which don't explicitly grant the document
+ permission to be loaded.</q> (from
+<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
+<blockquote cite="https://resourcepolicy.fyi/">
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
+</blockquote>
+For example, an attacker site can include an image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
 
-<h2>Charset Terkendali Pengguna</h2>
-Pemeriksaan ini memperhatikan usulan yang diberi oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilaksanakan. Pernyataan charset yang demikian seharusnya selalu dinyatakan oleh aplikasi. Apabila penyerang bisa mengendalikan charset respon, mereka dapat memanipulasi HTML untuk menjalankan XSS atau serangan lainnya.
+The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
+multiple browsing contexts to separate trusted and untrusted documents.
 
-<h2>Acara JavaScript Terkendali User (XSS)</h2>
-Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana nilai atribut HTML tertentu mungkin dilakukan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan memerlukan review lebih lanjut oleh seorang analis keamanan untuk {menentukan memutuskan eksploitasi.            
+Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
+mechanism managed independently by the browser.
 
-<h2>Properti javasript yang dapat di kontrol oleh pengguna (XSS)</h2>
-Pemeriksaan ini memandang masukan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi dimana lokasi URL di properti javascript tertentu (misalnya create element src) yang munkin dikendalikan. Ini menyediakan hotspot daeteksi pada XSS (cross-site scripting) yang mana akana memerlukan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.            
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
 
-<h2>Pengguna nama campuran ditemukan</h2>
-Seandainya ada konteks yang berisi pengguna yang didefinisikan pemindai ini memeriksa seluruh tanggapan atas adanya poin hash yang mewakili nama pengguna tersebut.
-Penemuan segala nilai apapun dapat mewakili kerentanan referensi obyek langsung tidak aman (IDOR). Lansiran cuma diajukan sebagai item informasi sebab dibutuhkan pengujian manual lebih lanjut untuk menentukan dan mengukur imbasnya. 
+<h2>Example Passive Scan Rule: Denial of Service</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>X-Powered-By Header Information Leak</h2>
-Ini berupa memeriksa header respon untuk mengetahui rincian oleh X-Powered-.
+<h2>In Page Banner Information Leak</h2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
 
-<h2>X-Backend-Server Header Information Leak</h2>
-Ini memeriksa respon header untuk mengetahui rincian Server X-Backend.
+<h2>Java Serialization Object</h2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
 
-<h2>Pengalihan Masuk</h2>
-Pemerikasaan ini memprediksi ukuran berbagai jenis tanggapan ulang dan menghasilkan peringatan jika responsnya lebih besar dari ukuran yang diprediksi. 
-Sebuah Tanggapan mencoba langsung yang besar mungkin menunjukkan bahwa walaupun mencoba langsung telah terjadi, halaman tersebut benar-benar memuat konten (yang mungkin mengungkapkan informasi sensitif, PII, dll.).
+<h2>Permissions Policy Header Not Set</h2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found.<br>
+Redirects are ignored except at the Low threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
 
-<h2>Informasi data kebocoran header X-ChromeLogger-Data</h2>
-Ini memeriksa respon header untuk mengetahui rincian X-ChromeLogger-Data atau X-ChromePhp-Data.
+<h2>Source Code Disclosure</h2>
+Application Source Code was disclosed by the web server.<br>
+NOTE: Ignores CSS and JavaScript files.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
-<h2>Kebocoran informasi X-Debug-Token</h2>
-Ini akan memeriksa header respon dari kehadiran X-Debug-Token dan X-Debug-Token-Link rincian.
-Yang menunjukkan penggunaan/paparan pengguna Symfony. Pengguna symfony menyediakan akses pada sebagian besar informasi yang menarik bagi individu jahat dan Penguji Keamanan.
+<h2>Sub Resource Integrity Attribute Missing</h2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 
-<h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
-Ini memeriksa header respon untuk mengetahui rincian dari X-AspNet-Versi / X-AspNetMvc-Versi.
-
+<h2>Dangerous JS Functions</h2>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
 </body>
 </html>

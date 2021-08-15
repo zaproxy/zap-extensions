@@ -6,4 +6,5 @@
 <map version="1.0">
     <mapID target="soap-icon" url="contents/images/soap.png" />
     <mapID target="soap" url="contents/soap.html" />
+    <mapID target="soap.automation" url="contents/automation.html" />
 </map>

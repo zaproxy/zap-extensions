@@ -5,7 +5,6 @@ plugins {
     id("com.diffplug.spotless")
 }
 
-version = "0.4.0"
 description = "Official ZAP Reports."
 
 zapAddOn {
@@ -24,7 +23,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.2.0")
+                            version.set(">=0.4.0")
                         }
                     }
                 }
@@ -35,6 +34,14 @@ zapAddOn {
     apiClientGen {
         api.set("org.zaproxy.addon.reports.ReportApi")
         messages.set(file("src/main/resources/org/zaproxy/addon/reports/resources/Messages.properties"))
+    }
+}
+
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
     }
 }
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Report Generation API</TITLE>
+</HEAD>
+<BODY>
+	<H1>Report Generation API</H1>
+	The following operations are added to the API:
+
+	<h3>Views</h3>
+	<ul>
+		<li>templates: View available templates.</li>
+		<li>templateDetails (template*): View details of the specified
+			template.</li>
+	</ul>
+
+	<h3>Actions</h3>
+	<ul>
+		<li>generate (title* template* theme description contexts sites
+			sections includedConfidences includedRisks reportFileName
+			reportFileNamePattern reportDir display): Generate a report with the
+			supplied parameters.
+			<ul>
+				<li>title: Report Title</li>
+				<li>template: Report Template</li>
+				<li>theme: Report Theme</li>
+				<li>description: Report Description</li>
+				<li>contexts: The name of the contexts to be included in the
+					report, separated by '|'. For example, "Default Context|My
+					Context".</li>
+				<li>sites: The site URLs that should be included in the report,
+					separated by '|'.</li>
+				<li>sections: The report sections that should be included,
+					separated by '|'. View section names via API view <code>templateDetails
+						(template*)</code>
+				</li>
+				<li>includedConfidences: Confidences that should be included in
+					the report, separated by '|'. Accepted values are "False Positive",
+					"Low", "Medium", "High", and "Confirmed".</li>
+				<li>includedRisks: Risks that should be included in the report,
+					separated by '|'. Accepted values are "Informational", "Low",
+					"Medium", and "High".</li>
+				<li>reportFileName: The file name of the generated report. This
+					value overrides the reportFileNamePattern parameter.</li>
+				<li>reportFileNamePattern: Report File Name Pattern. For
+					example, <code>{{yyyy-MM-dd}}-ZAP-Report-[[site]]</code>.
+				</li>
+				<li>reportDir: Path to directory in which the generated report
+					should be placed.</li>
+				<li>display: Display the generated report. Either "true" or
+					"false".</li>
+			</ul>
+		</li>
+	</ul>
+
+</BODY>
+</HTML>

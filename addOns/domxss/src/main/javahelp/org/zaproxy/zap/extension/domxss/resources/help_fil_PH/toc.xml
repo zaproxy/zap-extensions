@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay ng mga Gumagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Mga Patakaran sa Aktibong Pag-scan ng DOM XSS" target="domxss"/>
+			<tocitem text="Mga Patakaran sa Aktibong Pag-scan ng DOM XSS" target="domxss">
+				<tocitem text="About" target="domxss.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -4,6 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [26] - 2021-07-29
+### Fixed
+- PII Disclosure scan rule now ignores images (Issue 6697).
+- PII Disclosure scan rule will now ignore seeming decimal numbers unless at Low threshold (Issue 6639).
+
+## [25] - 2021-06-17
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Update RE2/J library to latest version (1.6).
@@ -20,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Insecure Form Post
     - Added evidence
 - Maintenance changes.
+- Update links to repository.
 
 ## [24] - 2020-12-15
 ### Changed
@@ -195,6 +204,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v26
+[25]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v22

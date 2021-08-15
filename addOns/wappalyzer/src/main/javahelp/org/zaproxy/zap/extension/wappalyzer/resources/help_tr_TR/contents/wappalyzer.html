@@ -4,32 +4,45 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Teknoloji Tespiti</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Wappalyzer Kullanarak Teknoloji Tespiti</h1>
 <p>
-Teknoloji Tespit eklentisi, uygulamalar tarafından kullanılan teknolojileri tespit etmek için Wappalyzer (http://wappalyzer.com/) kurallarını kullanır.<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 Aşağıdaki istisnalar ile Wapplayzer tarayıcı eklentilerine çok benzer bir şekilde çalışır:
 <ul>
 <li>'Global JavaScript değişkenlerini' kullanmaz çünkü 'tam' tarayıcı olmadan bunları test etmek zordur</li>
-<li>Sürümleri göstermez - bu hala yapılacak</li>
-<li>Güvenirliği göstermez - bu hala yapılacak</li>
+<li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Teknolojileri tespit etmek için kullanılan 'kanıtı' görmenize olanak verir</li>
 </ul>
 <h2>Teknoloji Sekmesi</h2>
 Bu sekme, seçili site için tespit edilen teknolojilerin tümünü gösterir.<br>
 Bir teknolojiye sağ tıklamak o teknolojiyi tespit etmek için kullanılan tüm kurallı ifadelerin olduğu 'Kanıt göster' menüsünü görüntüler.<br>
-Bir kurallı ifade seçmek 'Arama' sekmesine geçirir ve o kurallı ifade için geçmişi araştırır.
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>Dış Bağlantılar</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
-	<td>Wappalyzer Anasayfa</td></tr>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
-	<td>Wappalyzer depo</td>
+	<td>The Wappalyzer Repository</td>
 </tr>
 </table>
 

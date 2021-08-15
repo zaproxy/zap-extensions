@@ -5,162 +5,127 @@
 Mga Passive na Iskan Rule - Alpha
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Mga patakaran ng passive iskan-alpha</h1>
 Ang mga sumosonod na alituntonin ay kalidad ng alpha passive iskan ay kasama sa add-on na ito:
 
-<h2>Asp. net viewstate pagbubunyag</h2>
-Ang isang ASP.NET ViewState ay isiwalat ng aplikasyon / web server
-
-<h2>ASP.NET ViewState integridad</h2>
-Ang aplikasyon ay hindi gumagamit ng Code Authentication Code (MAC) upang maprotektahan ang integridad ng ASP.NET ViewState, na maaaring binago ng isang malisyosong client
-
-<h2>Ang Pagsisiwalat ng Base64</h2>
-Ang naka-encode na data sa Base64 ay isiwalat ng aplikasyon / web server
-
-<h2>Nawawala ang nilalaman ng seguridad sa patakarang ng header</h2>
-Ito ay pagsusuri ng HTML sa tugon ng mga header para sa presensiya ng nilalaman ayon sa siguridad at patakaran ng header.<br>
-Sapamamagitan ng default ay sinosuri ang alituntunin ng "nilalaman-siguridad-patakaran ng header, at sa Mababang threshold ay nag susuri din para sa" x-nilalaman-patakaran-siguridad " at "X-WebKit-CSP" ng mga header.
+<h2>An example passive scan rule which loads data from a file</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Kung ang "Content-Security-Policy-Report-Only" ang header ay matatagpun sa tugon ng isang INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o na kung saan isa lamang ang bahagyang ipinatutupad.
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
-<h2>nakaka lason na cookie</h2>
-Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query string parametro at ang post sa data upang tukuyin kung saan maaaring kuntrolin ang mga parametro cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. At sa isang Banda Hindi ito mapag sasamantalahan kung ang URL parameters ay papayag na ang halaga ng cookie ay mailagay bilang isang bug.
-
-<h2>Cookie Without SameSite Attribute</h2>
-Inuulat ang anuma cookie na walang samesite attribute o wala itong kinikilalang anuman halaga para sa attribute na ito.
-
-<h2>Cross Domain Misconfiguration</h2> passively suriin ang mga tugon ng cross domain misconfiguration, para mapahinga ang parehong pinagmula ng patakaran sa web browser, halimbawa <br> ang kasalukuyang nag papatupad ay labis na tumitingen sa pagpapahintulot ng CORS headers.
-
-<h2>Directory Browsing</h2> 
-passively suriin ang mga tugon para sa mga lumagda na nagpapahiwatig na ang directory browsing ay maaari.
-
-<h2>Halimbawa ng Dokumento sa Passive iskaner</h2>
-Ipinatupad ito na isang halimbawa ng passive iskan rule na naglo-load ng mga string mula sa isang dokumento na maaaring ayusin ng isang gumagamit.<br>
-Para sa iba pang detalye na makikita: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-
-<h2>Halimbawa ng Simpleng passive Eskaner</h2>
-Ipinatupad ito ng isang halimbawa ng passive eskan rule.<br>
-Para sa iba pang detalye tignan ang: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Hash Disclosure</h2>
-Passively iskan para sa password na mga sumira ng nagsabi sa pamamagitan ng web server. <br>
-Kabilang ang iba't ibang ayos, kabilang ang ilang mga porma tulad ng MD4, MD5, and SHA*, kung saan minsan gamit ito para sa mga layunin maliban sa naglalaman ng mga hashes ng password. 
-
-<h2>HeartBleed</h2>
-Passively iskan para sa HTTP header ng mga tugon na maaaring mag pahiwatig na ang server ay mahina sa mga kritikal na HeartBleed OpenSSL ng kahinaan. 
-
-<h2>HTTP sa HTTPS Walang kasiguraduhan ang pagliligtas sa form ng post</h2> itong pagsusuri ay tumitingen sa walang kasiguraduhan ng HTTP sa pahina ng mga form host HTTPS. Ang isyu ay ang isang hindi secure na pahina ng HTTP na pweding madaling ma hijack gamit ang MITM at ang secure na HTTPS form ay pweding mapalitan o ma spoofed.
-
-<h2>HTTPS sa HTTP hindi secure na pagbabago sa form ng post</h2> ang pagsusuring ito ay nakikilala ng secure na pahina sa HTTPS ang host ay walang secure sa mga form ng HTTP. Ang isyung ito ay para sa isang secure na pahina paglipat sa isang hindi secure na pahina kung ang data ay ililipat sa isang form. Iniisip ng gumagamit na sila ay nag sasabmit ng datos sa seguridad na pahina ngunit ang katunayan ay hindi.
-
-<h2>hindi secure na Component</h2>
-Passively ma iskan ang tugon ng server sa mga header at ng body generator content para sa producto ng mga bersyon, na kung saan ang krus-referenced ay laban sa listahan ng mga bersyon produto nalalaman na ito ay mahina sa various CVEs. 
-Ang listahan ng mga niraranguhan sa CVEs at CVSS matindi ang iskor sa output ng bawat isang producto na nabangit na mahina. 
-Sa katunayan, ang mga sumosunod na producto ay nasa panig ng server na sumosuporta:<br> Apache Tomcat aplikasyon server (limitadong functionality dahil sapagtagas ng limitadong inpormasyon sa tomcat)<br> Apache web server<br> mod_auth_radius Apache modue<br>
- mod_fcgid Apache module<br>
- mod_imap Apache module<br>
-mod_jk Apache module<br>
-mod_perl Apache module<br>
-mod_python Apache module<br>
-mod_ssl Apache module<br>
-OpenSSL Apache module<br>
-Perl Apache module<br>
-Python Apache module<br>
-IBM HTTP Server<br>
-JBoss aplikasyon server<br>
-Jetty web server / aplikasyon server<br>
-LiteSpeed web server<br>
-Lighttpd web server<br>
-Microsoft IIS web server<br>
-Netscape Enterprise web server<br>
-Nginx web server<br>
-OpenCMS<br>
-Oracle Aplikasyon server<br>
-Oracle Web Cache<br>
-PHP<br>
-Phusion_Passenger<br>
-Phusion_Passenger<br>
-Squid proxy server<br>
-Sun One web server<br>
-Sun Java System Web Server<br>
-TornadoServer web server<br>
-WordPress
-
-<h2>Image lokasyon eskaner</h2>
-<p>Mga passively eskan para sa lokaayon ng GPS pag lantad ng image sa panahon ng normal ang seguridad ng
-mga assessment sa mga website.  Image lokasyon eskaner tumotulong sa sitwasyon kung saan maaaring magpaskil ng mga larawan sa propayl ang end user at posibleng ipamigay ang kanilang lokasyon sa bahay
-e.g. a dating site or children's chatroom.  Ang isang whitepaper na ito ay matatagpuan sa http://veggiespam.com/ils/</p>
-
-<p>Tandaan: ang pagkakasunod sunod ng plug-in na ito para magamit sa, ZAP kaylangan isaayos para makatangap at maproseso ang mga image.  Upang gawin ito, pumunta sa opsiyon ng ZAP panel (Tools &rarr; Opsiyon), pumili ng display, at paganahin ang checkbox para sa "pagpaprases ng mga image sa HTTP requests/responses".  Para sa pagdadagdag, ng mga image sa ZAP ay hindi masasala sa pamamagitan ng mga setting "Global Exclude URL" o ang sesiyon prapertis para sa "Exclude from
-Proxy". </p>
-
-<h2>Buksan na Redirect</h2>
-Ang mga bukas na redirect ay isa mga top ten vulnerabilities ng OWASP 2010. Ang pagsusuring ito ay tumitingen sa user-supplied input ng mga query string parameter at post data para matukoy kung saan posibleng bukas ang mga redirect. Ang mga bukas na redirect ay mangyayari kapag ang isang aplikasyon ay pinahintulotan ang user-supplied input (e.g. http://nottrusted.com) na makuntrol ang isang offsite redirect. Ito ay pangkaraniwan isang tumpak na paraan para mahanap ang 301 o 302 mga redirect na maaaring pagsamantalahan ng mga spammer o ng pag-atake sa phishing
-
-<h2>HTTP server ay tumugon sa header eskaner</h2>
-Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng isang server header na naglalaman ng mga detalye ng bersiyon.
-Sa mahinang Threshold ay mataas ang alerto batay sa presensiya ng header field kung nakita o hindi ang bersyon ng string.
-
-<h2>Pagsiwalat sa Source Code</h2>
-Ang aplikasyon Source Code ay siniwalat ng web server
-
-<h2>Istiktong Siguridad ng transport sa header eskaner</h2>
-Itong eskaner ay sinusuri ang mga tugon ng HTTPS para sa presensiya ng Striktong Seguridad ng Transport HTTP (HSTS) header at pagsubok sa iba't ibang suliranin,
-Maging alerto kung natagpuan na ito.
-Mga alertong generated:
+<h2>Base64 Disclosure</h2>
 <ul>
- <li><b>Strict-Transport-Security Header Not Set:
-</b> kung ang tugon ay HTTPS at ang header ay ganap na nawawala.</li>
- <li><b>Strikto-Transport-Seguridad Disabled: </b> kung ang tugon ay HTTPS at ang halaga ng max-age ay naka-set sa zero, gayon pagnireset ang mga browser ang impormasiyon ng HSTS para sa site.</li>
- <li><b>Strikto-Transport-Security maraming entre ang header (Hindi sumusunod sa Spec):</b> kung ang tugon ay HTTPS at meron higit sa isang HSTS header sa mga tumugon.</li>
- <li><b>Stricto-Transport-Seguridad Nawawalang Max-Age (hindi-sumusunod sa Spec): </b> kung ang tugon ay HTTPS, isang HSTS header ay tiyak pero ang max-age value ay hindi naglalaman ng numero.</li>
- <li><b>Strikto-Transport-Segutidad ay tinukoy sa pamamagitan ng META (Hindi sumosunod sa Spec): </b> kung ang response body ay kabilang sa META tag sino ang susubok tukuyin ang HSTS.</li>
- <li><b>Strikto-Transport-Seguridad ang Header ay nasa plain sa tugon ng HTTP: </b> Kung ang tugon ay HTTP at ang HSTS header ay kasalukuyan.</li>
- <li><b>Strikto-Transport-Seguridad Max-Age malformed (Hindi sumusunod sa Spec) </b> kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga quote na nauuna ang max-age directiba(ang mga quote ay pinapayagan sa paligid ng max-age value, ngunit hindi sa paligid ng directibang ito).</li>
- <li><b>Stikto-Transport-Seguridad Malformed Nilalaman(hindi sumusunod sa Spec): </b>kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga hindi inaasahang nilalaman(tulad ng mga buhol buhol na quote). Ang inaasahan ay maipi-print ang nilalaman ng ASCII.</li>
+ <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
+ <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
+ <li><b>Base64 Disclosure:</b> Base64 encoded data was disclosed by the application/web server</li>
 </ul>
+<strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
-<h2>Pagsisiwalat ng Timestamp</h2>
-Ang timestamp ay isiniwalat sa pamamagitan ng aplikasyon/web server
+<h2>Content Cacheability</h2>
+This scan rule analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+<p>
+Alerts generated:
+<ul>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
 
-<h2>Ang gumagamit ay nakukuntrol ang katangian ng elemento sa HTML (potensyal XSS)</h2>
-Ang pagsusuring ito ay tumitingen sa supplied ng gumagamit na nakapasok sa query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolado. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.
+<h2>Site Isolation Scan Rule</h2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measures is to prevent sensitive data
+from entering the memory and to separate trusted and untrusted documents in
+different browsing contexts. Three headers have been defined to enable that:
+<ul>
+ <li>Cross-Origin-Resource-Policy</li>
+ <li>Cross-Origin-Embedder-Policy</li>
+ <li>Cross-Origin-Opener-Policy</li>
+</ul>
+The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
+ loading any non-same-origin resources which don't explicitly grant the document
+ permission to be loaded.</q> (from
+<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
+<blockquote cite="https://resourcepolicy.fyi/">
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
+</blockquote>
+For example, an attacker site can include an image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
 
-<h2>Ang Gumagamit ay Nakukuntrol ang Charset</h2>
-Ang pagsusuring ito ay tumitingen sa user-suplied input sa mga query string parameter at POST data upang makilala kung saan ang uri ng nilalaman o meta tag charser ang mga deklarasyon ay maaaring kontrolado ng gumagamit. Ang naturang mga deklarasyon ng charset ay dapat palaging ideklara ng aplikasyon. Kung ang umatake ay kayang kontrolin ang tugon ng charset maaari niyang manipulahin ang HTML para mag perporm sa XSS o iba pang mga pag atake.
+The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
+multiple browsing contexts to separate trusted and untrusted documents.
 
-<h2>User Kontrolable Javascript Event (XSS)</h2>
-Ang pag susuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolin. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.            
+Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
+mechanism managed independently by the browser.
 
-<h2>Ang gumagamit ay nakukuntrol ang pag aari ng Javasript (XSS)</h2>
-Ang pagsusuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para makilala kung saan ang URL's ay tiyak ang mga katangian ng javascript (e.g.createElement src) maaaring becontrolled. Ito ay nagbibigay pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagan pagsusuri ng isang manunuri sa siguridad upang matukoy ang pagsasamantala.            
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
 
-<h2>Ang Username ng Hash ay natagpuan</h2>
-Kung anuman ang nilalaman ng kongteksto na tinutukoy ng mga gumagamit itong iskaner ay sinusuri ang lahat ng mga tugon para sa presensiya ng hashed values na kumakatawan sa mga username.
-Pagkatuklas ng anumang naturang halaga ay maaaring kumakatawan sa isang Insecure Direct Object Reference (IDOR) na kahinaan. Ang alerto ay itataas lamang bilang inpormasyon aytem bilang further ang manu-manong pagsusuri ay kinakaylangan upang makompirma at masuri ang impact. 
+<h2>Example Passive Scan Rule: Denial of Service</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>X-Powered-By Header impormasyon Leak</h2>
-Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng X-Powed-By detalye.
+<h2>In Page Banner Information Leak</h2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
 
-<h2>X-Backend-Server Header impormasyon Leak</h2>
-Ang pagsusuring ito ay tugon ng mga header para sa presensiya ng X-Backend-Server sa mga detalye.
+<h2>Java Serialization Object</h2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
 
-<h2>Malaking Redirect</h2>
-Ang pagsusuring ito ay para mahulaan ang size ng variuos redirect uri ng mga tugon at bumubuo ng alerto kung ang tugon ay masmataas pa kesa sa nahulaan size. 
-Ang malaking tugon ng redirect ay maaaring mag pahiwatig na bagama't ang isang redirect ay naganap ang pahina ay talagang nag lalaman ng nilalaman(na kung saan maaaring mabunyag ang sinsitibong impormasyon, PII, atbp).
+<h2>Permissions Policy Header Not Set</h2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found.<br>
+Redirects are ignored except at the Low threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
 
-<h2>X-ChromeLogger-Data Header impormasyon Leak</h2>
-Ito ay nagsusuri sa mga tugon ng header para sa presensiya ng X-Chromelogger-Data o X-ChromePhp-Data detalye.
+<h2>Source Code Disclosure</h2>
+Application Source Code was disclosed by the web server.<br>
+NOTE: Ignores CSS and JavaScript files.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
-<h2>X-Debug-Token impormasyon Leak</h2>
-Ito ay nagsusuri sa tugon ng mga header para sa presensiya ng X-Debug-Token at sa detalye ng X-Debug-Token-Link.
-Na nagpapahiwatig ng paggamit/pagkakalantad sa propayl ng Synfony. Ang symfony profiler ay nag bibigay ng akses sa isang makabuluhang halaga ng impormasyon ng interes para sa mga malisyosung indibidwal at seguridad ng mga Tester.
+<h2>Sub Resource Integrity Attribute Missing</h2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 
-<h2>X-AspNet-Bersiyon/X-AspNetMvc-Bersiyon ng Header impormasyon Leak</h2>
-Ang mga pagsusuring ito ay tugon ng mga header para sa presensiya ng X-AspNet-Bersiyon/X-AspNetMvc-Mga ditalye ng Bersiyon.
-
+<h2>Dangerous JS Functions</h2>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
 </body>
 </html>

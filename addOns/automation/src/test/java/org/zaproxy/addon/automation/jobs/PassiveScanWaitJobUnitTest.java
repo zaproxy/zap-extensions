@@ -120,12 +120,16 @@ class PassiveScanWaitJobUnitTest {
         Map map = new HashMap();
         map.put("maxDuration", Integer.toString(duration));
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
-        assertThat(job.getMaxDuration(), is(equalTo(duration)));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(duration)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -139,9 +143,13 @@ class PassiveScanWaitJobUnitTest {
         Map map = new HashMap();
         map.put("test", "test");
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
@@ -165,6 +173,7 @@ class PassiveScanWaitJobUnitTest {
                         new Answer<Integer>() {
                             private int records = 5;
 
+                            @Override
                             public Integer answer(InvocationOnMock invocation) {
                                 records = records - 1;
                                 return records;
@@ -180,7 +189,7 @@ class PassiveScanWaitJobUnitTest {
         PassiveScanWaitJob job = new PassiveScanWaitJob();
 
         // When
-        job.runJob(env, null, progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
@@ -211,10 +220,14 @@ class PassiveScanWaitJobUnitTest {
         Map map = new HashMap();
         map.put("maxDuration", Integer.toString(duration));
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
 
         // When
-        job.applyParameters(params, progress);
-        job.runJob(env, null, progress);
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));

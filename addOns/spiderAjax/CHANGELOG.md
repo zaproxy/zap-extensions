@@ -4,9 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+ - Address errors when running the AJAX Spider with Automation Framework.
+ - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
+
+## [23.4.0] - 2021-08-05
+### Added
+- Automation Framework GUI
+
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
+- Handle multiple context URLs in automation.
+
+### Deprecated
+- Automation parameters `failIfFoundUrlsLessThan` and `warnIfFoundUrlsLessThan` in favour of the
+`spiderAjax.urls.added` statistic test.
 
 ## [23.3.0] - 2021-03-09
 ### Added
@@ -178,6 +191,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.4.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.4.0
 [23.3.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.3.0
 [23.2.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.2.0
 [23.1.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.1.0

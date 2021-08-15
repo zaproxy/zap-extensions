@@ -6,6 +6,7 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="automation" target="automation" />
+    <indexitem text="automation - gui" target="automation.gui" />
     <indexitem text="automation - environment" target="automation.env" />
     <indexitem text="automation - addOns job" target="automation.addons" />
     <indexitem text="automation - passiveScan-config job" target="automation.pscanconf" />
@@ -13,4 +14,5 @@
     <indexitem text="automation - spider job" target="automation.spider" />
     <indexitem text="automation - activeScan job" target="automation.ascan" />
     <indexitem text="automation - about" target="automation.about" />
+    <indexitem text="automation - tests" target="automation.tests" />
 </index>

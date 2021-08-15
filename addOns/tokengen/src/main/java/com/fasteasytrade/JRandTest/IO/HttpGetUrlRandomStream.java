@@ -32,9 +32,14 @@
 
 package com.fasteasytrade.JRandTest.IO;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.DataInputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class represents an encrypted or random source HTTP Url source.
@@ -76,6 +81,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#getFilename()
 	 */
+	@Override
 	public String getFilename() {
 		return filename;
 	}
@@ -83,6 +89,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#setFilename(java.lang.String)
 	 */
+	@Override
 	public void setFilename(String s) {
 		filename = s;
 	}
@@ -90,6 +97,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#isOpen()
 	 */
+	@Override
 	public boolean isOpen() {
 		return open;
 	}
@@ -97,6 +105,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#openInputStream()
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 		open = false;
 		if (filename == null)
@@ -145,6 +154,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#closeInputStream()
 	 */
+	@Override
 	public boolean closeInputStream() {
 		try {
 			infile.close();
@@ -157,6 +167,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -185,6 +196,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		byte[] b = new byte[4];
 		int result = 0;
@@ -199,6 +211,7 @@ public class HttpGetUrlRandomStream implements RandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		byte[] b = new byte[8];
 		int result = 0;

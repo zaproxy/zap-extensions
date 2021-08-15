@@ -27,13 +27,13 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.soap.SOAPActionSpoofingActiveScanRule.ResponseType;
 
-public class SOAPActionSpoofingActiveScanRuleTestCase {
+class SOAPActionSpoofingActiveScanRuleTestCase {
 
     private HttpMessage originalMsg = new HttpMessage();
     private HttpMessage modifiedMsg = new HttpMessage();
 
     @BeforeEach
-    public void setUp() throws HttpMalformedHeaderException {
+    void setUp() throws HttpMalformedHeaderException {
         /* Original. */
         Sample.setOriginalRequest(originalMsg);
         Sample.setOriginalResponse(originalMsg);

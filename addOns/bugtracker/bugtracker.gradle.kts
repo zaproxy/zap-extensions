@@ -1,13 +1,7 @@
-version = "3"
 description = "Bug Tracker extension."
 
 tasks.withType<JavaCompile> {
     options.compilerArgs = options.compilerArgs - "-Werror" + "-proc:none"
-}
-
-repositories {
-    // Required by dependencies of org.kohsuke:github-api:1.75.
-    maven(url = "https://repo.jenkins-ci.org/releases/")
 }
 
 zapAddOn {

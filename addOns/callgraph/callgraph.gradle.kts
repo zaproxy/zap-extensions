@@ -1,4 +1,3 @@
-version = "5"
 description = "Allows the user to view a call graph of the selected resources"
 
 zapAddOn {
@@ -13,6 +12,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }
 

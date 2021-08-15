@@ -1,7 +1,8 @@
 env:
   contexts:
     - name: example
-      url: https://www.example.com/
+      urls: 
+      - https://www.example.com/
   parameters:
     failOnError: false
     failOnWarning: true

@@ -483,6 +483,9 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
                     // for the url filename, try each of the prefixes in turn
                     for (String prefix : LOCAL_FILE_RELATIVE_PREFIXES) {
+                        if (isStop()) {
+                            return;
+                        }
 
                         prefixedUrlfilename = prefix + urlfilename;
                         msg = getNewMsg();
@@ -527,14 +530,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
                             // All done. No need to look for vulnerabilities on subsequent
                             // parameters on the same request (to reduce performance impact)
-                            return;
-                        }
-
-                        // Check if the scan has been stopped
-                        // if yes dispose resources and exit
-                        if (isStop()) {
-                            // Dispose all resources
-                            // Exit the scan rule
                             return;
                         }
                     }

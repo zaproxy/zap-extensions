@@ -1,4 +1,3 @@
-version = "8"
 description = "Allows you to highlight strings in the request and response tabs."
 
 zapAddOn {
@@ -13,5 +12,12 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }

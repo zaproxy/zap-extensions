@@ -33,6 +33,8 @@ import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -130,7 +132,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("$badFunction", alertsRaised.get(0).getEvidence());
+        assertEquals("badFunction", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -195,6 +197,21 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertEquals("bypassSecurityTrustHtml", alertsRaised.get(0).getEvidence());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"globalEval", "parentPromiseValue"})
+    void shouldNotAlertOnMatchingSubString(String funcName)
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body = "Some text <script>" + funcName + "()</script>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)

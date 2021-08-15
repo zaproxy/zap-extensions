@@ -35,6 +35,7 @@ import org.jsoup.select.Elements;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
@@ -113,6 +114,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     private void checkAppMatches(HttpMessage msg, Source source) {
         checkUrlMatches(msg);
         checkHeadersMatches(msg);
+        checkCookieMatches(msg);
         if (!msg.getResponseHeader().isText()) {
             return; // Don't check body if not text'ish
         }
@@ -208,6 +210,19 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                 if (header != null) {
                     AppPattern p = entry.getValue();
                     addIfMatches(p, header);
+                }
+            }
+        }
+    }
+
+    private void checkCookieMatches(HttpMessage msg) {
+        for (Map<String, AppPattern> sp : currentApp.getCookies()) {
+            for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+                for (HtmlParameter cookie : msg.getCookieParams()) {
+                    if (entry.getKey().equals(cookie.getName())) {
+                        AppPattern p = entry.getValue();
+                        addIfMatches(p, cookie.getValue());
+                    }
                 }
             }
         }

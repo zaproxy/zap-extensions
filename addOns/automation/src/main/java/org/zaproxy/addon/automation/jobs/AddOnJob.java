@@ -22,13 +22,17 @@ package org.zaproxy.addon.automation.jobs;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.configuration.XMLPropertiesConfiguration;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.gui.AddOnJobDialog;
 import org.zaproxy.zap.control.AddOnCollection;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.extension.autoupdate.OptionsParamCheckForUpdates;
@@ -39,18 +43,77 @@ public class AddOnJob extends AutomationJob {
 
     private static final String PARAM_UPDATE_ADDONS = "updateAddOns";
 
-    private boolean updateAddOns = true;
+    private Parameters parameters = new Parameters();
+    private Data data;
 
-    public AddOnJob() {}
+    public AddOnJob() {
+        data = new Data(this, this.parameters);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void runJob(
-            AutomationEnvironment env, LinkedHashMap<?, ?> jobData, AutomationProgress progress) {
+    public void verifyParameters(AutomationProgress progress) {
+        LinkedHashMap<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
+        }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
+        for (Object key : jobData.keySet()) {
+            if ("install".equals(key)) {
+                Object installAddOnsObj = jobData.get(key);
+                if (installAddOnsObj == null) {
+                    continue;
+                }
+                if (installAddOnsObj instanceof ArrayList<?>) {
+                    try {
+                        this.data.setInstall((ArrayList<String>) installAddOnsObj);
+                    } catch (Exception e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.addons.addon.data", installAddOnsObj));
+                    }
+                } else {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.addons.addon.data", installAddOnsObj));
+                }
+            } else if ("uninstall".equals(key)) {
+                Object uninstallAddOnsObj = jobData.get(key);
+                if (uninstallAddOnsObj == null) {
+                    continue;
+                }
+                if (uninstallAddOnsObj instanceof ArrayList<?>) {
+                    try {
+                        this.data.setUninstall((ArrayList<String>) uninstallAddOnsObj);
+                    } catch (Exception e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.addons.addon.data", uninstallAddOnsObj));
+                    }
+                } else {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.addons.addon.data", uninstallAddOnsObj));
+                }
+            }
+        }
+    }
 
+    @Override
+    public void applyParameters(AutomationProgress progress) {
+        // Nothing to do
+    }
+
+    @Override
+    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ExtensionAutoUpdate extAutoUpd =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
-        if (updateAddOns) {
+        if (this.parameters.getUpdateAddOns()) {
             try {
                 // Unfortunately we need to do some nasty reflection :/
                 Method glviMethod = extAutoUpd.getClass().getDeclaredMethod("getLatestVersionInfo");
@@ -85,50 +148,20 @@ public class AddOnJob extends AutomationJob {
                 return;
             }
         }
-        Object installAddOnsObj = jobData.get("install");
-        if (installAddOnsObj != null) {
-            if (installAddOnsObj instanceof ArrayList<?>) {
-                ArrayList<?> instAddOns = (ArrayList<?>) installAddOnsObj;
-                String result = extAutoUpd.installAddOns((ArrayList<String>) instAddOns);
-                if (result.length() > 0) {
-                    progress.error(result);
-                    return;
-                }
-            } else {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.addons.addon.data", installAddOnsObj));
+        if (this.data.getInstall() != null) {
+            String result = extAutoUpd.installAddOns(this.data.getInstall());
+            if (result.length() > 0) {
+                progress.error(result);
+                return;
             }
         }
-
-        Object uninstallAddOnsObj = jobData.get("uninstall");
-        if (uninstallAddOnsObj != null) {
-            if (uninstallAddOnsObj instanceof ArrayList<?>) {
-                ArrayList<?> uninstAddOns = (ArrayList<?>) uninstallAddOnsObj;
-                String result = extAutoUpd.uninstallAddOns((ArrayList<String>) uninstAddOns);
-                if (result.length() > 0) {
-                    progress.error(result);
-                    return;
-                }
-            } else {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.addons.addon.data", uninstallAddOnsObj));
+        if (this.data.getUninstall() != null) {
+            String result = extAutoUpd.uninstallAddOns(this.data.getUninstall());
+            if (result.length() > 0) {
+                progress.error(result);
+                return;
             }
         }
-    }
-
-    @Override
-    public boolean applyCustomParameter(String name, String value) {
-        switch (name) {
-            case PARAM_UPDATE_ADDONS:
-                updateAddOns = Boolean.parseBoolean(value);
-                return true;
-            default:
-                // Ignore
-                break;
-        }
-        return false;
     }
 
     @Override
@@ -138,13 +171,14 @@ public class AddOnJob extends AutomationJob {
         return map;
     }
 
+    @Override
     public String getExtraConfigFileData() {
         return "    install:                           # A list of non standard add-ons to install from the ZAP Marketplace\n"
                 + "    uninstall:                         # A list of standard add-ons to uninstall\n";
     }
 
     public boolean isUpdateAddOns() {
-        return updateAddOns;
+        return this.parameters.getUpdateAddOns();
     }
 
     @Override
@@ -165,5 +199,77 @@ public class AddOnJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return null;
+    }
+
+    @Override
+    public void showDialog() {
+        new AddOnJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getSummary() {
+        return Constant.messages.getString(
+                "automation.dialog.addon.summary",
+                this.getData().getInstall() == null ? "[]" : this.getData().getInstall(),
+                this.getData().getUninstall() == null ? "[]" : this.getData().getUninstall());
+    }
+
+    @Override
+    public Data getData() {
+        return data;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public static class Data extends JobData {
+        private Parameters parameters;
+        private List<String> install;
+        private List<String> uninstall;
+
+        public Data(AutomationJob job, Parameters parameters) {
+            super(job);
+            this.parameters = parameters;
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+
+        public List<String> getInstall() {
+            if (install == null) {
+                return null;
+            }
+            return install.stream().collect(Collectors.toList());
+        }
+
+        public void setInstall(List<String> install) {
+            this.install = install;
+        }
+
+        public List<String> getUninstall() {
+            if (uninstall == null) {
+                return null;
+            }
+            return uninstall.stream().collect(Collectors.toList());
+        }
+
+        public void setUninstall(List<String> uninstall) {
+            this.uninstall = uninstall;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private boolean updateAddOns = true;
+
+        public boolean getUpdateAddOns() {
+            return updateAddOns;
+        }
+
+        public void setUpdateAddOns(boolean updateAddOns) {
+            this.updateAddOns = updateAddOns;
+        }
     }
 }

@@ -4,27 +4,40 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>技术检测</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>使用Wappalyzer的技术检测</h1>
 <p>
-技术检测附件使用Wappalyzer(http://wappalyzer.com/)规则来检测应用程序所使用的技术。<p>
+The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
 它的工作方式与Wappalyzer浏览器加载项非常相似，以下情况例外：
 <ul>
 <li>它不能使用"Global JavaScript变量"，因为在没有"完整的"浏览器情况下，很难检测。</li>
-<li>它无法显示版本-这仍然是待办事项（todo）</li>
 <li>It does not not show the confidence - this is still todo</li>
+<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>它允许您参阅用于检测技术的"证据"</li>
 </ul>
 <h2>技术选项卡</h2>
 此选项卡显示了所有已选站点上的检测技术。<br>
 右键单击技术将会显示一个"显示证据"菜单，在这之下是所有用于检测它的正则表达式。<br>
-选择正则表达式将切换到"搜索"选项卡，并搜索该正则表达式的历史记录。
+Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
+the menu will not be displayed.
+<p>
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
+passive scanner.
+<p>
+The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
+This enabled state is persisted between ZAP sessions.
 
-<h2>外部链接</h2>
+<h2>Reporting</h2>
+
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+
+<h2>External Links</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="http://wappalyzer.com/">http://wappalyzer.com/</a></td>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
 	<td>The Wappalyzer Homepage</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

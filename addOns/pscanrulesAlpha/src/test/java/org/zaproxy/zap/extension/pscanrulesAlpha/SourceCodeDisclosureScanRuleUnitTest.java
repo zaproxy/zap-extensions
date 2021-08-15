@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
 class SourceCodeDisclosureScanRuleUnitTest
@@ -105,6 +107,41 @@ class SourceCodeDisclosureScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnCssRequest() throws Exception {
+        // Given
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/styles.css", true));
+        msg.setResponseBody(wrapWithHTML(CODE_PHP));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnCssResponse() throws Exception {
+        // Given
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/styles", true));
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/css");
+        msg.setResponseBody(wrapWithHTML(CODE_PHP));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnJavaScriptResponse() throws Exception {
+        // Given
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/assets/scripts", true));
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/javascript");
+        msg.setResponseBody("class a{ constructor(t,e)}");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
     }
 
     private String wrapWithHTML(String code) {

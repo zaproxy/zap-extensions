@@ -5,28 +5,35 @@
 Mga Patakaran sa Aktibong Pag-scan ng DOM XSS
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Mga Patakaran sa Aktibong Pag-scan ng DOM XSS</h1>
 <p>
 Ang patakaran ng aktibong pag-scan para sa pagtuklas ng mga kahinaan ng DOM XSS.
 <p>
-Ito ay naglulunsad ng mga window ng browser at nagpapadala ng mga atake sa kargamento sa lahat ng mga nauugnay na mga elemento ng DOM.<br>Habang ito ay naglulunsad ng mga window ng browser, hindi ito angkop para sa headless environments, at aabot ng mas matagal kaysa sa iba (hindi batay sa browser) mga patakaran. 
+It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
+As it launches browser windows it will take significantly longer than other (non browser based) rules. 
 </p>
 <p>
-Ang bersyong ito ay sumusuporta lamang ng Firefox.<br>Ang mga bersyon sa hinaharap ay maaaring sumuporta ng ibang mga browser.
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
 </p>
 <p>
-Ang mga sumusundo ng mga Kalakasan ng Atake ay suportado, at tuwirang may kinalaman sa bilang ng mga kargamento ng atake na ginamit:
+The following Attack Strengths are supported, and related directly to the number of attack payloads used
+for URL fragment and form input field injections (eg: http://example.com/index.html?foo=bar#injection):
 <ul>
-<li>LOW: 2 mga kargamento ng atake 
-<li>MEDIUM: 4 mga kargamento ng atake 
+<li>LOW: 1 attack payloads 
+<li>MEDIUM: 3 attack payloads 
 <li>HIGHT: 6 mga kargamento ng atake 
-<li>INSANE: 8 mga kargamento ng atake 
+<li>INSANE: 9 attack payloads 
 </ul>
+The scanner will also attempt URL/query parameter injections which are not impacted by the selected strength.
 </p>
 <p>
 Ang patakaran ay magtatala lamang ng isang kahinaan ng DOM XSS kada noda, maliban kung ang LOW Alert threshold ay ginamit, kung saan susubukan nito ang lahat ng tinukoy na mga kargamento. 
 </p>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
 
 </body>
 </html>

@@ -24,12 +24,11 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -48,8 +47,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.SiteMap;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
@@ -103,7 +100,6 @@ public class ReportDialog extends StandardFieldsDialog {
     private ExtensionReports extension = null;
     private JButton[] extraButtons = null;
     private DefaultListModel<Context> contextsModel;
-    private DefaultListModel<String> sitesModel;
 
     private JList<Context> contextsSelector;
     private JList<String> sitesSelector;
@@ -123,7 +119,6 @@ public class ReportDialog extends StandardFieldsDialog {
         this.removeAllFields();
         // Ensure the contexts and sites get re-read as they may well have changed
         this.contextsModel = null;
-        this.sitesModel = null;
         this.contextsSelector = null;
         this.sitesSelector = null;
 
@@ -237,10 +232,12 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, reportParam.isDisplayReport());
 
         Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
+        List<String> templates = extension.getTemplateNames();
+        Collections.sort(templates);
         this.addComboField(
                 TAB_TEMPLATE,
                 FIELD_TEMPLATE,
-                extension.getTemplateNames(),
+                templates,
                 defaultTemplate != null ? defaultTemplate.getDisplayName() : null);
 
         List<String> themes = new ArrayList<>();
@@ -390,25 +387,12 @@ public class ReportDialog extends StandardFieldsDialog {
         return contextsSelector;
     }
 
-    private DefaultListModel<String> getSitesModel() {
-        if (sitesModel == null) {
-            sitesModel = new DefaultListModel<>();
-            SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-            SiteNode root = siteMap.getRoot();
-            if (root.getChildCount() > 0) {
-                SiteNode child = (SiteNode) root.getFirstChild();
-                while (child != null) {
-                    sitesModel.addElement(child.getName());
-                    child = (SiteNode) root.getChildAfter(child);
-                }
-            }
-        }
-        return sitesModel;
-    }
-
     private JList<String> getSitesSelector() {
         if (sitesSelector == null) {
-            sitesSelector = new JList<>(getSitesModel());
+            List<String> list = ExtensionReports.getSites();
+            String[] arr = new String[list.size()];
+            list.toArray(arr);
+            sitesSelector = new JList<String>(arr);
         }
         return sitesSelector;
     }
@@ -453,10 +437,7 @@ public class ReportDialog extends StandardFieldsDialog {
         reportData.setTheme(template.getThemeForName(getStringValue(FIELD_THEME)));
         if (reportData.getSites().isEmpty()) {
             // None selected so add all
-            reportData.setSites(
-                    IntStream.range(0, getSitesModel().size())
-                            .mapToObj(getSitesModel()::get)
-                            .collect(Collectors.toList()));
+            reportData.setSites(ExtensionReports.getSites());
         }
         reportData.setIncludeConfidence(0, this.getBoolValue(FIELD_CONFIDENCE_0));
         reportData.setIncludeConfidence(1, this.getBoolValue(FIELD_CONFIDENCE_1));

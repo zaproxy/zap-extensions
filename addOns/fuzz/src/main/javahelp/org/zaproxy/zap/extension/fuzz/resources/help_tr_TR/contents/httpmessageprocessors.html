@@ -6,7 +6,7 @@
 HTTP Mesaj İşlemcileri
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>HTTP Mesaj İşlemcileri</h1>
 Mesaj İşlemcileri fuzz'lanmakta olan mesajlara erişebilir ve onları değiştirebilir, fuzzing sürecini kontrol edebilir ve ZAP UI'ı ile etkileşime geçebilir.
 <p>
@@ -29,19 +29,25 @@ Etkinleştirilmiş Fuzzer HTTP İşlemcisi script'lerini seçmeye yarar. Bu scri
 <li>Uyarıları yükselt</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Payload Yansıma Algılayıcısı</h3>
-" kullanarak Durum sütünunda, yanıtta enjekte edilen payload'lardn birinin bulunup bulunmadığını belirtir.<img src="images/reflected_icon.png"> Yansıtılmış".<br>
-<strong>Not:</strong> İşlemci işlemcilerin listesine otomatik olarak eklenir.
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Not:</strong> This processor is automatically added to the list of processors.
 
 <h3>İstek İçerik-Uzunluğu Güncelleyici</h3>
-Günceller (ya da zaten yoksa ekler) <code>İçerik-Uzunluğu</code> talep gövdesinin uzunluğu ile tüm talep yöntemleri için başlığı. Talep gövdesinin boyutu sıfırsa ve başlık mevcut değilse herhangi bir değişiklik yapılmaz.<br>
-<strong>Not:</strong> İşlemci işlemcilerin listesine otomatik olarak eklenir.
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Not:</strong> This processor is automatically added to the list of processors.
 
 <h3>Etiket Yaratıcı</h3>
-Sonuçlar tablosunun Durum sütununa yanıtın içeriğine bağlı olarak özel 'etiketler' eklemeye yarar
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
 
 <h3>Kullanıcı Mesaj İşlemcisi</h3>
-Fuzz'lanmakta olan HTTP mesajını içeren bağlamlarda tanımlanmış kullanıcılardan birini kullanarak, bir kullanıcı olarak fuzz'lamayı sağlar.
+Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
 
 <p>
 Diğer eklentiler ek HTTP Mesaj İşlemcileri tanımlayabilir.

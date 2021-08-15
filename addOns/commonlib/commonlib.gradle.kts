@@ -9,7 +9,6 @@ plugins {
 
 group = "org.zaproxy.addon"
 
-version = "1.4.0"
 val versionBC = "1.0.0"
 description = "A common library, for use by other add-ons."
 
@@ -25,6 +24,13 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
     }
 }
 

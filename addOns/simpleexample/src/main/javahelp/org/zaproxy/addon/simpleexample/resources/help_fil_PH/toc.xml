@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay ng Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Simpleng Halimbawa" image="simple-icon" target="simple"/>
+			<tocitem text="Simpleng Halimbawa" image="simple-icon" target="simple">
+				<tocitem text="About" target="simple.about"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

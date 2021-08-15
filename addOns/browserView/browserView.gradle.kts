@@ -1,4 +1,3 @@
-version = "6"
 description = "Adds an option to render HTML responses like a browser"
 
 if (JavaVersion.current() <= JavaVersion.VERSION_1_10) {

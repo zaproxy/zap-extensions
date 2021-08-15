@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "11"
 description = "Displays a dialog showing the differences between 2 requests or responses. It uses diffutils and diff_match_patch"
 
 zapAddOn {

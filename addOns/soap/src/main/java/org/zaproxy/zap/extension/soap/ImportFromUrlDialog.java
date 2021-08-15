@@ -90,6 +90,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
     }
 
     /* Action executed by import button. */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (caller != null) {
             String url = fieldURL.getText();
@@ -104,6 +105,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
     public JTextField addContextMenu(final JTextField field) {
         field.addMouseListener(
                 new MouseAdapter() {
+                    @Override
                     public void mouseReleased(MouseEvent e) {
                         if (e.isPopupTrigger()) {
                             JPopupMenu jPopupMenu = new JPopupMenu();
@@ -112,6 +114,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
                             @SuppressWarnings("serial")
                             Action pasteAction =
                                     new AbstractAction(actionName) {
+                                        @Override
                                         public void actionPerformed(ActionEvent e) {
                                             field.paste();
                                         }

@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Pagscript gamit ang Python" image="python-logo" target="jython"/>
+			<tocitem text="Pagscript gamit ang Python" image="python-logo" target="jython">
+				<tocitem text="Options" target="jython.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

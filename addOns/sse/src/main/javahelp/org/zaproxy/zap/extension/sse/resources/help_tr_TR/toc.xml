@@ -6,9 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanım Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Sunucu-Gönderimli Olaylar" image="html5connectivity" >
-		    	<tocitem text="Tanıtım" target="sse.introduction"/>
-				<tocitem text="Sekme" target="sse.tab"/>
+			<tocitem text="Sunucu-Gönderimli Olaylar" target="sse.introduction" image="html5connectivity" >
+				<tocitem text="Tab" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

@@ -1,4 +1,3 @@
-version = "3"
 description = "ASP/JSF ViewState Decoder and Editor"
 
 zapAddOn {
@@ -13,5 +12,11 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }

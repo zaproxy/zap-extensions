@@ -1,4 +1,3 @@
-version = "5"
 description = "Request numbered panel."
 
 zapAddOn {
@@ -13,5 +12,11 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%helpPath%", "")
     }
 }

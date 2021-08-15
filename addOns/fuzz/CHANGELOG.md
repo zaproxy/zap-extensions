@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [13.2.0] - 2021-06-01
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
@@ -135,6 +138,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.2.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.2.0
 [13.1.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.1.0
 [13.0.1]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.1
 [13.0.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.0

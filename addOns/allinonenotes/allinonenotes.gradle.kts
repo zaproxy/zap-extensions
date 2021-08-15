@@ -1,4 +1,3 @@
-version = "2"
 description = "A simple extension to view all notes in one pane."
 
 zapAddOn {

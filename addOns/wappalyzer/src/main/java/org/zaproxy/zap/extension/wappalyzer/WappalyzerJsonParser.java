@@ -138,6 +138,7 @@ public class WappalyzerJsonParser {
                 app.setCategories(
                         this.jsonToCategoryList(result.getCategories(), appData.get("cats")));
                 app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
+                app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
                 app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
                 app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
                 app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
@@ -281,7 +282,10 @@ public class WappalyzerJsonParser {
             }
         } else if (json != null) {
             logger.error(
-                    "Unexpected header type for {} {}", json, json.getClass().getCanonicalName());
+                    "Unexpected JSON type for {} pattern: {} {}",
+                    type,
+                    json,
+                    json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -349,8 +353,11 @@ public class WappalyzerJsonParser {
                 }
             }
         } else {
-            logger.error(
-                    "Unexpected header type for {} : {}", json, json.getClass().getCanonicalName());
+            logger.debug(
+                    "Unexpected JSON type for {} pattern: {} {}",
+                    type,
+                    json,
+                    json.getClass().getCanonicalName());
         }
         return list;
     }

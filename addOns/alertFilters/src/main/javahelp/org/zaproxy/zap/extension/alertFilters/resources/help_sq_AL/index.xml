@@ -5,5 +5,7 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="alertFilter" target="addon.alertFilter" />
+	<indexitem text="Alert Filters" target="addon.alertFilter" />
+	<indexitem text="Context alert Filters" target="addon.contextAlertFilter" />
+	<indexitem text="Global Alert Filters" target="addon.globalAlertFilter" />
 </index>

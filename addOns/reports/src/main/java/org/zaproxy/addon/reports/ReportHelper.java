@@ -19,13 +19,18 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
 
@@ -45,7 +50,12 @@ public class ReportHelper {
     public static String getHostForSite(String site) {
         String[] schemeHostPort = site.split(":");
         // http://www.example.com:8080 - the host will start with //
-        return schemeHostPort[1].substring(2);
+        String host = schemeHostPort[1].substring(2);
+        int slashIndex = host.indexOf("/");
+        if (slashIndex > 0) {
+            host = host.substring(0, slashIndex);
+        }
+        return host;
     }
 
     public static int getPortForSite(String site) {
@@ -65,7 +75,7 @@ public class ReportHelper {
     }
 
     public static String getHttpStatusCodeString(int code) {
-        return HttpStatus.getStatusText(code);
+        return HttpStatusReason.get(code);
     }
 
     public static Map<String, Long> getSiteStats(String site, String prefix) {
@@ -82,5 +92,75 @@ public class ReportHelper {
 
     public static boolean hasSiteStats(String site, String prefix) {
         return !getSiteStats(site, prefix).isEmpty();
+    }
+
+    public static List<Alert> getAlertsForSite(AlertNode rootNode, String site) {
+        List<Alert> list = new ArrayList<>();
+
+        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
+            AlertNode alertNode = rootNode.getChildAt(alertIndex);
+            for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                    list.add(instanceNode.getUserObject());
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public static List<Alert> getAlertInstancesForSite(
+            AlertNode rootNode, String site, int pluginId) {
+        List<Alert> list = new ArrayList<>();
+
+        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
+            AlertNode alertNode = rootNode.getChildAt(alertIndex);
+            // Only the instances have userObjects, not the top level nodes :/
+            if (alertNode.getChildAt(0) != null
+                    && alertNode.getChildAt(0).getUserObject().getPluginId() == pluginId) {
+                for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                    AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                    if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                        list.add(instanceNode.getUserObject());
+                    }
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeText(String text) {
+        return legacyEscapeText(text, false);
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeText(String text, boolean escapeJson) {
+        String enc = XMLStringUtil.escapeControlChrs(text);
+        if (escapeJson) {
+            return StringEscapeUtils.escapeJava(enc);
+        }
+        return enc;
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeParagraph(String text) {
+        return legacyEscapeParagraph(text, false);
+    }
+
+    /** A method which mimics the escaping used for traditional ZAP reports */
+    public static String legacyEscapeParagraph(String text, boolean escapeJson) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return legacyEscapeText(
+                        "<p>"
+                                + text.replaceAll("\\r\\n", "</p><p>").replaceAll("\\n", "</p><p>")
+                                + "</p>",
+                        escapeJson)
+                .replace("&lt;p&gt;", "<p>")
+                .replace("&lt;/p&gt;", "</p>");
     }
 }

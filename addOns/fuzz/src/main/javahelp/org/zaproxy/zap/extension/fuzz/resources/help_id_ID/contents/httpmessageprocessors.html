@@ -6,7 +6,7 @@
 Pesan prosesor HTTP
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Prosesor pesan HTTP</h1>
 Prosesor pesan HTTP dapat mengakses dan mengubah pesan HTTP yang menjadi fuzzed, mengendalikan proses fuzzing dan berinteraksi dengan UI ZAP.
 <p>
@@ -30,20 +30,25 @@ Memungkinkan untuk memilih naskah prosesor fuzzer HTTP yang diaktifkan. Naskah m
 <li>Raise alerts</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Muatan Refleksi Detector</h3>
-Menunjukkan di kolom dari tabel hasil jika salah satu muatan yang disuntikkan ditemukan dalam tanggapan, dengan menggunakan"<img src="images/reflected_icon.png"> Reflected".<br>
-<strong>Catatan:</strong> Prosesor ini otomatis ditambahkan ke daftar prosesor.
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
+<strong>Catatan:</strong> This processor is automatically added to the list of processors.
 
 <h3>Request Content-Length Updater</h3>
-Perbaharui (atau tambahkan, jika sudah tersedia) <code>Content-Length</code> meminta bagian dengan panjang permintaan badan,
-untuk semua metode permintaan tidak ada perubahan yang dilakukan jika ukuran badan permintaan adalah nol dan bagian belum ada.<br>
-<strong>Note:</strong> Prosesor ini secara otomatis ditambahkan ke daftar prosesor.
+Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
+<strong>Catatan:</strong> This processor is automatically added to the list of processors.
 
 <h3>Tag Creator</h3>
-Memungkinkan untuk menambahkan 'menandai' khusus, berdasarkan isi tanggapan, ke kolom negara bagian dari hasil tabel
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
 
 <h3>Prosesor Pesan Pengguna</h3>
-Memungkinkan fuzz sebagai pengguna, menggunakan salah satu pengguna yang didefinisikan dalam kontek yang menyertakan pesan HTTP yang berkedip. Pengguna harus ada untuk bisa memilih dan menambahkan prosesor ini.
+Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
 
 <p>
 Tambahan lainnya dapat mendefinisikan tambahan pesan prosesor HTTP.

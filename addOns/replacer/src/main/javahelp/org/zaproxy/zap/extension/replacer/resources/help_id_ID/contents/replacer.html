@@ -6,7 +6,7 @@
 Menggantikan
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Menggantikan</h1>
 Cara mudah untuk mengganti string dalam permintaan dan tanggapan.
 <p>
@@ -54,17 +54,20 @@ String yang akan digunakan untuk mengidentifikasi apa yang harus diganti - melih
 <h3>Pertandingan Regex</h3>
 Jika diatur kemudian Mencocokkan String akan diperlakukan sebagai regex ekspresi.
 Opsi ini dinonaktifkan ketika pencocokan header.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>String Pengganti</h3>
-String baru yang akan menggantikan ditentukan pilihan.
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Aktifkan</h3>
-Jika tidak diatur maka aturan tersebut tidak akan berlaku.
+<h3>Enable</h3>
+If not set then the rule will not apply.
 
-<h3>Maju</h3>
-Jika diatur kemudian tab tambahan akan menunjukkan yang memungkinkan anda untuk menentukan yang 'penggagas' aturan harus berlaku untuk.
-Masing-masing ZAP komponen yang dapat mengirim dan menerima pesan terpisah inisiator, sehingga ini akan memberikan anda sangat baik biji-bijian
-kontrol atas persis ketika aturan harus diterapkan.
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Jika anda membutuhkan lebih mengontrol kapan dan bagaimana teks harus diganti maka anda dapat menggunakan ZAP Script Konsol yang
