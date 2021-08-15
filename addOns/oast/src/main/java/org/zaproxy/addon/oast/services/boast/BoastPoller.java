@@ -38,6 +38,9 @@ public class BoastPoller implements Runnable {
 
     @Override
     public void run() {
+        if (boastService.getRegisteredServers().isEmpty()) {
+            return;
+        }
         LOGGER.debug("Polling all registered BOAST Servers.");
         this.boastService.getRegisteredServers().stream()
                 .map(BoastServer::poll)

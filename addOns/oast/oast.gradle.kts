@@ -7,6 +7,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/oast-support/")
+
+        extensions {
+            register("org.zaproxy.addon.oast.scripts.ExtensionOastScripts") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.oast.scripts"))
+                }
+                dependencies {
+                    addOns {
+                        register("scripts")
+                        register("graaljs")
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -24,5 +38,7 @@ crowdin {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects["graaljs"]!!)
+
     testImplementation(project(":testutils"))
 }
