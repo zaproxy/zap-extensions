@@ -9,6 +9,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - An option to allow changing the polling frequency of BOAST servers.
 - A table that lists the payloads and canary values of all registered BOAST servers.
+- Two new scripts that demonstrate how to interact with this add-on:
+  - OAST Register Request Handler.js (Template)
+  - OAST Get BOAST Servers.js
 
 ### Removed
 - The _ID_ and the _Canary Value_ fields, in favour of the _Active Servers_ table in the BOAST options window.
