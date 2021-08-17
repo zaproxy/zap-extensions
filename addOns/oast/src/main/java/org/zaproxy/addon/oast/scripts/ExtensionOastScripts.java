@@ -20,9 +20,7 @@
 package org.zaproxy.addon.oast.scripts;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,6 +77,11 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
     }
 
     @Override
+    public void postInstall() {
+        addTemplates();
+    }
+
+    @Override
     public boolean canUnload() {
         return true;
     }
@@ -88,12 +91,15 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
         removeScripts();
     }
 
-    private void addScripts() {
+    private void addTemplates() {
         addScript(
                 TEMPLATE_REGISTER_REQUEST_HANDLER,
                 Constant.messages.getString("oast.scripts.requestHandler.desc"),
                 extScript.getScriptType(ExtensionScript.TYPE_STANDALONE),
                 true);
+    }
+
+    private void addScripts() {
         addScript(
                 SCRIPT_GET_BOAST_SERVERS,
                 Constant.messages.getString("oast.scripts.getBoastServers.desc"),
@@ -137,10 +143,10 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
             } else {
                 extScript.addScript(script, false);
             }
-        } catch (IOException e) {
-            LOGGER.warn(Constant.messages.getString("oast.scripts.warn.couldNotAddScripts"));
-        } catch (InvalidParameterException e) {
-            LOGGER.warn(Constant.messages.getString("oast.scripts.warn.couldNotFindGraaljs"));
+        } catch (Exception e) {
+            LOGGER.warn(
+                    Constant.messages.getString(
+                            "oast.scripts.warn.couldNotAddScripts", e.getLocalizedMessage()));
         }
     }
 
