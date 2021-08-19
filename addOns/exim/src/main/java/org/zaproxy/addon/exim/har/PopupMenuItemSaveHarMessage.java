@@ -62,6 +62,11 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
     }
 
     @Override
+    public boolean isSafe() {
+        return true;
+    }
+
+    @Override
     protected void performActions(List<HttpMessage> httpMessages) {
         File file = getOutputFile();
         if (file == null) {
