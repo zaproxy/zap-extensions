@@ -51,7 +51,7 @@ public class OastPanel extends AbstractPanel {
         this.extensionOast = extensionOast;
 
         this.setLayout(new CardLayout());
-        this.setName(Constant.messages.getString("oast.callback.panel.name"));
+        this.setName(Constant.messages.getString("oast.panel.name"));
         this.setIcon(new ImageIcon(OastPanel.class.getResource("/resource/icon/16/callbacks.png")));
         this.add(getMainPanel(), getMainPanel().getName());
     }
@@ -84,9 +84,8 @@ public class OastPanel extends AbstractPanel {
 
     private JButton getClearButton() {
         JButton clearButton =
-                new JButton(Constant.messages.getString("oast.callback.panel.clear.button.label"));
-        clearButton.setToolTipText(
-                Constant.messages.getString("oast.callback.panel.clear.button.toolTip"));
+                new JButton(Constant.messages.getString("oast.panel.clear.button.label"));
+        clearButton.setToolTipText(Constant.messages.getString("oast.panel.clear.button.toolTip"));
         clearButton.setIcon(
                 DisplayUtils.getScaledIcon(
                         new ImageIcon(
@@ -98,7 +97,7 @@ public class OastPanel extends AbstractPanel {
     private JButton getOptionsButton() {
         JButton optionsButton = new JButton();
         optionsButton.setToolTipText(
-                Constant.messages.getString("oast.callback.panel.options.button.label"));
+                Constant.messages.getString("oast.panel.options.button.label"));
         optionsButton.setIcon(
                 DisplayUtils.getScaledIcon(
                         new ImageIcon(OastPanel.class.getResource("/resource/icon/16/041.png"))));

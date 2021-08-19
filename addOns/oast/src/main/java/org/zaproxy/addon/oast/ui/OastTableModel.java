@@ -53,8 +53,7 @@ public class OastTableModel extends DefaultCustomColumnHistoryReferencesTableMod
 
     private static CustomColumn<OastRequest> createHandlerColumn() {
         return new CustomColumn<OastRequest>(
-                String.class,
-                Constant.messages.getString("oast.callback.panel.table.column.handler")) {
+                String.class, Constant.messages.getString("oast.panel.table.column.handler")) {
 
             @Override
             public Object getValue(OastRequest model) {
@@ -65,8 +64,7 @@ public class OastTableModel extends DefaultCustomColumnHistoryReferencesTableMod
 
     private static CustomColumn<OastRequest> createSourceColumn() {
         return new CustomColumn<OastRequest>(
-                String.class,
-                Constant.messages.getString("oast.callback.panel.table.column.source")) {
+                String.class, Constant.messages.getString("oast.panel.table.column.source")) {
 
             @Override
             public Object getValue(OastRequest model) {
@@ -77,8 +75,7 @@ public class OastTableModel extends DefaultCustomColumnHistoryReferencesTableMod
 
     private static CustomColumn<OastRequest> createRefererColumn() {
         return new CustomColumn<OastRequest>(
-                String.class,
-                Constant.messages.getString("oast.callback.panel.table.column.referer")) {
+                String.class, Constant.messages.getString("oast.panel.table.column.referer")) {
 
             @Override
             public Object getValue(OastRequest model) {
