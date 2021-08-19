@@ -10,6 +10,8 @@ OPCODE_TEXT = 0x1;
 RISK_LOW = 1;
 CONFIDENCE_MEDIUM = 2;
 
+var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
+
 var debug_messages = [
     /Error Occurred While Processing Request/igm,
     /Internal Server Error/igm,
@@ -53,22 +55,33 @@ function scan(helper,msg) {
     debug_messages.forEach(function(pattern){
         if((matches = message.match(pattern)) != null){
             matches.forEach(function(evidence){
-                helper.newAlert()
-                    .setName("Information Disclosure - Debug Error Messages via WebSocket (script)")
-                    .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
-                    .setDescription("The response appeared to contain common error messages returned"
-                                    + " by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure"
-                                    + " the list of common debug messages.")
-                    .setSolution("Disable debugging messages before pushing to production.")
-                    .setEvidence(evidence)
-                    .setCweId(200) // CWE-200: Information Exposure
-                    .setWascId(13) // WASC Id 13 - Info leakage
-                    .raise();
+                raiseAlert(helper, evidence);
             });
         }
     });
 }
 
+function raiseAlert(helper, evidence){
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence){
+    return helper.newAlert()
+        .setPluginId(getId())
+        .setName("Information Disclosure - Debug Error Messages via WebSocket")
+        .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
+        .setDescription("The response appeared to contain common error messages returned"
+                        + " by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure"
+                        + " the list of common debug messages.")
+        .setSolution("Disable debugging messages before pushing to production.")
+        .setEvidence(evidence)
+        .setCweId(200) // CWE-200: Information Exposure
+        .setWascId(13); // WASC Id 13 - Info leakage
+}
+
+function getExampleAlerts(){
+    return [createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "").build().getAlert()];
+}
 
 function getName(){
     return "Debug Error Disclosure script";

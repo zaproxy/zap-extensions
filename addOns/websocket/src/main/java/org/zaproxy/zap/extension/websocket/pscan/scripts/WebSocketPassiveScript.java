@@ -19,11 +19,16 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan.scripts;
 
+import java.util.Collections;
+import java.util.List;
 import javax.script.ScriptException;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScanner;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelper;
+import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelperImpl;
 
 /**
  * This interface is going to implemented by Zap Scripts. Interface uses the {@link
@@ -32,7 +37,7 @@ import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelper;
  * org.zaproxy.zap.extension.script.ExtensionScript#getInterface(ScriptWrapper, Class)} in order to
  * run scripts with different scripting engines.
  */
-public interface WebSocketPassiveScript {
+public interface WebSocketPassiveScript extends ExampleAlertProvider {
     /**
      * Used for passive scanning the WebSocket Messages.
      *
@@ -51,5 +56,15 @@ public interface WebSocketPassiveScript {
 
     default String getName() {
         return ScriptsWebSocketPassiveScanner.PLUGIN_NAME;
+    }
+
+    @Override
+    default List<Alert> getExampleAlerts() {
+        return Collections.emptyList();
+    }
+
+    /** Only use for generating example alerts, not for raising them. */
+    static WebSocketScanHelper getExampleHelper() {
+        return new WebSocketScanHelperImpl();
     }
 }
