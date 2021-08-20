@@ -62,6 +62,7 @@ var addOns = listOf(
     "replacer",
     "reports",
     "requester",
+    "retest",
     "retire",
     "reveal",
     "revisit",
