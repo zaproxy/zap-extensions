@@ -33,4 +33,4 @@
         confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
         risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
         otherInfo:                             # String: Addional information corresponding to the alert, optional
-        onFail: 'warn'                         # One of 'warn', 'error', 'ignore'
+        onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory

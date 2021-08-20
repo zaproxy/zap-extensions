@@ -166,7 +166,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return ExtensionAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
 
-    void setEnv(AutomationEnvironment env) {
+    public void setEnv(AutomationEnvironment env) {
         this.env = env;
     }
 

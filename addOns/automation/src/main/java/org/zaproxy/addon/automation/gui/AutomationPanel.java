@@ -55,7 +55,6 @@ import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationEventPublisher;
 import org.zaproxy.addon.automation.AutomationJob;
-import org.zaproxy.addon.automation.AutomationJobException;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ExtensionAutomation;
@@ -198,17 +197,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         if (currentPlan == null) {
                             return;
                         }
-                        new Thread(
-                                        () -> {
-                                            try {
-                                                ext.runPlan(currentPlan, true);
-                                            } catch (AutomationJobException e1) {
-                                                View.getSingleton()
-                                                        .showWarningDialog(e1.getMessage());
-                                            }
-                                        },
-                                        "ZAP-Automation")
-                                .start();
+                        ext.runPlanAsync(currentPlan);
                     });
         }
         return runPlanButton;
@@ -328,24 +317,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private void loadPlan(File f) {
         try {
-            setCurrentPlan(ext.loadPlan(f));
-            ext.registerPlan(currentPlan);
-            AutomationProgress progress = currentPlan.getProgress();
-            this.getOutputArea().setText(listToStr(progress.getAllMessages()));
-            if (progress.hasErrors()) {
-                View.getSingleton()
-                        .showWarningDialog(
-                                Constant.messages.getString(
-                                        "automation.panel.load.error",
-                                        listToStr(progress.getErrors())));
-            } else if (progress.hasWarnings()) {
-                View.getSingleton()
-                        .showWarningDialog(
-                                Constant.messages.getString(
-                                        "automation.panel.load.warning",
-                                        listToStr(progress.getWarnings())));
-            }
-
+            loadPlan(ext.loadPlan(f));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             View.getSingleton()
@@ -557,6 +529,26 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return removeTestButton;
     }
 
+    public void loadPlan(AutomationPlan plan) {
+        setCurrentPlan(plan);
+        ext.registerPlan(currentPlan);
+        AutomationProgress progress = currentPlan.getProgress();
+        this.getOutputArea().setText(listToStr(progress.getAllMessages()));
+        if (progress.hasErrors()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "automation.panel.load.error",
+                                    listToStr(progress.getErrors())));
+        } else if (progress.hasWarnings()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "automation.panel.load.warning",
+                                    listToStr(progress.getWarnings())));
+        }
+    }
+
     public void setCurrentPlan(AutomationPlan plan) {
         currentPlan = plan;
         getTreeModel().setPlan(currentPlan);
@@ -707,7 +699,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return ext.getPlan(planId);
     }
 
-    private AutomationJob getJob(Event event) {
+    public AutomationJob getJob(Event event) {
         AutomationPlan plan = this.getPlan(event);
         if (plan == null) {
             return null;
