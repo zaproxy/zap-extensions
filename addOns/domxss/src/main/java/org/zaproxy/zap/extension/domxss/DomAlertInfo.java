@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.domxss;
 
-public class DomAlertException extends Exception {
+public class DomAlertInfo {
 
     private static final long serialVersionUID = 1L;
     private String url;
@@ -28,7 +28,7 @@ public class DomAlertException extends Exception {
     private String attributeId;
     private String attributeName;
 
-    public DomAlertException(
+    public DomAlertInfo(
             String url, String attack, String tagName, String attributeId, String attributeName) {
         super();
         this.url = url;
@@ -38,7 +38,7 @@ public class DomAlertException extends Exception {
         this.attributeName = attributeName;
     }
 
-    public DomAlertException(String url, String attack) {
+    public DomAlertInfo(String url, String attack) {
         super();
         this.url = url;
         this.attack = attack;

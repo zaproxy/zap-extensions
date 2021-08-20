@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
@@ -775,7 +776,17 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             int requester, Browser browser, String proxyAddress, int proxyPort) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(requester, browser, proxyAddress, proxyPort);
+        return getWebDriverImpl(requester, browser, proxyAddress, proxyPort, c -> {});
+    }
+
+    public static WebDriver getWebDriver(
+            Browser browser,
+            String proxyAddress,
+            int proxyPort,
+            Consumer<MutableCapabilities> consumer) {
+        validateProxyAddressPort(proxyAddress, proxyPort);
+
+        return getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer);
     }
 
     private static void setCommonOptions(
@@ -794,7 +805,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private static WebDriver getWebDriverImpl(
-            int requester, Browser browser, String proxyAddress, int proxyPort) {
+            int requester,
+            Browser browser,
+            String proxyAddress,
+            int proxyPort,
+            Consumer<MutableCapabilities> consumer) {
         switch (browser) {
             case CHROME:
             case CHROME_HEADLESS:
@@ -803,6 +818,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
                 chromeOptions.setHeadless(browser == Browser.CHROME_HEADLESS);
+
+                consumer.accept(chromeOptions);
                 return new ChromeDriver(chromeOptions);
             case FIREFOX:
             case FIREFOX_HEADLESS:
@@ -855,10 +872,14 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 }
 
                 firefoxOptions.setHeadless(browser == Browser.FIREFOX_HEADLESS);
+
+                consumer.accept(firefoxOptions);
                 return new FirefoxDriver(firefoxOptions);
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
+
+                consumer.accept(htmlunitCapabilities);
                 return new HtmlUnitDriver(
                         DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
             case INTERNET_EXPLORER:
@@ -890,10 +911,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 phantomCapabilities.setCapability(
                         PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
 
+                consumer.accept(phantomCapabilities);
                 return new PhantomJSDriver(phantomCapabilities);
             case SAFARI:
                 SafariOptions safariOptions = new SafariOptions();
                 setCommonOptions(safariOptions, proxyAddress, proxyPort);
+
+                consumer.accept(safariOptions);
                 return new SafariDriver(safariOptions);
             default:
                 throw new IllegalArgumentException("Unknown browser: " + browser);
