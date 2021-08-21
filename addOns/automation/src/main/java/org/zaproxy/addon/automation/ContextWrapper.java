@@ -77,11 +77,17 @@ public class ContextWrapper {
         for (String url : getData().getUrls()) {
             this.context.addIncludeInContextRegex(env.replaceVars(url) + ".*");
         }
-        for (String path : getData().getIncludePaths()) {
-            this.context.addIncludeInContextRegex(env.replaceVars(path));
+        List<String> includePaths = getData().getIncludePaths();
+        if (includePaths != null) {
+            for (String path : includePaths) {
+                this.context.addIncludeInContextRegex(env.replaceVars(path));
+            }
         }
-        for (String path : getData().getExcludePaths()) {
-            this.context.addExcludeFromContextRegex(env.replaceVars(path));
+        List<String> excludePaths = getData().getExcludePaths();
+        if (excludePaths != null) {
+            for (String path : excludePaths) {
+                this.context.addExcludeFromContextRegex(env.replaceVars(path));
+            }
         }
     }
 

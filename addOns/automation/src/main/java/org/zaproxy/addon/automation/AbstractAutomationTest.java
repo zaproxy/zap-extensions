@@ -74,6 +74,7 @@ public abstract class AbstractAutomationTest {
 
     public AbstractAutomationTest(String name, String onFail, AutomationJob job) {
         this.job = job;
+        this.name = name;
         if (!EnumUtils.isValidEnumIgnoreCase(OnFail.class, onFail)) {
             throw new IllegalArgumentException(
                     Constant.messages.getString("automation.tests.invalidOnFail", name, onFail));

@@ -58,6 +58,11 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
     private Data data;
 
+    public AutomationAlertTest(String name, String onFail, AutomationJob job) {
+        super(name, onFail, job);
+        data = new Data(this);
+    }
+
     public AutomationAlertTest(
             LinkedHashMap<?, ?> testData, AutomationJob job, AutomationProgress progress) {
         super(testData, job);

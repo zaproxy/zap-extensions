@@ -56,6 +56,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -271,6 +272,23 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return progress;
     }
 
+    public void runPlanAsync(AutomationPlan plan) {
+        new Thread(
+                        () -> {
+                            try {
+                                this.runPlan(plan, true);
+                            } catch (AutomationJobException e1) {
+                                if (hasView()) {
+                                    getView().showWarningDialog(e1.getMessage());
+                                } else {
+                                    LOG.warn(e1.getMessage());
+                                }
+                            }
+                        },
+                        "ZAP-Automation")
+                .start();
+    }
+
     public AutomationPlan loadPlan(File f)
             throws AutomationJobException, FileNotFoundException, IOException {
         return new AutomationPlan(this, f);
@@ -331,6 +349,25 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         return new AutomationPlan(env, jobsToRun, progress);
+    }
+
+    public void loadPlan(AutomationPlan plan, boolean setFocus, boolean run) {
+        if (hasView()) {
+            getAutomationPanel().loadPlan(plan);
+            if (setFocus) {
+                getAutomationPanel().setTabFocus();
+            }
+            if (run) {
+                this.runPlanAsync(plan);
+            }
+        }
+    }
+
+    public AutomationJob getJobByEvent(Event e) {
+        if (hasView()) {
+            return getAutomationPanel().getJob(e);
+        }
+        return null;
     }
 
     public void registerPlan(AutomationPlan plan) {
