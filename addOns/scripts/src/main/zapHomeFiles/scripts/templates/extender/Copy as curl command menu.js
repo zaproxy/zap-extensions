@@ -11,6 +11,9 @@ var curlmenuitem = new popupmenuitemtype("Copy as curl Command") {
 	},
 	precedeWithSeparator: function() {
 		return true;
+	},
+	isSafe: function() {
+		return true;
 	}
 }
 
