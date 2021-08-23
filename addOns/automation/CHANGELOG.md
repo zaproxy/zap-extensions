@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
  - Always enable the Save button on changes and prompt user when opening a plan if the current one has changes.
 
+### Changed
+ - Changes to support the Retest add-on.
+
 ## [0.4.1] - 2021-08-07
 ### Added
 - Missing icons
