@@ -167,8 +167,14 @@ public class ExtensionOast extends ExtensionAdaptor {
         return true;
     }
 
+    // TODO: Remove once targeting >= 2.11, refer to issue 6536.
     @Override
     public void unload() {
+        stop();
+    }
+
+    @Override
+    public void stop() {
         boastService.stopService();
         callbackService.stopService();
         unregisterOastService(boastService);
