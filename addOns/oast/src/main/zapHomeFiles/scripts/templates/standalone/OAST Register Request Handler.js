@@ -12,5 +12,5 @@ function requestHandler(request) {
     print()
 }
 
-boast.addOastRequestHandler(function(req) { requestHandler(req) })
+boast.addOastRequestHandler(requestHandler)
 print("OAST Request handler registered.")

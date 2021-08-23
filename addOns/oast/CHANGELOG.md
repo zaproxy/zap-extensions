@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- The add-on did not stop when ZAP did, which led to ZAP hanging.
 
+### Changed
+- Minor script and help updates.
 
 ## [0.2.1] - 2021-08-19
 ### Changed
