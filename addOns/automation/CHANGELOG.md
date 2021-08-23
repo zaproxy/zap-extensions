@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.5.0] - 2021-08-23
 ### Fixed
  - Address errors when running an automation plan with spiders and passive scan config.
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
@@ -63,6 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.5.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.5.0
 [0.4.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.4.1
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.3.0
