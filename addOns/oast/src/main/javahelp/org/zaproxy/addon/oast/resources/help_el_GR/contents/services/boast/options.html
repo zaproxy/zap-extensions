@@ -17,27 +17,27 @@
     running a working instance of BOAST.</p>
 <p>An example of a valid URI is: <code>https://example.com:1337/events</code>.</p>
 
-<h3>ID</h3>
+<h3>Polling Frequency</h3>
 
-<p>A non-editable field that is filled in when you register with a BOAST instance.</p>
-<p>This ID can be used to craft an address that can be specified in relevant attacks.</p>
-<p>For example, if an ID is <code>cxcjyaf5wahkidrp2zvhxe6ola</code>, and the Server URI host is <code>example.com</code>,
-    then the payload URI host will be <code>cxcjyaf5wahkidrp2zvhxe6ola.example.com</code>.</p>
+<p>This option allows you to change the frequency of polling the registered BOAST servers. It takes values in
+    seconds. The minimum allowed value is 10 seconds and there is no maximum allowed value. The default value is 60
+    seconds.</p>
 
-<h3>Canary</h3>
+<h3>Active Servers</h3>
+
+<p>This table lists the Payloads and Canary values of all registered BOAST Servers. An entry is added each time you
+    click on Register.</p>
+
+<h4>Payload</h4>
+
+<p>The Payload is the address of an active BOAST server that can be used in out-of-band attacks.</p>
+
+<h4>Canary</h4>
 
 <p>The Canary value is a random string that is returned to the target web application when it makes a request to the
-    registered BOAST server.</p>
+    corresponding Payload address.</p>
 <p>Consider an example of how this value could be used: if the target web application ends up using the canary value
-    somewhere, then it may be vulnerable to out of band injection attacks. </p>
-
-<h3>Other Configuration Options</h3>
-
-<p>By default, ZAP polls all the registered BOAST servers once per minute. This setting will be made configurable in
-    future versions of this add-on.</p>
-<p>Along with the <em>Polling Frequency</em> setting, there is also a plan to introduce a <em>Registered Servers</em>
-    panel that will display all registered BOAST servers.</p>
-<p></p>
+    somewhere, then it may be vulnerable to out-of-band injection attacks. </p>
 
 
 <H2>See also</H2>
