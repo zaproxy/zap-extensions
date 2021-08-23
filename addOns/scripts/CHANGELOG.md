@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update links to zaproxy and community-scripts repo.
 - Maintenance Changes.
 - 'Copy as curl command menu.js' is now preceded by a separator, and the Title Caps of the menu item were fixed (Issue 2000).
+- 'Copy as curl command menu.js' is now available in safe mode.
 
 ## [28] - 2020-12-18
 
