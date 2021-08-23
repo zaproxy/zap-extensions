@@ -22,6 +22,14 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
+        tokens.put("%messagesPath%", resourcesPath)
+        tokens.put("%helpPath%", resourcesPath)
+    }
+}
+
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("automation")!!)
