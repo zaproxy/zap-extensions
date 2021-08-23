@@ -196,7 +196,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-    	this.job.setName(this.getStringValue(NAME_PARAM));
+        this.job.setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
