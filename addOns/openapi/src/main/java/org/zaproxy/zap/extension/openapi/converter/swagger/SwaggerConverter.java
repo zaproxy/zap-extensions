@@ -402,18 +402,18 @@ public class SwaggerConverter implements Converter {
         parseOptions.setResolve(true);
         parseOptions.setResolveFully(true);
 
-        SwaggerParseResult swaggerParseResult = new SwaggerParseResult();
         List<String> errors = new ArrayList<>();
         for (SwaggerParserExtension ex : OpenAPIV3Parser.getExtensions()) {
-            swaggerParseResult = ex.readLocation(file.getAbsolutePath(), null, parseOptions);
-            OpenAPI openAPI = swaggerParseResult.getOpenAPI();
-            if (openAPI != null && swaggerParseResult.getMessages().isEmpty()) {
+            SwaggerParseResult swaggerParseResult =
+                    ex.readLocation(file.getAbsolutePath(), null, parseOptions);
+            if (swaggerParseResult.getOpenAPI() != null) {
                 return swaggerParseResult;
             } else {
                 errors.addAll(swaggerParseResult.getMessages());
             }
         }
 
+        SwaggerParseResult swaggerParseResult = new SwaggerParseResult();
         swaggerParseResult.setMessages(errors);
         return swaggerParseResult;
     }

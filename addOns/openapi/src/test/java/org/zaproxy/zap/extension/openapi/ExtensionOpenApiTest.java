@@ -22,8 +22,12 @@ package org.zaproxy.zap.extension.openapi;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyInt;
+import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -53,8 +57,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.RecordHistory;
+import org.parosproxy.paros.db.TableAlert;
+import org.parosproxy.paros.db.TableHistory;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.StructuralNodeModifier;
@@ -64,12 +73,14 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionOpenApiTest extends AbstractServerTest {
 
+    private Model model;
     private ExtensionOpenApi extensionOpenApi;
+    private TableHistory tableHistory;
 
     @BeforeEach
     void setupExtension() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
 
         extensionOpenApi = new ExtensionOpenApi();
@@ -81,6 +92,10 @@ class ExtensionOpenApiTest extends AbstractServerTest {
 
         given(extensionLoader.getExtension(ExtensionSpider.class))
                 .willReturn(mock(ExtensionSpider.class));
+
+        tableHistory = mock(TableHistory.class);
+        HistoryReference.setTableHistory(tableHistory);
+        HistoryReference.setTableAlert(mock(TableAlert.class));
     }
 
     @Test
@@ -160,6 +175,22 @@ class ExtensionOpenApiTest extends AbstractServerTest {
 
         // Then
         assertThat(errors, is(not(empty())));
+    }
+
+    @Test
+    void shouldImportFileDefinitionWithIssues() throws Exception {
+        // Given
+        this.nano.addHandler(new EmptyServerHandler());
+        File file = createLocalDefinition("defn-with-warns.yml").toFile();
+        RecordHistory recordHistory = mock(RecordHistory.class);
+        given(tableHistory.write(anyLong(), anyInt(), any()))
+                .willReturn(recordHistory, recordHistory);
+        given(model.getVariantFactory()).willReturn(new VariantFactory());
+        // When
+        OpenApiResults results = extensionOpenApi.importOpenApiDefinitionV2(file, null, false);
+        // Then
+        assertThat(results.getErrors(), is(not(empty())));
+        assertThat(results.getHistoryReferences(), hasSize(1));
     }
 
     @ParameterizedTest
