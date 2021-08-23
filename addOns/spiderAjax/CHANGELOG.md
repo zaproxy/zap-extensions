@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-  - Add Job Name field in AjaxSpider Automation dialogue
+  - Add Job Name field in AJAX Spider Automation dialogue
 ### Fixed
  - Address errors when running the AJAX Spider with Automation Framework.
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
