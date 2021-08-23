@@ -312,7 +312,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             OpenAPI openApi = swaggerParseResult.getOpenAPI();
 
             List<String> errors;
-            if (openApi == null || !swaggerParseResult.getMessages().isEmpty()) {
+            if (openApi == null) {
                 errors = swaggerParseResult.getMessages();
             } else {
                 errors =
