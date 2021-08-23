@@ -5,4 +5,5 @@
 
 <map version="1.0">
     <mapID target="retest" url="contents/retest.html" />
+    <mapID target="retest.about" url="contents/about.html" />
 </map>
