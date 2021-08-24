@@ -624,7 +624,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     /**
      * Opens the browser for manual proxying through ZAP
      *
-     * @param requester the ZAP componenet that will use this browser
+     * @param requester the ZAP component that will use this browser
      * @param providedBrowserId the browser id
      * @param url the URL to open
      */
