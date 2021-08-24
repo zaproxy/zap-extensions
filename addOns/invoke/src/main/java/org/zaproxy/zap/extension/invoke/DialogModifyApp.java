@@ -41,7 +41,7 @@ class DialogModifyApp extends DialogAddApp {
         return CONFIRM_BUTTON_LABEL;
     }
 
-    public void setApp(InvokableApp app) {
+    public void setApp(InvocableApp app) {
         this.app = app;
     }
 

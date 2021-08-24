@@ -46,9 +46,9 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
         return true;
     }
 
-    public void setApps(List<InvokableApp> apps) {
+    public void setApps(List<InvocableApp> apps) {
         removeAll();
-        for (InvokableApp app : apps) {
+        for (InvocableApp app : apps) {
             PopupMenuItemInvoke pmi = new PopupMenuItemInvoke(app.getDisplayName());
             pmi.setCommand(app.getFullCommand());
             pmi.setWorkingDir(app.getWorkingDirectory());

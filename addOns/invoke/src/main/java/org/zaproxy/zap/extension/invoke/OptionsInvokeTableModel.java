@@ -24,7 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
-public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<InvokableApp> {
+public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<InvocableApp> {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,35 +34,35 @@ public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<I
         Constant.messages.getString("invoke.options.table.header.command"),
         Constant.messages.getString("invoke.options.table.header.directory"),
         Constant.messages.getString("invoke.options.table.header.parameters"),
-        Constant.messages.getString("invoke.options.table.header.ouput"),
+        Constant.messages.getString("invoke.options.table.header.output"),
         Constant.messages.getString("invoke.options.table.header.toNote")
     };
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
-    private List<InvokableApp> listApps = new ArrayList<>(5);
+    private List<InvocableApp> listApps = new ArrayList<>(5);
 
     public OptionsInvokeTableModel() {
         super();
     }
 
     /** @param apps The listAuth to set. */
-    public void setListInvokableApps(List<InvokableApp> apps) {
+    public void setListInvocableApps(List<InvocableApp> apps) {
         this.listApps = new ArrayList<>(apps.size());
 
-        for (InvokableApp app : apps) {
-            this.listApps.add(new InvokableApp(app));
+        for (InvocableApp app : apps) {
+            this.listApps.add(new InvocableApp(app));
         }
 
         fireTableDataChanged();
     }
 
-    public List<InvokableApp> getListInvokableApps() {
+    public List<InvocableApp> getListInvocableApps() {
         return new ArrayList<>(listApps);
     }
 
     @Override
-    public List<InvokableApp> getElements() {
+    public List<InvocableApp> getElements() {
         return listApps;
     }
 

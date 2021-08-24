@@ -45,8 +45,8 @@ public class InvokeParam extends AbstractParam {
 
     private static final String CONFIRM_REMOVE_APP_KEY = INVOKE_BASE_KEY + ".confirmRemoveApp";
 
-    private List<InvokableApp> listInvoke = new ArrayList<>(0);
-    private List<InvokableApp> listInvokeEnabled = new ArrayList<>(0);
+    private List<InvocableApp> listInvoke = new ArrayList<>(0);
+    private List<InvocableApp> listInvokeEnabled = new ArrayList<>(0);
 
     private boolean confirmRemoveApp = true;
 
@@ -56,7 +56,7 @@ public class InvokeParam extends AbstractParam {
     protected void parse() {
         listInvoke.clear();
 
-        ArrayList<InvokableApp> enabledApps = null;
+        ArrayList<InvocableApp> enabledApps = null;
         try {
             List<HierarchicalConfiguration> fields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_APPS_KEY);
@@ -74,8 +74,8 @@ public class InvokeParam extends AbstractParam {
                         dir = new File(directory);
                     }
 
-                    InvokableApp app =
-                            new InvokableApp(
+                    InvocableApp app =
+                            new InvocableApp(
                                     name,
                                     dir,
                                     sub.getString(APP_COMMAND_KEY),
@@ -101,23 +101,23 @@ public class InvokeParam extends AbstractParam {
         this.confirmRemoveApp = getBoolean(CONFIRM_REMOVE_APP_KEY, true);
     }
 
-    public List<InvokableApp> getListInvoke() {
+    public List<InvocableApp> getListInvoke() {
         return listInvoke;
     }
 
-    public List<InvokableApp> getListInvokeEnabled() {
+    public List<InvocableApp> getListInvokeEnabled() {
         return listInvokeEnabled;
     }
 
-    public void setListInvoke(List<InvokableApp> listInvoke) {
+    public void setListInvoke(List<InvocableApp> listInvoke) {
         this.listInvoke = listInvoke;
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_APPS_KEY);
 
-        ArrayList<InvokableApp> enabledApps = new ArrayList<>(listInvoke.size());
+        ArrayList<InvocableApp> enabledApps = new ArrayList<>(listInvoke.size());
         for (int i = 0, size = listInvoke.size(); i < size; ++i) {
             String elementBaseKey = ALL_APPS_KEY + "(" + i + ").";
-            InvokableApp app = listInvoke.get(i);
+            InvocableApp app = listInvoke.get(i);
 
             getConfig().setProperty(elementBaseKey + APP_NAME_KEY, app.getDisplayName());
             File file = app.getWorkingDirectory();

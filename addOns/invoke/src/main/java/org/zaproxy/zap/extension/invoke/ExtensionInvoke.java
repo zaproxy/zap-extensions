@@ -72,7 +72,7 @@ public class ExtensionInvoke extends ExtensionAdaptor {
     @Override
     public void optionsLoaded() {
         if (View.isInitialised()) {
-            List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
+            List<InvocableApp> apps = invokeParam.getListInvokeEnabled();
             popupMenuInvokers.setApps(apps);
         }
     }
@@ -84,7 +84,7 @@ public class ExtensionInvoke extends ExtensionAdaptor {
         return optionsInvokePanel;
     }
 
-    protected void replaceInvokeMenus(List<InvokableApp> apps) {
+    protected void replaceInvokeMenus(List<InvocableApp> apps) {
         popupMenuInvokers.setApps(apps);
     }
 

@@ -170,7 +170,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
                     isOutput = true;
                 }
                 if (isOutput) {
-                    // Somethings been written, switch to the Output tab
+                    // Something's been written, switch to the Output tab
                     View.getSingleton().getOutputPanel().setTabFocus();
                 }
 

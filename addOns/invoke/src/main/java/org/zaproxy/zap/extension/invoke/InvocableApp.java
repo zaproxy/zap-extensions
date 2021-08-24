@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.invoke;
 import java.io.File;
 import org.zaproxy.zap.utils.Enableable;
 
-public class InvokableApp extends Enableable {
+public class InvocableApp extends Enableable {
 
     private String displayName = "";
     private String fullCommand = "";
@@ -31,9 +31,9 @@ public class InvokableApp extends Enableable {
     private boolean outputNote = false;
     private File workingDirectory = null;
 
-    public InvokableApp() {}
+    public InvocableApp() {}
 
-    public InvokableApp(
+    public InvocableApp(
             String displayName,
             File workingDirectory,
             String fullCommand,
@@ -49,7 +49,7 @@ public class InvokableApp extends Enableable {
         this.outputNote = outputNote;
     }
 
-    public InvokableApp(InvokableApp app) {
+    public InvocableApp(InvocableApp app) {
         this(
                 app.displayName,
                 app.workingDirectory,
@@ -133,7 +133,7 @@ public class InvokableApp extends Enableable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        InvokableApp other = (InvokableApp) obj;
+        InvocableApp other = (InvocableApp) obj;
         if (captureOutput != other.captureOutput) {
             return false;
         }
