@@ -104,7 +104,7 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
                 this.getHttpSender().sendAndReceive(msg, true);
             } catch (SocketTimeoutException ste) {
                 log.debug(
-                        "A timout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
+                        "A timeout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
                 i--;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
