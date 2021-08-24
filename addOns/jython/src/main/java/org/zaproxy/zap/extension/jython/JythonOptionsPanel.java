@@ -114,7 +114,7 @@ public class JythonOptionsPanel extends AbstractParamPanel {
             if (!modulesPath.exists()) {
                 throw new NoSuchFileException(
                         Constant.messages.getString(
-                                "jython.options.error.modulepath.notexist", modulesPath));
+                                "jython.options.error.modulepath.nonexistent", modulesPath));
             }
             if (!modulesPath.isDirectory()) {
                 throw new NotDirectoryException(
