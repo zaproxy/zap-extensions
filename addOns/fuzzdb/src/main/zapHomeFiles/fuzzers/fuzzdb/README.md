@@ -50,7 +50,7 @@ Many, many hours of research and pentesting. And
 and the input of contributors: https://github.com/fuzzdb-project/fuzzdb/graphs/contributors
 
 ### Places you can find FuzzDB ###
-Other security tools and projects that incorporate FuzzzDB in whole or part
+Other security tools and projects that incorporate FuzzDB in whole or part
   * OWASP Zap Proxy fuzzdb plugin https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project
   * SecLists https://github.com/danielmiessler/SecLists
   * TrustedSec Pentesters Framework https://github.com/trustedsec/ptf
