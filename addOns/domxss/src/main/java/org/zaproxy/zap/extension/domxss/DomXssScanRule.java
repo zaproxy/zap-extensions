@@ -222,7 +222,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     }
 
     /*
-     * We use a separate port so that we dont polute the sites tree
+     * We use a separate port so that we dont pollute the sites tree
      * and show the requests in the Active Scan tab
      */
     private Server getProxy() {
