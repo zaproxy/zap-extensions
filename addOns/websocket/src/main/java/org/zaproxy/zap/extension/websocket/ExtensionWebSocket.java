@@ -213,7 +213,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     private WebSocketSenderScriptListener webSocketSenderScriptListener;
 
     /** Script type used to register Websocket sender scripts. */
-    private ScriptType websocketSenderSciptType;
+    private ScriptType websocketSenderScriptType;
 
     private WebSocketEventPublisher eventPublisher;
 
@@ -381,13 +381,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         this.extensionScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (this.extensionScript != null) {
-            websocketSenderSciptType =
+            websocketSenderScriptType =
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_SENDER,
                             "websocket.script.type.websocketsender",
                             hasView() ? getScriptSenderIcon() : null,
                             true);
-            this.extensionScript.registerScriptType(websocketSenderSciptType);
+            this.extensionScript.registerScriptType(websocketSenderScriptType);
             webSocketSenderScriptListener = new WebSocketSenderScriptListener();
             addAllChannelSenderListener(webSocketSenderScriptListener);
         }
@@ -479,7 +479,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             removeAllChannelSenderListener(webSocketSenderScriptListener);
-            extensionScript.removeScriptType(websocketSenderSciptType);
+            extensionScript.removeScriptType(websocketSenderScriptType);
         }
     }
 

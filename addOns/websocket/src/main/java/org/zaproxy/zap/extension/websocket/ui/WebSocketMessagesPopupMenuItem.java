@@ -66,7 +66,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
      */
     protected abstract String getMenuText();
 
-    /** What happens if choosen? */
+    /** What happens if chosen? */
     protected abstract void performAction();
 
     /**
