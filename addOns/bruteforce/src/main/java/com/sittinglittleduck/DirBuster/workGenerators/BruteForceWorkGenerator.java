@@ -50,7 +50,7 @@ public class BruteForceWorkGenerator implements Runnable {
     private BlockingQueue<DirToCheck> dirQueue;
 
     private String firstPart;
-    private String fileExtention;
+    private String fileExtension;
     private String finished;
     private String started;
 
@@ -81,7 +81,7 @@ public class BruteForceWorkGenerator implements Runnable {
 
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
-        fileExtention = manager.getFileExtention();
+        fileExtension = manager.getFileExtension();
         firstPart = manager.getFirstPartOfURL();
     }
 
@@ -89,20 +89,20 @@ public class BruteForceWorkGenerator implements Runnable {
     public void run() {
         boolean recursive = true;
 
-        // checks if the server surports heads requests
+        // checks if the server supports heads requests
 
         if (manager.getAuto()) {
             try {
                 URL headurl = new URL(firstPart);
 
-                int responceCode =
+                int responseCode =
                         manager.getHttpClient()
                                 .send(HttpMethod.HEAD, headurl.toString())
                                 .getStatusCode();
 
-                // if the responce code is method not implemented or fails
-                if (responceCode == HttpStatus.NOT_IMPLEMENTED
-                        || responceCode == HttpStatus.BAD_REQUEST) {
+                // if the response code is method not implemented or fails
+                if (responseCode == HttpStatus.NOT_IMPLEMENTED
+                        || responseCode == HttpStatus.BAD_REQUEST) {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
@@ -119,7 +119,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 DirToCheck tempDirToCheck = dirQueue.take();
                 // get dir name
                 currentDir = tempDirToCheck.getName();
-                // get any extention that need to be checked
+                // get any extension that need to be checked
                 extToCheck = tempDirToCheck.getExts();
             } catch (InterruptedException e) {
                 LOG.debug(e);
@@ -134,7 +134,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 BaseCase baseCaseObj = null;
                 URL failurl = null;
                 try {
-                    // get fail responce code for a dir test
+                    // get fail response code for a dir test
 
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
@@ -161,11 +161,11 @@ public class BruteForceWorkGenerator implements Runnable {
                 for (int b = 0; b < extToCheck.size(); b++) {
                     ExtToCheck tempExt = extToCheck.elementAt(b);
                     if (tempExt.toCheck()) {
-                        fileExtention = "";
+                        fileExtension = "";
                         if (tempExt.getName().equals(ExtToCheck.BLANK_EXT)) {
-                            fileExtention = "";
+                            fileExtension = "";
                         } else {
-                            fileExtention = "." + tempExt.getName();
+                            fileExtension = "." + tempExt.getName();
                         }
 
                         try {
@@ -173,7 +173,7 @@ public class BruteForceWorkGenerator implements Runnable {
 
                             baseCaseObj =
                                     GenBaseCase.genBaseCase(
-                                            manager, firstPart + currentDir, false, fileExtention);
+                                            manager, firstPart + currentDir, false, fileExtension);
 
                         } catch (IOException e) {
                             LOG.error(e);
@@ -235,7 +235,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, temp));
 
             } else {
-                URL currentURL = new URL(firstPart + currentDir + temp + fileExtention);
+                URL currentURL = new URL(firstPart + currentDir + temp + fileExtension);
 
                 workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, temp));
             }

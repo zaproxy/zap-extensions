@@ -69,7 +69,7 @@ public class ProcessChecker extends TimerTask {
             // add the number of base cases and the frist inital request
             totalToDo = totalToDo + manager.getNumberOfBaseCasesProduced();
 
-            // correct to deal with the intial dir we need to test
+            // correct to deal with the initial dir we need to test
             if (manager.getDoDirs()) {
                 totalToDo = totalToDo + 1;
             }
@@ -128,7 +128,7 @@ public class ProcessChecker extends TimerTask {
 
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
-                    String timeToCompelete = convertSecsToTime(timeLeft);
+                    String timeToComplete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
                     LOG.debug(
                             "Current speed: {} request/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: {}\n{}",
@@ -137,7 +137,7 @@ public class ProcessChecker extends TimerTask {
                             averageLastTen,
                             currentTotal,
                             totalToDo,
-                            timeToCompelete,
+                            timeToComplete,
                             parseQueueLength);
                 }
 
@@ -150,7 +150,7 @@ public class ProcessChecker extends TimerTask {
     }
 
     private String convertSecsToTime(long secs) {
-        // get the number of minuates
+        // get the number of minutes
         if (secs < 10) {
             return "00:00:0" + secs;
         }

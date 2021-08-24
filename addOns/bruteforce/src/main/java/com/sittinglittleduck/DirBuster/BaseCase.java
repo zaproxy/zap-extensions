@@ -28,7 +28,7 @@ public class BaseCase {
     // be set to /wibble/
     private URL baseCaseURL;
 
-    // http responce code for the base case
+    // http response code for the base case
     private int returnCode = 0;
 
     // store of the actual base case if required
@@ -40,7 +40,7 @@ public class BaseCase {
     // URL of the base that was requested
     private URL baseCaseRequestURL;
 
-    // used to store the fileextention used
+    // used to store the fileextension used
     private String fileExt = null;
 
     /*

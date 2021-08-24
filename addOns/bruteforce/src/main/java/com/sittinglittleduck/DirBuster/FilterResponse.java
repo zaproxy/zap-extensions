@@ -1,5 +1,5 @@
 /*
- * FilterResponce.java
+ * FilterResponse.java
  *
  * Created on 01 December 2005, 22:10
  *
@@ -26,35 +26,35 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Util class to normliaze http responces */
-public class FilterResponce {
+/** Util class to normalize http responses */
+public class FilterResponse {
 
-    /** Creates a new instance of FilterResponce */
-    public FilterResponce() {}
+    /** Creates a new instance of FilterResponse */
+    public FilterResponse() {}
 
     /**
-     * Clean the responce of a work unit
+     * Clean the response of a work unit
      *
      * @param toclean String to clean
-     * @param work Unit of work the toclean string refferes to
-     * @return Cleaned responce
+     * @param work Unit of work the toclean string refers to
+     * @return Cleaned response
      */
-    public static String CleanResponce(String toclean, WorkUnit work) {
-        return CleanResponce(toclean, work.getWork(), work.getItemToCheck());
+    public static String CleanResponse(String toclean, WorkUnit work) {
+        return CleanResponse(toclean, work.getWork(), work.getItemToCheck());
     }
 
     /**
-     * Clean the responce of a work based on a URL
+     * Clean the response of a work based on a URL
      *
      * @param toclean String to clean
-     * @param url URL that generated the reponce that is to be cleaned
-     * @return String of cleaned responce
+     * @param url URL that generated the response that is to be cleaned
+     * @return String of cleaned response
      */
-    public static String CleanResponce(String toclean, URL url, String itemChecked) {
+    public static String CleanResponse(String toclean, URL url, String itemChecked) {
 
         if (toclean != null) {
             if (!toclean.equals("")) {
-                // remove the firstline from the responce
+                // remove the firstline from the response
                 // firstline = toclean.
 
                 // remove date header

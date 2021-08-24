@@ -20,7 +20,7 @@
 package com.sittinglittleduck.DirBuster;
 
 /**
- * Stores basic configuration detials
+ * Stores basic configuration details
  *
  * @author James
  */
@@ -70,7 +70,7 @@ public class Config {
      * reset all the fonts
      * fixed a bug in the proxy settings, where it did not save the proxy port number
      * fixed bug under osx where the advance options buttons are not shown
-     * fixed bug that stop recisive scanning from working
+     * fixed bug that stop recursive scanning from working
      * fixed bug where the parser workers did not restart
      *
      * 0.9.11
@@ -78,9 +78,9 @@ public class Config {
      * Fixed bug in advanced options, which caused proxy setting to always get set
      * Add an option to limit the number of requests/sec
      * Improved the way results table works
-     * Fixed a bug that caused responce to be displayed incorrectly
+     * Fixed a bug that caused response to be displayed incorrectly
      * Fixed bug that selection from the tables to now work correctly
-     * Fixed bug that caused blank extentions to stop working at all!
+     * Fixed bug that caused blank extensions to stop working at all!
      *
      *0.9.10
      * + Fixed Bug that prevents it running on below java 1.6
@@ -105,23 +105,23 @@ public class Config {
      *+ Added second status label for future use
      *+ Added feature to allow the setting of connection timeout, default is 30 seconds
      *+ Improved some parts of the GUI
-     *+ Imporved the error checking during start up, it will no longer try to test servers that are down
-     *+ Will now scan mutiple file extentions
+     *+ Improved the error checking during start up, it will no longer try to test servers that are down
+     *+ Will now scan multiple file extensions
      *+ Added information about the supplied lists
      *+ Changed links and branding
      *+ Fixed bug with stoped start point from being scanned e.g. /
      *+ Added HTML parsing of found pages
-     *+ Added optins to configure the HTML parsing
-     *+ Imporved checking for if the server does not support HEAD requests
-     *+ Impoved code, having run used "find bugs" to highlight issues
+     *+ Added options to configure the HTML parsing
+     *+ Improved checking for if the server does not support HEAD requests
+     *+ Improved code, having run used "find bugs" to highlight issues
      *
      *0.9.7
-     *+ Improved the the content anylsis mode
+     *+ Improved the the content analysis mode
      *+ Added copy function to URL from running table
      *+ fixed the prue brute force work generator
      *+ added check to prevent the over writing of report files
      *+ minor layout changes
-     *+ better auto detection of when servers dont suport HEAD requets
+     *+ better auto detection of when servers dont support HEAD request
      *+ Added the ability to display information about the base case for each found directory/file
      *+ Fixed Reporting to remove html code from reports
      *+ Changed dirbuster to lesser GPL
@@ -129,13 +129,13 @@ public class Config {
      *+ Corrected all jTextAreas, so they now start at the top of the text when they need scroll
      *
      *0.9.6
-     *+ Dirbuster can now do file scanning with no extention.
-     *+ View responce now shows information about errors as well
+     *+ Dirbuster can now do file scanning with no extension.
+     *+ View response now shows information about errors as well
      *+ Removed all other imported source code, they will no be done via their own api's
      *
      *0.9.5
      *+ Fix now threads will actually stop!
-     *+ Added custom headers when making a get if we had a sucessfull HEAD
+     *+ Added custom headers when making a get if we had a successful HEAD
      *+ Fix to stop it adding extra threads when restarting
      *
      *0.9.4
@@ -151,7 +151,7 @@ public class Config {
      *0.9.2
      *+ Corrected content checking mode when a 200 is returned for the 404 test, so it now works
      *+ minor changes to the interface
-     *+ now shows diff of basecase vs responce
+     *+ now shows diff of basecase vs response
      */
     /** Date the version was completed */
     public static final String versionDate = "06/05/2008";
@@ -168,7 +168,7 @@ public class Config {
     public static boolean parseHTMLimg = true;
     public static boolean parseHTMLform = true;
     /*
-     * marker to say if we should treat the server case sensative
+     * marker to say if we should treat the server case sensitive
      */
-    public static boolean caseInsensativeMode = false;
+    public static boolean caseInsensitiveMode = false;
 }

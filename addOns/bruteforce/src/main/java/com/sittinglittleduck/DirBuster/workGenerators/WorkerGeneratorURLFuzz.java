@@ -49,7 +49,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
     private BlockingQueue<DirToCheck> dirQueue;
     private String inputFile;
     private String firstPart;
-    private String fileExtention;
+    private String fileExtension;
     private String finished;
     private String started;
     private boolean stopMe = false;
@@ -74,12 +74,12 @@ public class WorkerGeneratorURLFuzz implements Runnable {
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
         if (manager.isBlankExt()) {
-            fileExtention = "";
+            fileExtension = "";
         } else {
-            fileExtention = "." + manager.getFileExtention();
+            fileExtension = "." + manager.getFileExtension();
         }
 
-        // get the vector of all the file extention we need to use
+        // get the vector of all the file extension we need to use
         // extToCheck = manager.getExtToUse();
         inputFile = manager.getInputFile();
         firstPart = manager.getFirstPartOfURL();
@@ -122,16 +122,16 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             if (manager.getAuto()) {
                 try {
                     URL headurl = new URL(firstPart);
-                    int responceCode =
+                    int responseCode =
                             manager.getHttpClient()
                                     .send(HttpMethod.HEAD, headurl.toString())
                                     .getStatusCode();
-                    LOG.debug("Response code for head check = {}", responceCode);
-                    if (responceCode == HttpStatus.NOT_IMPLEMENTED
-                            || responceCode == HttpStatus.BAD_REQUEST
-                            || responceCode == HttpStatus.METHOD_NOT_ALLOWED) {
+                    LOG.debug("Response code for head check = {}", responseCode);
+                    if (responseCode == HttpStatus.NOT_IMPLEMENTED
+                            || responseCode == HttpStatus.BAD_REQUEST
+                            || responseCode == HttpStatus.METHOD_NOT_ALLOWED) {
                         LOG.debug(
-                                "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                                "Changing to GET only HEAD test returned 501(method no implemented) or a 400");
                         manager.setAuto(false);
                     }
                 } catch (MalformedURLException e) {
@@ -170,8 +170,8 @@ public class WorkerGeneratorURLFuzz implements Runnable {
 
                     URL currentURL = new URL(firstPart + urlFuzzStart + line + urlFuzzEnd);
                     // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true, failurl,
-                    // baseResponce);
-                    // if the base case is null then we need to switch to content anylsis mode
+                    // baseResponse);
+                    // if the base case is null then we need to switch to content analysis mode
                     workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, line));
                 }
 

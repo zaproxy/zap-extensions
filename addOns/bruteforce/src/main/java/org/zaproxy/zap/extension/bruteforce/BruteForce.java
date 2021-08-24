@@ -57,7 +57,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
     private boolean pauseScan = false;
     private boolean unpauseScan = false;
     private boolean isPaused = false;
-    private BruteForceListenner listenner;
+    private BruteForceListenner listener;
     private int threads = 0;
     private boolean recursive = BruteForceParam.DEFAULT_RECURSIVE;
     private DirBusterManager manager = null;
@@ -71,12 +71,12 @@ public class BruteForce extends Thread implements BruteForceListenner {
     public BruteForce(
             ScanTarget target,
             File file,
-            BruteForceListenner listenner,
+            BruteForceListenner listener,
             BruteForceParam bruteForceParam) {
         this.target = target;
         this.file = file;
         this.directory = null;
-        this.listenner = listenner;
+        this.listener = listener;
         this.threads = bruteForceParam.getThreadPerScan();
         this.recursive = bruteForceParam.getRecursive();
 
@@ -108,10 +108,10 @@ public class BruteForce extends Thread implements BruteForceListenner {
     public BruteForce(
             ScanTarget target,
             File file,
-            BruteForceListenner listenner,
+            BruteForceListenner listener,
             BruteForceParam bruteForceParam,
             String directory) {
-        this(target, file, listenner, bruteForceParam);
+        this(target, file, listener, bruteForceParam);
         this.directory = directory;
 
         if (this.directory != null) {
@@ -192,7 +192,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 // System.out.println("Worker count " +  manager.getWorkerCount());
                 // System.out.println("Done " +  manager.getTotalDone() + "/" + manager.getTotal());
 
-                this.listenner.scanProgress(target, manager.getTotalDone(), manager.getTotal());
+                this.listener.scanProgress(target, manager.getTotalDone(), manager.getTotal());
 
                 try {
                     sleep(1000);
@@ -203,8 +203,8 @@ public class BruteForce extends Thread implements BruteForceListenner {
             log.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 
-        if (this.listenner != null) {
-            this.listenner.scanFinshed(target);
+        if (this.listener != null) {
+            this.listener.scanFinshed(target);
         }
         stopScan = true;
         log.info("BruteForce: {} finished", target.getURI());
@@ -247,8 +247,8 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     @Override
     public void scanProgress(ScanTarget target, int done, int todo) {
-        if (this.listenner != null) {
-            this.listenner.scanProgress(this.target, done, todo);
+        if (this.listener != null) {
+            this.listener.scanProgress(this.target, done, todo);
         }
     }
 

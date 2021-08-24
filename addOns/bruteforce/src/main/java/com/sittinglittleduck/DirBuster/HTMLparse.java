@@ -33,7 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class is to paser the returned html pages and extract other dirs and files from them
+ * This class is to parser the returned html pages and extract other dirs and files from them
  *
  * @author james
  */
@@ -90,7 +90,7 @@ public class HTMLparse extends Thread {
 
                     Vector<HTMLelementToParse> elementsToParse = manager.getElementsToParse();
 
-                    // loop trought all the things we wish to parse
+                    // loop through all the things we wish to parse
                     for (int z = 0; z < elementsToParse.size(); z++) {
                         HTMLelementToParse elementToParse = elementsToParse.elementAt(z);
 
@@ -100,7 +100,7 @@ public class HTMLparse extends Thread {
                             // System.out.println(href.getValue());
                             try {
                                 if (attr != null) {
-                                    // creates a full qulaifed domian name, based on the page we
+                                    // creates a full qualified domain name, based on the page we
                                     // have just tested
                                     URL tempURL = new URL(work.getWork(), attr.getValue());
 
@@ -155,7 +155,7 @@ public class HTMLparse extends Thread {
                         // if it is ok to process the link
                         if (process) {
 
-                            // check if the found item has already been procced
+                            // check if the found item has already been proceed
                             // System.out.println("Testing to see if found item (" + founditem + ")
                             // has already been done");
                             if (!manager.hasLinkBeenDone(founditem)) {
@@ -252,7 +252,7 @@ public class HTMLparse extends Thread {
 
         try {
             boolean isDir = false;
-            String fileExtention = null;
+            String fileExtension = null;
             if (item.length() == 1 || item.length() == 0) {
                 // System.out.println("found a / in findBaseCasePoint");
                 return GenBaseCase.genBaseCase(
@@ -267,23 +267,23 @@ public class HTMLparse extends Thread {
 
             if (item.endsWith("/")) {
                 isDir = true;
-                fileExtention = null;
+                fileExtension = null;
             } else {
                 String file = array[array.length - 1];
                 int loc = file.indexOf(".");
                 if (loc != -1) {
-                    fileExtention = file.substring(loc + 1);
+                    fileExtension = file.substring(loc + 1);
                 } else {
-                    fileExtention = "";
+                    fileExtension = "";
                 }
             }
             // System.out.println("baseItem = " + baseItem);
-            // System.out.println("file extention = " + fileExtention);
+            // System.out.println("file extension = " + fileExtension);
 
             Thread.sleep(100);
 
             return GenBaseCase.genBaseCase(
-                    manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
+                    manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtension);
         } catch (MalformedURLException ex) {
             LOG.debug("Bad URL", ex);
         } catch (IOException | InterruptedException ex) {

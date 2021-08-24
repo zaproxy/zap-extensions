@@ -49,7 +49,7 @@ public class WorkerGenerator implements Runnable {
     private BlockingQueue<DirToCheck> dirQueue;
     private String inputFile;
     private String firstPart;
-    private String fileExtention;
+    private String fileExtension;
     private String finished;
     private String started;
     private boolean stopMe = false;
@@ -68,12 +68,12 @@ public class WorkerGenerator implements Runnable {
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
         if (manager.isBlankExt()) {
-            fileExtention = "";
+            fileExtension = "";
         } else {
-            fileExtention = "." + manager.getFileExtention();
+            fileExtension = "." + manager.getFileExtension();
         }
 
-        // get the vector of all the file extention we need to use
+        // get the vector of all the file extension we need to use
         // extToCheck = manager.getExtToUse();
         inputFile = manager.getInputFile();
         firstPart = manager.getFirstPartOfURL();
@@ -110,25 +110,25 @@ public class WorkerGenerator implements Runnable {
         }
         // -------------------------------------------------
 
-        // checks if the server surports heads requests
+        // checks if the server supports heads requests
         if (manager.getAuto()) {
             try {
                 URL headurl = new URL(firstPart);
 
-                int responceCode =
+                int responseCode =
                         manager.getHttpClient()
                                 .send(HttpMethod.HEAD, headurl.toString())
                                 .getStatusCode();
 
-                LOG.debug("Response code for head check = {}", responceCode);
+                LOG.debug("Response code for head check = {}", responseCode);
 
-                // if the responce code is method not implemented or if the head requests return
+                // if the response code is method not implemented or if the head requests return
                 // 400!
-                if (responceCode == HttpStatus.NOT_IMPLEMENTED
-                        || responceCode == HttpStatus.BAD_REQUEST
-                        || responceCode == HttpStatus.METHOD_NOT_ALLOWED) {
+                if (responseCode == HttpStatus.NOT_IMPLEMENTED
+                        || responseCode == HttpStatus.BAD_REQUEST
+                        || responseCode == HttpStatus.METHOD_NOT_ALLOWED) {
                     LOG.debug(
-                            "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                            "Changing to GET only HEAD test returned 501(method no implemented) or a 400");
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
@@ -137,13 +137,13 @@ public class WorkerGenerator implements Runnable {
             }
         }
 
-        // end of checks to see if server surpports head requests
+        // end of checks to see if server supports head requests
         int counter = 0;
 
         while ((!dirQueue.isEmpty() || !workQueue.isEmpty() || !manager.areWorkersAlive())
                 && recursive) {
             // get the dir we are about to process
-            String baseResponce = null;
+            String baseResponse = null;
             recursive = manager.isRecursive();
             BaseCase baseCaseObj = null;
 
@@ -158,7 +158,7 @@ public class WorkerGenerator implements Runnable {
                 // System.out.println("gen taken");
                 // get dir name
                 currentDir = tempDirToCheck.getName();
-                // get any extention that need to be checked
+                // get any extension that need to be checked
                 extToCheck = tempDirToCheck.getExts();
 
                 manager.setCurrentlyProcessing(currentDir);
@@ -173,7 +173,7 @@ public class WorkerGenerator implements Runnable {
                 URL failurl = null;
 
                 try {
-                    baseResponce = null;
+                    baseResponse = null;
 
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
@@ -188,7 +188,7 @@ public class WorkerGenerator implements Runnable {
 
                 // generate work links
                 try {
-                    // readin dir names
+                    // read in dir names
                     BufferedReader d =
                             new BufferedReader(
                                     new InputStreamReader(new FileInputStream(inputFile)));
@@ -251,14 +251,14 @@ public class WorkerGenerator implements Runnable {
 
                                 currentURL = new URL(firstPart + currentDir + line + "/");
                                 // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true,
-                                // failurl, baseResponce);
+                                // failurl, baseResponse);
                                 // if the base case is null then we need to switch to content
-                                // anylsis mode
+                                // analysis mode
 
                                 // System.out.println("Gen about to add to queue");
                                 workQueue.put(
                                         new WorkUnit(currentURL, true, method, baseCaseObj, line));
-                                // System.out.println("Gen finshed adding to queue");
+                                // System.out.println("Gen finished adding to queue");
                                 LOG.debug("2 adding dir to work list {} {}", method, currentURL);
                             } catch (MalformedURLException e) {
                                 // TODO deal with bad line
@@ -285,28 +285,28 @@ public class WorkerGenerator implements Runnable {
             // generate the list of files
             if (manager.getDoFiles()) {
 
-                baseResponce = null;
+                baseResponse = null;
                 URL failurl = null;
 
-                // loop for all the different file extentions
+                // loop for all the different file extensions
                 for (int b = 0; b < extToCheck.size(); b++) {
-                    // only test if we are surposed to
+                    // only test if we are supposed to
                     ExtToCheck extTemp = extToCheck.elementAt(b);
 
                     if (extTemp.toCheck()) {
 
-                        fileExtention = "";
+                        fileExtension = "";
                         if (extTemp.getName().equals(ExtToCheck.BLANK_EXT)) {
-                            fileExtention = "";
+                            fileExtension = "";
                         } else {
-                            fileExtention = "." + extTemp.getName();
+                            fileExtension = "." + extTemp.getName();
                         }
 
                         try {
-                            // get the base for this extention
+                            // get the base for this extension
                             baseCaseObj =
                                     GenBaseCase.genBaseCase(
-                                            manager, firstPart + currentDir, false, fileExtention);
+                                            manager, firstPart + currentDir, false, fileExtension);
                         } catch (IOException e) {
                             LOG.error(e);
                         }
@@ -349,9 +349,9 @@ public class WorkerGenerator implements Runnable {
                                                         firstPart
                                                                 + currentDir
                                                                 + line
-                                                                + fileExtention);
+                                                                + fileExtension);
                                         // BaseCase baseCaseObj = new BaseCase(currentURL, true,
-                                        // failurl, baseResponce);
+                                        // failurl, baseResponse);
                                         workQueue.put(
                                                 new WorkUnit(
                                                         currentURL,

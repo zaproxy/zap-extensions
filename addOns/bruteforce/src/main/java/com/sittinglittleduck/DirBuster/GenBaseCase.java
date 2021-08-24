@@ -50,12 +50,12 @@ public class GenBaseCase {
      * @param manager the manager class
      * @param url The directy or file we need a base case for
      * @param isDir true if it's dir, else false if it's a file
-     * @param fileExtention File extention to be scanned, set to null if it's a dir that is to be
+     * @param fileExtension File extension to be scanned, set to null if it's a dir that is to be
      *     tested
      * @return A BaseCase Object
      */
     public static BaseCase genBaseCase(
-            Manager manager, String url, boolean isDir, String fileExtention)
+            Manager manager, String url, boolean isDir, String fileExtension)
             throws MalformedURLException, IOException {
         String type;
         if (isDir) {
@@ -70,7 +70,7 @@ public class GenBaseCase {
         boolean useRegexInstead = false;
         String regex = null;
 
-        BaseCase tempBaseCase = manager.getBaseCase(url, isDir, fileExtention);
+        BaseCase tempBaseCase = manager.getBaseCase(url, isDir, fileExtension);
 
         if (tempBaseCase != null) {
             return tempBaseCase;
@@ -81,19 +81,19 @@ public class GenBaseCase {
         BaseCase baseCase = null;
         int failcode = 0;
         String failString = Config.failCaseString;
-        String baseResponce = "";
+        String baseResponse = "";
         URL failurl = null;
         if (isDir) {
             failurl = new URL(url + failString + "/");
         } else {
             if (manager.isBlankExt()) {
-                fileExtention = "";
-                failurl = new URL(url + failString + fileExtention);
+                fileExtension = "";
+                failurl = new URL(url + failString + fileExtension);
             } else {
-                if (!fileExtention.startsWith(".")) {
-                    fileExtention = "." + fileExtention;
+                if (!fileExtension.startsWith(".")) {
+                    fileExtension = "." + fileExtension;
                 }
-                failurl = new URL(url + failString + fileExtention);
+                failurl = new URL(url + failString + fileExtension);
             }
         }
 
@@ -101,7 +101,7 @@ public class GenBaseCase {
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
-        // save the http responce code for the base case
+        // save the http response code for the base case
         failcode = response.getStatusCode();
         manager.workDone();
 
@@ -109,32 +109,32 @@ public class GenBaseCase {
         if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            baseResponce = response.getResponseBody();
+            baseResponse = response.getResponseBody();
 
             // HTMLparse.parseHTML();
 
-            // HTMLparse htmlParse = new HTMLparse(baseResponce, null);
+            // HTMLparse htmlParse = new HTMLparse(baseResponse, null);
             // Thread parse  = new Thread(htmlParse);
             // parse.start();
 
             // clean up the base case, based on the basecase URL
-            baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
+            baseResponse = FilterResponse.CleanResponse(baseResponse, failurl, failString);
 
             /*
-             * get the base case twice more, for consisitency checking
+             * get the base case twice more, for consistency checking
              */
-            String baseResponce1 = baseResponce;
-            String baseResponce2 = getBaseCaseAgain(manager, failurl, failString);
-            String baseResponce3 = getBaseCaseAgain(manager, failurl, failString);
+            String baseResponse1 = baseResponse;
+            String baseResponse2 = getBaseCaseAgain(manager, failurl, failString);
+            String baseResponse3 = getBaseCaseAgain(manager, failurl, failString);
 
-            if (baseResponce1 != null && baseResponce2 != null && baseResponce3 != null) {
+            if (baseResponse1 != null && baseResponse2 != null && baseResponse3 != null) {
                 /*
-                 * check that all the responces are same, if they are do nothing if not enter the if statement
+                 * check that all the responses are same, if they are do nothing if not enter the if statement
                  */
 
-                if (!baseResponce1.equalsIgnoreCase(baseResponce2)
-                        || !baseResponce1.equalsIgnoreCase(baseResponce3)
-                        || !baseResponce2.equalsIgnoreCase(baseResponce3)) {
+                if (!baseResponse1.equalsIgnoreCase(baseResponse2)
+                        || !baseResponse1.equalsIgnoreCase(baseResponse3)
+                        || !baseResponse2.equalsIgnoreCase(baseResponse3)) {
                     if (manager.getFailCaseRegexes().size() != 0) {
 
                         /*
@@ -147,9 +147,9 @@ public class GenBaseCase {
 
                             Pattern regexFindFile = Pattern.compile(failCaseRegexes.elementAt(a));
 
-                            Matcher m1 = regexFindFile.matcher(baseResponce1);
-                            Matcher m2 = regexFindFile.matcher(baseResponce2);
-                            Matcher m3 = regexFindFile.matcher(baseResponce3);
+                            Matcher m1 = regexFindFile.matcher(baseResponse1);
+                            Matcher m2 = regexFindFile.matcher(baseResponse2);
+                            Matcher m3 = regexFindFile.matcher(baseResponse3);
 
                             boolean test1 = m1.find();
                             boolean test2 = m2.find();
@@ -164,12 +164,12 @@ public class GenBaseCase {
                     }
                 } else {
                     /*
-                     * We have a big problem as now we have different responce codes for the same request
+                     * We have a big problem as now we have different response codes for the same request
                      * //TODO think of a way to deal with is
                      */
                 }
 
-                LOG.debug("Base case was set to: {}", baseResponce);
+                LOG.debug("Base case was set to: {}", baseResponse);
             }
         }
 
@@ -179,8 +179,8 @@ public class GenBaseCase {
                         failcode,
                         isDir,
                         failurl,
-                        baseResponce,
-                        fileExtention,
+                        baseResponse,
+                        fileExtension,
                         useRegexInstead,
                         regex);
 
@@ -199,7 +199,7 @@ public class GenBaseCase {
         BaseCase baseCase = null;
         int failcode = 0;
         String failString = Config.failCaseString;
-        String baseResponce = "";
+        String baseResponse = "";
 
         /*
          * markers for using regex instead
@@ -211,19 +211,19 @@ public class GenBaseCase {
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
-        // save the http responce code for the base case
+        // save the http response code for the base case
         failcode = response.getStatusCode();
         manager.workDone();
 
         if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            baseResponce = response.getResponseBody();
+            baseResponse = response.getResponseBody();
 
             // clean up the base case, based on the basecase URL
-            baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
+            baseResponse = FilterResponse.CleanResponse(baseResponse, failurl, failString);
 
-            LOG.debug("Base case was set to: {}", baseResponce);
+            LOG.debug("Base case was set to: {}", baseResponse);
         }
 
         /*
@@ -231,22 +231,22 @@ public class GenBaseCase {
          */
         baseCase =
                 new BaseCase(
-                        null, failcode, false, failurl, baseResponce, null, useRegexInstead, regex);
+                        null, failcode, false, failurl, baseResponse, null, useRegexInstead, regex);
 
         return baseCase;
     }
 
     /*
-     * this function is used to get base case again, so we can check that the base case is consitent.
+     * this function is used to get base case again, so we can check that the base case is consistent.
      */
     private static String getBaseCaseAgain(Manager manager, URL failurl, String failString)
             throws IOException {
         int failcode;
-        String baseResponce = "";
+        String baseResponse = "";
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
-        // save the http responce code for the base case
+        // save the http response code for the base case
         failcode = response.getStatusCode();
         manager.workDone();
 
@@ -254,24 +254,24 @@ public class GenBaseCase {
         if (failcode == HttpStatus.OK) {
             LOG.debug("Base case for {} came back as 200!", failurl);
 
-            baseResponce = response.getResponseBody();
+            baseResponse = response.getResponseBody();
 
             // HTMLparse.parseHTML();
 
-            // HTMLparse htmlParse = new HTMLparse(baseResponce, null);
+            // HTMLparse htmlParse = new HTMLparse(baseResponse, null);
             // Thread parse  = new Thread(htmlParse);
             // parse.start();
 
             // clean up the base case, based on the basecase URL
-            baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
+            baseResponse = FilterResponse.CleanResponse(baseResponse, failurl, failString);
 
             /*
-             * return the cleaned responce
+             * return the cleaned response
              */
-            return baseResponce;
+            return baseResponse;
         } else {
             /*
-             * we have a big problem here as the server has returned an other responce code, for the same request
+             * we have a big problem here as the server has returned an other response code, for the same request
              * TODO: think of a way to deal with this!
              */
             return null;

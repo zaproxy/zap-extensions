@@ -62,17 +62,17 @@ public class ReportWriter {
             }
         }
 
-        // get responce codes for dirs
+        // get response codes for dirs
         for (int b = 0; b < dirs.size(); b++) {
-            if (!dirCodes.contains(String.valueOf(dirs.elementAt(b).getResponceCode()))) {
-                dirCodes.addElement(String.valueOf(dirs.elementAt(b).getResponceCode()));
+            if (!dirCodes.contains(String.valueOf(dirs.elementAt(b).getResponseCode()))) {
+                dirCodes.addElement(String.valueOf(dirs.elementAt(b).getResponseCode()));
             }
         }
 
-        // get responce codes for files
+        // get response codes for files
         for (int b = 0; b < files.size(); b++) {
-            if (!fileCodes.contains(String.valueOf(files.elementAt(b).getResponceCode()))) {
-                fileCodes.addElement(String.valueOf(files.elementAt(b).getResponceCode()));
+            if (!fileCodes.contains(String.valueOf(files.elementAt(b).getResponseCode()))) {
+                fileCodes.addElement(String.valueOf(files.elementAt(b).getResponseCode()));
             }
         }
 
@@ -99,7 +99,7 @@ public class ReportWriter {
                     out.newLine();
                     for (int b = 0; b < dirs.size(); b++) {
 
-                        if (dirs.elementAt(b).getResponceCode() == foundCodeInt) {
+                        if (dirs.elementAt(b).getResponseCode() == foundCodeInt) {
                             out.write(dirs.elementAt(b).getFound());
                             out.newLine();
                         }
@@ -122,12 +122,12 @@ public class ReportWriter {
                 for (int a = 0; a < fileCodes.size(); a++) {
                     String foundCode = fileCodes.elementAt(a);
                     int foundCodeInt = Integer.parseInt(foundCode);
-                    out.write("Files found with a " + foundCode + " responce:");
+                    out.write("Files found with a " + foundCode + " response:");
                     out.newLine();
                     out.newLine();
                     for (int b = 0; b < files.size(); b++) {
 
-                        if (files.elementAt(b).getResponceCode() == foundCodeInt) {
+                        if (files.elementAt(b).getResponseCode() == foundCodeInt) {
                             out.write(files.elementAt(b).getFound());
                             out.newLine();
                         }

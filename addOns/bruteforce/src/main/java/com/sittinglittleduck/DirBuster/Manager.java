@@ -49,7 +49,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private BruteForceURLFuzz workGenBruteFuzz;
     private String inputFile;
     private String firstPartOfURL;
-    private String extention;
+    private String extension;
     private Timer timer;
     private ProcessChecker task;
     private ProcessEnd task2;
@@ -69,14 +69,14 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     boolean recursive = true;
     // flag for if we are auto switching between HEADS and GETS
     private boolean auto = true;
-    // used for storing total numbers of trys per pass
+    // used for storing total numbers of tries per pass
     private double totalPass;
     // used to record the total number of dirs that have been found
     // set to 1 as we there must always at least 1
     private int totalDirsFound = 1;
-    // setting for using a blank extention
+    // setting for using a blank extension
     private boolean blankExt = false;
-    // store of all extention that are to be tested
+    // store of all extension that are to be tested
     private Vector<ExtToCheck> extToUse = new Vector<>(10, 5);
     private Vector<BaseCase> producedBasesCases = new Vector<>(10, 10);
     // used to store all the links that have parsed, will not contain a list a all items, processed
@@ -86,7 +86,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private int baseCaseCounterCorrection = 0;
     // used to store the value of items that will have been skipped
     private int workAmountCorrection = 0;
-    // total number of links pasrsed from the HTML that have been added to the work queue
+    // total number of links parsed from the HTML that have been added to the work queue
     private int parsedLinksProcessed = 0;
     // total number of basecases produced
     private int numberOfBaseCasesProduced = 0;
@@ -144,13 +144,13 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     Vector<HeadlessResult> headlessResult = new Vector<>(100, 100);
 
     /*
-     * stores of information used to transer data to the gui when started with console args
+     * stores of information used to transfer data to the gui when started with console args
      *
      */
     private URL targetURL = null;
     private String fileLocation = null;
     private String reportLocation = null;
-    private String fileExtentions = null;
+    private String fileExtensions = null;
     private String pointToStartFrom = null;
 
     // ZAP: Option to control whether only the dirs found under the startPoint should be
@@ -181,14 +181,14 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         this.httpClient = httpClient;
     }
 
-    // set up dictionay based attack with normal start
+    // set up dictionary based attack with normal start
     public void setupManager(
             String startPoint,
             String inputFile,
             String protocol,
             String host,
             int port,
-            String extention,
+            String extension,
             int ThreadNumber,
             boolean doDirs,
             boolean doFiles,
@@ -199,7 +199,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         this.startPoint = startPoint;
         this.inputFile = inputFile;
         this.firstPartOfURL = protocol + "://" + host + ":" + port;
-        this.extention = extention;
+        this.extension = extension;
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -212,7 +212,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         URL url;
 
         // add the start point to the running list
-        // TODO change this so it sctually checks for it
+        // TODO change this so it actually checks for it
         try {
             url = new URL(firstPartOfURL + startPoint);
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
@@ -240,7 +240,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String protocol,
             String host,
             int port,
-            String extention,
+            String extension,
             int ThreadNumber,
             boolean doDirs,
             boolean doFiles,
@@ -249,7 +249,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         totalDone = 0;
         this.startPoint = startPoint;
         this.firstPartOfURL = protocol + "://" + host + ":" + port;
-        this.extention = extention;
+        this.extension = extension;
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -456,22 +456,22 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     }
 
     public synchronized void foundDir(
-            URL url, int statusCode, String Responce, BaseCase baseCaseObj) {
-        foundDir(url, statusCode, Responce, null, Responce, baseCaseObj);
+            URL url, int statusCode, String Response, BaseCase baseCaseObj) {
+        foundDir(url, statusCode, Response, null, Response, baseCaseObj);
     }
 
     public synchronized void foundDir(
             URL url,
             int statusCode,
-            String Responce,
+            String Response,
             String BaseCase,
-            String RawResponce,
+            String RawResponse,
             BaseCase baseCaseObj) {
         try {
 
             boolean isStartPoint;
 
-            if (Config.caseInsensativeMode) {
+            if (Config.caseInsensitiveMode) {
                 isStartPoint = url.getPath().equalsIgnoreCase(startPoint);
 
                 /*
@@ -486,7 +486,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                 for (int a = 0; a < dirArray.length; a++) {
                     /*
-                     * perform case in seneative check
+                     * perform case insensitive check
                      */
                     if (url.getPath().equalsIgnoreCase(dirArray[a].getName())) {
                         foundDir = true;
@@ -528,7 +528,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
             }
             /*
-             * normal case sensative search
+             * normal case sensitive search
              */
             else {
                 isStartPoint = url.getPath().equals(startPoint);
@@ -581,16 +581,16 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     }
 
     public synchronized void foundFile(
-            URL url, int statusCode, String Responce, BaseCase baseCaseObj) {
-        foundFile(url, statusCode, Responce, null, Responce, baseCaseObj);
+            URL url, int statusCode, String Response, BaseCase baseCaseObj) {
+        foundFile(url, statusCode, Response, null, Response, baseCaseObj);
     }
 
     public synchronized void foundFile(
             URL url,
             int statusCode,
-            String Responce,
+            String Response,
             String BaseCase,
-            String rawResponce,
+            String rawResponse,
             BaseCase baseCaseObj) {
 
         LOG.debug("File found: {} - {}", url.getFile(), statusCode);
@@ -615,8 +615,8 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return firstPartOfURL;
     }
 
-    public String getFileExtention() {
-        return extention;
+    public String getFileExtension() {
+        return extension;
     }
 
     @Override
@@ -769,7 +769,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     /*
      * used to add extra workers to the queue
      */
-    public void addWrokers(int number) {
+    public void addWorkers(int number) {
         int currentNumber = workers.size();
         for (int i = 0; i < number; i++) {
             int threadid = currentNumber + i;
@@ -827,7 +827,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         }
     }
 
-    // used to re add stuff to the work as the reswult from a request from the work queue
+    // used to re add stuff to the work as the result from a request from the work queue
     public synchronized void addToDirQueue(String dir) {
         // System.out.println("SBSB addToDirQueue " + dir);
         try {
@@ -916,9 +916,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public synchronized boolean addParsedLink(String link) {
         // System.out.println("SBSB addParsedLink " + link);
         /*
-         * case insenataive mode
+         * case insensitive mode
          */
-        if (Config.caseInsensativeMode) {
+        if (Config.caseInsensitiveMode) {
 
             for (int a = 0; a < processedLinks.size(); a++) {
                 if (link.equalsIgnoreCase(processedLinks.elementAt(a))) {
@@ -935,7 +935,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
         } else
         /*
-         * case sensative mode
+         * case sensitive mode
          */
         {
             if (!processedLinks.contains(link)) {
@@ -978,12 +978,12 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
     public void skipCurrentWork() {
         /*
-         * while this is a case snsative comparie, it should not require to be done both ways
+         * while this is a case sensitive compare, it should not require to be done both ways
          */
         // stop work gen from adding more the the queue
         workGen.skipCurrent();
 
-        // remove all items in the current work queue that are no loger required.
+        // remove all items in the current work queue that are no logger required.
         Object[] tempArray = workQueue.toArray();
         WorkUnit work = null;
         int totalRemoved = 0;
@@ -1105,12 +1105,12 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         this.reportLocation = reportLocation;
     }
 
-    public String getFileExtentions() {
-        return fileExtentions;
+    public String getFileExtensions() {
+        return fileExtensions;
     }
 
-    public void setFileExtentions(String fileExtentions) {
-        this.fileExtentions = fileExtentions;
+    public void setFileExtensions(String fileExtensions) {
+        this.fileExtensions = fileExtensions;
     }
 
     public String getPointToStartFrom() {

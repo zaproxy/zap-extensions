@@ -735,9 +735,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     public void foundDir(
             URL url,
             int statusCode,
-            String responce,
+            String response,
             String baseCase,
-            String rawResponce,
+            String rawResponse,
             BaseCase baseCaseObj) {}
 
     public void refreshFileList() {

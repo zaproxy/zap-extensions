@@ -28,44 +28,44 @@ import org.apache.logging.log4j.Logger;
 
 public class DirBusterManager extends Manager {
 
-    private BruteForceListenner listenner;
+    private BruteForceListenner listener;
     private int total = 0;
     private boolean finished = false;
     private static Logger log = LogManager.getLogger(DirBusterManager.class);
 
-    public DirBusterManager(SimpleHttpClient httpClient, BruteForceListenner listenner) {
+    public DirBusterManager(SimpleHttpClient httpClient, BruteForceListenner listener) {
         super(httpClient);
-        this.listenner = listenner;
+        this.listener = listener;
     }
 
     @Override
     public synchronized void foundDir(
             URL url,
             int statusCode,
-            String responce,
+            String response,
             String baseCase,
-            String rawResponce,
+            String rawResponse,
             BaseCase baseCaseObj) {
         if (url.toString().endsWith("//")) {
             // For some reason DirBuster can go recursive and never finish
             log.debug("Ignoring url {}", url);
             return;
         }
-        super.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
+        super.foundDir(url, statusCode, response, baseCase, rawResponse, baseCaseObj);
         log.debug("DirBusterManager.foundDir {} code: {}", url, statusCode);
-        listenner.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
+        listener.foundDir(url, statusCode, response, baseCase, rawResponse, baseCaseObj);
     }
 
     @Override
     public synchronized void foundFile(
             URL url,
             int statusCode,
-            String responce,
+            String response,
             String baseCase,
-            String rawResponce,
+            String rawResponse,
             BaseCase baseCaseObj) {
-        super.foundFile(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
-        listenner.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
+        super.foundFile(url, statusCode, response, baseCase, rawResponse, baseCaseObj);
+        listener.foundDir(url, statusCode, response, baseCase, rawResponse, baseCaseObj);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class DirBusterManager extends Manager {
         // add the number of base cases and the frist inital request
         totalToDo = totalToDo + this.getNumberOfBaseCasesProduced();
 
-        // correct to deal with the intial dir we need to test
+        // correct to deal with the initial dir we need to test
         if (this.getDoDirs()) {
             totalToDo = totalToDo + 1;
         }

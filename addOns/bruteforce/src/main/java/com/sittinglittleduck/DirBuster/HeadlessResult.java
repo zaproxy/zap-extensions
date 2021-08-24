@@ -27,12 +27,12 @@ public class HeadlessResult {
     public static final int ERROR = 2;
 
     private String found;
-    private int responceCode;
+    private int responseCode;
     private int type;
 
-    public HeadlessResult(String found, int responceCode, int type) {
+    public HeadlessResult(String found, int responseCode, int type) {
         this.found = found;
-        this.responceCode = responceCode;
+        this.responseCode = responseCode;
         this.type = type;
     }
 
@@ -40,8 +40,8 @@ public class HeadlessResult {
         return found;
     }
 
-    public int getResponceCode() {
-        return responceCode;
+    public int getResponseCode() {
+        return responseCode;
     }
 
     public int getType() {
