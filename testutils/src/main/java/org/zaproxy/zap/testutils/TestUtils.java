@@ -544,7 +544,7 @@ public abstract class TestUtils {
     private static void assertKeyExists(String key) {
         assertTrue(
                 extensionResourceBundle != null,
-                "The extension's ResourceBundle was not intialiased.");
+                "The extension's ResourceBundle was not initialised.");
         assertTrue(extensionResourceBundle.containsKey(key), "No resource message for: " + key);
     }
 
