@@ -191,10 +191,10 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
                     // Loop through all of the elements
                     logger.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
-                        Attributes atts = element.getAttributes();
+                        Attributes attrs = element.getAttributes();
 
-                        if (atts != null && atts.size() > 0) {
-                            Iterator<Attribute> iter = atts.iterator();
+                        if (attrs != null && attrs.size() > 0) {
+                            Iterator<Attribute> iter = attrs.iterator();
                             while (iter.hasNext()) {
                                 Attribute att = iter.next();
                                 if (ATT_DISABLED.equalsIgnoreCase(att.getName())
