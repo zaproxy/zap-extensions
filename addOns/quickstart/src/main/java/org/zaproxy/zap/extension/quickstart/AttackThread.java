@@ -45,7 +45,7 @@ import org.zaproxy.zap.model.Target;
 public class AttackThread extends Thread {
 
     public enum Progress {
-        notstarted,
+        pending,
         started,
         spider,
         ajaxspider,
@@ -58,7 +58,7 @@ public class AttackThread extends Thread {
     private ExtensionQuickStart extension;
     private URL url;
     private HttpSender httpSender = null;
-    private PlugableSpider plugableSpider;
+    private PlugableSpider pluggableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
 
@@ -74,8 +74,8 @@ public class AttackThread extends Thread {
         this.url = url;
     }
 
-    public void setPlugableSpider(PlugableSpider plugableSpider) {
-        this.plugableSpider = plugableSpider;
+    public void setPlugableSpider(PlugableSpider pluggableSpider) {
+        this.pluggableSpider = pluggableSpider;
     }
 
     @Override
@@ -150,16 +150,16 @@ public class AttackThread extends Thread {
             }
 
             // optionally invoke ajax spider here
-            if (plugableSpider != null && plugableSpider.isSelected()) {
-                plugableSpider.startScan(this.url.toURI());
+            if (pluggableSpider != null && pluggableSpider.isSelected()) {
+                pluggableSpider.startScan(this.url.toURI());
                 sleep(1500);
 
                 try {
                     // Wait for the ajax spider to complete
-                    while (plugableSpider.isRunning()) {
+                    while (pluggableSpider.isRunning()) {
                         sleep(500);
                         if (this.stopAttack) {
-                            plugableSpider.stopScan();
+                            pluggableSpider.stopScan();
                             break;
                         }
                         extension.notifyProgress(Progress.ajaxspider);

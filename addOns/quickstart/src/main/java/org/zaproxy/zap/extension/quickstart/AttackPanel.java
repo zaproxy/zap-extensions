@@ -61,10 +61,10 @@ public class AttackPanel extends QuickStartSubPanel {
     private int paddingY;
 
     /** Optional class that adds the ajax spider - may be added after init or not at all */
-    private PlugableSpider plugableSpider;
+    private PlugableSpider pluggableSpider;
 
-    private JLabel plugableSpiderLabel;
-    private int plugableSpiderY;
+    private JLabel pluggableSpiderLabel;
+    private int pluggableSpiderY;
 
     public AttackPanel(ExtensionQuickStart extension, QuickStartPanel qsp) {
         super(extension, qsp);
@@ -155,7 +155,7 @@ public class AttackPanel extends QuickStartSubPanel {
                     LayoutHelper.getGBC(
                             2, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
-            plugableSpiderY = ++formPanelY;
+            pluggableSpiderY = ++formPanelY;
 
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
             buttonPanel.add(this.getAttackButton());
@@ -182,8 +182,7 @@ public class AttackPanel extends QuickStartSubPanel {
             progressLabel =
                     new JLabel(
                             Constant.messages.getString(
-                                    "quickstart.progress."
-                                            + AttackThread.Progress.notstarted.name()));
+                                    "quickstart.progress." + AttackThread.Progress.pending.name()));
         }
         return progressLabel;
     }
@@ -202,31 +201,35 @@ public class AttackPanel extends QuickStartSubPanel {
         return spiderCheckBox;
     }
 
-    public void addPlugableSpider(PlugableSpider plugableSpider) {
-        this.plugableSpider = plugableSpider;
+    public void addPlugableSpider(PlugableSpider pluggableSpider) {
+        this.pluggableSpider = pluggableSpider;
         addAjaxSpiderGui();
     }
 
-    public void removePlugableSpider(PlugableSpider plugableSpider) {
-        if (contentPanel != null && plugableSpider != null) {
-            contentPanel.remove(plugableSpiderLabel);
-            contentPanel.remove(plugableSpider.getPanel());
+    public void removePlugableSpider(PlugableSpider pluggableSpider) {
+        if (contentPanel != null && pluggableSpider != null) {
+            contentPanel.remove(pluggableSpiderLabel);
+            contentPanel.remove(pluggableSpider.getPanel());
             replacePadding();
         }
-        this.plugableSpider = null;
+        this.pluggableSpider = null;
     }
 
     private void addAjaxSpiderGui() {
-        if (contentPanel != null && this.plugableSpider != null) {
-            plugableSpiderLabel = new JLabel(this.plugableSpider.getLabel());
+        if (contentPanel != null && this.pluggableSpider != null) {
+            pluggableSpiderLabel = new JLabel(this.pluggableSpider.getLabel());
             contentPanel.add(
-                    plugableSpiderLabel,
+                    pluggableSpiderLabel,
                     LayoutHelper.getGBC(
-                            1, plugableSpiderY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                            1,
+                            pluggableSpiderY,
+                            1,
+                            0.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             contentPanel.add(
-                    this.plugableSpider.getPanel(),
-                    LayoutHelper.getGBC(2, plugableSpiderY, 1, 1.0D));
+                    this.pluggableSpider.getPanel(),
+                    LayoutHelper.getGBC(2, pluggableSpiderY, 1, 1.0D));
             replacePadding();
         }
     }
@@ -319,7 +322,7 @@ public class AttackPanel extends QuickStartSubPanel {
             attackButton.addActionListener(
                     e -> {
                         if (!spiderCheckBox.isSelected()
-                                && (plugableSpider == null || !plugableSpider.isSelected())) {
+                                && (pluggableSpider == null || !pluggableSpider.isSelected())) {
                             getExtensionQuickStart()
                                     .getView()
                                     .showWarningDialog(

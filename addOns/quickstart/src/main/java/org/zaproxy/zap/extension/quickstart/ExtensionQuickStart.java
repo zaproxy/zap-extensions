@@ -99,7 +99,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     private QuickStartPanel quickStartPanel = null;
     private AttackThread attackThread = null;
-    private PlugableSpider plugableSpider;
+    private PlugableSpider pluggableSpider;
     private PlugableHud hudProvider;
     private QuickStartParam quickStartParam;
 
@@ -291,14 +291,14 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     public void addPlugableSpider(PlugableSpider pe) {
-        this.plugableSpider = pe;
+        this.pluggableSpider = pe;
         if (quickStartPanel != null) {
             quickStartPanel.addPlugableSpider(pe);
         }
     }
 
     public void removePlugableSpider(PlugableSpider pe) {
-        this.plugableSpider = pe;
+        this.pluggableSpider = pe;
         if (quickStartPanel != null) {
             quickStartPanel.removePlugableSpider(pe);
         }
@@ -310,8 +310,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             quickStartPanel.setName(Constant.messages.getString("quickstart.panel.title"));
             // Force it to be the first one
             quickStartPanel.setTabIndex(0);
-            if (this.plugableSpider != null) {
-                quickStartPanel.addPlugableSpider(this.plugableSpider);
+            if (this.pluggableSpider != null) {
+                quickStartPanel.addPlugableSpider(this.pluggableSpider);
             }
         }
         return quickStartPanel;
@@ -333,7 +333,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         }
         attackThread = new AttackThread(this, useStdSpider);
         attackThread.setURL(url);
-        attackThread.setPlugableSpider(plugableSpider);
+        attackThread.setPlugableSpider(pluggableSpider);
         attackThread.start();
     }
 
@@ -354,7 +354,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             }
         }
         switch (progress) {
-            case notstarted:
+            case pending:
             case started:
             case spider:
             case ajaxspider:
