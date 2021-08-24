@@ -224,7 +224,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
             logger.warn(
-                    "Unknow browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
+                    "Unknown browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
             browserId = DEFAULT_BROWSER_ID;
         }
 
