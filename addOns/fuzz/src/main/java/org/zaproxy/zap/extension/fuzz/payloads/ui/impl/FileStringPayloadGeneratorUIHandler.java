@@ -208,11 +208,11 @@ public class FileStringPayloadGeneratorUIHandler
                 Constant.messages.getString("fuzz.payloads.generator.file.charset.label");
         private static final String LIMIT_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payloads.generator.file.limit.label");
-        private static final String LIMIT_FIELD_TOOPTIP =
+        private static final String LIMIT_FIELD_TOOLTIP =
                 Constant.messages.getString("fuzz.payloads.generator.file.limit.tooltip");
         private static final String LIMIT_VALUE_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payloads.generator.file.limit.value.label");
-        private static final String LIMIT_NUMBER_FIELD_TOOPTIP =
+        private static final String LIMIT_NUMBER_FIELD_TOOLTIP =
                 Constant.messages.getString("fuzz.payloads.generator.file.limit.value.tooltip");
         private static final String COMMENT_TOKEN_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payloads.generator.file.commentToken.label");
@@ -480,7 +480,7 @@ public class FileStringPayloadGeneratorUIHandler
         private JCheckBox getLimitCheckBox() {
             if (limitCheckBox == null) {
                 limitCheckBox = new JCheckBox();
-                limitCheckBox.setToolTipText(LIMIT_FIELD_TOOPTIP);
+                limitCheckBox.setToolTipText(LIMIT_FIELD_TOOLTIP);
                 limitCheckBox.addItemListener(
                         e ->
                                 getLimitNumberSpinner()
@@ -493,7 +493,7 @@ public class FileStringPayloadGeneratorUIHandler
             if (limitNumberSpinner == null) {
                 limitNumberSpinner =
                         new ZapNumberSpinner(0, DEFAULT_LIMIT_NUMBER, Integer.MAX_VALUE);
-                limitNumberSpinner.setToolTipText(LIMIT_NUMBER_FIELD_TOOPTIP);
+                limitNumberSpinner.setToolTipText(LIMIT_NUMBER_FIELD_TOOLTIP);
                 limitNumberSpinner.setEnabled(false);
             }
             return limitNumberSpinner;

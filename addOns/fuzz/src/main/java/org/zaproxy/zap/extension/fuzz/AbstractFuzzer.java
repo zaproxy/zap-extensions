@@ -515,7 +515,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                 replacements);
     }
 
-    protected void failedReplacementInFuzzeMessage(
+    protected void failedReplacementInFuzzerMessage(
             long taskId,
             ReplacementException e,
             SortedSet<MessageLocationReplacement<?>> replacements) {
@@ -607,7 +607,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                                     e,
                                     multipleMessageLocationsReplacer.currentReplacements());
                         } catch (ReplacementException e) {
-                            failedReplacementInFuzzeMessage(
+                            failedReplacementInFuzzerMessage(
                                     taskId,
                                     e,
                                     multipleMessageLocationsReplacer.currentReplacements());
