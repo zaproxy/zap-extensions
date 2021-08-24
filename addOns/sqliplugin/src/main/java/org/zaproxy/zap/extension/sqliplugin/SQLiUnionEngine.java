@@ -180,7 +180,7 @@ public class SQLiUnionEngine {
     }
 
     // ------------------------------------------
-    // Internal contants for payload management
+    // Internal constants for payload management
     // ------------------------------------------
     private static final String PREFIX_REGEX = "(?:\\s+(?:FIRST|SKIP)\\s+\\d+)*";
     private static final Pattern SELECT_CASE_PATTERN =
@@ -503,7 +503,7 @@ public class SQLiUnionEngine {
      * master..sysxlogins
      *
      * @param fields fields string to be processed
-     * @return fields string nulled, casted and concatened
+     * @return fields string nulled, casted and concatenated
      */
     private String getNullCastAndConcatenatedFields(String fields) {
 
@@ -716,7 +716,7 @@ public class SQLiUnionEngine {
             query = query.substring(0, query.indexOf(intoRegExp));
         }
 
-        // remove the working table if exixts
+        // remove the working table if exists
         if (fromTable != null) {
             int fromTableIndex = unionQuery.lastIndexOf(fromTable);
             if (fromTableIndex == unionQuery.length() - fromTable.length()) {
