@@ -138,8 +138,8 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
                 Matcher badAgeMatcher = BAD_MAX_AGE_PATT.matcher(stsOptionString);
                 Matcher maxAgeMatcher = MAX_AGE_PATT.matcher(stsOptionString);
                 Matcher malformedMaxAgeMatcher = MALFORMED_MAX_AGE.matcher(stsOptionString);
-                Matcher wellformedMatcher = WELL_FORMED_PATT.matcher(stsOptionString);
-                if (!wellformedMatcher.matches()) {
+                Matcher wellFormedMatcher = WELL_FORMED_PATT.matcher(stsOptionString);
+                if (!wellFormedMatcher.matches()) {
                     // Well formed pattern didn't match (perhaps curly quotes or some other unwanted
                     // character(s))
                     raiseAlert(VulnType.HSTS_MALFORMED_CONTENT, STS_HEADER, msg, id);

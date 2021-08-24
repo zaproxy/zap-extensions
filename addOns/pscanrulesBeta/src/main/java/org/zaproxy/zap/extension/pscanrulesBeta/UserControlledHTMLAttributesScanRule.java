@@ -161,7 +161,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
             // Special handling of meta tag.
             // If I were just looking to see if the meta tag 'contains' the user input,
             // we'd wind up with lots of false positives.
-            // To avoid this, I  parse the meta tag values based on a set of delimeters,
+            // To avoid this, I  parse the meta tag values based on a set of delimiters,
             // such as ; =  and ,.  This is similar to what the Cookie poisoning
             // check does.
             if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META)
