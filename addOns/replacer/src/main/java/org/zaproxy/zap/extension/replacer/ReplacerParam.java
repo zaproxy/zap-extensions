@@ -137,7 +137,7 @@ public class ReplacerParam extends AbstractParam {
                                 initList.add(Integer.parseInt(str.trim()));
                             } catch (NumberFormatException e) {
                                 logger.error(
-                                        "Error while loading global repacement rule: {}",
+                                        "Error while loading global replacement rule: {}",
                                         e.getMessage(),
                                         e);
                             }
@@ -150,7 +150,7 @@ public class ReplacerParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading global repacement rules: {}", e.getMessage(), e);
+            logger.error("Error while loading global replacement rules: {}", e.getMessage(), e);
             this.rules = new ArrayList<>(defaultList.size());
         }
 

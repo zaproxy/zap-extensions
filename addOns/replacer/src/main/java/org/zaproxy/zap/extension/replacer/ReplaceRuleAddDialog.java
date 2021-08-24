@@ -417,7 +417,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         list.add("Trailer");
         list.add("Transfer-Encoding");
         list.add("TSV");
-        list.add("Uprade");
+        list.add("Upgrade");
         list.add("Vary");
         list.add("Via");
         list.add("Warning");
