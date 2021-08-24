@@ -1175,7 +1175,7 @@ public class diff_match_patch {
             pointer.remove();
           }
           if (both_types) {
-            // Factor out any common prefixies.
+            // Factor out any common prefixes.
             commonlength = diff_commonPrefix(text_insert, text_delete);
             if (commonlength != 0) {
               if (pointer.hasPrevious()) {
@@ -1191,7 +1191,7 @@ public class diff_match_patch {
               text_insert = text_insert.substring(commonlength);
               text_delete = text_delete.substring(commonlength);
             }
-            // Factor out any common suffixies.
+            // Factor out any common suffixes.
             commonlength = diff_commonSuffix(text_insert, text_delete);
             if (commonlength != 0) {
               thisDiff = pointer.next();
@@ -2399,9 +2399,9 @@ public class diff_match_patch {
 
 
     /**
-     * Emmulate GNU diff's format.
+     * Emulate GNU diff's format.
      * Header: @@ -382,8 +481,9 @@
-     * Indicies are printed as 1-based, not 0-based.
+     * Indices are printed as 1-based, not 0-based.
      * @return The GNU diff string.
      */
     @Override

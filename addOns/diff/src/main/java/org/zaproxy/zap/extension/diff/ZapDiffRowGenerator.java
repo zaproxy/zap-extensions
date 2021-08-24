@@ -233,13 +233,13 @@ public class ZapDiffRowGenerator {
  public List<DiffRow> generateDiffRows(List<String> original, List<String> revised, Patch<String> patch) {
      // normalize the lines (expand tabs, escape html entities)
 	 // ZAP: Dont normalise the strings
-     //original = StringUtills.normalize(original);
-     //revised = StringUtills.normalize(revised);
+     //original = StringUtils.normalize(original);
+     //revised = StringUtils.normalize(revised);
 
      // wrap to the column width
      // ZAP: Don't word wrap, it adds br tags. The word wrap should be done by view component.
-     // original = StringUtills.wrapText(original, this.columnWidth);
-     // revised = StringUtills.wrapText(revised, this.columnWidth);
+     // original = StringUtils.wrapText(original, this.columnWidth);
+     // revised = StringUtils.wrapText(revised, this.columnWidth);
 
      List<DiffRow> diffRows = new ArrayList<>();
      int endPos = 0;
@@ -251,12 +251,12 @@ public class ZapDiffRowGenerator {
 
          // We should normalize and wrap lines in deltas too.
     	 // ZAP: Dont normalise the strings
-         //orig.setLines(StringUtills.normalize((List<String>) orig.getLines()));
-         //rev.setLines(StringUtills.normalize((List<String>) rev.getLines()));
+         //orig.setLines(StringUtils.normalize((List<String>) orig.getLines()));
+         //rev.setLines(StringUtils.normalize((List<String>) rev.getLines()));
 
          // ZAP: Don't word wrap, it adds br tags. The word wrap should be done by view component.
-         // orig.setLines(StringUtills.wrapText((List<String>) orig.getLines(), this.columnWidth));
-         // rev.setLines(StringUtills.wrapText((List<String>) rev.getLines(), this.columnWidth));
+         // orig.setLines(StringUtils.wrapText((List<String>) orig.getLines(), this.columnWidth));
+         // rev.setLines(StringUtils.wrapText((List<String>) rev.getLines(), this.columnWidth));
 
          // catch the equal prefix for each chunk
          for (String line : original.subList(endPos, orig.getPosition())) {
