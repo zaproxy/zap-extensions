@@ -521,8 +521,8 @@ public class ZestDialogManager extends AbstractPanel {
         loopDialog.setVisible(true);
     }
 
-    public void addDeferedMessage(HttpMessage msg) {
-        scriptDialog.addDeferedMessage(msg);
+    public void addDeferredMessage(HttpMessage msg) {
+        scriptDialog.addDeferredMessage(msg);
     }
 
     public ZestRedactDialog showZestRedactDialog(ScriptNode node, String replace) {

@@ -84,7 +84,7 @@ public class ZestCompareReqRespPopupMenu extends PopupMenuItemHistoryReferenceCo
             if (stmt instanceof ZestRequest) {
                 ZestRequest zr = (ZestRequest) stmt;
                 ZestResponse resp = zr.getResponse();
-                // Have tro use introspection as ExtensionDiff is an add-on and will therefore be
+                // Have to use introspection as ExtensionDiff is an add-on and will therefore be
                 // loaded using a different class loader
                 Extension ext =
                         Control.getSingleton().getExtensionLoader().getExtension("ExtensionDiff");

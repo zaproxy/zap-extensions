@@ -93,12 +93,12 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
                         return false;
                     } else if (ZestZapUtils.getShadowLevel(node) > 0) {
-                        // Cant move these
+                        // Can't move these
                         /* TODO
                         } else if ((ZestZapUtils.getElement(node) instanceof ZestControl)) {
                         	return false;
                         } else if (ZestTreeElement.isSubclass(node.getZestElement(), ZestTreeElement.Type.COMMON_TESTS)) {
-                        	// Cantmove these either
+                        	// Can't move these either
                         	 */
                     } else if (up) {
                         ScriptNode prev = (ScriptNode) node.getPreviousSibling();

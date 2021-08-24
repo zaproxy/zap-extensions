@@ -76,7 +76,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
         try {
             performActionImpl(msg);
         } catch (Exception e) {
-            LOGGER.error("Failer to generate script from alert menu: {}", e.getMessage(), e);
+            LOGGER.error("Failed to generate script from alert menu: {}", e.getMessage(), e);
         }
     }
 

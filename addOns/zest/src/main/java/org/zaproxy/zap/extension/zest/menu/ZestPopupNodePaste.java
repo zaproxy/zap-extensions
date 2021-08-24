@@ -60,9 +60,9 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         this.addActionListener(
                 e -> {
                     ScriptNode node = extension.getSelectedZestNode();
-                    ZestElement elmt = ZestZapUtils.getElement(node);
+                    ZestElement element = ZestZapUtils.getElement(node);
                     if (node != null) {
-                        if (elmt instanceof ZestContainer) {
+                        if (element instanceof ZestContainer) {
                             extension.pasteToNode(node);
                         } else {
                             extension.pasteToNode(node.getParent(), node);
@@ -82,16 +82,17 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
                         return false;
                     }
                     ScriptNode node = extension.getSelectedZestNode();
-                    ZestElement elmt = ZestZapUtils.getElement(node);
+                    ZestElement element = ZestZapUtils.getElement(node);
                     this.setEnabled(false);
 
-                    if (node == null || node.isRoot() || elmt == null) {
+                    if (node == null || node.isRoot() || element == null) {
                         return false;
 
-                    } else if (elmt instanceof ZestContainer && extension.canPasteNodesTo(node)) {
+                    } else if (element instanceof ZestContainer
+                            && extension.canPasteNodesTo(node)) {
                         this.setEnabled(true);
 
-                    } else if (elmt instanceof ZestStatement
+                    } else if (element instanceof ZestStatement
                             && extension.canPasteNodesTo(node.getParent())) {
                         this.setEnabled(true);
                     }

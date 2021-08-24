@@ -148,7 +148,7 @@ Sender scripts. (Issue 5590)
 - Fix exception while opening a dialogue.
 - Cannot use auth script in daemon mode (Issue 2294).
 - Support httpsender scripts (Issue 2293).
-- Cant paste variable into new request dialog (Issue 2007).
+- Can't paste variable into new request dialog (Issue 2007).
 - Script context menu has duplicated items (Issue 2106).
 - Exception while adding Zest Condition (Issue 2296).
 - Should not be able to delete THEN statement (Issue 2295).

@@ -319,7 +319,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
     @Override
     public String validateFields() {
-        // Cant validate the url as it may contain tokens
+        // Can't validate the url as it may contain tokens
 
         if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
             return Constant.messages.getString("zest.dialog.client.error.windowHandle");
