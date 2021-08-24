@@ -165,7 +165,7 @@ public class ContextAccessRulesManager {
             path = context.getUrlParamParser().getTreePath(node.getUri());
             hostname = UriUtils.getHostName(node.getUri());
         } catch (URIException e) {
-            log.error("An error occurred while infering access rules: {}", e.getMessage(), e);
+            log.error("An error occurred while inferring access rules: {}", e.getMessage(), e);
             return AccessRule.UNKNOWN;
         }
 
@@ -198,7 +198,7 @@ public class ContextAccessRulesManager {
                 parent = parent.findChild(pathSegment);
                 if (parent == null) {
                     log.warn(
-                            "Unable to find path segment while infering rule for {} : {}",
+                            "Unable to find path segment while inferring rule for {} : {}",
                             node,
                             pathSegment);
                     break;

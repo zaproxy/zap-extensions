@@ -137,7 +137,7 @@ public class AccessControlScannerThread
         try {
             notifyScanStarted();
             scanImpl();
-            log.debug("Access control scan succesfully completed.");
+            log.debug("Access control scan successfully completed.");
         } catch (Exception e) {
             log.error("An error occurred while scanning:", e);
         } finally {
