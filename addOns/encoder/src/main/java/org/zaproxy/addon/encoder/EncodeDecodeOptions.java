@@ -64,9 +64,9 @@ public class EncodeDecodeOptions extends VersionedAbstractParam {
         return base64DoBreakLines;
     }
 
-    public void setBase64DoBreakLines(boolean base64OuputBreak) {
-        this.base64DoBreakLines = base64OuputBreak;
-        getConfig().setProperty(PARAM_BASE64_DO_BREAK_LINES, base64OuputBreak);
+    public void setBase64DoBreakLines(boolean base64OutputBreak) {
+        this.base64DoBreakLines = base64OutputBreak;
+        getConfig().setProperty(PARAM_BASE64_DO_BREAK_LINES, base64OutputBreak);
     }
 
     @Override
