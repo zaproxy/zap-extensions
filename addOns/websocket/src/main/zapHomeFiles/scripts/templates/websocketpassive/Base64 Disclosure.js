@@ -14,6 +14,8 @@ CONFIDENCE_MEDIUM = 2;
 
 PRINT_RESULTS = false;
 
+var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
+
 var base64Regex = /((?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=))/gmi;
 
 base64Decoder = java.util.Base64.getDecoder();
@@ -37,17 +39,29 @@ function scan(helper,msg) {
                 print("Decoded Evidence: " + decodedEvidence);
             }
 
-            helper.newAlert()
-                .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
-                .setName("Base64 Disclosure in WebSocket message (script)")
-                .setDescription("A Base64-encoded string has been found in the websocket incoming message. Base64-encoded data may contain sensitive " +
-                                "information such as usernames, passwords or cookies which should be further inspected. Decoded evidence: "
-                                + decodedEvidence + ".")
-                .setSolution("Base64-encoding should not be used to store or send sensitive information.")
-                .setEvidence(evidence)
-                .raise();
+            raiseAlert(helper, evidence, decodedEvidence);
         });
     }
+}
+
+function raiseAlert(helper, evidence, decodedEvidence){
+    createAlertBuilder(helper, evidence, decodedEvidence).raise();
+}
+
+function createAlertBuilder(helper, evidence, decodedEvidence){
+    return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
+        .setName("Base64 Disclosure in WebSocket message")
+        .setDescription("A Base64-encoded string has been found in the websocket incoming message. Base64-encoded data may contain sensitive " +
+                        "information such as usernames, passwords or cookies which should be further inspected. Decoded evidence: "
+                        + decodedEvidence + ".")
+        .setSolution("Base64-encoding should not be used to store or send sensitive information.")
+        .setEvidence(evidence);
+}
+
+function getExampleAlerts(){
+    return [createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "example", "example").build().getAlert()];
 }
 
 function getName(){

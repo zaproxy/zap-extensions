@@ -10,6 +10,7 @@ var Model = Java.type("org.parosproxy.paros.model.Model");
 var Control = Java.type("org.parosproxy.paros.control.Control");
 var ExtensionUserManagement = Java.type("org.zaproxy.zap.extension.users.ExtensionUserManagement");
 var DigestUtils = Java.type("org.apache.commons.codec.digest.DigestUtils");
+var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
 
 OPCODE_TEXT = 0x1;
 RISK_INFO 	= 0;
@@ -33,30 +34,41 @@ function scan(helper,msg) {
 
         Object.keys(usernameHashes).forEach(function(hashType){
             if((matches = message.match(usernameHashes[hashType]))!= null) {
+                var contextname = Model.getSingleton().getSession().getContext(parseInt(user.getContextId())).getName();
                 matches.forEach(function(evidence){
-                    helper.newAlert()
-                        .setRiskConfidence(RISK_INFO, CONFIDENCE_HIGH)
-                        .setName("Username Hash Found in WebSocket message (script)")
-                        .setDescription(getDescription(user, hashType))
-                        .setSolution("Use per user or session indirect object references (create a temporary mapping at time of use)."
-                                     + " Or, ensure that each use of a direct object reference is tied to an authorization check to ensure the"
-                                     + " user is authorized for the requested object.")
-                        .setReference("https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References\n"
-                                      + "https://www.owasp.org/index.php/Testing_for_Insecure_Direct_Object_References_(OTG-AUTHZ-004)")
-                        .setEvidence(evidence)
-                        .setCweId(284) // CWE-284: Improper Access Control
-                        .setWascId(2) // WASC-2: Insufficient Authorization
-                        .raise();
+                	raiseAlert(helper, evidence, username, contextname, hashType);
                 });
             }
         });
     });
 }
 
-function getDescription(user, hashType){
-    var username = user.getName();
-    var context = Model.getSingleton().getSession().getContext(parseInt(user.getContextId())).getName();
-    return "A " + hashType + " hash of {" + username + " / context: " + context + "} was found in incoming WebSocket message."
+function raiseAlert(helper, evidence, username, contextname, hashType){
+    createAlertBuilder(helper, evidence, username, contextname, hashType).raise();
+}
+
+function createAlertBuilder(helper, evidence, username, contextname, hashType){
+    return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_INFO, CONFIDENCE_HIGH)
+        .setName("Username Hash Found in WebSocket message")
+        .setDescription(getDescription(username, contextname, hashType))
+        .setSolution("Use per user or session indirect object references (create a temporary mapping at time of use)."
+                     + " Or, ensure that each use of a direct object reference is tied to an authorization check to ensure the"
+                     + " user is authorized for the requested object.")
+        .setReference("https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References\n"
+                      + "https://www.owasp.org/index.php/Testing_for_Insecure_Direct_Object_References_(OTG-AUTHZ-004)")
+        .setEvidence(evidence)
+        .setCweId(284) // CWE-284: Improper Access Control
+        .setWascId(2); // WASC-2: Insufficient Authorization
+}
+
+function getExampleAlerts(){
+    return [createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "", "Example", "Example", "Example").build().getAlert()];
+}
+
+function getDescription(username, contextname, hashType){
+    return "A " + hashType + " hash of {" + username + " / context: " + contextname + "} was found in incoming WebSocket message."
         +" This may indicate that the application is subject to an Insecure Direct Object"
         +" Reference (IDOR) vulnerability. Manual testing will be required to see if this"
         +" discovery can be abused.";

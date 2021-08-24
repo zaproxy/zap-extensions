@@ -16,6 +16,8 @@ CONFIDENCE_MEDIUM = 2;
 REGULAR_IP_OCTET = "(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})";
 REGULAR_PORTS = "(:(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65([0-4]\\d{2}|5[0-2]\\d|53[0-5]))\\b)?";
 
+var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
+
 var patternPre = [];
 
 /** Pattern for private IP V4 addresses as well as Amazon EC2 private hostnames */
@@ -69,19 +71,31 @@ function scan(helper,msg) {
     if((matches = message.match(ipRegex)) != null){
 
         matches.forEach(function(evidence){
-            helper.newAlert()
-                .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
-                .setName("Private IP Disclosure via WebSocket (script)")
-                .setDescription("A private IP (such as 10.x.x.x, 172.x.x.x, 192.168.x.x)\
+            raiseAlert(helper, evidence);
+        });
+    }
+}
+
+function raiseAlert(helper, evidence){
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence){
+    return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
+        .setName("Private IP Disclosure via WebSocket")
+        .setDescription("A private IP (such as 10.x.x.x, 172.x.x.x, 192.168.x.x)\
  or an Amazon EC2 private hostname (for example, ip-10-0-56-78) has been found in the incoming\
  WebSocket message. This information might be helpful for further attacks targeting\
  internal systems.")
-                .setSolution("Remove the private IP address from the WebSocket messages.")
-                .setReference("https://tools.ietf.org/html/rfc1918")
-                .setEvidence(evidence)
-                .raise();
-        });
-    }
+        .setSolution("Remove the private IP address from the WebSocket messages.")
+        .setReference("https://tools.ietf.org/html/rfc1918")
+        .setEvidence(evidence);
+}
+
+function getExampleAlerts(){
+    return [createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "").build().getAlert()];
 }
 
 function getName(){

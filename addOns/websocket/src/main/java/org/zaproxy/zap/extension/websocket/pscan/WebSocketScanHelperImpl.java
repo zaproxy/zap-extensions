@@ -34,6 +34,11 @@ public class WebSocketScanHelperImpl implements WebSocketScanHelper {
     private int pluginId;
     private WebSocketMessageDTO webSocketMessage;
 
+    /** Only to be used for the example alerts, will not be able to raise any this way. */
+    public WebSocketScanHelperImpl() {
+        this.webSocketAlertThread = new WebSocketPassiveScanThread(null);
+    }
+
     /**
      * @param webSocketAlertThread the parent thread of helper which is responsible for the alert.
      */

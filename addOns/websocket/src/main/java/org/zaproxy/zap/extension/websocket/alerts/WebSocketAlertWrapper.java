@@ -158,7 +158,7 @@ public class WebSocketAlertWrapper {
             return this;
         }
 
-        protected WebSocketAlertBuilder setPluginId(int pluginId) {
+        public WebSocketAlertBuilder setPluginId(int pluginId) {
             this.pluginId = pluginId;
             return this;
         }
@@ -185,6 +185,10 @@ public class WebSocketAlertWrapper {
         }
 
         protected WebSocketAlertBuilder setMessage(WebSocketMessageDTO webSocketMessageDTO) {
+            if (webSocketMessageDTO == null) {
+                // Can be null when generating example alerts
+                return this;
+            }
 
             HttpMessage handshakeMessage;
 
