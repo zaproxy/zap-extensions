@@ -2,7 +2,7 @@
 In addition to allowing you to specify exactly what can be attacked in a request,
 input vector scripts now also allow you to change how requests are represented in the sites tree.
 This script decodes URL and post parameters that are represented by JSON.
-To demonstate this run the following curl commands from the command line with this script enabled:
+To demonstrate this run the following curl commands from the command line with this script enabled:
 
 export http_proxy=http://localhost:8090/
 curl http://www.example.com/page/?%5B%7B%22key%22:%22aa%22,%22value%22:%22bb%22%7D%5D
@@ -11,8 +11,8 @@ curl -d '[{"key":"aa","value":"ee"},{"key":"cc","value":"ff"}]' -X POST http://w
 
 It also changes the path of requests starting http://www.example.com/test/ so that every other path element after the initial 'test' is replaced by '<ddn>'
 The built-in ZAP support for Data Driven Nodes (ie nodes where name is actually data rather than part of the application structure)
-only supports one DDN per URL. This script shows that site modifier scripts can support an arbritrary number of them.
-To demonstate this run the following curl commands from the command line with this script enabled:
+only supports one DDN per URL. This script shows that site modifier scripts can support an arbitrary number of them.
+To demonstrate this run the following curl commands from the command line with this script enabled:
 
 export http_proxy=http://localhost:8090/
 curl http://www.example.com/test/aaa/test2/bbb/
