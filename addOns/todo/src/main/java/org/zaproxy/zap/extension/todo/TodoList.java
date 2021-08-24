@@ -138,7 +138,7 @@ public class TodoList extends AbstractPanel implements Tab {
 
     private void crazyFix() {
         // clicking on remove btn does not immediately rerender the view.so use fix
-        // fix : scroll up and down programatically
+        // fix : scroll up and down programmatically
         bar.setValue(bar.getValue() - 1);
         bar.setValue(bar.getValue() + 1);
     }
