@@ -37,7 +37,7 @@ public class WiderDropdownJComboBox<E> extends JComboBox<E> {
     private static final long serialVersionUID = -5796470611592964798L;
 
     private boolean layingOut = false;
-    private int widestLengh = 0;
+    private int widestLength = 0;
     private boolean wide = false;
 
     public WiderDropdownJComboBox(ComboBoxModel<E> channelComboBoxModel, boolean isWide) {
@@ -49,17 +49,17 @@ public class WiderDropdownJComboBox<E> extends JComboBox<E> {
 
                     @Override
                     public void intervalRemoved(ListDataEvent evt) {
-                        widestLengh = getWidestItemWidth();
+                        widestLength = getWidestItemWidth();
                     }
 
                     @Override
                     public void intervalAdded(ListDataEvent evt) {
-                        widestLengh = getWidestItemWidth();
+                        widestLength = getWidestItemWidth();
                     }
 
                     @Override
                     public void contentsChanged(ListDataEvent evt) {
-                        widestLengh = getWidestItemWidth();
+                        widestLength = getWidestItemWidth();
                     }
                 });
     }
@@ -70,14 +70,14 @@ public class WiderDropdownJComboBox<E> extends JComboBox<E> {
 
     public void setWide(boolean wide) {
         this.wide = wide;
-        widestLengh = getWidestItemWidth();
+        widestLength = getWidestItemWidth();
     }
 
     @Override
     public Dimension getSize() {
         Dimension dim = super.getSize();
         if (!layingOut && isWide()) {
-            dim.width = Math.max(widestLengh, dim.width);
+            dim.width = Math.max(widestLength, dim.width);
         }
         return dim;
     }

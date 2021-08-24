@@ -358,7 +358,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
                                                 if (channelId < 0) {
                                                     if (channelId
                                                             == ReEstablishConnection
-                                                                    .RETRIVING_HANDSHAKE_ERROR) {
+                                                                    .RETRIEVING_HANDSHAKE_ERROR) {
                                                         // TODO: This message should be replaced
                                                         // when we are able to open websocket
                                                         // connection.
@@ -476,7 +476,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
                 this.newSecWebSocketKey = newSecWebSocketKey;
             }
 
-            public static final int RETRIVING_HANDSHAKE_ERROR = -1;
+            public static final int RETRIEVING_HANDSHAKE_ERROR = -1;
             public static final int IOEXCEPTION = -2;
             public static final int REQUEST_OUT_OF_SCOPE = -3;
 
@@ -494,7 +494,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
                     LOGGER.debug(
                             "An error occurred while trying to retrieve the HTTP handshake from history",
                             e);
-                    channelId = RETRIVING_HANDSHAKE_ERROR;
+                    channelId = RETRIEVING_HANDSHAKE_ERROR;
                 } catch (IOException e) {
                     LOGGER.debug("Unable to re-establish the WebSocket Connection", e);
                     channelId = IOEXCEPTION;
