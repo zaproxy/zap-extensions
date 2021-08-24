@@ -82,7 +82,7 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                     }
 
                     this.setEnabled(false);
-                    Boolean enable = null; // We dont know whetehr it will be Enable or Disable yet
+                    Boolean enable = null; // We dont know whether it will be Enable or Disable yet
 
                     for (TreePath tp : tree.getSelectionPaths()) {
                         ScriptNode node = (ScriptNode) tp.getLastPathComponent();
