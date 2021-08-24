@@ -287,7 +287,7 @@ public class AlertFilter extends Enableable {
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
             }
         } catch (Exception ex) {
-            log.error("An error occured while decoding alertFilter from: {}", encodedString, ex);
+            log.error("An error occurred while decoding alertFilter from: {}", encodedString, ex);
             return null;
         }
         // log.debug("Decoded alertFilter: {}", alertFilter);
