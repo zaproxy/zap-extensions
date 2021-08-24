@@ -126,9 +126,9 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     /**
      * Generate the help file including all of the tips
      *
-     * @param parmas
+     * @param params
      */
-    public static void main(String[] parmas) {
+    public static void main(String[] params) {
         Properties props = new Properties();
         File f = new File("src/org/zaproxy/zap/extension/tips/resources/Messages.properties");
         try {
