@@ -104,7 +104,7 @@ class CookieUtilsUnitTest {
     }
 
     @Test
-    void shouldNotFindAttributeIfCookieHasNoNameValueSepartor() {
+    void shouldNotFindAttributeIfCookieHasNoNameValueSeparator() {
         // Given
         String headerValue = "Name; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
@@ -241,9 +241,9 @@ class CookieUtilsUnitTest {
                 "Sun, 06 Nov 1994 08:49:37 GMT",
                 "Sunday, 06-Nov-94 08:49:37 GMT",
                 "Sun Nov  6 08:49:37 1994",
-                "Unkown Format"
+                "Unknown Format"
             })
-    void shouldReportExpiredIfDateInThePastOrUnkownFormat(String date) {
+    void shouldReportExpiredIfDateInThePastOrUnknownFormat(String date) {
         // Given
         String header = "name=value; expires=" + date;
         // When

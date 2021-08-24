@@ -58,7 +58,7 @@ public class HttpDateUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "Unkown Format"})
+    @ValueSource(strings = {"", "Unknown Format"})
     void shouldFailToParseUnknownFormats(String date) {
         // Given / When
         ZonedDateTime parsedDate = HttpDateUtils.parse(date);
