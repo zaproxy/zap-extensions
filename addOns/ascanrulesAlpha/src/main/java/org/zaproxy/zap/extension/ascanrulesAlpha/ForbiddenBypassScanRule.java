@@ -122,7 +122,7 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             "X-Remote-IP: 127.0.0.1",
             "X-Client-IP: 127.0.0.1",
             "X-Host: 127.0.0.1",
-            "X-Forwared-Host: 127.0.0.1"
+            "X-Forwarded-Host: 127.0.0.1"
         };
 
         for (String header : headerPayloads) {

@@ -62,8 +62,8 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private int SLEEP_SHORT_TIME, SLEEP_LONG_TIME;
     private static final String INSERT_SHORT_TIME = "INSERT_SHORT_TIME",
             INSERT_LONG_TIME = "INSERT_LONG_TIME";
-    private static final int SHORT_TRESHOLD = 1500;
-    private static final int LONG_TRESHOLD = 3000;
+    private static final int SHORT_THRESHOLD = 1500;
+    private static final int LONG_THRESHOLD = 3000;
     // Packages of attack rules
     private static final String[] ALL_DATA_PARAM_INJECTION =
             new String[] {"[$ne]", "[$regex]", "[$gt]", "[$eq]"};
@@ -205,7 +205,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        LOG.debug("Initialising MongoDB penertration tests");
+        LOG.debug("Initialising MongoDB penetration tests");
         switch (this.getAttackStrength()) {
             case LOW:
                 SLEEP_SHORT_TIME = 1000;
@@ -379,7 +379,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                     LOG.debug(
                             "Trying for a longer time with the value: {}",
                             SLEEP_INJECTION[index][1]);
-                    if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + SHORT_TRESHOLD) {
+                    if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + SHORT_THRESHOLD) {
                         phase = INSERT_LONG_TIME;
                         sleepValueToInj =
                                 SLEEP_INJECTION[index][1].replaceFirst(
@@ -387,7 +387,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         msgInjAttack = getNewMsg();
                         setParameter(msgInjAttack, param, sleepValueToInj);
                         sendAndReceive(msgInjAttack, false);
-                        if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + LONG_TRESHOLD) {
+                        if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + LONG_THRESHOLD) {
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_HIGH)
                                     .setParam(param)
