@@ -8,10 +8,10 @@
       browserId:                       # String: Browser Id to use, default: firefox-headless
       clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and input, default: true
       clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
-      eventWait:                       # Int: The time in millseconds to wait after a client side event is fired, default: 1000
+      eventWait:                       # Int: The time in milliseconds to wait after a client side event is fired, default: 1000
       maxCrawlStates:                  # Int: The maximum number of crawl states the crawler should crawl, default: 0 unlimited
       randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
-      reloadWait:                      # Int: The time in millseconds to wait after the URL is loaded, default: 1000
+      reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
     tests:
       - name: 'At least X URLs found'        # String: Name of the test, default: statistic + operator + value
         type: 'stats'                        # String: Type of test, only 'stats' is supported for now

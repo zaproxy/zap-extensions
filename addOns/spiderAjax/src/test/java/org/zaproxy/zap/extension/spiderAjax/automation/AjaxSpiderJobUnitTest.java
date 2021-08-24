@@ -66,7 +66,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class AjaxSpiderJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
-    // Disdabled due to build issues
+    // Disabled due to build issues
     private ExtensionLoader extensionLoader;
     private ExtensionAjax extAjax;
     private AjaxSpiderParam ajaxSpiderParam;
