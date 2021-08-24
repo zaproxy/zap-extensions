@@ -48,7 +48,7 @@ public class PortScan extends ScanThread implements ScanListenner {
     private boolean pauseScan = false;
     private boolean unpauseScan = false;
     private boolean isPaused = false;
-    private ScanListenner listenner;
+    private ScanListenner listener;
     private int maxPort = 0;
     private int threads = 0;
     private int threadIndex = -1;
@@ -60,10 +60,10 @@ public class PortScan extends ScanThread implements ScanListenner {
 
     private static Logger log = LogManager.getLogger(PortScan.class);
 
-    public PortScan(String site, ScanListenner listenner, PortScanParam portScanParam) {
-        super(site, listenner);
+    public PortScan(String site, ScanListenner listener, PortScanParam portScanParam) {
+        super(site, listener);
         this.site = site;
-        this.listenner = listenner;
+        this.listener = listener;
         this.maxPort = portScanParam.getMaxPort();
         this.threads = portScanParam.getThreadPerScan();
         this.timeout = portScanParam.getTimeoutInMs();
@@ -74,14 +74,14 @@ public class PortScan extends ScanThread implements ScanListenner {
 
     private PortScan(
             String site,
-            ScanListenner listenner,
+            ScanListenner listener,
             PortScanResultsTableModel resultsTableModel,
             int maxPort,
             int threads,
             int threadIndex) {
-        super(site, listenner);
+        super(site, listener);
         this.site = site;
-        this.listenner = listenner;
+        this.listener = listener;
         this.maxPort = maxPort;
         this.threads = threads;
         this.threadIndex = threadIndex;
@@ -99,8 +99,8 @@ public class PortScan extends ScanThread implements ScanListenner {
             // This is a sub thread
             runScan();
         }
-        if (this.listenner != null) {
-            this.listenner.scanFinshed(site);
+        if (this.listener != null) {
+            this.listener.scanFinshed(site);
         }
         stopScan = true;
     }
@@ -148,8 +148,8 @@ public class PortScan extends ScanThread implements ScanListenner {
                     log.debug("Scanned stopped");
                     break;
                 }
-                if (this.listenner != null) {
-                    this.listenner.scanProgress(site, port, maxPort);
+                if (this.listener != null) {
+                    this.listener.scanProgress(site, port, maxPort);
                 }
 
                 if (useProxy
@@ -294,7 +294,7 @@ public class PortScan extends ScanThread implements ScanListenner {
     public void scanProgress(String host, int progress, int maximum) {
         if (progress > this.progress) {
             this.progress = progress;
-            this.listenner.scanProgress(site, progress, maximum);
+            this.listener.scanProgress(site, progress, maximum);
         }
     }
 
