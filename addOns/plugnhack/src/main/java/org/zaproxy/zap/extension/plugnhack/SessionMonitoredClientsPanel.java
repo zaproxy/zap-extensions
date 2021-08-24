@@ -140,7 +140,7 @@ public class SessionMonitoredClientsPanel extends AbstractParamPanel {
             changed = true;
         }
         if (changed) {
-            // Refresh the tree - too hard to work out excactly what has changed
+            // Refresh the tree - too hard to work out exactly what has changed
             this.mpm.setMonitorFlags();
         }
     }

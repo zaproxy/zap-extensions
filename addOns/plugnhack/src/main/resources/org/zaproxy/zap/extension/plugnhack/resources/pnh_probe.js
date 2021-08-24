@@ -96,7 +96,7 @@ function getActorsListener(messagePeer, clientConfig) {
     return zapS4()+zapS4()+"-"+zapS4()+"-"+zapS4()+"-"+zapS4()+"-"+zapS4()+zapS4()+zapS4();
   }
 
-  // Actors which receieve messages from the tool
+  // Actors which receive messages from the tool
   var actors = {
     /*
      * set the location of the current window. Useful for, e.g. forcing the
@@ -267,7 +267,7 @@ function getActorsListener(messagePeer, clientConfig) {
     function hookNode(node) {
       if(node.contentWindow && node.contentWindow.postMessage) {
         node.addEventListener('load', function() {
-          //console.log("MODIFY TEH "+node.nodeName+"!!!");
+          //console.log("MODIFY THE "+node.nodeName+"!!!");
           if(!hookWindow(node.contentWindow)) {
             makeProxyFrame(node);
             hookWindow(node.contentWindow);

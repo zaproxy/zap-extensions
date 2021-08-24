@@ -358,12 +358,12 @@ public class MonitoredPagesManager {
                 // Drop the message
                 logger.debug("Dropping message {}", msg.getData());
                 msg.setState(ClientMessage.State.dropped);
-                // Make sure the message table is updated immediatelly
+                // Make sure the message table is updated immediately
                 this.extension.messageChanged(msg);
             } else {
                 responseSet.add(this.msgToResponse(msg, false));
                 if (msg.isChanged()) {
-                    // Make sure the message table is updated immediatelly
+                    // Make sure the message table is updated immediately
                     this.extension.messageChanged(msg);
                 }
             }

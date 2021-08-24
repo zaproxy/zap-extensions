@@ -146,7 +146,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String manifestUrl = "/manifest/";
                 String xpiUrl = "/OTHER/pnh/other/fx_pnh.xpi/";
-                String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
+                String welcomePage = ExtensionPlugNHack.getStringResource("resources/welcome.html");
                 // Replace the dynamic parts
                 welcomePage =
                         welcomePage
@@ -241,7 +241,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String manifest =
                         this.replaceApiTokens(
-                                ExtensionPlugNHack.getStringReource("resources/manifest.json"));
+                                ExtensionPlugNHack.getStringResource("resources/manifest.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -265,7 +265,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String service =
                         this.replaceApiTokens(
-                                ExtensionPlugNHack.getStringReource("resources/service.json"));
+                                ExtensionPlugNHack.getStringResource("resources/service.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -437,7 +437,7 @@ public class PlugNHackAPI extends ApiImplementor {
         // Sanity check the json config files are valid!
         // JSON json;
 
-        // String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
+        // String manifest = ExtensionPlugNHack.getStringResource("resources/manifest.json");
         // System.out.println("Manifest = " + manifest);
         // json = JSONSerializer.toJSON(manifest);
         // System.out.println("Manifest OK? " + json);

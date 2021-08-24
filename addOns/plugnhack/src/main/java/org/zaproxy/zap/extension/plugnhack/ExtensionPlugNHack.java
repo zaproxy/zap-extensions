@@ -208,7 +208,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     @Override
                     public void run() {
                         this.setName("ZAP-pnh-timeout");
-                        // Cant init extBreak here - Control wont have been initialized
+                        // Can't init extBreak here - Control wont have been initialized
                         boolean ctrlInit = false;
                         ExtensionBreak extBreak = null;
                         while (!shutdown) {
@@ -503,7 +503,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     }
                     if (!injected) {
                         logger.debug(
-                                "Cant inject PnH script into {} no head tag found {}",
+                                "Can't inject PnH script into {} no head tag found {}",
                                 msg.getRequestHeader().getURI().toString(),
                                 msg.getResponseHeader().getStatusCode());
                     }
@@ -617,13 +617,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     private String getPnhScript() throws ApiException {
         if (pnhScript == null) {
-            pnhScript = ExtensionPlugNHack.getStringReource("resources/pnh_probe.js");
+            pnhScript = ExtensionPlugNHack.getStringResource("resources/pnh_probe.js");
         }
 
         return pnhScript;
     }
 
-    public static String getStringReource(String resourceName) throws ApiException {
+    public static String getStringResource(String resourceName) throws ApiException {
         InputStream in = null;
         StringBuilder sb = new StringBuilder();
         try {
@@ -657,12 +657,12 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         return this.oracleManager.registerOracle(data);
     }
 
-    public void addOracleListnner(OracleListener listenner) {
-        this.oracleManager.addListener(listenner);
+    public void addOracleListener(OracleListener listener) {
+        this.oracleManager.addListener(listener);
     }
 
-    public void removeOracleListenner(OracleListener listenner) {
-        this.oracleManager.removeListener(listenner);
+    public void removeOracleListenner(OracleListener listener) {
+        this.oracleManager.removeListener(listener);
     }
 
     /*
@@ -691,12 +691,12 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         this.mpm.stopMonitoring(id);
     }
 
-    public void addMonitoredPageListenner(MonitoredPageListener listenner) {
-        this.mpm.addListener(listenner);
+    public void addMonitoredPageListenner(MonitoredPageListener listener) {
+        this.mpm.addListener(listener);
     }
 
-    public void removeMonitoredPageListenner(MonitoredPageListener listenner) {
-        this.mpm.removeListener(listenner);
+    public void removeMonitoredPageListenner(MonitoredPageListener listener) {
+        this.mpm.removeListener(listener);
     }
 
     protected String getApiRoot() {
