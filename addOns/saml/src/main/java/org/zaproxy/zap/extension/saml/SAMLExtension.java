@@ -26,7 +26,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.ExtensionPopupMenu;
-import org.zaproxy.zap.extension.saml.ui.SamlExtentionSettingsUI;
+import org.zaproxy.zap.extension.saml.ui.SamlExtensionSettingsUI;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
 
 public class SAMLExtension extends ExtensionAdaptor {
@@ -44,7 +44,7 @@ public class SAMLExtension extends ExtensionAdaptor {
             if (conf != null) {
                 conf.initialize();
             } else {
-                log.error("SAML Configuration can't be loaded. Extention will not be loaded...");
+                log.error("SAML Configuration can't be loaded. Extension will not be loaded...");
             }
             if (getView() != null && conf != null) {
                 final SAMLProxyListener proxyListener = new SAMLProxyListener();
@@ -63,7 +63,7 @@ public class SAMLExtension extends ExtensionAdaptor {
                         new JMenuItem(SamlI18n.getMessage("saml.toolmenu.settings"));
                 samlActiveEditorMenu.addActionListener(
                         e -> {
-                            SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
+                            SamlExtensionSettingsUI settingUI = new SamlExtensionSettingsUI();
                             settingUI.setVisible(true);
                         });
                 extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);

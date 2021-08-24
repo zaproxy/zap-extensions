@@ -46,7 +46,7 @@ import org.zaproxy.zap.extension.saml.SAMLConfiguration;
 import org.zaproxy.zap.extension.saml.SAMLException;
 import org.zaproxy.zap.extension.saml.SamlI18n;
 
-public class SamlExtentionSettingsUI extends JFrame
+public class SamlExtensionSettingsUI extends JFrame
         implements PassiveAttributeChangeListener, AttributeListener {
 
     private static final long serialVersionUID = 1L;
@@ -58,10 +58,10 @@ public class SamlExtentionSettingsUI extends JFrame
 
     private SAMLConfiguration configuration;
 
-    protected Logger log = LogManager.getLogger(SamlExtentionSettingsUI.class);
+    protected Logger log = LogManager.getLogger(SamlExtensionSettingsUI.class);
 
     /** Create the frame. */
-    public SamlExtentionSettingsUI() {
+    public SamlExtensionSettingsUI() {
         configuration = SAMLConfiguration.getInstance();
         setTitle(SamlI18n.getMessage("saml.toolmenu.settings"));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -87,7 +87,7 @@ public class SamlExtentionSettingsUI extends JFrame
         btnAddAutoChange.addActionListener(
                 e -> {
                     AddAutoChangeAttributeUI dialog =
-                            new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
+                            new AddAutoChangeAttributeUI(SamlExtensionSettingsUI.this);
                     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                     dialog.setVisible(true);
                 });
@@ -97,7 +97,7 @@ public class SamlExtentionSettingsUI extends JFrame
         btnAdd.addActionListener(
                 e -> {
                     AddAttributeUI addAttributeUI =
-                            new AddAttributeUI(SamlExtentionSettingsUI.this);
+                            new AddAttributeUI(SamlExtensionSettingsUI.this);
                     addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     addAttributeUI.setVisible(true);
                 });
@@ -109,14 +109,14 @@ public class SamlExtentionSettingsUI extends JFrame
                     boolean success = saveChanges();
                     if (success) {
                         JOptionPane.showMessageDialog(
-                                SamlExtentionSettingsUI.this,
+                                SamlExtensionSettingsUI.this,
                                 SamlI18n.getMessage("saml.settings" + ".messages.saved"),
                                 SamlI18n.getMessage("saml.settings.messages.success"),
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(
-                                SamlExtentionSettingsUI.this,
-                                SamlI18n.getMessage("saml.settings" + ".messages.notsaved"),
+                                SamlExtensionSettingsUI.this,
+                                SamlI18n.getMessage("saml.settings" + ".messages.unsaved"),
                                 SamlI18n.getMessage("saml.settings.messages.failed"),
                                 JOptionPane.ERROR_MESSAGE);
                     }
@@ -128,7 +128,7 @@ public class SamlExtentionSettingsUI extends JFrame
                 e -> {
                     int response =
                             JOptionPane.showConfirmDialog(
-                                    SamlExtentionSettingsUI.this,
+                                    SamlExtensionSettingsUI.this,
                                     SamlI18n.getMessage("saml.editor.msg.confirmreset"),
                                     SamlI18n.getMessage("saml.settings.messages.confirm"),
                                     JOptionPane.YES_NO_OPTION);
@@ -143,7 +143,7 @@ public class SamlExtentionSettingsUI extends JFrame
                 e -> {
                     int response =
                             JOptionPane.showConfirmDialog(
-                                    SamlExtentionSettingsUI.this,
+                                    SamlExtensionSettingsUI.this,
                                     "Do You want to save changes before exit?",
                                     SamlI18n.getMessage("saml.settings.messages" + ".confirm"),
                                     JOptionPane.YES_NO_CANCEL_OPTION);
@@ -270,7 +270,7 @@ public class SamlExtentionSettingsUI extends JFrame
                     e -> {
                         int response =
                                 JOptionPane.showConfirmDialog(
-                                        SamlExtentionSettingsUI.this,
+                                        SamlExtensionSettingsUI.this,
                                         SamlI18n.getMessage("saml.settings.messages.confirmremove"),
                                         SamlI18n.getMessage("saml.settings.messages.confirm"),
                                         JOptionPane.YES_NO_OPTION);
@@ -315,7 +315,7 @@ public class SamlExtentionSettingsUI extends JFrame
                     e -> {
                         int response =
                                 JOptionPane.showConfirmDialog(
-                                        SamlExtentionSettingsUI.this,
+                                        SamlExtensionSettingsUI.this,
                                         SamlI18n.getMessage("saml.settings.messages.confirmremove"),
                                         SamlI18n.getMessage("saml.settings.messages.confirm"),
                                         JOptionPane.YES_NO_OPTION);
@@ -342,7 +342,7 @@ public class SamlExtentionSettingsUI extends JFrame
             initAttributes();
         } catch (SAMLException e1) {
             JOptionPane.showMessageDialog(
-                    SamlExtentionSettingsUI.this,
+                    SamlExtensionSettingsUI.this,
                     SamlI18n.getMessage("saml.editor.msg.resetfailed"),
                     SamlI18n.getMessage("saml.settings.messages.failed"),
                     JOptionPane.ERROR_MESSAGE);
