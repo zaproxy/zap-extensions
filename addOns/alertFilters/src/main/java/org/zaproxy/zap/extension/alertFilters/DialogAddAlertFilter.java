@@ -259,7 +259,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.evidenceRegexCheckBox.setSelected(false);
         this.setConfirmButtonEnabled(true);
         this.testResultsLabel.setText(
-                Constant.messages.getString("alertFilters.dialog.filter.state.nottested"));
+                Constant.messages.getString("alertFilters.dialog.filter.state.untested"));
         this.applyResultsLabel.setText(
                 Constant.messages.getString("alertFilters.dialog.filter.state.notapplied"));
     }
@@ -389,7 +389,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             testResultsLabel =
                     new JLabel(
                             Constant.messages.getString(
-                                    "alertFilters.dialog.filter.state.nottested"));
+                                    "alertFilters.dialog.filter.state.untested"));
             testButton =
                     new JButton(Constant.messages.getString("alertFilters.dialog.button.test"));
             testButton.addActionListener(
