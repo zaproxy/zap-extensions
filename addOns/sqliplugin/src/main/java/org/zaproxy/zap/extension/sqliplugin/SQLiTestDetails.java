@@ -32,7 +32,7 @@ import org.jdom2.Element;
  */
 public class SQLiTestDetails {
     /*
-       Which details can be infered if the payload succeed.
+       Which details can be inferred if the payload succeed.
 
        Sub-tags: <dbms>
            What is the database management system (e.g. MySQL).

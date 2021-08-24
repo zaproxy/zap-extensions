@@ -42,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Split boundary and plugin definition in two different files
 - Updated all plugin and boundary files to the newest SQLMap database
-- Changed to target DB tecnhonolgy (Issue 1618).
+- Changed to target DB technology (Issue 1618).
 
 ## 8 - 2015-04-20
 

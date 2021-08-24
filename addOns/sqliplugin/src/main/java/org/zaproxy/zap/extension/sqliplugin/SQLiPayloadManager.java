@@ -118,7 +118,7 @@ public class SQLiPayloadManager {
         return instance;
     }
 
-    /** Inner contructor used to create the Singleton */
+    /** Inner constructor used to create the Singleton */
     private SQLiPayloadManager() throws IOException, JDOMException {
         boundaries = new ArrayList<>();
         tests = new ArrayList<>();
@@ -176,7 +176,7 @@ public class SQLiPayloadManager {
     }
 
     /**
-     * Get a random integer value of lenght digits
+     * Get a random integer value of length digits
      *
      * @param length the number of digits of this integer
      * @return the integer value
@@ -202,12 +202,12 @@ public class SQLiPayloadManager {
     }
 
     /**
-     * Get a randomly built string with exactly lenght chars
+     * Get a randomly built string with exactly length chars
      *
      * @param length the number of chars of this string
      * @param lowerCase get only lowercase chars
      * @param alphabet set the alphabet to use
-     * @return a string element containing exactly "lenght" characters
+     * @return a string element containing exactly "length" characters
      */
     public static String randomString(int length, boolean lowerCase, String alphabet) {
         StringBuilder result = new StringBuilder();

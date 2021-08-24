@@ -112,7 +112,7 @@ Tag: <test>
             NOTE: useful to test for UNION query (inband) SQL injection.
 
     Sub-tag: <details>
-        Which details can be infered if the payload succeed.
+        Which details can be inferred if the payload succeed.
 
         Sub-tags: <dbms>
             What is the database management system (e.g. MySQL).
@@ -4928,7 +4928,7 @@ Tag: <test>
         </details>
     </test>
 
-    <!-- Without parentesis because it never works with them, useful to exploit SQL injection in Oracle E-Business Suite Financials -->
+    <!-- Without parenthesis because it never works with them, useful to exploit SQL injection in Oracle E-Business Suite Financials -->
     <test>
         <title>Oracle time-based blind - Parameter replace (DBMS_LOCK.SLEEP)</title>
         <stype>5</stype>

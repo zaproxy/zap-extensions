@@ -60,7 +60,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     public static final double WARN_TIME_STDEV = 0.5 * 1000;
     // Minimum time response set needed for time-comparison based on standard deviation
     public static final int MIN_TIME_RESPONSES = 10;
-    // Payload used for checking of existence of IDS/WAF (dummier the better)
+    // Payload used for checking of existence of IDS/WAF (dumber the better)
     // IDS_WAF_CHECK_PAYLOAD = "AND 1=1 UNION ALL SELECT 1,2,3,table_name FROM
     // information_schema.tables"
 
@@ -153,7 +153,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     /**
-     * Get the description of the vulnerbaility when found
+     * Get the description of the vulnerability when found
      *
      * @return the vulnerability description
      */
@@ -1110,8 +1110,8 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             // TO BE IMPLEMENTED
             // Here we can tamper content for WAF evasion
             // a good idea could be to use a generic class
-            // and instantiate one choosen SQLiTamper or more than one
-            // who should set it? Acccording to SQLMap it's something
+            // and instantiate one chosen SQLiTamper or more than one
+            // who should set it? According to SQLMap it's something
             // that depends by the pentester...
             // Maybe create a metalanguage for this?
             // At last it's only a find and replace schema
@@ -1355,7 +1355,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     /**
-     * Prepare the Payload prepending the choosen prefix element according to the used injection
+     * Prepare the Payload prepending the chosen prefix element according to the used injection
      * model
      *
      * @param payload
