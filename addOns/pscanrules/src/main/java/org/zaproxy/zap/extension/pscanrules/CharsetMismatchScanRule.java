@@ -194,7 +194,7 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
             }
         } else if (isResponseXML(msg, source)) { // Check XML response charset
             // We're interested in the 'encoding' attribute defined in the XML
-            // declaration tag (<?xml enconding=".."?>
+            // declaration tag (<?xml encoding=".."?>
             //
             // TODO: could there be more than one XML declaration tag for a single XML file?
             List<StartTag> xmlDeclarationTags =
@@ -258,7 +258,7 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
                                 + " "
                                 + getVariant(
                                         currentMismatch)) // Compound name (to account for variant
-                // designations, and muitiple alerts on single URI)
+                // designations, and multiple alerts on single URI)
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())

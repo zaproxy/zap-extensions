@@ -145,10 +145,10 @@ class InsecureAuthenticationScanRuleUnitTest
                         new URI("http://www.example.com", true),
                         HttpRequestHeader.HTTP11);
         msg.setRequestHeader(requestHeader);
-        HttpResponseHeader responsHeader = new HttpResponseHeader();
-        responsHeader.addHeader(
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
+        responseHeader.addHeader(
                 HttpHeader.WWW_AUTHENTICATE, AUTHORIZATION_BASIC + " realm=\"Private\"");
-        msg.setResponseHeader(responsHeader);
+        msg.setResponseHeader(responseHeader);
         // When
         scanHttpResponseReceive(msg);
         // Then

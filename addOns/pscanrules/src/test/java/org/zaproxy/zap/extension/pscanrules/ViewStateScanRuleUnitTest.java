@@ -69,7 +69,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
     }
 
     @Test
-    void shouldNotRaiseAlertAsThereIsAnUnknowVersionOfASP() {
+    void shouldNotRaiseAlertAsThereIsAnUnknownVersionOfASP() {
         msg.setResponseBody("<input name=\"__specialstate\" value=\"bm90dmFsaWQ=\">");
 
         scanHttpResponseReceive(msg);

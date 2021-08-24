@@ -77,7 +77,7 @@ class InformationDisclosureReferrerScanRuleUnitTest
         Path testFile =
                 xmlDir.resolve(
                         InformationDisclosureReferrerScanRule.URL_SENSITIVE_INFORMATION_FILE);
-        Files.write(testFile, Arrays.asList(" user", " Password ", "# notused", "session "));
+        Files.write(testFile, Arrays.asList(" user", " Password ", "# unused", "session "));
     }
 
     @Test

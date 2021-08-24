@@ -52,7 +52,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
     public void scanHttpRequestSend(HttpMessage msg, int id) {
 
         String uri = null, method = null;
-        String extraInfo = null; // valeu depends on which method is being used.
+        String extraInfo = null; // value depends on which method is being used.
         String digestInfo = null;
 
         if (msg.getRequestHeader().isSecure()) {

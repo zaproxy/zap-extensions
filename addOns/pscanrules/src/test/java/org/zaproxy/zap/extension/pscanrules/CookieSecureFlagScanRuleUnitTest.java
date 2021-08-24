@@ -126,7 +126,7 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: hasatt=test123; Path=/; Secure; HttpOnly\r\n"
+                        + "Set-Cookie: hasattr=test123; Path=/; Secure; HttpOnly\r\n"
                         + "Set-Cookie: test=123; Path=/;\r\n"
                         + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                         + "Content-Length: "
@@ -295,7 +295,7 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: hasatt=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; secure\r\n"
+                        + "Set-Cookie: hasattr=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; secure\r\n"
                         + "Set-Cookie: test=123; Path=/;\r\n"
                         + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                         + "Content-Length: "

@@ -76,7 +76,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
 
     /*
      * Determines whether the specified cookie is loosely scoped by
-     * checking it's Domain attribute value agains the host
+     * checking it's Domain attribute value against the host
      */
     private boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
         // preconditions

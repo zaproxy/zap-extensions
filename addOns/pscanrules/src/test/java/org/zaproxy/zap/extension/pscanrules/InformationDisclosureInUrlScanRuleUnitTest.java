@@ -56,7 +56,7 @@ class InformationDisclosureInUrlScanRuleUnitTest
                                 InformationDisclosureInUrlScanRule.URL_SENSITIVE_INFORMATION_DIR));
         Path testFile =
                 xmlDir.resolve(InformationDisclosureInUrlScanRule.URL_SENSITIVE_INFORMATION_FILE);
-        Files.write(testFile, Arrays.asList(" user", "password", "# notused", "session "));
+        Files.write(testFile, Arrays.asList(" user", "password", "# unused", "session "));
     }
 
     protected HttpMessage createHttpMessageWithRespBody(String testURI)
@@ -101,7 +101,7 @@ class InformationDisclosureInUrlScanRuleUnitTest
     void noSensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testURI = URI + "?notused=45365";
+        String testURI = URI + "?unused=45365";
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When

@@ -58,25 +58,25 @@ public class MixedContentScanRule extends PluginPassiveScanner {
         boolean incScript = false;
         List<Element> sourceElements = source.getAllElements();
         for (Element sourceElement : sourceElements) {
-            if (addAttsContainingHttpContent(sourceElement, "src", list)) {
+            if (addAttrsContainingHttpContent(sourceElement, "src", list)) {
                 if (HTMLElementName.SCRIPT.equals(sourceElement.getName())) {
                     // Considered to be more serious
                     incScript = true;
                 }
             }
-            addAttsContainingHttpContent(sourceElement, "background", list);
-            addAttsContainingHttpContent(sourceElement, "classid", list);
-            addAttsContainingHttpContent(sourceElement, "codebase", list);
-            addAttsContainingHttpContent(sourceElement, "data", list);
-            addAttsContainingHttpContent(sourceElement, "icon", list);
-            addAttsContainingHttpContent(sourceElement, "usemap", list);
+            addAttrsContainingHttpContent(sourceElement, "background", list);
+            addAttrsContainingHttpContent(sourceElement, "classid", list);
+            addAttrsContainingHttpContent(sourceElement, "codebase", list);
+            addAttrsContainingHttpContent(sourceElement, "data", list);
+            addAttrsContainingHttpContent(sourceElement, "icon", list);
+            addAttrsContainingHttpContent(sourceElement, "usemap", list);
 
             switch (this.getAlertThreshold()) {
                 case LOW:
                 case MEDIUM:
                     // These are a bit more debatable, so dont do them on the HIGH setting
-                    addAttsContainingHttpContent(sourceElement, "action", list);
-                    addAttsContainingHttpContent(sourceElement, "formaction", list);
+                    addAttrsContainingHttpContent(sourceElement, "action", list);
+                    addAttrsContainingHttpContent(sourceElement, "formaction", list);
                     break;
                 default:
                     // No other checks
@@ -100,7 +100,7 @@ public class MixedContentScanRule extends PluginPassiveScanner {
         }
     }
 
-    private boolean addAttsContainingHttpContent(
+    private boolean addAttrsContainingHttpContent(
             Element sourceElement, String attribute, List<MixedContent> list) {
         String val = sourceElement.getAttributeValue(attribute);
         if (val != null && val.toLowerCase().startsWith("http:")) {

@@ -137,7 +137,7 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
 
     @Test
     void
-            shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertTreshold() {
+            shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertThreshold() {
         for (String attribute : Arrays.asList("action", "formaction")) {
             // Given
             String uri = "https://example.com/";

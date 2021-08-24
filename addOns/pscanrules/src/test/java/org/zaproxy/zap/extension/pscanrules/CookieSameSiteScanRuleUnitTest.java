@@ -235,7 +235,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         msg.getResponseHeader()
                 .setHeader(
                         HttpResponseHeader.SET_COOKIE,
-                        "hasatt=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/");
+                        "hasattr=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/");
         msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "test=123; Path=/;");
         // When
         scanHttpResponseReceive(msg);

@@ -258,7 +258,7 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         int expectedAlerts = 0;
         List<String> alternativeDebugErrors =
                 Arrays.asList(
-                        "Alternative Error", "This should also be dected as debug error message");
+                        "Alternative Error", "This should also be detected as debug error message");
 
         // Should raise alert with default error messages loaded
         HttpMessage msg =

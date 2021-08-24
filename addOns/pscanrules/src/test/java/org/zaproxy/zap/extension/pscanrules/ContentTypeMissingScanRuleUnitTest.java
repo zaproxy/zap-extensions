@@ -53,7 +53,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
-    void shoudNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
+    void shouldNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
@@ -65,7 +65,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
-    void shoudNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
+    void shouldNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
@@ -77,7 +77,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
-    void shoudAlertIfContentTypePresentButEmptyInResponse() throws HttpMalformedHeaderException {
+    void shouldAlertIfContentTypePresentButEmptyInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
@@ -91,7 +91,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
-    void shoudAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
+    void shouldAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
         // When

@@ -48,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [32] - 2021-01-20
 ### Changed
 - The Suspicious Comments scan rule will include the offending line as evidence.
-- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggeregated alert per HTTP message.
+- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggregated alert per HTTP message.
 
 ## [31] - 2020-12-15
 ### Changed

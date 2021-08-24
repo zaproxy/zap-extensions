@@ -258,7 +258,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
         // serialized objects which also trigger this filter
         // Example: Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint,
         // Version=12.0.0.0, Culture=neutral,
-        // TODO: maybe replace this regex by a tigher rule, avoiding detecting 999.999.999.999
+        // TODO: maybe replace this regex by a tighter rule, avoiding detecting 999.999.999.999
         IPADDRESS(
                 Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
                 Constant.messages.getString(MESSAGE_PREFIX + "content.ip.name"),
