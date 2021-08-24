@@ -43,6 +43,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     };
 
     private static final String TITLE = "spiderajax.automation.dialog.ajaxspider.title";
+    private static final String NAME_PARAM = "spiderajax.automation.dialog.ajaxspider.name";
     private static final String CONTEXT_PARAM = "spiderajax.automation.dialog.ajaxspider.context";
     private static final String URL_PARAM = "spiderajax.automation.dialog.ajaxspider.url";
     private static final String MAX_DURATION_PARAM =
@@ -78,7 +79,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                 DisplayUtils.getScaledDimension(450, 400),
                 TAB_LABELS);
         this.job = job;
-
+        this.addTextField(0, NAME_PARAM, this.job.getName());
         List<String> contextNames = this.job.getEnv().getContextNames();
         // Add blank option
         contextNames.add(0, "");
@@ -195,6 +196,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
+        this.job.setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
