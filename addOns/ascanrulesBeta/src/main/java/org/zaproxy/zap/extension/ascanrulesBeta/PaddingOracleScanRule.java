@@ -103,7 +103,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
     }
 
     /**
-     * Scan for Paddding Oracle Vulnerabilites
+     * Scan for Padding Oracle Vulnerabilities
      *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
@@ -248,8 +248,8 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
     }
 
     /**
-     * Enumeration Utility which is able to manage all specifi encoding/decoding tasks that could be
-     * met during rule's testing
+     * Enumeration Utility which is able to manage all specific encoding/decoding tasks that could
+     * be met during rule's testing
      */
     public enum OracleEncoder {
         HEX {

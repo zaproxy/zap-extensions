@@ -58,7 +58,7 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
 
     private static ExtensionCallback extCallback;
 
-    /** Default contructor */
+    /** Default constructor */
     public ChallengeCallbackImplementor() {
         if (getExtensionCallback() != null) {
             getExtensionCallback().registerCallbackImplementor(this);
@@ -89,7 +89,7 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
     public void cleanExpiredCallbacks() {
         long now = System.currentTimeMillis();
 
-        // Cuncurrency could be possible for multiple instantiations
+        // Concurrency could be possible for multiple instantiations
         synchronized (regCallbacks) {
             Iterator<Map.Entry<String, RegisteredCallback>> it = regCallbacks.entrySet().iterator();
             Map.Entry<String, RegisteredCallback> entry;

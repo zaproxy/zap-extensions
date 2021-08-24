@@ -741,7 +741,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
                 // raise the alert on the original message
                 // there are multiple messages on which the issue could have been raised, but each
-                // individual atatck message
+                // individual attack message
                 // tells only a small part of the story. Explain it in the "extra info" instead.
                 newAlert()
                         .setRisk(

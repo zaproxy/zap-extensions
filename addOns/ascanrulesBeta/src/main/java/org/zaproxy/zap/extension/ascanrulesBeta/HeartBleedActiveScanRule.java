@@ -843,7 +843,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
      */
     static final byte heartbeatRecordByte = 0x18;
 
-    /** the beartbeat request that we will send to */
+    /** the heartbeat request that we will send to */
     static final byte heartbeatBuffer[] = {
         0x00,
         0x03, // data Length = 0x00 0x03 = 3 in decimal. This length is important later...
@@ -977,7 +977,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                 break;
                             }
                             log.debug(
-                                    "Got a reponse from the server, but it was not a server hello 'Done' message");
+                                    "Got a response from the server, but it was not a server hello 'Done' message");
                         }
                     } catch (SocketTimeoutException es) {
                         throw new IOException(
@@ -1218,7 +1218,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
      * reads the requested number of bytes from the inputstream, blocking if necessary
      *
      * @param s the inputstream from which to read
-     * @param length the number of bytes to reas
+     * @param length the number of bytes to read
      * @return a byte array containing the requested number of bytes from the inputstream
      * @throws IOException
      */

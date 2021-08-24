@@ -106,7 +106,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
     }
 
     /**
-     * Scan for Expression Language Injection Vulnerabilites
+     * Scan for Expression Language Injection Vulnerabilities
      *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
@@ -154,7 +154,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
                 // We Found IT!
                 // First do logging
                 LOG.debug(
-                        "[Expression Langage Injection Found] on parameter [{}]  with payload [{}]",
+                        "[Expression Language Injection Found] on parameter [{}]  with payload [{}]",
                         paramName,
                         payload);
 

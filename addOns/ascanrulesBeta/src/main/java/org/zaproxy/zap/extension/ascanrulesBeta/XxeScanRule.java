@@ -355,10 +355,10 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     }
 
     /**
-     * Get a randomly built string with exactly lenght chars
+     * Get a randomly built string with exactly length chars
      *
      * @param length the number of chars of this string
-     * @return a string element containing exactly "lenght" characters
+     * @return a string element containing exactly "length" characters
      */
     private String randomString(int length) {
         SecureRandom rand = new SecureRandom();

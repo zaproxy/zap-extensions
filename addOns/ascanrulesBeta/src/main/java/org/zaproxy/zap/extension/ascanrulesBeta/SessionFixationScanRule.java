@@ -1336,7 +1336,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
             String html, String parametername, boolean pseudoUrlParameter) throws Exception {
         TreeMap<String, Integer> parametersInHTMLURls = new TreeMap<>();
         Source source = new Source(html);
-        // for now, just look at the HREF attribue in <a> tags (ie, in links in the HTML output)
+        // for now, just look at the HREF attribute in <a> tags (ie, in links in the HTML output)
         List<Element> elementList = source.getAllElements(HTMLElementName.A);
         for (Element element : elementList) {
             if (element.getAttributes() != null) {
@@ -1346,7 +1346,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         parametername,
                         urlInResults);
                 if (urlInResults != null) {
-                    // now parse out and count the value of the url parm with the name:
+                    // now parse out and count the value of the url param with the name:
                     // currentHtmlParameter.getName()
 
                     // depending on the type of url parameter, get the parameters set in the output

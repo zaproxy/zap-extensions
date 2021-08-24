@@ -61,7 +61,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
     private static Logger log = LogManager.getLogger(UsernameEnumerationScanRule.class);
 
     /** The characters used to generate the random username. */
-    private static final char[] RANDOM_USERNAME_CHARS = "abcdefghijklmnopqrstuvwyxz".toCharArray();
+    private static final char[] RANDOM_USERNAME_CHARS = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     private static ExtensionAuthentication extAuth =
             (ExtensionAuthentication)
@@ -593,7 +593,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         // this might occur if the output returned for the URL changed mid-way.
                         // Perhaps a CAPTCHA has fired, or a WAF has kicked in.  Let's abort now so.
                         log.warn(
-                                "The modified URL [{}] (for [{}] parameter {}) does not produce stable output (after {} of {} steps). There is no static element in the output that can be used as a basis of comparison with the static output of the original questy. Perhaps a CAPTCHA or WAF has kicked in!!",
+                                "The modified URL [{}] (for [{}] parameter {}) does not produce stable output (after {} of {} steps). There is no static element in the output that can be used as a basis of comparison with the static output of the original query. Perhaps a CAPTCHA or WAF has kicked in!!",
                                 msgModifiedParam.getRequestHeader().getURI(),
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName(),
@@ -608,9 +608,9 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 }
 
                 // if we didn't hit something with one of the iterations for the parameter (ie, if
-                // the output when changing the parm is stable),
-                // check if the parameter might be vulnerable by comparins its LCS with the original
-                // LCS for a valid login
+                // the output when changing the param is stable),
+                // check if the parameter might be vulnerable by comparison its LCS with the
+                // original LCS for a valid login
                 if (longestCommonSubstringB != null && continueForParameter == true) {
                     // get rid of any remnants of cookie setting and Date headers in the responses,
                     // as these cause false positives, and can be safely ignored
@@ -736,8 +736,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
      * @return the Longest Common Subsequence of a and b
      */
     public String longestCommonSubsequence(String a, String b) {
-        HirshbergMatcher hirschberg = new HirshbergMatcher();
-        return hirschberg.getLCS(a, b);
+        HirshbergMatcher hirshberg = new HirshbergMatcher();
+        return hirshberg.getLCS(a, b);
     }
 
     private boolean shouldContinue(List<Context> contextList) {

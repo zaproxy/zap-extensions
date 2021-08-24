@@ -36,7 +36,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionMyqlScanRule identifies MySQL specific SQL Injection vulnerabilities using MySQL
+ * The SqlInjectionMysqlScanRule identifies MySQL specific SQL Injection vulnerabilities using MySQL
  * specific syntax. If it doesn't use MySQL specific syntax, it belongs in the generic SQLInjection
  * class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based
  * (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked (N/A - uses
@@ -48,7 +48,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMysqlScanRule extends AbstractAppParamPlugin {
 
     private boolean doTimeBased = false;
 
@@ -189,7 +189,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionMyqlScanRule.class);
+    private static Logger log = LogManager.getLogger(SqlInjectionMysqlScanRule.class);
 
     @Override
     public int getId() {

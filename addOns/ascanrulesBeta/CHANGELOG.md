@@ -263,7 +263,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 13 - 2014-04-10
 
-- Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability.
+- Promoted new XXE Plugin to test for remote and local XML External Entity Vulnerability.
 - Promoted new PaddingOracle plugin to test for possible encryption padding errors.
 - Promoted PXSS tests to beta.
 - Promoted Command Injection release.

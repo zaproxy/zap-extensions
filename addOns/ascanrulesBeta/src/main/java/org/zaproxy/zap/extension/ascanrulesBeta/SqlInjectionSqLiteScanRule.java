@@ -207,7 +207,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
     private long parseDelayDifference = 0;
     private long incrementalDelayIncreasesForAlert = 0;
 
-    private char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
+    private char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(SqlInjectionSqLiteScanRule.class);
@@ -421,7 +421,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     long modifiedTimeUsed = msgDelay.getTimeElapsedMillis();
 
                     // before we do the time based checking, first check for a known error message
-                    // from the atatck, indicating a SQL injection vuln
+                    // from the attack, indicating a SQL injection vuln
                     for (Pattern errorMessagePattern : errorMessagePatterns) {
                         Matcher matcher =
                                 errorMessagePattern.matcher(msgDelay.getResponseBody().toString());

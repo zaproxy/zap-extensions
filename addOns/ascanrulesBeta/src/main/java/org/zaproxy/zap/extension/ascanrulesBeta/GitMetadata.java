@@ -635,7 +635,7 @@ public class GitMetadata {
                 // pack file of the SHA11 entry we are looking at
                 // NB: the various tables in the "pack index" file are sorted by the corresponding
                 // SHA1.
-                // 2 adjacent entries in the offset table (for consequtive SHA11 entries) could have
+                // 2 adjacent entries in the offset table (for consecutive SHA11 entries) could have
                 // wildly different offsets into the "pack" file
                 // and the offsets in the table are therefore not sorted by offset.
                 // In order to calculate the deflated length of an entry in the pack file (which is
@@ -693,7 +693,7 @@ public class GitMetadata {
      * specified offset
      *
      * @param packfiledata byte array containing the raw data associated with the pack file
-     * @param packfiledataoffset the offset for the specified intry into the raw pack file data
+     * @param packfiledataoffset the offset for the specified entry into the raw pack file data
      * @param entryLength the deflated length of the packfile object entry
      * @param packFileVersion the version of the pack file. The version determines the file format,
      *     and thus the object extraction logic.
@@ -817,7 +817,7 @@ public class GitMetadata {
             } else if (entryType == 0x6) {
                 // for 'DELTA_ENCODED object with offset to base'
                 // this object type is not common in small repos. it will get more common in larger
-                // Git repositorie.
+                // Git repositories.
                 int deltabaseoffset = readBigEndianModifiedBase128Number(entryBuffer);
                 int deltaoffsetBytesRead = this.tempbytesread;
                 log.debug(

@@ -371,7 +371,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // is it worth looking for a copy of the file?
             if (statusCode == HttpStatusCode.NOT_FOUND) {
                 log.debug(
-                        "The original file request was not successfuly retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
+                        "The original file request was not successfully retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
                         statusCode);
                 return;
             }
@@ -412,7 +412,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         try {
             boolean gives404s = true;
             boolean parentgives404s = true;
-            byte[] nonexistparentmsgdata = null;
+            byte[] nonexistentparentmsgdata = null;
 
             URI originalURI = originalMessage.getRequestHeader().getURI();
 
@@ -429,11 +429,11 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
 
             String randomfilename =
                     RandomStringUtils.random(
-                            filename.length(), "abcdefghijklmoopqrstuvwxyz9123456789");
+                            filename.length(), "abcdefghijklmnopqrstuvwxyz0123456789");
             String randomfilepath = temppath.substring(0, slashposition) + "/" + randomfilename;
 
             log.debug("Trying non-existent file: {}", randomfilepath);
-            HttpMessage nonexistfilemsg =
+            HttpMessage nonexistentfilemsg =
                     new HttpMessage(
                             new URI(
                                     originalURI.getScheme(),
@@ -442,29 +442,30 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     null,
                                     null));
             try {
-                nonexistfilemsg.setCookieParams(originalMessage.getCookieParams());
+                nonexistentfilemsg.setCookieParams(originalMessage.getCookieParams());
             } catch (Exception e) {
                 log.debug("Could not set the cookies from the base request: {}", e);
             }
-            sendAndReceive(nonexistfilemsg, false);
-            byte[] nonexistfilemsgdata = nonexistfilemsg.getResponseBody().getBytes();
+            sendAndReceive(nonexistentfilemsg, false);
+            byte[] nonexistentfilemsgdata = nonexistentfilemsg.getResponseBody().getBytes();
             // does the server give a 404 for a non-existent file?
-            if (nonexistfilemsg.getResponseHeader().getStatusCode() != HttpStatusCode.NOT_FOUND) {
+            if (nonexistentfilemsg.getResponseHeader().getStatusCode()
+                    != HttpStatusCode.NOT_FOUND) {
                 gives404s = false;
                 log.debug(
                         "The server does not return a 404 status for a non-existent path: {}",
-                        nonexistfilemsg.getRequestHeader().getURI());
+                        nonexistentfilemsg.getRequestHeader().getURI());
             } else {
                 gives404s = true;
                 log.debug(
                         "The server gives a 404 status for a non-existent path: {}",
-                        nonexistfilemsg.getRequestHeader().getURI());
+                        nonexistentfilemsg.getRequestHeader().getURI());
             }
 
             // now request a different (and non-existent) parent directory,
             // to see whether a non-existent parent folder causes a 404
             String[] pathbreak = temppath.split("/");
-            HttpMessage nonexistparentmsg = null;
+            HttpMessage nonexistentparentmsg = null;
             if (pathbreak.length
                     > 2) { // the file has a parent folder that is not the root folder (ie, there is
                 // a parent folder to mess with)
@@ -472,7 +473,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 String parentfoldername = pathbreak[pathbreak.length - 2];
                 String randomparentfoldername =
                         RandomStringUtils.random(
-                                parentfoldername.length(), "abcdefghijklmoopqrstuvwxyz9123456789");
+                                parentfoldername.length(), "abcdefghijklmnopqrstuvwxyz0123456789");
 
                 // replace the parent folder name with the random one, and build it back into a
                 // string
@@ -480,7 +481,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 String randomparentpath = StringUtils.join(temppathbreak, "/");
 
                 log.debug("Trying non-existent parent path: {}", randomparentpath);
-                nonexistparentmsg =
+                nonexistentparentmsg =
                         new HttpMessage(
                                 new URI(
                                         originalURI.getScheme(),
@@ -489,24 +490,24 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         null,
                                         null));
                 try {
-                    nonexistparentmsg.setCookieParams(originalMessage.getCookieParams());
+                    nonexistentparentmsg.setCookieParams(originalMessage.getCookieParams());
                 } catch (Exception e) {
                     log.debug("Could not set the cookies from the base request: {}", e);
                 }
-                sendAndReceive(nonexistparentmsg, false);
-                nonexistparentmsgdata = nonexistparentmsg.getResponseBody().getBytes();
+                sendAndReceive(nonexistentparentmsg, false);
+                nonexistentparentmsgdata = nonexistentparentmsg.getResponseBody().getBytes();
                 // does the server give a 404 for a non-existent parent folder?
-                if (nonexistparentmsg.getResponseHeader().getStatusCode()
+                if (nonexistentparentmsg.getResponseHeader().getStatusCode()
                         != HttpStatusCode.NOT_FOUND) {
                     parentgives404s = false;
                     log.debug(
                             "The server does not return a 404 status for a non-existent parent path: {}",
-                            nonexistparentmsg.getRequestHeader().getURI());
+                            nonexistentparentmsg.getRequestHeader().getURI());
                 } else {
                     parentgives404s = true;
                     log.debug(
                             "The server gives a 404 status for a non-existent parent path: {}",
-                            nonexistparentmsg.getRequestHeader().getURI());
+                            nonexistentparentmsg.getRequestHeader().getURI());
                 }
             }
 
@@ -716,9 +717,10 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 if (!isEmptyResponse(disclosedData)
                         && ((gives404s && requestStatusCode != HttpStatusCode.NOT_FOUND)
                                 || ((!gives404s)
-                                        && nonexistfilemsg.getResponseHeader().getStatusCode()
+                                        && nonexistentfilemsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
-                                        && (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
+                                        && (!Arrays.equals(
+                                                disclosedData, nonexistentfilemsgdata))))) {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setAttack(candidateBackupFileURI.toString())
@@ -767,10 +769,10 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 if (!isEmptyResponse(disclosedData)
                         && ((parentgives404s && requestStatusCode != HttpStatusCode.NOT_FOUND)
                                 || ((!parentgives404s)
-                                        && nonexistparentmsg.getResponseHeader().getStatusCode()
+                                        && nonexistentparentmsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
                                         && (!Arrays.equals(
-                                                disclosedData, nonexistparentmsgdata))))) {
+                                                disclosedData, nonexistentparentmsgdata))))) {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setName(
