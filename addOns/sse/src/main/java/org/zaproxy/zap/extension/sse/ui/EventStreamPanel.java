@@ -526,7 +526,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
     /**
      * Shows filter dialog
      *
-     * @return 1 is returned if applied, -1 when dialog was reseted.
+     * @return 1 is returned if applied, -1 when dialog was reset.
      */
     protected int showFilterDialog() {
         EventStreamViewFilterDialog dialog = getFilterDialog();

@@ -120,7 +120,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
             synchronized (cachedRowCountSemaphore) {
                 if (cachedRowCount == null) {
                     cachedRowCount =
-                            table.getEventCount(getCriterionMessage(), getCriterianInScope());
+                            table.getEventCount(getCriterionMessage(), getCriterionInScope());
                 }
                 return cachedRowCount;
             }
@@ -130,7 +130,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         }
     }
 
-    protected List<Integer> getCriterianInScope() {
+    protected List<Integer> getCriterionInScope() {
         if (filter.getShowJustInScope()) {
             List<Integer> inScopeStreamIds = new ArrayList<>();
 
@@ -205,7 +205,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         try {
             return table.getEvents(
                     getCriterionMessage(),
-                    getCriterianInScope(),
+                    getCriterionInScope(),
                     offset,
                     length,
                     PAYLOAD_PREVIEW_LENGTH);
