@@ -25950,7 +25950,7 @@
       "cats": [
         67
       ],
-      "description": "snigel AdConsent is a IAB-registered consent managment platfrom (CMP) which help keep sites speed intact while remaining compliant with GDPR and CCPA.",
+      "description": "snigel AdConsent is a IAB-registered consent management platfrom (CMP) which help keep sites speed intact while remaining compliant with GDPR and CCPA.",
       "icon": "snigel.svg",
       "js": {
         "adconsent.version": "^([\\d.]+)$\\;version:\\1",
