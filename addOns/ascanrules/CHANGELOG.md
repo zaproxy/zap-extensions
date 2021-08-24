@@ -114,7 +114,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 29 - 2018-01-19
 
 - Issue 3979: Fix reflected XSS in PUT response.
-- Issue 3978: Handle relfected XSS in JSON response.
+- Issue 3978: Handle reflected XSS in JSON response.
 - Issue 4211: Fix false positive in FormatString scanner.
 
 ## 28 - 2017-11-27

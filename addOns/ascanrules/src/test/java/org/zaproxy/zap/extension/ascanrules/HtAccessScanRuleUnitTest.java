@@ -35,7 +35,7 @@ import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link HtAccessScanRule}. */
-class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessScanRule> {
+class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessScanRule> {
 
     private static final String URL = "/.htaccess";
     private static final String HTACCESS_BODY = "order allow,deny";

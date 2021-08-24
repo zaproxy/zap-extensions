@@ -206,7 +206,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                             hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
 
                     for (HtmlContext context : contexts) {
-                        // Loop through the returned contexts and lauch targetted attacks
+                        // Loop through the returned contexts and launch targeted attacks
                         if (attackWorked || isStop()) {
                             break;
                         }

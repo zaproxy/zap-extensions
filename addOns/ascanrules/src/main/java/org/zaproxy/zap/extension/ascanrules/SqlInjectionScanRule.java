@@ -589,7 +589,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         log.debug("Doing RDBMS specific error based? {}", doSpecificErrorBased);
         log.debug("Doing generic RDBMS error based? {}", doGenericErrorBased);
         log.debug("Using a max of {} requests", doErrorMaxRequests);
-        log.debug("Doing expession based? {}", doExpressionBased);
+        log.debug("Doing expression based? {}", doExpressionBased);
         log.debug("Using a max of {} requests", doExpressionMaxRequests);
         log.debug("Using boolean based? {}", doBooleanBased);
         log.debug("Using a max of {} requests", doBooleanMaxRequests);
@@ -988,7 +988,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     }
 
                     // if the results of the "AND 1=1" match the original query (using either the
-                    // stipped or unstripped versions), we may be onto something.
+                    // stripped or unstripped versions), we may be onto something.
                     if (andTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
                                     normalBodyOutput[booleanStrippedUnstrippedIndex])
                             == 0) {
@@ -1180,7 +1180,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                                 + "\n"
                                                 + Constant.messages.getString(
                                                         MESSAGE_PREFIX
-                                                                + "alert.booleanbased.extrainfo.datanotexists");
+                                                                + "alert.booleanbased.extrainfo.datadoesnotexist");
 
                                 // raise the alert, and save the attack string for the
                                 // "Authentication Bypass" alert, if necessary
@@ -1363,7 +1363,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                         + "\n"
                                         + Constant.messages.getString(
                                                 MESSAGE_PREFIX
-                                                        + "alert.booleanbased.extrainfo.datanotexists");
+                                                        + "alert.booleanbased.extrainfo.datadoesnotexist");
 
                         // raise the alert, and save the attack string for the "Authentication
                         // Bypass" alert, if necessary
@@ -1873,7 +1873,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 if (confirmExpressionOutputStripped.compareTo(normalBodyOutputStripped) != 0) {
                     // the confirm query did not return the same results.  This means that arbitrary
                     // queries are not all producing the same page output.
-                    // this means the fact we earier reproduced the original page output with a
+                    // this means the fact we earlier reproduced the original page output with a
                     // modified parameter was not a coincidence
 
                     // Likely a SQL Injection. Raise it
@@ -1912,7 +1912,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
     /**
      * Replace body by stripping of pattern string. The URLencoded pattern will also be stripped
-     * off. The URL decoded pattern will not be stripped off, as this is not necessary of rour
+     * off. The URL decoded pattern will not be stripped off, as this is not necessary for our
      * purposes, and causes issues when attempting to decode parameter values such as '%' (a single
      * percent character) This is mainly used for stripping off a testing string in HTTP response
      * for comparison against the original response. Reference: TestInjectionSQL

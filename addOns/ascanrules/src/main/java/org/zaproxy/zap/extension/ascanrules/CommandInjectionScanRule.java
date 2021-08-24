@@ -360,7 +360,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     /**
-     * Scan for OS Command Injection Vulnerabilites
+     * Scan for OS Command Injection Vulnerabilities
      *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
@@ -371,7 +371,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
         // Begin scan rule execution
         log.debug(
-                "Checking [{}][{}], parameter [{}] for OS Command Injection vulnerabilites",
+                "Checking [{}][{}], parameter [{}] for OS Command Injection vulnerabilities",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
                 paramName);

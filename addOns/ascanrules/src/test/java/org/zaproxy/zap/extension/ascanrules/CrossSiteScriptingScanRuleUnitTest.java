@@ -969,7 +969,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
     @Test
     void shouldReportXssWeaknessInJsonResponse() throws NullPointerException, IOException {
-        String test = "/shouldReportXssInJsonReponse/";
+        String test = "/shouldReportXssInJsonResponse/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {

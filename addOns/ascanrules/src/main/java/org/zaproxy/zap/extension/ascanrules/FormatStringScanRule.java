@@ -169,19 +169,19 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             sb.append('\n');
             String initialAttackPayload = sb.toString();
 
-            HttpMessage intialAttackMsg = getNewMsg();
-            setParameter(intialAttackMsg, param, initialAttackPayload);
+            HttpMessage initialAttackMsg = getNewMsg();
+            setParameter(initialAttackMsg, param, initialAttackPayload);
             try {
-                sendAndReceive(intialAttackMsg);
+                sendAndReceive(initialAttackMsg);
             } catch (InvalidRedirectLocationException | UnknownHostException ex) {
                 log.debug(
                         "Caught {} {} when accessing: {}.\nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        intialAttackMsg.getRequestHeader().getURI());
+                        initialAttackMsg.getRequestHeader().getURI());
                 return; // Something went wrong, no point continuing
             }
-            if (isPage500(intialAttackMsg)) {
+            if (isPage500(initialAttackMsg)) {
                 StringBuilder sb1 = new StringBuilder();
                 sb1.append(initialMessage);
                 for (i = 0; i < 10; i++) {
@@ -218,7 +218,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                             .setParam(param)
                             .setAttack(initialAttackPayload)
                             .setOtherInfo(getError('1'))
-                            .setMessage(intialAttackMsg)
+                            .setMessage(initialAttackMsg)
                             .raise();
                 }
                 return;

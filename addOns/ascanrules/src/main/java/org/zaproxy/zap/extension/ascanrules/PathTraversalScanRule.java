@@ -51,7 +51,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
      */
     private static final String MESSAGE_PREFIX = "ascanrules.pathtraversal.";
 
-    private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
+    private static final String NON_EXISTANT_FILENAME = "ThisShouldNotExistAndHopefullyItWillNot";
 
     /*
      * Windows local file targets and detection pattern

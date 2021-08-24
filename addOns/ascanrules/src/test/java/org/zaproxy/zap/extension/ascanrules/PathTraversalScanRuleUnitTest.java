@@ -374,7 +374,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         @Override
         protected Response serve(IHTTPSession session) {
             String value = getFirstParamValue(session, param);
-            if (value.equals("thishouldnotexistandhopefullyitwillnot") && passInitialCheck) {
+            if (value.equals("ThisShouldNotExistAndHopefullyItWillNot") && passInitialCheck) {
                 return newFixedLengthResponse("Error");
             }
             return newFixedLengthResponse(content);
