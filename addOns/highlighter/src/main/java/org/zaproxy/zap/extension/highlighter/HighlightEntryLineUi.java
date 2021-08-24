@@ -68,7 +68,7 @@ public class HighlightEntryLineUi extends AbstractPanel implements ActionListene
     private void createUserPanelLine(JPanel gridPanel, int lineNr, HighlightSearchEntry highlight) {
         GridBagConstraints c = new GridBagConstraints();
 
-        // Contraints
+        // Constraints
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 0; // make this component tall
         c.weightx = 0.0;
