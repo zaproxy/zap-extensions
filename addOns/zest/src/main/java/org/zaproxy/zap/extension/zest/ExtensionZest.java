@@ -465,7 +465,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         this.refreshMessage();
     }
 
-    public void perameterize(
+    public void parameterize(
             ZestScriptWrapper script,
             ScriptNode node,
             ZestRequest request,
@@ -641,7 +641,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             logger.debug("addToParent parent=null msg={}", msg.getRequestHeader().getURI());
             this.dialogManager.showZestEditScriptDialog(null, null, prefix, true);
             if (msg != null) {
-                this.dialogManager.addDeferedMessage(msg);
+                this.dialogManager.addDeferredMessage(msg);
             }
         } else {
             logger.debug(
@@ -1048,7 +1048,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             next = (ScriptNode) next.getNextSibling();
         }
         if (next == null) {
-            logger.error("Cant move node down {}", node.getNodeName());
+            logger.error("Can't move node down {}", node.getNodeName());
             return;
         }
         if (ZestZapUtils.getElement(node) instanceof ZestScript) {
@@ -1377,7 +1377,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         for (ScriptNode cnpNode : this.cnpNodes) {
             if (cnpNode.isNodeDescendant(node)) {
-                // Cant paste into a descendant of one of the cut/copied nodes
+                // Can't paste into a descendant of one of the cut/copied nodes
                 return false;
             }
             if (isPassive && !this.canPasteIntoPassiveElement(cnpNode)) {
@@ -1442,7 +1442,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         int lastRow = this.getZestResultsPanel().getModel().getRowCount() - 1;
         ZestResultWrapper zrw = this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
         zrw.setPassed(false);
-        // TODO use toUiFailureString varient?
+        // TODO use toUiFailureString variant?
         // zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
         zrw.setMessage(e.getMessage());
         this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
