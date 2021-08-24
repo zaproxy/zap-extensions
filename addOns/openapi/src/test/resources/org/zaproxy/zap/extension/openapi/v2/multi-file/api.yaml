@@ -40,7 +40,7 @@ paths:
             $ref: "person.yaml#/Person"
       responses:
         204:
-          description: Persons succesfully created.
+          description: Persons successfully created.
         400:
           description: Persons couldn't have been created.
   /persons/{username}:

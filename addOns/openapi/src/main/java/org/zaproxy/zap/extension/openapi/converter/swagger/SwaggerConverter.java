@@ -98,7 +98,7 @@ public class SwaggerConverter implements Converter {
      *       <li>the scheme component of {@code targetUrl} or {@code definitionUrl} is empty when it
      *           shouldn't, for example, {@code ://authority};
      *       <li>the scheme component of {@code targetUrl} or {@code definitionUrl} is not empty
-     *           when it should, for example, {@code notscheme//authority};
+     *           when it should, for example, {@code notascheme//authority};
      *       <li>the {@code targetUrl} or {@code definitionUrl} have an unsupported scheme;
      *       <li>when provided, the {@code definitionUrl} does not have the scheme and authority
      *           components.
@@ -441,12 +441,12 @@ public class SwaggerConverter implements Converter {
         }
 
         List<StructuralNodeModifier> structuralNodeModifiers = new ArrayList<>();
-        int ddnCnt = 0;
+        int ddnCount = 0;
         for (String regexString : ddnRegexStrings) {
             try {
                 Pattern pattern = Pattern.compile(regexString);
                 StructuralNodeModifier structuralNodeModifier =
-                        createStructuralNode(pattern, "DDN" + ddnCnt++);
+                        createStructuralNode(pattern, "DDN" + ddnCount++);
                 structuralNodeModifiers.add(structuralNodeModifier);
             } catch (Exception e) {
                 LOG.error("error adding structural node", e);

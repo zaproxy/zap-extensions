@@ -48,8 +48,8 @@ public class ValueGenerator {
             return defaultValue;
         }
 
-        HashMap<String, String> fieldAtts = new HashMap<>();
-        fieldAtts.put("Control Type", type == null ? "" : type);
+        HashMap<String, String> fieldAttrs = new HashMap<>();
+        fieldAttrs.put("Control Type", type == null ? "" : type);
         String value =
                 coreValGen.getValue(
                         null,
@@ -58,7 +58,7 @@ public class ValueGenerator {
                         defaultValue,
                         Collections.<String>emptyList(),
                         Collections.<String, String>emptyMap(),
-                        fieldAtts);
+                        fieldAttrs);
 
         LOG.debug(
                 "Name : {} Type : {} Default : {} Returning : {}", name, type, defaultValue, value);

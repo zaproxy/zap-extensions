@@ -71,7 +71,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
     @Test
     void shouldThrowInvalidUrlIfDefinitionUrlHasMalformedScheme() {
         // Given
-        String definitionUrl = "notscheme//example.com";
+        String definitionUrl = "notascheme//example.com";
         // When / Then
         assertThrows(
                 InvalidUrlException.class,
@@ -174,7 +174,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
     @Test
     void shouldThrowInvalidUrlIfTargetUrlHasMalformedScheme() {
         // Given
-        String targetUrl = "notscheme//example.com";
+        String targetUrl = "notascheme//example.com";
         // When / Then
         assertThrows(
                 InvalidUrlException.class,
@@ -619,7 +619,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
     @Test
     void shouldIgnoreServersWithMalformedScheme() {
         // Given
-        List<Server> servers = asList(server("notscheme//"));
+        List<Server> servers = asList(server("notascheme//"));
         // When
         List<UriBuilder> uriBuilders =
                 SwaggerConverter.createUriBuilders(servers, EMPTY_URI_BUILDER);

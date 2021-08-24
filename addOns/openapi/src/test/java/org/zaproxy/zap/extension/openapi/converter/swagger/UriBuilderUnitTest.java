@@ -216,7 +216,7 @@ class UriBuilderUnitTest {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
-                    String value = "notscheme//";
+                    String value = "notascheme//";
                     // When / Then
                     IllegalArgumentException e =
                             assertThrows(
@@ -539,7 +539,7 @@ class UriBuilderUnitTest {
     }
 
     @Test
-    void shouldSetDefaulPathIfNotAlreadySet() {
+    void shouldSetDefaultPathIfNotAlreadySet() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -552,7 +552,7 @@ class UriBuilderUnitTest {
     }
 
     @Test
-    void shouldNotSetDefaulPathIfAlreadySet() {
+    void shouldNotSetDefaultPathIfAlreadySet() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
