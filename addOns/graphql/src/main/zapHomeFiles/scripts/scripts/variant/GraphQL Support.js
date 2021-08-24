@@ -84,7 +84,7 @@ function setParameter(helper, msg, param, value, escaped) {
 	try {
 		setQuery(msg, injector.inject(query, param, JSON.stringify(value)));	
 	} catch(err){
-		print("Setting Paramater failed: " + err.message);
+		print("Setting Parameter failed: " + err.message);
 		return;
 	}
 }

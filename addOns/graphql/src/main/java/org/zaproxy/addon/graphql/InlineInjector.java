@@ -178,7 +178,7 @@ public final class InlineInjector {
                                 .map(AstPrinter::printAstCompact)
                                 .collect(Collectors.joining(", "));
                 if (csVars.isEmpty()) {
-                    // Remove parantheses and extra whitespace.
+                    // Remove parentheses and extra whitespace.
                     startPos -= 2;
                     endPos++;
                 }
@@ -268,7 +268,7 @@ public final class InlineInjector {
                     // Add '1' if it has variables.
                     queryPrefix.insert(0, 1);
 
-                    // -1 for offset, -1 for paranthesis, -1 for whitespace.
+                    // -1 for offset, -1 for parenthesis, -1 for whitespace.
                     int startPos = vars.get(0).getSourceLocation().getColumn() - 3;
                     VariableDefinition endVar = vars.get(vars.size() - 1);
                     int endPos =
@@ -304,7 +304,7 @@ public final class InlineInjector {
             }
             List<Argument> args = field.getArguments();
             if (args != null && !args.isEmpty()) {
-                // -1 for offset, -1 for paranthesis.
+                // -1 for offset, -1 for parenthesis.
                 int startPos = args.get(0).getSourceLocation().getColumn() - 2;
                 Argument endArg = args.get(args.size() - 1);
                 int endPos =
