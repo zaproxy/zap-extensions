@@ -124,7 +124,7 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
                         } else if (!HttpStatusCode.isSuccess(
                                 msg.getResponseHeader().getStatusCode())) {
                             // Record for info
-                            Stats.incCounter(site, prefix + "notsuccess");
+                            Stats.incCounter(site, prefix + "unsuccessful");
                         } else {
                             updateAuthIndicatorStats(msg, site, prefix, context);
                         }
