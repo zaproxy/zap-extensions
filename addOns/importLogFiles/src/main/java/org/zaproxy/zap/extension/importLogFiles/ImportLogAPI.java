@@ -299,14 +299,14 @@ public class ImportLogAPI extends ApiImplementor {
 
         importer.processInput(targetFile, logType);
 
-        return new ApiResponseElement("Parsing log files to ZAPs site tree", "Suceeded");
+        return new ApiResponseElement("Parsing log files to ZAPs site tree", "Succeeded");
     }
 
     private static ApiResponseElement ProcessRequestResponsePair(
             List<HttpMessage> messages, ExtensionImportLogFiles importer) {
         try {
             importer.addToTree(importer.getHistoryRefs(messages));
-            return new ApiResponseElement("Parsing log files to ZAPs site tree", "Suceeded");
+            return new ApiResponseElement("Parsing log files to ZAPs site tree", "Succeeded");
         } catch (HttpMalformedHeaderException httpex) {
             String exceptionMessage =
                     String.format(

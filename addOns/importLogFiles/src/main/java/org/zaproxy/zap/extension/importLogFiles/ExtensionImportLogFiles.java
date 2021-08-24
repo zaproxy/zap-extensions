@@ -290,7 +290,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
      * request response pair.
      *
      * @param request HttpRequest string
-     * @param response HttpRespones string
+     * @param response HttpResponses string
      * @return List of the HttpMessage objects
      * @throws HttpMalformedHeaderException
      */
