@@ -57,7 +57,7 @@ jobs:
         evidence:                              # String: The evidence corresponding to the alert generated, optional
         confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
         risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
-        otherInfo:                             # String: Addional information corresponding to the alert, optional
+        otherInfo:                             # String: Additional information corresponding to the alert, optional
         onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
   - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
     parameters:
@@ -78,5 +78,5 @@ jobs:
         evidence:                              # String: The evidence corresponding to the alert generated, optional
         confidence:                            # String: The confidence of the alert, one of 'False Positive', 'Low', 'Medium', 'High', 'Confirmed', optional
         risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
-        otherInfo:                             # String: Addional information corresponding to the alert, optional
+        otherInfo:                             # String: Additional information corresponding to the alert, optional
         onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory

@@ -53,7 +53,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String TITLE = "automation.dialog.newplan.title";
-    private static final String COMTEXTS_PARAM = "automation.dialog.newplan.contexts";
+    private static final String CONTEXTS_PARAM = "automation.dialog.newplan.contexts";
     private static final String PROFILE_PARAM = "automation.dialog.newplan.profile";
     private static final String JOBS_PARAM = "automation.dialog.newplan.jobs";
 
@@ -129,7 +129,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         if (contextListModel.getSize() > 0) {
             contextList.setSelectedIndex(0);
         }
-        this.addCustomComponent(COMTEXTS_PARAM, new JScrollPane(contextList));
+        this.addCustomComponent(CONTEXTS_PARAM, new JScrollPane(contextList));
 
         List<AutomationJob> jobs =
                 ext.getAutomationJobs().values().stream()

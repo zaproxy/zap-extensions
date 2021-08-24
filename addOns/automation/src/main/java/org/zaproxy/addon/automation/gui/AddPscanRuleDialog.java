@@ -40,7 +40,7 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "automation.dialog.addrule.title";
     private static final String RULE_PARAM = "automation.dialog.addrule.rule";
-    private static final String THREHOLD_PARAM = "automation.dialog.addrule.threshold";
+    private static final String THRESHOLD_PARAM = "automation.dialog.addrule.threshold";
 
     private PassiveScanConfigJob.Rule rule;
     private int tableIndex;
@@ -94,7 +94,7 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
             allthresholds.add(JobUtils.thresholdToI18n(at.name()));
         }
 
-        this.addComboField(THREHOLD_PARAM, allthresholds, thresholdName);
+        this.addComboField(THRESHOLD_PARAM, allthresholds, thresholdName);
 
         this.addPadding();
     }
@@ -106,10 +106,10 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
             PluginPassiveScanner plugin = this.nameToPlugin.get(this.getStringValue(RULE_PARAM));
             rule.setId(plugin.getPluginId());
             rule.setName(plugin.getName());
-            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THREHOLD_PARAM)));
+            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THRESHOLD_PARAM)));
             this.model.add(rule);
         } else {
-            rule.setThreshold(JobUtils.i18nToStrength(this.getStringValue(THREHOLD_PARAM)));
+            rule.setThreshold(JobUtils.i18nToStrength(this.getStringValue(THRESHOLD_PARAM)));
             this.model.update(tableIndex, rule);
         }
     }

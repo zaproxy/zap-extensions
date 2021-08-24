@@ -62,7 +62,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class ExtentionAutomationUnitTest extends TestUtils {
+class ExtensionAutomationUnitTest extends TestUtils {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
 

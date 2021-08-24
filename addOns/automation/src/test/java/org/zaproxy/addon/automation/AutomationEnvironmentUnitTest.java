@@ -54,13 +54,13 @@ class AutomationEnvironmentUnitTest {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "envVarValue");
+        ExtensionAutomationUnitTest.updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
     static void close() throws Exception {
         mockedCmdLine.close();
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "");
+        ExtensionAutomationUnitTest.updateEnv("myEnvVar", "");
     }
 
     @BeforeEach

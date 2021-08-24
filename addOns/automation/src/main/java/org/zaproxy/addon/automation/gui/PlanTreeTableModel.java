@@ -159,7 +159,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                             }
                         case NOT_STARTED:
                             return Constant.messages.getString(
-                                    "automation.panel.table.status.notstarted");
+                                    "automation.panel.table.status.pending");
                         case RUNNING:
                             return Constant.messages.getString(
                                     "automation.panel.table.status.running");

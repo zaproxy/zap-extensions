@@ -133,7 +133,7 @@ class AddOnJobUnitTest {
     }
 
     @Test
-    void shouldErrorOnUnkownInstallDataFormat() {
+    void shouldErrorOnUnknownInstallDataFormat() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AddOnJob job = new AddOnJob();
@@ -155,7 +155,7 @@ class AddOnJobUnitTest {
     }
 
     @Test
-    void shouldErrorOnUnkownUninstallDataFormat() {
+    void shouldErrorOnUnknownUninstallDataFormat() {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AddOnJob job = new AddOnJob();

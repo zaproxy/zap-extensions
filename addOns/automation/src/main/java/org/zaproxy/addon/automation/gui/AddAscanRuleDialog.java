@@ -43,7 +43,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "automation.dialog.addrule.title";
     private static final String RULE_PARAM = "automation.dialog.addrule.rule";
-    private static final String THREHOLD_PARAM = "automation.dialog.addrule.threshold";
+    private static final String THRESHOLD_PARAM = "automation.dialog.addrule.threshold";
     private static final String STRENGTH_PARAM = "automation.dialog.addrule.strength";
 
     private ActiveScanJob.Rule rule;
@@ -95,7 +95,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
             allthresholds.add(JobUtils.thresholdToI18n(at.name()));
         }
 
-        this.addComboField(THREHOLD_PARAM, allthresholds, thresholdName);
+        this.addComboField(THRESHOLD_PARAM, allthresholds, thresholdName);
 
         List<String> allstrengths = new ArrayList<>();
 
@@ -115,11 +115,11 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
             Plugin plugin = this.nameToPlugin.get(this.getStringValue(RULE_PARAM));
             rule.setId(plugin.getId());
             rule.setName(plugin.getName());
-            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THREHOLD_PARAM)));
+            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THRESHOLD_PARAM)));
             rule.setStrength(JobUtils.i18nToStrength(this.getStringValue(STRENGTH_PARAM)));
             this.model.add(rule);
         } else {
-            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THREHOLD_PARAM)));
+            rule.setThreshold(JobUtils.i18nToThreshold(this.getStringValue(THRESHOLD_PARAM)));
             rule.setStrength(JobUtils.i18nToStrength(this.getStringValue(STRENGTH_PARAM)));
             this.model.update(tableIndex, rule);
         }
@@ -127,7 +127,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
-        if (JobUtils.i18nToThreshold(this.getStringValue(THREHOLD_PARAM)).equals("default")
+        if (JobUtils.i18nToThreshold(this.getStringValue(THRESHOLD_PARAM)).equals("default")
                 && JobUtils.i18nToStrength(this.getStringValue(STRENGTH_PARAM)).equals("default")) {
             return Constant.messages.getString("automation.dialog.addrule.error.defaults");
         }
