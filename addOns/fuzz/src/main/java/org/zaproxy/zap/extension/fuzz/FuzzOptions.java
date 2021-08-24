@@ -137,10 +137,10 @@ public class FuzzOptions extends VersionedAbstractParam {
                 getConfig().setProperty(DEFAULT_CATEGORY_NAME_KEY, defaultCategory);
                 getConfig().clearProperty(defaultCategoryKey);
 
-                String dealyInMsKey = "fuzzer.delayInMs";
-                int delayInMs = getInt(dealyInMsKey, DEFAULT_FUZZ_DELAY_IN_MS);
+                String delayInMsKey = "fuzzer.delayInMs";
+                int delayInMs = getInt(delayInMsKey, DEFAULT_FUZZ_DELAY_IN_MS);
                 getConfig().setProperty(DEFAULT_FUZZ_DELAY_IN_MS_KEY, Integer.valueOf(delayInMs));
-                getConfig().clearProperty(dealyInMsKey);
+                getConfig().clearProperty(delayInMsKey);
 
                 String lastSelectedDirectoryKey = "fuzzer.lastSelectedDirectoryAddCustomFile";
                 String lastSelectedDirectory = getString(lastSelectedDirectoryKey, "");

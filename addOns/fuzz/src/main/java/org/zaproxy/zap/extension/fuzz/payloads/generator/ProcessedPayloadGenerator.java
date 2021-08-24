@@ -44,7 +44,7 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
 
     @Override
     public ResettableAutoCloseableIterator<T> iterator() {
-        return new ProcessedPayaloadGeneratorIterator<>(payloadGenerator, processors);
+        return new ProcessedPayloadGeneratorIterator<>(payloadGenerator, processors);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
     }
 
-    private static class ProcessedPayaloadGeneratorIterator<E extends Payload>
+    private static class ProcessedPayloadGeneratorIterator<E extends Payload>
             implements ResettableAutoCloseableIterator<E> {
 
         private final PayloadGenerator<E> payloadGenerator;
@@ -60,7 +60,7 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
 
         private ResettableAutoCloseableIterator<E> payloadIterator;
 
-        public ProcessedPayaloadGeneratorIterator(
+        public ProcessedPayloadGeneratorIterator(
                 PayloadGenerator<E> payloadGenerator, List<PayloadProcessor<E>> processors) {
             this.payloadGenerator = payloadGenerator;
             this.processors = processors;

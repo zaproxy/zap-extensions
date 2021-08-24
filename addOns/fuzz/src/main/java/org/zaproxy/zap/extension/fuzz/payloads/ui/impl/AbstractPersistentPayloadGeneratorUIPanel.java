@@ -196,10 +196,10 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                     JOptionPane.showMessageDialog(
                             this,
                             Constant.messages.getString(
-                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.message",
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermission.message",
                                     selectedFile.getAbsolutePath()),
                             Constant.messages.getString(
-                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.title"),
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermission.title"),
                             JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -222,10 +222,10 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<
                 JOptionPane.showMessageDialog(
                         this,
                         Constant.messages.getString(
-                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.message",
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermission.message",
                                 selectedFile.getParentFile().getAbsolutePath()),
                         Constant.messages.getString(
-                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.title"),
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermission.title"),
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
