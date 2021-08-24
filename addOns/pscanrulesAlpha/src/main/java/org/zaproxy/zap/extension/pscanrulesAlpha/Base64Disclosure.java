@@ -62,7 +62,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
     }
 
     /**
-     * patterns used to identify strings withut each of the given character sets which is used to
+     * patterns used to identify strings without each of the given character sets which is used to
      * calculate the probability of this occurring, and eliminate potential Base64 strings which are
      * extremely improbable
      */
@@ -328,7 +328,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         log.debug("Raising a Base64 informational alert");
 
                         // the Base64 decoded data is not a valid ViewState (even though it may have
-                        // a valid ViewStatet pre-amble)
+                        // a valid ViewState pre-amble)
                         // so treat it as normal Base64 data, and raise an informational alert.
                         if (base64evidence.length() > 0) {
                             newAlert()

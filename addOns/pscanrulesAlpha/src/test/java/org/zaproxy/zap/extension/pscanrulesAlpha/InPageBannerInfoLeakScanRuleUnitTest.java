@@ -66,7 +66,7 @@ class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertIfResponseHasRelevanContent() throws URIException {
+    void shouldRaiseAlertIfResponseHasRelevantContent() throws URIException {
         // Given
         String squidBanner = "Squid/2.5.STABLE4";
         HttpMessage msg = createMessage(squidBanner);
