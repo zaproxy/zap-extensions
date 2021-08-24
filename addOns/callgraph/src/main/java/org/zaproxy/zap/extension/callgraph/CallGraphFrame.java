@@ -127,7 +127,7 @@ public class CallGraphFrame extends AbstractFrame {
             // do not cater for
             // ad-hoc queries on the table
             /*
-             * TODO Add-ons should NOT make their own connections to the db any more - the db layer is plugable
+             * TODO Add-ons should NOT make their own connections to the db any more - the db layer is pluggable
              * so could be implemented in a completely different way
              * TODO: how? There is currently no API to do this.
              */
