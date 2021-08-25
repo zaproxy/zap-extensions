@@ -143,6 +143,10 @@ public class ExtensionOast extends ExtensionAdaptor {
         return callbackService;
     }
 
+    public void pollAllServices() {
+        getOastServices().values().forEach(OastService::poll);
+    }
+
     private OastOptionsPanel getOastOptionsPanel() {
         if (oastOptionsPanel == null) {
             oastOptionsPanel = new OastOptionsPanel();

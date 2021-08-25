@@ -33,6 +33,8 @@ public abstract class OastService {
 
     public abstract void stopService();
 
+    public void poll() {}
+
     public void sessionChanged() {}
 
     public void addOastRequestHandler(OastRequestHandler oastRequestHandler) {
