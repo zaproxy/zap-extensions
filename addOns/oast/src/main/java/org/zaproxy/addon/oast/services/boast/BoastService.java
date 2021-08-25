@@ -55,12 +55,7 @@ public class BoastService extends OastService implements OptionsChangedListener 
     public void startService() {
         LOGGER.debug("Starting BOAST Service.");
         if (pollingSchedule == null || pollingSchedule.isDone()) {
-            pollingSchedule =
-                    executorService.scheduleAtFixedRate(
-                            new BoastPoller(this),
-                            getParam().getPollingFrequency(),
-                            getParam().getPollingFrequency(),
-                            TimeUnit.SECONDS);
+            schedulePoller(getParam().getPollingFrequency());
         }
     }
 
@@ -86,6 +81,21 @@ public class BoastService extends OastService implements OptionsChangedListener 
             currentPollingFrequency = getParam().getPollingFrequency();
             LOGGER.debug("Updated BOAST Polling frequency to {} seconds.", currentPollingFrequency);
         }
+    }
+
+    @Override
+    public void poll() {
+        pollingSchedule.cancel(false);
+        schedulePoller(0);
+    }
+
+    private void schedulePoller(int initialDelay) {
+        pollingSchedule =
+                executorService.scheduleAtFixedRate(
+                        new BoastPoller(this),
+                        initialDelay,
+                        getParam().getPollingFrequency(),
+                        TimeUnit.SECONDS);
     }
 
     public BoastParam getParam() {

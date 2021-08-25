@@ -76,6 +76,7 @@ public class OastPanel extends AbstractPanel {
             mainToolBar.setName("Callback Toolbar");
 
             mainToolBar.add(getClearButton());
+            mainToolBar.add(getPollNowButton());
             mainToolBar.add(Box.createHorizontalGlue());
             mainToolBar.add(getOptionsButton());
         }
@@ -92,6 +93,18 @@ public class OastPanel extends AbstractPanel {
                                 OastPanel.class.getResource("/resource/icon/fugue/broom.png"))));
         clearButton.addActionListener(e -> extensionOast.deleteAllCallbacks());
         return clearButton;
+    }
+
+    private JButton getPollNowButton() {
+        JButton pollNowButton =
+                new JButton(Constant.messages.getString("oast.panel.pollNow.button.label"));
+        pollNowButton.setToolTipText(
+                Constant.messages.getString("oast.panel.pollNow.button.toolTip"));
+        pollNowButton.setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(OastPanel.class.getResource("/resource/icon/16/124.png"))));
+        pollNowButton.addActionListener(e -> extensionOast.pollAllServices());
+        return pollNowButton;
     }
 
     private JButton getOptionsButton() {
