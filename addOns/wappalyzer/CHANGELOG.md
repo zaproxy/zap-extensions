@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.3.0] - 2021-08-25
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Maintenance changes.
@@ -179,6 +179,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.3.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.3.0
 [21.2.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.2.0
 [21.1.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.1.0
 [21.0.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.0.0
