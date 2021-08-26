@@ -43,7 +43,7 @@ By default this job will spider the first context defined in the <a href="enviro
         statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
         operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
         value: 100                                      # Int: Change this to the number of URLs you expect to find
-        onFail: 'info'                                  # String [warn, error, info]: Change this to 'warn' or 'error' for the test to take effect
+        onFail: 'info'                                  # String: One of 'warn', 'error', 'info', mandatory
 </pre>
 
 </BODY>
