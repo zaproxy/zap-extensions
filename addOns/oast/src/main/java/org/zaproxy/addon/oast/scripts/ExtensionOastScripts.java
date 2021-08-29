@@ -44,6 +44,7 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
     private static final String TEMPLATE_REGISTER_REQUEST_HANDLER =
             "OAST Register Request Handler.js";
     private static final String SCRIPT_GET_BOAST_SERVERS = "OAST Get BOAST Servers.js";
+    private static final String SCRIPT_GET_INTERACTSH_PAYLOADS = "OAST Get Interactsh Payloads.js";
 
     private ExtensionScript extScript;
 
@@ -103,6 +104,11 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
         addScript(
                 SCRIPT_GET_BOAST_SERVERS,
                 Constant.messages.getString("oast.scripts.getBoastServers.desc"),
+                extScript.getScriptType(ExtensionScript.TYPE_STANDALONE),
+                false);
+        addScript(
+                SCRIPT_GET_INTERACTSH_PAYLOADS,
+                Constant.messages.getString("oast.scripts.getInteractshPayloads.desc"),
                 extScript.getScriptType(ExtensionScript.TYPE_STANDALONE),
                 false);
     }

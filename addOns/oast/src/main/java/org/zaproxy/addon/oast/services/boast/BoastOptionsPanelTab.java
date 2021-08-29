@@ -21,6 +21,7 @@ package org.zaproxy.addon.oast.services.boast;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -95,7 +96,9 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
         if (pollingFrequencySpinner == null) {
             pollingFrequencySpinner =
                     new ZapNumberSpinner(
-                            BoastParam.MINIMUM_POLLING_FREQUENCY, 60, Integer.MAX_VALUE);
+                            BoastParam.MINIMUM_POLLING_FREQUENCY,
+                            60,
+                            (int) TimeUnit.HOURS.toSeconds(6));
         }
         return pollingFrequencySpinner;
     }
