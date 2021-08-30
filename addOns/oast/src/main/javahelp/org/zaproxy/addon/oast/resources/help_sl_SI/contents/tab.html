@@ -10,6 +10,9 @@
 <h1>OAST Tab</h1>
 
 <p>This tab shows a summary of the out-of-band messages discovered by ZAP.</p>
+
+<h2>Messages</h2>
+
 For each message, you can see:
 
 <table>
@@ -40,6 +43,23 @@ For each message, you can see:
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>The Referer - The value of the HTTP <em>Referer</em> header (if one was included in the request).</td>
+    </tr>
+</table>
+
+<h2>Buttons</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Clear Messages</td>
+        <td>Clears all messages in the table.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>Poll Now</td>
+        <td>Polls all registered services and resets the time to next polling. This means that if the polling
+            frequency is set to 120 seconds, and you click on the button with 30 seconds remaining, the next automatic
+            polling will occur after 120 seconds.
+        </td>
     </tr>
 </table>
 
