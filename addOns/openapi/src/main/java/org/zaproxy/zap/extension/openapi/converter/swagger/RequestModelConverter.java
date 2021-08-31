@@ -64,8 +64,7 @@ public class RequestModelConverter {
             Schema<?> schema;
 
             if (content.containsKey("application/json")) {
-                schema = content.get("application/json").getSchema();
-                return generators.getBodyGenerator().generate(schema);
+                return generators.getBodyGenerator().generate(content.get("application/json"));
             }
             if (content.containsKey("application/octet-stream")) {
                 schema = content.get("application/octet-stream").getSchema();

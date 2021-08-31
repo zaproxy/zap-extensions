@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
  - Import file definition even if it has issues ([Issue #6758](https://github.com/zaproxy/zaproxy/issues/6758)).
 
+### Changed
+- Use `application/json` media type examples when available.
+
 ## [20] - 2021-08-05
 ### Added
 - Automation Framework GUI
