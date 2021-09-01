@@ -4,9 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The import progress is now displayed using a Progress Panel.
+
 ### Fixed
- - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
- - Import file definition even if it has issues ([Issue #6758](https://github.com/zaproxy/zaproxy/issues/6758)).
+- Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
+- Import file definition even if it has issues ([Issue #6758](https://github.com/zaproxy/zaproxy/issues/6758)).
 
 ### Changed
 - Use `application/json` media type examples when available.
