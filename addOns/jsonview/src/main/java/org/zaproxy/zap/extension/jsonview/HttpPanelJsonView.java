@@ -51,7 +51,7 @@ public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListe
      */
     public static final String NAME = "HttpPanelJsonView";
 
-    private static final String CAPTION_NAME = "Json";
+    private static final String CAPTION_NAME = "JSON";
 
     private HttpPanelJsonArea httpPanelJsonArea;
     private JPanel mainPanel;
