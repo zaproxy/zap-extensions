@@ -466,20 +466,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     }
 
     @Override
-    public void postInstall() {
-        super.postInstall();
-
-        if (webSocketPassiveScannerManager != null) {
-            registerDefaultScripts(websocketPassiveScanScriptType);
-        }
-    }
-
-    @Override
     public void postInit() {
         super.postInit();
 
-        if (webSocketPassiveScannerManager != null && !webSocketPassiveScannerManager.hasTable()) {
-            webSocketPassiveScannerManager.setTable(table);
+        if (webSocketPassiveScannerManager != null) {
+            // Always register the built (non template) in scripts, so that they get used from a new
+            // install
+            registerDefaultScripts(websocketPassiveScanScriptType);
+
+            if (!webSocketPassiveScannerManager.hasTable()) {
+                webSocketPassiveScannerManager.setTable(table);
+            }
         }
     }
 

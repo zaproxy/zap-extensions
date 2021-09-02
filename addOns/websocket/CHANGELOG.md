@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes (some changes impact the visibility of variables and add getters/setters, which may impact third party add-ons or scripts).
 - Update links to repository.
 - Support passive scan alert examples so they can be added to the website
+- Missing default scripts will always be added and enabled on start up.
 
 ## [23] - 2020-12-18
 ### Changed
