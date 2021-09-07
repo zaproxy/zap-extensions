@@ -48,10 +48,9 @@ public class NumberPayloadGenerator
 
     @Override
     public long getNumberOfPayloads() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of payloads = {}", (toNo - fromNo) / steps);
-        }
-        return (toNo - fromNo) / steps;
+        int payloadCount = (toNo - fromNo) / steps;
+        LOGGER.debug("Number of payloads = {}", payloadCount);
+        return payloadCount;
     }
 
     @Override
