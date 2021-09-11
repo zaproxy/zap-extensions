@@ -1,0 +1,997 @@
+{
+  "W3 Total Cache": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "W3 Total Cache (W3TC) improves the SEO and increases website performance and reducing load times by leveraging features like content delivery network (CDN) integration and the latest best practices.",
+    "headers": {
+      "X-Powered-By": "W3 Total Cache(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "html": "<!--[^>]+W3 Total Cache",
+    "icon": "W3 Total Cache.png",
+    "requires": "WordPress",
+    "website": "http://www.w3-edge.com/wordpress-plugins/w3-total-cache"
+  },
+  "W3Counter": {
+    "cats": [
+      10
+    ],
+    "icon": "W3Counter.png",
+    "scripts": "w3counter\\.com/tracker\\.js",
+    "website": "http://www.w3counter.com"
+  },
+  "WEBDEV": {
+    "cats": [
+      20
+    ],
+    "description": "WEBDEV is a tool to develop internet and intranet sites and applications that support data and processes",
+    "headers": {
+      "WebDevSrc": ""
+    },
+    "html": "<!-- [a-zA-Z0-9_]+ [\\d/]+ [\\d:]+ WebDev \\d\\d ([\\d.]+) -->\\;version:\\1",
+    "icon": "webdev.png",
+    "meta": {
+      "generator": "^WEBDEV$"
+    },
+    "website": "https://www.windev.com/webdev/index.html"
+  },
+  "WEBXPAY": {
+    "cats": [
+      6
+    ],
+    "html": "Powered by <a href=\"https://www\\.webxpay\\.com\">WEBXPAY<",
+    "icon": "WEBXPAY.png",
+    "js": {
+      "WEBXPAY": ""
+    },
+    "website": "https://webxpay.com"
+  },
+  "WHMCS": {
+    "cats": [
+      1
+    ],
+    "description": "WHMCS is an automation platform that simplifies and automates all aspects of operating an online web hosting and domain registrar business.",
+    "icon": "WHMCS.png",
+    "js": {
+      "WHMCS": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "http://www.whmcs.com"
+  },
+  "WP Engine": {
+    "cats": [
+      62,
+      88
+    ],
+    "description": "WP Engine is a website hosting provider.",
+    "headers": {
+      "X-Pass-Why": "",
+      "X-Powered-By": "WP Engine",
+      "X-WPE-Loopback-Upstream-Addr": "",
+      "wpe-backend": ""
+    },
+    "icon": "wpengine.svg",
+    "implies": "WordPress",
+    "website": "https://wpengine.com"
+  },
+  "WP Rocket": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "WP Rocket is a caching and performance optimisation plugin to improve the loading speed of WordPress websites.",
+    "headers": {
+      "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
+      "X-Rocket-Nginx-Bypass": ""
+    },
+    "html": "<!--[^>]+WP Rocket",
+    "icon": "WP Rocket.png",
+    "requires": "WordPress",
+    "website": "http://wp-rocket.me"
+  },
+  "WP-Statistics": {
+    "cats": [
+      10,
+      87
+    ],
+    "html": [
+      "<!-- Analytics by WP-Statistics v([\\d.]+) -\\;version:\\1"
+    ],
+    "icon": "WP-Statistics.png",
+    "requires": "WordPress",
+    "website": "https://wp-statistics.com"
+  },
+  "WPCacheOn": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "WPCacheOn is a caching and performance optimisation plugin, which improves the loading speed of WordPress websites.",
+    "headers": {
+      "x-powered-by": "^Optimized by WPCacheOn"
+    },
+    "icon": "WPCacheOn.png",
+    "requires": [
+      "WordPress"
+    ],
+    "website": "https://wpcacheon.io"
+  },
+  "Wagtail": {
+    "cats": [
+      1
+    ],
+    "description": "Wagtail is a Django content management system (CMS) focused on flexibility and user experience.",
+    "dom": {
+      "[style*='images/']": {
+        "attributes": {
+          "style": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "img[src*='images/']": {
+        "attributes": {
+          "src": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "img[srcset*='images/'], source[srcset*='images/']": {
+        "attributes": {
+          "srcset": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "meta[content*='images/']": {
+        "attributes": {
+          "content": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "style, script": {
+        "text": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+      },
+      "video[poster*='images/']": {
+        "attributes": {
+          "poster": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      }
+    },
+    "icon": "Wagtail.svg",
+    "implies": "Django",
+    "website": "https://wagtail.io/"
+  },
+  "Wair": {
+    "cats": [
+      76,
+      5
+    ],
+    "description": "Wair is the widget to personalised fit.",
+    "icon": "Wair.png",
+    "js": {
+      "PredictV3.default.version": "([\\d.]+)\\;version:\\1",
+      "predictWidget": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "getwair\\.com",
+    "website": "https://getwair.com"
+  },
+  "Wangsu": {
+    "cats": [
+      31
+    ],
+    "description": "Wangsu is a China-based company that provides content delivery network and internet data center services.",
+    "icon": "Wangsu.png",
+    "js": {
+      "__cdnRoute": "^wangsu$",
+      "playurl.wangsu": ""
+    },
+    "website": "https://en.wangsu.com"
+  },
+  "Warp": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "^Warp/(\\d+(?:\\.\\d+)+)?$\\;version:\\1"
+    },
+    "icon": "Warp.png",
+    "implies": "Haskell",
+    "website": "http://www.stackage.org/package/warp"
+  },
+  "Web2py": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "X-Powered-By": "web2py"
+    },
+    "icon": "Web2py.png",
+    "implies": [
+      "Python",
+      "jQuery"
+    ],
+    "meta": {
+      "generator": "^Web2py"
+    },
+    "scripts": "web2py\\.js",
+    "website": "http://web2py.com"
+  },
+  "WebAR": {
+    "cats": [
+      19
+    ],
+    "html": [
+      "<model-viewer"
+    ],
+    "icon": "webAR.svg",
+    "website": "https://modelviewer.dev/"
+  },
+  "WebAssembly": {
+    "cats": [
+      27
+    ],
+    "description": "WebAssembly (abbreviated Wasm) is a binary instruction format for a stack-based virtual machine. Wasm is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.",
+    "headers": {
+      "Content-Type": "application/wasm"
+    },
+    "icon": "WebAssembly.svg",
+    "oss": true,
+    "website": "https://webassembly.org/"
+  },
+  "WebEngage": {
+    "cats": [
+      32,
+      76
+    ],
+    "description": "WebEngage is a customer data platform and marketing automation suite.",
+    "icon": "WebEngage.png",
+    "js": {
+      "webengage.__v": "([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.webengage\\.co(?:m)?/",
+    "website": "https://webengage.com"
+  },
+  "WebGUI": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "wgSession": ""
+    },
+    "icon": "WebGUI.png",
+    "implies": "Perl",
+    "meta": {
+      "generator": "^WebGUI ([\\d.]+)\\;version:\\1"
+    },
+    "website": "http://www.webgui.org"
+  },
+  "WebMetric": {
+    "cats": [
+      10
+    ],
+    "cookies": {
+      "_wmuid": ""
+    },
+    "icon": "WebMetric.svg",
+    "js": {
+      "_wmid": ""
+    },
+    "scripts": "cdn\\.webmetric\\.ir",
+    "website": "https://webmetric.ir/"
+  },
+  "WebNode": {
+    "cats": [
+      1,
+      51
+    ],
+    "cookies": {
+      "_gat_wnd_header": ""
+    },
+    "description": "Webnode is a drag-and-drop online website builder.",
+    "icon": "WebNode.svg",
+    "js": {
+      "wnd.$system": ""
+    },
+    "meta": {
+      "generator": "^Webnode(?:\\s([\\d.]+))?$\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webnode.com"
+  },
+  "WebSite X5": {
+    "cats": [
+      20
+    ],
+    "description": "WebSite X5 is a tools to create and publish websites.",
+    "icon": "WebSite X5.png",
+    "meta": {
+      "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
+    },
+    "website": "http://websitex5.com"
+  },
+  "Webflow": {
+    "cats": [
+      51
+    ],
+    "description": "Webflow is Software-as-a-Service (Saas) for website building and hosting.",
+    "html": "<html[^>]+data-wf-site",
+    "icon": "webflow.svg",
+    "js": {
+      "Webflow": ""
+    },
+    "meta": {
+      "generator": "Webflow"
+    },
+    "website": "https://webflow.com"
+  },
+  "Webgains": {
+    "cats": [
+      71
+    ],
+    "description": "Webgains is an affiliate marketing network.",
+    "icon": "Webgains.svg",
+    "js": {
+      "ITCLKQ": ""
+    },
+    "scripts": "analytics\\.webgains\\.io",
+    "website": "https://www.webgains.com/"
+  },
+  "Webix": {
+    "cats": [
+      12
+    ],
+    "icon": "Webix.png",
+    "js": {
+      "webix": ""
+    },
+    "scripts": "\\bwebix\\.js",
+    "website": "http://webix.com"
+  },
+  "Weblium": {
+    "cats": [
+      1,
+      6
+    ],
+    "description": "Weblium let's you create a web site or online store without the need for a web developer or designer.",
+    "dom": "link[href*='res2.weblium.site']",
+    "icon": "Weblium.svg",
+    "implies": [
+      "Node.js",
+      "OpenResty",
+      "React"
+    ],
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "res2\\.weblium\\.site/common/core\\.min\\.js",
+    "url": "\\.weblium\\.site",
+    "website": "https://weblium.com"
+  },
+  "WebsPlanet": {
+    "cats": [
+      1
+    ],
+    "icon": "WebsPlanet.png",
+    "meta": {
+      "generator": "WebsPlanet"
+    },
+    "website": "http://websplanet.com"
+  },
+  "Websale": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "websale_ac": ""
+    },
+    "icon": "Websale.png",
+    "website": "http://websale.de"
+  },
+  "Website Creator": {
+    "cats": [
+      1
+    ],
+    "icon": "WebsiteCreator.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Vue.js"
+    ],
+    "meta": {
+      "generator": "Website Creator by hosttech",
+      "wsc_rendermode": ""
+    },
+    "website": "https://www.hosttech.ch/websitecreator"
+  },
+  "WebsiteBaker": {
+    "cats": [
+      1
+    ],
+    "icon": "WebsiteBaker.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "WebsiteBaker"
+    },
+    "website": "http://websitebaker2.org/en/home.php"
+  },
+  "Websocket": {
+    "cats": [
+      19
+    ],
+    "html": [
+      "<link[^>]+rel=[\"']web-socket[\"']",
+      "<(?:link|a)[^>]+href=[\"']wss?://"
+    ],
+    "icon": "websocket.png",
+    "website": "https://en.wikipedia.org/wiki/WebSocket"
+  },
+  "Webtrekk": {
+    "cats": [
+      10
+    ],
+    "icon": "Webtrekk.png",
+    "js": {
+      "WebtrekkV3": "",
+      "webtrekk": "",
+      "webtrekkConfig": "",
+      "webtrekkHeatmapObjects": "",
+      "webtrekkLinktrackObjects": "",
+      "webtrekkUnloadObjects": "",
+      "webtrekkV3": "",
+      "wt_tt": "",
+      "wt_ttv2": ""
+    },
+    "website": "http://www.webtrekk.com"
+  },
+  "Webtrends": {
+    "cats": [
+      10
+    ],
+    "html": "<img[^>]+id=\"DCSIMG\"[^>]+webtrends",
+    "icon": "Webtrends.png",
+    "js": {
+      "WTOptimize": "",
+      "WebTrends": ""
+    },
+    "website": "http://worldwide.webtrends.com"
+  },
+  "Webzi": {
+    "cats": [
+      1
+    ],
+    "icon": "Webzi.svg",
+    "js": {
+      "Webzi": ""
+    },
+    "meta": {
+      "generator": "^Webzi"
+    },
+    "scripts": "cdn\\.6th\\.ir",
+    "website": "https://webzi.ir"
+  },
+  "Weebly": {
+    "cats": [
+      1
+    ],
+    "description": "Weebly is a website and eCommerce service.",
+    "icon": "Weebly.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "_W.configDomain": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": "cdn\\d+\\.editmysite\\.com",
+    "website": "https://www.weebly.com"
+  },
+  "Weglot": {
+    "cats": [
+      89
+    ],
+    "headers": {
+      "Weglot-Translated": ""
+    },
+    "icon": "Weglot.png",
+    "scripts": [
+      "cdn\\.weglot\\.com",
+      "wp-content/plugins/weglot"
+    ],
+    "website": "https://www.weglot.com"
+  },
+  "Welcart": {
+    "cats": [
+      6,
+      87
+    ],
+    "cookies": {
+      "usces_cookie": ""
+    },
+    "cpe": "cpe:/a:welcart:welcart",
+    "description": "Welcart is a free ecommerce plugin for WordPress with top market share in Japan.",
+    "html": [
+      "<link[^>]+?href=\"[^\"]+usces_default(?:\\.min)?\\.css",
+      "<!-- Welcart version : v([\\d.]+)\\;version:\\1"
+    ],
+    "icon": "Welcart.svg",
+    "requires": "WordPress",
+    "scripts": "uscesL10n",
+    "website": "https://www.welcart.com"
+  },
+  "Whatfix": {
+    "cats": [
+      19
+    ],
+    "description": "Whatfix is a SaaS based platform which provides in-app guidance and performance support for web applications and software products.",
+    "icon": "Whatfix.png",
+    "js": {
+      "_wfx_add_logger": "",
+      "_wfx_settings": "",
+      "wfx_is_playing__": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "whatfix\\.com",
+    "website": "https://whatfix.com"
+  },
+  "Wheelio": {
+    "cats": [
+      5
+    ],
+    "description": "Wheelio is gamified pop-up/widget for ecommerce sites.",
+    "icon": "Wheelio.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "wheelioapp\\.azureedge\\.net",
+    "website": "https://wheelio-app.com/"
+  },
+  "Whooshkaa": {
+    "cats": [
+      5
+    ],
+    "html": "<iframe src=\"[^>]+whooshkaa\\.com",
+    "icon": "Whooshkaa.svg",
+    "website": "https://www.whooshkaa.com"
+  },
+  "Wigzo": {
+    "cats": [
+      32
+    ],
+    "description": "Wigzo is e-commerce marketing automation platform that helps businesses of every size dig deeper into data to find opportunities to increase their sales and revenue.",
+    "icon": "Wigzo.png",
+    "js": {
+      "wigzo": ""
+    },
+    "saas": true,
+    "scripts": "app\\.wigzo\\.com",
+    "website": "https://www.wigzo.com/"
+  },
+  "Wiki.js": {
+    "cats": [
+      4
+    ],
+    "description": "Wiki.js is a wiki engine running on Node.js and written in JavaScript.",
+    "icon": "Wiki.js.png",
+    "implies": "Node.js",
+    "js": {
+      "WIKI.$_apolloInitData": "",
+      "WIKI.$apolloProvider": ""
+    },
+    "oss": true,
+    "website": "https://js.wiki"
+  },
+  "Wikinggruppen": {
+    "cats": [
+      6
+    ],
+    "html": [
+      "<!-- WIKINGGRUPPEN"
+    ],
+    "icon": "wikinggruppen.png",
+    "website": "https://wikinggruppen.se/"
+  },
+  "WikkaWiki": {
+    "cats": [
+      8
+    ],
+    "description": "WikkaWiki is an open-source wiki application written in PHP.",
+    "html": "Powered by <a href=\"[^>]+WikkaWiki",
+    "icon": "WikkaWiki.png",
+    "meta": {
+      "generator": "WikkaWiki"
+    },
+    "website": "http://wikkawiki.org"
+  },
+  "Windows CE": {
+    "cats": [
+      28
+    ],
+    "description": "Windows CE is an operating system designed for small footprint devices or embedded systems.",
+    "headers": {
+      "Server": "\\bWinCE\\b"
+    },
+    "icon": "Microsoft.png",
+    "website": "http://microsoft.com"
+  },
+  "Windows Server": {
+    "cats": [
+      28
+    ],
+    "description": "Windows Server is a brand name for a group of server operating systems.",
+    "headers": {
+      "Server": "Win32|Win64"
+    },
+    "icon": "WindowsServer.png",
+    "website": "http://microsoft.com/windowsserver"
+  },
+  "Wink": {
+    "cats": [
+      26,
+      12
+    ],
+    "description": "Wink Toolkit is a JavaScript toolkit used to build mobile web apps.",
+    "icon": "Wink.png",
+    "js": {
+      "wink.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "(?:_base/js/base|wink).*\\.js",
+    "website": "http://winktoolkit.org"
+  },
+  "Winstone Servlet Container": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "Winstone Servlet (?:Container|Engine) v?([\\d.]+)?\\;version:\\1",
+      "X-Powered-By": "Winstone(?:\\/([\\d.]+))?\\;version:\\1"
+    },
+    "website": "http://winstone.sourceforge.net"
+  },
+  "Wisepops": {
+    "cats": [
+      5,
+      32
+    ],
+    "description": "Wisepops is an intelligent popup and marketing automation system that offers marketers a single platform from which to create and manage website popups.",
+    "icon": "Wisepops.svg",
+    "js": {
+      "WisePopsObject": "",
+      "wisepops._api": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "loader\\.wisepops\\.com/get-loader\\.js",
+    "website": "https://wisepops.com"
+  },
+  "Wistia": {
+    "cats": [
+      14
+    ],
+    "description": "Wistia is designed exclusively to serve companies using video on their websites for marketing, support, and sales.",
+    "icon": "Wistia.svg",
+    "js": {
+      "Wistia": "",
+      "wistiaEmbeds": "",
+      "wistiaUtils": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.wistia\\.com",
+    "website": "https://wistia.com"
+  },
+  "Wix": {
+    "cats": [
+      1,
+      11
+    ],
+    "cookies": {
+      "Domain": "\\.wix\\.com"
+    },
+    "description": "Wix provides cloud-based web development services, allowing users to create HTML5 websites and mobile sites.",
+    "headers": {
+      "X-Wix-Renderer-Server": "",
+      "X-Wix-Request-Id": "",
+      "X-Wix-Server-Artifact-Id": ""
+    },
+    "icon": "Wix.svg",
+    "implies": "React",
+    "js": {
+      "wixBiSession": "",
+      "wixPerformanceMeasurements": ""
+    },
+    "meta": {
+      "generator": "Wix\\.com Website Builder"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "static\\.parastorage\\.com",
+    "website": "https://www.wix.com"
+  },
+  "Wix eCommerce": {
+    "cats": [
+      6
+    ],
+    "dom": {
+      "#wix-viewer-model": {
+        "text": "wixstores"
+      }
+    },
+    "icon": "Wix.svg",
+    "implies": "Wix",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.wix.com/freesitebuilder/tae-store"
+  },
+  "Wolf CMS": {
+    "cats": [
+      1
+    ],
+    "html": "(?:<a href=\"[^>]+wolfcms\\.org[^>]+>Wolf CMS(?:</a>)? inside|Thank you for using <a[^>]+>Wolf CMS)",
+    "icon": "Wolf CMS.png",
+    "implies": "PHP",
+    "website": "http://www.wolfcms.org"
+  },
+  "Woltlab Community Framework": {
+    "cats": [
+      1
+    ],
+    "icon": "Woltlab Community Framework.png",
+    "implies": "PHP",
+    "scripts": "WCF\\..*\\.js",
+    "website": "http://www.woltlab.com"
+  },
+  "WooCommerce": {
+    "cats": [
+      6,
+      87
+    ],
+    "description": "WooCommerce is an open-source ecommerce plugin for WordPress.",
+    "dom": ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']",
+    "icon": "WooCommerce.svg",
+    "js": {
+      "woocommerce_params": ""
+    },
+    "meta": {
+      "generator": "WooCommerce ([\\d.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "requires": "WordPress",
+    "scripts": [
+      "woocommerce",
+      "/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
+    ],
+    "website": "https://woocommerce.com"
+  },
+  "Woopra": {
+    "cats": [
+      10
+    ],
+    "icon": "Woopra.png",
+    "scripts": "static\\.woopra\\.com",
+    "website": "http://www.woopra.com"
+  },
+  "WordPress": {
+    "cats": [
+      1,
+      11
+    ],
+    "cpe": "cpe:/a:wordpress:wordpress",
+    "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
+    "headers": {
+      "X-Pingback": "/xmlrpc\\.php$",
+      "link": "rel=\"https://api\\.w\\.org/\""
+    },
+    "html": [
+      "<link rel=[\"']stylesheet[\"'] [^>]+/wp-(?:content|includes)/",
+      "<link[^>]+s\\d+\\.wp\\.com"
+    ],
+    "icon": "WordPress.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "wp_username": ""
+    },
+    "meta": {
+      "generator": "^WordPress(?: ([\\d.]+))?\\;version:\\1",
+      "shareaholic:wp_version": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": [
+      "/wp-(?:content|includes)/",
+      "wp-embed\\.min\\.js"
+    ],
+    "website": "https://wordpress.org"
+  },
+  "WordPress Super Cache": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "WordPress Super Cache is a static caching plugin for WordPress.",
+    "headers": {
+      "WP-Super-Cache": ""
+    },
+    "html": "<!--[^>]+WP-Super-Cache",
+    "icon": "wp_super_cache.png",
+    "requires": "WordPress",
+    "website": "http://z9.io/wp-super-cache/"
+  },
+  "WordPress VIP": {
+    "cats": [
+      62
+    ],
+    "headers": {
+      "x-powered-by": "^WordPress\\.com VIP"
+    },
+    "icon": "wpvip.svg",
+    "implies": [
+      "WordPress",
+      "Automattic"
+    ],
+    "website": "https://wpvip.com"
+  },
+  "WorldPay": {
+    "cats": [
+      41
+    ],
+    "description": "WorldPay is a merchant services and payment processing provider offering a payment gateway for online transactions.",
+    "dom": "img[src*='secure.worldpay.com'], img[alt='Powered by WorldPay'], a[href*='worldpay.com'][target='_blank']",
+    "icon": "WorldPay.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://online.worldpay.com"
+  },
+  "Wufoo": {
+    "cats": [
+      73
+    ],
+    "description": "Wufoo is an online form builder that creates forms including contact forms, online payments, online surveys and event registrations.",
+    "dom": "a[href*='.wufoo.com/forms/'][target='_blank']",
+    "icon": "Wufoo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.wufoo.com"
+  },
+  "Wunderkind": {
+    "cats": [
+      32
+    ],
+    "description": "Wunderkind (Formerly BounceX) is a software for behavioural marketing technologies, created to de-anonymise site visitors, analyse their digital behaviour and create relevant digital experiences regardless of channel or device.",
+    "icon": "Wunderkind.svg",
+    "js": {
+      "bouncex": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.bounceexchange\\.com",
+    "website": "https://www.wunderkind.co"
+  },
+  "webEdition": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:/a:webedition:webedition_cms",
+    "icon": "webEdition.png",
+    "meta": {
+      "DC.title": "webEdition",
+      "generator": "webEdition"
+    },
+    "website": "http://webedition.de/en"
+  },
+  "webpack": {
+    "cats": [
+      19
+    ],
+    "description": "Webpack is an open-source JavaScript module bundler.",
+    "icon": "webpack.svg",
+    "js": {
+      "webpackJsonp": ""
+    },
+    "website": "https://webpack.js.org/"
+  },
+  "wisyCMS": {
+    "cats": [
+      1
+    ],
+    "icon": "wisyCMS.svg",
+    "meta": {
+      "generator": "^wisy CMS[ v]{0,3}([0-9.,]*)\\;version:\\1"
+    },
+    "website": "https://wisy.3we.de"
+  },
+  "wpBakery": {
+    "cats": [
+      51,
+      87
+    ],
+    "description": "WPBakery is a drag and drop visual page builder plugin for WordPress.",
+    "icon": "wpBakery.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "WPBakery"
+    },
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://wpbakery.com"
+  },
+  "wpCache": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "WPCache is a static caching plugin for WordPress.",
+    "headers": {
+      "X-Powered-By": "wpCache(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "html": "<!--[^>]+wpCache",
+    "icon": "wpCache.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "wpCache",
+      "keywords": "wpCache"
+    },
+    "requires": "WordPress",
+    "url": "^https?://[^/]+\\.wpcache\\.co",
+    "website": "https://wpcache.co"
+  }
+}

@@ -1,0 +1,401 @@
+{
+  "UIKit": {
+    "cats": [
+      66
+    ],
+    "description": "UIKit is the framework used for developing iOS applications.",
+    "html": "<[^>]+class=\"[^\"]*(?:uk-container|uk-section)",
+    "icon": "UIKit.png",
+    "scripts": "uikit.*\\.js",
+    "website": "https://getuikit.com"
+  },
+  "UMI.CMS": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Generated-By": "UMI\\.CMS"
+    },
+    "icon": "UMI.CMS.png",
+    "implies": "PHP",
+    "website": "https://www.umi-cms.ru"
+  },
+  "UNIX": {
+    "cats": [
+      28
+    ],
+    "description": "Unix is a family of multitasking, multiuser computer operating systems.",
+    "headers": {
+      "Server": "Unix"
+    },
+    "icon": "UNIX.png",
+    "website": "http://unix.org"
+  },
+  "Ubercart": {
+    "cats": [
+      6
+    ],
+    "icon": "Ubercart.png",
+    "implies": "Drupal",
+    "scripts": "uc_cart/uc_cart_block\\.js",
+    "website": "http://www.ubercart.org"
+  },
+  "Ubuntu": {
+    "cats": [
+      28
+    ],
+    "description": "Ubuntu is a free and open-source operating system on Linux for the enterprise server, desktop, cloud, and IoT.",
+    "headers": {
+      "Server": "Ubuntu",
+      "X-Powered-By": "Ubuntu"
+    },
+    "icon": "Ubuntu.png",
+    "website": "http://www.ubuntu.com/server"
+  },
+  "Ueeshop": {
+    "cats": [
+      6
+    ],
+    "description": "Ueeshop is a ecommerce platform from China.",
+    "icon": "Ueeshop.png",
+    "js": {
+      "ueeshop_config": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ueeshop.com"
+  },
+  "UltraCart": {
+    "cats": [
+      6
+    ],
+    "html": "<form [^>]*action=\"[^\"]*\\/cgi-bin\\/UCEditor\\?(?:[^\"]*&)?merchantId=[^\"]",
+    "icon": "UltraCart.png",
+    "js": {
+      "ucCatalog": ""
+    },
+    "scripts": "cgi-bin\\/UCJavaScript\\?",
+    "url": "/cgi-bin/UCEditor\\?",
+    "website": "http://ultracart.com"
+  },
+  "Umbraco": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Umbraco-Version": "^(.+)$\\;version:\\1"
+    },
+    "html": "powered by <a href=[^>]+umbraco",
+    "icon": "Umbraco.png",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "UC_IMAGE_SERVICE|ITEM_INFO_SERVICE": "",
+      "UC_ITEM_INFO_SERVICE": "",
+      "UC_SETTINGS": "",
+      "Umbraco": ""
+    },
+    "meta": {
+      "generator": "umbraco"
+    },
+    "url": "/umbraco/login\\.aspx(?:$|\\?)",
+    "website": "http://umbraco.com"
+  },
+  "Unbounce": {
+    "cats": [
+      20,
+      51
+    ],
+    "description": "Unbounce is a tool to build landing pages.",
+    "headers": {
+      "X-Unbounce-PageId": ""
+    },
+    "icon": "Unbounce.png",
+    "scripts": "ubembed\\.com",
+    "website": "http://unbounce.com"
+  },
+  "Underscore.js": {
+    "cats": [
+      59
+    ],
+    "description": "Underscore.js is a JavaScript library which provides utility functions for common programming tasks. It is comparable to features provided by Prototype.js and the Ruby language, but opts for a functional programming design instead of extending object prototypes.",
+    "excludes": "Lodash",
+    "icon": "Underscore.js.png",
+    "js": {
+      "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
+      "_.restArguments": ""
+    },
+    "scripts": "underscore.*\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
+    "website": "http://underscorejs.org"
+  },
+  "Uniconsent": {
+    "cats": [
+      67
+    ],
+    "icon": "Uniconsent.png",
+    "scripts": "cmp\\.uniconsent\\.mgr\\.consensu\\.org/dfp\\.js",
+    "website": "https://www.uniconsent.com/"
+  },
+  "Unpkg": {
+    "cats": [
+      31
+    ],
+    "description": "Unpkg is a content delivery network for everything on npm.",
+    "dom": "link[href*='unpkg.com']",
+    "icon": "Unpkg.png",
+    "oss": true,
+    "scripts": "unpkg\\.com/",
+    "website": "https://unpkg.com"
+  },
+  "UpSellit": {
+    "cats": [
+      76,
+      6
+    ],
+    "description": "UpSellit is a performance based lead and cart abandonment recovery solutions.",
+    "icon": "UpSellit.png",
+    "js": {
+      "usi_analytics": "\\;confidence:25",
+      "usi_app": "\\;confidence:25",
+      "usi_commons": "\\;confidence:25",
+      "usi_cookies": "\\;confidence:25"
+    },
+    "pricing": [
+      "poa",
+      "mid"
+    ],
+    "saas": true,
+    "scripts": "www\\.upsellit\\.com/",
+    "website": "https://us.upsellit.com"
+  },
+  "Upserve": {
+    "cats": [
+      93
+    ],
+    "description": "Upserve is a restaurant management solution featuring an Android or iOS-based point-of-sale system, online ordering, contactless payments, automated inventory management, sales analytics, and more.",
+    "dom": "a[href*='app.upserve.com/']",
+    "icon": "Upserve.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "app\\.upserve\\.com/",
+    "website": "https://onlineordering.upserve.com"
+  },
+  "Upvoty": {
+    "cats": [
+      47
+    ],
+    "dom": {
+      "div.upvotyContainer": {
+        "text": ""
+      }
+    },
+    "icon": "upvoty.png",
+    "implies": "PHP",
+    "js": {
+      "upvoty": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://upvoty.com"
+  },
+  "UsableNet": {
+    "cats": [
+      68
+    ],
+    "description": "UsableNet is a technology for web accessibility and digital transformation, providing end-to-end services.",
+    "html": "<iframe[ˆ>]*\\.usablenet\\.com/pt/",
+    "icon": "UsableNet.png",
+    "scripts": "\\.usablenet\\.com/pt/",
+    "website": "https://usablenet.com/"
+  },
+  "Uscreen": {
+    "cats": [
+      1
+    ],
+    "description": "Uscreen is a CMS to monetize VOD and live content. They provide site hosting, video hosting, and a payment gateway for selling video based content.",
+    "dom": {
+      ".powered-by-uscreen": {
+        "text": ""
+      }
+    },
+    "icon": "Uscreen.svg",
+    "js": {
+      "analyticsHost": "stats\\.uscreen\\.io"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://uscreen.tv/"
+  },
+  "UserLike": {
+    "cats": [
+      52
+    ],
+    "description": "Userlike is a cloud-based live chat solution that can be integrated with existing websites.",
+    "icon": "UserLike.svg",
+    "js": {
+      "userlike": "",
+      "userlikeInit": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "userlike\\.min\\.js",
+      "userlikelib\\.min\\.js",
+      "//userlike-cdn-widgets\\.",
+      "api\\.userlike\\.com"
+    ],
+    "website": "http://userlike.com"
+  },
+  "UserRules": {
+    "cats": [
+      13
+    ],
+    "icon": "UserRules.png",
+    "js": {
+      "_usrp": ""
+    },
+    "website": "http://www.userrules.com"
+  },
+  "UserVoice": {
+    "cats": [
+      13
+    ],
+    "description": "UserVoice is a management to collect and analyse feedback from customers.",
+    "icon": "UserVoice.png",
+    "js": {
+      "UserVoice": ""
+    },
+    "website": "http://uservoice.com"
+  },
+  "UserWay": {
+    "cats": [
+      68
+    ],
+    "description": "UserWay is a web accessibility overlay for websites that claims to improve compliance with accessibility standards.",
+    "icon": "UserWay.png",
+    "scripts": "cdn\\.userway\\.org/widget.*\\.js",
+    "website": "https://userway.org/"
+  },
+  "UserZoom": {
+    "cats": [
+      74,
+      10
+    ],
+    "description": "UserZoom is a cloud-based user experience solution.",
+    "icon": "UserZoom.png",
+    "pricing": [
+      "poa",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.userzoom\\.com/",
+    "website": "https://www.userzoom.com"
+  },
+  "Usercentrics": {
+    "cats": [
+      67
+    ],
+    "description": "Usercentrics is a SaaS enterprise solution for Consent Management (CMP) that helps enterprise customers to obtain, manage and document the user consent.",
+    "icon": "Usercentrics.svg",
+    "js": {
+      "usercentrics.appVersion": "([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.usercentrics\\.eu/.+\\.js",
+    "website": "https://usercentrics.com"
+  },
+  "Ushahidi": {
+    "cats": [
+      1,
+      35
+    ],
+    "cookies": {
+      "ushahidi": ""
+    },
+    "description": "Ushahidi is a tool that collects crowdsourced data and targeted survey responses from multiple data sources.",
+    "icon": "Ushahidi.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "OpenLayers"
+    ],
+    "js": {
+      "Ushahidi": ""
+    },
+    "scripts": "/js/ushahidi\\.js$",
+    "website": "http://www.ushahidi.com"
+  },
+  "uKnowva": {
+    "cats": [
+      1,
+      2,
+      50
+    ],
+    "headers": {
+      "X-Content-Encoded-By": "uKnowva ([\\d.]+)\\;version:\\1"
+    },
+    "html": "<a[^>]+>Powered by uKnowva</a>",
+    "icon": "uKnowva.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "uKnowva (?: ([\\d.]+))?\\;version:\\1"
+    },
+    "scripts": "/media/conv/js/jquery\\.js",
+    "website": "https://uknowva.com"
+  },
+  "uPortal": {
+    "cats": [
+      21
+    ],
+    "description": "uPortal is an open source enterprise portal framework built by and for higher education institutions.",
+    "icon": "uPortal.png",
+    "implies": "Java",
+    "js": {
+      "uportal": ""
+    },
+    "meta": {
+      "description": " uPortal "
+    },
+    "oss": true,
+    "website": "https://www.apereo.org/projects/uportal"
+  },
+  "uRemediate": {
+    "cats": [
+      68
+    ],
+    "description": "uRemediate provides web accessibility testing tools and accessibility overlays.",
+    "icon": "User1st.png",
+    "scripts": "fecdn\\.user1st\\.info/Loader/head",
+    "website": "https://www.user1st.com/uremediate/"
+  },
+  "user.com": {
+    "cats": [
+      10
+    ],
+    "html": "<div[^>]+/id=\"ue_widget\"",
+    "icon": "user.com.svg",
+    "js": {
+      "UserEngage": ""
+    },
+    "website": "https://user.com"
+  }
+}

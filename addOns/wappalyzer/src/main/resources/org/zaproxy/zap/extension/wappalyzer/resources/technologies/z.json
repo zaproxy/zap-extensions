@@ -1,0 +1,363 @@
+{
+  "ZK": {
+    "cats": [
+      18
+    ],
+    "html": "<!-- ZK [.\\d\\s]+-->",
+    "icon": "ZK.png",
+    "implies": "Java",
+    "scripts": "zkau/",
+    "website": "http://zkoss.org"
+  },
+  "ZURB Foundation": {
+    "cats": [
+      66
+    ],
+    "description": "Zurb Foundation is used to prototype in the browser. Allows rapid creation of websites or applications while leveraging mobile and responsive technology. The front end framework is the collection of HTML, CSS, and Javascript containing design patterns.",
+    "html": [
+      "<link[^>]+foundation[^>\"]+css",
+      "<div [^>]*class=\"[^\"]*(?:small|medium|large)-\\d{1,2} columns"
+    ],
+    "icon": "ZURB Foundation.png",
+    "js": {
+      "Foundation.version": "([\\d.]+)\\;version:\\1"
+    },
+    "website": "http://foundation.zurb.com"
+  },
+  "Zabbix": {
+    "cats": [
+      19
+    ],
+    "html": "<body[^>]+zbxCallPostScripts",
+    "icon": "Zabbix.png",
+    "implies": "PHP",
+    "js": {
+      "zbxCallPostScripts": ""
+    },
+    "meta": {
+      "Author": "ZABBIX SIA\\;confidence:70"
+    },
+    "url": "\\/zabbix\\/\\;confidence:30",
+    "website": "http://zabbix.com"
+  },
+  "Zanox": {
+    "cats": [
+      36
+    ],
+    "html": "<img [^>]*src=\"[^\"]+ad\\.zanox\\.com",
+    "icon": "Zanox.png",
+    "js": {
+      "zanox": ""
+    },
+    "scripts": "zanox\\.com/scripts/zanox\\.js$",
+    "website": "http://zanox.com"
+  },
+  "Zen Cart": {
+    "cats": [
+      6
+    ],
+    "icon": "Zen Cart.png",
+    "meta": {
+      "generator": "Zen Cart"
+    },
+    "website": "http://www.zen-cart.com"
+  },
+  "Zend": {
+    "cats": [
+      22
+    ],
+    "cookies": {
+      "ZENDSERVERSESSID": ""
+    },
+    "headers": {
+      "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
+    },
+    "icon": "Zend.png",
+    "website": "http://zend.com"
+  },
+  "Zendesk": {
+    "cats": [
+      4,
+      13,
+      52
+    ],
+    "cookies": {
+      "_help_center_session": "",
+      "_zendesk_cookie": "",
+      "_zendesk_shared_session": ""
+    },
+    "description": "Zendesk is a cloud-based help desk management solution offering customizable tools to build customer service portal, knowledge base and online communities.",
+    "dns": {
+      "TXT": [
+        "mail\\.zendesk\\.com"
+      ]
+    },
+    "headers": {
+      "x-zendesk-user-id": ""
+    },
+    "icon": "Zendesk.png",
+    "js": {
+      "Zendesk": ""
+    },
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "scripts": "static\\.zdassets\\.com",
+    "website": "https://zendesk.com"
+  },
+  "Zendesk Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Zendesk Chat is a live chat and communication widget.",
+    "icon": "Zendesk Chat.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "v2\\.zopim\\.com",
+    "website": "http://zopim.com"
+  },
+  "Zenfolio": {
+    "cats": [
+      7
+    ],
+    "description": "Zenfolio is a photography website builder.",
+    "icon": "Zenfolio.png",
+    "js": {
+      "Zenfolio": ""
+    },
+    "website": "https://zenfolio.com"
+  },
+  "Zepto": {
+    "cats": [
+      59
+    ],
+    "icon": "Zepto.png",
+    "js": {
+      "Zepto": ""
+    },
+    "scripts": "zepto.*\\.js",
+    "website": "http://zeptojs.com"
+  },
+  "Zimbra": {
+    "cats": [
+      30
+    ],
+    "cookies": {
+      "ZM_TEST": "true"
+    },
+    "icon": "Zimbra.png",
+    "implies": "Java",
+    "website": "https://www.zimbra.com/"
+  },
+  "ZingChart": {
+    "cats": [
+      25
+    ],
+    "description": "ZingChart is a open-source and free JavaScript library for building interactive and intuitive charts.",
+    "icon": "ZingChart.svg",
+    "js": {
+      "zingchart": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://www.zingchart.com"
+  },
+  "Zinnia": {
+    "cats": [
+      11
+    ],
+    "description": "Zimbra is a is a collaborative software suite that includes an email server and a web client.",
+    "icon": "Zinnia.png",
+    "implies": "Django",
+    "meta": {
+      "generator": "Zinnia"
+    },
+    "website": "http://django-blog-zinnia.com"
+  },
+  "Zip": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Zip is a payment service that lets you receive your purchase now and spread the total cost over a interest-free payment schedule.",
+    "dom": "link[href*='widgets.quadpay.com/'], div[data-quadpay-src*='.quadpay.com/']",
+    "icon": "zip_pay.svg",
+    "js": {
+      "QuadPayShopify": "",
+      "quadpayID": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "quadpay\\.com",
+      "static\\.zipmoney\\.com\\.au",
+      "zip\\.co"
+    ],
+    "website": "https://www.zip.co/"
+  },
+  "Zipkin": {
+    "cats": [
+      10
+    ],
+    "headers": {
+      "X-B3-Flags": "",
+      "X-B3-ParentSpanId": "",
+      "X-B3-Sampled": "",
+      "X-B3-SpanId": "",
+      "X-B3-TraceId": ""
+    },
+    "icon": "Zipkin.png",
+    "website": "https://zipkin.io/"
+  },
+  "Zocdoc": {
+    "cats": [
+      72
+    ],
+    "description": "Zocdoc is a New York City-based company offering an online service that allows people to find and book in-person or telemedicine appointments for medical or dental care.",
+    "dom": "a[href*='www.zocdoc.com'][target='_blank']",
+    "icon": "Zocdoc.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "offsiteschedule\\.zocdoc\\.com",
+    "website": "https://www.zocdoc.com"
+  },
+  "Zoey": {
+    "cats": [
+      6
+    ],
+    "description": "Zoey is a cloud-based ecommerce platform for B2B and wholesale businesses.",
+    "excludes": "Magento",
+    "icon": "Zoey.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "Zoey.module": "",
+      "zoey.developer": "",
+      "zoeyDev": ""
+    },
+    "scripts": "cdna4\\.zoeysite\\.com",
+    "website": "https://www.zoey.com/"
+  },
+  "Zoho": {
+    "cats": [
+      53
+    ],
+    "description": "Zoho is a web-based online office suite.",
+    "dns": {
+      "TXT": [
+        "\\.zoho\\.com"
+      ]
+    },
+    "icon": "Zoho.svg",
+    "pricing": [
+      "low",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.zoho.com/"
+  },
+  "Zoho Mail": {
+    "cats": [
+      75
+    ],
+    "description": "Zoho Mail is an email hosting service for businesses.",
+    "dns": {
+      "TXT": [
+        "transmail\\.net"
+      ]
+    },
+    "icon": "Zoho.svg",
+    "implies": "Zoho",
+    "website": "https://www.zoho.com/mail/"
+  },
+  "Zone.js": {
+    "cats": [
+      12
+    ],
+    "implies": "Angular",
+    "js": {
+      "Zone.root": ""
+    },
+    "website": "https://github.com/angular/angular/tree/master/packages/zone.js"
+  },
+  "Zonos": {
+    "cats": [
+      6
+    ],
+    "description": "Zonos is a cross-border ecommerce software and app solution for companies with international business.",
+    "icon": "Zonos.svg",
+    "js": {
+      "Zonos": "",
+      "zonos": "",
+      "zonosCheckout": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.zonos\\.com/",
+    "website": "https://zonos.com"
+  },
+  "Zoominfo": {
+    "cats": [
+      10
+    ],
+    "description": "ZoomInfo provides actionable B2B contact and company information for sales and marketing teams.",
+    "icon": "Zoominfo.svg",
+    "saas": true,
+    "scripts": "ws\\.zoominfo\\.com",
+    "website": "https://www.zoominfo.com/"
+  },
+  "Zoominfo Chat": {
+    "cats": [
+      52
+    ],
+    "description": "ZoomInfo chat is a live chat solution.",
+    "icon": "Zoominfo.svg",
+    "saas": true,
+    "scripts": "madstreetden\\.widget\\.insent\\.ai",
+    "website": "https://www.zoominfo.com/chat"
+  },
+  "Zope": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "^Zope/"
+    },
+    "icon": "Zope.png",
+    "website": "http://zope.org"
+  },
+  "Zyro": {
+    "cats": [
+      51
+    ],
+    "description": "Zyro is a website builder service by the Hostinger group.",
+    "icon": "Zyro.svg",
+    "implies": "Vue.js",
+    "meta": {
+      "generator": "^Zyro\\.com Website Builder$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "userapp\\.zyrosite\\.com/",
+    "website": "https://zyro.com"
+  }
+}

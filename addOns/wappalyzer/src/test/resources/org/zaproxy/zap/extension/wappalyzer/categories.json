@@ -1,0 +1,14 @@
+{
+  "1": {
+    "name": "CMS",
+    "priority": 1
+  },
+  "2": {
+    "name": "Message boards",
+    "priority": 1
+  },
+  "36": {
+    "name": "Advertising",
+    "priority": 9
+  }
+}

@@ -1,0 +1,946 @@
+{
+  "LEPTON": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:/a:lepton-cms:lepton",
+    "icon": "LEPTON.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "LEPTON"
+    },
+    "website": "http://www.lepton-cms.org"
+  },
+  "LKQD": {
+    "cats": [
+      36
+    ],
+    "description": "LKQD is a video advertising platform that enables publishers to serve video ads across multiple devices and formats.",
+    "dom": "iframe[src*='.lkqd.net']",
+    "icon": "LKQD.svg",
+    "js": {
+      "lkqdCall": "",
+      "lkqdErrorCount": "",
+      "lkqdSettings": "",
+      "lkqd_http_response": ""
+    },
+    "scripts": "\\.lkqd\\.net",
+    "website": "https://wiki.lkqd.com",
+    "xhr": "\\.lkqd\\.net"
+  },
+  "LOU": {
+    "cats": [
+      58
+    ],
+    "description": "LOU is a Digital Adoption Platform that streamlines user onboarding and training.",
+    "icon": "LOU.png",
+    "scripts": "cdn\\.louassist\\.com*",
+    "website": "https://www.louassist.com"
+  },
+  "Lagoon": {
+    "cats": [
+      62
+    ],
+    "headers": {
+      "X-LAGOON": "",
+      "x-lagoon": ""
+    },
+    "icon": "Lagoon.png",
+    "website": "https://www.amazee.io/hosting"
+  },
+  "Laravel": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "laravel_session": ""
+    },
+    "cpe": "cpe:/a:laravel:laravel",
+    "description": "Laravel is a free, open-source PHP web framework.",
+    "icon": "Laravel.svg",
+    "implies": "PHP",
+    "js": {
+      "Laravel": ""
+    },
+    "website": "https://laravel.com"
+  },
+  "Laterpay": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Laterpay is a service that simplifies payments on the Internet. In addition to the classic immediate purchase option, Laterpay also allows you to buy digital content such as articles or videos now and pay later.",
+    "icon": "laterpay.png",
+    "meta": {
+      "laterpay:connector:callbacks:on_user_has_access": "deobfuscateText"
+    },
+    "scripts": "https?://connectormwi\\.laterpay\\.net/([0-9.]+)[a-zA-z-]*/live/[\\w-]+\\.js\\;version:\\1",
+    "website": "https://www.laterpay.net/"
+  },
+  "LaunchDarkly": {
+    "cats": [
+      85
+    ],
+    "description": "LaunchDarkly is a continuous delivery and feature flags as a service platform that integrates into a company's current development cycle.",
+    "dom": "link[href*='.launchdarkly.com']",
+    "icon": "LaunchDarkly.svg",
+    "js": {
+      "DDC.WS.state": "",
+      "launchDarkly": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "(?:\\.|\\-)launchdarkly(?:\\.com/|\\-sdk\\.)",
+    "website": "https://launchdarkly.com",
+    "xhr": [
+      "app\\.launchdarkly\\.com",
+      "events\\.launchdarkly\\.com"
+    ]
+  },
+  "Launchrock": {
+    "cats": [
+      74,
+      51
+    ],
+    "description": "Launchrock is an online tool designed to help capture email addresses and create online product launching events.",
+    "icon": "Launchrock.svg",
+    "js": {
+      "lrIgnition": "\\;confidence:25",
+      "lrLoadedJs": "\\;confidence:25",
+      "lrSiteSettingAsBoolean": "\\;confidence:25",
+      "lrignition": "\\;confidence:25"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "js/ignition-current\\.min\\.js\\;confidence:50",
+    "website": "https://www.launchrock.com"
+  },
+  "Leadinfo": {
+    "cats": [
+      10
+    ],
+    "description": "Leadinfo is a lead generation software that enables you to recognise B2B website visitors.",
+    "icon": "Leadinfo.svg",
+    "js": {
+      "GlobalLeadinfoNamespace": "\\;confidence:50",
+      "leadinfo": "\\;confidence:50"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.leadinfo\\.net",
+    "website": "https://www.leadinfo.com"
+  },
+  "Leaflet": {
+    "cats": [
+      35
+    ],
+    "description": "Leaflet is the open-source JavaScript library for mobile-friendly interactive maps.",
+    "icon": "Leaflet.png",
+    "js": {
+      "L.DistanceGrid": "",
+      "L.PosAnimation": "",
+      "L.version": "^(.+)$\\;version:\\1\\;confidence:0"
+    },
+    "scripts": "leaflet.{0,32}\\.js",
+    "website": "http://leafletjs.com"
+  },
+  "Leanplum": {
+    "cats": [
+      32,
+      74
+    ],
+    "description": "Leanplum is a multi-channel messaging and campaign orchestration platform.",
+    "icon": "Leanplum.svg",
+    "js": {
+      "Leanplum": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1",
+    "website": "https://www.leanplum.com"
+  },
+  "Lede": {
+    "cats": [
+      1
+    ],
+    "description": "Lede is a publishing platform and growth program designed to support journalism startups and news media.",
+    "html": [
+      "<a [^>]*href=\"[^\"]+joinlede.com"
+    ],
+    "icon": "lede.png",
+    "implies": [
+      "WordPress",
+      "WordPress VIP"
+    ],
+    "js": {
+      "ledeChartbeatViews": "",
+      "ledeEngagement": "",
+      "ledeEngagementReset": ""
+    },
+    "meta": {
+      "og:image": "https?\\:\\/\\/lede-admin"
+    },
+    "saas": true,
+    "website": "https://joinlede.com/"
+  },
+  "Legal Monster": {
+    "cats": [
+      67
+    ],
+    "description": "Legal Monster is a consent and privacy management solution, which helps businesses maintain compliance with ePrivacy, marketing requirements and General Data Protection Regulation (GDPR).",
+    "icon": "Legal Monster.svg",
+    "js": {
+      "legal.__VERSION__": "([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.legalmonster\\.com/",
+    "website": "https://www.legalmonster.com"
+  },
+  "Less": {
+    "cats": [
+      19
+    ],
+    "html": "<link[^>]+ rel=\"stylesheet/less\"",
+    "icon": "Less.png",
+    "website": "http://lesscss.org"
+  },
+  "Let's Encrypt": {
+    "cats": [
+      70
+    ],
+    "certIssuer": "Let's Encrypt",
+    "description": "Let's Encrypt is a free, automated, and open certificate authority.",
+    "icon": "Lets Encrypt.svg",
+    "website": "https://letsencrypt.org/"
+  },
+  "Liferay": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:/a:liferay:liferay_portal",
+    "description": "Liferay is an open-source company that provides free documentation and paid professional service to users of its software.",
+    "headers": {
+      "Liferay-Portal": "[a-z\\s]+([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Liferay.svg",
+    "js": {
+      "Liferay": ""
+    },
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.liferay.com"
+  },
+  "Lift": {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:/a:liftweb:lift",
+    "headers": {
+      "X-Lift-Version": "(.+)\\;version:\\1"
+    },
+    "icon": "Lift.png",
+    "implies": "Scala",
+    "website": "http://liftweb.net"
+  },
+  "LightMon Engine": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "lm_online": ""
+    },
+    "html": "<!-- Lightmon Engine Copyright Lightmon",
+    "icon": "LightMon Engine.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "LightMon Engine"
+    },
+    "website": "http://lightmon.ru"
+  },
+  "Lightbox": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:/a:lightbox_photo_gallery_project:lightbox_photo_gallery",
+    "html": "<link [^>]*href=\"[^\"]+lightbox(?:\\.min)?\\.css",
+    "icon": "Lightbox.png",
+    "scripts": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
+    "website": "http://lokeshdhakar.com/projects/lightbox2/"
+  },
+  "Lightspeed eCom": {
+    "cats": [
+      6
+    ],
+    "html": "<!-- \\[START\\] 'blocks/head\\.rain' -->",
+    "icon": "Lightspeed.svg",
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "scripts": "http://assets\\.webshopapp\\.com",
+    "url": "seoshop.webshopapp.com",
+    "website": "http://www.lightspeedhq.com/products/ecommerce/"
+  },
+  "LinkSmart": {
+    "cats": [
+      36
+    ],
+    "icon": "LinkSmart.png",
+    "js": {
+      "LS_JSON": "",
+      "LinkSmart": "",
+      "_mb_site_guid": ""
+    },
+    "scripts": "^https?://cdn\\.linksmart\\.com/linksmart_([\\d.]+?)(?:\\.min)?\\.js\\;version:\\1",
+    "website": "http://linksmart.com"
+  },
+  "Linkedin Insight Tag": {
+    "cats": [
+      10
+    ],
+    "dom": "noscript > img[src*='dc.ads.linkedin.com']",
+    "icon": "Linkedin.svg",
+    "js": {
+      "_linkedin_data_partner_id": ""
+    },
+    "scripts": "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+    "website": "https://business.linkedin.com/marketing-solutions/insight-tag"
+  },
+  "Linkedin Sign-in": {
+    "cats": [
+      69
+    ],
+    "description": "Linkedin Sign-In is an authentication system that reduces the burden of login for users, by enabling them to sign in with their Linkedin account.",
+    "icon": "Linkedin.svg",
+    "js": {
+      "OnLinkedInAuth": "",
+      "onLinkedInLoad": ""
+    },
+    "scripts": "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1",
+    "website": "https://www.linkedin.com/developers"
+  },
+  "Liquid Web": {
+    "cats": [
+      62
+    ],
+    "headers": {
+      "x-lw-cache": ""
+    },
+    "icon": "liquidweb.svg",
+    "website": "https://www.liquidweb.com"
+  },
+  "List.js": {
+    "cats": [
+      59
+    ],
+    "icon": "List.js.png",
+    "js": {
+      "List": "\\;confidence:50"
+    },
+    "scripts": [
+      "list\\.js/\\;confidence:50",
+      "@([\\d.]+)/(?:/dist)?list\\.(?:min\\.)?js\\;version:\\1"
+    ],
+    "website": "http://listjs.com"
+  },
+  "Listrak": {
+    "cats": [
+      32
+    ],
+    "description": "Listrak is a AI-based marketing automation and CRM solutions that unify, interpret and personalise data to engage customer across channels and devices.",
+    "icon": "Listrak.png",
+    "js": {
+      "_LTKSignup": "",
+      "_LTKSubscriber": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "(?:cdn|s1)\\.listrakbi\\.com",
+      "services\\.listrak\\.com"
+    ],
+    "website": "https://www.listrak.com"
+  },
+  "LiteSpeed": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:/a:litespeedtech:litespeed_web_server",
+    "description": "LiteSpeed is a high-scalability web server.",
+    "headers": {
+      "Server": "^LiteSpeed$"
+    },
+    "icon": "LiteSpeed.svg",
+    "website": "http://litespeedtech.com"
+  },
+  "Litespeed Cache": {
+    "cats": [
+      23,
+      87
+    ],
+    "description": "LiteSpeed Cache is an all-in-one site acceleration plugin for WordPress.",
+    "headers": {
+      "x-litespeed-cache": ""
+    },
+    "icon": "litespeed-cache.png",
+    "requires": "LiteSpeed",
+    "website": "https://wordpress.org/plugins/litespeed-cache/"
+  },
+  "Lithium": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "LithiumVisitor": ""
+    },
+    "html": " <a [^>]+Powered by Lithium",
+    "icon": "Lithium.png",
+    "implies": "PHP",
+    "js": {
+      "LITHIUM": ""
+    },
+    "website": "https://www.lithium.com"
+  },
+  "Live Story": {
+    "cats": [
+      1
+    ],
+    "icon": "LiveStory.png",
+    "js": {
+      "LSHelpers": "",
+      "LiveStory": ""
+    },
+    "website": "https://www.livestory.nyc/"
+  },
+  "LiveAgent": {
+    "cats": [
+      52
+    ],
+    "description": "LiveAgent is an online live chat platform. The software provides a ticket management system.",
+    "icon": "LiveAgent.png",
+    "js": {
+      "LiveAgent": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.liveagent.com"
+  },
+  "LiveChat": {
+    "cats": [
+      52
+    ],
+    "description": "LiveChat is an online customer service software with online chat, help desk software, and web analytics capabilities.",
+    "icon": "LiveChat.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.livechatinc\\.com/.*tracking\\.js",
+    "website": "http://livechatinc.com"
+  },
+  "LiveHelp": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "LiveHelp is an online chat tool.",
+    "icon": "LiveHelp.png",
+    "js": {
+      "LHready": ""
+    },
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "website": "http://www.livehelp.it"
+  },
+  "LiveIntent": {
+    "cats": [
+      75,
+      36
+    ],
+    "description": "LiveIntent is an email ad monetization platform.",
+    "icon": "LiveIntent.svg",
+    "js": {
+      "LI.advertiserId": "\\d+"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.liadm\\.com",
+    "website": "https://www.liveintent.com",
+    "xhr": "\\.liadm\\.com"
+  },
+  "LiveJournal": {
+    "cats": [
+      11
+    ],
+    "description": "LiveJournal is a social networking service where users can keep a blog, journal or diary.",
+    "icon": "LiveJournal.png",
+    "url": "\\.livejournal\\.com",
+    "website": "http://www.livejournal.com"
+  },
+  "LivePerson": {
+    "cats": [
+      52
+    ],
+    "description": "LivePerson is a tool for conversational chatbots and messaging.",
+    "icon": "LivePerson.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "^https?://lptag\\.liveperson\\.net/tag/tag\\.js",
+    "website": "https://www.liveperson.com/"
+  },
+  "LiveRamp PCM": {
+    "cats": [
+      67
+    ],
+    "description": "LiveRamp PCM is a preference and consent management platform that enables comply with the ePrivacy Directive, GDPR, CCPA, and other data protection and privacy laws and regulations.",
+    "dom": "iframe[src*='gdpr-consent-tool\\.privacymanager\\.io']",
+    "icon": "LiveRamp.svg",
+    "js": {
+      "wpJsonpLiverampGdprCmp": ""
+    },
+    "scripts": "gdpr\\.privacymanager\\.io",
+    "website": "https://liveramp.com/our-platform/preference-consent-management"
+  },
+  "LiveStreet CMS": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Powered-By": "LiveStreet CMS"
+    },
+    "icon": "LiveStreet CMS.png",
+    "implies": "PHP",
+    "js": {
+      "LIVESTREET_SECURITY_KEY": ""
+    },
+    "website": "http://livestreetcms.com"
+  },
+  "LiveZilla": {
+    "cats": [
+      52
+    ],
+    "description": "LiveZilla is a web-based live support platform.",
+    "dom": "#lz_overlay_chat",
+    "icon": "LiveZilla.png",
+    "js": {
+      "lz_chat_execute": "",
+      "lz_code_id": "(?:[\\w\\d]+)",
+      "lz_tracking_set_widget_visibility": ""
+    },
+    "pricing": [
+      "onetime",
+      "mid"
+    ],
+    "saas": false,
+    "website": "https://www.livezilla.net"
+  },
+  "Livefyre": {
+    "cats": [
+      15
+    ],
+    "description": "Livefyre is a platform that integrates with the social web to boost social interaction.",
+    "html": "<[^>]+(?:id|class)=\"livefyre",
+    "icon": "Livefyre.png",
+    "js": {
+      "FyreLoader": "",
+      "L.version": "^(.+)$\\;confidence:0\\;version:\\1",
+      "LF.CommentCount": "",
+      "fyre": ""
+    },
+    "scripts": "livefyre_init\\.js",
+    "website": "http://livefyre.com"
+  },
+  "Liveinternet": {
+    "cats": [
+      10
+    ],
+    "html": [
+      "<script [^>]*>[\\s\\S]*//counter\\.yadro\\.ru/hit",
+      "<!--LiveInternet counter-->",
+      "<!--/LiveInternet-->",
+      "<a href=\"http://www\\.liveinternet\\.ru/click\""
+    ],
+    "icon": "Liveinternet.png",
+    "website": "http://liveinternet.ru/rating/"
+  },
+  "Livewire": {
+    "cats": [
+      18,
+      19
+    ],
+    "html": "<[^>]{1,512}\\bwire:",
+    "icon": "Livewire.png",
+    "implies": "Laravel",
+    "js": {
+      "livewire": ""
+    },
+    "scripts": "livewire(?:\\.min)?\\.js",
+    "website": "https://laravel-livewire.com"
+  },
+  "LocalFocus": {
+    "cats": [
+      25
+    ],
+    "html": "<iframe[^>]+\\blocalfocus\\b",
+    "icon": "LocalFocus.png",
+    "implies": [
+      "Angular",
+      "D3"
+    ],
+    "website": "https://www.localfocus.nl/en/"
+  },
+  "Localised": {
+    "cats": [
+      6
+    ],
+    "description": "Localised is local-first ecommerce platform.",
+    "dom": {
+      "img[src='.localised.com']": {
+        "attributes": {
+          "src": ""
+        }
+      },
+      "span": {
+        "attributes": {
+          "text": ".+Localised Inc\\..+"
+        }
+      }
+    },
+    "icon": "Localised.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.localised.com",
+    "xhr": "api\\.localised\\.com"
+  },
+  "LocomotiveCMS": {
+    "cats": [
+      1
+    ],
+    "html": "<link[^>]*/sites/[a-z\\d]{24}/theme/stylesheets",
+    "icon": "LocomotiveCMS.png",
+    "implies": [
+      "Ruby on Rails",
+      "MongoDB"
+    ],
+    "website": "https://www.locomotivecms.com"
+  },
+  "Lodash": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:/a:lodash:lodash",
+    "description": "Lodash is a JavaScript library which provides utility functions for common programming tasks using the functional programming paradigm.",
+    "excludes": "Underscore.js",
+    "icon": "Lo-dash.png",
+    "js": {
+      "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
+      "_.differenceBy": "",
+      "_.templateSettings.imports._.templateSettings.imports._.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "lodash.*\\.js",
+    "website": "http://www.lodash.com"
+  },
+  "LogRocket": {
+    "cats": [
+      10
+    ],
+    "description": "LogRocket records videos of user sessions with logs and network data.",
+    "icon": "LogRocket.svg",
+    "scripts": [
+      "cdn\\.logrocket\\.(com|io)",
+      "cdn\\.lr-ingest\\.io"
+    ],
+    "website": "https://logrocket.com/"
+  },
+  "Loggly": {
+    "cats": [
+      10
+    ],
+    "description": "Loggly is a cloud-based log management service provider.",
+    "dom": "link[href*='.loggly.com']",
+    "icon": "Loggly.svg",
+    "js": {
+      "LogglyTracker": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.loggly\\.com/",
+    "website": "https://www.loggly.com"
+  },
+  "Login with Amazon": {
+    "cats": [
+      69
+    ],
+    "description": "Login with Amazon allows you use your Amazon user name and password to sign into and share information with participating third-party websites or apps.",
+    "icon": "Amazon.svg",
+    "js": {
+      "onAmazonLoginReady": ""
+    },
+    "website": "https://developer.amazon.com/apps-and-games/login-with-amazon"
+  },
+  "LoginRadius": {
+    "cats": [
+      5,
+      69
+    ],
+    "description": "LoginRadius is a cloud based SaaS Customer Identity Access Management platform based in Canada.",
+    "icon": "LoginRadius.svg",
+    "js": {
+      "LoginRadius": "",
+      "LoginRadiusDefaults": "",
+      "LoginRadiusSDK": "",
+      "LoginRadiusUtility": ""
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.loginradius\\.com",
+      "\\.lrcontent\\.com"
+    ],
+    "website": "https://www.loginradius.com"
+  },
+  "Loja Integrada": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "X-Powered-By": "vtex-integrated-store"
+    },
+    "icon": "Loja Integrada.png",
+    "js": {
+      "LOJA_ID": ""
+    },
+    "website": "https://lojaintegrada.com.br/"
+  },
+  "Loja Mestre": {
+    "cats": [
+      6
+    ],
+    "description": "Loja Mestre is an all-in-one ecommerce platform from Brazil.",
+    "icon": "Loja Mestre.svg",
+    "meta": {
+      "webmaster": "www\\.lojamestre\\.\\w+\\.br"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "lojamestre\\.\\w+\\.br",
+    "website": "https://www.lojamestre.com.br/"
+  },
+  "Loja Virtual": {
+    "cats": [
+      6
+    ],
+    "description": "Loja Virtual is an all-in-one ecommerce platform from Brazil.",
+    "icon": "Loja Virtual.svg",
+    "js": {
+      "id_loja_virtual": "",
+      "link_loja_virtual": "",
+      "loja_sem_dominio": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "/js/ljvt_v(\\d+)/\\;version:\\1\\;confidence:20",
+      "cdn1\\.solojavirtual\\.com"
+    ],
+    "website": "https://www.lojavirtual.com.br"
+  },
+  "Loja2": {
+    "cats": [
+      6
+    ],
+    "description": "Loja2 is an all-in-one ecommerce platform from Brazil.",
+    "icon": "Loja2.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "loja2\\.com\\.br",
+    "website": "https://www.loja2.com.br"
+  },
+  "Loop54": {
+    "cats": [
+      29,
+      76
+    ],
+    "cookies": {
+      "Loop54User": ""
+    },
+    "description": "Loop54 is a ecommerce search and navigation SaaS product.",
+    "icon": "Loop54.png",
+    "js": {
+      "Loop54.config.libVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.loop54.com"
+  },
+  "Lootly": {
+    "cats": [
+      84,
+      32
+    ],
+    "description": "Lootly is a loyalty and referral marketing automation software suite for ecommerce businesses.",
+    "dom": "iframe[src*='lootly.io/']",
+    "icon": "Lootly.png",
+    "js": {
+      "Lootly.config": "",
+      "lootlyWidgetInit": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "lootly\\.io/",
+    "website": "https://lootly.io"
+  },
+  "Loox": {
+    "cats": [
+      90
+    ],
+    "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
+    "icon": "Loox.svg",
+    "js": {
+      "loox_global_hash": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "loox\\.io/widget",
+    "website": "https://loox.app"
+  },
+  "Lotus Domino": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:/a:ibm:lotus_domino",
+    "headers": {
+      "Server": "Lotus-Domino"
+    },
+    "icon": "Lotus Domino.png",
+    "implies": "Java",
+    "website": "http://www-01.ibm.com/software/lotus/products/domino"
+  },
+  "LoyaltyLion": {
+    "cats": [
+      84
+    ],
+    "description": "LoyaltyLion is a data-driven ecommerce loyalty and engagement platform.",
+    "icon": "LoyaltyLion.svg",
+    "js": {
+      "loyaltylion.version": "([\\d\\-]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "sdk\\.loyaltylion\\.net/",
+    "website": "https://loyaltylion.com"
+  },
+  "Lua": {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:/a:lua:lua",
+    "description": "Lua is a multi-paradigm programming language designed primarily for embedded use in applications.",
+    "headers": {
+      "X-Powered-By": "\\bLua(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Lua.png",
+    "website": "http://www.lua.org"
+  },
+  "Lucene": {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:/a:apache:lucene",
+    "description": "Lucene is a free and open-source search engine software library.",
+    "icon": "Lucene.png",
+    "implies": "Java",
+    "website": "http://lucene.apache.org/core/"
+  },
+  "Luigi’s Box": {
+    "cats": [
+      10,
+      29
+    ],
+    "icon": "Luigisbox.svg",
+    "js": {
+      "Luigis": ""
+    },
+    "website": "https://www.luigisbox.com"
+  },
+  "libwww-perl-daemon": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "libwww-perl-daemon(?:/([\\d\\.]+))?\\;version:\\1"
+    },
+    "icon": "libwww-perl-daemon.png",
+    "implies": "Perl",
+    "website": "http://metacpan.org/pod/HTTP::Daemon"
+  },
+  "lighttpd": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "lighttpd(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "lighttpd.png",
+    "website": "http://www.lighttpd.net"
+  }
+}

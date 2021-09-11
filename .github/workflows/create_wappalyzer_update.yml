@@ -36,7 +36,8 @@ jobs:
         chmod -R 664 wappalyzer/src/drivers/webextension/images/icons/*.*
         rm -rf wappalyzer/src/drivers/webextension/images/icons/converted/
         cp -R wappalyzer/src/drivers/webextension/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
-        cp -f wappalyzer/src/technologies.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/apps.json
+        cp -f wappalyzer/src/technologies/*.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/technologies/
+        cp -f wappalyzer/src/categories.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/categories.json
         cd zap-extensions
         ## Update the index to be sure git is aware of changes
         git update-index -q --refresh

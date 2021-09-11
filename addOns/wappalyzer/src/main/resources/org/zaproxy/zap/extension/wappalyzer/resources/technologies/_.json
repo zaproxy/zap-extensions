@@ -1,0 +1,98 @@
+{
+  "1C-Bitrix": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "BITRIX_SM_GUEST_ID": "",
+      "BITRIX_SM_LAST_IP": "",
+      "BITRIX_SM_SALE_UID": ""
+    },
+    "description": "1C-Bitrix is a system of web project management, universal software for the creation, support and successful development of corporate websites and online stores.",
+    "headers": {
+      "Set-Cookie": "BITRIX_",
+      "X-Powered-CMS": "Bitrix Site Manager"
+    },
+    "icon": "1C-Bitrix.svg",
+    "implies": "PHP",
+    "pricing": [
+      "onetime",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "bitrix(?:\\.info/|/js/main/core)",
+    "website": "http://www.1c-bitrix.ru"
+  },
+  "2B Advice": {
+    "cats": [
+      67
+    ],
+    "description": "2B Advice provides a plug-in to manage GDPR cookie consent.",
+    "icon": "2badvice.png",
+    "js": {
+      "BBCookieControler": ""
+    },
+    "saas": true,
+    "scripts": "2badvice-cdn\\.azureedge\\.net",
+    "website": "https://www.2b-advice.com/en/data-privacy-software/cookie-consent-plugin/"
+  },
+  "33Across": {
+    "cats": [
+      36
+    ],
+    "description": "33Across is a technology company focused on solving the challenge of consumer attention for automated advertising.",
+    "dom": "iframe[src*='.33across.com'], link[href*='.33across.com']",
+    "icon": "33Across.png",
+    "saas": true,
+    "website": "https://www.33across.com",
+    "xhr": "\\.33across\\.com"
+  },
+  "3dCart": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "3dvisit": ""
+    },
+    "headers": {
+      "X-Powered-By": "3DCART"
+    },
+    "icon": "3dCart.png",
+    "scripts": "(?:twlh(?:track)?\\.asp|3d_upsell\\.js)",
+    "website": "http://www.3dcart.com"
+  },
+  "4-Tell": {
+    "cats": [
+      76
+    ],
+    "cookies": {
+      "4Tell": "",
+      "4TellCart": "",
+      "4TellSession": ""
+    },
+    "description": "4-Tell is an ecommerce software company for retailers with AI-powered personalisation and recommendations products.",
+    "icon": "4-Tell.png",
+    "js": {
+      "_4TellBoost": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "4tellcdn\\.azureedge\\.net",
+    "website": "https://4-tell.com"
+  },
+  "@sulu/web": {
+    "cats": [
+      59
+    ],
+    "icon": "Sulu.svg",
+    "js": {
+      "web.startComponents": ""
+    },
+    "website": "https://github.com/sulu/web-js"
+  }
+}

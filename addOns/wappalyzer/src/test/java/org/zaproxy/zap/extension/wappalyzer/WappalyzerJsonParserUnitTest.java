@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,8 @@ class WappalyzerJsonParserUnitTest {
     void shouldParseExample() {
         // Given
         WappalyzerJsonParser wjp = new WappalyzerJsonParser();
-        WappalyzerData wappData = wjp.parseAppsJson("apps.json");
+        WappalyzerData wappData =
+                wjp.parse("categories.json", Collections.singletonList("apps.json"));
         List<String> expectedCategory = new ArrayList<>(1);
         expectedCategory.add("Advertising"); // 36 - Advertising
         // When

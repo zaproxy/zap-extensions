@@ -1,0 +1,672 @@
+{
+  "K2": {
+    "cats": [
+      19
+    ],
+    "html": "<!--(?: JoomlaWorks \"K2\"| Start K2)",
+    "icon": "K2.png",
+    "implies": "Joomla",
+    "js": {
+      "K2RatingURL": ""
+    },
+    "website": "https://getk2.org"
+  },
+  "KISSmetrics": {
+    "cats": [
+      10
+    ],
+    "icon": "KISSmetrics.png",
+    "js": {
+      "KM_COOKIE_DOMAIN": ""
+    },
+    "website": "https://www.kissmetrics.com"
+  },
+  "KQS.store": {
+    "cats": [
+      6
+    ],
+    "description": "KQS.store is an ecommerce software.",
+    "dom": [
+      "a[href*='kqsdesign.pl'][target='_blank']",
+      "a[href*='kqs.pl'][target='_blank']",
+      "#kqs-box,kqs-cookie"
+    ],
+    "icon": "KQS.store.png",
+    "js": {
+      "kqs_box": "\\;confidence:50",
+      "kqs_off": "\\;confidence:50"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "saas": false,
+    "website": "https://www.kqs.pl"
+  },
+  "KaTeX": {
+    "cats": [
+      25
+    ],
+    "description": "KaTeX is a cross-browser JavaScript library that displays mathematical notation in web browsers.",
+    "dom": {
+      "link[href*=katex]": {
+        "attributes": {
+          "href": "katex(?:\\.min)?\\.css"
+        }
+      }
+    },
+    "icon": "KaTeX.svg",
+    "js": {
+      "katex": "",
+      "katex.version": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scripts": "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1",
+    "website": "https://katex.org/"
+  },
+  "Kajabi": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "_kjb_session": ""
+    },
+    "icon": "Kajabi.svg",
+    "js": {
+      "Kajabi": ""
+    },
+    "pricing": [
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://newkajabi.com"
+  },
+  "Kameleoon": {
+    "cats": [
+      74
+    ],
+    "cookies": {
+      "kameleoonVisitorCode": ""
+    },
+    "description": "Kameleoon is a personalisation technology platform for real-time omnichannel optimisation and conversion.",
+    "dom": "link[href*='.kameleoon.eu/kameleoon.js']",
+    "icon": "Kameleoon.svg",
+    "js": {
+      "Kameleoon.Gatherer.SCRIPT_VERSION": "(.+)\\;version:\\1",
+      "kameleoonEndLoadTime": "",
+      "kameleoonS": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.kameleoon\\.\\w+/kameleoon\\.js",
+    "website": "https://kameleoon.com/"
+  },
+  "Kamva": {
+    "cats": [
+      6
+    ],
+    "icon": "Kamva.svg",
+    "js": {
+      "Kamva": ""
+    },
+    "meta": {
+      "generator": "[CK]amva"
+    },
+    "scripts": "cdn\\.mykamva\\.ir",
+    "website": "https://kamva.ir"
+  },
+  "Karma": {
+    "cats": [
+      59
+    ],
+    "description": "Karma is a test runner for JavaScript that runs on Node.js.",
+    "icon": "Karma.svg",
+    "implies": "Node.js",
+    "js": {
+      "karma.vars.version": "(.+)\\;version:\\1"
+    },
+    "oss": true,
+    "scripts": "karma\\.mdpcdn\\.com",
+    "website": "https://karma-runner.github.io"
+  },
+  "Kartra": {
+    "cats": [
+      32
+    ],
+    "description": "Kartra is an online business platform that offers marketing and sales tools.",
+    "dom": "form[action*='app.kartra.com']",
+    "icon": "Kartra.png",
+    "js": {
+      "init_kartra_tracking": "",
+      "kartra_tracking_loaded": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "app\\.kartra\\.com",
+    "website": "https://home.kartra.com"
+  },
+  "Keap": {
+    "cats": [
+      53
+    ],
+    "description": "Keap offers an email marketing and sales platform for small businesses, including products to manage customers, customer relationship management, marketing, and ecommerce.",
+    "dom": "form[action*='property.infusionsoft.com']",
+    "icon": "Keap.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "property\\.infusionsoft\\.com",
+    "website": "https://keap.com",
+    "xhr": "property\\.infusionsoft\\.com"
+  },
+  "Kemal": {
+    "cats": [
+      18,
+      22
+    ],
+    "headers": {
+      "X-Powered-By": "Kemal"
+    },
+    "icon": "kemalcr.png",
+    "website": "http://kemalcr.com"
+  },
+  "Kendo UI": {
+    "cats": [
+      66
+    ],
+    "description": "Kendo UI is a HTML5 user interface framework for building interactive and high-performance websites and applications.",
+    "html": "<link[^>]*\\s+href=[^>]*styles/kendo\\.common(?:\\.min)?\\.css[^>]*/>",
+    "icon": "Kendo UI.png",
+    "implies": "jQuery",
+    "js": {
+      "kendo": "",
+      "kendo.version": "^(.+)$\\;version:\\1"
+    },
+    "website": "https://www.telerik.com/kendo-ui"
+  },
+  "Kentico CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "CMSPreferredCulture": ""
+    },
+    "cpe": "cpe:/a:kentico:kentico_cms",
+    "description": "Kentico CMS is a web content management system for building websites, online stores, intranets, and Web 2.0 community sites.",
+    "icon": "Kentico CMS.png",
+    "js": {
+      "CMS.Application": ""
+    },
+    "meta": {
+      "generator": "Kentico CMS ([\\d.R]+ \\(build [\\d.]+\\))\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "/CMSPages/GetResource\\.ashx",
+    "website": "http://www.kentico.com"
+  },
+  "Kerberos": {
+    "cats": [
+      16
+    ],
+    "description": "Kerberos is an authentication method commonly used by Windows servers",
+    "headers": {
+      "WWW-Authenticate": "^Kerberos"
+    },
+    "website": "https://tools.ietf.org/html/rfc4559"
+  },
+  "Kestrel": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "^Kestrel"
+    },
+    "icon": "kestrel.svg",
+    "implies": "Microsoft ASP.NET",
+    "website": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel"
+  },
+  "KeyCDN": {
+    "cats": [
+      31
+    ],
+    "description": "KeyCDN is a content delivery network (CDN).",
+    "headers": {
+      "Server": "^keycdn-engine$"
+    },
+    "icon": "KeyCDN.png",
+    "website": "http://www.keycdn.com"
+  },
+  "Kibana": {
+    "cats": [
+      29,
+      25
+    ],
+    "cpe": "cpe:/a:elasticsearch:kibana",
+    "description": "Kibana is an open-source data visualisation dashboard for Elasticsearch. It provides visualisation capabilities on top of the content indexed on an Elasticsearch cluster. Users can create bar, line and scatter plots, or pie charts and maps on top of large volumes of data.",
+    "headers": {
+      "kbn-name": "kibana",
+      "kbn-version": "^([\\d.]+)$\\;version:\\1"
+    },
+    "html": "<title>Kibana</title>",
+    "icon": "kibana.svg",
+    "implies": [
+      "Node.js",
+      "Elasticsearch"
+    ],
+    "url": "kibana#/dashboard/",
+    "website": "http://www.elastic.co/products/kibana"
+  },
+  "Kibo Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Kibo Commerce is a enterprise ecommerce platform  that offers a cloud-based, end-to-end commerce solution for retailers and branded manufacturers.",
+    "icon": "Kibo.png",
+    "pricing": [
+      "poa"
+    ],
+    "scripts": "cdn-tp\\d+\\.mozu\\.com",
+    "website": "https://kibocommerce.com"
+  },
+  "Kibo Personalization": {
+    "cats": [
+      76,
+      74
+    ],
+    "description": "Kibo Personalization is a omnichannel personalisation software powered by machine learning to deliver individualized customer experiences and powered by Monetate and Certona.",
+    "icon": "Kibo.png",
+    "js": {
+      "BaynoteAPI": "",
+      "BaynoteJSVersion": "",
+      "monetate": "",
+      "monetateQ": "",
+      "monetateT": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.monetate\\.net",
+      "\\.baynote\\.net"
+    ],
+    "website": "https://kibocommerce.com/personalization-software"
+  },
+  "KineticJS": {
+    "cats": [
+      25
+    ],
+    "icon": "KineticJS.png",
+    "js": {
+      "Kinetic": "",
+      "Kinetic.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "kinetic(?:-v?([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://github.com/ericdrowell/KineticJS/"
+  },
+  "Kinsta": {
+    "cats": [
+      62,
+      88
+    ],
+    "headers": {
+      "x-kinsta-cache": ""
+    },
+    "icon": "kinsta.svg",
+    "implies": "WordPress",
+    "website": "https://kinsta.com"
+  },
+  "Kiwi Sizing": {
+    "cats": [
+      76
+    ],
+    "description": "Kiwi Sizing is a size chart and a recommender plugin on the Shopify platform.",
+    "icon": "Kiwi Sizing.png",
+    "js": {
+      "KiwiSizing": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.static\\.kiwisizing\\.com/",
+    "website": "https://www.kiwisizing.com"
+  },
+  "Klarna Checkout": {
+    "cats": [
+      41,
+      6,
+      91
+    ],
+    "cookies": {
+      "ku1-sid": "",
+      "ku1-vid": ""
+    },
+    "description": "Klarna Checkout is a complete payment solution where Klarna handles a store's entire checkout.",
+    "icon": "Klarna.svg",
+    "js": {
+      "KlarnaOnsiteService": "",
+      "_klarnaCheckout": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.klarnaservices\\.com/lib\\.js",
+    "website": "https://www.klarna.com/international/"
+  },
+  "Klaviyo": {
+    "cats": [
+      32
+    ],
+    "description": "Klaviyo is an email marketing platform for online businesses.",
+    "icon": "Klaviyo.svg",
+    "js": {
+      "KlaviyoSubscribe": "",
+      "klaviyo": ""
+    },
+    "scripts": "klaviyo\\.com",
+    "website": "https://www.klaviyo.com/"
+  },
+  "Klevu": {
+    "cats": [
+      29
+    ],
+    "description": "Klevu is a highly advanced AI-Powered search solution for ecommerce platforms.",
+    "icon": "Klevu.png",
+    "js": {
+      "klevu_apiKey": "",
+      "klevu_layout": "",
+      "klevu_sessionId": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1",
+    "website": "https://www.klevu.com"
+  },
+  "Knockout.js": {
+    "cats": [
+      12
+    ],
+    "icon": "Knockout.js.png",
+    "js": {
+      "ko.version": "^(.+)$\\;version:\\1"
+    },
+    "website": "http://knockoutjs.com"
+  },
+  "Ko-fi": {
+    "cats": [
+      5,
+      41
+    ],
+    "description": "Ko-fi is an online platform that helps content creators get the financial support.",
+    "dom": "a[href*='ko-fi.com/'][target='_blank']",
+    "icon": "Ko-fi.svg",
+    "js": {
+      "kofiwidget2": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "ko-fi\\.com/widgets",
+    "website": "https://ko-fi.com"
+  },
+  "Koa": {
+    "cats": [
+      18,
+      22
+    ],
+    "headers": {
+      "X-Powered-By": "^koa$"
+    },
+    "icon": "Koa.png",
+    "implies": "Node.js",
+    "website": "http://koajs.com"
+  },
+  "Koala Framework": {
+    "cats": [
+      1,
+      18
+    ],
+    "html": "<!--[^>]+This website is powered by Koala Web Framework CMS",
+    "icon": "Koala Framework.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^Koala Web Framework CMS"
+    },
+    "website": "http://koala-framework.org"
+  },
+  "KobiMaster": {
+    "cats": [
+      6
+    ],
+    "icon": "Kobimaster.png",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "kmGetSession": "",
+      "kmPageInfo": ""
+    },
+    "website": "https://www.kobimaster.com.tr"
+  },
+  "Koha": {
+    "cats": [
+      50
+    ],
+    "cpe": "cpe:/a:koha:koha",
+    "description": "Koha is an open-source Integrated Library System (ILS).",
+    "html": [
+      "<input name=\"koha_login_context\" value=\"intranet\" type=\"hidden\">",
+      "<a href=\"/cgi-bin/koha/"
+    ],
+    "icon": "koha.png",
+    "implies": "Perl",
+    "js": {
+      "KOHA": ""
+    },
+    "meta": {
+      "generator": "^Koha ([\\d.]+)$\\;version:\\1"
+    },
+    "website": "https://koha-community.org/"
+  },
+  "Kohana": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "kohanasession": ""
+    },
+    "cpe": "cpe:/a:kohanaframework:kohana",
+    "headers": {
+      "X-Powered-By": "Kohana Framework ([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Kohana.png",
+    "implies": "PHP",
+    "website": "http://kohanaframework.org"
+  },
+  "Koken": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "koken_referrer": ""
+    },
+    "html": [
+      "<html lang=\"en\" class=\"k-source-essays k-lens-essays\">",
+      "<!--\\s+KOKEN DEBUGGING"
+    ],
+    "icon": "Koken.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "Koken ([\\d.]+)\\;version:\\1"
+    },
+    "scripts": "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1",
+    "website": "http://koken.me"
+  },
+  "Komodo CMS": {
+    "cats": [
+      1
+    ],
+    "icon": "Komodo CMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^Komodo CMS"
+    },
+    "website": "http://www.komodocms.com"
+  },
+  "Konduto": {
+    "cats": [
+      16
+    ],
+    "description": "Konduto is a fraud detection service for ecommerce.",
+    "dom": "link[href*='.konduto.com']",
+    "icon": "Konduto.png",
+    "js": {
+      "Konduto": "",
+      "getKondutoID": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.k-analytix\\.com",
+    "website": "https://www.konduto.com"
+  },
+  "Koobi": {
+    "cats": [
+      1
+    ],
+    "html": "<!--[^K>-]+Koobi ([a-z\\d.]+)\\;version:\\1",
+    "icon": "Koobi.png",
+    "meta": {
+      "generator": "Koobi"
+    },
+    "website": "http://dream4.de/cms"
+  },
+  "Kooboo CMS": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-KoobooCMS-Version": "^(.+)$\\;version:\\1"
+    },
+    "icon": "Kooboo CMS.png",
+    "implies": "Microsoft ASP.NET",
+    "scripts": "/Kooboo",
+    "website": "http://kooboo.com"
+  },
+  "Kooomo": {
+    "cats": [
+      6
+    ],
+    "description": "Kooomo is a SaaS ecommerce platform with a focus on localisation and internationalisation.",
+    "dom": "img[src*='.kooomo-cloud.com']",
+    "icon": "Kooomo.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "Kooomo(?: v([\\d.]+))?\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.kooomo.com"
+  },
+  "Kotisivukone": {
+    "cats": [
+      1
+    ],
+    "icon": "Kotisivukone.png",
+    "scripts": "kotisivukone(?:\\.min)?\\.js",
+    "website": "http://www.kotisivukone.fi"
+  },
+  "Kount": {
+    "cats": [
+      10,
+      16
+    ],
+    "description": "Kount is a suite of fraud detection and prevention solutions for ecommerce businesses.",
+    "icon": "Kount.svg",
+    "js": {
+      "ka.ClientSDK": "",
+      "ka.collectData": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "shopify\\.kount\\.net/js"
+    ],
+    "website": "https://kount.com"
+  },
+  "Kubernetes Dashboard": {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:/a:kubernetes:kubernetes",
+    "html": "<html ng-app=\"kubernetesDashboard\">",
+    "icon": "Kubernetes.svg",
+    "website": "https://kubernetes.io/"
+  },
+  "KueskiPay": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "KueskiPay is a buy-now-pay-later solution.",
+    "icon": "KueskiPay.svg",
+    "implies": [
+      "Cart Functionality"
+    ],
+    "js": {
+      "kueskypushhead": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "scripts": "cdn\\.kueskipay\\.com",
+    "website": "https://kueskipay.com/"
+  },
+  "Kustomer": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Kustomer is a CRM platform.",
+    "icon": "Kustomer.svg",
+    "js": {
+      "Kustomer": ""
+    },
+    "scripts": [
+      "cdn\\.kustomerapp\\.com"
+    ],
+    "website": "https://www.kustomer.com/"
+  }
+}

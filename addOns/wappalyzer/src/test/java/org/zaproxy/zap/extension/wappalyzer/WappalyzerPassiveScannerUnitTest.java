@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +48,8 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
             try {
                 defaultHolder = new WappalyzerApplicationTestHolder();
                 WappalyzerJsonParser parser = new WappalyzerJsonParser();
-                WappalyzerData result = parser.parseAppsJson("apps.json");
+                WappalyzerData result =
+                        parser.parse("categories.json", Collections.singletonList("apps.json"));
                 defaultHolder.setApplications(result.getApplications());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
