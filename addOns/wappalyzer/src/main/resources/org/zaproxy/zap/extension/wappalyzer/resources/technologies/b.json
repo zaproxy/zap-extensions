@@ -206,6 +206,20 @@
     "scripts": "msecnd\\.net/api/beYableJSv(\\d+)\\;version:\\1",
     "website": "https://beyable.com"
   },
+  "BeyondMenu": {
+    "cats": [
+      51,
+      93
+    ],
+    "description": "BeyondMenu is an online food ordering service.",
+    "icon": "BeyondMenu.png",
+    "scripts": "static\\.beyondmenu\\.com/",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.beyondmenu.com/contactus.aspx"
+  },
   "Big Cartel": {
     "cats": [
       6
@@ -654,8 +668,7 @@
   },
   "BookDinners": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "BookDinners is a restaurant table booking widget.",
     "icon": "BookDinners.svg",
@@ -664,8 +677,7 @@
   },
   "Bookatable": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Bookatable is a restaurant table booking widget.",
     "icon": "Bookatable.svg",

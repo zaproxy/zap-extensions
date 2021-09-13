@@ -547,6 +547,20 @@
     "scripts": "js\\.chilipiper\\.com/marketing\\.js",
     "website": "https://www.chilipiper.com/"
   },
+  "Chinese Menu Online": {
+    "cats": [
+      51,
+      93
+    ],
+    "description": "Chinese Menu Online is an online food ordering service.",
+    "icon": "Chinese Menu Online.png",
+    "dom": "li > a[href*='chinesemenuonline.com']",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.chinesemenuonline.com"
+  },
   "Chitika": {
     "cats": [
       36
@@ -1772,6 +1786,27 @@
     "scripts": "tag\\.crsspxl\\.com",
     "website": "http://crosspixel.net"
   },
+  "Cross Sell": {
+    "cats": [
+      76
+    ],
+    "description": "Cross Sell provide recommendations solution for Shopify based sites.",
+    "icon": "CrossSell.png",
+    "implies": [
+      "Shopify",
+      "Cart Functionality"
+    ],    
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,    
+    "scripts": [
+      "load\\.csell\\.co"
+    ],
+    "website": "https://csell.io/"
+  },  
   "CrossBox": {
     "cats": [
       30

@@ -100,8 +100,7 @@
   },
   "TableBooker": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Tablebooker is an online reservation system for restaurants.",
     "dom": {
@@ -122,8 +121,7 @@
   },
   "TableCheck": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "TableCheck is a restaurant table booking widget.",
     "dom": {
@@ -250,6 +248,15 @@
     "scripts": "cdn\\.tamara\\.co",
     "website": "https://tamara.co/"
   },
+  "Target2Sell": {
+    "cats": [
+      76
+    ],
+    "description": "Target2Sell is a personalisation solution for ecommerce sites.",
+    "icon": "Target2Sell.png",
+    "scripts": "static\\.target2sell\\.com",
+    "website": "https://www.target2sell.com/"
+  },
   "Tatari": {
     "cats": [
       36
@@ -309,6 +316,7 @@
     ],
     "description": "Teads is a technology provider that sells ads on publisher websites.",
     "icon": "Teads.svg",
+    "scripts": "teads\\.tv",
     "website": "https://www.teads.com",
     "xhr": "\\.teads\\.tv"
   },
@@ -497,8 +505,7 @@
   },
   "Thefork": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Thefork is a restaurant booking, managing system.",
     "dom": {
@@ -1010,6 +1017,19 @@
     "scripts": "consent\\.trustarc\\.com",
     "website": "http://trustarc.com"
   },
+  "Trustspot": {
+    "cats": [
+      90
+    ],
+    "description": "TrustSpot provides a solution to capture ratings & reviews, video testimonials, photos, social experiences, and product Q&A.",
+    "icon": "Trustspot.png",
+    "js": {
+      "trustspot_key": ""
+    },
+    "saas": true,
+    "scripts": "trustspot\\.io",
+    "website": "https://trustspot.io/"
+  },
   "TrustYou": {
     "cats": [
       5
@@ -1028,7 +1048,7 @@
   },
   "Trustpilot": {
     "cats": [
-      5
+      90
     ],
     "description": "Trustpilot is a Danish consumer review website which provide embed stand-alone applications in your website to show your most recent reviews, TrustScore, and star ratings.",
     "icon": "Trustpilot.svg",
@@ -1328,6 +1348,13 @@
       36
     ],
     "description": "theTradeDesk is an technology company that markets a software platform used by digital ad buyers to purchase data-driven digital advertising campaigns across various ad formats and devices.",
+    "dom": {
+      "iframe[src*='insight.adsrvr.org']": {
+        "attributes": {
+          "src": ""
+        }
+      }
+    },
     "icon": "theTradeDesk.svg",
     "js": {
       "TTDUniversalPixelApi": "",

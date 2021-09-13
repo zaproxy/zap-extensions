@@ -480,6 +480,20 @@
     "scripts": "Divi/js/custom\\.(?:min|unified)\\.js\\?ver=([\\d.]+)\\;version:\\1",
     "website": "https://www.elegantthemes.com/gallery/divi"
   },
+  "DivideBuy": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Dividebuy provides retailer financing solutions.",
+    "dom": "div[class*='dividebuy-softcredit']",    
+    "icon": "DivideBuy.png",
+    "js": {
+      "display_dividebuy_modal": ""
+    },
+    "saas": true,
+    "website": "https://dividebuy.co.uk/"
+  }, 
   "Divido": {
     "cats": [
       41,

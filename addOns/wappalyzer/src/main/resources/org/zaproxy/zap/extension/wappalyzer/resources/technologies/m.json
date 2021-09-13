@@ -327,7 +327,7 @@
       41
     ],
     "description": "MasterCard facilitates electronic funds transfers throughout the world, most commonly through branded credit cards, debit cards and prepaid cards.",
-    "dom": "[aria-labelledby='pi-mastercard']",
+    "dom": "[aria-labelledby='pi-mastercard'], [aria-labelledby='pi-master']",
     "icon": "Mastercard.svg",
     "website": "https://www.mastercard.com"
   },
@@ -665,6 +665,35 @@
     "scripts": "memberstack\\.js",
     "url": "^https?//.+\\.memberstack\\.io",
     "website": "https://www.memberstack.io"
+  },
+  "Menufy Online Ordering": {
+    "cats": [
+      93
+    ],
+    "description": "Menufy is an online and mobile meal ordering service.",
+    "icon": "Menufy.png",
+    "dom": "a[href*='.menufy.com/'][target='_blank']",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://restaurant.menufy.com"
+  },
+  "Menufy Website": {
+    "cats": [
+      51
+    ],
+    "description": "Menufy is an online and mobile meal ordering service.",
+    "icon": "Menufy.png",
+    "js": {
+      "Views_Website_Layouts_Footer_Menufy": ""
+    },
+    "scripts": "sitecontent-menufycom\\.netdna-ssl\\.com/",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://restaurant.menufy.com"
   },
   "Mercado Shops": {
     "cats": [
@@ -1604,6 +1633,16 @@
     "icon": "mini_httpd.png",
     "website": "http://acme.com/software/mini_httpd"
   },
+  "mobicred": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Mobicred is a credit facility that allows you to safely shop online with our participating retailers.",
+    "icon": "Mobicred.png",
+    "scripts": "app\\.mobicredwidget\\.co\\.za",
+    "website": "https://mobicred.co.za/"
+  },  
   "mod_auth_pam": {
     "cats": [
       33

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
 - Updated to handle upstream Wappalyzer data file changes (Issue 6784).
 
 ## [21.3.0] - 2021-08-25

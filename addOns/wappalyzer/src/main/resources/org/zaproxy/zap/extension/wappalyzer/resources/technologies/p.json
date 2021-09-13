@@ -337,6 +337,27 @@
     "scripts": "app\\.paybright\\.com",
     "website": "https://paybright.com"
   },
+  "Payflex": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Payflex offers an online payment gateway solution to South African merchants that allows shoppers to pay over 6 weeks, interest-free.",
+    "dom": "[aria-labelledby='pi-payflex']",
+    "icon": "Payflex.png",
+    "saas": true,
+    "scripts": "partpayassets\\.blob\\.core\\.windows\\.net",
+    "website": "https://payflex.co.za/"
+  },
+  "PayFast": {
+    "cats": [
+      41
+    ],
+    "description": "PayFast is a payments processing service for South Africans & South African websites.",
+    "dom": "[aria-labelledby='pi-payfast_instant_eft']",
+    "icon": "Payfast.svg",
+    "website": "https://www.payfast.co.za/"
+  },  
   "PayKickStart": {
     "cats": [
       5,
@@ -1076,6 +1097,17 @@
     "scripts": "cdn\\.pdst\\.fm",
     "website": "https://podsights.com/"
   },
+  "Pojo.me": {
+    "cats": [
+      68
+    ],
+    "description": "Pojo.me provides a Accessibility overlay plug-in for any WordPress Theme or Page Builder.",   
+    "icon": "Pojo.me.png",
+    "js": {
+      "PojoA11yOptions": ""
+    },
+    "website": "https://pojo.me/plugins/accessibility/"
+  },  
   "Polyfill": {
     "cats": [
       59

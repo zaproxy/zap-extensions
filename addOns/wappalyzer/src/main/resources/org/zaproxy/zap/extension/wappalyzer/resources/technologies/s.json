@@ -780,7 +780,7 @@
     "cats": [
       6
     ],
-    "description": "Selly is an ecommerce payment processor. It accepts PayPal, Bitcoin, Ethereum, Litecoin, Stripe and more.",
+    "description": "Selly is an ecommerce platform for selling digital goods.",
     "icon": "Selly.svg",
     "pricing": [
       "low",
@@ -791,6 +791,20 @@
     "scripts": "embed\\.selly\\.(?:gg|io)",
     "website": "https://selly.io/"
   },
+  "Selz": {
+    "cats": [
+      6
+    ],
+    "description": "Selz is ecommerce platform with built-in payment processing.",
+    "dom": "img[src*='img.selzstatic.com']",
+    "icon": "Selz.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://selz.com/"
+  },  
   "Semantic UI": {
     "cats": [
       66
@@ -1875,6 +1889,19 @@
     "scripts": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
   },
+  "Slice": {
+    "cats": [
+      93
+    ],
+    "description": "Slice is an online food ordering platform for independent pizzerias.",
+    "icon": "Slice.svg",
+    "dom": "a[href*='slicelife.com/restaurants/']",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://slicelife.com/owners"
+  },
   "Slick": {
     "cats": [
       59
@@ -2553,6 +2580,25 @@
     },
     "icon": "Splunk.png",
     "website": "http://splunk.com"
+  },
+  "SpotHopper": {
+    "cats": [
+      51,
+      32,
+      75
+    ],
+    "description": "SpotHopper is an all-in-one marketing and online revenue platform for restaurants.",
+    "icon": "SpotHopper.png",
+    "js": {
+      "Spothopper": ""
+    },
+    "scripts": "static\\.spotapps\\.co/",
+    "saas":true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.spothopperapp.com"
   },
   "SpotX": {
     "cats": [

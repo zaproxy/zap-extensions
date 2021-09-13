@@ -1244,8 +1244,7 @@
   },
   "Guestonline": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Guestonline is a restaurant table booking widget.",
     "dom": "iframe[src*='ib.guestonline.']",

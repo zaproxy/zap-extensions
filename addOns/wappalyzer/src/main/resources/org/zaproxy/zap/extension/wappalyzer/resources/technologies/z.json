@@ -284,6 +284,27 @@
     "implies": "Zoho",
     "website": "https://www.zoho.com/mail/"
   },
+  "Zoko": {
+    "cats": [
+      52
+    ],
+    "description": "Zoko is an all-in-one system that leverages the WhatsApp API to help you do business, on WhatsApp",
+    "icon": "Zoko.png",
+    "implies": [
+      "WhatsApp Business Chat"
+    ],    
+    "js": {
+      "__zoko_app_version": ""
+    },
+    "pricing": [
+      "recurring",
+      "payg",
+      "mid"
+    ],   
+    "saas": true,
+    "scripts": "zoko-shopify-prod\\.web\\.app",
+    "website": "https://www.zoko.io/"
+  },   
   "Zone.js": {
     "cats": [
       12

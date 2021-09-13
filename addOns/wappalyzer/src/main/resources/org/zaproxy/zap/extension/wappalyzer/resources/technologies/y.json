@@ -135,8 +135,7 @@
   },
   "Yelp Reservations": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Yelp Reservations is a cloud-based restaurant management system.",
     "dom": {
