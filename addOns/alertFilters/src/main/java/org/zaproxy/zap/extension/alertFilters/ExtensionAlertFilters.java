@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -569,5 +570,21 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             }
         }
         return count;
+    }
+
+    public Set<AlertFilter> getGlobalAlertFilters() {
+        return Collections.unmodifiableSet(this.globalAlertFilterParam.getGlobalAlertFilters());
+    }
+
+    public boolean addGlobalAlertFilter(AlertFilter af) {
+        return this.globalAlertFilterParam.addAlertFilter(af);
+    }
+
+    public boolean removeGlobalAlertFilter(AlertFilter af) {
+        return this.globalAlertFilterParam.removeFilter(af);
+    }
+
+    public void deleteAllGlobalAlertFilters() {
+        this.globalAlertFilterParam.deleteGlobalAlertFilters();
     }
 }

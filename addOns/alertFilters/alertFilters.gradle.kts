@@ -10,6 +10,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/alert-filters/")
+        extensions {
+            register("org.zaproxy.zap.extension.alertFilters.automation.ExtensionAlertFiltersAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.alertFilters.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.5.0")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -19,5 +33,7 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
+    testImplementation(parent!!.childProjects.get("automation")!!)
 }
