@@ -1,0 +1,362 @@
+{
+  "1": {
+    "name": "CMS",
+    "priority": 1
+  },
+  "2": {
+    "name": "Message boards",
+    "priority": 1
+  },
+  "3": {
+    "name": "Database managers",
+    "priority": 2
+  },
+  "4": {
+    "name": "Documentation",
+    "priority": 2
+  },
+  "5": {
+    "name": "Widgets",
+    "priority": 9
+  },
+  "6": {
+    "name": "Ecommerce",
+    "priority": 1
+  },
+  "7": {
+    "name": "Photo galleries",
+    "priority": 1
+  },
+  "8": {
+    "name": "Wikis",
+    "priority": 1
+  },
+  "9": {
+    "name": "Hosting panels",
+    "priority": 1
+  },
+  "10": {
+    "name": "Analytics",
+    "priority": 9
+  },
+  "11": {
+    "name": "Blogs",
+    "priority": 1
+  },
+  "12": {
+    "name": "JavaScript frameworks",
+    "priority": 8
+  },
+  "13": {
+    "name": "Issue trackers",
+    "priority": 2
+  },
+  "14": {
+    "name": "Video players",
+    "priority": 7
+  },
+  "15": {
+    "name": "Comment systems",
+    "priority": 9
+  },
+  "16": {
+    "name": "Security",
+    "priority": 9
+  },
+  "17": {
+    "name": "Font scripts",
+    "priority": 9
+  },
+  "18": {
+    "name": "Web frameworks",
+    "priority": 7
+  },
+  "19": {
+    "name": "Miscellaneous",
+    "priority": 9
+  },
+  "20": {
+    "name": "Editors",
+    "priority": 4
+  },
+  "21": {
+    "name": "LMS",
+    "priority": 1
+  },
+  "22": {
+    "name": "Web servers",
+    "priority": 8
+  },
+  "23": {
+    "name": "Caching",
+    "priority": 7
+  },
+  "24": {
+    "name": "Rich text editors",
+    "priority": 5
+  },
+  "25": {
+    "name": "JavaScript graphics",
+    "priority": 6
+  },
+  "26": {
+    "name": "Mobile frameworks",
+    "priority": 8
+  },
+  "27": {
+    "name": "Programming languages",
+    "priority": 5
+  },
+  "28": {
+    "name": "Operating systems",
+    "priority": 6
+  },
+  "29": {
+    "name": "Search engines",
+    "priority": 4
+  },
+  "30": {
+    "name": "Webmail",
+    "priority": 2
+  },
+  "31": {
+    "name": "CDN",
+    "priority": 9
+  },
+  "32": {
+    "name": "Marketing automation",
+    "priority": 9
+  },
+  "33": {
+    "name": "Web server extensions",
+    "priority": 7
+  },
+  "34": {
+    "name": "Databases",
+    "priority": 5
+  },
+  "35": {
+    "name": "Maps",
+    "priority": 6
+  },
+  "36": {
+    "name": "Advertising",
+    "priority": 9
+  },
+  "37": {
+    "name": "Network devices",
+    "priority": 2
+  },
+  "38": {
+    "name": "Media servers",
+    "priority": 1
+  },
+  "39": {
+    "name": "Webcams",
+    "priority": 9
+  },
+  "41": {
+    "name": "Payment processors",
+    "priority": 8
+  },
+  "42": {
+    "name": "Tag managers",
+    "priority": 9
+  },
+  "44": {
+    "name": "CI",
+    "priority": 3
+  },
+  "45": {
+    "name": "Control systems",
+    "priority": 2
+  },
+  "46": {
+    "name": "Remote access",
+    "priority": 1
+  },
+  "47": {
+    "name": "Development",
+    "priority": 2
+  },
+  "48": {
+    "name": "Network storage",
+    "priority": 2
+  },
+  "49": {
+    "name": "Feed readers",
+    "priority": 1
+  },
+  "50": {
+    "name": "DMS",
+    "priority": 1
+  },
+  "51": {
+    "name": "Page builders",
+    "priority": 2
+  },
+  "52": {
+    "name": "Live chat",
+    "priority": 9
+  },
+  "53": {
+    "name": "CRM",
+    "priority": 5
+  },
+  "54": {
+    "name": "SEO",
+    "priority": 8
+  },
+  "55": {
+    "name": "Accounting",
+    "priority": 1
+  },
+  "56": {
+    "name": "Cryptominers",
+    "priority": 5
+  },
+  "57": {
+    "name": "Static site generator",
+    "priority": 1
+  },
+  "58": {
+    "name": "User onboarding",
+    "priority": 8
+  },
+  "59": {
+    "name": "JavaScript libraries",
+    "priority": 9
+  },
+  "60": {
+    "name": "Containers",
+    "priority": 8
+  },
+  "62": {
+    "name": "PaaS",
+    "priority": 8
+  },
+  "63": {
+    "name": "IaaS",
+    "priority": 8
+  },
+  "64": {
+    "name": "Reverse proxies",
+    "priority": 7
+  },
+  "65": {
+    "name": "Load balancers",
+    "priority": 7
+  },
+  "66": {
+    "name": "UI frameworks",
+    "priority": 7
+  },
+  "67": {
+    "name": "Cookie compliance",
+    "priority": 9
+  },
+  "68": {
+    "name": "Accessibility",
+    "priority": 9
+  },
+  "69": {
+    "name": "Social logins",
+    "priority": 6
+  },
+  "70": {
+    "name": "SSL/TLS certificate authorities",
+    "priority": 9
+  },
+  "71": {
+    "name": "Affiliate programs",
+    "priority": 9
+  },
+  "72": {
+    "name": "Appointment scheduling",
+    "priority": 9
+  },
+  "73": {
+    "name": "Surveys",
+    "priority": 9
+  },
+  "74": {
+    "name": "A/B Testing",
+    "priority": 9
+  },
+  "75": {
+    "name": "Email",
+    "priority": 9
+  },
+  "76": {
+    "name": "Personalisation",
+    "priority": 9
+  },
+  "77": {
+    "name": "Retargeting",
+    "priority": 9
+  },
+  "78": {
+    "name": "RUM",
+    "priority": 9
+  },
+  "79": {
+    "name": "Geolocation",
+    "priority": 9
+  },
+  "80": {
+    "name": "WordPress themes",
+    "priority": 9
+  },
+  "81": {
+    "name": "Shopify themes",
+    "priority": 9
+  },
+  "82": {
+    "name": "Drupal themes",
+    "priority": 9
+  },
+  "83": {
+    "name": "Browser fingerprinting",
+    "priority": 9
+  },
+  "84": {
+    "name": "Loyalty & rewards",
+    "priority": 9
+  },
+  "85": {
+    "name": "Feature management",
+    "priority": 9
+  },
+  "86": {
+    "name": "Segmentation",
+    "priority": 9
+  },
+  "87": {
+    "name": "WordPress plugins",
+    "priority": 9
+  },
+  "88": {
+    "name": "Hosting",
+    "priority": 9
+  },
+  "89": {
+    "name": "Translation",
+    "priority": 9
+  },
+  "90": {
+    "name": "Reviews",
+    "priority": 9
+  },
+  "91": {
+    "name": "Buy now pay later",
+    "priority": 9
+  },
+  "92": {
+    "name": "Performance",
+    "priority": 9
+  },
+  "93": {
+    "name": "Reservations & delivery",
+    "priority": 9
+  }
+}

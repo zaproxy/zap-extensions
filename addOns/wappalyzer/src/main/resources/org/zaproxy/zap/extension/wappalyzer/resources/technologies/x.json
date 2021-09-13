@@ -1,0 +1,236 @@
+{
+  "X-Cart": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "xid": "[a-z\\d]{32}(?:;|$)"
+    },
+    "html": [
+      "Powered by X-Cart(?: (\\d+))? <a[^>]+href=\"http://www\\.x-cart\\.com/\"[^>]*>\\;version:\\1",
+      "<a[^>]+href=\"[^\"]*(?:\\?|&)xcart_form_id=[a-z\\d]{32}(?:&|$)"
+    ],
+    "icon": "X-Cart.png",
+    "implies": "PHP",
+    "js": {
+      "xcart_web_dir": "",
+      "xliteConfig": ""
+    },
+    "meta": {
+      "generator": "X-Cart(?: (\\d+))?\\;version:\\1"
+    },
+    "scripts": "/skin/common_files/modules/Product_Options/func\\.js",
+    "website": "http://x-cart.com"
+  },
+  "X.ai": {
+    "cats": [
+      72
+    ],
+    "description": "X.ai is a scheduling tool that organizes meeting times and improves lead conversion by adding embedded booking buttons to websites or within live chat applications.",
+    "icon": "X.ai.png",
+    "js": {
+      "xdotaiAction": "",
+      "xdotaiButton": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js",
+    "website": "https://x.ai"
+  },
+  "XAMPP": {
+    "cats": [
+      22
+    ],
+    "html": "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1",
+    "icon": "XAMPP.png",
+    "implies": [
+      "Apache",
+      "MySQL",
+      "PHP",
+      "Perl"
+    ],
+    "meta": {
+      "author": "Kai Oswald Seidler\\;confidence:10"
+    },
+    "website": "http://www.apachefriends.org/en/xampp.html"
+  },
+  "XMB": {
+    "cats": [
+      2
+    ],
+    "html": "<!-- Powered by XMB",
+    "icon": "XMB.png",
+    "website": "http://www.xmbforum.com"
+  },
+  "XOOPS": {
+    "cats": [
+      1
+    ],
+    "icon": "XOOPS.png",
+    "implies": "PHP",
+    "js": {
+      "xoops": ""
+    },
+    "meta": {
+      "generator": "XOOPS"
+    },
+    "website": "http://xoops.org"
+  },
+  "XRegExp": {
+    "cats": [
+      59
+    ],
+    "icon": "XRegExp.png",
+    "js": {
+      "XRegExp.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": [
+      "xregexp[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
+      "/([\\d.]+)/xregexp(?:\\.min)?\\.js\\;version:\\1",
+      "xregexp.*\\.js"
+    ],
+    "website": "http://xregexp.com"
+  },
+  "XWiki": {
+    "cats": [
+      8
+    ],
+    "description": "XWiki is a free wiki software platform written in Java.",
+    "excludes": "MediaWiki",
+    "html": [
+      "<html[^>]data-xwiki-[^>]>"
+    ],
+    "icon": "xwiki.png",
+    "implies": "Java\\;confidence:99",
+    "meta": {
+      "wiki": "xwiki"
+    },
+    "website": "http://www.xwiki.org"
+  },
+  "Xajax": {
+    "cats": [
+      59
+    ],
+    "icon": "Xajax.png",
+    "scripts": "xajax_core.*\\.js",
+    "website": "http://xajax-project.org"
+  },
+  "Xanario": {
+    "cats": [
+      6
+    ],
+    "icon": "Xanario.png",
+    "meta": {
+      "generator": "xanario shopsoftware"
+    },
+    "website": "http://xanario.de"
+  },
+  "XenForo": {
+    "cats": [
+      2
+    ],
+    "cookies": {
+      "xf_csrf": "",
+      "xf_session": ""
+    },
+    "description": "XenForo is a PHP-based forum hosting program for communities that is designed to be deployed on a remote web server.",
+    "html": [
+      "(?:jQuery\\.extend\\(true, XenForo|<a[^>]+>Forum software by XenForo™|<!--XF:branding|<html[^>]+id=\"XenForo\")",
+      "<html id=\"XF\" "
+    ],
+    "icon": "XenForo.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "XF.GuestUsername": ""
+    },
+    "website": "http://xenforo.com"
+  },
+  "Xeora": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "Server": "XeoraEngine",
+      "X-Powered-By": "XeoraCube"
+    },
+    "html": "<input type=\"hidden\" name=\"_sys_bind_\\d+\" id=\"_sys_bind_\\d+\" />",
+    "icon": "xeora.png",
+    "implies": "Microsoft ASP.NET",
+    "scripts": "/_bi_sps_v.+\\.js",
+    "website": "http://www.xeora.org"
+  },
+  "Xitami": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "Xitami(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Xitami.png",
+    "website": "http://xitami.com"
+  },
+  "Xonic": {
+    "cats": [
+      6
+    ],
+    "html": [
+      "Powered by <a href=\"http://www\\.xonic-solutions\\.de/index\\.php\" target=\"_blank\">xonic-solutions Shopsoftware</a>"
+    ],
+    "icon": "xonic.png",
+    "meta": {
+      "keywords": "xonic-solutions"
+    },
+    "scripts": "core/jslib/jquery\\.xonic\\.js\\.php",
+    "website": "http://www.xonic-solutions.de"
+  },
+  "XpressEngine": {
+    "cats": [
+      1
+    ],
+    "icon": "XpressEngine.png",
+    "meta": {
+      "generator": "XpressEngine"
+    },
+    "website": "http://www.xpressengine.com/"
+  },
+  "Xtremepush": {
+    "cats": [
+      32
+    ],
+    "description": "Xtremepush is a customer engagement, personalisation and data platform. It's purpose-built for multichannel and mobile marketing.",
+    "icon": "Xtremepush.svg",
+    "js": {
+      "xtremepush": ""
+    },
+    "website": "https://xtremepush.com"
+  },
+  "xCharts": {
+    "cats": [
+      25
+    ],
+    "html": "<link[^>]* href=\"[^\"]*xcharts(?:\\.min)?\\.css",
+    "implies": "D3",
+    "js": {
+      "xChart": ""
+    },
+    "scripts": "xcharts\\.js",
+    "website": "https://tenxer.github.io/xcharts/"
+  },
+  "xtCommerce": {
+    "cats": [
+      6
+    ],
+    "html": "<div class=\"copyright\">[^<]+<a[^>]+>xt:Commerce",
+    "icon": "xtCommerce.png",
+    "meta": {
+      "generator": "xt:Commerce"
+    },
+    "website": "https://www.xt-commerce.com"
+  }
+}

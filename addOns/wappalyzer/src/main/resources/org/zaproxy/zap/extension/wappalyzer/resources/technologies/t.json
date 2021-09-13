@@ -1,0 +1,1378 @@
+{
+  "T-Soft": {
+    "cats": [
+      6
+    ],
+    "html": "<a href=\"http://www\\.tsoft\\.com\\.tr\" target=\"_blank\" title=\"T-Soft E-ticaret Sistemleri\">",
+    "icon": "Tsoft.png",
+    "website": "https://www.tsoft.com.tr/"
+  },
+  "TN Express Web": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "TNEW": ""
+    },
+    "description": "Tessitura is an enterprise application to manage activities in ticketing, fundraising, customer relationship management, and marketing.",
+    "icon": "tessitura.svg",
+    "implies": "Tessitura",
+    "website": "https://www.tessituranetwork.com"
+  },
+  "TNS Payments": {
+    "cats": [
+      41
+    ],
+    "description": "TNS Payments, is designed to deliver payment transaction information to banks, merchants, processors and other payment institutions.",
+    "icon": "tnsi.png",
+    "scripts": "secure\\.ap\\.tnspayments\\.com",
+    "website": "https://tnsi.com/products/payments/"
+  },
+  "TRUENDO": {
+    "cats": [
+      67
+    ],
+    "description": "TRUENDO is a GDPR compliance software.",
+    "icon": "TRUENDO.svg",
+    "js": {
+      "Truendo": "",
+      "TruendoCookieControlCallback": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "cdn\\.priv\\.center/",
+      "cdn\\.truendo\\.com/"
+    ],
+    "website": "https://truendo.com"
+  },
+  "TWiki": {
+    "cats": [
+      8
+    ],
+    "cookies": {
+      "TWIKISID": ""
+    },
+    "description": "TWiki is an open-source wiki and application platform.",
+    "html": "<img [^>]*(?:title|alt)=\"This site is powered by the TWiki collaboration platform",
+    "icon": "TWiki.png",
+    "implies": "Perl",
+    "scripts": "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)",
+    "website": "http://twiki.org"
+  },
+  "TYPO3 CMS": {
+    "cats": [
+      1
+    ],
+    "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
+    "html": [
+      "<link[^>]+ href=\"/?typo3(?:conf|temp)/",
+      "<img[^>]+ src=\"/?typo3(?:conf|temp)/",
+      "<!--\n\tThis website is powered by TYPO3"
+    ],
+    "icon": "TYPO3.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
+    },
+    "oss": true,
+    "scripts": "^/?typo3(?:conf|temp)/",
+    "url": "/typo3/",
+    "website": "https://typo3.org/"
+  },
+  "Tabby": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Tabby is a Buy now pay later solution from Middle East.",
+    "icon": "Tabby.svg",
+    "js": {
+      "Tabby": "",
+      "TabbyPromo": ""
+    },
+    "saas": true,
+    "scripts": "checkout\\.tabby\\.ai",
+    "website": "https://tabby.ai/"
+  },
+  "TableBooker": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "Tablebooker is an online reservation system for restaurants.",
+    "dom": {
+      "iframe": {
+        "attributes": {
+          "id": "tablebookerResFrame_"
+        }
+      }
+    },
+    "icon": "TableBooker.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "reservations\\.tablebooker\\.\\w+/",
+    "website": "https://www.tablebooker.com"
+  },
+  "TableCheck": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "TableCheck is a restaurant table booking widget.",
+    "dom": {
+      "form[action*='tablecheck']": {
+        "attributes": {
+          "action": "\\.tablecheck\\.\\w+/"
+        }
+      }
+    },
+    "icon": "TableCheck.svg",
+    "scripts": "tc_widget\\.js",
+    "website": "https://www.tablecheck.com"
+  },
+  "Taboola": {
+    "cats": [
+      36
+    ],
+    "description": "Taboola is a content discovery & native advertising platform for publishers and advertisers.",
+    "dom": {
+      "link[href*='.taboola.com']": {
+        "attributes": {
+          "href": ""
+        }
+      }
+    },
+    "icon": "Taboola.svg",
+    "js": {
+      "_taboola": "",
+      "_taboolaNetworkMode": "",
+      "taboola_view_id": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.taboola\\.com",
+    "website": "https://www.taboola.com",
+    "xhr": "\\.taboola\\.com"
+  },
+  "TagCommander": {
+    "cats": [
+      42
+    ],
+    "description": "TagCommander is an enterprise tag management system (TMS) that makes it easy to add and remove vendor tags from your Drupal-based websites.",
+    "icon": "tagcommander.png",
+    "js": {
+      "tc_vars": ""
+    },
+    "scripts": "\\.tagcommander\\.com",
+    "website": "https://www.commandersact.com/en/solutions/tagcommander/"
+  },
+  "Taggbox": {
+    "cats": [
+      5
+    ],
+    "description": "Taggbox is an UGC platform to collect, curate, manage rights, and publish user-generated content marketing campaigns across multiple channels.",
+    "icon": "Taggbox.svg",
+    "js": {
+      "taggboxAjaxurl": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.taggbox\\.com",
+      "taggbox\\.com/app/js/embed\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "url": "\\.taggbox\\.com",
+    "website": "https://taggbox.com/"
+  },
+  "Taiga": {
+    "cats": [
+      13
+    ],
+    "icon": "Taiga.png",
+    "implies": [
+      "Django",
+      "AngularJS"
+    ],
+    "js": {
+      "taigaConfig": ""
+    },
+    "website": "http://taiga.io"
+  },
+  "TakeDrop": {
+    "cats": [
+      6
+    ],
+    "description": "TakeDrop is an ecommerce platform.",
+    "dom": "img[src*='main.takedropstorage.com']",
+    "icon": "TakeDrop.png",
+    "js": {
+      "webpackJsonptakedrop-react": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://takedrop.pl"
+  },
+  "Tamago": {
+    "cats": [
+      5
+    ],
+    "html": "<link [^>]*href=\"http://tamago\\.temonalab\\.com",
+    "icon": "Tamago.png",
+    "website": "http://tamago.temonalab.com"
+  },
+  "Tamara": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Tamara ia a BNPL (Buy now pay later) provider in Saudi Arabia.",
+    "icon": "Tamara.svg",
+    "js": {
+      "TamaraProductWidget": ""
+    },
+    "saas": true,
+    "scripts": "cdn\\.tamara\\.co",
+    "website": "https://tamara.co/"
+  },
+  "Tatari": {
+    "cats": [
+      36
+    ],
+    "description": "Tatari is a data and analytics company focused on buying and measuring ads across TV and streaming platforms",
+    "icon": "Tatari.png",
+    "js": {
+      "tatari": ""
+    },
+    "website": "https://www.tatari.tv/"
+  },
+  "Tawk.to": {
+    "cats": [
+      52
+    ],
+    "cookies": {
+      "TawkConnectionTime": ""
+    },
+    "description": "Tawk.to is a free messaging app to monitor and chat with the visitors to a website, mobile app.",
+    "icon": "TawkTo.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "//embed\\.tawk\\.to",
+    "website": "http://tawk.to"
+  },
+  "Teachable": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "_gat_teachableTracker": "\\d+"
+    },
+    "description": "Teachable is a learning management system or LMS platform.",
+    "icon": "Teachable.png",
+    "js": {
+      "isTeachable": "\\;confidence:50",
+      "teachableIcons": "\\;confidence:50",
+      "trackTeachableGAEvent": ""
+    },
+    "meta": {
+      "asset_host": "\\.teachablecdn\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.teachablecdn\\.com",
+    "website": "https://teachable.com"
+  },
+  "Teads": {
+    "cats": [
+      36
+    ],
+    "description": "Teads is a technology provider that sells ads on publisher websites.",
+    "icon": "Teads.svg",
+    "website": "https://www.teads.com",
+    "xhr": "\\.teads\\.tv"
+  },
+  "Tealeaf": {
+    "cats": [
+      10
+    ],
+    "icon": "Tealeaf.png",
+    "js": {
+      "TeaLeaf": ""
+    },
+    "website": "http://www.tealeaf.com"
+  },
+  "Tealium": {
+    "cats": [
+      42
+    ],
+    "description": "Tealium provides a sales enterprise tag management system and marketing software.",
+    "icon": "Tealium.png",
+    "js": {
+      "TEALIUMENABLED": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "^(?:https?:)?//tags\\.tiqcdn\\.com/",
+      "/tealium/utag\\.js$"
+    ],
+    "website": "http://tealium.com"
+  },
+  "Tealium AudienceStream": {
+    "cats": [
+      86
+    ],
+    "description": "Tealium AudienceStream is an omnichannel customer segmentation and real-time action engine.",
+    "dom": "link[href*='.tealiumiq.com']",
+    "icon": "Tealium.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.tealiumiq\\.com",
+    "website": "https://tealium.com/products/audiencestream"
+  },
+  "Tealium Consent Management": {
+    "cats": [
+      67
+    ],
+    "description": "Tealium Consent Management adds consent and data privacy support.",
+    "dom": "script#__tealiumGDPRecScript,div#__tealiumGDPRecModal",
+    "icon": "Tealium.png",
+    "website": "https://docs.tealium.com/platforms/getting-started/consent-management"
+  },
+  "TeamCity": {
+    "cats": [
+      44
+    ],
+    "description": "TeamCity is a build management and continuous integration server from JetBrains.",
+    "html": "<span class=\"versionTag\"><span class=\"vWord\">Version</span> ([\\d\\.]+)\\;version:\\1",
+    "icon": "TeamCity.svg",
+    "implies": [
+      "Apache Tomcat",
+      "Java",
+      "jQuery",
+      "Moment.js",
+      "Prototype",
+      "React",
+      "Underscore.js"
+    ],
+    "meta": {
+      "application-name": "TeamCity"
+    },
+    "website": "https://www.jetbrains.com/teamcity/"
+  },
+  "Telescope": {
+    "cats": [
+      1
+    ],
+    "icon": "Telescope.png",
+    "implies": [
+      "Meteor",
+      "React"
+    ],
+    "js": {
+      "Telescope": ""
+    },
+    "website": "http://telescopeapp.org"
+  },
+  "Tencent Analytics (腾讯分析)": {
+    "cats": [
+      10
+    ],
+    "icon": "tajs.png",
+    "scripts": "tajs\\.qq\\.com/stats",
+    "website": "https://ta.qq.com/"
+  },
+  "Tencent Waterproof Wall": {
+    "cats": [
+      9,
+      16
+    ],
+    "icon": "TencentWaterproofWall.png",
+    "scripts": [
+      "/TCaptcha\\.js",
+      "captcha\\.qq\\.com/.*"
+    ],
+    "website": "https://007.qq.com/"
+  },
+  "Tengine": {
+    "cats": [
+      22
+    ],
+    "description": "Tengine is a web server which is based on the Nginx HTTP server.",
+    "headers": {
+      "Server": "Tengine"
+    },
+    "icon": "Tengine.png",
+    "website": "http://tengine.taobao.org"
+  },
+  "Termly": {
+    "cats": [
+      67
+    ],
+    "description": "Termly provides free website policy resources and web-based policy creation software.",
+    "icon": "termly.svg",
+    "scripts": "app\\.termly\\.io/embed\\.min\\.js",
+    "website": "https://termly.io/"
+  },
+  "TerriaJS": {
+    "cats": [
+      35
+    ],
+    "description": "TerriaJS is an open-source framework for web-based geospatial catalogue explorers.",
+    "dom": "html[class*='terria']",
+    "icon": "TerriaJS.png",
+    "website": "https://terria.io/"
+  },
+  "Tessitura": {
+    "cats": [
+      53
+    ],
+    "html": "<!--[^>]+Tessitura Version: (\\d*\\.\\d*\\.\\d*)?\\;version:\\1",
+    "icon": "tessitura.svg",
+    "implies": [
+      "Microsoft ASP.NET",
+      "IIS",
+      "Windows Server"
+    ],
+    "website": "https://www.tessituranetwork.com"
+  },
+  "Texthelp": {
+    "cats": [
+      68
+    ],
+    "description": "TextHelp is a literacy, accessibility and dyslexia software developer for people with reading and writing difficulties.",
+    "icon": "Texthelp.svg",
+    "scripts": "browsealoud\\.com/.*/browsealoud\\.js",
+    "website": "https://www.texthelp.com/en-gb/products/browsealoud/"
+  },
+  "Textpattern CMS": {
+    "cats": [
+      1
+    ],
+    "icon": "Textpattern CMS.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "Textpattern"
+    },
+    "website": "http://textpattern.com"
+  },
+  "The Hut Group": {
+    "cats": [
+      6
+    ],
+    "icon": "TheHutGroup.png",
+    "scripts": [
+      "THEHUT-.*\\.js"
+    ],
+    "website": "https://www.thg.com/"
+  },
+  "Thefork": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "Thefork is a restaurant booking, managing system.",
+    "dom": {
+      "iframe[data-src*='lafourchette']": {
+        "attributes": {
+          "data-src": "module\\.lafourchette.\\w+"
+        }
+      },
+      "iframe[src*='lafourchette']": {
+        "attributes": {
+          "src": "module\\.lafourchette.\\w+"
+        }
+      }
+    },
+    "icon": "Thefork.svg",
+    "pricing": [
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.thefork.com"
+  },
+  "Thelia": {
+    "cats": [
+      1,
+      6
+    ],
+    "html": "<(?:link|style|script)[^>]+/assets/frontOffice/",
+    "icon": "Thelia.png",
+    "implies": [
+      "PHP",
+      "Symfony"
+    ],
+    "website": "http://thelia.net"
+  },
+  "Thimatic": {
+    "cats": [
+      90
+    ],
+    "description": "Thimatic is a Shopify app for product reviews.",
+    "icon": "Thimatic.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "thimatic-apps\\.com/product_review/.*?v=([\\d.]+)\\;version:\\1",
+    "website": "https://thimatic-apps.com/"
+  },
+  "ThinkPHP": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "X-Powered-By": "ThinkPHP"
+    },
+    "icon": "ThinkPHP.png",
+    "implies": "PHP",
+    "website": "http://www.thinkphp.cn"
+  },
+  "Thinkific": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "_thinkific_session": ""
+    },
+    "description": "Thinkific is a software platform that enables entrepreneurs to create, market, sell, and deliver their own online courses.",
+    "icon": "Thinkific.svg",
+    "js": {
+      "Thinkific": "",
+      "ThinkificAnalytics": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn(?:-themes)?\\.thinkific\\.com",
+    "website": "https://www.thinkific.com"
+  },
+  "ThreatMetrix": {
+    "cats": [
+      16,
+      83
+    ],
+    "description": "LexisNexis ThreatMetrix is an enterprise solution for online risk and fraud protection ('digital identity intelligence and digital authentication').",
+    "icon": "ThreatMetrix.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.online-metrix\\.net",
+    "website": "https://risk.lexisnexis.com/products/threatmetrix"
+  },
+  "ThriveCart": {
+    "cats": [
+      6
+    ],
+    "description": "ThriveCart is a sales cart solution that lets you create checkout pages for your online products and services.",
+    "icon": "ThriveCart.svg",
+    "js": {
+      "ThriveCart": ""
+    },
+    "pricing": [
+      "mid",
+      "onetime"
+    ],
+    "saas": true,
+    "scripts": "thrivecart\\.js",
+    "website": "https://thrivecart.com"
+  },
+  "Ticimax": {
+    "cats": [
+      6
+    ],
+    "icon": "Ticimax.png",
+    "scripts": [
+      "cdn\\.ticimax\\.com/"
+    ],
+    "website": "https://www.ticimax.com"
+  },
+  "Tictail": {
+    "cats": [
+      6
+    ],
+    "html": "<link[^>]*tictail\\.com",
+    "icon": "tictail.png",
+    "website": "https://tictail.com"
+  },
+  "TiddlyWiki": {
+    "cats": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "description": "TiddlyWiki is an open-source notebook for capturing, organising and sharing complex information.",
+    "html": "<[^>]*type=[^>]text\\/vnd\\.tiddlywiki",
+    "icon": "TiddlyWiki.png",
+    "js": {
+      "tiddler": ""
+    },
+    "meta": {
+      "application-name": "^TiddlyWiki$",
+      "copyright": "^TiddlyWiki created by Jeremy Ruston",
+      "generator": "^TiddlyWiki$",
+      "tiddlywiki-version": "^(.+)$\\;version:\\1"
+    },
+    "website": "http://tiddlywiki.com"
+  },
+  "Tidio": {
+    "cats": [
+      5,
+      52
+    ],
+    "description": "Tidio is a customer communication product. It provides multi-channel support so users can communicate with customers on the go. Live chat, messenger, or email are all supported.",
+    "icon": "Tidio.svg",
+    "js": {
+      "tidioChatApi": ""
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "code\\.tidio\\.co",
+    "website": "https://www.tidio.com"
+  },
+  "Tiendanube": {
+    "cats": [
+      6
+    ],
+    "description": "Tiendanube is an ecommerce platform.",
+    "icon": "Tiendanube.svg",
+    "js": {
+      "LS.store.url": "^.+\\.mitiendanube\\.com$"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.tiendanube.com"
+  },
+  "TikTok Pixel": {
+    "cats": [
+      10
+    ],
+    "dom": {
+      "script[data-hid='tiktok']": {
+        "attributes": {
+          "data-hid": ""
+        }
+      }
+    },
+    "icon": "TikTok.svg",
+    "js": {
+      "TiktokAnalyticsObject": ""
+    },
+    "website": "https://ads.tiktok.com",
+    "xhr": "analytics\\.tiktok\\.com"
+  },
+  "Tiki Wiki CMS Groupware": {
+    "cats": [
+      1,
+      2,
+      8,
+      11,
+      13
+    ],
+    "description": "Tiki Wiki is a free and open-source wiki-based content management system and online office suite written primarily in PHP.",
+    "icon": "Tiki Wiki CMS Groupware.png",
+    "meta": {
+      "generator": "^Tiki"
+    },
+    "scripts": "(?:/|_)tiki",
+    "website": "http://tiki.org"
+  },
+  "Tilda": {
+    "cats": [
+      1
+    ],
+    "description": "Tilda is a web design tool.",
+    "html": "<link[^>]* href=[^>]+tilda(?:cdn|\\.ws|-blocks)",
+    "icon": "Tilda.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "tilda(?:cdn|\\.ws|-blocks)",
+    "website": "https://tilda.cc"
+  },
+  "Timeplot": {
+    "cats": [
+      25
+    ],
+    "icon": "Timeplot.png",
+    "js": {
+      "Timeplot": ""
+    },
+    "scripts": "timeplot.*\\.js",
+    "website": "http://www.simile-widgets.org/timeplot/"
+  },
+  "Timify": {
+    "cats": [
+      72
+    ],
+    "description": "The Online Scheduling and Resource Management Software.",
+    "icon": "Timify.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "scripts": "https://widget\\.timify\\.com/js/widget\\.js",
+    "website": "https://www.timify.com/"
+  },
+  "TinyMCE": {
+    "cats": [
+      24
+    ],
+    "cpe": "cpe:/a:tiny:tinymce",
+    "description": "TinyMCE is an online rich-text editor released as open-source software. TinyMCE is designed to integrate with JavaScript libraries, Vue.js, and AngularJS as well as content management systems such as Joomla!, and WordPress.",
+    "icon": "TinyMCE.png",
+    "js": {
+      "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1"
+    },
+    "scripts": "/tiny_?mce(?:\\.min)?\\.js",
+    "website": "http://tinymce.com"
+  },
+  "Titan": {
+    "cats": [
+      36
+    ],
+    "icon": "Titan.png",
+    "js": {
+      "titan": "",
+      "titanEnabled": ""
+    },
+    "website": "http://titan360.com"
+  },
+  "TomatoCart": {
+    "cats": [
+      6
+    ],
+    "icon": "TomatoCart.png",
+    "js": {
+      "AjaxShoppingCart": ""
+    },
+    "meta": {
+      "generator": "TomatoCart"
+    },
+    "website": "http://tomatocart.com"
+  },
+  "TornadoServer": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "TornadoServer(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "TornadoServer.png",
+    "website": "http://tornadoweb.org"
+  },
+  "TotalCode": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "X-Powered-By": "^TotalCode$"
+    },
+    "icon": "TotalCode.png",
+    "website": "http://www.totalcode.com"
+  },
+  "Touch2Success": {
+    "cats": [
+      6
+    ],
+    "description": "Touch2Success is a fully featured restaurant POS software designed to serve startups, enterprises.",
+    "icon": "Touch2Success.svg",
+    "meta": {
+      "content": "^Touch2Success$"
+    },
+    "website": "https://www.touch2success.com"
+  },
+  "TownNews": {
+    "cats": [
+      1
+    ],
+    "description": "TownNews is a CMS platform built for local media organizations.",
+    "headers": {
+      "x-tncms": ""
+    },
+    "icon": "townnews.png",
+    "js": {
+      "TNCMS": "",
+      "TNStats_Tracker": "",
+      "TNTracker": ""
+    },
+    "website": "https://townnews.com/"
+  },
+  "Trac": {
+    "cats": [
+      13
+    ],
+    "html": [
+      "<a id=\"tracpowered",
+      "Powered by <a href=\"[^\"]*\"><strong>Trac(?:[ /]([\\d.]+))?\\;version:\\1"
+    ],
+    "icon": "Trac.png",
+    "implies": "Python",
+    "website": "http://trac.edgewall.org"
+  },
+  "TrackJs": {
+    "cats": [
+      10
+    ],
+    "description": "TrackJS is an error monitoring agent for production web sites and applications.",
+    "icon": "TrackJs.svg",
+    "js": {
+      "TrackJs": "",
+      "trackJs": ""
+    },
+    "scripts": "cdn\\.trackjs\\.com",
+    "website": "http://trackjs.com"
+  },
+  "Tradedoubler": {
+    "cats": [
+      71
+    ],
+    "description": "Tradedoubler is a global affiliate marketing network.",
+    "dom": {
+      "a[href*='clk.tradedoubler.com/click']": {
+        "text": ""
+      },
+      "img[src*='impes.tradedoubler.com/imp']": {
+        "text": ""
+      }
+    },
+    "icon": "Tradedoubler.svg",
+    "scripts": "swrap\\.tradedoubler\\.com",
+    "website": "https://www.tradedoubler.com/"
+  },
+  "Transifex": {
+    "cats": [
+      12
+    ],
+    "icon": "transifex.png",
+    "js": {
+      "Transifex.live.lib_version": "(.+)\\;version:\\1"
+    },
+    "website": "https://www.transifex.com"
+  },
+  "Translucide": {
+    "cats": [
+      1
+    ],
+    "icon": "translucide.svg",
+    "implies": [
+      "PHP",
+      "jQuery"
+    ],
+    "scripts": "lucide\\.init(?:\\.min)?\\.js",
+    "website": "http://www.translucide.net"
+  },
+  "Tray": {
+    "cats": [
+      6
+    ],
+    "description": "Tray is an all-in-one ecommerce platform from Brazil.",
+    "icon": "tray.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "tcdn\\.com\\.br",
+    "website": "https://www.tray.com.br"
+  },
+  "Trbo": {
+    "cats": [
+      74,
+      76
+    ],
+    "cookies": {
+      "trbo_session": "^(?:[\\d]+)$",
+      "trbo_usr": "^(?:[\\d\\w]+)$"
+    },
+    "description": "Trbo is a personalisation, recommendations, A/B testing platform from Germany.",
+    "icon": "Trbo.svg",
+    "js": {
+      "_trbo": "",
+      "_trbo_start": "",
+      "_trboq": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.trbo\\.com",
+    "website": "https://www.trbo.com"
+  },
+  "Tripadviser.Widget": {
+    "cats": [
+      5
+    ],
+    "description": "Tripadvisor embed reviews widget.",
+    "icon": "Tripadviser.Widget.svg",
+    "scripts": "tripadvisor\\.[\\w]+/WidgetEmbed",
+    "website": "https://www.tripadvisor.com/Widgets"
+  },
+  "TripleLift": {
+    "cats": [
+      36
+    ],
+    "description": "TripleLift is an advertising technology company providing native programmatic to buyers and sellers.",
+    "dom": {
+      "iframe[src*='.3lift.com']": {
+        "attributes": {
+          "src": ""
+        }
+      }
+    },
+    "icon": "TripleLift.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://triplelift.com",
+    "xhr": "\\.3lift\\.com"
+  },
+  "TruValidate": {
+    "cats": [
+      16,
+      83
+    ],
+    "description": "TransUnion TruValidate (previously ReputationShield/IDVision from iovation) is an online risk and fraud detection platform.",
+    "icon": "TruValidate.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "mpsnare\\.iesnare\\.com",
+      "ci-mpsnare\\.iovation\\.com"
+    ],
+    "website": "https://www.transunion.com/solution/truvalidate"
+  },
+  "TrueCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "TrueCommerce is an eCommerce platform.",
+    "icon": "Truecommerce.svg",
+    "scripts": "cdn\\.nexternal\\.com/",
+    "website": "https://www.truecommerce.com"
+  },
+  "TrustArc": {
+    "cats": [
+      67
+    ],
+    "description": "TrustArc provides software and services to help corporations update their privacy management processes so they comply with government laws and best practices.",
+    "icon": "TrustArc.svg",
+    "scripts": "consent\\.trustarc\\.com",
+    "website": "http://trustarc.com"
+  },
+  "TrustYou": {
+    "cats": [
+      5
+    ],
+    "description": "TrustYou is guest feedback and hotel reputation software company located in Germany.",
+    "dom": {
+      "iframe[src*='api.trustyou.com']": {
+        "attributes": {
+          "src": ""
+        }
+      }
+    },
+    "icon": "TrustYou.svg",
+    "saas": true,
+    "website": "https://www.trustyou.com"
+  },
+  "Trustpilot": {
+    "cats": [
+      5
+    ],
+    "description": "Trustpilot is a Danish consumer review website which provide embed stand-alone applications in your website to show your most recent reviews, TrustScore, and star ratings.",
+    "icon": "Trustpilot.svg",
+    "js": {
+      "Trustpilot": ""
+    },
+    "pricing": [
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.trustpilot\\.com",
+    "website": "https://business.trustpilot.com"
+  },
+  "Tumblr": {
+    "cats": [
+      11
+    ],
+    "description": "Tumblr is a microblogging and social networking website. The service allows users to post multimedia and other content to a short-form blog.",
+    "headers": {
+      "X-Tumblr-User": ""
+    },
+    "html": "<iframe src=\"[^>]+tumblr\\.com",
+    "icon": "Tumblr.png",
+    "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
+    "website": "http://www.tumblr.com"
+  },
+  "Turbolinks": {
+    "cats": [
+      92
+    ],
+    "description": "Turbolinks is a Rails feature, available as a gem and enabled by default in new Rails apps. It is intended to speed up navigating between pages of your application.",
+    "js": {
+      "Turbolinks": ""
+    },
+    "oss": true,
+    "scripts": "turolinks\\.js",
+    "website": "https://github.com/turbolinks/turbolinks"
+  },
+  "TurfJS": {
+    "cats": [
+      59
+    ],
+    "description": "Turf is a modular geospatial engine written in JavaScript.",
+    "icon": "TurfJS.svg",
+    "js": {
+      "turf.feature": "",
+      "turf.point": "",
+      "turf.random": ""
+    },
+    "scripts": "(turf@[\\d.]+)?/?turf\\.min\\.js",
+    "website": "https://turfjs.org/"
+  },
+  "TwicPics": {
+    "cats": [
+      31,
+      59
+    ],
+    "description": "TwicPics offers on-demand responsive image generation.",
+    "dom": {
+      ".twic": {
+        "attributes": {
+          "data-src": ""
+        }
+      },
+      "[data-twic-src]": {
+        "attributes": {
+          "data-twic-src": ""
+        }
+      },
+      "data-twic-background": {
+        "attributes": {
+          "data-twic-background": ""
+        }
+      }
+    },
+    "headers": {
+      "server": "^TwicPics/\\d+\\.\\d+\\.\\d+$"
+    },
+    "icon": "TwicPics.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": ".+\\.twic\\.pics",
+    "website": "https://www.twicpics.com"
+  },
+  "Twik": {
+    "cats": [
+      76
+    ],
+    "description": "Twik provides a automated, no-configuration business intelligence & personalization automation engine.",
+    "icon": "Twik.svg",
+    "js": {
+      "TWIK_ID": ""
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.twik\\.io",
+    "website": "https://www.twik.io/"
+  },
+  "Twilight CMS": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Powered-CMS": "Twilight CMS"
+    },
+    "icon": "Twilight CMS.png",
+    "website": "http://www.twilightcms.com"
+  },
+  "TwistPHP": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "X-Powered-By": "TwistPHP"
+    },
+    "icon": "TwistPHP.png",
+    "implies": "PHP",
+    "website": "http://twistphp.com"
+  },
+  "TwistedWeb": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "TwistedWeb(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "TwistedWeb.png",
+    "website": "http://twistedmatrix.com/trac/wiki/TwistedWeb"
+  },
+  "Twitter": {
+    "cats": [
+      5
+    ],
+    "description": "Twitter is a 'microblogging' system that allows you to send and receive short posts called tweets.",
+    "icon": "Twitter.svg",
+    "scripts": "//platform\\.twitter\\.com/widgets\\.js",
+    "website": "http://twitter.com"
+  },
+  "Twitter Ads": {
+    "cats": [
+      36
+    ],
+    "description": "Twitter Ads is an advertising platform for Twitter 'microblogging' system.",
+    "icon": "Twitter.svg",
+    "js": {
+      "twttr": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "static\\.ads-twitter\\.com/uwt\\.js",
+    "website": "https://ads.twitter.com"
+  },
+  "Twitter Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Twitter Analytics is a built-in data-tracking platform that shows you insights specific to your Twitter account and activity.",
+    "icon": "Twitter.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": "analytics\\.twitter\\.com",
+    "website": "https://analytics.twitter.com"
+  },
+  "Twitter Emoji (Twemoji)": {
+    "cats": [
+      17
+    ],
+    "description": "Twitter Emoji is a set of open-source emoticons and emojis for Twitter, TweetDeck, and also for Android and iOS versions of the application.",
+    "js": {
+      "twemoji": ""
+    },
+    "scripts": "twemoji(?:\\.min)?\\.js",
+    "website": "https://twitter.github.io/twemoji/"
+  },
+  "Twitter Flight": {
+    "cats": [
+      12
+    ],
+    "icon": "Twitter Flight.png",
+    "implies": "jQuery",
+    "js": {
+      "flight": ""
+    },
+    "website": "https://flightjs.github.io/"
+  },
+  "Twitter typeahead.js": {
+    "cats": [
+      59
+    ],
+    "icon": "Twitter typeahead.js.png",
+    "implies": "jQuery",
+    "js": {
+      "typeahead": ""
+    },
+    "scripts": "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js",
+    "website": "https://twitter.github.io/typeahead.js"
+  },
+  "TypeDoc": {
+    "cats": [
+      4
+    ],
+    "description": "TypeDoc is an API documentation generator for TypeScript projects.",
+    "icon": "TypeDoc.png",
+    "implies": "TypeScript",
+    "oss": true,
+    "website": "https://typedoc.org"
+  },
+  "TypePad": {
+    "cats": [
+      11
+    ],
+    "description": "Typepad is a blog hosting service.",
+    "icon": "TypePad.png",
+    "meta": {
+      "generator": "typepad"
+    },
+    "url": "typepad\\.com",
+    "website": "http://www.typepad.com"
+  },
+  "TypeScript": {
+    "cats": [
+      27
+    ],
+    "description": "TypeScript is an open-source language which builds on JavaScript  by adding static type definitions.",
+    "icon": "TypeScript.svg",
+    "oss": true,
+    "website": "https://www.typescriptlang.org"
+  },
+  "Typecho": {
+    "cats": [
+      11
+    ],
+    "description": "Typecho is a PHP Blogging Platform.",
+    "icon": "typecho.svg",
+    "implies": "PHP",
+    "js": {
+      "TypechoComment": ""
+    },
+    "meta": {
+      "generator": "Typecho( [\\d.]+)?\\;version:\\1"
+    },
+    "url": "/admin/login\\.php?referer=http%3A%2F%2F",
+    "website": "http://typecho.org/"
+  },
+  "Typekit": {
+    "cats": [
+      17
+    ],
+    "description": "Typekit is an online service which offers a subscription library of fonts.",
+    "html": "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)",
+    "icon": "Typekit.png",
+    "js": {
+      "Typekit.config.js": "^(.+)$\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "scripts": "use\\.typekit\\.com",
+    "website": "http://typekit.com"
+  },
+  "tailwindcss": {
+    "cats": [
+      66
+    ],
+    "description": "Tailwind is a utility-first CSS framework.",
+    "dom": {
+      "link[rel='stylesheet'][href*='tailwind']": {
+        "attributes": {
+          "href": ""
+        }
+      }
+    },
+    "html": [
+      "<link[^>]+?href=\"[^\"]+tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css\\;version:\\1"
+    ],
+    "icon": "tailwindcss.svg",
+    "website": "https://tailwindcss.com/"
+  },
+  "theTradeDesk": {
+    "cats": [
+      36
+    ],
+    "description": "theTradeDesk is an technology company that markets a software platform used by digital ad buyers to purchase data-driven digital advertising campaigns across various ad formats and devices.",
+    "icon": "theTradeDesk.svg",
+    "js": {
+      "TTDUniversalPixelApi": "",
+      "ttd_dom_ready": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.adsrvr\\.org/",
+    "website": "https://www.thetradedesk.com",
+    "xhr": "adsvr\\.org"
+  },
+  "three.js": {
+    "cats": [
+      25
+    ],
+    "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
+    "icon": "three.js.png",
+    "js": {
+      "THREE.REVISION": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "three(?:\\.min)?\\.js",
+    "website": "https://threejs.org"
+  },
+  "thttpd": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:/a:acme:thttpd",
+    "headers": {
+      "Server": "\\bthttpd(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "thttpd.png",
+    "website": "https://acme.com/software/thttpd"
+  },
+  "total.js": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "X-Powered-By": "^total\\.js"
+    },
+    "icon": "total.js.png",
+    "implies": "Node.js",
+    "website": "https://totaljs.com"
+  }
+}

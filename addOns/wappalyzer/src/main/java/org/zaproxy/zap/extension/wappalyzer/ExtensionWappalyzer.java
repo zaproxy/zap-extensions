@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
@@ -61,6 +63,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     public static final ImageIcon WAPPALYZER_ICON =
             new ImageIcon(ExtensionWappalyzer.class.getResource(RESOURCE + "/wappalyzer.png"));
+    public static final String TECHNOLOGIES_PATH = "resources/technologies/";
+    public static final String CATEGORIES_PATH = "resources/categories.json";
 
     private TechPanel techPanel = null;
     private PopupMenuEvidence popupMenuEvidence = null;
@@ -96,23 +100,39 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public ExtensionWappalyzer() {
         super(NAME);
         this.setOrder(201);
-
-        try {
-            WappalyzerJsonParser parser = new WappalyzerJsonParser();
-            WappalyzerData result = parser.parseDefaultAppsJson();
-            this.applications = result.getApplications();
-            this.categories = result.getCategories();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     @Override
     public void init() {
         super.init();
+
+        List<String> technologyFiles = new ArrayList<>();
+        try (ZipFile zip = new ZipFile(getAddOn().getFile())) {
+            zip.stream()
+                    .filter(ExtensionWappalyzer::isTechnology)
+                    .map(ExtensionWappalyzer::techToResourcePath)
+                    .forEach(technologyFiles::add);
+        } catch (IOException e) {
+            logger.error("Failed to enumerate Wappalyzer technologies:", e);
+        }
+
+        WappalyzerData result = new WappalyzerJsonParser().parse(CATEGORIES_PATH, technologyFiles);
+        this.applications = result.getApplications();
+        this.categories = result.getCategories();
+
         enabled = true;
         wappalyzerParam = new WappalyzerParam();
         passiveScanner = new WappalyzerPassiveScanner(this);
+    }
+
+    private static boolean isTechnology(ZipEntry entry) {
+        String name = entry.getName();
+        return name.contains(TECHNOLOGIES_PATH) && name.endsWith(".json");
+    }
+
+    private static String techToResourcePath(ZipEntry entry) {
+        String name = entry.getName();
+        return name.substring(name.lastIndexOf(TECHNOLOGIES_PATH));
     }
 
     WappalyzerPassiveScanner getPassiveScanner() {

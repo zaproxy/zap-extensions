@@ -1,0 +1,298 @@
+{
+  "YUI": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:/a:yahoo:yui",
+    "icon": "YUI.png",
+    "js": {
+      "YAHOO.VERSION": "^(.+)$\\;version:\\1",
+      "YUI.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "(?:/yui/|yui\\.yahooapis\\.com)",
+    "website": "http://yuilibrary.com"
+  },
+  "YUI Doc": {
+    "cats": [
+      4
+    ],
+    "description": "UIDoc is a Node.js application used at build time to generate API documentation.",
+    "html": "(?:<html[^>]* yuilibrary\\.com/rdf/[\\d.]+/yui\\.rdf|<body[^>]+class=\"yui3-skin-sam)",
+    "icon": "yahoo.png",
+    "website": "http://developer.yahoo.com/yui/yuidoc"
+  },
+  "YaBB": {
+    "cats": [
+      2
+    ],
+    "html": "Powered by <a href=\"[^>]+yabbforum",
+    "icon": "YaBB.png",
+    "website": "http://www.yabbforum.com"
+  },
+  "Yahoo Advertising": {
+    "cats": [
+      36
+    ],
+    "html": [
+      "<iframe[^>]+adserver\\.yahoo\\.com",
+      "<img[^>]+clicks\\.beap\\.bc\\.yahoo\\.com"
+    ],
+    "icon": "yahoo.png",
+    "js": {
+      "adxinserthtml": ""
+    },
+    "scripts": "adinterax\\.com",
+    "website": "http://advertising.yahoo.com"
+  },
+  "Yahoo! Ecommerce": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "X-XRDS-Location": "/ystore/"
+    },
+    "html": "<link[^>]+store\\.yahoo\\.net",
+    "icon": "yahoo.png",
+    "js": {
+      "YStore": ""
+    },
+    "website": "http://smallbusiness.yahoo.com/ecommerce"
+  },
+  "Yahoo! Tag Manager": {
+    "cats": [
+      42
+    ],
+    "html": "<!-- (?:End )?Yahoo! Tag Manager -->",
+    "icon": "yahoo.png",
+    "scripts": "b\\.yjtag\\.jp/iframe",
+    "website": "https://tagmanager.yahoo.co.jp/"
+  },
+  "Yahoo! Web Analytics": {
+    "cats": [
+      10
+    ],
+    "icon": "yahoo.png",
+    "js": {
+      "YWA": ""
+    },
+    "scripts": "d\\.yimg\\.com/mi/ywa\\.js",
+    "website": "http://web.analytics.yahoo.com"
+  },
+  "Yandex.Direct": {
+    "cats": [
+      36
+    ],
+    "description": "Yandex Direct is the platform designed for sponsored ad management.",
+    "html": "<yatag class=\"ya-partner__ads\">",
+    "icon": "Yandex.Direct.png",
+    "js": {
+      "yandex_ad_format": "",
+      "yandex_partner_id": ""
+    },
+    "scripts": "https?://an\\.yandex\\.ru/",
+    "website": "http://partner.yandex.com"
+  },
+  "Yandex.Messenger": {
+    "cats": [
+      5,
+      52
+    ],
+    "description": "Yandex.Messenger is an instant messaging application.",
+    "icon": "Yandex.Messenger.svg",
+    "js": {
+      "yandexChatWidget": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "scripts": "chat\\.s3\\.yandex\\.net/widget\\.js",
+    "website": "https://dialogs.yandex.ru"
+  },
+  "Yandex.Metrika": {
+    "cats": [
+      10
+    ],
+    "description": "Yandex.Metrica is a free web analytics service that tracks and reports website traffic.",
+    "icon": "Yandex.Metrika.png",
+    "js": {
+      "yandex_metrika": ""
+    },
+    "scripts": [
+      "mc\\.yandex\\.ru/metrika/(?:tag|watch)\\.js",
+      "cdn\\.jsdelivr\\.net/npm/yandex\\-metrica\\-watch/watch\\.js"
+    ],
+    "website": "http://metrika.yandex.com"
+  },
+  "Yaws": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "Yaws(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Yaws.png",
+    "website": "http://yaws.hyber.org"
+  },
+  "Yelp Reservations": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "Yelp Reservations is a cloud-based restaurant management system.",
+    "dom": {
+      "iframe[src*='yelp']": {
+        "attributes": {
+          "src": "yelp(?:.com/reservations|reservations\\.com)"
+        }
+      }
+    },
+    "icon": "Yelp.svg",
+    "website": "http://yelp.com"
+  },
+  "Yelp Review Badge": {
+    "cats": [
+      5
+    ],
+    "description": "Yelp Review Badges showcase business reviews from Yelp on websites.",
+    "dom": {
+      "img[src*='dyn.yelpcdn.com']": {
+        "attributes": {
+          "src": ""
+        }
+      }
+    },
+    "icon": "Yelp.svg",
+    "scripts": "yelp\\.com/biz_badge_js",
+    "website": "http://yelp.com"
+  },
+  "Yepcomm": {
+    "cats": [
+      6
+    ],
+    "icon": "yepcomm.png",
+    "meta": {
+      "author": "Yepcomm Tecnologia",
+      "copyright": "Yepcomm Tecnologia"
+    },
+    "website": "https://www.yepcomm.com.br"
+  },
+  "Yieldify": {
+    "cats": [
+      76
+    ],
+    "description": "Yieldify is a customer journey optimisation platform that brings personalisation to the full customer journey.",
+    "icon": "Yieldify.svg",
+    "js": {
+      "_yieldify": ""
+    },
+    "pricing": [
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.yieldify\\.com",
+    "website": "https://www.yieldify.com"
+  },
+  "Yieldlab": {
+    "cats": [
+      36
+    ],
+    "icon": "Yieldlab.png",
+    "scripts": "^https?://(?:[^/]+\\.)?yieldlab\\.net/",
+    "website": "http://yieldlab.de"
+  },
+  "Yii": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "YII_CSRF_TOKEN": ""
+    },
+    "description": "Yii is an open-source, object-oriented, component-based MVC PHP web application framework.",
+    "html": [
+      "Powered by <a href=\"http://www\\.yiiframework\\.com/\" rel=\"external\">Yii Framework</a>",
+      "<input type=\"hidden\" value=\"[a-zA-Z0-9]{40}\" name=\"YII_CSRF_TOKEN\" \\/>",
+      "<!\\[CDATA\\[YII-BLOCK-(?:HEAD|BODY-BEGIN|BODY-END)\\]"
+    ],
+    "icon": "Yii.png",
+    "implies": "PHP",
+    "scripts": [
+      "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
+      "/yii\\.(?:validation|activeForm)\\.js"
+    ],
+    "website": "https://www.yiiframework.com"
+  },
+  "Yoast SEO": {
+    "cats": [
+      54,
+      87
+    ],
+    "description": "Yoast SEO is a search engine optimisation plugin for WordPress and other platforms.",
+    "dom": {
+      "script.yoast-schema-graph": {
+        "attributes": {
+          "class": ""
+        }
+      }
+    },
+    "html": "<!-- This site is optimized with the Yoast (?:WordPress )?SEO plugin v([\\d.]+) -\\;version:\\1",
+    "icon": "Yoast SEO.png",
+    "requires": "WordPress",
+    "website": "https://yoast.com"
+  },
+  "Yotpo": {
+    "cats": [
+      84,
+      90
+    ],
+    "description": "Yotpo is a provider of Loyalty & Referrals, SMS Marketing, Reviews, and Visual UGC solutions.",
+    "icon": "Yotpo.png",
+    "js": {
+      "yotpo": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "staticw2\\.yotpo\\.com",
+    "website": "https://www.yotpo.com/"
+  },
+  "Yottaa": {
+    "cats": [
+      42,
+      74,
+      92
+    ],
+    "description": "Yottaa is an ecommerce optimisation platform that helps with conversions, performance and security.",
+    "icon": "Yottaa.svg",
+    "meta": {
+      "X-Yottaa-Metrics": "",
+      "X-Yottaa-Optimizations": ""
+    },
+    "scripts": "cdn\\.yottaa\\.\\w+/",
+    "website": "https://www.yottaa.com"
+  },
+  "YouTrack": {
+    "cats": [
+      13
+    ],
+    "description": "YouTrack is a browser-based bug tracker, issue tracking system and project management software.",
+    "html": [
+      "no-title=\"YouTrack\">",
+      "data-reactid=\"[^\"]+\">youTrack ([0-9.]+)<\\;version:\\1",
+      "type=\"application/opensearchdescription\\+xml\" title=\"YouTrack\"/>"
+    ],
+    "icon": "YouTrack.png",
+    "website": "http://www.jetbrains.com/youtrack/"
+  },
+  "YouTube": {
+    "cats": [
+      14
+    ],
+    "description": "YouTube is a video sharing service where users can create their own profile, upload videos, watch, like and comment on other videos.",
+    "html": "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)",
+    "icon": "YouTube.png",
+    "website": "http://www.youtube.com"
+  }
+}

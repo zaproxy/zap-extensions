@@ -74,24 +74,17 @@ public class WappalyzerJsonParser {
         this.parsingExceptionHandler = parsingExceptionHandler;
     }
 
-    public WappalyzerData parseDefaultAppsJson() throws IOException {
-        return parseJson(getStringResource(ExtensionWappalyzer.RESOURCE + "/apps.json"));
+    WappalyzerData parse(String categories, List<String> technologies) {
+        WappalyzerData wappalyzerData = new WappalyzerData();
+        parseCategories(wappalyzerData, getStringResource(categories));
+        technologies.forEach(path -> parseJson(wappalyzerData, getStringResource(path)));
+        logger.info("Loaded {} Wappalyzer technologies.", wappalyzerData.getApplications().size());
+        return wappalyzerData;
     }
 
-    WappalyzerData parseAppsJson(String path) {
-        try {
-            return parseJson(getStringResource(path));
-        } catch (IOException e) {
-            logger.warn("An error occurred reading the file: {}", path);
-        }
-        return null;
-    }
-
-    private static String getStringResource(String resourceName) throws IOException {
-        InputStream in = null;
+    private String getStringResource(String resourceName) {
         StringBuilder sb = new StringBuilder();
-        try {
-            in = ExtensionWappalyzer.class.getResourceAsStream(resourceName);
+        try (InputStream in = ExtensionWappalyzer.class.getResourceAsStream(resourceName)) {
             int numRead = 0;
             byte[] buf = new byte[1024];
             while ((numRead = in.read(buf)) != -1) {
@@ -99,75 +92,81 @@ public class WappalyzerJsonParser {
             }
             return sb.toString();
 
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
+        } catch (IOException e) {
+            parsingExceptionHandler.handleException(e);
+        }
+        return "";
+    }
+
+    @SuppressWarnings("unchecked")
+    private void parseCategories(WappalyzerData wappalyzerData, String jsonStr) {
+        try {
+            JSONObject json = JSONObject.fromObject(jsonStr);
+
+            logger.debug("There seem to be: {} categories to load", json.entrySet().size());
+            for (Object cat : json.entrySet()) {
+                Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
+                logger.debug("{}:{}", mCat.getKey(), mCat.getValue().getString("name"));
+                wappalyzerData.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
             }
+            logger.debug("Parsed {} categories", wappalyzerData.getCategories().size());
+        } catch (Exception e) {
+            parsingExceptionHandler.handleException(e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public WappalyzerData parseJson(String jsonStr) {
-        WappalyzerData result = new WappalyzerData();
+    private void parseJson(WappalyzerData wappalyzerData, String jsonStr) {
 
         try {
-            JSONObject json = JSONObject.fromObject(jsonStr);
+            if (!jsonStr.isEmpty()) {
+                JSONObject json = JSONObject.fromObject(jsonStr);
 
-            JSONObject cats = json.getJSONObject("categories");
+                for (Object entry : json.entrySet()) {
+                    Map.Entry<String, JSONObject> mApp = (Map.Entry<String, JSONObject>) entry;
 
-            for (Object cat : cats.entrySet()) {
-                Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
-                result.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
-            }
+                    String appName = mApp.getKey();
+                    JSONObject appData = mApp.getValue();
 
-            JSONObject apps = json.getJSONObject("technologies");
-            for (Object entry : apps.entrySet()) {
-                Map.Entry<String, JSONObject> mApp = (Map.Entry<String, JSONObject>) entry;
+                    Application app = new Application();
+                    app.setName(appName);
+                    app.setDescription(appData.optString("description"));
+                    app.setWebsite(appData.getString("website"));
+                    app.setCategories(
+                            this.jsonToCategoryList(
+                                    wappalyzerData.getCategories(), appData.get("cats")));
+                    app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
+                    app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
+                    app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
+                    app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
+                    app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
+                    app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
+                    app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
+                    app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));
+                    app.setImplies(this.jsonToStringList(appData.get("implies")));
+                    app.setCpe(appData.optString("cpe"));
 
-                String appName = mApp.getKey();
-                JSONObject appData = mApp.getValue();
-
-                Application app = new Application();
-                app.setName(appName);
-                app.setDescription(appData.optString("description"));
-                app.setWebsite(appData.getString("website"));
-                app.setCategories(
-                        this.jsonToCategoryList(result.getCategories(), appData.get("cats")));
-                app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
-                app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
-                app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
-                app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
-                app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
-                app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
-                app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
-                app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));
-                app.setImplies(this.jsonToStringList(appData.get("implies")));
-                app.setCpe(appData.optString("cpe"));
-
-                URL iconUrl =
-                        ExtensionWappalyzer.class.getResource(
-                                ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
-                if (iconUrl != null) {
-                    app.setIcon(createPngIcon(iconUrl));
-                } else {
-                    iconUrl =
+                    URL iconUrl =
                             ExtensionWappalyzer.class.getResource(
-                                    ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".svg");
-                    app.setIcon(createSvgIcon(iconUrl));
+                                    ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
+                    if (iconUrl != null) {
+                        app.setIcon(createPngIcon(iconUrl));
+                    } else {
+                        iconUrl =
+                                ExtensionWappalyzer.class.getResource(
+                                        ExtensionWappalyzer.RESOURCE
+                                                + "/icons/"
+                                                + appName
+                                                + ".svg");
+                        app.setIcon(createSvgIcon(iconUrl));
+                    }
+
+                    wappalyzerData.addApplication(app);
                 }
-
-                result.addApplication(app);
             }
-
         } catch (Exception e) {
             parsingExceptionHandler.handleException(e);
         }
-
-        return result;
     }
 
     private static Graphics2D addRenderingHints(BufferedImage image) {

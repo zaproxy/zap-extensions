@@ -1,0 +1,887 @@
+{
+  "EC-CUBE": {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:/a:lockon:ec-cube",
+    "description": "EC-CUBE is an open source package used to build ecommerce sites.",
+    "icon": "EC-CUBE.svg",
+    "implies": "PHP",
+    "oss": true,
+    "scripts": [
+      "eccube\\.js",
+      "win_op\\.js"
+    ],
+    "website": "http://www.ec-cube.net"
+  },
+  "EKM": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "ekmpowershop": ""
+    },
+    "description": "EKM is an all-in-one online store builder, with the company based in the UK.",
+    "icon": "EKM.png",
+    "js": {
+      "_ekmpinpoint": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ekm.com"
+  },
+  "ELOG": {
+    "cats": [
+      19
+    ],
+    "html": "<title>ELOG Logbook Selection</title>",
+    "icon": "ELOG.png",
+    "website": "http://midas.psi.ch/elog"
+  },
+  "ELOG HTTP": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "ELOG HTTP ?([\\d.-]+)?\\;version:\\1"
+    },
+    "icon": "ELOG.png",
+    "implies": "ELOG",
+    "website": "http://midas.psi.ch/elog"
+  },
+  "EPiServer": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "EPiServer": "",
+      "EPiTrace": ""
+    },
+    "cpe": "cpe:/a:episerver:episerver",
+    "icon": "EPiServer.png",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "website": "http://episerver.com"
+  },
+  "EPrints": {
+    "cats": [
+      19
+    ],
+    "icon": "EPrints.png",
+    "implies": "Perl",
+    "js": {
+      "EPJS_menu_template": "",
+      "EPrints": ""
+    },
+    "meta": {
+      "generator": "EPrints ([\\d.]+)\\;version:\\1"
+    },
+    "website": "http://www.eprints.org"
+  },
+  "EX.CO": {
+    "cats": [
+      5
+    ],
+    "description": "EX.CO (formerly Playbuzz) is an online publishing platform for publishers, brand agencies, and individual content creators to create content in interactive formats such as polls, quizzes, lists, video snippets, slideshows, and countdowns.",
+    "icon": "EX.CO.svg",
+    "js": {
+      "__EXCO": "",
+      "__EXCO_INTEGRATION_TYPE": "",
+      "excoPixelUrl": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scripts": [
+      "\\.ex\\.co",
+      "\\.playbuzz\\.com"
+    ],
+    "website": "https://ex.co",
+    "xhr": "prd-collector-anon\\.ex\\.co"
+  },
+  "EasyDigitalDownloads": {
+    "cats": [
+      6,
+      87
+    ],
+    "description": "Easy Digital Downloads is a WordPress ecommerce plugin that focuses purely on digital products.",
+    "icon": "EasyDigitalDownloads.svg",
+    "meta": {
+      "generator": "^Easy Digital Downloads v(.*)$\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "website": "https://easydigitaldownloads.com"
+  },
+  "EasyEngine": {
+    "cats": [
+      47,
+      9
+    ],
+    "description": "EasyEngine is a command-line tool for the Nginx web servers to manage WordPress sites that are running on the LEMP Stack.",
+    "headers": {
+      "x-powered-by": "^EasyEngine (.*)$\\;version:\\1"
+    },
+    "icon": "EasyEngine.png",
+    "implies": "Docker",
+    "website": "https://easyengine.io"
+  },
+  "EasyStore": {
+    "cats": [
+      6
+    ],
+    "description": "EasyStore is a multi sales channel ecommerce platform.",
+    "icon": "EasyStore.svg",
+    "js": {
+      "EasyStore": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.easystore\\.co/",
+    "website": "https://www.easystore.co"
+  },
+  "Ecwid": {
+    "cats": [
+      6
+    ],
+    "description": "Ecwid is a shopping cart plugin that turns any existing website into an online store.",
+    "icon": "ecwid.svg",
+    "js": {
+      "Ecwid": "",
+      "EcwidCart": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "https://app\\.multiscreenstore\\.com/script\\.js",
+      "https://app\\.ecwid\\.com/script\\.js"
+    ],
+    "website": "https://www.ecwid.com/"
+  },
+  "EdgeCast": {
+    "cats": [
+      31
+    ],
+    "description": "EdgeCast is a content delivery network (CDN) that accelerated and delivers static content to users around the world.",
+    "headers": {
+      "Server": "^ECD\\s\\(\\S+\\)"
+    },
+    "icon": "EdgeCast.png",
+    "url": "https?://(?:[^/]+\\.)?edgecastcdn\\.net/",
+    "website": "http://www.edgecast.com"
+  },
+  "Elastic APM": {
+    "cats": [
+      10,
+      13,
+      78
+    ],
+    "description": "Elastic APM offers free and open application performance monitoring.",
+    "icon": "ElasticAPM.png",
+    "implies": [
+      "Elasticsearch"
+    ],
+    "js": {
+      "elasticApm": ""
+    },
+    "website": "https://www.elastic.co/apm"
+  },
+  "Elasticsearch": {
+    "cats": [
+      29
+    ],
+    "description": "Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.",
+    "icon": "Elasticsearch.svg",
+    "website": "https://www.elastic.co"
+  },
+  "Elcodi": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "X-Elcodi": ""
+    },
+    "icon": "Elcodi.png",
+    "implies": [
+      "PHP",
+      "Symfony"
+    ],
+    "website": "http://elcodi.io"
+  },
+  "Eleanor CMS": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:/a:eleanor-cms:eleanor_cms",
+    "icon": "Eleanor CMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Eleanor"
+    },
+    "website": "http://eleanor-cms.ru"
+  },
+  "Element UI": {
+    "cats": [
+      12
+    ],
+    "html": [
+      "<(?:div|button) class=\"el-(?:table-column|table-filter|popper|pagination|pager|select-group|form|form-item|color-predefine|color-hue-slider|color-svpanel|color-alpha-slider|color-dropdown|color-picker|badge|tree|tree-node|select|message|dialog|checkbox|checkbox-button|checkbox-group|container|steps|carousel|menu|menu-item|submenu|menu-item-group|button|button-group|card|table|select-dropdown|row|tabs|notification|radio|progress|progress-bar|tag|popover|tooltip|cascader|cascader-menus|cascader-menu|time-spinner|spinner|spinner-inner|transfer|transfer-panel|rate|slider|dropdown|dropdown-menu|textarea|input|input-group|popup-parent|radio-group|main|breadcrumb|time-range-picker|date-range-picker|year-table|date-editor|range-editor|time-spinner|date-picker|time-panel|date-table|month-table|picker-panel|collapse|collapse-item|alert|select-dropdown|select-dropdown__empty|select-dropdown__wrap|select-dropdown__list|scrollbar|switch|carousel|upload|upload-dragger|upload-list|upload-cover|aside|input-number|header|message-box|footer|radio-button|step|autocomplete|autocomplete-suggestion|loading-parent|loading-mask|loading-spinner|)"
+    ],
+    "icon": "ElementUI.svg",
+    "implies": "Vue.js",
+    "website": "https://element.eleme.io/"
+  },
+  "Elementor": {
+    "cats": [
+      51
+    ],
+    "description": "Elementor is a website builder platform for professionals on WordPress.",
+    "html": [
+      "<div class=(?:\"|')[^\"']*elementor",
+      "<section class=(?:\"|')[^\"']*elementor",
+      "<link [^>]*href=(?:\"|')[^\"']*elementor/assets",
+      "<link [^>]*href=(?:\"|')[^\"']*uploads/elementor/css"
+    ],
+    "icon": "Elementor.png",
+    "js": {
+      "elementorFrontend.getElements": ""
+    },
+    "scripts": "elementor/assets/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
+    "website": "https://elementor.com"
+  },
+  "Elm": {
+    "cats": [
+      27,
+      12
+    ],
+    "icon": "elm.svg",
+    "js": {
+      "Elm.Main.embed": "\\;version:0.18",
+      "Elm.Main.init": "\\;version:0.19"
+    },
+    "website": "https://elm-lang.org/"
+  },
+  "Elm-ui": {
+    "cats": [
+      66
+    ],
+    "html": "<style>[\\s\\S]*\\.explain > \\.s[\\s\\S]*\\.explain > \\.ctr > \\.s",
+    "icon": "elm.svg",
+    "implies": "Elm",
+    "website": "https://github.com/mdgriffith/elm-ui"
+  },
+  "Eloqua": {
+    "cats": [
+      32
+    ],
+    "description": "Eloqua is a Software-as-a-Service (SaaS) platform for marketing automation offered that aims to help B2B marketers and organisations manage marketing campaigns and sales lead generation.",
+    "icon": "Oracle.png",
+    "js": {
+      "elqCurESite": "",
+      "elqLoad": "",
+      "elqSiteID": "",
+      "elq_global": ""
+    },
+    "scripts": "elqCfg\\.js",
+    "website": "http://eloqua.com"
+  },
+  "Emarsys": {
+    "cats": [
+      32,
+      76
+    ],
+    "description": "Emarsys is a cloud-based B2C marketing platform.",
+    "icon": "Emarsys.svg",
+    "js": {
+      "Scarab": "",
+      "ScarabQueue": ""
+    },
+    "scripts": "(?:static|cdn)\\.scarabresearch\\.com",
+    "website": "https://emarsys.com/"
+  },
+  "EmbedThis Appweb": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:/a:embedthis:appweb",
+    "headers": {
+      "Server": "Mbedthis-Appweb(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Embedthis.png",
+    "website": "http://embedthis.com/appweb"
+  },
+  "Ember.js": {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:/a:emberjs:ember.js",
+    "icon": "Ember.js.png",
+    "implies": "Handlebars",
+    "js": {
+      "Ember": "",
+      "Ember.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "website": "http://emberjs.com"
+  },
+  "Emotion": {
+    "cats": [
+      12,
+      47
+    ],
+    "description": "Emotion is a library designed for writing CSS styles with JavaScript.",
+    "dom": "style[data-emotion], style[data-emotion-css]",
+    "icon": "Emotion.png",
+    "website": "http://emotion.sh"
+  },
+  "Engagio": {
+    "cats": [
+      10
+    ],
+    "icon": "Engagio.png",
+    "scripts": [
+      "web-analytics\\.engagio\\.com/js/ei\\.js",
+      "web-analytics\\.engagio\\.com/api/"
+    ],
+    "website": "https://www.engagio.com/"
+  },
+  "Ensighten": {
+    "cats": [
+      42
+    ],
+    "description": "Ensighten is a solution that enables secure management, implementation and control of website technologies.",
+    "icon": "ensighten.png",
+    "scripts": "//nexus\\.ensighten\\.com/",
+    "website": "https://success.ensighten.com/hc/en-us"
+  },
+  "Envoy": {
+    "cats": [
+      64
+    ],
+    "cpe": "cpe:/a:envoyproxy:envoy",
+    "description": "Envoy is an open-source edge and service proxy, designed for cloud-native applications.",
+    "headers": {
+      "Server": "^envoy$",
+      "x-envoy-upstream-service-time": ""
+    },
+    "icon": "Envoy.png",
+    "website": "https://www.envoyproxy.io/"
+  },
+  "Enyo": {
+    "cats": [
+      12,
+      26
+    ],
+    "description": "Enyo is an open-source JavaScript framework for cross-platform for mobile, desktop, TV and web applications.",
+    "icon": "Enyo.png",
+    "js": {
+      "enyo": ""
+    },
+    "scripts": "enyo\\.js",
+    "website": "http://enyojs.com"
+  },
+  "Epoch": {
+    "cats": [
+      25
+    ],
+    "html": "<link[^>]+?href=\"[^\"]+epoch(?:\\.min)?\\.css",
+    "implies": "D3",
+    "scripts": "epoch(?:\\.min)?\\.js",
+    "website": "https://fastly.github.io/epoch"
+  },
+  "Epom": {
+    "cats": [
+      36
+    ],
+    "icon": "Epom.png",
+    "js": {
+      "epomCustomParams": ""
+    },
+    "url": "^https?://(?:[^/]+\\.)?ad(?:op)?shost1\\.com/",
+    "website": "http://epom.com"
+  },
+  "EqualWeb": {
+    "cats": [
+      68
+    ],
+    "description": "EqualWeb provides a web accessibility overlay, and helps some people with disabilities access digital information.",
+    "icon": "EqualWeb.png",
+    "scripts": "cdn\\.equalweb\\.com.*\\.js",
+    "website": "https://www.equalweb.com/"
+  },
+  "Erlang": {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:/a:erlang:erlang%2fotp",
+    "description": "Erlang is a general-purpose, concurrent, functional programming language, and a garbage-collected runtime system.",
+    "headers": {
+      "Server": "Erlang( OTP/(?:[\\d.ABR-]+))?\\;version:\\1"
+    },
+    "icon": "Erlang.png",
+    "website": "http://www.erlang.org"
+  },
+  "Essential JS 2": {
+    "cats": [
+      12,
+      59
+    ],
+    "html": "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b",
+    "icon": "syncfusion.svg",
+    "website": "https://www.syncfusion.com/javascript-ui-controls"
+  },
+  "Estore Compare": {
+    "cats": [
+      74
+    ],
+    "description": "Estore Compare is a website optimisation software that offers A/B testing, CVR and LTV measuring tools.",
+    "icon": "EstoreCompare.svg",
+    "scripts": "cdn\\d+\\.estore\\.jp/",
+    "website": "https://estore.co.jp/estorecompare/"
+  },
+  "Estore Shopserve": {
+    "cats": [
+      6
+    ],
+    "description": "Estore Shopserve is an all-in-one payment processing and ecommerce solution.",
+    "icon": "EstoreShopserve.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cart\\d+\\.shopserve\\.jp/",
+    "website": "https://estore.co.jp/shopserve"
+  },
+  "Etherpad": {
+    "cats": [
+      24
+    ],
+    "cpe": "cpe:/a:etherpad:etherpad",
+    "description": "Etherpad is an open-source, web-based collaborative real-time editor, allowing authors to simultaneously edit a text document, and see all of the participants' edits in real-time, with the ability to display each author's text in their own colour.",
+    "headers": {
+      "Server": "^Etherpad"
+    },
+    "icon": "etherpad.png",
+    "implies": "Node.js",
+    "js": {
+      "padeditbar": "",
+      "padimpexp": ""
+    },
+    "scripts": [
+      "/ep_etherpad-lite/"
+    ],
+    "website": "https://etherpad.org"
+  },
+  "Etracker": {
+    "cats": [
+      10,
+      74
+    ],
+    "description": "Etracker is a web optimisation solution.",
+    "icon": "Etracker.png",
+    "js": {
+      "_etracker": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.etracker\\.com",
+    "website": "https://www.etracker.com"
+  },
+  "Eveve": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "Eveve is a restaurant table booking widget.",
+    "html": "<iframe[^>]*[\\w]+\\.eveve\\.com",
+    "icon": "Eveve.svg",
+    "implies": "PHP",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.eveve.com"
+  },
+  "Exhibit": {
+    "cats": [
+      25
+    ],
+    "icon": "Exhibit.png",
+    "js": {
+      "Exhibit": "",
+      "Exhibit.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "exhibit.*\\.js",
+    "website": "http://simile-widgets.org/exhibit/"
+  },
+  "ExitIntel": {
+    "cats": [
+      32
+    ],
+    "description": "ExitIntel is a full service conversion optimisation agency that focuses on ecommerce companies.",
+    "icon": "ExitIntel.png",
+    "js": {
+      "exitintel.VERSION": "(.+)$\\;version:\\1",
+      "exitintelAccount": "",
+      "exitintelConfig": ""
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "(?:get.)?exitintel\\.com",
+    "website": "https://exitintelligence.com"
+  },
+  "ExpertRec": {
+    "cats": [
+      29
+    ],
+    "description": "ExpertRec is a collaborative Web search engine, which allows users share search histories through a web browser.",
+    "icon": "ExpertRec.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "expertrec\\.com/api/js/ci_common\\.js\\?id=.*",
+    "website": "https://www.expertrec.com"
+  },
+  "Exponea": {
+    "cats": [
+      32
+    ],
+    "description": "Exponea is a cloud-based marketing analysis platform suitable for large and midsize organisations in a variety of industries.",
+    "icon": "Exponea.svg",
+    "js": {
+      "exponea.version": "^v([\\d.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "(?:\\.exponea\\.com)?/js/exponea\\.min\\.js",
+    "website": "https://go.exponea.com"
+  },
+  "Express": {
+    "cats": [
+      18,
+      22
+    ],
+    "cpe": "cpe:/a:expressjs:express",
+    "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
+    "headers": {
+      "X-Powered-By": "^Express$"
+    },
+    "icon": "Express.png",
+    "implies": "Node.js",
+    "website": "http://expressjs.com"
+  },
+  "ExpressionEngine": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "exp_csrf_token": "",
+      "exp_last_activity": "",
+      "exp_tracker": ""
+    },
+    "cpe": "cpe:/a:ellislab:expressionengine",
+    "description": "ExpressionEngine is a free and open-source CMS.",
+    "icon": "ExpressionEngine.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "http://expressionengine.com"
+  },
+  "ExtJS": {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:/a:sencha:ext_js",
+    "icon": "ExtJS.png",
+    "js": {
+      "Ext": "",
+      "Ext.version": "^(.+)$\\;version:\\1",
+      "Ext.versions.extjs.version": "^(.+)$\\;version:\\1"
+    },
+    "scripts": "ext-base\\.js",
+    "website": "https://www.sencha.com"
+  },
+  "Ezoic": {
+    "cats": [
+      10,
+      36
+    ],
+    "description": "Ezoic is a website optimisation platform for digital publishers and website owners powered by machine learning.",
+    "icon": "Ezoic.svg",
+    "js": {
+      "EzoicA": "",
+      "EzoicBanger": "",
+      "ezoicTestActive": ""
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.ezo(?:js|ic|dn)\\.(?:com|net)",
+    "website": "https://www.ezoic.com"
+  },
+  "e-goi": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "e-goi is a multichannel marketing automation software for ecommerce.",
+    "icon": "e-goi.svg",
+    "js": {
+      "Egoimmerce": "",
+      "_egoiaq": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.e-goi\\.com/egoimmerce\\.js",
+    "website": "https://www.e-goi.com"
+  },
+  "e107": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "e107_tz": ""
+    },
+    "headers": {
+      "X-Powered-By": "e107"
+    },
+    "icon": "e107.png",
+    "implies": "PHP",
+    "scripts": "[^a-z\\d]e107\\.js",
+    "website": "http://e107.org"
+  },
+  "eClass": {
+    "cats": [
+      1
+    ],
+    "description": "eClass is an online learning platform.",
+    "icon": "eClass.png",
+    "js": {
+      "fe_eclass": "\\;confidence:50",
+      "fe_eclass_guest": "\\;confidence:50"
+    },
+    "website": "https://www.eclass.com.hk"
+  },
+  "eDokan": {
+    "cats": [
+      6
+    ],
+    "description": "eDokan is hosted ecommerce platform with drag-drop template builder and zero programming knowledge.",
+    "dom": "img[src*='cdn.edokan.co']",
+    "icon": "eDokan.png",
+    "implies": [
+      "Node.js",
+      "Angular",
+      "MongoDB"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://edokan.co"
+  },
+  "eKomi": {
+    "cats": [
+      5
+    ],
+    "description": "eKomi is a German supplier and product review service.",
+    "dom": ".ekomi-widget-container",
+    "icon": "eKomi.png",
+    "js": {
+      "ekomiWidgetMain": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.ekomi.de"
+  },
+  "ePages": {
+    "cats": [
+      6
+    ],
+    "description": "ePages is a provider of cloud-based online shop solutions.",
+    "headers": {
+      "X-epages-RequestId": ""
+    },
+    "icon": "ePages.svg",
+    "js": {
+      "epages": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "http://www.epages.com/"
+  },
+  "eSSENTIAL Accessibility": {
+    "cats": [
+      68
+    ],
+    "description": "eSSENTIAL Accessibility provides an accessibility overlay for websites.",
+    "dom": " a[href*='.essentialaccessibility.com'] > img",
+    "icon": "eSSENTIAL Accessibility.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.essentialaccessibility.com"
+  },
+  "eSyndiCat": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Drectory-Script": "^eSyndiCat"
+    },
+    "icon": "eSyndiCat.png",
+    "implies": "PHP",
+    "js": {
+      "esyndicat": ""
+    },
+    "meta": {
+      "generator": "^eSyndiCat "
+    },
+    "website": "http://esyndicat.com"
+  },
+  "eWAY Payments": {
+    "cats": [
+      41
+    ],
+    "description": "eWAY is a global omnichannel payment provider. The company processes secure credit card payments for merchants. eWay works through eCommerce.",
+    "html": "<img [^>]*src=\"[^/]*//[^/]*eway\\.com",
+    "icon": "eway.png",
+    "scripts": "secure\\.ewaypayments\\.com",
+    "website": "https://www.eway.com.au/"
+  },
+  "eZ Platform": {
+    "cats": [
+      1,
+      6
+    ],
+    "icon": "eZ.svg",
+    "implies": "Symfony",
+    "meta": {
+      "generator": "eZ Platform"
+    },
+    "website": "https://ezplatform.com/"
+  },
+  "eZ Publish": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "eZSESSID": ""
+    },
+    "headers": {
+      "X-Powered-By": "^eZ Publish"
+    },
+    "icon": "eZ.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "eZ Publish"
+    },
+    "website": "https://github.com/ezsystems/ezpublish-legacy"
+  },
+  "ef.js": {
+    "cats": [
+      12
+    ],
+    "icon": "ef.js.svg",
+    "js": {
+      "ef.version": "^(.+)$\\;version:\\1",
+      "efCore": ""
+    },
+    "scripts": "/ef(?:-core)?(?:\\.min|\\.dev)?\\.js",
+    "website": "http://ef.js.org"
+  },
+  "emBlue": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "emBlue is an email and marketing automation platform.",
+    "icon": "emBlue.svg",
+    "js": {
+      "emblueOnSiteApp": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.embluemail\\.com/(?:library/([\\d.]+))?\\;version:\\1",
+    "website": "https://www.embluemail.com/en"
+  },
+  "enduro.js": {
+    "cats": [
+      1
+    ],
+    "headers": {
+      "X-Powered-By": "^enduro\\.js"
+    },
+    "icon": "enduro.js.svg",
+    "implies": "Node.js",
+    "website": "http://endurojs.com"
+  },
+  "eucookie.eu": {
+    "cats": [
+      67
+    ],
+    "icon": "eucookie.png",
+    "scripts": "eucookie\\.eu/public/gdpr-cookie-consent\\.js",
+    "website": "https://www.eucookie.eu/"
+  },
+  "experiencedCMS": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:/a:experiencedcms:experiencedcms",
+    "icon": "experiencedCMS_Logo.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^experiencedCMS$"
+    },
+    "website": "https://experiencedcms.berkearas.de"
+  }
+}

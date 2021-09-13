@@ -38,9 +38,19 @@ class WappalyzerAppsJsonParseUnitTest {
         WappalyzerJsonParser parser =
                 new WappalyzerJsonParser(
                         (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
-        parser.parseDefaultAppsJson();
+        parser.parse("categories.json", generateFileList());
         // Then
         assertEquals(Collections.emptyList(), errs);
         assertEquals(Collections.emptyList(), parsingExceptions);
+    }
+
+    private List<String> generateFileList() {
+        char[] techFileNames = "_abcdefghijklmnopqrstuvwxyz".toCharArray();
+        List<String> fileList = new ArrayList<>();
+
+        for (char fileNameChar : techFileNames) {
+            fileList.add(ExtensionWappalyzer.RESOURCE + "/technologies/" + fileNameChar + ".json");
+        }
+        return fileList;
     }
 }
