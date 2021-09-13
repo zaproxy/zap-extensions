@@ -70,6 +70,11 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
         return alertFilters;
     }
 
+    public void deleteGlobalAlertFilters() {
+        alertFilters.clear();
+        this.saveGlobalAlertFilters();
+    }
+
     public void setGlobalAlertFilters(List<AlertFilter> filters) {
         this.alertFilters = new HashSet<>(filters);
         this.saveGlobalAlertFilters();
