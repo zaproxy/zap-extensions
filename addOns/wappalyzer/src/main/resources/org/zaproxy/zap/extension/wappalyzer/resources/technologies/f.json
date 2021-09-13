@@ -661,8 +661,7 @@
   },
   "Formitable": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Formitable is an reservation management system for restaurants.",
     "icon": "Formitable.svg",

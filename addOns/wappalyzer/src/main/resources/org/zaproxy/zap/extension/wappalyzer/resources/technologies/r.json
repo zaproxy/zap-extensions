@@ -647,8 +647,7 @@
   },
   "ResDiary": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "ResDiary, is a online reservation system for hospitality operators.",
     "dom": {
@@ -669,8 +668,7 @@
   },
   "Resengo": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Resengo is a restaurant table booking widget.",
     "dom": {
@@ -689,6 +687,7 @@
   },
   "Reservio": {
     "cats": [
+      93,
       72
     ],
     "description": "Reservio is a cloud-based appointment scheduling and online booking solution.",
@@ -721,8 +720,7 @@
   },
   "Resmio": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Resmio is a restaurant table booking widget.",
     "icon": "Resmio.svg",
@@ -741,8 +739,7 @@
   },
   "Resy": {
     "cats": [
-      5,
-      72
+      93
     ],
     "description": "Resy is an technology and media company that provides an app and back-end management software for restaurant reservations.",
     "icon": "Resy.svg",
@@ -1160,6 +1157,24 @@
     "scripts": "rx(?:\\.\\w+)?(?:\\.compat|\\.global)?(?:\\.min)?\\.js",
     "website": "http://reactivex.io"
   },
+  "Ryviu": {
+    "cats": [
+      90
+    ],
+    "description": "Ryviu is customer product reviews app for building social proof for store.",
+    "icon": "Ryviu.png",
+    "js": {
+      "ryviu_global_settings": ""
+    },
+    "pricing": [
+      "recurring",
+      "payg",
+      "low"
+    ],   
+    "saas": true,
+    "scripts": "cdn\\.ryviu\\.com",
+    "website": "https://www.ryviu.com/"
+  }, 
   "reCAPTCHA": {
     "cats": [
       16

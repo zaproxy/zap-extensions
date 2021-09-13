@@ -560,6 +560,15 @@
     "scripts": "whatfix\\.com",
     "website": "https://whatfix.com"
   },
+  "WhatsApp Business Chat": {
+    "cats": [
+      52
+    ],
+    "description": "WhatsApp Business is a free to download app available on Android and iPhone using which businesses can connect with their customers.",
+    "dom": "link[href*='api.whatsapp.com/send'], link[href*='wa.me/'], div[class*='wptwa-container']",
+    "icon": "WhatsApp.svg",
+    "website": "https://www.whatsapp.com/business"
+  },
   "Wheelio": {
     "cats": [
       5
@@ -892,6 +901,17 @@
     "saas": true,
     "website": "https://online.worldpay.com"
   },
+  "Workarea": {
+    "cats": [
+      6
+    ],
+    "description": "Workarea is a SaaS commerce platform for medium to large businesses.",
+    "icon": "Workarea.png",
+    "js": {
+      "workarea": ""
+    },
+    "website": "https://www.workarea.com/"
+  },  
   "Wufoo": {
     "cats": [
       73
@@ -923,6 +943,18 @@
     "scripts": "\\.bounceexchange\\.com",
     "website": "https://www.wunderkind.co"
   },
+  "Wurfl": {
+    "cats": [
+      59
+    ],
+    "description": "WURFL.js is JavaScript that detects device models of smartphones, tablets, smart TVs and game consoles accessing your website.",
+    "icon": "Wurfl.png",
+    "js": {
+      "WURFL": ""
+    },
+    "scripts": "\\.wurfl\\.io",
+    "website": "https://web.wurfl.io/"
+  },  
   "webEdition": {
     "cats": [
       1

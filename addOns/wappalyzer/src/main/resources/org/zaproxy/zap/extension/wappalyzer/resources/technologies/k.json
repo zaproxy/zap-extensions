@@ -354,6 +354,7 @@
       "ku1-vid": ""
     },
     "description": "Klarna Checkout is a complete payment solution where Klarna handles a store's entire checkout.",
+    "dom": "[aria-labelledby='pi-klarna']",
     "icon": "Klarna.svg",
     "js": {
       "KlarnaOnsiteService": "",
