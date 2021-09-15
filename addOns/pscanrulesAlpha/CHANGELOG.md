@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Ignore CSS or JavaScript files when scanning for source code disclosures (Issue 6595).
+- Ignore CSS, JavaScript, or font files when scanning for source code disclosures (Issues: 6595 & 6795).
 
 ## [33] - 2021-07-07
 ### Fixed

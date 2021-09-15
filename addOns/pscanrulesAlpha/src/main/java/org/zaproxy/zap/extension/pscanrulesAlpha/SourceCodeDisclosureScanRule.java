@@ -627,6 +627,9 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         // patterns are tried before more general patterns
     }
 
+    static final Pattern PATTERN_FONT_EXTENSIONS =
+            Pattern.compile("(?:\\.ttf|\\.woff|\\.woff2|\\.otf)\\z", Pattern.CASE_INSENSITIVE);
+
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sourcecodedisclosure.";
 
@@ -646,7 +649,9 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseHeader().isCss()
                 || msg.getResponseHeader().isJavaScript()
-                || msg.getRequestHeader().isCss()) {
+                || msg.getRequestHeader().isCss()
+                || msg.getResponseHeader().hasContentType("font")
+                || isFontRequest(msg)) {
             return;
         }
 
@@ -686,6 +691,14 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
                     .setWascId(13) // WASC-13: Information Leakage
                     .raise();
         }
+    }
+
+    private static boolean isFontRequest(HttpMessage msg) {
+        String path = msg.getRequestHeader().getURI().getEscapedPath();
+        if (path != null) {
+            return PATTERN_FONT_EXTENSIONS.matcher(path).find();
+        }
+        return false;
     }
 
     @Override

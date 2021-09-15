@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -36,6 +39,7 @@ class SourceCodeDisclosureScanRuleUnitTest
 
     private static final String CODE_SQL = "insert into vulnerabilities values(";
     private static final String CODE_PHP = "<?php echo 'evils'; ?>";
+    private static final String CODE_PHP2 = "<?=something; ?>";
     private static final String CODE_HTML = "<p>Innocent HTML</p>";
     private static final String URI = "https://www.example.com";
 
@@ -71,17 +75,18 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertThat(alertsRaised.size(), is(0));
     }
 
-    @Test
-    void givenPHPCodeThenAlertRaised() {
+    @ParameterizedTest
+    @ValueSource(strings = {CODE_PHP, CODE_PHP2})
+    void givenPHPCodeThenAlertRaised(String phpSnippet) {
         // Given
-        msg.setResponseBody(wrapWithHTML(CODE_PHP));
+        msg.setResponseBody(wrapWithHTML(phpSnippet));
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertAlertAttributes(alertsRaised.get(0), CODE_PHP, "PHP");
+        assertAlertAttributes(alertsRaised.get(0), phpSnippet, "PHP");
     }
 
     @Test
@@ -142,6 +147,39 @@ class SourceCodeDisclosureScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"font.woff", "font.woff2", "font.ttf", "font.otf"})
+    void shouldNotRaiseAlertOnValidPhpInFontRequest(String fileName) throws Exception {
+        // Given
+        msg.setResponseBody(wrapWithHTML(CODE_PHP2));
+        msg.getRequestHeader().setURI(new URI("http://example.com/" + fileName, false));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    void patternFontExtensionShouldNotFindSubString() {
+        // Given / When
+        boolean result =
+                SourceCodeDisclosureScanRule.PATTERN_FONT_EXTENSIONS.matcher("/font.woffL").find();
+        // Then
+        assertEquals(false, result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
+    void shouldNotRaiseAlertOnValidPhpWhenInFontResponse(String type) throws Exception {
+        // Given
+        msg.setResponseBody(wrapWithHTML(CODE_PHP2));
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
     }
 
     private String wrapWithHTML(String code) {
