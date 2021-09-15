@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Maintenance changes.
+- The 'Delay when fuzzing (in milliseconds)' value can now be up to an hour (3,600,000ms), and the control was changed from a slider to a spinner (Issue 6651).
 
 ## [13.2.0] - 2021-06-01
 ### Changed
