@@ -27,9 +27,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.addon.automation.AutomationAlertTest;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionRetest extends ExtensionAdaptor {

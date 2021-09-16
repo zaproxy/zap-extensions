@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.addon.automation.AbstractAutomationTest;
-import org.zaproxy.addon.automation.AutomationAlertTest;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
@@ -34,6 +32,8 @@ import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
+import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 
 public class RetestPlanGenerator {
 

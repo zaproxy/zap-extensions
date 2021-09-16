@@ -23,10 +23,10 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress.JobResults;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 
 public class PlanTreeNodeCellRenderer extends DefaultTreeCellRenderer {
 

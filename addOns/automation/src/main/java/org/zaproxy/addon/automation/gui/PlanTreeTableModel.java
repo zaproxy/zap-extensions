@@ -28,11 +28,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress.JobResults;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 
 public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableModel {
 

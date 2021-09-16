@@ -17,7 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation;
+package org.zaproxy.addon.automation.tests;
+
+import org.zaproxy.addon.automation.AutomationData;
 
 public abstract class TestData extends AutomationData {
 

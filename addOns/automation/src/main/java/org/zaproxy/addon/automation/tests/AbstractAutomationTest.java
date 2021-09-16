@@ -17,12 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation;
+package org.zaproxy.addon.automation.tests;
 
 import java.util.Map;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 
 public abstract class AbstractAutomationTest {
