@@ -89,6 +89,7 @@ public class ExtensionReports extends ExtensionAdaptor {
     private static final Pattern DATETIME_PATTERN = Pattern.compile(DATETIME_REGEX);
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
             new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    private static final int RISK_FALSE_POSITIVE = -1;
 
     private ZapMenuItem reportMenu;
     private JButton reportButton;
@@ -514,13 +515,15 @@ public class ExtensionReports extends ExtensionAdaptor {
         return new HashMap<>();
     }
 
-    private Map<Integer, Integer> getAlertCountsByRule(AlertNode rootNode) {
+    Map<Integer, Integer> getAlertCountsByRule(AlertNode rootNode) {
         Map<Integer, Integer> alertCounts = new HashMap<>();
         Enumeration<?> childEnum = rootNode.children();
         while (childEnum.hasMoreElements()) {
             AlertNode child = (AlertNode) childEnum.nextElement();
-            alertCounts.merge(
-                    child.getUserObject().getPluginId(), child.getChildCount(), Integer::sum);
+            if (child.getRisk() != RISK_FALSE_POSITIVE) {
+                alertCounts.merge(
+                        child.getUserObject().getPluginId(), child.getChildCount(), Integer::sum);
+            }
         }
 
         return alertCounts;
