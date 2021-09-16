@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Address errors when running the OutputSummary job with Automation Framework.
  - Alert counts to ignore false positives.
 
+### Changed
+- Maintenance changes.
+
 ## [0.5.0] - 2021-08-05
 ### Added
 - Automation Framework 'theme' parameter.

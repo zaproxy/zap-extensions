@@ -74,11 +74,11 @@ public class OpenApiSpider extends SpiderParser {
             String responseBodyStart =
                     StringUtils.left(message.getResponseBody().toString(), 250)
                             .toLowerCase(Locale.ROOT);
-            if (contentType.startsWith("application/vnd.oai.openapi")) {
-                return true;
-            } else if ((contentType.contains("json") || contentType.contains("yaml"))
-                    && (responseBodyStart.contains("swagger")
-                            || responseBodyStart.contains("openapi"))) {
+            if (contentType.startsWith("application/vnd.oai.openapi")
+                    || (contentType.contains("json")
+                            || contentType.contains("yaml")
+                                    && (responseBodyStart.contains("swagger")
+                                            || responseBodyStart.contains("openapi")))) {
                 return true;
             }
         } catch (Exception e) {

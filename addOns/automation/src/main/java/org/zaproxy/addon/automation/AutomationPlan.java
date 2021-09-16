@@ -59,8 +59,7 @@ public class AutomationPlan {
         env.setPlan(this);
     }
 
-    public AutomationPlan(ExtensionAutomation ext, File file)
-            throws FileNotFoundException, IOException {
+    public AutomationPlan(ExtensionAutomation ext, File file) throws IOException {
         super();
         this.id = nextId++;
         this.file = file;
@@ -152,7 +151,7 @@ public class AutomationPlan {
     public void resetProgress() {
         progress = new AutomationProgress();
         this.getEnv().setProgress(progress);
-        jobs.stream().forEach(j -> j.reset());
+        jobs.stream().forEach(AutomationJob::reset);
     }
 
     public AutomationEnvironment getEnv() {
@@ -238,7 +237,7 @@ public class AutomationPlan {
     }
 
     public void setChanged() {
-        if (changed == false) {
+        if (!changed) {
             AutomationEventPublisher.publishEvent(
                     AutomationEventPublisher.PLAN_CHANGED, this, null);
         }

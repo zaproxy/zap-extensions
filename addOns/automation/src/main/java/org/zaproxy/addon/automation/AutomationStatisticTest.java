@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -56,7 +57,7 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     public AutomationStatisticTest(
-            LinkedHashMap<?, ?> testData, AutomationJob job, AutomationProgress progress) {
+            Map<?, ?> testData, AutomationJob job, AutomationProgress progress) {
         super(testData, job);
         data = new Data(this);
         JobUtils.applyParamsToObject(testData, this.getData(), this.getName(), null, progress);

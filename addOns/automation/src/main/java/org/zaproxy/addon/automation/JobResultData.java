@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import java.util.Collection;
+import java.util.Collections;
 import org.parosproxy.paros.core.scanner.Alert;
 
 public abstract class JobResultData {
@@ -41,6 +42,6 @@ public abstract class JobResultData {
     }
 
     public Collection<Alert> getAllAlertData() {
-        return null;
+        return Collections.emptyList();
     }
 }

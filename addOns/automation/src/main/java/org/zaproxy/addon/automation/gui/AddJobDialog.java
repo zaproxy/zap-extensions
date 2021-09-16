@@ -20,7 +20,6 @@
 package org.zaproxy.addon.automation.gui;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
@@ -57,18 +56,7 @@ public class AddJobDialog extends StandardFieldsDialog {
                         .filter(j -> !j.isDataJob())
                         .collect(Collectors.toList());
 
-        Collections.sort(
-                jobs,
-                new Comparator<AutomationJob>() {
-
-                    @Override
-                    public int compare(AutomationJob j1, AutomationJob j2) {
-                        if (j1.getOrder().equals(j2.getOrder())) {
-                            return j1.getName().compareTo(j2.getName());
-                        }
-                        return j1.getOrder().compareTo(j2.getOrder());
-                    }
-                });
+        Collections.sort(jobs);
 
         this.addComboField(
                 JOB_PARAM,

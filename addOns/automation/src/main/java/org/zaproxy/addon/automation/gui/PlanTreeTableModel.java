@@ -222,7 +222,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                 default:
             }
         } else {
-            LOG.error("Unexpected obj object " + obj.getClass().getCanonicalName());
+            LOG.error("Unexpected obj object {}", obj.getClass().getCanonicalName());
             return obj;
         }
         return null;

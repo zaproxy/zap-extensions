@@ -222,26 +222,19 @@ public class ContextAccessRulesManager {
      */
     public void copyRulesFrom(ContextAccessRulesManager sourceManager, List<User> users) {
         this.rules.clear();
-        Map<SiteTreeNode, AccessRule> userRules;
         // Copy the user rules for the provided users
         for (User user : users) {
             Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(user.getId());
             if (sourceRules == null) {
                 continue;
             }
-            userRules = new HashMap<>(sourceManager.rules.get(user.getId()));
-            if (userRules != null) {
-                this.rules.put(user.getId(), userRules);
-            }
+            this.rules.put(user.getId(), new HashMap<>(sourceRules));
         }
         // Also copy the rules for the unauthenticated user, which will always be there
         Map<SiteTreeNode, AccessRule> sourceRules =
                 sourceManager.rules.get(UNAUTHENTICATED_USER_ID);
         if (sourceRules != null) {
-            userRules = new HashMap<>(sourceManager.rules.get(UNAUTHENTICATED_USER_ID));
-            if (userRules != null) {
-                this.rules.put(UNAUTHENTICATED_USER_ID, userRules);
-            }
+            this.rules.put(UNAUTHENTICATED_USER_ID, new HashMap<>(sourceRules));
         }
 
         this.contextSiteTree = sourceManager.contextSiteTree;
@@ -305,7 +298,7 @@ public class ContextAccessRulesManager {
                     "Imported access control rule (context, userId, node, rule): ({}, {}, {}, {}) ",
                     context.getId(),
                     userId,
-                    uri.toString(),
+                    uri,
                     rule);
         } catch (Exception ex) {
             log.error(
@@ -324,9 +317,9 @@ public class ContextAccessRulesManager {
      * @return the map of rules which are associated to nodes not in the context tree
      */
     public Map<SiteTreeNode, AccessRule> computeHangingRules(int userId) {
-        Map<SiteTreeNode, AccessRule> rules = new HashMap<>(getUserRules(userId));
-        if (rules.isEmpty()) {
-            return rules;
+        Map<SiteTreeNode, AccessRule> userRules = new HashMap<>(getUserRules(userId));
+        if (userRules.isEmpty()) {
+            return userRules;
         }
 
         // We make a traversal of the context site tree and remove all nodes from the map
@@ -336,14 +329,14 @@ public class ContextAccessRulesManager {
             // Unfortunately the enumeration isn't genericized so we need to downcast when calling
             // nextElement():
             SiteTreeNode node = (SiteTreeNode) en.nextElement();
-            rules.remove(node);
+            userRules.remove(node);
         }
 
         log.debug(
                 "Identified hanging rules for context {} and user {}: {}",
                 context.getId(),
                 userId,
-                rules);
-        return rules;
+                userRules);
+        return userRules;
     }
 }

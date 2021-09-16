@@ -376,7 +376,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             // Needs to be called after converter.getRequestModels() to get loop
                             // errors
                             errors.addAll(converter.getErrorMessages());
-                            if (errors.size() > 0) {
+                            if (!errors.isEmpty()) {
                                 logErrors(errors, initViaUi);
                                 if (initViaUi) {
                                     View.getSingleton()

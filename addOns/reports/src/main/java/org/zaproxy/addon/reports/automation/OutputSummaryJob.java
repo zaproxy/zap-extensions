@@ -81,7 +81,7 @@ public class OutputSummaryJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return;
         }

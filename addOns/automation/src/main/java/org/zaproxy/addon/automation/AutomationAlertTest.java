@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.automation;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -63,8 +63,8 @@ public class AutomationAlertTest extends AbstractAutomationTest {
         data = new Data(this);
     }
 
-    public AutomationAlertTest(
-            LinkedHashMap<?, ?> testData, AutomationJob job, AutomationProgress progress) {
+    public AutomationAlertTest(Map<?, ?> testData, AutomationJob job, AutomationProgress progress) {
+
         super(testData, job);
         data = new Data(this);
         if (Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class)
@@ -174,7 +174,7 @@ public class AutomationAlertTest extends AbstractAutomationTest {
                         .filter(t -> (t.getPluginId() == this.getData().getScanRuleId()))
                         .collect(Collectors.toList());
 
-        if (alerts.size() == 0) {
+        if (alerts.isEmpty()) {
             return passIfAbsent;
         }
 

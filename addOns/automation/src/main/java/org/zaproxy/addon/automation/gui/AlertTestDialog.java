@@ -58,7 +58,7 @@ public class AlertTestDialog extends StandardFieldsDialog {
         this.addComboField(
                 ON_FAIL_PARAM,
                 Arrays.asList(OnFail.values()).stream()
-                        .map(o -> o.toString())
+                        .map(OnFail::toString)
                         .toArray(String[]::new),
                 test.getData().getOnFail().toString());
         this.addComboField(

@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,8 +37,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -345,14 +344,14 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             addPlanButton.setToolTipText(Constant.messages.getString("automation.dialog.plan.new"));
             addPlanButton.addActionListener(
                     e -> {
-                        if (currentPlan != null && currentPlan.isChanged()) {
-                            if (JOptionPane.OK_OPTION
-                                    != View.getSingleton()
-                                            .showConfirmDialog(
-                                                    Constant.messages.getString(
-                                                            "automation.dialog.plan.loosechanges"))) {
-                                return;
-                            }
+                        if (currentPlan != null
+                                && currentPlan.isChanged()
+                                && JOptionPane.OK_OPTION
+                                        != View.getSingleton()
+                                                .showConfirmDialog(
+                                                        Constant.messages.getString(
+                                                                "automation.dialog.plan.loosechanges"))) {
+                            return;
                         }
                         new NewPlanDialog().setVisible(true);
                     });
@@ -460,13 +459,12 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         if (userObj instanceof AutomationJob) {
                             AutomationJob job = (AutomationJob) userObj;
                             if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    Constant.messages.getString(
-                                                            "automation.dialog.job.remove.confirm"))) {
-                                if (currentPlan.removeJob(job)) {
-                                    getTreeModel().removeJob(job);
-                                }
+                                            == View.getSingleton()
+                                                    .showConfirmDialog(
+                                                            Constant.messages.getString(
+                                                                    "automation.dialog.job.remove.confirm"))
+                                    && currentPlan.removeJob(job)) {
+                                getTreeModel().removeJob(job);
                             }
                         }
                     });
@@ -511,17 +509,14 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                         if (userObj instanceof AbstractAutomationTest) {
                             AbstractAutomationTest test = (AbstractAutomationTest) userObj;
                             if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    Constant.messages.getString(
-                                                            "automation.dialog.test.remove.confirm"))) {
-                                if (test.getJob().removeTest(test)) {
-                                    AutomationEventPublisher.publishEvent(
-                                            AutomationEventPublisher.TEST_REMOVED,
-                                            test.getJob(),
-                                            null);
-                                    getTreeModel().removeTest(test);
-                                }
+                                            == View.getSingleton()
+                                                    .showConfirmDialog(
+                                                            Constant.messages.getString(
+                                                                    "automation.dialog.test.remove.confirm"))
+                                    && test.getJob().removeTest(test)) {
+                                AutomationEventPublisher.publishEvent(
+                                        AutomationEventPublisher.TEST_REMOVED, test.getJob(), null);
+                                getTreeModel().removeTest(test);
                             }
                         }
                     });
@@ -563,7 +558,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             list.add(Constant.messages.getString("automation.plan.current.unsaved"));
             return list;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private JTabbedPane getTabbedPane() {
@@ -604,28 +599,23 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     });
             tree.getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    int row = tree.getSelectedRow();
-                                    if (currentPlan == null || row < 0) {
-                                        disableJobAndTestButtons();
-                                        return;
-                                    }
-                                    Object userObj = setSelectedItem();
-                                    if (userObj instanceof AutomationJob) {
-                                        getJobUpButton().setEnabled(row > 1);
-                                        getJobDownButton()
-                                                .setEnabled(row < currentPlan.getJobsCount());
-                                        getRemoveJobButton().setEnabled(true);
-                                        getAddTestButton().setEnabled(true);
-                                    } else if (userObj instanceof AbstractAutomationTest) {
-                                        disableJobAndTestButtons();
-                                        getRemoveTestButton().setEnabled(true);
-                                    } else {
-                                        disableJobAndTestButtons();
-                                    }
+                            e -> {
+                                int row = tree.getSelectedRow();
+                                if (currentPlan == null || row < 0) {
+                                    disableJobAndTestButtons();
+                                    return;
+                                }
+                                Object userObj = setSelectedItem();
+                                if (userObj instanceof AutomationJob) {
+                                    getJobUpButton().setEnabled(row > 1);
+                                    getJobDownButton().setEnabled(row < currentPlan.getJobsCount());
+                                    getRemoveJobButton().setEnabled(true);
+                                    getAddTestButton().setEnabled(true);
+                                } else if (userObj instanceof AbstractAutomationTest) {
+                                    disableJobAndTestButtons();
+                                    getRemoveTestButton().setEnabled(true);
+                                } else {
+                                    disableJobAndTestButtons();
                                 }
                             });
         }
@@ -741,6 +731,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         LOG.debug("Event: {}", event.getEventType());
         switch (event.getEventType()) {
             case AutomationEventPublisher.PLAN_CREATED:
+            case AutomationEventPublisher.PLAN_CHANGED:
                 updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.PLAN_STARTED:
@@ -761,9 +752,6 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             case AutomationEventPublisher.PLAN_ENV_CREATED:
                 getTreeModel().envChanged();
                 break;
-            case AutomationEventPublisher.PLAN_CHANGED:
-                updateSaveButton(event, true);
-                break;
             case AutomationEventPublisher.PLAN_SAVED:
                 updateSaveButton(event, false);
                 break;
@@ -774,17 +762,13 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 updateJob(event);
                 break;
             case AutomationEventPublisher.JOB_ADDED:
+            case AutomationEventPublisher.TEST_ADDED:
                 plan = this.getPlan(event);
                 getTreeModel().setPlan(plan);
                 updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.JOB_CHANGED:
                 updateJob(event);
-                updateSaveButton(event, true);
-                break;
-            case AutomationEventPublisher.TEST_ADDED:
-                plan = this.getPlan(event);
-                getTreeModel().setPlan(plan);
                 updateSaveButton(event, true);
                 break;
             default:

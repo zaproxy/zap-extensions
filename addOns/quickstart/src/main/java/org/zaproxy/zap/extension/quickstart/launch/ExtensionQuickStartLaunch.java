@@ -70,7 +70,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
                     new ImageIcon(
                             ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
 
-    private QuickStartLaunchAPI api;
     private OptionsQuickStartLaunchPanel optionsPanel;
     private LaunchPanel launchPanel;
 
@@ -97,8 +96,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        this.api = new QuickStartLaunchAPI(this);
-        extensionHook.addApiImplementor(api);
+        extensionHook.addApiImplementor(new QuickStartLaunchAPI(this));
         extensionHook.addAddOnInstallationStatusListener(this);
         extensionHook.addOptionsChangedListener(this);
 
@@ -143,11 +141,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             if (this.launchPanel != null) {
                 this.launchPanel.optionsChanged();
             }
-        }
-
-        if (!this.getExtQuickStart().getQuickStartParam().isLaunchZapStartPage()) {
-            // Dont request the online version if the user has opted out
-            return;
         }
     }
 
@@ -262,10 +255,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     @Override
     public void addOnUninstalled(AddOn addOn, boolean successfully) {
-        if (getView() != null) {
-            if (addOn.getId().equals("hud")) {
-                this.launchPanel.hudAddOnUninstalled();
-            }
+        if (getView() != null && addOn.getId().equals("hud")) {
+            this.launchPanel.hudAddOnUninstalled();
         }
     }
 }

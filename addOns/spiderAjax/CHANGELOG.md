@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Address errors when running the AJAX Spider with Automation Framework.
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
 
+### Changed
+- Maintenance changes.
+
 ## [23.4.0] - 2021-08-05
 ### Added
 - Automation Framework GUI

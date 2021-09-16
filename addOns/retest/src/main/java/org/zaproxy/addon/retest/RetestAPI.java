@@ -35,7 +35,6 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationAlertTest;
 import org.zaproxy.addon.automation.AutomationJob;
-import org.zaproxy.addon.automation.AutomationJobException;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
@@ -82,12 +81,7 @@ public class RetestAPI extends ApiImplementor {
                                 .getExtensionLoader()
                                 .getExtension(ExtensionAutomation.class);
                 extAutomation.registerPlan(retestPlan);
-                try {
-                    extAutomation.runPlan(retestPlan, true);
-                } catch (AutomationJobException e) {
-                    LOGGER.error("An automation job error occurred: {}", e.toString());
-                    throw new ApiException(ApiException.Type.INTERNAL_ERROR);
-                }
+                extAutomation.runPlan(retestPlan, true);
                 return planToSet(retestPlan, alerts);
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);

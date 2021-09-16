@@ -31,10 +31,9 @@ public class DefaultPropertyFilter extends SimpleBeanPropertyFilter {
             Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
             throws Exception {
         if (include(writer)) {
-            if (pojo instanceof AutomationData) {
-                if (((AutomationData) pojo).isDefaultValue(writer.getName())) {
-                    return;
-                }
+            if (pojo instanceof AutomationData
+                    && ((AutomationData) pojo).isDefaultValue(writer.getName())) {
+                return;
             }
             writer.serializeAsField(pojo, jgen, provider);
         } else if (!jgen.canOmitFields()) {

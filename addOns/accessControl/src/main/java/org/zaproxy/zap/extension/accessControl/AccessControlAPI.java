@@ -110,14 +110,13 @@ public class AccessControlAPI extends ApiImplementor {
                             ApiException.Type.MODE_VIOLATION,
                             Constant.messages.getString(
                                     "accessControl.scanOptions.error.mode.safe"));
-                } else if (Mode.protect.equals(mode)) {
-                    if (!startOptions.getTargetContext().isInScope()) {
-                        throw new ApiException(
-                                ApiException.Type.MODE_VIOLATION,
-                                Constant.messages.getString(
-                                        "accessControl.scanOptions.error.mode.protected",
-                                        startOptions.getTargetContext().getName()));
-                    }
+                } else if (Mode.protect.equals(mode)
+                        && !startOptions.getTargetContext().isInScope()) {
+                    throw new ApiException(
+                            ApiException.Type.MODE_VIOLATION,
+                            Constant.messages.getString(
+                                    "accessControl.scanOptions.error.mode.protected",
+                                    startOptions.getTargetContext().getName()));
                 }
 
                 if (usersExtension == null) {
@@ -199,7 +198,7 @@ public class AccessControlAPI extends ApiImplementor {
 
                 // Have to add the check because ReportGenerator.XMLToHtml() won't raise an
                 // exception
-                if (reportFile.exists() == false || reportFile.canWrite() == false) {
+                if (!reportFile.exists() || !reportFile.canWrite()) {
                     String writeFailedMessage =
                             "Error writing report to file " + reportFile.getPath();
                     LOGGER.error(writeFailedMessage);

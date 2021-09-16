@@ -89,11 +89,11 @@ public class AutomationProgress {
     }
 
     public boolean hasErrors() {
-        return errors.size() > 0;
+        return !errors.isEmpty();
     }
 
     public boolean hasWarnings() {
-        return warnings.size() > 0;
+        return !warnings.isEmpty();
     }
 
     public boolean isOutputToStdout() {

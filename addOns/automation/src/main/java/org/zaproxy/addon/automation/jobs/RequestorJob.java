@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -67,7 +68,7 @@ public class RequestorJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         Object o = jobData.get(REQUESTS);
         if (o == null) {
             return;

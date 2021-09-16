@@ -45,7 +45,7 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
     private PassiveScanConfigJob.Rule rule;
     private int tableIndex;
     private PscanRulesTableModel model;
-    private Map<String, PluginPassiveScanner> nameToPlugin = new HashMap<>();;
+    private Map<String, PluginPassiveScanner> nameToPlugin = new HashMap<>();
 
     public AddPscanRuleDialog(PscanRulesTableModel model) {
         this(model, null, -1);

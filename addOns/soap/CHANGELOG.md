@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
  - Fixed var support in URLs ([Issue #6726](https://github.com/zaproxy/zaproxy/issues/6726))
 
+### Changed
+- Maintenance changes.
+
 ## [8] - 2021-08-05
 ### Added
 - Automation Framework GUI

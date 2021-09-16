@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -200,12 +199,12 @@ public class JobUtils {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void applyParamsToObject(
-            LinkedHashMap<?, ?> params,
+            Map<?, ?> testData,
             Object object,
             String objectName,
             String[] ignore,
             AutomationProgress progress) {
-        if (params == null || object == null) {
+        if (testData == null || object == null) {
             return;
         }
         Map<String, Method> methodMap = null;
@@ -230,7 +229,7 @@ public class JobUtils {
             return;
         }
 
-        for (Entry<?, ?> param : params.entrySet()) {
+        for (Entry<?, ?> param : testData.entrySet()) {
             String key = param.getKey().toString();
             if (param.getValue() == null) {
                 continue;
@@ -370,10 +369,9 @@ public class JobUtils {
                             setterMethod.invoke(destObject, value);
                         } else {
                             LOG.error(
-                                    "Automation Framework failed to find method "
-                                            + setterName
-                                            + " on "
-                                            + destObject.getClass().getCanonicalName());
+                                    "Automation Framework failed to find method {} on {}",
+                                    setterName,
+                                    destObject.getClass().getCanonicalName());
                         }
 
                     } catch (Exception e) {

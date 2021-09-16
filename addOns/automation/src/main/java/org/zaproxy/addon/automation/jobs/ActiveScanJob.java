@@ -53,6 +53,8 @@ public class ActiveScanJob extends AutomationJob {
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_POLICY = "policy";
 
+    private static final String RULES_ELEMENT_NAME = "rules";
+
     private ExtensionActiveScan extAScan;
 
     private Parameters parameters = new Parameters();
@@ -75,7 +77,7 @@ public class ActiveScanJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return;
         }
@@ -91,13 +93,13 @@ public class ActiveScanJob extends AutomationJob {
                     policyDefnData,
                     this.policyDefinition,
                     this.getName(),
-                    new String[] {"rules"},
+                    new String[] {RULES_ELEMENT_NAME},
                     progress);
 
             ScanPolicy scanPolicy = new ScanPolicy();
             PluginFactory pluginFactory = scanPolicy.getPluginFactory();
 
-            Object o = policyDefnData.get("rules");
+            Object o = policyDefnData.get(RULES_ELEMENT_NAME);
             if (o instanceof ArrayList<?>) {
                 ArrayList<?> ruleData = (ArrayList<?>) o;
                 for (Object ruleObj : ruleData) {
@@ -136,7 +138,10 @@ public class ActiveScanJob extends AutomationJob {
             } else if (o != null) {
                 progress.warn(
                         Constant.messages.getString(
-                                "automation.error.options.badlist", this.getName(), "rules", o));
+                                "automation.error.options.badlist",
+                                this.getName(),
+                                RULES_ELEMENT_NAME,
+                                o));
             }
 
         } else if (policyDefn != null) {
@@ -485,7 +490,7 @@ public class ActiveScanJob extends AutomationJob {
         }
 
         public List<Rule> getRules() {
-            return rules.stream().map(r -> r.copy()).collect(Collectors.toList());
+            return rules.stream().map(Rule::copy).collect(Collectors.toList());
         }
 
         public void addRule(Rule rule) {

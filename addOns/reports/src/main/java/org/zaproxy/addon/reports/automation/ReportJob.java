@@ -64,7 +64,7 @@ public class ReportJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
-        LinkedHashMap<?, ?> jobData = this.getJobData();
+        Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
             return;
         }
@@ -309,7 +309,7 @@ public class ReportJob extends AutomationJob {
     }
 
     private List<String> getJobDataList(
-            LinkedHashMap<?, ?> jobData, String key, AutomationProgress progress) {
+            Map<?, ?> jobData, String key, AutomationProgress progress) {
         List<String> list = new ArrayList<>();
         Object o = jobData.get(key);
         if (o == null) {

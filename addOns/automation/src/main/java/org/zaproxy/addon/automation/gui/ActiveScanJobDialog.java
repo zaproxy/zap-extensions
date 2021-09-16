@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.automation.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -109,14 +107,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 JobUtils.unBox(JobUtils.unBox(job.getParameters().getMaxScanDurationInMins())));
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
-        this.addFieldListener(
-                FIELD_ADVANCED,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
-                    }
-                });
+        this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
 
         this.addPadding(0);
 
@@ -232,7 +223,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                 .setDefaultThreshold(
                         JobUtils.i18nToThreshold(this.getStringValue(DEFAULT_THRESHOLD_PARAM)));
 
-        if (this.getBoolValue(FIELD_ADVANCED)) {
+        if (JobUtils.unBox(getBoolValue(FIELD_ADVANCED))) {
             this.job.getParameters().setDelayInMs(this.getIntValue(DELAY_IN_MS_PARAM));
             this.job.getParameters().setThreadPerHost(this.getIntValue(THREADS_PER_HOST_PARAM));
             this.job.getParameters().setAddQueryParam(this.getBoolValue(ADD_QUERY_PARAM));
@@ -348,16 +339,10 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                     .getSelectionModel()
                     .addListSelectionListener(
                             e -> {
-                                if (getRulesTable().getSelectedRowCount() == 0) {
-                                    modifyButton.setEnabled(false);
-                                    removeButton.setEnabled(false);
-                                } else if (getRulesTable().getSelectedRowCount() == 1) {
-                                    modifyButton.setEnabled(true);
-                                    removeButton.setEnabled(true);
-                                } else {
-                                    modifyButton.setEnabled(false);
-                                    removeButton.setEnabled(false);
-                                }
+                                boolean singleRowSelected =
+                                        getRulesTable().getSelectedRowCount() == 1;
+                                modifyButton.setEnabled(singleRowSelected);
+                                removeButton.setEnabled(singleRowSelected);
                             });
             rulesTable.addMouseListener(
                     new MouseAdapter() {

@@ -20,8 +20,6 @@
 package org.zaproxy.addon.automation.gui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -116,14 +114,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 JobUtils.unBox(this.job.getParameters().getMaxChildren()));
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
 
-        this.addFieldListener(
-                FIELD_ADVANCED,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
-                    }
-                });
+        this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
 
         this.addPadding(0);
 
@@ -165,7 +156,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 JobUtils.unBox(this.job.getParameters().getThreadCount()));
 
-        handleParamsModel = new DefaultComboBoxModel<SpiderParam.HandleParametersOption>();
+        handleParamsModel = new DefaultComboBoxModel<>();
         Arrays.stream(SpiderParam.HandleParametersOption.values())
                 .forEach(v -> handleParamsModel.addElement(v));
         DefaultListCellRenderer renderer =
@@ -264,7 +255,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setMaxDepth(this.getIntValue(MAX_DEPTH_PARAM));
         this.job.getParameters().setMaxChildren(this.getIntValue(MAX_CHILDREN_PARAM));
 
-        if (this.getBoolValue(FIELD_ADVANCED)) {
+        if (JobUtils.unBox(this.getBoolValue(FIELD_ADVANCED))) {
             this.job.getParameters().setAcceptCookies(this.getBoolValue(ACCEPT_COOKIES_PARAM));
             this.job
                     .getParameters()
