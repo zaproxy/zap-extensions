@@ -21,9 +21,9 @@ package org.zaproxy.addon.automation.gui;
 
 import java.util.Arrays;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.automation.AbstractAutomationTest.OnFail;
-import org.zaproxy.addon.automation.AutomationStatisticTest;
-import org.zaproxy.addon.automation.AutomationStatisticTest.Operator;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest.OnFail;
+import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.automation.tests.AutomationStatisticTest.Operator;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 

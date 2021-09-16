@@ -28,8 +28,8 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.addon.automation.AutomationAlertTest;
 import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 
 class ExtensionRetestUnitTest {
 

@@ -21,9 +21,9 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.zaproxy.addon.automation.AbstractAutomationTest;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 
 public abstract class JobData extends AutomationData {
 

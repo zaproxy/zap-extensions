@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation;
+package org.zaproxy.addon.automation.tests;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.gui.AlertTestDialog;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;

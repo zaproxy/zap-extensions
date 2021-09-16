@@ -23,9 +23,9 @@ import java.util.Arrays;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.automation.AbstractAutomationTest.OnFail;
-import org.zaproxy.addon.automation.AutomationAlertTest;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest.OnFail;
+import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 

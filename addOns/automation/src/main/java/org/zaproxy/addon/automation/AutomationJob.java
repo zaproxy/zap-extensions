@@ -32,6 +32,9 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
+import org.zaproxy.addon.automation.tests.AutomationAlertTest;
+import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 
 public abstract class AutomationJob implements Comparable<AutomationJob> {
