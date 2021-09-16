@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - The Numberzz payload generator should not set the increment to zero when creating subsequent payloads.
+- Correct spelling mistake in the initial message shown in the Fuzzer tab.
 
 ### Changed
 - Maintenance changes.
