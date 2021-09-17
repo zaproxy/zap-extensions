@@ -89,7 +89,7 @@ public class ExtensionReports extends ExtensionAdaptor {
     private static final Pattern DATETIME_PATTERN = Pattern.compile(DATETIME_REGEX);
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
             new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    private static final int RISK_FALSE_POSITIVE = -1;
+    static final int RISK_FALSE_POSITIVE = -1;
 
     private ZapMenuItem reportMenu;
     private JButton reportButton;
@@ -485,22 +485,29 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     public List<HttpMessage> getHttpMessagesForRule(int ruleId, int max) {
+        try {
+            return getHttpMessagesForRule(this.getRootAlertNode(), ruleId, max);
+        } catch (Exception e) {
+            LOGGER.error("Failed to get HttpMessages for rule Id " + ruleId, e);
+        }
+        return new ArrayList<>();
+    }
+
+    List<HttpMessage> getHttpMessagesForRule(AlertNode rootNode, int ruleId, int max) {
         List<HttpMessage> list = new ArrayList<>();
 
-        try {
-            Enumeration<?> alertEnum = this.getRootAlertNode().children();
-            while (alertEnum.hasMoreElements()) {
-                AlertNode alertNode = (AlertNode) alertEnum.nextElement();
-                if (alertNode.getUserObject().getPluginId() == ruleId) {
-                    Enumeration<?> instEnum = alertNode.children();
-                    while (instEnum.hasMoreElements() && list.size() < max) {
-                        AlertNode instNode = (AlertNode) instEnum.nextElement();
+        Enumeration<?> alertEnum = rootNode.children();
+        while (alertEnum.hasMoreElements()) {
+            AlertNode alertNode = (AlertNode) alertEnum.nextElement();
+            if (alertNode.getUserObject().getPluginId() == ruleId) {
+                Enumeration<?> instEnum = alertNode.children();
+                while (instEnum.hasMoreElements() && list.size() < max) {
+                    AlertNode instNode = (AlertNode) instEnum.nextElement();
+                    if (instNode.getRisk() != RISK_FALSE_POSITIVE) {
                         list.add(instNode.getUserObject().getMessage());
                     }
                 }
             }
-        } catch (Exception e) {
-            LOGGER.error("Failed to get HttpMessages for rule Id " + ruleId, e);
         }
 
         return list;

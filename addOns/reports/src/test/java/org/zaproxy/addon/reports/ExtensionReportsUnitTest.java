@@ -157,10 +157,28 @@ class ExtensionReportsUnitTest {
         ExtensionReports extRep = new ExtensionReports();
         AlertNode root = new AlertNode(0, "Alerts");
         root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
-        root.add(newAlertNode(1, -1, "Alert Medium 1", "https://www.example.com", 2));
+        root.add(
+                newAlertNode(
+                        1,
+                        ExtensionReports.RISK_FALSE_POSITIVE,
+                        "Alert Medium 1",
+                        "https://www.example.com",
+                        2));
         root.add(newAlertNode(2, Alert.RISK_LOW, "Alert Low 1", "https://www.example.com", 4));
-        root.add(newAlertNode(2, -1, "Alert Low 2", "https://www.example.com", 8));
-        root.add(newAlertNode(3, -1, "Alert Low 3", "https://www.example.com", 16));
+        root.add(
+                newAlertNode(
+                        2,
+                        ExtensionReports.RISK_FALSE_POSITIVE,
+                        "Alert Low 2",
+                        "https://www.example.com",
+                        8));
+        root.add(
+                newAlertNode(
+                        3,
+                        ExtensionReports.RISK_FALSE_POSITIVE,
+                        "Alert Low 3",
+                        "https://www.example.com",
+                        16));
 
         // When
         Map<Integer, Integer> counts = extRep.getAlertCountsByRule(root);
@@ -178,9 +196,69 @@ class ExtensionReportsUnitTest {
         AlertNode alertNode = new AlertNode(level, name);
         alertNode.setUserObject(alert);
         for (int i = 0; i < childCount; i++) {
-            alertNode.add(new AlertNode(level, name));
+            AlertNode childNode = new AlertNode(level, name);
+            childNode.setUserObject(new Alert(pluginId));
+            alertNode.add(childNode);
         }
         return alertNode;
+    }
+
+    @Test
+    void shouldReturnAllMessages() {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        AlertNode root = new AlertNode(0, "Alerts");
+        root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
+        root.add(
+                newAlertNode(2, Alert.RISK_MEDIUM, "Alert Medium 1", "https://www.example.com", 2));
+        root.add(newAlertNode(3, Alert.RISK_LOW, "Alert Low 1", "https://www.example.com", 4));
+        root.add(newAlertNode(4, Alert.RISK_LOW, "Alert Low 2", "https://www.example.com", 8));
+
+        // When
+        List<HttpMessage> msgs = extRep.getHttpMessagesForRule(root, 4, 10);
+
+        // Then
+        assertThat(msgs.size(), is(equalTo(8)));
+    }
+
+    @Test
+    void shouldReturnMaxNumberOfMessages() {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        AlertNode root = new AlertNode(0, "Alerts");
+        root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
+        root.add(
+                newAlertNode(2, Alert.RISK_MEDIUM, "Alert Medium 1", "https://www.example.com", 2));
+        root.add(newAlertNode(3, Alert.RISK_LOW, "Alert Low 1", "https://www.example.com", 4));
+        root.add(newAlertNode(4, Alert.RISK_LOW, "Alert Low 2", "https://www.example.com", 8));
+
+        // When
+        List<HttpMessage> msgs = extRep.getHttpMessagesForRule(root, 4, 5);
+
+        // Then
+        assertThat(msgs.size(), is(equalTo(5)));
+    }
+
+    @Test
+    void shouldIgnoreFalsePositiveAlertMessages() {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        AlertNode root = new AlertNode(0, "Alerts");
+        root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
+        root.add(newAlertNode(2, Alert.RISK_LOW, "Alert Low 1", "https://www.example.com", 3));
+        root.add(
+                newAlertNode(
+                        2,
+                        ExtensionReports.RISK_FALSE_POSITIVE,
+                        "Alert Low 2",
+                        "https://www.example.com",
+                        8));
+
+        // When
+        List<HttpMessage> msgs = extRep.getHttpMessagesForRule(root, 2, 5);
+
+        // Then
+        assertThat(msgs.size(), is(equalTo(3)));
     }
 
     @Test
