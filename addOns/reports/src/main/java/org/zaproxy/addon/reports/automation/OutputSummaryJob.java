@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class OutputSummaryJob extends AutomationJob {
 
     private ExtensionReports extReport;
     private AlertNode root;
+    private Map<Integer, String> customMessageMap = null;
 
     public OutputSummaryJob() {
         this.data = new Data(this, parameters);
@@ -126,7 +128,8 @@ public class OutputSummaryJob extends AutomationJob {
                             .add(
                                     new Rule(
                                             (Integer) ruleMap.get("id"),
-                                            (String) ruleMap.get("action")));
+                                            (String) ruleMap.get("action"),
+                                            (String) ruleMap.get("customMessage")));
                 }
             }
         }
@@ -323,7 +326,8 @@ public class OutputSummaryJob extends AutomationJob {
                                 + rule.getId()
                                 + "] x "
                                 + count
-                                + " ");
+                                + " "
+                                + getCustomMessage(rule.getId()));
                 if (Format.LONG.equals(this.getParameters().getFormat())) {
                     for (HttpMessage msg : getExtReport().getHttpMessagesForRule(rule.getId(), 5)) {
                         int code = msg.getResponseHeader().getStatusCode();
@@ -340,6 +344,22 @@ public class OutputSummaryJob extends AutomationJob {
             }
         }
         return total;
+    }
+
+    private String getCustomMessage(int ruleId) {
+        if (customMessageMap == null) {
+            customMessageMap = new HashMap<>();
+            for (Rule rule : this.getData().getRules()) {
+                String cm = rule.getCustomMessage();
+                if (cm != null) {
+                    customMessageMap.put(rule.getId(), cm);
+                }
+            }
+        }
+        if (customMessageMap.containsKey(ruleId)) {
+            return customMessageMap.get(ruleId);
+        }
+        return "";
     }
 
     /**
@@ -472,21 +492,23 @@ public class OutputSummaryJob extends AutomationJob {
     }
 
     public static class Rule extends AutomationData {
-        private Integer Id;
+        private Integer id;
         private String action;
+        private String customMessage;
 
-        public Rule(Integer id, String action) {
+        public Rule(Integer id, String action, String customMessage) {
             super();
-            Id = id;
+            this.id = id;
             this.action = action;
+            this.customMessage = customMessage;
         }
 
         public Integer getId() {
-            return Id;
+            return id;
         }
 
         public void setId(Integer id) {
-            Id = id;
+            this.id = id;
         }
 
         public String getAction() {
@@ -495,6 +517,14 @@ public class OutputSummaryJob extends AutomationJob {
 
         public void setAction(String action) {
             this.action = action;
+        }
+
+        public String getCustomMessage() {
+            return customMessage;
+        }
+
+        public void setCustomMessage(String customMessage) {
+            this.customMessage = customMessage;
         }
     }
 

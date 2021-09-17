@@ -620,6 +620,46 @@ class OutputSummaryJobUnitTest {
         assertThat(summary, is("{\"pass\":2,\"warn\":1,\"fail\":0}"));
     }
 
+    @Test
+    void shouldIncludeCustomMessage() throws Exception {
+        // Given
+        given(ext.countNumberOfUrls()).willReturn(3);
+
+        Map<Integer, Integer> alertCounts = new HashMap<>();
+        alertCounts.put(1, 3);
+        given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
+
+        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+
+        given(psJobResData.getAllRuleData()).willReturn(list);
+
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", 1);
+        ruleDefn.put("action", "WARN");
+        ruleDefn.put("customMessage", "A custom message");
+
+        LinkedHashMap<String, List<?>> data = new LinkedHashMap<>();
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+        rulesDefn.add(ruleDefn);
+        data.put("rules", rulesDefn);
+
+        AutomationProgress realProgress = new AutomationProgress();
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(realProgress);
+        job.getData().getParameters().setFormat(Format.LONG);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(
+                os.toString(),
+                is(
+                        "Total of 3 URLs\n"
+                                + "WARN-NEW: rule1 [1] x 3 A custom message\n"
+                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+    }
+
     class TestPluginPassiveScanner extends PluginPassiveScanner {
 
         private int id;
