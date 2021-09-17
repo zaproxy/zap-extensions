@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [36] - 2021-09-17
 ### Removed
 - Apache Range Header DoS (CVE-2011-3192) scan rule has been retired (Issue 6516)
 
@@ -307,6 +307,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[36]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v33
