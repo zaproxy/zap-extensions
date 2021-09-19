@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -52,153 +53,151 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     static final Set<String> fileExtensions =
             new LinkedHashSet<>(
                     Arrays.asList(
-                            new String[] {
-                                ".bak",
-                                ".backup",
-                                ".bac",
-                                ".zip",
-                                ".tar",
-                                ".jar",
-                                ".log",
-                                ".swp",
-                                "~" /* no "." */,
-                                ".old",
-                                ".~bk",
-                                ".orig",
-                                ".tmp",
-                                ".exe",
-                                ".0",
-                                ".1",
-                                ".2",
-                                ".3",
-                                ".gz",
-                                ".bz2",
-                                ".7z",
-                                ".s7z",
-                                ".lz",
-                                ".z",
-                                ".lzma",
-                                ".lzo",
-                                ".apk",
-                                ".cab",
-                                ".rar",
-                                ".war",
-                                ".ear",
-                                ".tar.gz",
-                                ".tgz",
-                                ".tar.z",
-                                ".tar.bz2",
-                                ".tbz2",
-                                ".tar.lzma",
-                                ".tlz",
-                                ".zipx",
-                                ".iso",
-                                ".src",
-                                ".dev",
-                                ".a",
-                                ".a",
-                                ".ar",
-                                ".cbz",
-                                ".cpio",
-                                ".shar",
-                                ".lbr",
-                                ".lbr",
-                                ".mar",
-                                ".f",
-                                ".rz",
-                                ".sfark",
-                                ".xz",
-                                ".ace",
-                                ".afa",
-                                ".alz",
-                                ".arc",
-                                ".arj",
-                                ".ba",
-                                ".bh",
-                                ".cfs",
-                                ".cpt",
-                                ".dar",
-                                ".dd",
-                                ".dgc",
-                                ".dmg",
-                                ".gca",
-                                ".ha",
-                                ".hki",
-                                ".ice",
-                                ".inc",
-                                ".j",
-                                ".kgb",
-                                ".lhz",
-                                ".lha",
-                                ".lzk",
-                                ".pak",
-                                ".partimg.",
-                                ".paq6",
-                                ".paq7",
-                                ".paq8",
-                                ".pea",
-                                ".pim",
-                                ".pit",
-                                ".qda",
-                                ".rk",
-                                ".sda",
-                                ".sea",
-                                ".sen",
-                                ".sfx",
-                                ".sit",
-                                ".sitx",
-                                ".sqx",
-                                "s.xz",
-                                ".tar.7z",
-                                ".tar.xz",
-                                ".uc",
-                                ".uc0",
-                                ".uc2",
-                                ".ucn",
-                                ".ur2",
-                                ".ue2",
-                                ".uca",
-                                ".uha",
-                                ".wim",
-                                ".xar",
-                                ".xp3",
-                                ".yz1",
-                                ".zoo",
-                                ".zpaq",
-                                ".zz",
-                                ".include"
-                                // extensions that get appended without the dot.
-                                // these are fairly random, and are included to catch the remainder
-                                // of the wavsep test cases, but are not likely in the real world
-                                // which is why they are included at the very end, and will only be
-                                // tried in "Insane" mode. Keepin' it real... :)
-                                ,
-                                "1",
-                                "_1",
-                                "2",
-                                "_2",
-                                "x",
-                                "_x",
-                                "bak",
-                                "_bak",
-                                "old",
-                                "_old",
-                                "a",
-                                "b",
-                                "c",
-                                "d",
-                                "e",
-                                "f",
-                                "_a",
-                                "_b",
-                                "_c",
-                                "_d",
-                                "_e",
-                                "_f",
-                                "inc",
-                                "_inc",
-                                "_backup"
-                            }));
+                            ".bak",
+                            ".backup",
+                            ".bac",
+                            ".zip",
+                            ".tar",
+                            ".jar",
+                            ".log",
+                            ".swp",
+                            "~" /* no "." */,
+                            ".old",
+                            ".~bk",
+                            ".orig",
+                            ".tmp",
+                            ".exe",
+                            ".0",
+                            ".1",
+                            ".2",
+                            ".3",
+                            ".gz",
+                            ".bz2",
+                            ".7z",
+                            ".s7z",
+                            ".lz",
+                            ".z",
+                            ".lzma",
+                            ".lzo",
+                            ".apk",
+                            ".cab",
+                            ".rar",
+                            ".war",
+                            ".ear",
+                            ".tar.gz",
+                            ".tgz",
+                            ".tar.z",
+                            ".tar.bz2",
+                            ".tbz2",
+                            ".tar.lzma",
+                            ".tlz",
+                            ".zipx",
+                            ".iso",
+                            ".src",
+                            ".dev",
+                            ".a",
+                            ".a",
+                            ".ar",
+                            ".cbz",
+                            ".cpio",
+                            ".shar",
+                            ".lbr",
+                            ".lbr",
+                            ".mar",
+                            ".f",
+                            ".rz",
+                            ".sfark",
+                            ".xz",
+                            ".ace",
+                            ".afa",
+                            ".alz",
+                            ".arc",
+                            ".arj",
+                            ".ba",
+                            ".bh",
+                            ".cfs",
+                            ".cpt",
+                            ".dar",
+                            ".dd",
+                            ".dgc",
+                            ".dmg",
+                            ".gca",
+                            ".ha",
+                            ".hki",
+                            ".ice",
+                            ".inc",
+                            ".j",
+                            ".kgb",
+                            ".lhz",
+                            ".lha",
+                            ".lzk",
+                            ".pak",
+                            ".partimg.",
+                            ".paq6",
+                            ".paq7",
+                            ".paq8",
+                            ".pea",
+                            ".pim",
+                            ".pit",
+                            ".qda",
+                            ".rk",
+                            ".sda",
+                            ".sea",
+                            ".sen",
+                            ".sfx",
+                            ".sit",
+                            ".sitx",
+                            ".sqx",
+                            "s.xz",
+                            ".tar.7z",
+                            ".tar.xz",
+                            ".uc",
+                            ".uc0",
+                            ".uc2",
+                            ".ucn",
+                            ".ur2",
+                            ".ue2",
+                            ".uca",
+                            ".uha",
+                            ".wim",
+                            ".xar",
+                            ".xp3",
+                            ".yz1",
+                            ".zoo",
+                            ".zpaq",
+                            ".zz",
+                            ".include"
+                            // extensions that get appended without the dot.
+                            // these are fairly random, and are included to catch the remainder
+                            // of the wavsep test cases, but are not likely in the real world
+                            // which is why they are included at the very end, and will only be
+                            // tried in "Insane" mode. Keepin' it real... :)
+                            ,
+                            "1",
+                            "_1",
+                            "2",
+                            "_2",
+                            "x",
+                            "_x",
+                            "bak",
+                            "_bak",
+                            "old",
+                            "_old",
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "_a",
+                            "_b",
+                            "_c",
+                            "_d",
+                            "_e",
+                            "_f",
+                            "inc",
+                            "_inc",
+                            "_backup"));
 
     /**
      * the ordered set of file suffixes to try (after the file path and file name, but immediately
@@ -207,46 +206,44 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     static final Set<String> fileSuffixes =
             new LinkedHashSet<>(
                     Arrays.asList(
-                            new String[] {
-                                " - Copy",
-                                " - Copy (2)",
-                                " - Copy (3)",
-                                "backup",
-                                "_backup",
-                                "-backup",
-                                "bak",
-                                "_bak",
-                                "-bak",
-                                "old",
-                                "_old",
-                                "-old",
-                                "1",
-                                "-1",
-                                "_1",
-                                "2"
-                                // ,".2"  //see above
-                                ,
-                                "-2",
-                                "_2",
-                                " - Copy - Copy" // a copy of a copy! :)
-                                ,
-                                "(copy)",
-                                "(another copy)",
-                                "(second copy)",
-                                "(third copy)",
-                                "(fourth copy)",
-                                "(2nd copy)",
-                                "(3rd copy)",
-                                "(4th copy)",
-                                " (copy)",
-                                " (another copy)",
-                                " (second copy)",
-                                " (third copy)",
-                                " (fourth copy)",
-                                " (2nd copy)",
-                                " (3rd copy)",
-                                " (4th copy)"
-                            }));
+                            " - Copy",
+                            " - Copy (2)",
+                            " - Copy (3)",
+                            "backup",
+                            "_backup",
+                            "-backup",
+                            "bak",
+                            "_bak",
+                            "-bak",
+                            "old",
+                            "_old",
+                            "-old",
+                            "1",
+                            "-1",
+                            "_1",
+                            "2"
+                            // ,".2" //see above
+                            ,
+                            "-2",
+                            "_2",
+                            " - Copy - Copy" // a copy of a copy! :)
+                            ,
+                            "(copy)",
+                            "(another copy)",
+                            "(second copy)",
+                            "(third copy)",
+                            "(fourth copy)",
+                            "(2nd copy)",
+                            "(3rd copy)",
+                            "(4th copy)",
+                            " (copy)",
+                            " (another copy)",
+                            " (second copy)",
+                            " (third copy)",
+                            " (fourth copy)",
+                            " (2nd copy)",
+                            " (3rd copy)",
+                            " (4th copy)"));
 
     /**
      * the ordered set of file prefixes to try (after the file path and file name, but immediately
@@ -255,28 +252,26 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     static final Set<String> filePrefixes =
             new LinkedHashSet<>(
                     Arrays.asList(
-                            new String[] {
-                                "Copy of ",
-                                "Copy (2) of ",
-                                "Copy (3) of ",
-                                "Copy of Copy of " // a copy of a copy!
-                                ,
-                                "backup",
-                                "backup_",
-                                "backup-",
-                                "bak",
-                                "bak_",
-                                "bak-",
-                                "old",
-                                "old_",
-                                "old-",
-                                "1",
-                                "1_",
-                                "1-",
-                                "2",
-                                "2_",
-                                "2-"
-                            }));
+                            "Copy of ",
+                            "Copy (2) of ",
+                            "Copy (3) of ",
+                            "Copy of Copy of " // a copy of a copy!
+                            ,
+                            "backup",
+                            "backup_",
+                            "backup-",
+                            "bak",
+                            "bak_",
+                            "bak-",
+                            "old",
+                            "old_",
+                            "old-",
+                            "1",
+                            "1_",
+                            "1-",
+                            "2",
+                            "2_",
+                            "2-"));
 
     /**
      * details of the vulnerability which we are attempting to find 34 = "Predictable Resource
@@ -363,10 +358,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             String filename = uri.getName();
 
             int statusCode = this.getBaseMsg().getResponseHeader().getStatusCode();
-            log.debug(
-                    "About to look for a backup for '{}', which returned {}",
-                    uri.toString(),
-                    statusCode);
+            log.debug("About to look for a backup for '{}', which returned {}", uri, statusCode);
 
             // is it worth looking for a copy of the file?
             if (statusCode == HttpStatusCode.NOT_FOUND) {
@@ -423,7 +415,8 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             int slashposition = temppath.lastIndexOf("/");
             if (slashposition < 0) {
                 // WTF? there was no slash in the path..
-                throw new Exception("The message has a path with a malformed path component");
+                throw new MalformedURLException(
+                        "The message has a path with a malformed path component");
             }
             String filename = originalMessage.getRequestHeader().getURI().getName();
 
@@ -441,11 +434,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     randomfilepath,
                                     null,
                                     null));
-            try {
-                nonexistfilemsg.setCookieParams(originalMessage.getCookieParams());
-            } catch (Exception e) {
-                log.debug("Could not set the cookies from the base request: {}", e);
-            }
+            setMessageCookies(nonexistfilemsg, originalMessage);
             sendAndReceive(nonexistfilemsg, false);
             byte[] nonexistfilemsgdata = nonexistfilemsg.getResponseBody().getBytes();
             // does the server give a 404 for a non-existent file?
@@ -488,11 +477,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         randomparentpath,
                                         null,
                                         null));
-                try {
-                    nonexistparentmsg.setCookieParams(originalMessage.getCookieParams());
-                } catch (Exception e) {
-                    log.debug("Could not set the cookies from the base request: {}", e);
-                }
+                setMessageCookies(nonexistparentmsg, originalMessage);
                 sendAndReceive(nonexistparentmsg, false);
                 nonexistparentmsgdata = nonexistparentmsg.getResponseBody().getBytes();
                 // does the server give a 404 for a non-existent parent folder?
@@ -692,21 +677,15 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // user
             // try each candidate URI in turn.
             for (URI candidateBackupFileURI : candidateBackupFileURIs) {
-                byte[] disclosedData = {};
-                log.debug(
-                        "Trying possible backup file path: {}", candidateBackupFileURI.toString());
+                log.debug("Trying possible backup file path: {}", candidateBackupFileURI);
                 HttpMessage requestmsg = new HttpMessage(candidateBackupFileURI);
-                try {
-                    requestmsg.setCookieParams(originalMessage.getCookieParams());
-                } catch (Exception e) {
-                    log.debug("Could not set the cookies from the base request: {}", e);
-                }
+                setMessageCookies(requestmsg, originalMessage);
                 // Do not follow redirects. They're evil. Yep.
                 sendAndReceive(requestmsg, false);
                 if (!isWithinThreshold(requestmsg)) {
                     continue;
                 }
-                disclosedData = requestmsg.getResponseBody().getBytes();
+                byte[] disclosedData = requestmsg.getResponseBody().getBytes();
                 int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
 
                 // just to complicate things.. I have a test case which for the random file, does
@@ -745,22 +724,17 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // the logic here needs to check using the parent 404 logic, and the output for a
             // non-existent parent folder.
             for (URI candidateBackupFileURI : candidateBackupFileChangedFolderURIs) {
-                byte[] disclosedData = {};
                 log.debug(
                         "Trying possible backup file path (with changed parent folder): {}",
-                        candidateBackupFileURI.toString());
+                        candidateBackupFileURI);
                 HttpMessage requestmsg = new HttpMessage(candidateBackupFileURI);
-                try {
-                    requestmsg.setCookieParams(originalMessage.getCookieParams());
-                } catch (Exception e) {
-                    log.debug("Could not set the cookies from the base request: {}", e);
-                }
+                setMessageCookies(requestmsg, originalMessage);
                 // Do not follow redirects. They're evil. Yep.
                 sendAndReceive(requestmsg, false);
                 if (!isWithinThreshold(requestmsg)) {
                     continue;
                 }
-                disclosedData = requestmsg.getResponseBody().getBytes();
+                byte[] disclosedData = requestmsg.getResponseBody().getBytes();
                 int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
                 // If the response is empty it's probably not really a backup
 
@@ -801,7 +775,17 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                     "Some error occurred when looking for a backup file for '{}'",
                     originalMessage.getRequestHeader().getURI(),
                     e);
-            return;
+        }
+    }
+
+    private static void setMessageCookies(HttpMessage newMsg, HttpMessage originalMsg) {
+        try {
+            newMsg.setCookieParams(originalMsg.getCookieParams());
+        } catch (Exception e) {
+            log.debug(
+                    "Could not set the cookies from the base request: {}",
+                    originalMsg.getRequestHeader().getURI(),
+                    e);
         }
     }
 
