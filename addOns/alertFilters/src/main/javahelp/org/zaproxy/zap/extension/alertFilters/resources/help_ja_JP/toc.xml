@@ -9,6 +9,7 @@
 			<tocitem text="Alert Filters" target="addon.alertFilter" image="flags-icon">
 				<tocitem text="Context Alert Filters" target="addon.contextAlertFilter"/>
 				<tocitem text="Global Alert Filters" target="addon.globalAlertFilter"/>
+				<tocitem text="Automation" target="addon.automation"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

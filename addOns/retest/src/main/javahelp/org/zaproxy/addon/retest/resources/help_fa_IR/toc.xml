@@ -3,7 +3,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Retest" image="retest-icon" target="retest">
+			<tocitem text="Retest" target="retest">
 				<tocitem text="About" target="retest.about"/>
 			</tocitem>
 		</tocitem>

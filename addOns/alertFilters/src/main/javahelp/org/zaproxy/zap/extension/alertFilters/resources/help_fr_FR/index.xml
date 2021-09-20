@@ -8,4 +8,5 @@
 	<indexitem text="Alert Filters" target="addon.alertFilter" />
 	<indexitem text="Context alert Filters" target="addon.contextAlertFilter" />
 	<indexitem text="Global Alert Filters" target="addon.globalAlertFilter" />
+	<indexitem text="Automation" target="addon.automation" />
 </index>
