@@ -161,6 +161,18 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertEquals(0, alertsRaised.size());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"image.gif", "image.jpg", "image.png", "image.bmp"})
+    void shouldNotRaiseAlertOnValidPhpInImageRequest(String fileName) throws Exception {
+        // Given
+        msg.setResponseBody(wrapWithHTML(CODE_PHP2));
+        msg.getRequestHeader().setURI(new URI("http://example.com/" + fileName, false));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
     @Test
     void patternFontExtensionShouldNotFindSubString() {
         // Given / When
@@ -173,6 +185,18 @@ class SourceCodeDisclosureScanRuleUnitTest
     @ParameterizedTest
     @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
     void shouldNotRaiseAlertOnValidPhpWhenInFontResponse(String type) throws Exception {
+        // Given
+        msg.setResponseBody(wrapWithHTML(CODE_PHP2));
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/gif", "image/jpeg", "image/png", "image/bmp"})
+    void shouldNotRaiseAlertOnValidPhpWhenInImageResponse(String type) throws Exception {
         // Given
         msg.setResponseBody(wrapWithHTML(CODE_PHP2));
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
