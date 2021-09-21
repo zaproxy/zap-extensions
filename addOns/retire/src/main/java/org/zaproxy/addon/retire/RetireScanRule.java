@@ -100,7 +100,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 .setOtherInfo(otherInfo)
                 .setReference(getDetails(Result.INFO, result.getInfo()))
                 .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
-                .setEvidence(result.getEvidence())
+                .setEvidence(result.getEvidence().trim())
                 .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere
     }
 

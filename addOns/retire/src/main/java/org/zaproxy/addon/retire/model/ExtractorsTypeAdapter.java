@@ -31,7 +31,7 @@ import java.util.Map;
 public class ExtractorsTypeAdapter extends TypeAdapter<Extractors> {
 
     private static final String VERSION_TOKEN = "§§version§§";
-    private static final String VERSION_SUB_PATTERN = "[0-9][0-9.a-z_\\\\\\\\-]+";
+    private static final String VERSION_SUB_PATTERN = "[0-9][0-9a-z._\\-]+?";
 
     @Override
     public Extractors read(JsonReader in) throws IOException {
@@ -110,7 +110,7 @@ public class ExtractorsTypeAdapter extends TypeAdapter<Extractors> {
         return extractors;
     }
 
-    private String fixPattern(String inPattern) {
+    static String fixPattern(String inPattern) {
         String goodPattern;
         goodPattern = inPattern.replace(VERSION_TOKEN, VERSION_SUB_PATTERN);
         if (goodPattern.contains("{")) {
@@ -118,6 +118,11 @@ public class ExtractorsTypeAdapter extends TypeAdapter<Extractors> {
                     goodPattern.replaceAll(
                             "\\{\\}", "\\\\{\\\\}"); // PatternSyntaxException: {} is treated
             // as an empty number of chars definition ex: [a-z]{8}
+        }
+        if (goodPattern.endsWith(VERSION_SUB_PATTERN + ")")) {
+            // If the pattern ends with a version sub pattern, then artificially bound it with a
+            // whitespace check
+            goodPattern = goodPattern + "\\s";
         }
         return goodPattern;
     }
