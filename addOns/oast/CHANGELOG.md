@@ -9,6 +9,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - Interactsh support.
 
+### Changed
+- The _OAST Register Request Handler.js_ script template now also prints the raw request sent to the server.
+
 ## [0.3.0] - 2021-08-26
 ### Added
 - A "Poll Now" button to the OAST tab.
