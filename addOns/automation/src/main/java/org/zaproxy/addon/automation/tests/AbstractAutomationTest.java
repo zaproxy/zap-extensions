@@ -150,7 +150,7 @@ public abstract class AbstractAutomationTest {
 
     public String getSummary() {
         return EMPTY_SUMMARY;
-    };
+    }
 
     public abstract String getTestType();
 
