@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
  - Maintenance changes.
+### Fixed
+ - "Unexpected obj object java.lang.String" error shown during initialization
 
 ## [0.6.0] - 2021-09-16
 ### Changed

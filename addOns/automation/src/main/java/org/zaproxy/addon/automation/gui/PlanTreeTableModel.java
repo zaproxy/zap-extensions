@@ -101,6 +101,9 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
     @Override
     public Object getValueAt(Object node, int columnIndex) {
         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+        if (treeNode.isRoot()) {
+            return null;
+        }
         Object obj = treeNode.getUserObject();
         if (obj instanceof AutomationEnvironment) {
             AutomationEnvironment env = (AutomationEnvironment) obj;
@@ -222,7 +225,13 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                 default:
             }
         } else {
-            LOG.error("Unexpected obj object {}", obj.getClass().getCanonicalName());
+            LOG.error(
+                    "Unexpected obj object {} value {} node {} column {}",
+                    obj.getClass().getCanonicalName(),
+                    obj,
+                    node,
+                    columnIndex,
+                    new Exception());
             return obj;
         }
         return null;
