@@ -38,8 +38,10 @@ import io.swagger.v3.oas.models.servers.ServerVariables;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.AbstractOpenApiTest;
+import org.zaproxy.zap.extension.openapi.network.RequestModel;
 
 /** Unit test for {@link SwaggerConverter}. */
 class SwaggerConverterUnitTest extends AbstractOpenApiTest {
@@ -1111,6 +1113,46 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
                         serverUriBuilders, targetUriBuilder, EMPTY_URI_BUILDER);
         // Then
         assertThat(serverUrls, contains("http://example.com/serverpath"));
+    }
+
+    @Test
+    void shouldUsePathServers() throws Exception {
+        // Given
+        String definition = getHtml("openapi_path_servers.yaml");
+        SwaggerConverter converter = new SwaggerConverter(definition, null);
+        // When
+        List<RequestModel> requests = converter.getRequestModels();
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                urlsOf(requests),
+                contains(
+                        "http://server0.localhost/path/without/servers",
+                        "http://server1.localhost/path/with/server",
+                        "http://server2.localhost/v1/path/with/servers",
+                        "http://server3.localhost/path/with/servers"));
+    }
+
+    @Test
+    void shouldUseTargetUrlForPathServers() throws Exception {
+        // Given
+        String definition = getHtml("openapi_path_servers.yaml");
+        SwaggerConverter converter =
+                new SwaggerConverter("/v2/", "http://localhost/definition/", definition, null);
+        // When
+        List<RequestModel> requests = converter.getRequestModels();
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                urlsOf(requests),
+                contains(
+                        "http://server0.localhost/v2/path/without/servers",
+                        "http://server1.localhost/v2/path/with/server",
+                        "http://server2.localhost/v2/path/with/servers"));
+    }
+
+    private static List<String> urlsOf(List<RequestModel> requests) {
+        return requests.stream().map(RequestModel::getUrl).collect(Collectors.toList());
     }
 
     private static void assertUriBuilder(

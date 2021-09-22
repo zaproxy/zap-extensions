@@ -186,13 +186,27 @@ public class SwaggerConverter implements Converter {
         }
 
         List<OperationModel> operations = new ArrayList<>();
-        List<UriBuilder> serverUriBuilders =
-                createUriBuilders(openAPI.getServers(), definitionUriBuilder);
-        apiUrls = createApiUrls(serverUriBuilders, targetUriBuilder, definitionUriBuilder);
-        for (String url : apiUrls) {
-            addOperations(openAPI, url, operations);
+        apiUrls = createApiUrls(openAPI.getServers());
+        for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {
+            PathItem path = entry.getValue();
+            for (String url : createApiUrls(path)) {
+                operations.addAll(operationHelper.getAllOperations(path, url + entry.getKey()));
+            }
         }
         return operations;
+    }
+
+    private Set<String> createApiUrls(List<Server> servers) throws SwaggerException {
+        List<UriBuilder> serverUriBuilders = createUriBuilders(servers, definitionUriBuilder);
+        return createApiUrls(serverUriBuilders, targetUriBuilder, definitionUriBuilder);
+    }
+
+    private Set<String> createApiUrls(PathItem path) throws SwaggerException {
+        List<Server> pathServers = path.getServers();
+        if (pathServers == null || pathServers.isEmpty()) {
+            return apiUrls;
+        }
+        return createApiUrls(pathServers);
     }
 
     private OpenAPI getOpenAPI() throws SwaggerException {
@@ -388,13 +402,6 @@ public class SwaggerConverter implements Converter {
         }
         errors.addAll(this.generators.getErrorMessages());
         return errors;
-    }
-
-    private void addOperations(OpenAPI openApi, String url, List<OperationModel> operations) {
-        for (Map.Entry<String, PathItem> entry : openApi.getPaths().entrySet()) {
-            operations.addAll(
-                    operationHelper.getAllOperations(entry.getValue(), url + entry.getKey()));
-        }
     }
 
     /**
