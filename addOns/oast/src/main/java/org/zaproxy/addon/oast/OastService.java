@@ -21,6 +21,8 @@ package org.zaproxy.addon.oast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class OastService {
 
@@ -49,5 +51,31 @@ public abstract class OastService {
 
     public void clearOastRequestHandlers() {
         oastRequestHandlerList.clear();
+    }
+
+    protected static class OastThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger threadNumber;
+        private final String namePrefix;
+        private final ThreadGroup group;
+
+        public OastThreadFactory(String namePrefix) {
+            threadNumber = new AtomicInteger(1);
+            this.namePrefix = namePrefix;
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
     }
 }

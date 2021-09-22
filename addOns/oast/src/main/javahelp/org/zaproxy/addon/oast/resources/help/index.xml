@@ -11,4 +11,6 @@
     <indexitem text="oast boast options" target="oast.boast.options"/>
     <indexitem text="oast callbacks" target="oast.callbacks"/>
     <indexitem text="oast callbacks options" target="oast.callbacks.options"/>
+    <indexitem text="oast interactsh" target="oast.interactsh"/>
+    <indexitem text="oast interactsh options" target="oast.interactsh.options"/>
 </index>

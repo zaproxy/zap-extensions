@@ -15,6 +15,9 @@
                     <tocitem text="Callbacks" target="oast.callbacks">
                         <tocitem text="Options" target="oast.callbacks.options"/>
                     </tocitem>
+                    <tocitem text="Interactsh" target="oast.interactsh">
+                        <tocitem text="Options" target="oast.interactsh.options"/>
+                    </tocitem>
                 </tocitem>
             </tocitem>
         </tocitem>

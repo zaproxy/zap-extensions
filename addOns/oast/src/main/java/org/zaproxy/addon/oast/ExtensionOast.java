@@ -37,6 +37,8 @@ import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
 import org.zaproxy.addon.oast.services.boast.BoastService;
 import org.zaproxy.addon.oast.services.callback.CallbackOptionsPanelTab;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
+import org.zaproxy.addon.oast.services.interactsh.InteractshOptionsPanelTab;
+import org.zaproxy.addon.oast.services.interactsh.InteractshService;
 import org.zaproxy.addon.oast.ui.OastOptionsPanel;
 import org.zaproxy.addon.oast.ui.OastPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -53,6 +55,7 @@ public class ExtensionOast extends ExtensionAdaptor {
     private OastPanel oastPanel;
     private BoastService boastService;
     private CallbackService callbackService;
+    private InteractshService interactshService;
 
     public ExtensionOast() {
         super(NAME);
@@ -62,6 +65,7 @@ public class ExtensionOast extends ExtensionAdaptor {
     public void init() {
         boastService = new BoastService();
         callbackService = new CallbackService();
+        interactshService = new InteractshService();
     }
 
     @Override
@@ -70,20 +74,24 @@ public class ExtensionOast extends ExtensionAdaptor {
 
         registerOastService(boastService);
         registerOastService(callbackService);
+        registerOastService(interactshService);
 
         extensionHook.addApiImplementor(new OastApi());
         extensionHook.addSessionListener(new OastSessionChangedListener());
 
         extensionHook.addOptionsParamSet(boastService.getParam());
         extensionHook.addOptionsParamSet(callbackService.getParam());
+        extensionHook.addOptionsParamSet(interactshService.getParam());
 
         extensionHook.addOptionsChangedListener(boastService);
         extensionHook.addOptionsChangedListener(callbackService);
+        extensionHook.addOptionsChangedListener(interactshService);
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
             getOastOptionsPanel().addServicePanel(new BoastOptionsPanelTab(boastService));
             getOastOptionsPanel().addServicePanel(new CallbackOptionsPanelTab(callbackService));
+            getOastOptionsPanel().addServicePanel(new InteractshOptionsPanelTab(interactshService));
             extensionHook.getHookView().addStatusPanel(getOastPanel());
             ExtensionHelp.enableHelpKey(getOastPanel(), "oast.tab");
         }
@@ -93,12 +101,14 @@ public class ExtensionOast extends ExtensionAdaptor {
     public void optionsLoaded() {
         boastService.optionsLoaded();
         callbackService.optionsLoaded();
+        interactshService.optionsLoaded();
     }
 
     @Override
     public void postInit() {
         boastService.startService();
         callbackService.startService();
+        interactshService.startService();
     }
 
     public void deleteAllCallbacks() {
@@ -143,6 +153,10 @@ public class ExtensionOast extends ExtensionAdaptor {
         return callbackService;
     }
 
+    public InteractshService getInteractshService() {
+        return interactshService;
+    }
+
     public void pollAllServices() {
         getOastServices().values().forEach(OastService::poll);
     }
@@ -181,8 +195,10 @@ public class ExtensionOast extends ExtensionAdaptor {
     public void stop() {
         boastService.stopService();
         callbackService.stopService();
+        interactshService.stopService();
         unregisterOastService(boastService);
         unregisterOastService(callbackService);
+        unregisterOastService(interactshService);
     }
 
     private class OastSessionChangedListener implements SessionChangedListener {

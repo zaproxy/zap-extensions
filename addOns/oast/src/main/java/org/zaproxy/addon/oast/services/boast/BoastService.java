@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.OptionsChangedListener;
@@ -40,7 +38,7 @@ public class BoastService extends OastService implements OptionsChangedListener 
 
     private List<BoastServer> registeredServers = new ArrayList<>();
     private final ScheduledExecutorService executorService =
-            Executors.newSingleThreadScheduledExecutor(new BoastThreadFactory("ZAP-OAST-BOAST-"));
+            Executors.newSingleThreadScheduledExecutor(new OastThreadFactory("ZAP-OAST-BOAST-"));
 
     private BoastParam boastParam;
     private int currentPollingFrequency;
@@ -114,31 +112,5 @@ public class BoastService extends OastService implements OptionsChangedListener 
         BoastServer boastServer = new BoastServer(boastUri);
         registeredServers.add(boastServer);
         return boastServer;
-    }
-
-    private static class BoastThreadFactory implements ThreadFactory {
-
-        private final AtomicInteger threadNumber;
-        private final String namePrefix;
-        private final ThreadGroup group;
-
-        public BoastThreadFactory(String namePrefix) {
-            threadNumber = new AtomicInteger(1);
-            this.namePrefix = namePrefix;
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        }
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-            return t;
-        }
     }
 }
