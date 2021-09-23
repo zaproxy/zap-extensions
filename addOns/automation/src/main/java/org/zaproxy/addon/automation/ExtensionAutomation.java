@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,6 +109,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addOptionsParamSet(getParam());
+
+        extensionHook.addApiImplementor(new AutomationAPI(this));
 
         if (getView() != null) {
             extensionHook.getHookView().addStatusPanel(getAutomationPanel());
@@ -231,6 +234,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         AutomationProgress progress = plan.getProgress();
         AutomationEnvironment env = plan.getEnv();
 
+        plan.setStarted(new Date());
+        plan.setFinished(null);
+
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_STARTED, plan, null);
         env.create(Model.getSingleton().getSession(), progress);
 
@@ -241,6 +247,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             // If the environment reports an error then no point in continuing
             AutomationEventPublisher.publishEvent(
                     AutomationEventPublisher.PLAN_FINISHED, plan, plan.getProgress().toMap());
+            plan.setFinished(new Date());
             return progress;
         }
 
@@ -264,6 +271,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 break;
             }
         }
+        plan.setFinished(new Date());
 
         AutomationEventPublisher.publishEvent(
                 AutomationEventPublisher.PLAN_FINISHED, plan, plan.getProgress().toMap());
