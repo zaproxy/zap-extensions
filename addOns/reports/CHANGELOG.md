@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for custom messages in outputSummary job.
+### Changed
+- Promoted to release.
 
 ### Fixed
  - Ignore false positives when listing messages in the outputSummary job.
