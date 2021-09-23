@@ -27,6 +27,8 @@ import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -110,17 +112,17 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                 alertsRaised.get(0).getReference());
     }
 
-    @Test
-    void shouldRaiseAlertOnVulnerableFilename() {
+    @ParameterizedTest
+    @ValueSource(strings = {"jquery-3.1.1.min.js", "jquery-3_1_1.min.js", "jquery-3-1-1.min.js"})
+    void shouldRaiseAlertOnVulnerableFilename(String fileName) {
         // Given
-        HttpMessage msg =
-                createMessage("http://example.com/CommonElements/js/jquery-3.1.1.min.js", null);
+        HttpMessage msg = createMessage("http://example.com/CommonElements/js/" + fileName, null);
         given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals("jquery-3.1.1.min.js", alertsRaised.get(0).getEvidence());
+        assertEquals(fileName, alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
                 alertsRaised.get(0).getReference());
