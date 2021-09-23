@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +48,8 @@ public class AutomationPlan {
     private List<AutomationJob> jobs;
     private final int id;
     private boolean changed = false;
+    private Date started;
+    private Date finished;
 
     private static final Logger LOG = LogManager.getLogger(AutomationPlan.class);
 
@@ -152,6 +155,8 @@ public class AutomationPlan {
         progress = new AutomationProgress();
         this.getEnv().setProgress(progress);
         jobs.stream().forEach(AutomationJob::reset);
+        started = null;
+        finished = null;
     }
 
     public AutomationEnvironment getEnv() {
@@ -242,6 +247,22 @@ public class AutomationPlan {
                     AutomationEventPublisher.PLAN_CHANGED, this, null);
         }
         this.changed = true;
+    }
+
+    void setStarted(Date started) {
+        this.started = started;
+    }
+
+    void setFinished(Date finished) {
+        this.finished = finished;
+    }
+
+    public Date getStarted() {
+        return started;
+    }
+
+    public Date getFinished() {
+        return finished;
     }
 
     public boolean save() throws FileNotFoundException, JsonProcessingException {
