@@ -9,7 +9,7 @@ description = "Official ZAP Reports."
 
 zapAddOn {
     addOnName.set("Report Generation")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.10.0")
 
     manifest {
