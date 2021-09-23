@@ -27,6 +27,7 @@ import io.swagger.parser.SwaggerParser;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,12 +56,27 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
+import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.StructuralNodeModifier;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.utils.Pair;
 
 public class SwaggerConverter implements Converter {
+
+    private static final List<Pair<Function<PathItem, Operation>, RequestMethod>> OPERATIONS;
+
+    static {
+        OPERATIONS = new ArrayList<>(7);
+        OPERATIONS.add(new Pair<>(PathItem::getGet, RequestMethod.GET));
+        OPERATIONS.add(new Pair<>(PathItem::getPost, RequestMethod.POST));
+        OPERATIONS.add(new Pair<>(PathItem::getPut, RequestMethod.PUT));
+        OPERATIONS.add(new Pair<>(PathItem::getHead, RequestMethod.HEAD));
+        OPERATIONS.add(new Pair<>(PathItem::getOptions, RequestMethod.OPTIONS));
+        OPERATIONS.add(new Pair<>(PathItem::getDelete, RequestMethod.DELETE));
+        OPERATIONS.add(new Pair<>(PathItem::getPatch, RequestMethod.PATCH));
+    }
 
     /** The base key for internationalised messages. */
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
@@ -69,7 +86,6 @@ public class SwaggerConverter implements Converter {
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
     private String defn;
-    private OperationHelper operationHelper;
     private RequestModelConverter requestConverter;
     private Generators generators;
     private List<String> errors = new ArrayList<>();
@@ -141,7 +157,6 @@ public class SwaggerConverter implements Converter {
         }
 
         generators = new Generators(valueGenerator);
-        operationHelper = new OperationHelper();
         requestConverter = new RequestModelConverter();
         // Remove BOM, if any. Swagger library checks the first char to decide if it should be
         // parsed as JSON or YAML.
@@ -189,8 +204,23 @@ public class SwaggerConverter implements Converter {
         apiUrls = createApiUrls(openAPI.getServers());
         for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {
             PathItem path = entry.getValue();
-            for (String url : createApiUrls(path)) {
-                operations.addAll(operationHelper.getAllOperations(path, url + entry.getKey()));
+            Set<String> pathApiUrls = createApiUrls(path.getServers(), apiUrls);
+
+            boolean operationsAdded = false;
+            for (Pair<Function<PathItem, Operation>, RequestMethod> operationData : OPERATIONS) {
+                Operation operation = operationData.first.apply(path);
+                if (operation != null) {
+                    operationsAdded = true;
+                    for (String url : createApiUrls(operation.getServers(), pathApiUrls)) {
+                        operations.add(
+                                new OperationModel(
+                                        url + entry.getKey(), operation, operationData.second));
+                    }
+                }
+            }
+
+            if (!operationsAdded) {
+                LOG.debug("Failed to find any operations for path={}", path);
             }
         }
         return operations;
@@ -201,12 +231,12 @@ public class SwaggerConverter implements Converter {
         return createApiUrls(serverUriBuilders, targetUriBuilder, definitionUriBuilder);
     }
 
-    private Set<String> createApiUrls(PathItem path) throws SwaggerException {
-        List<Server> pathServers = path.getServers();
-        if (pathServers == null || pathServers.isEmpty()) {
-            return apiUrls;
+    private Set<String> createApiUrls(List<Server> servers, Set<String> fallbackApiUrls)
+            throws SwaggerException {
+        if (servers == null || servers.isEmpty()) {
+            return fallbackApiUrls;
         }
-        return createApiUrls(pathServers);
+        return createApiUrls(servers);
     }
 
     private OpenAPI getOpenAPI() throws SwaggerException {
