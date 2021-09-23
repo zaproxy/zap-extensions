@@ -12,4 +12,6 @@
     <mapID target="oast.boast.options" url="contents/services/boast/options.html"/>
     <mapID target="oast.callbacks" url="contents/services/callbacks/callbacks.html"/>
     <mapID target="oast.callbacks.options" url="contents/services/callbacks/options.html"/>
+    <mapID target="oast.interactsh" url="contents/services/interactsh/interactsh.html"/>
+    <mapID target="oast.interactsh.options" url="contents/services/interactsh/options.html"/>
 </map>
