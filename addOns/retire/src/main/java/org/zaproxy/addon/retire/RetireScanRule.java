@@ -62,12 +62,12 @@ public class RetireScanRule extends PluginPassiveScanner {
         if (!msg.getResponseHeader().isImage()
                 && !msg.getRequestHeader().isCss()
                 && !msg.getResponseHeader().isCss()) {
-            Repo repo = getRepo();
-            if (repo == null) {
+            Repo scanRepo = getRepo();
+            if (scanRepo == null) {
                 LOGGER.error("\tThe Retire.js repository was null.");
                 return;
             }
-            Result result = repo.scanJS(msg);
+            Result result = scanRepo.scanJS(msg);
             if (result == null) {
                 LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);
             } else {
@@ -77,9 +77,9 @@ public class RetireScanRule extends PluginPassiveScanner {
                         uri,
                         (result.getFilename() == null) ? "" : result.getFilename(),
                         result.getVersion(),
-                        result.getInfo());
+                        result.getInformation());
 
-                String otherInfo = getDetails(Result.CVE, result.getInfo());
+                String otherInfo = getDetails(Result.CVE, result.getInformation());
 
                 if (result.hasOtherInfo()) {
                     otherInfo = otherInfo + result.getOtherinfo();
@@ -98,7 +98,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                         Constant.messages.getString(
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
                 .setOtherInfo(otherInfo)
-                .setReference(getDetails(Result.INFO, result.getInfo()))
+                .setReference(getDetails(Result.INFO, result.getInformation()))
                 .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
                 .setEvidence(result.getEvidence().trim())
                 .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere

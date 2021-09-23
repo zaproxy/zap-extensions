@@ -99,7 +99,7 @@ public class Repo {
         HashMap<String, String> msginfo = new HashMap<>();
         msginfo.put(Extractors.TYPE_URI, uri);
         if (fileName != null) {
-            msginfo.put(Extractors.TYPE_FILENAME, fileName.toString());
+            msginfo.put(Extractors.TYPE_FILENAME, fileName);
         }
         msginfo.put(Extractors.TYPE_FILECONTENT, content);
 
@@ -136,7 +136,6 @@ public class Repo {
      */
     private Result scanHash(String hash) {
         // Testable URL: https://ajax.googleapis.com/ajax/libs/dojo/1.1.1/dojo/dojo.js
-        Map<String, Set<String>> results = new HashMap<>();
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
             Map<String, String> hashes = repoEntry.getValue().getExtractors().getHashes();
 
@@ -146,7 +145,8 @@ public class Repo {
                     List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
 
                     if (hash.equalsIgnoreCase(hashEntry.getKey())) {
-                        results = isVersionVulnerable(vulnerabilities, hashEntry.getValue());
+                        Map<String, Set<String>> results =
+                                isVersionVulnerable(vulnerabilities, hashEntry.getValue());
                         Result result =
                                 new Result(repoEntry.getKey(), hashEntry.getValue(), results, "");
                         result.setOtherinfo(
@@ -166,7 +166,6 @@ public class Repo {
      * FileName OR FileURL OR FileContent
      */
     private Result scan(String extractorType, String input) {
-        Map<String, Set<String>> results = new HashMap<>();
         // reading each entry for JS libraries in repo
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
             List<String> extractors = repoEntry.getValue().getExtractors().get(extractorType);
@@ -187,7 +186,8 @@ public class Repo {
                             // Now try to determine if this version is vulnerable
                             List<Vulnerability> vulnerabilities =
                                     repoEntry.getValue().getVulnerabilities();
-                            results = isVersionVulnerable(vulnerabilities, versionString);
+                            Map<String, Set<String>> results =
+                                    isVersionVulnerable(vulnerabilities, versionString);
                             if (!results.isEmpty()) {
                                 return new Result(
                                         repoEntry.getKey(),
@@ -214,15 +214,15 @@ public class Repo {
         Extractors extractors = dc.getExtractors();
 
         // iterating over extractors
-        for (String criterion : msginfo.keySet()) {
-            matches = extractors.get(criterion);
+        for (Entry<String, String> criterion : msginfo.entrySet()) {
+            matches = extractors.get(criterion.getKey());
             if (matches != null && !matches.isEmpty()) {
                 Iterator<String> iterator = matches.iterator();
                 while (iterator.hasNext()) {
                     String next = iterator.next();
                     if (next != null) {
                         Pattern p = Pattern.compile(next);
-                        Matcher m = p.matcher(msginfo.get(criterion));
+                        Matcher m = p.matcher(criterion.getValue());
                         // doing a match for each filename regex
                         if (m.find()) {
                             return true;
