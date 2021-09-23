@@ -32,7 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.callback.ExtensionCallback;
+import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -191,7 +191,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             // using a challenge/response model based on a random string
 
             // Skip XXE Remote File Inclusion Attack when callback extension is not available.
-            if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
+            if (ChallengeCallbackImplementor.getCallbackService() != null) {
                 String challenge = randomString(CHALLENGE_LENGTH);
 
                 try {
@@ -372,18 +372,14 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         return result.toString();
     }
 
-    /**
-     * Only for use in unit tests
-     *
-     * @param extCallback
-     */
-    protected void setExtensionCallback(ExtensionCallback extCallback) {
-        ChallengeCallbackImplementor.setExtensionCallback(extCallback);
+    /** Only for use in unit tests */
+    protected void setCallbackService(CallbackService callbackService) {
+        ChallengeCallbackImplementor.setCallbackService(callbackService);
     }
 
     protected static void unload() {
-        if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
-            ChallengeCallbackImplementor.getExtensionCallback()
+        if (ChallengeCallbackImplementor.getCallbackService() != null) {
+            ChallengeCallbackImplementor.getCallbackService()
                     .removeCallbackImplementor(callbackImplementor);
         }
     }

@@ -23,6 +23,8 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -34,16 +36,28 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.db.paros.ParosTableHistory;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
+
+    @BeforeAll
+    static void setUpCallbacks() {
+        CallbackService callbackService = spy(new CallbackService());
+        ChallengeCallbackImplementor.setCallbackService(callbackService);
+        doReturn("http://192.0.2.0:12345/").when(callbackService).getCallbackAddress();
+        HistoryReference.setTableHistory(new ParosTableHistory());
+    }
 
     @Override
     protected XxeScanRule createScanner() {

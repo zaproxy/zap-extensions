@@ -34,9 +34,9 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.api.ApiException;
-import org.zaproxy.zap.extension.callback.CallbackImplementor;
-import org.zaproxy.zap.extension.callback.ExtensionCallback;
+import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.addon.oast.services.callback.CallbackImplementor;
+import org.zaproxy.addon.oast.services.callback.CallbackService;
 
 /**
  * General Abstract class for Challenge/Response Active Plugin management
@@ -56,12 +56,12 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
     private final Map<String, RegisteredCallback> regCallbacks =
             Collections.synchronizedMap(new TreeMap<>());
 
-    private static ExtensionCallback extCallback;
+    private static CallbackService callbackService;
 
     /** Default contructor */
     public ChallengeCallbackImplementor() {
-        if (getExtensionCallback() != null) {
-            getExtensionCallback().registerCallbackImplementor(this);
+        if (getCallbackService() != null) {
+            getCallbackService().registerCallbackImplementor(this);
         }
     }
 
@@ -103,19 +103,10 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
         }
     }
 
-    /**
-     * @param challenge
-     * @return
-     */
     public String getCallbackUrl(String challenge) {
-        return getExtensionCallback().getCallbackAddress() + getPrefix() + "/" + challenge;
+        return getCallbackService().getCallbackAddress() + getPrefix() + "/" + challenge;
     }
 
-    /**
-     * @param msg
-     * @return
-     * @throws ApiException
-     */
     @Override
     public void handleCallBack(HttpMessage msg) {
         // We've to look at the name and verify if the challenge has
@@ -145,11 +136,6 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
         }
     }
 
-    /**
-     * @param challenge
-     * @param plugin
-     * @param attack
-     */
     public void registerCallback(
             String challenge, ChallengeCallbackPlugin plugin, HttpMessage attack) {
         // Maybe we'va a lot of dirty entries
@@ -159,26 +145,20 @@ public abstract class ChallengeCallbackImplementor implements CallbackImplemento
         regCallbacks.put(challenge, new RegisteredCallback(plugin, attack));
     }
 
-    protected static ExtensionCallback getExtensionCallback() {
-        if (extCallback == null) {
-            extCallback =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionCallback.class);
+    protected static CallbackService getCallbackService() {
+        if (callbackService == null) {
+            ExtensionOast extOast =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+            callbackService = extOast != null ? extOast.getCallbackService() : null;
         }
-        return extCallback;
+        return callbackService;
     }
 
-    /**
-     * Only for use in unit tests
-     *
-     * @param extCallback
-     */
-    protected static void setExtensionCallback(ExtensionCallback ext) {
-        extCallback = ext;
+    /** Only for use in unit tests */
+    protected static void setCallbackService(CallbackService service) {
+        callbackService = service;
     }
 
-    /** */
     private static class RegisteredCallback {
         private ChallengeCallbackPlugin plugin;
         private HistoryReference hRef;

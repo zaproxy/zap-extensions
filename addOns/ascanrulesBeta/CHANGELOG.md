@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Use OAST Callbacks for the XXE Scan Rule.
 
 ## [36] - 2021-09-17
 ### Removed
