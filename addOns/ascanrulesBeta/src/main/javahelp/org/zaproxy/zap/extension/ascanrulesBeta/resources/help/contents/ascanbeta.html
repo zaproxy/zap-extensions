@@ -340,7 +340,8 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
 Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
 handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc. The number of tags which are tested individually depends on the strength of the rule.<br>
+internal or tertiary systems, etc. It tests the request in both cases, whether the XML is directly POSTed 
+to the server or is part of a multipart request. The number of tags which are tested individually depends on the strength of the rule.<br>
 <br>
 It requires the Callback extension, so will not work if this extension is disabled or removed. 
 It is also recommended that you test that the Callback extension is correctly configured for your target site.

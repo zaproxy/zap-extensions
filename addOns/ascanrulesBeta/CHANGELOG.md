@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Source Code Disclosure - File Inclusion scan rule was modified to make use of the Dice algorithm for calculating the match percentage, thus improving its performance.
 - Update links to repository.
 - Maintenance changes.
+- XML External Entity Attack scan rule extended to detect XXE attacks when the XML is part of a multipart request.
 
 ### Fixed
 - Add missing file, used by Hidden File Finder scan rule.
