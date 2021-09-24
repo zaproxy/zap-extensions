@@ -27,9 +27,13 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RetireUtil {
+public final class RetireUtil {
 
     private static final Logger LOGGER = LogManager.getLogger(RetireUtil.class);
+
+    private RetireUtil() {
+        // Utility class
+    }
 
     /*
      * This utility function computes the SHA 1 hash input string
@@ -79,26 +83,26 @@ public class RetireUtil {
         String[] v2 = version2.split("[\\.-]");
         int l = v1.length > v2.length ? v1.length : v2.length;
         for (int i = 0; i < l; i++) {
-            String v1_part = v1.length > i ? v1[i] : "0";
-            String v2_part = v2.length > i ? v2[i] : "0";
-            boolean v1_isnumber = isNumber(v1_part);
-            boolean v2_isnumber = isNumber(v2_part);
+            String v1Part = v1.length > i ? v1[i] : "0";
+            String v2part = v2.length > i ? v2[i] : "0";
+            boolean v1IsNumber = isNumber(v1Part);
+            boolean v2IsNumber = isNumber(v2part);
 
             // if either of v1 or v2 is string
-            if (v1_isnumber != v2_isnumber) {
-                return v1_isnumber;
+            if (v1IsNumber != v2IsNumber) {
+                return v1IsNumber;
             }
 
             // if both v1 and v2 are strings
-            if (!v1_isnumber && !v2_isnumber) {
-                return v1_part.compareTo(v2_part) > 0;
+            if (!v1IsNumber && !v2IsNumber) {
+                return v1Part.compareTo(v2part) > 0;
             }
 
             // if both are numbers
-            if (Integer.parseInt(v1_part) < Integer.parseInt(v2_part)) {
+            if (Integer.parseInt(v1Part) < Integer.parseInt(v2part)) {
                 return false;
             }
-            if (Integer.parseInt(v1_part) > Integer.parseInt(v2_part)) {
+            if (Integer.parseInt(v1Part) > Integer.parseInt(v2part)) {
                 return true;
             }
         }

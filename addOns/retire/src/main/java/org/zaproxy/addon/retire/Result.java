@@ -27,7 +27,7 @@ public class Result {
     public static final String INFO = "info";
     public static final String CVE = "CVE";
 
-    Map<String, Set<String>> info = new HashMap<>();
+    Map<String, Set<String>> information = new HashMap<>();
     String version;
     String filename;
     String evidence;
@@ -40,12 +40,12 @@ public class Result {
             String evidence) {
         this.filename = filename;
         this.version = version;
-        this.info = info;
+        this.information = info;
         this.evidence = evidence;
     }
 
-    public Map<String, Set<String>> getInfo() {
-        return info;
+    public Map<String, Set<String>> getInformation() {
+        return information;
     }
 
     public String getVersion() {

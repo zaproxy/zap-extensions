@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Version extraction pattern was fixed to reduce false positives (Issue 6818).
 
+### Changed
+- Maintenance changes.
+
 ## [0.8.0] - 2021-08-25
 ### Changed
 - Updated with upstream retire.js pattern changes.
