@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.selenium;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -32,6 +34,7 @@ public class PopupMenuItemOpenInBrowser extends PopupMenuItemHttpMessageContaine
     private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemOpenInBrowser.class);
     private ExtensionSelenium ext;
     private ProvidedBrowser browser;
+    private boolean disabledToolTipSet = false;
 
     public PopupMenuItemOpenInBrowser(
             String label, ExtensionSelenium ext, ProvidedBrowser browser) {
@@ -46,6 +49,26 @@ public class PopupMenuItemOpenInBrowser extends PopupMenuItemHttpMessageContaine
             return false;
         }
         return super.isEnabled();
+    }
+
+    @Override
+    protected boolean isButtonEnabledForNumberOfSelectedMessages(int numberOfSelectedMessages) {
+        if (Constant.isInContainer()
+                && !Model.getSingleton()
+                        .getOptionsParam()
+                        .getViewParam()
+                        .isAllowAppIntegrationInContainers()) {
+            if (!disabledToolTipSet) {
+                this.setToolTipText(Constant.messages.getString("history.browser.disabled"));
+                disabledToolTipSet = true;
+            }
+            return false;
+        }
+        if (disabledToolTipSet) {
+            this.setToolTipText("");
+            disabledToolTipSet = false;
+        }
+        return true;
     }
 
     @Override
