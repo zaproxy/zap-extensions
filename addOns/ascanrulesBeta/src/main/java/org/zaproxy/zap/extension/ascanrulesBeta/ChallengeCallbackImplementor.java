@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,7 @@ import org.zaproxy.addon.oast.services.callback.CallbackService;
 public abstract class ChallengeCallbackImplementor implements CallbackImplementor {
 
     // The default expiration time for each callback (in millisecs)
-    private static final long CALLBACK_EXPIRE_TIME = 2 * 60 * 1000L;
+    private static final long CALLBACK_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(2);
 
     // Internal logger
     private static final Logger logger = LogManager.getLogger(ChallengeCallbackImplementor.class);
