@@ -6,16 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for custom messages in outputSummary job.
+
 ### Changed
 - Promoted to release.
 
 ### Fixed
- - Ignore false positives when listing messages in the outputSummary job.
+- Ignore false positives when listing messages in the outputSummary job.
+- Bug in report job add-on which prevented the right theme from being used
+- Added missing Modern template i18n messages
 
 ## [0.6.0] - 2021-09-16
 ### Fixed
- - Address errors when running the OutputSummary job with Automation Framework.
- - Alert counts to ignore false positives.
+- Address errors when running the OutputSummary job with Automation Framework.
+- Alert counts to ignore false positives.
 
 ### Changed
 - Maintenance changes.
