@@ -132,11 +132,13 @@ public class ReportJobDialog extends StandardFieldsDialog {
                         });
 
         List<String> themes = new ArrayList<>();
+        String theme = null;
         if (defaultTemplate != null) {
             themes = defaultTemplate.getThemeNames();
+            theme = defaultTemplate.getThemeName(params.getTheme());
         }
 
-        this.addComboField(TAB_TEMPLATE, FIELD_THEME, themes, params.getTheme());
+        this.addComboField(TAB_TEMPLATE, FIELD_THEME, themes, theme);
 
         this.addCustomComponent(TAB_TEMPLATE, FIELD_SECTIONS, getSectionsScrollPane());
         resetTemplateFields();
@@ -198,23 +200,32 @@ public class ReportJobDialog extends StandardFieldsDialog {
 
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         if (template != null) {
+            String originalValue = this.getStringValue(FIELD_THEME);
             JComboBox<String> themeCombo = ((JComboBox<String>) this.getField(FIELD_THEME));
             themeCombo.removeAllItems();
             for (String theme : template.getThemeNames()) {
                 themeCombo.addItem(theme);
             }
-            if (template.getThemeNames().size() > 0) {
-                String defaultTheme = extension.getReportParam().getTheme(template.getConfigName());
-                if (defaultTheme != null) {
-                    themeCombo.setSelectedItem(template.getThemeName(defaultTheme));
+            if (!template.getThemeNames().isEmpty()) {
+                // Try the current value in the dialog
+                if (template.getThemeForName(originalValue) != null) {
+                    themeCombo.setSelectedItem(originalValue);
                 } else {
-                    themeCombo.setSelectedIndex(0);
+                    // Use the user's default theme for this template
+                    String defaultTheme =
+                            extension.getReportParam().getTheme(template.getConfigName());
+                    if (defaultTheme != null) {
+                        themeCombo.setSelectedItem(template.getThemeName(defaultTheme));
+                    } else {
+                        // fall back to the first one
+                        themeCombo.setSelectedIndex(0);
+                    }
                 }
             }
 
             List<String> sections = template.getSections();
             sectionsMap = new HashMap<>();
-            if (sections.size() == 0) {
+            if (sections.isEmpty()) {
                 sectionPanel.add(
                         new JLabel(
                                 Constant.messages.getString("reports.dialog.field.sections.none")));
@@ -227,7 +238,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
                                             "report.template.section." + section, null));
                     cb.setSelected(
                             sectionList == null
-                                    || sectionList.size() == 0
+                                    || sectionList.isEmpty()
                                     || sectionList.contains(section));
                     sectionsMap.put(section, cb);
                     sectionPanel.add(cb);
@@ -257,7 +268,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
                 sections.add(entry.getKey());
             }
         }
-        if (sections.size() == 0) {
+        if (sections.isEmpty()) {
             job.getData().setSections(null);
         } else {
             job.getData().setSections(sections);
@@ -270,7 +281,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
                 risks.add(ReportJob.riskIntToString(i));
             }
         }
-        if (risks.size() == 0) {
+        if (risks.isEmpty()) {
             job.getData().setRisks(null);
         } else {
             job.getData().setRisks(risks);
@@ -289,7 +300,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
                 confs.add(ReportJob.confidenceIntToString(i));
             }
         }
-        if (confs.size() == 0) {
+        if (confs.isEmpty()) {
             job.getData().setConfidences(null);
         } else {
             job.getData().setConfidences(confs);
@@ -300,11 +311,6 @@ public class ReportJobDialog extends StandardFieldsDialog {
     private File getReportFile() {
         return new File(
                 this.getStringValue(FIELD_REPORT_DIR), this.getStringValue(FIELD_REPORT_NAME));
-    }
-
-    @Override
-    public void setVisible(boolean show) {
-        super.setVisible(show);
     }
 
     @Override
