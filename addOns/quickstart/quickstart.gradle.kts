@@ -5,7 +5,7 @@ description = "Provides a tab which allows you to quickly test a target applicat
 zapAddOn {
     addOnName.set("Quick Start")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -62,7 +62,15 @@ zapAddOn {
     }
 }
 
+repositories {
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    zap("org.zaproxy:zap:2.11.0-20210923.152813-2")
+
     compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)

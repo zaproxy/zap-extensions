@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
 - Generate quickout reports using the reports add-on instead of the core
+- Update minimum ZAP version to 2.11.0.
+- Disable browser launch in containers unless override option enabled
 
 ## [29] - 2020-12-15
 ### Changed

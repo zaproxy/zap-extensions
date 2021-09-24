@@ -73,7 +73,10 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private JCheckBox hudCheckbox;
     private JLabel hudIsInScopeOnly;
     private JLabel exploreLabel;
+    private JLabel footerLabel;
+    private JButton selectButton;
     private int hudOffset;
+    private Boolean canLaunch;
 
     public LaunchPanel(
             ExtensionQuickStartLaunch extLaunch,
@@ -118,18 +121,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     }
 
-    @Override
-    public JPanel getContentPanel() {
-        if (this.contentPanel == null) {
-            contentPanel = new QuickStartBackgroundPanel();
-            contentPanel.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
-            int offset = 0;
-            contentPanel.add(
-                    new JLabel(Constant.messages.getString("quickstart.label.exploreurl")),
-                    LayoutHelper.getGBC(0, ++offset, 1, 0.0D, new Insets(5, 5, 5, 5)));
-
-            JPanel urlSelectPanel = new JPanel(new GridBagLayout());
-            JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
+    private JButton getSelectButton() {
+        if (selectButton == null) {
+            selectButton = new JButton(Constant.messages.getString("all.button.select"));
             selectButton.setIcon(
                     DisplayUtils.getScaledIcon(
                             new ImageIcon(
@@ -165,9 +159,24 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                             }
                         }
                     });
+        }
+        return selectButton;
+    }
+
+    @Override
+    public JPanel getContentPanel() {
+        if (this.contentPanel == null) {
+            contentPanel = new QuickStartBackgroundPanel();
+            contentPanel.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
+            int offset = 0;
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.label.exploreurl")),
+                    LayoutHelper.getGBC(0, ++offset, 1, 0.0D, new Insets(5, 5, 5, 5)));
+
+            JPanel urlSelectPanel = new JPanel(new GridBagLayout());
 
             urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 0.5D));
-            urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            urlSelectPanel.add(getSelectButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(1, offset, 3, 0.25D));
 
             contentPanel.add(
@@ -350,6 +359,13 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return exploreLabel;
     }
 
+    private JLabel getFooterLabel() {
+        if (footerLabel == null) {
+            footerLabel = new JLabel();
+        }
+        return footerLabel;
+    }
+
     @Override
     public void eventReceived(Event event) {
         if (event.getEventType().equals(EVENT_HUD_ENABLED_FOR_DESKTOP)) {
@@ -367,13 +383,36 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     @Override
     public JPanel getFooterPanel() {
         JPanel panel = new QuickStartBackgroundPanel();
-        panel.add(
-                new JLabel(Constant.messages.getString("quickstart.panel.launch.manual")),
-                LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
+        panel.add(getFooterLabel(), LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
         return panel;
     }
 
     public void optionsChanged() {
         this.setHudIsInScopeOnlyText();
+        this.setForContainers();
+    }
+
+    private void setForContainers() {
+        boolean canLaunchNow =
+                !Constant.isInContainer()
+                        || Model.getSingleton()
+                                .getOptionsParam()
+                                .getViewParam()
+                                .isAllowAppIntegrationInContainers();
+        if (this.canLaunch == null || !this.canLaunch.equals(canLaunchNow)) {
+            if (canLaunchNow) {
+                getFooterLabel()
+                        .setText(Constant.messages.getString("quickstart.panel.launch.manual"));
+            } else {
+                getFooterLabel()
+                        .setText(Constant.messages.getString("quickstart.panel.launch.container"));
+            }
+            this.getUrlField().setEnabled(canLaunchNow);
+            this.getHudCheckbox().setEnabled(canLaunchNow);
+            this.getLaunchButton().setEnabled(canLaunchNow);
+            this.getSelectButton().setEnabled(canLaunchNow);
+            this.getBrowserComboBox().setEnabled(canLaunchNow);
+            this.canLaunch = canLaunchNow;
+        }
     }
 }
