@@ -111,7 +111,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"https://www.example2.com/\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"https://www.example2.com/\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
@@ -129,7 +129,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
                         LinkTargetScanRule.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
-                "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"https://www.example2.com/page1\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
@@ -146,14 +146,15 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
                         LinkTargetScanRule.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
-                "<html><a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"https://www.example3.com/page1\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a>"));
+                equalTo(
+                        "<a href=\"https://www.example3.com/page1\" rel=\"opener\" target=\"_blank\">link</a>"));
     }
 
     @Test
@@ -163,14 +164,15 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"http://www.example2.com\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"));
+                equalTo(
+                        "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"));
     }
 
     @Test
@@ -180,14 +182,15 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
+                "<html><a href=\"http://www.example2.com\" rel=\"opener\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"http://www.example2.com\" target=\"other\">link</a>"));
+                equalTo(
+                        "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"other\">link</a>"));
     }
 
     @Test
@@ -199,7 +202,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
         msg.setResponseBody(
-                "<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
+                "<html><a href=\"http://www.example2.com\" rel=\"opener\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
@@ -215,9 +218,9 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setResponseBody(
                 "<html> <img src=\"planets.gif\" width=\"145\" height=\"126\" alt=\"Planets\"  usemap=\"#planetmap\">"
                         + "<map name=\"planetmap\">"
-                        + "  <area shape=\"rect\" coords=\"0,0,82,126\" href=\"https://www.example.com/sun.html\" target=\"_blank\" alt=\"Sun\">"
-                        + "  <area shape=\"circle\" coords=\"90,58,3\" href=\"https://www.example.com2/mercur.html\" target=\"_blank\" alt=\"Mercury\">"
-                        + "  <area shape=\"circle\" coords=\"124,58,8\" href=\"https://www.example.com/venus.html\" target=\"_blank\" alt=\"Venus\">"
+                        + "  <area shape=\"rect\" coords=\"0,0,82,126\" href=\"https://www.example.com/sun.html\" rel=\"opener\" target=\"_blank\" alt=\"Sun\">"
+                        + "  <area shape=\"circle\" coords=\"90,58,3\" href=\"https://www.example.com2/mercur.html\" rel=\"opener\" target=\"_blank\" alt=\"Mercury\">"
+                        + "  <area shape=\"circle\" coords=\"124,58,8\" href=\"https://www.example.com/venus.html\" rel=\"opener\" target=\"_blank\" alt=\"Venus\">"
                         + "</map> </html>");
 
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
@@ -227,7 +230,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo(
-                        "<area shape=\"circle\" coords=\"90,58,3\" href=\"https://www.example.com2/mercur.html\" target=\"_blank\" alt=\"Mercury\">"));
+                        "<area shape=\"circle\" coords=\"90,58,3\" href=\"https://www.example.com2/mercur.html\" rel=\"opener\" target=\"_blank\" alt=\"Mercury\">"));
     }
 
     @Test
@@ -239,9 +242,9 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setResponseBody(
                 "<html> <img src=\"planets.gif\" width=\"145\" height=\"126\" alt=\"Planets\"  usemap=\"#planetmap\">"
                         + "<map name=\"planetmap\">"
-                        + "  <area shape=\"rect\" coords=\"0,0,82,126\" href=\"https://www.example.com/sun.html\" target=\"_blank\" alt=\"Sun\">"
-                        + "  <area shape=\"circle\" coords=\"90,58,3\" href=\"mercur.html\"  target=\"_blank\"alt=\"Mercury\">"
-                        + "  <area shape=\"circle\" coords=\"124,58,8\" href=\"https://www.example.com/venus.html\" target=\"_blank\" alt=\"Venus\">"
+                        + "  <area shape=\"rect\" coords=\"0,0,82,126\" href=\"https://www.example.com/sun.html\" rel=\"opener\" target=\"_blank\" alt=\"Sun\">"
+                        + "  <area shape=\"circle\" coords=\"90,58,3\" href=\"mercur.html\" rel=\"opener\" target=\"_blank\"alt=\"Mercury\">"
+                        + "  <area shape=\"circle\" coords=\"124,58,8\" href=\"https://www.example.com/venus.html\" rel=\"opener\" target=\"_blank\" alt=\"Venus\">"
                         + "</map> </html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
@@ -258,12 +261,12 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         // When
         msg.setResponseBody(
                 "<html>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example.com\" rel=\"opener\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
@@ -280,12 +283,12 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         // When
         msg.setResponseBody(
                 "<html>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
-                        + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
@@ -293,7 +296,8 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"));
+                equalTo(
+                        "<a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a>"));
     }
 
     @Test
@@ -337,7 +341,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
                 "<html>"
                         + "<a href=\"http://www.example.com/1\">link</a>"
                         + "<a href=\"http://www.example.com/2\">link</a>"
-                        + "<a href=\"http://www.example.com/3\" target=\"other\">link</a>"
+                        + "<a href=\"http://www.example.com/3\" rel=\"opener\" target=\"other\">link</a>"
                         + "<a href=\"http://www.example.com/4\" target=\"_blank\" rel=\"noopener\">link</a>"
                         + "<a href=\"http://www.example.com/5\" target=\"_blank\" rel=\"noopener\">link</a>"
                         + "<a href=\"http://www.example.com/6\" target=\"_blank\">link</a>"
@@ -362,7 +366,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
                         + "<a href=\"http://www.example2.com/3\">link</a>"
                         + "<a href=\"http://www.example2.com/4\" target=\"_blank\" rel=\"noopener noreferrer\">link</a>"
                         + "<a href=\"http://www.example2.com/5\" target=\"_blank\" rel=\"noreferrer noopener\">link</a>"
-                        + "<a href=\"http://www.example2.com/6\" target=\"_blank\">link</a>"
+                        + "<a href=\"http://www.example2.com/6\" target=\"_blank\" rel=\"opener\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
@@ -370,7 +374,8 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"http://www.example2.com/6\" target=\"_blank\">link</a>"));
+                equalTo(
+                        "<a href=\"http://www.example2.com/6\" target=\"_blank\" rel=\"opener\">link</a>"));
     }
 
     @Test
@@ -380,7 +385,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"http://www.example2.com\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"http://www.example2.com\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(TEXT_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
@@ -398,7 +403,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"https://www.example2.com/\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"https://www.example2.com/\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
@@ -416,14 +421,15 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
-                "<html><a href=\"http://www.example3.com/\" target=\"_blank\">link</a></html>");
+                "<html><a href=\"http://www.example3.com/\" rel=\"opener\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<a href=\"http://www.example3.com/\" target=\"_blank\">link</a>"));
+                equalTo(
+                        "<a href=\"http://www.example3.com/\" rel=\"opener\" target=\"_blank\">link</a>"));
     }
 
     @Test
