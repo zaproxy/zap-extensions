@@ -1151,8 +1151,60 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
                         "http://server2.localhost/v2/path/with/servers"));
     }
 
+    @Test
+    void shouldUseOperationServers() throws Exception {
+        // Given
+        String definition = getHtml("openapi_operation_servers.yaml");
+        SwaggerConverter converter = new SwaggerConverter(definition, null);
+        // When
+        List<RequestModel> requests = converter.getRequestModels();
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                methodsAndUrlsOf(requests),
+                contains(
+                        "GET http://server0.localhost/operation/without/servers",
+                        "GET http://server1.localhost/operations/with/servers",
+                        "POST http://server2.localhost/v1/operations/with/servers",
+                        "POST http://server3.localhost/operations/with/servers",
+                        "PUT http://server4.localhost/operations/with/servers",
+                        "HEAD http://server5.localhost/operations/with/servers",
+                        "OPTIONS http://server6.localhost/operations/with/servers",
+                        "DELETE http://server7.localhost/operations/with/servers",
+                        "PATCH http://server8.localhost/operations/with/servers"));
+    }
+
+    @Test
+    void shouldUseTargetUrlForOperationServers() throws Exception {
+        // Given
+        String definition = getHtml("openapi_operation_servers.yaml");
+        SwaggerConverter converter =
+                new SwaggerConverter("/v2/", "http://localhost/definition/", definition, null);
+        // When
+        List<RequestModel> requests = converter.getRequestModels();
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                methodsAndUrlsOf(requests),
+                contains(
+                        "GET http://server0.localhost/v2/operation/without/servers",
+                        "GET http://server1.localhost/v2/operations/with/servers",
+                        "POST http://server2.localhost/v2/operations/with/servers",
+                        "PUT http://server4.localhost/v2/operations/with/servers",
+                        "HEAD http://server5.localhost/v2/operations/with/servers",
+                        "OPTIONS http://server6.localhost/v2/operations/with/servers",
+                        "DELETE http://server7.localhost/v2/operations/with/servers",
+                        "PATCH http://server8.localhost/v2/operations/with/servers"));
+    }
+
     private static List<String> urlsOf(List<RequestModel> requests) {
         return requests.stream().map(RequestModel::getUrl).collect(Collectors.toList());
+    }
+
+    private static List<String> methodsAndUrlsOf(List<RequestModel> requests) {
+        return requests.stream()
+                .map(e -> e.getMethod() + " " + e.getUrl())
+                .collect(Collectors.toList());
     }
 
     private static void assertUriBuilder(
