@@ -29,6 +29,9 @@
 // ZAP: 2017/06/06 Issue 3549: Exclude port when comparing hosts
 // ZAP: 2019/05/08 Normalise format/indentation.
 // ZAP: 2020/06/22 Normalise scan rule class naming and i18n keys.
+// ZAP: 2021/08/12 Fix handling of octets with leading zeros
+// ZAP: 2021/08/12 Issue 6749: Fix handling of non-octets
+
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
@@ -50,45 +53,64 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.infoprivateaddressdisclosure.";
 
-    private static final String REGULAR_IP_OCTET = "(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})";
+    private static final String REGULAR_IP_OCTET = "(25[0-5]|2[0-4]\\d|[01]?\\d{1,2})";
+
+    private static final String NOT_FOLLOWED_BY_ANOTHER_DOTTED_NUMBER = "\\b(?!\\.\\d)";
+
+    private static final String NOT_FOLLOWED_BY_ANOTHER_DASHED_NUMBER = "\\b(?!-\\d)";
+
+    private static final String NOT_PRECEDED_BY_ANOTHER_DOTTED_NUMBER = "(?<!\\d\\.)\\b";
+
+    private static final String PRECEDED_BY_IP_DASH = "\\bip-";
 
     /** Pattern for private IP V4 addresses as well as Amazon EC2 private hostnames */
     public static final Pattern patternPrivateIP =
             Pattern.compile(
                     "("
-                            + "\\b10\\.("
+                            + NOT_PRECEDED_BY_ANOTHER_DOTTED_NUMBER
+                            + "10\\.("
                             + REGULAR_IP_OCTET
                             + "\\.){2}"
                             + REGULAR_IP_OCTET
-                            + "\\b|"
-                            + "\\b172\\."
-                            + "(3[01]|2[0-9]|1[6-9])\\."
+                            + NOT_FOLLOWED_BY_ANOTHER_DOTTED_NUMBER
+                            + "|"
+                            + NOT_PRECEDED_BY_ANOTHER_DOTTED_NUMBER
+                            + "172\\."
+                            + "(3[01]|2\\d|1[6-9])\\."
                             + REGULAR_IP_OCTET
                             + "\\."
                             + REGULAR_IP_OCTET
-                            + "\\b|"
-                            + "\\b192\\.168\\."
+                            + NOT_FOLLOWED_BY_ANOTHER_DOTTED_NUMBER
+                            + "|"
+                            + NOT_PRECEDED_BY_ANOTHER_DOTTED_NUMBER
+                            + "192\\.168\\."
                             + REGULAR_IP_OCTET
                             + "\\."
                             + REGULAR_IP_OCTET
-                            + "\\b|"
+                            + NOT_FOLLOWED_BY_ANOTHER_DOTTED_NUMBER
+                            + "|"
                             // find IPs from AWS hostnames such as "ip-10-2-3-200"
-                            + "\\bip-10-("
+                            + PRECEDED_BY_IP_DASH
+                            + "10-("
                             + REGULAR_IP_OCTET
                             + "-){2}"
                             + REGULAR_IP_OCTET
-                            + "\\b|"
-                            + "\\bip-172-"
-                            + "(3[01]|2[0-9]|1[6-9])-"
+                            + NOT_FOLLOWED_BY_ANOTHER_DOTTED_NUMBER
+                            + "|"
+                            + PRECEDED_BY_IP_DASH
+                            + "172-"
+                            + "(3[01]|2\\d|1[6-9])-"
                             + REGULAR_IP_OCTET
                             + "-"
                             + REGULAR_IP_OCTET
-                            + "\\b|"
-                            + "\\bip-192-168-"
+                            + NOT_FOLLOWED_BY_ANOTHER_DASHED_NUMBER
+                            + "|"
+                            + PRECEDED_BY_IP_DASH
+                            + "192-168-"
                             + REGULAR_IP_OCTET
                             + "-"
                             + REGULAR_IP_OCTET
-                            + "\\b"
+                            + NOT_FOLLOWED_BY_ANOTHER_DASHED_NUMBER
                             + ")"
                             // find regular ports (0-65535)
                             + "(:(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65([0-4]\\d{2}|5[0-2]\\d|53[0-5]))\\b)?",
