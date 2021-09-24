@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Update links to zaproxy repo.
 - Maintenance changes (some changes impact the visibility of variables and getters/setters, which may impact third party add-ons or scripts).
+- Update minimum ZAP version to 2.11.0.
+- Disable open URL in browser from GUI in containers unless override option enabled.
 
 ## [15.3.0] - 2020-12-15
 ### Changed
