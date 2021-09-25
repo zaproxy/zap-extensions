@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Use OAST Callbacks for the XXE Scan Rule.
+- Backup File Disclosure Scan Rule: When checkout a parent folder for 404 behavior assume a minimum folder name length of four to further eliminate chance of collision on short folder names (Issue 5330).
 
 ## [36] - 2021-09-17
 ### Removed
