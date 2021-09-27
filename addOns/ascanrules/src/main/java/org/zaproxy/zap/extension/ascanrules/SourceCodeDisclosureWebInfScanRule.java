@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -50,6 +52,11 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author 70pointer
  */
 public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     // TODO: for imported classes that we do not find in the classes folder, map to jar file names,
     // which we might find in WEB-INF/lib/ ?
@@ -327,6 +334,10 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

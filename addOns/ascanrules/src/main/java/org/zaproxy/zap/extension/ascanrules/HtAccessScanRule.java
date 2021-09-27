@@ -19,10 +19,12 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Map;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -30,6 +32,11 @@ public class HtAccessScanRule extends AbstractAppFilePlugin {
 
     private static final String MESSAGE_PREFIX = "ascanrules.htaccess.";
     private static final int PLUGIN_ID = 40032;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     public HtAccessScanRule() {
         super(".htaccess", MESSAGE_PREFIX);
@@ -73,5 +80,19 @@ public class HtAccessScanRule extends AbstractAppFilePlugin {
         }
 
         return false;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    @Override
+    public int getCweId() {
+        return 94; // Configuration
+    }
+
+    @Override
+    public int getWascId() {
+        return 14; // Server Misconfiguration
     }
 }
