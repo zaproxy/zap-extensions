@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Use path and operation servers ([Issue #6754](https://github.com/zaproxy/zaproxy/issues/6754)).
 
+### Changed
+- Warn when request has content `application/xml`, not supported (Related to [Issue #6767](https://github.com/zaproxy/zaproxy/issues/6767)).
+
 ## [22] - 2021-09-16
 ### Changed
 - Maintenance changes.

@@ -19,12 +19,14 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import java.util.List;
 import java.util.Map;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
@@ -33,6 +35,7 @@ import org.zaproxy.zap.extension.openapi.network.RequestModel;
 
 public class RequestModelConverter {
 
+    private static final String CONTENT_APPLICATION_XML = "application/xml";
     private OperationModel operationModel;
     private Generators generators;
 
@@ -58,7 +61,8 @@ public class RequestModelConverter {
     }
 
     private String generateBody() {
-        RequestBody requestBody = operationModel.getOperation().getRequestBody();
+        Operation operation = operationModel.getOperation();
+        RequestBody requestBody = operation.getRequestBody();
         if (requestBody != null) {
             Content content = requestBody.getContent();
             Schema<?> schema;
@@ -79,6 +83,15 @@ public class RequestModelConverter {
                 schema = content.get(formdataType).getSchema();
                 Map<String, Encoding> encoding = content.get(formdataType).getEncoding();
                 return generators.getBodyGenerator().generateMultiPart(schema, encoding);
+            }
+
+            if (content.containsKey(CONTENT_APPLICATION_XML)) {
+                generators.addErrorMessage(
+                        Constant.messages.getString(
+                                "openapi.unsupportedcontent",
+                                operation.getOperationId(),
+                                CONTENT_APPLICATION_XML));
+                return "";
             }
 
             if (!content.isEmpty()) {
