@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PiiUtils;
 import org.zaproxy.addon.commonlib.binlist.BinList;
 import org.zaproxy.addon.commonlib.binlist.BinRecord;
@@ -45,6 +47,11 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
 
     protected static final String MESSAGE_PREFIX = "pscanrules.informationdisclosurereferrer.";
     private static final int PLUGIN_ID = 10025;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
     public static final String URL_SENSITIVE_INFORMATION_FILE =
@@ -118,14 +125,14 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
 
     private void raiseAlert(HttpMessage msg, String evidence, String other) {
         newAlert()
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setOtherInfo(other)
                 .setSolution(getSolution())
                 .setEvidence(evidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
-                .setWascId(13) // WASC Id 13 - Info leakage
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -134,14 +141,14 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
             other = other + '\n' + getBinRecString(binRec);
         }
         newAlert()
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setOtherInfo(other)
                 .setSolution(getSolution())
                 .setEvidence(evidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
-                .setWascId(13) // WASC Id 13 - Info leakage
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -215,6 +222,10 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         return PLUGIN_ID;
     }
 
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
     @Override
     public void setParent(PassiveScanThread parent) {
         // Nothing to do.
@@ -225,12 +236,24 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 200; // CWE Id 200 - Information Exposure
+    }
+
+    public int getWascId() {
+        return 13; // WASC Id - Info leakage
     }
 
     private String doesContainEmailAddress(String emailAddress) {

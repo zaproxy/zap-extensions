@@ -27,12 +27,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -59,6 +61,30 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
 
         return msg;
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(565)));
+        assertThat(wasc, is(equalTo(15)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
     @Test

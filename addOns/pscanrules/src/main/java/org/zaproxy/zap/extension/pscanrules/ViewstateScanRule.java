@@ -35,6 +35,7 @@ import net.htmlparser.jericho.StartTag;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -42,6 +43,11 @@ public class ViewstateScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.viewstate.";
     private static final int PLUGIN_ID = 10032;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
 
@@ -80,8 +86,8 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setDescription(var.pattern.getAlertDescription())
                 .setOtherInfo(var.getResultExtract().toString())
                 .setSolution(getSolution())
-                .setCweId(642) // CWE-642: External Control of Critical State Data
-                .setWascId(14); // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     private AlertBuilder alertOldAspVersion() {
@@ -91,8 +97,8 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"))
-                .setCweId(642) // CWE-642: External Control of Critical State Data
-                .setWascId(14); // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     // TODO: see if this alert triggers too often, as the detection rule is far from being robust
@@ -105,8 +111,8 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"))
-                .setCweId(642) // CWE Id 642 - External Control of Critical State Data
-                .setWascId(14); // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     private AlertBuilder alertNoMACforSure() {
@@ -117,8 +123,8 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"))
-                .setCweId(642) // CWE Id 642 - External Control of Critical State Data
-                .setWascId(14); // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     private AlertBuilder alertSplitViewstate() {
@@ -128,8 +134,8 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "split.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "split.soln"))
-                .setCweId(642) // CWE-642: External Control of Critical State Data
-                .setWascId(14); // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     @Override
@@ -177,6 +183,18 @@ public class ViewstateScanRule extends PluginPassiveScanner {
 
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 642; // CWE-642: External Control of Critical State Data
+    }
+
+    public int getWascId() {
+        return 14; // WASC-14 - Server Misconfiguration
     }
 
     private Map<String, StartTag> getHiddenFields(Source source) {

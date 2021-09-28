@@ -259,14 +259,14 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
                                 + getVariant(
                                         currentMismatch)) // Compound name (to account for variant
                 // designations, and muitiple alerts on single URI)
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(getDescription())
                 .setOtherInfo(getExtraInfo(firstCharset, secondCharset, currentMismatch))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
-                .setCweId(436) // CWE-436: Interpretation Conflict
-                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -284,16 +284,28 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
      * Rule-associated messages
      */
 
-    private String getDescriptionMessage() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolutionMessage() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReferenceMessage() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
+    public int getCweId() {
+        return 436; // CWE-436: Interpretation Conflict
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration
     }
 
     private String getExtraInfo(

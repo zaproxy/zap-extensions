@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.users.User;
@@ -43,6 +44,11 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.usernameidor.";
     private static final int PLUGIN_ID = 10057;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     private static final Logger LOGGER = LogManager.getLogger(UsernameIdorScanRule.class);
 
@@ -109,17 +115,15 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
     private void raiseAlert(
             String username, String evidence, String hashType, int id, HttpMessage msg) {
         newAlert()
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(getDescription(username))
                 .setOtherInfo(getOtherinfo(hashType, evidence))
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                // CWE-284: Improper Access Control
-                .setCweId(284)
-                // WASC-02: Insufficient Authorization
-                .setWascId(02)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -128,25 +132,41 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription(String username) {
+    public String getDescription(String username) {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc", username);
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private String getOtherinfo(String hashType, String hashValue) {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", hashType, hashValue);
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 284; // CWE-284: Improper Access Control
+    }
+
+    public int getWascId() {
+        return 2; // WASC-02: Insufficient Authorization
     }
 
     public String match(String contents, Pattern pattern) {

@@ -22,10 +22,12 @@ package org.zaproxy.zap.extension.pscanrules;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,6 +36,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Context;
 
 /** Unit test for {@link CrossDomainScriptInclusionScanRule}. */
@@ -56,6 +59,24 @@ class CrossDomainScriptInclusionScanRuleUnitTest
     @Override
     protected CrossDomainScriptInclusionScanRule createScanner() {
         return new CrossDomainScriptInclusionScanRule();
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(829)));
+        assertThat(wasc, is(equalTo(15)));
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getValue())));
     }
 
     @Test

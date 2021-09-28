@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
@@ -40,6 +42,9 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.crossdomainscriptinclusion.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL);
 
     private static final int PLUGIN_ID = 10017;
 
@@ -75,15 +80,14 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setParam(crossDomainScript)
                 .setSolution(getSolution())
                 .setEvidence(evidence)
-                .setCweId(829) // CWE Id 829 - Inclusion of Functionality from Untrusted Control
-                // Sphere
-                .setWascId(15) // WASC Id 15 - Application Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -97,17 +101,33 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 829; // CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration)
     }
 
     private Model getModel() {

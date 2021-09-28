@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -37,6 +39,11 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xframeoptions.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static final int PLUGIN_ID = 10020;
     boolean includedInCsp;
@@ -126,8 +133,8 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
                 .setSolution(getAlertElement(currentVT, "soln"))
                 .setReference(getAlertElement(currentVT, "refs"))
                 .setEvidence(evidence)
-                .setCweId(1021) // CWE-1021: Improper Restriction of Rendered UI Layers or Frames
-                .setWascId(15); // WASC-15: Application Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     @Override
@@ -143,6 +150,18 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 1021; //  CWE-1021: Improper Restriction of Rendered UI Layers or Frames
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration
     }
 
     private String getAlertElement(VulnType currentVT, String element) {

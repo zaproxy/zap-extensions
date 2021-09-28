@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -42,6 +44,11 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
 
     private static final String MESSAGE_PREFIX = "pscanrules.informationdisclosuredebugerrors.";
     private static final int PLUGIN_ID = 10023;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     private static final String debugErrorFile = "xml/debug-error-messages.txt";
     private static final Logger logger =
@@ -66,13 +73,13 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
 
     private void raiseAlert(HttpMessage msg, int id, String infoDisclosureDBError) {
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
                 .setEvidence(infoDisclosureDBError)
-                .setCweId(200) // CWE Id 200 - Information Exposure
-                .setWascId(13) // WASC Id - Info leakage
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -130,17 +137,33 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         this.errors = loadFile(path);
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 200; // CWE Id 200 - Information Exposure
+    }
+
+    public int getWascId() {
+        return 13; // WASC Id - Info leakage
     }
 
     @Override

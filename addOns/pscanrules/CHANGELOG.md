@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- OWASP Top Ten 2021/2017 mappings.
+
 ### Fixed
 - Fixed reference URL on CORS misconfiguration.
 - Reduce false positives from Private IP Disclosure scan rule (Issue 6749).

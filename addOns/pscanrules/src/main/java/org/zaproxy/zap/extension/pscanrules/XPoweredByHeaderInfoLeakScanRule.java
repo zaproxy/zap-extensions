@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -42,6 +44,11 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.xpoweredbyheaderinfoleak.";
     private static final String HEADER_NAME = "X-Powered-By";
     private static final int PLUGIN_ID = 10037;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     private static final Logger logger =
             LogManager.getLogger(XPoweredByHeaderInfoLeakScanRule.class);
@@ -113,15 +120,15 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
             alertOtherInfo = sb.toString();
         }
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setOtherInfo(alertOtherInfo)
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(alertEvidence)
-                .setCweId(200)
-                .setWascId(13)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -130,20 +137,36 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 200; // CWE Id 200 - Information Exposure
+    }
+
+    public int getWascId() {
+        return 13; // WASC Id - Info leakage
     }
 }

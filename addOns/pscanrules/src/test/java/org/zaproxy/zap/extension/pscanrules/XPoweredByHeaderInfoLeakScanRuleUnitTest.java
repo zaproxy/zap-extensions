@@ -21,10 +21,13 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** @author Vahid Rafiei (@vahid_r) */
 class XPoweredByHeaderInfoLeakScanRuleUnitTest
@@ -33,6 +36,30 @@ class XPoweredByHeaderInfoLeakScanRuleUnitTest
     @Override
     protected XPoweredByHeaderInfoLeakScanRule createScanner() {
         return new XPoweredByHeaderInfoLeakScanRule();
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(200)));
+        assertThat(wasc, is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
     }
 
     @Test

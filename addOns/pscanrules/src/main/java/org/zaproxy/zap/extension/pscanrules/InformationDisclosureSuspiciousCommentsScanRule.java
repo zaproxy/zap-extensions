@@ -40,6 +40,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -48,6 +49,11 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final String MESSAGE_PREFIX =
             "pscanrules.informationdisclosuresuspiciouscomments.";
     private static final int PLUGIN_ID = 10027;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
 
@@ -166,13 +172,13 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private void raiseAlert(
             HttpMessage msg, int id, String detail, int confidence, String evidence) {
         newAlert()
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(confidence)
                 .setDescription(getDescription())
                 .setOtherInfo(detail)
                 .setSolution(getSolution())
-                .setCweId(200) // CWE Id 200 - Information Exposure
-                .setWascId(13) // WASC Id 13 - Info leakage
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .setEvidence(evidence)
                 .raise();
     }
@@ -221,17 +227,33 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         // Nothing to do.
     }
 
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 200; // CWE Id 200 - Information Exposure
+    }
+
+    public int getWascId() {
+        return 13; // WASC Id - Info leakage
     }
 
     @Override

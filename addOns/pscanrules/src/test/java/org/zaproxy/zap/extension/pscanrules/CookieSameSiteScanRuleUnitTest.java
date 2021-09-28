@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -57,6 +60,30 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         when(model.getOptionsParam()).thenReturn(options);
         rule.setModel(model);
         return rule;
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(1275)));
+        assertThat(wasc, is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue())));
     }
 
     @Test

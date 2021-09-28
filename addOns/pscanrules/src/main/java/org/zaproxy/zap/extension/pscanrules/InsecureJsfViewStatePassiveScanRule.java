@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -32,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -66,6 +68,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.insecurejsfviewstate.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -202,14 +209,14 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, String viewState) {
         newAlert()
-                .setRisk(Alert.RISK_MEDIUM)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", viewState))
                 .setSolution(getSolution())
                 .setReference(getReference())
-                .setCweId(642) // CWE-642: External Control of Critical State Data
-                .setWascId(14) // WASC Id - Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -219,20 +226,36 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
         return val != null && val.contains(":");
     }
 
+    public int getRisk() {
+        return Alert.RISK_MEDIUM;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 642; // CWE-642: External Control of Critical State Data
+    }
+
+    public int getWascId() {
+        return 14; // WASC Id - Server Misconfiguration
     }
 }
