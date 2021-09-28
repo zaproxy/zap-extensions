@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -39,6 +41,11 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.remotefileinclude.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     /** the various prefixes to try, for each of the remote file targets below */
     private static final String[] REMOTE_FILE_TARGET_PREFIXES = {
@@ -255,6 +262,10 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

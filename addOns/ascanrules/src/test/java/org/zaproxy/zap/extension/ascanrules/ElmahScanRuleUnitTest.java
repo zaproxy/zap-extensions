@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractHostFilePluginUnitTest;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ElmahScanRule}. */
@@ -66,6 +68,30 @@ class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule
     protected HttpMessage getHttpMessageForSendReasonableNumberOfMessages(String defaultPath)
             throws HttpMalformedHeaderException {
         return super.getHttpMessageForSendReasonableNumberOfMessages(URL);
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = ((ElmahScanRule) rule).getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(94)));
+        assertThat(wasc, is(equalTo(14)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
     @ParameterizedTest

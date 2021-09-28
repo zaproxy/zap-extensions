@@ -22,13 +22,16 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.ArrayList;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CrlfInjectionScanRule}. */
@@ -53,6 +56,30 @@ class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanR
     @Override
     protected CrlfInjectionScanRule createScanner() {
         return new CrlfInjectionScanRule();
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(113)));
+        assertThat(wasc, is(equalTo(25)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
     }
 
     @Test

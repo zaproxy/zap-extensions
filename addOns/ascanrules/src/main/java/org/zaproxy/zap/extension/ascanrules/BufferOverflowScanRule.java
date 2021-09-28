@@ -24,6 +24,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -40,6 +42,11 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.bufferoverflow.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     private static final int PLUGIN_ID = 30001;
     private static Logger log = LogManager.getLogger(BufferOverflowScanRule.class);
@@ -146,6 +153,10 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

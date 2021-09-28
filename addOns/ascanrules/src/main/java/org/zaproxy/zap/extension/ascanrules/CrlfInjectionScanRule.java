@@ -30,6 +30,7 @@
 // ZAP: 2020/07/24 Normalise scan rule class names.
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,11 +39,17 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 public class CrlfInjectionScanRule extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.crlfinjection.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     private String randomString = "Tamper=" + UUID.randomUUID().toString();
     private String cookieTamper1 = "Set-cookie: " + randomString;
@@ -135,6 +142,10 @@ public class CrlfInjectionScanRule extends AbstractAppParamPlugin {
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

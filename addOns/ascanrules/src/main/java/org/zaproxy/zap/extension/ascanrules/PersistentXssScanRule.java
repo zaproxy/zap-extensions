@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.httputils.HtmlContext;
 import org.zaproxy.zap.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -43,6 +45,11 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssattack.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
     private static final List<Integer> GET_POST_TYPES =
@@ -676,6 +683,10 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

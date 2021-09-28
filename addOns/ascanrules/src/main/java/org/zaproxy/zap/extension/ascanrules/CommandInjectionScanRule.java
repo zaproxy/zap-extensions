@@ -40,6 +40,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -83,6 +84,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     private static final Map<String, Pattern> NIX_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> PS_PAYLOADS = new LinkedHashMap<>();
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     static {
         // No quote payloads
@@ -318,6 +324,10 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     @Override
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override
