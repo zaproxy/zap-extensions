@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.openapi.v3;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,15 +34,30 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.RequestModelConverter;
 import org.zaproxy.zap.extension.openapi.generators.BodyGenerator;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class BodyGeneratorUnitTest {
+class BodyGeneratorUnitTest extends TestUtils {
     Generators generators;
+
+    @BeforeAll
+    static void setUp() {
+        mockMessages(new ExtensionOpenApi());
+    }
+
+    @AfterAll
+    static void cleanUp() {
+        Constant.messages = null;
+    }
 
     @BeforeEach
     void init() {
@@ -672,6 +690,22 @@ class BodyGeneratorUnitTest {
                         .getBody();
 
         assertEquals("", request);
+    }
+
+    @Test
+    void shouldNotGenerateContentForApplicationXml() throws IOException {
+        // Given
+        OpenAPI definition = parseResource("openapi_xml_bodies.yaml");
+        OperationModel operationModel =
+                new OperationModel("/xml", definition.getPaths().get("/xml").getPost(), null);
+        // When
+        String content = new RequestModelConverter().convert(operationModel, generators).getBody();
+        // Then
+        assertThat(content, isEmptyString());
+        assertThat(
+                generators.getErrorMessages(),
+                contains(
+                        "Not generating request body for operation xml, the content application/xml is not supported."));
     }
 
     private OpenAPI parseResource(String fileName) throws IOException {
