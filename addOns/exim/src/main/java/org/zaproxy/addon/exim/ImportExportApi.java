@@ -24,6 +24,7 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.exim.har.HarImporter;
+import org.zaproxy.addon.exim.urls.UrlsImporter;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -40,9 +41,12 @@ public class ImportExportApi extends ApiImplementor {
     private static final String ACTION_IMPORTHAR = "importhar";
     private static final String PARAM_FILE_PATH = "filePath";
 
+    private static final String ACTION_IMPORTURLS = "importurls";
+
     public ImportExportApi() {
         super();
         this.addApiAction(new ApiAction(ACTION_IMPORTHAR, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_IMPORTURLS, new String[] {PARAM_FILE_PATH}));
     }
 
     @Override
@@ -54,17 +58,27 @@ public class ImportExportApi extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         LOG.debug("handleApiAction {} {}", name, params);
 
+        boolean success;
+        File file;
         switch (name) {
             case ACTION_IMPORTHAR:
-                File file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                boolean success = HarImporter.importHarFile(file);
-                if (success) {
-                    return ApiResponseElement.OK;
-                } else {
-                    throw new ApiException(Type.BAD_EXTERNAL_DATA, file.getAbsolutePath());
-                }
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                success = HarImporter.importHarFile(file);
+                return handleFileImportResponse(success, file);
+            case ACTION_IMPORTURLS:
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                success = UrlsImporter.importUrlFile(file);
+                return handleFileImportResponse(success, file);
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
+    }
+
+    private ApiResponseElement handleFileImportResponse(boolean success, File file)
+            throws ApiException {
+        if (success) {
+            return ApiResponseElement.OK;
+        }
+        throw new ApiException(Type.BAD_EXTERNAL_DATA, file.getAbsolutePath());
     }
 }
