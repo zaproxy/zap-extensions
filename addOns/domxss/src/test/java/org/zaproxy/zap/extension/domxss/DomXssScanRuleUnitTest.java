@@ -41,7 +41,6 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-@Disabled
 class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
     @BeforeAll
@@ -105,6 +104,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/assign */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashAssign(String browser)
@@ -137,10 +137,11 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
                         equalTo(DomXssScanRule.HASH_JAVASCRIPT_ALERT),
                         equalTo(DomXssScanRule.QUERY_HASH_IMG_ALERT)));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/eval */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashEval(String browser)
@@ -162,6 +163,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/replace */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashReplace(String browser)
@@ -182,7 +184,27 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         assertAlertsRaised();
     }
 
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldNotReportXssWhenRandomAlertEncountered(String browser)
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldNotReportXssWhenRandomAlertEncountered/";
+        this.nano.addHandler(new TestNanoServerHandler(test, "RandomAlert.html"));
+
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/setTimeout */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashSetTimeout(String browser)
@@ -204,6 +226,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     }
 
     /** Test to trigger XSS after cancel button is clicked */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssWhenCancelButtonIsClicked(String browser)
@@ -226,6 +249,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/function */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashFunction(String browser)
@@ -247,6 +271,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/jshref */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInLocationHashInlineEvent(String browser)
@@ -293,6 +318,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
      * http://public-firing-range.appspot.com/dom/eventtriggering/document/formSubmission/innerHtml
      * Note that this only works in Firefox, not Chrome.
      */
+    @Disabled
     @Test
     void shouldReportXssInEventInnerHtmlFirefox() throws NullPointerException, IOException {
         // Given
@@ -317,6 +343,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
      * Test based on
      * http://public-firing-range.appspot.com/dom/eventtriggering/document/inputTyping/innerHtml
      */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInTypingInnerHtml(String browser) throws NullPointerException, IOException {
@@ -336,10 +363,8 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         assertAlertsRaised();
     }
 
-    /**
-     * Test based on
-     * http://public-firing-range.appspot.com/dom/eventtriggering/document/inputTyping/innerHtml
-     */
+    /** Test based on http://public-firing-range.appspot.com/dom/dompropagation/ */
+    @Disabled
     @ParameterizedTest
     @MethodSource("testBrowsers")
     void shouldReportXssInDomPropagation(String browser) throws NullPointerException, IOException {

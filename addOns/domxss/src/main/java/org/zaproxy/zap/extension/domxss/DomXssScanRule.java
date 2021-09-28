@@ -37,10 +37,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -62,19 +64,28 @@ import org.zaproxy.zap.utils.Stats;
 public class DomXssScanRule extends AbstractAppParamPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = LogManager.getLogger(DomXssScanRule.class);
+    private static final int UNLIKELY_INT = 5397;
+    private static final String UNLIKELY_STR = String.valueOf(UNLIKELY_INT);
 
     protected static final String POLYGLOT_ALERT =
-            "#jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e";
-    private static final String HASH_SCRIPT_ALERT = "#<script>alert(1)</script>";
-    private static final String HASH_IMG_ALERT = "#<img src=\"random.gif\" onerror=alert(1)>";
-    private static final String HASH_HASH_ALERT = "#abc#<script>alert(1)</script>";
+            "#jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert("
+                    + UNLIKELY_INT
+                    + ") )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert("
+                    + UNLIKELY_INT
+                    + ")//>\\x3e";
+    private static final String HASH_SCRIPT_ALERT = "#<script>alert(" + UNLIKELY_INT + ")</script>";
+    private static final String HASH_IMG_ALERT =
+            "#<img src=\"random.gif\" onerror=alert(" + UNLIKELY_INT + ")>";
+    private static final String HASH_HASH_ALERT =
+            "#abc#<script>alert(" + UNLIKELY_INT + ")</script>";
     protected static final String QUERY_IMG_ALERT =
-            "?name=<img src=\"random.gif\" onerror=alert(1)>";
-    private static final String HASH_HASH_IMG_ALERT = "#abc#<img src='random.gif' onerror=alert(1)";
-    protected static final String HASH_JAVASCRIPT_ALERT = "#javascript:alert(1)";
-    protected static final String HASH_ALERT = "#alert(1)";
+            "?name=<img src=\"random.gif\" onerror=alert(" + UNLIKELY_INT + ")>";
+    private static final String HASH_HASH_IMG_ALERT =
+            "#abc#<img src='random.gif' onerror=alert(" + UNLIKELY_INT + ")";
+    protected static final String HASH_JAVASCRIPT_ALERT = "#javascript:alert(" + UNLIKELY_INT + ")";
+    protected static final String HASH_ALERT = "#alert(" + UNLIKELY_INT + ")";
     protected static final String QUERY_HASH_IMG_ALERT =
-            "?name=abc#<img src=\"random.gif\" onerror=alert(1)>";
+            "?name=abc#<img src=\"random.gif\" onerror=alert(" + UNLIKELY_INT + ")>";
 
     // In order of effectiveness vs benchmark apps
     private static final String[] ATTACK_STRINGS = {
@@ -241,12 +252,20 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     }
 
     private WebDriver createWebDriver() {
-        WebDriver driver = ExtensionSelenium.getWebDriver(browser, "127.0.0.1", proxyPort);
+        WebDriver webDriver =
+                ExtensionSelenium.getWebDriver(
+                        browser,
+                        "127.0.0.1",
+                        proxyPort,
+                        capabilities ->
+                                capabilities.setCapability(
+                                        CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+                                        UnexpectedAlertBehaviour.IGNORE));
 
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+        webDriver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        webDriver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 
-        return driver;
+        return webDriver;
     }
 
     private WebDriverWrapper getWebDriver() {
@@ -318,6 +337,12 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
     private void returnDriver(WebDriverWrapper driver) {
         synchronized (takenDrivers) {
+            try {
+                driver.getDriver().switchTo().alert().accept();
+            } catch (Exception e) {
+                // ignore
+            }
+            driver.getDriver().get("about:blank");
             if (takenDrivers.remove(driver)) {
                 freeDrivers.computeIfAbsent(driver.getBrowser(), k -> new Stack<>()).push(driver);
 
@@ -430,37 +455,55 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         return new ArrayList<>();
     }
 
-    private void scanHelper(String attackVector, String url) throws DomAlertException {
-        if (this.isStop()) {
-            return;
+    private String getAlertDialogText() {
+        try {
+            org.openqa.selenium.Alert alertDialog = driver.getDriver().switchTo().alert();
+            String dialogText = alertDialog.getText();
+            alertDialog.accept();
+            return dialogText;
+        } catch (WebDriverException wde) {
+            return "";
         }
+    }
 
+    private DomAlertInfo scanHelper(String attackVector, String url) {
+        if (this.isStop()) {
+            return null;
+        }
         try {
             getHelper(driver, url);
         } catch (UnhandledAlertException uae) {
-            Stats.incCounter("domxss.vulns.get1");
-            throw new DomAlertException(url, attackVector);
+            // Ignore
+        } finally {
+            if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                Stats.incCounter("domxss.vulns.get1");
+                return new DomAlertInfo(url, attackVector);
+            }
         }
 
-        List<WebElement> possibleDomXSSTriggers;
+        List<WebElement> possibleDomXSSTriggers = new ArrayList<>();
 
         try {
             possibleDomXSSTriggers = findHelper(driver, By.tagName("input"));
             possibleDomXSSTriggers.addAll(findHelper(driver, By.tagName("button")));
         } catch (UnhandledAlertException uae) {
-            Stats.incCounter("domxss.vulns.input1");
-            throw new DomAlertException(url, attackVector);
+            // Ignore
+        } finally {
+            if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                Stats.incCounter("domxss.vulns.input1");
+                vulnerable = true;
+                return new DomAlertInfo(url, attackVector);
+            }
         }
 
         for (int i = 0; i < possibleDomXSSTriggers.size(); i++) {
             if (this.isStop()) {
-                return;
+                return null;
             }
             WebElement element = possibleDomXSSTriggers.get(i);
             String tagName = null;
             String attributeId = null;
             String attributeName = null;
-
             try {
                 // Save for the evidence
                 tagName = element.getTagName();
@@ -472,42 +515,59 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 }
 
                 element.click();
-
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.possibleDomXSSTriggers2");
-                throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
+                // Ignore
             } catch (WebDriverException wde) {
                 log.debug(wde);
+            } finally {
+                if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                    Stats.incCounter("domxss.vulns.possibleDomXSSTriggers2");
+                    return new DomAlertInfo(url, attackVector, tagName, attributeId, attributeName);
+                }
             }
+
             try {
                 getHelper(driver, url);
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.get2");
-                throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
+                // Ignore
+            } finally {
+                if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                    Stats.incCounter("domxss.vulns.get2");
+                    return new DomAlertInfo(url, attackVector, tagName, attributeId, attributeName);
+                }
             }
             try {
                 possibleDomXSSTriggers = findHelper(driver, By.tagName("input"));
                 possibleDomXSSTriggers.addAll(findHelper(driver, By.tagName("button")));
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.possibleDomXSSTriggers3");
-                throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
+                // Ignore
+            } finally {
+                if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                    Stats.incCounter("domxss.vulns.possibleDomXSSTriggers3");
+                    return new DomAlertInfo(url, attackVector, tagName, attributeId, attributeName);
+                }
             }
         }
-        List<WebElement> allElements;
+        List<WebElement> allElements = new ArrayList<>();
         try {
             allElements = findHelper(driver, By.tagName("div"));
         } catch (UnhandledAlertException uae) {
-            Stats.incCounter("domxss.vulns.div1");
-            throw new DomAlertException(url, attackVector);
+            // Ignore
+        } finally {
+            if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                Stats.incCounter("domxss.vulns.div1");
+                return new DomAlertInfo(url, attackVector);
+            }
         }
         for (int i = 0; i < allElements.size(); i++) {
             if (this.isStop()) {
-                return;
+                return null;
             }
             WebElement element = allElements.get(i);
             String tagName = null;
             String attributeId = null;
             String attributeName = null;
+
             try {
                 // Save for the evidence
                 tagName = element.getTagName();
@@ -517,10 +577,8 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 element.click();
                 getHelper(driver, url);
                 allElements = findHelper(driver, By.tagName("div"));
-
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.div2");
-                throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
+                // Ignore
             } catch (NoSuchSessionException enve) {
                 log.debug(enve);
                 // replaceDriver(driver);
@@ -530,8 +588,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 log.debug(wde);
             } catch (WebDriverException wde) {
                 log.debug(wde);
+            } finally {
+                if (getAlertDialogText().equals(UNLIKELY_STR)) {
+                    Stats.incCounter("domxss.vulns.div2");
+                    return new DomAlertInfo(url, attackVector, tagName, attributeId, attributeName);
+                }
             }
         }
+        return null;
     }
 
     @Override
@@ -592,25 +656,24 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     public boolean scan(String attackVector, String currUrl) {
         HttpMessage msg = getNewMsg();
 
-        try {
-            scanHelper(attackVector, currUrl);
-        } catch (DomAlertException e) {
-            String tagName = e.getTagName();
+        DomAlertInfo result = scanHelper(attackVector, currUrl);
+        if (result != null) {
+            String tagName = result.getTagName();
             String otherInfo = "";
             if (tagName != null) {
                 otherInfo =
                         "Tag name: "
                                 + tagName
                                 + " Att name: "
-                                + e.getAttributeName()
+                                + result.getAttributeName()
                                 + " Att id: "
-                                + e.getAttributeId();
+                                + result.getAttributeId();
             }
 
             newAlert()
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setUri(e.getUrl())
-                    .setAttack(e.getAttack())
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                    .setUri(result.getUrl())
+                    .setAttack(result.getAttack())
                     .setOtherInfo(otherInfo)
                     .setMessage(msg)
                     .raise();
