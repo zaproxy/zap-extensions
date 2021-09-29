@@ -51,7 +51,7 @@ public class InteractshParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        serverUrl = getString(PARAM_SERVER_URL, "https://interact.sh");
+        serverUrl = getString(PARAM_SERVER_URL, "https://interactsh.com");
         setPollingFrequency(getInt(PARAM_POLLING_FREQUENCY, 60));
         authToken = getString(PARAM_AUTH_TOKEN, "");
     }
