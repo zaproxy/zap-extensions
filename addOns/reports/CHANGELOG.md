@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for custom messages in outputSummary job.
+- Alert tags to the modern and traditional-plus reports.
 
 ### Changed
 - Promoted to release.
+- Minimum ZAP version 2.11.0
 
 ### Fixed
 - Ignore false positives when listing messages in the outputSummary job.
