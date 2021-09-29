@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -45,6 +47,11 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.crossdomain.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     /**
      * gets the name of the scanner
@@ -116,7 +123,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
                 // an unauthenticated API, which is protected by some other form of security, such
                 // as IP address white-listing, for instance.
                 newAlert()
-                        .setRisk(Alert.RISK_MEDIUM)
+                        .setRisk(getRisk())
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setDescription(getDescription())
                         .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
@@ -127,8 +134,8 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
                                         msg.getResponseHeader().toString(),
                                         HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
                                         corsAllowOriginValue))
-                        .setCweId(264) // CWE 264: Permissions, Privileges, and Access Controls
-                        .setWascId(14) // WASC-14: Server Misconfiguration
+                        .setCweId(getCweId())
+                        .setWascId(getWascId())
                         .raise();
             }
 
@@ -148,6 +155,22 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
             return matcher.group();
         }
         return "";
+    }
+
+    public int getRisk() {
+        return Alert.RISK_MEDIUM;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 264; // CWE 264: Permissions, Privileges, and Access Controls
+    }
+
+    public int getWascId() {
+        return 14; // WASC-14: Server Misconfiguration
     }
 
     /**

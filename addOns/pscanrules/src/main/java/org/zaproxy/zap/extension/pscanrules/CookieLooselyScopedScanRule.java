@@ -22,12 +22,14 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.net.HttpCookie;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -42,6 +44,11 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private Model model = null;
 
@@ -161,22 +168,25 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
         }
 
         newAlert()
-                .setRisk(Alert.RISK_INFO)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(getDescription())
                 .setOtherInfo(
                         Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
-                .setCweId(565) // CWE-565: Reliance on Cookies without Validation and Integrity
-                // Checking
-                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
     @Override
     public int getPluginId() {
         return 90033;
+    }
+
+    public int getRisk() {
+        return Alert.RISK_INFO;
     }
 
     @Override
@@ -188,16 +198,28 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
      * Rule-associated messages
      */
 
-    private String getDescriptionMessage() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolutionMessage() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReferenceMessage() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 565; // CWE-565: Reliance on Cookies without Validation and Integrity
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration)
     }
 
     private Model getModel() {

@@ -21,12 +21,14 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -36,6 +38,11 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptions.";
 
     private static final int PLUGIN_ID = 10021;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -77,7 +84,7 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setParam(HttpHeader.X_CONTENT_TYPE_OPTIONS)
@@ -85,8 +92,8 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(xContentTypeOption)
-                .setCweId(693) // CWE-693: Protection Mechanism Failure
-                .setWascId(15) // WASC15: Application Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -105,19 +112,35 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
-    private String getDescription() {
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getOtherInfo() {
+    public String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 693; // CWE-693: Protection Mechanism Failure
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration
     }
 }

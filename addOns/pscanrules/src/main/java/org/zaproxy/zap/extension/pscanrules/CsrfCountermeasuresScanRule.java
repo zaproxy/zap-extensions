@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Attribute;
@@ -36,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -53,6 +55,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
     /** contains the base vulnerability that this plugin refers to */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     private ExtensionAntiCSRF extensionAntiCSRF;
     private String csrfIgnoreList;
@@ -222,8 +229,8 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                         .setSolution(getSolution())
                         .setReference(getReference())
                         .setEvidence(evidence)
-                        .setCweId(352) // CWE-352: Cross-Site Request Forgery (CSRF)
-                        .setWascId(9)
+                        .setCweId(getCweId())
+                        .setWascId(getWascId())
                         .raise();
             }
         }
@@ -278,6 +285,18 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
             return sb.toString();
         }
         return "Failed to load vulnerability reference from file";
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 352; // CWE-352: Cross-Site Request Forgery (CSRF)
+    }
+
+    public int getWascId() {
+        return 9;
     }
 
     protected ExtensionAntiCSRF getExtensionAntiCSRF() {

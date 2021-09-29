@@ -21,10 +21,12 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -36,6 +38,11 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xaspnetversion.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private final List<String> xAspNetHeaders = new ArrayList<>();
 
@@ -62,16 +69,15 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(933) // CWE-933: OWASP Top Ten 2013 Category A5 - Security
-                // Misconfiguration
-                .setWascId(14) // WASC-14: Server Misconfiguration
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -80,8 +86,24 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
         return 10061;
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 933; // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
+    }
+
+    public int getWascId() {
+        return 14; //  WASC-14: Server Misconfiguration
     }
 }

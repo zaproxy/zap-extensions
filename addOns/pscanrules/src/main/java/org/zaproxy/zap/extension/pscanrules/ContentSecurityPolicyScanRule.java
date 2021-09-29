@@ -28,6 +28,7 @@ import com.shapesecurity.salvation2.URLs.URLWithScheme;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -42,6 +43,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -58,6 +60,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.csp.";
     private static final int PLUGIN_ID = 10055;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+
     private static final Logger LOGGER = LogManager.getLogger(ContentSecurityPolicyScanRule.class);
 
     private static final String HTTP_HEADER_CSP = "Content-Security-Policy";
@@ -385,12 +393,24 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 693; // CWE-693: Protection Mechanism Failure
+    }
+
+    public int getWascId() {
+        return 15; // WASC-15: Application Misconfiguration
     }
 
     private void raiseAlert(
@@ -406,8 +426,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                .setCweId(693) // CWE-693: Protection Mechanism Failure
-                .setWascId(15) // WASC-15: Application Misconfiguration)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 

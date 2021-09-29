@@ -80,15 +80,15 @@ public class CacheControlScanRule extends PluginPassiveScanner {
             evidence = evidence.substring(1, evidence.length() - 1);
         }
         newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setParam(header)
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                .setCweId(525)
-                .setWascId(13)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -102,15 +102,27 @@ public class CacheControlScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public int getCweId() {
+        return 525;
+    }
+
+    public int getWascId() {
+        return 13;
     }
 }

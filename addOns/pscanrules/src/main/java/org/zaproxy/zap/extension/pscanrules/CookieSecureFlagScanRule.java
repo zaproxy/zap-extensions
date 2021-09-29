@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.collections.iterators.IteratorChain;
@@ -29,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -37,6 +39,11 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookiesecureflag.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static final int PLUGIN_ID = 10011;
 
@@ -86,7 +93,7 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
 
     private AlertBuilder buildAlert(HttpMessage msg, String headerValue) {
         return newAlert()
-                .setRisk(Alert.RISK_LOW)
+                .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setParam(CookieUtils.getCookieName(headerValue))
@@ -95,9 +102,8 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(614) // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure'
-                // Attribute
-                .setWascId(13); // WASC-13: Info leakage
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     @Override
@@ -105,21 +111,37 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 614; // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure' Attribute
+    }
+
+    public int getWascId() {
+        return 13; // WASC-13: Info leakage
     }
 
     private Model getModel() {

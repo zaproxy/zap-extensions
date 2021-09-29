@@ -39,6 +39,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -66,6 +67,11 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.timestampdisclosure.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     /**
      * ignore the following response headers for the purposes of the comparison, since they cause
@@ -166,15 +172,15 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                         }
                         newAlert()
                                 .setName(getName() + " - " + timestampType)
-                                .setRisk(Alert.RISK_INFO)
+                                .setRisk(getRisk())
                                 .setConfidence(Alert.CONFIDENCE_LOW)
                                 .setDescription(getDescription() + " - " + timestampType)
                                 .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
                                 .setSolution(getSolution())
                                 .setReference(getReference())
                                 .setEvidence(evidence)
-                                .setCweId(200) // Information Exposure,
-                                .setWascId(13) // Information Leakage
+                                .setCweId(getCweId())
+                                .setWascId(getWascId())
                                 .raise();
                         // do NOT break at this point.. we need to find *all* the potential
                         // timestamps in the response..
@@ -216,12 +222,16 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         return 10096;
     }
 
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
+
     /**
      * get the description of the alert
      *
      * @return
      */
-    private String getDescription() {
+    public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
@@ -230,7 +240,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      *
      * @return
      */
-    private String getSolution() {
+    public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
@@ -239,7 +249,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      *
      * @return
      */
-    private String getReference() {
+    public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
@@ -253,5 +263,17 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
     private String getExtraInfo(HttpMessage msg, String evidence, Date timestamp) {
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence, formattedDate);
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 200; // CWE Id 200 - Information Exposure
+    }
+
+    public int getWascId() {
+        return 13; // WASC Id - Info leakage
     }
 }
