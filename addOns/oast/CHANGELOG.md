@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Updated the default Interactsh server URL to https://interactsh.com.
 
 ## [0.4.0] - 2021-09-22
 ### Added
