@@ -33,15 +33,15 @@ public class IllegalUTF8Encoder extends DefaultEncodeDecodeProcessor {
     }
 
     private String getIllegalUTF8Encode(String msg, int bytes) {
-        char[] input_array = msg.toCharArray();
+        char[] inputArray = msg.toCharArray();
 
         if (bytes != 4 && bytes != 3) {
             bytes = 2;
         }
 
         // numbers of characters * number of bytes * ("%" + Hex + Hex)
-        StringBuilder sbResult = new StringBuilder(input_array.length * bytes * 3);
-        for (char c : input_array) {
+        StringBuilder sbResult = new StringBuilder(inputArray.length * bytes * 3);
+        for (char c : inputArray) {
 
             if (bytes == 4) {
                 sbResult.append('%').append(Integer.toHexString(0xff & ((byte) 0xf0)));

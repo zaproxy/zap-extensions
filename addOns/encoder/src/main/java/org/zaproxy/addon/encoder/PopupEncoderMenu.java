@@ -49,11 +49,7 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
 
             JTextComponent txt = (JTextComponent) invoker;
             String sel = txt.getSelectedText();
-            if (sel == null || sel.length() == 0) {
-                this.setEnabled(false);
-            } else {
-                this.setEnabled(true);
-            }
+            this.setEnabled(!(sel == null || sel.length() == 0));
 
             setLastInvoker((JTextComponent) invoker);
             return true;
