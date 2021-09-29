@@ -453,6 +453,24 @@
 						</th:block></td>
 				</tr>
 				<tr>
+					<td th:text="#{report.alerts.detail.tags}" width="20%">Tags</td>
+					<td width="80%"><th:block
+							th:each="entry, state: ${alert.userObject.tags}">
+
+							<th:block
+								th:if="${entry.value.startsWith('https://') or entry.value.startsWith('http://')}">
+								<a th:href="${entry.value}" th:text="${entry.key}"></a>
+							</th:block>
+							<th:block
+								th:if="${! entry.value.startsWith('https://') and ! entry.value.startsWith('http://')}">
+								<th:block th:text="${entry.key}"></th:block>
+							=
+							<th:block th:text="${entry.value}"></th:block>
+							</th:block>
+							<br th:if="${!state.last}" />
+						</th:block></td>
+				</tr>
+				<tr>
 					<td th:text="#{report.alerts.detail.cweid}" width="20%">CWE Id</td>
 					<td width="80%"><a
 						th:href="'https://cwe.mitre.org/data/definitions/' + ${alert.userObject.cweId} + '.html'"

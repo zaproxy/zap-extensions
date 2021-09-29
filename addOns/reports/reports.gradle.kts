@@ -10,7 +10,7 @@ description = "Official ZAP Reports."
 zapAddOn {
     addOnName.set("Report Generation")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -45,7 +45,14 @@ crowdin {
     }
 }
 
+repositories {
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    zap("org.zaproxy:zap:2.11.0-20210929.093237-3")
     compileOnly(parent!!.childProjects.get("automation")!!)
     implementation("org.thymeleaf:thymeleaf:3.0.12.RELEASE")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.1.20")
