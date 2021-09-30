@@ -24,6 +24,7 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.exim.har.HarImporter;
+import org.zaproxy.addon.exim.log.LogsImporter;
 import org.zaproxy.addon.exim.urls.UrlsImporter;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -41,11 +42,16 @@ public class ImportExportApi extends ApiImplementor {
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String ACTION_IMPORT_HAR = "importHar";
     private static final String ACTION_IMPORT_URLS = "importUrls";
+    private static final String ACTION_IMPORT_ZAP_LOGS = "importZapLogs";
+    private static final String ACTION_IMPORT_MODSEC2_LOGS = "importModsec2Logs";
 
     public ImportExportApi() {
         super();
         this.addApiAction(new ApiAction(ACTION_IMPORT_HAR, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(new ApiAction(ACTION_IMPORT_URLS, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_ZAP_LOGS, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(
+                new ApiAction(ACTION_IMPORT_MODSEC2_LOGS, new String[] {PARAM_FILE_PATH}));
     }
 
     @Override
@@ -67,6 +73,14 @@ public class ImportExportApi extends ApiImplementor {
             case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
                 success = UrlsImporter.importUrlFile(file);
+                return handleFileImportResponse(success, file);
+            case ACTION_IMPORT_ZAP_LOGS:
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                success = LogsImporter.processInput(file, LogsImporter.LogType.ZAP);
+                return handleFileImportResponse(success, file);
+            case ACTION_IMPORT_MODSEC2_LOGS:
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                success = LogsImporter.processInput(file, LogsImporter.LogType.MOD_SECURITY_2);
                 return handleFileImportResponse(success, file);
             default:
                 throw new ApiException(Type.BAD_ACTION);

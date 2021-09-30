@@ -26,5 +26,7 @@ crowdin {
 }
 
 dependencies {
+    implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
+
     testImplementation(project(":testutils"))
 }
