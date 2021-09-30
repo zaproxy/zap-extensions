@@ -11,7 +11,7 @@ zapAddOn {
         author.set("Jay Ball (veggiespam) and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
 
-    dependencies {
+        dependencies {
             addOns {
                 register("commonlib") {
                     version.set(">= 1.5.0 & < 2.0.0")

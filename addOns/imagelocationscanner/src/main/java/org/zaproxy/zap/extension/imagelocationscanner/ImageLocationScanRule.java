@@ -23,6 +23,8 @@ package org.zaproxy.zap.extension.imagelocationscanner;
 
 import net.htmlparser.jericho.Source;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.URI;
@@ -119,17 +121,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
 			
 			if (! hasGPS.isEmpty()) {
-			    newAlert()
-			    .setName(getAlertTitle())
-			    .setRisk(Alert.RISK_INFO)
-			    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-			    .setDescription(getDescription())
-			    .setSolution(getSolution())
-			    .setReference(getReference())
-			    .setEvidence(getAlertDetailPrefix()  + "\n" + hasGPS)
-			    .setCweId(200) // CWE-200: Information Exposure
-			    .setWascId(13) // WASC-13: Information Leakage
-			    .raise();
+			    buildAlert(hasGPS).raise();
 			}
 			
 		}
@@ -169,6 +161,27 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
     
     public String getAuthor() {
         return ILS.pluginAuthor;
+    }
+
+    private AlertBuilder buildAlert(String gpsDetails) {
+        return newAlert()
+                .setName(getAlertTitle())
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(getAlertDetailPrefix()  + "\n" + gpsDetails)
+                .setCweId(200) // CWE-200: Information Exposure
+                .setWascId(13); // WASC-13: Information Leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
+        alerts.add(buildAlert(gpsDetails).build());
+        return alerts;
     }
 
     public Map<String, String> getAlertTags() {
