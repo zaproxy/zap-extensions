@@ -18,6 +18,13 @@ zapAddOn {
             baseName.set("org.zaproxy.addon.retire.resources.help%LC%.helpset")
             localeToken.set("%LC%")
         }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.5.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
@@ -30,7 +37,10 @@ crowdin {
 }
 
 dependencies {
-        implementation("com.google.code.gson:gson:2.8.6")
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
 
-        testImplementation(project(":testutils"))
+    implementation("com.google.code.gson:gson:2.8.6")
+
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(project(":testutils"))
 }
