@@ -62,6 +62,7 @@ import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
 
@@ -501,6 +502,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                     alert.getHistoryRef().getSiteNode().updateAlert(updAlert);
                 }
             }
+            Stats.incCounter(
+                    "stats.alertFilter." + alert.getPluginId() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
