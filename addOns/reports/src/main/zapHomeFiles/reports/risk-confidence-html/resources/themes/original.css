@@ -1,0 +1,61 @@
+body {
+	background-color: #c4e0e5;
+	background-image: radial-gradient(circle at top left, #fff 0%, #c4e0e5 1%, #4ca1af 100%);
+}
+
+main, footer {
+	background-color: white;
+}
+
+header {
+	background-color: #00549e;
+	color: #fff;
+}
+
+a:link {
+	color: #004380;
+}
+
+a:visited {
+	color: #770d67;
+}
+
+a:focus {
+	background-color: #ffd54d;
+}
+
+a:hover {
+	background-color: #ffd54d;
+}
+
+a:active {
+	background-color: #f4ba00;
+	color: #003261;
+}
+
+header a:link {
+	color: #f2f7fd;
+}
+
+header a:visited {
+	color: #f2b5e9;
+}
+
+header a:focus {
+	background-color: #ffd54d;
+	color: #004380;
+}
+
+header a:hover {
+	background-color: #ffd54d;
+	color: #004380;
+}
+
+header a:active {
+	background-color: #f4ba00;
+	color: #003261;
+}
+
+h2, h3, h4, h5, h6 {
+	color: #00549e;
+}
