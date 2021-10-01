@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.retire.model.Repo;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -40,6 +41,10 @@ public class RetireScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10003;
     private static final String COLLECTION_PATH =
             "/org/zaproxy/addon/retire/resources/jsrepository.json";
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
     private Repo repo;
 
@@ -122,6 +127,10 @@ public class RetireScanRule extends PluginPassiveScanner {
             sb.append(item).append('\n');
         }
         return sb.toString();
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

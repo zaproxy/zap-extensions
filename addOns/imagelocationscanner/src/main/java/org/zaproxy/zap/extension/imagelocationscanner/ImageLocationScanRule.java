@@ -23,6 +23,10 @@ package org.zaproxy.zap.extension.imagelocationscanner;
 
 import net.htmlparser.jericho.Source;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -53,6 +58,10 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 	private static final Logger logger = LogManager.getLogger(ImageLocationScanRule.class);
 	private static final String MESSAGE_PREFIX = "imagelocationscanner.";
 	public static final int PLUGIN_ID = 10103;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 	
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -112,17 +121,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
 			
 			if (! hasGPS.isEmpty()) {
-			    newAlert()
-			    .setName(getAlertTitle())
-			    .setRisk(Alert.RISK_INFO)
-			    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-			    .setDescription(getDescription())
-			    .setSolution(getSolution())
-			    .setReference(getReference())
-			    .setEvidence(getAlertDetailPrefix()  + "\n" + hasGPS)
-			    .setCweId(200) // CWE-200: Information Exposure
-			    .setWascId(13) // WASC-13: Information Leakage
-			    .raise();
+			    buildAlert(hasGPS).raise();
 			}
 			
 		}
@@ -162,6 +161,31 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
     
     public String getAuthor() {
         return ILS.pluginAuthor;
+    }
+
+    private AlertBuilder buildAlert(String gpsDetails) {
+        return newAlert()
+                .setName(getAlertTitle())
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(getAlertDetailPrefix()  + "\n" + gpsDetails)
+                .setCweId(200) // CWE-200: Information Exposure
+                .setWascId(13); // WASC-13: Information Leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        String gpsDetails = "\n  Location:: \n    Exif_GPS: 40° 50' 19\", -74° 12' 33\"";
+        alerts.add(buildAlert(gpsDetails).build());
+        return alerts;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

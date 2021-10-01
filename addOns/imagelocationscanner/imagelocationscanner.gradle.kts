@@ -10,13 +10,24 @@ zapAddOn {
     manifest {
         author.set("Jay Ball (veggiespam) and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.5.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
     implementation("com.adobe.xmp:xmpcore:6.0.6")
     implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }
 

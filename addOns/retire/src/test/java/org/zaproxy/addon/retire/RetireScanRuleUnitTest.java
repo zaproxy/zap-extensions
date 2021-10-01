@@ -19,11 +19,15 @@
  */
 package org.zaproxy.addon.retire;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 
 import java.io.IOException;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -33,6 +37,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.retire.model.Repo;
 
 class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
@@ -183,6 +188,26 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
     }
 
     private HttpMessage createMessage(String url, String body) {
