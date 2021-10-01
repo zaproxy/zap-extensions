@@ -4,7 +4,7 @@ body {
 }
 
 main, footer {
-	background-color: white;
+	background-color: #fff;
 }
 
 header {
@@ -29,8 +29,9 @@ a:hover {
 }
 
 a:active {
-	background-color: #f4ba00;
+	background-color: #ffd54d;
 	color: #003261;
+	outline-color: #f4ba00;
 }
 
 header a:link {
@@ -52,8 +53,9 @@ header a:hover {
 }
 
 header a:active {
-	background-color: #f4ba00;
+	background-color: #ffd54d;
 	color: #003261;
+	outline-color: #fff6db;
 }
 
 h2, h3, h4, h5, h6 {
