@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
-import java.awt.Dialog;
+import java.awt.Window;
 import org.parosproxy.paros.Constant;
 
 public class DialogModifyAlertFilter extends DialogAddAlertFilter {
@@ -28,13 +28,8 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
     private static final String DIALOG_TITLE =
             Constant.messages.getString("alertFilters.dialog.modify.title");
 
-    public DialogModifyAlertFilter(ExtensionAlertFilters extension, Dialog owner) {
+    public DialogModifyAlertFilter(ExtensionAlertFilters extension, Window owner) {
         super(extension, owner, DIALOG_TITLE);
-    }
-
-    @Override
-    public void setAlertFilter(AlertFilter alertFilter) {
-        super.setAlertFilter(alertFilter);
     }
 
     @Override

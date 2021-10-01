@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Stats for alerts changed
 
+### Fixed
+- Dialogs being shown under the owning dialog / frame.
+
 ## [12] - 2021-09-16
 ### Added
 - Support for the Automation Framework

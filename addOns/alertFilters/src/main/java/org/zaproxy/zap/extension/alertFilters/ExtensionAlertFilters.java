@@ -45,6 +45,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.Session.OnContextsChangedListener;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.control.CoreFunctionality;
 import org.zaproxy.zap.control.ExtensionFactory;
@@ -109,6 +110,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private Logger log = LogManager.getLogger(this.getClass());
 
     private OnContextsChangedListenerImpl contextsChangedListener;
+    private DialogAddAlertFilter addDialog = null;
 
     public ExtensionAlertFilters() {
         super(NAME);
@@ -210,9 +212,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
                                 @Override
                                 protected void performAction(Alert alert) {
-                                    AlertFilter af =
-                                            getOptionGlobalAlertFilterPanel()
-                                                    .showAddDialogue(new AlertFilter(-1, alert));
+                                    DialogAddAlertFilter dialog = showAddDialog(alert);
+                                    AlertFilter af = dialog.getAlertFilter();
                                     if (af != null) {
                                         if (af.getContextId() >= 0) {
                                             getContextAlertFilterManager(af.getContextId())
@@ -233,9 +234,23 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         extensionHook.addApiImplementor(api);
     }
 
+    private DialogAddAlertFilter showAddDialog(Alert alert) {
+        if (addDialog == null) {
+            addDialog = new DialogAddAlertFilter(this, View.getSingleton().getMainFrame());
+            addDialog.pack();
+        }
+        addDialog.clearFields();
+        addDialog.setCanChangeContext(true);
+        addDialog.setAlertFilter(new AlertFilter(-1, alert));
+        addDialog.setVisible(true);
+        return addDialog;
+    }
+
     private OptionsGlobalAlertFilterPanel getOptionGlobalAlertFilterPanel() {
         if (optionsGlobalAlertFilterPanel == null) {
-            optionsGlobalAlertFilterPanel = new OptionsGlobalAlertFilterPanel(this);
+            optionsGlobalAlertFilterPanel =
+                    new OptionsGlobalAlertFilterPanel(
+                            this, View.getSingleton().getOptionsDialog(null));
         }
         return optionsGlobalAlertFilterPanel;
     }
@@ -339,7 +354,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private ContextAlertFilterPanel getContextPanel(int contextId) {
         ContextAlertFilterPanel panel = this.alertFilterPanelsMap.get(contextId);
         if (panel == null) {
-            panel = new ContextAlertFilterPanel(this, contextId);
+            panel =
+                    new ContextAlertFilterPanel(
+                            this, View.getSingleton().getSessionDialog(), contextId);
             this.alertFilterPanelsMap.put(contextId, panel);
         }
         return panel;

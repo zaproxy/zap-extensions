@@ -20,9 +20,9 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
@@ -91,7 +91,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
      *
      * @param owner the owner
      */
-    public DialogAddAlertFilter(ExtensionAlertFilters extension, Dialog owner) {
+    public DialogAddAlertFilter(ExtensionAlertFilters extension, Window owner) {
         this(extension, owner, DIALOG_TITLE);
     }
 
@@ -101,7 +101,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
      * @param owner the owner
      * @param title the title
      */
-    public DialogAddAlertFilter(ExtensionAlertFilters extension, Dialog owner, String title) {
+    public DialogAddAlertFilter(ExtensionAlertFilters extension, Window owner, String title) {
         super(owner, title);
         this.extension = extension;
     }
