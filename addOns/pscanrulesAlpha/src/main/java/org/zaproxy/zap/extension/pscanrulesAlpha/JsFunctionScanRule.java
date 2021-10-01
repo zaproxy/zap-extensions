@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -57,6 +59,8 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     public static final String JS_FUNCTION_PAYLOAD_CATEGORY = "JS-Function";
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN);
 
     private static List<Pattern> defaultPatterns = null;
     private static List<Pattern> patterns = null;
@@ -195,5 +199,9 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

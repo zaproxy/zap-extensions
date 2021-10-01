@@ -21,7 +21,9 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,8 +32,10 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
 
@@ -266,6 +270,26 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
 
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getValue())));
     }
 
     private static byte[] createJso() throws IOException {

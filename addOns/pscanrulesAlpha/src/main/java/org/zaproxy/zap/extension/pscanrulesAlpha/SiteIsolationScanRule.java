@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -66,6 +68,10 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String SITE_ISOLATION_MESSAGE_PREFIX = "pscanalpha.site-isolation.";
 
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
     private static final int PLUGIN_ID = 90004;
 
     private final List<SiteIsolationHeaderScanRule> rules =
@@ -102,6 +108,10 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override
