@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -52,6 +54,10 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
                     "application\\/vnd\\.spring-boot\\.actuator\\.v[0-9]\\+json|application\\/json",
                     Pattern.MULTILINE);
     private static final Pattern JSON_PAYLOAD = Pattern.compile("\\{.*\\:.*\\}", Pattern.MULTILINE);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     @Override
     public boolean targets(TechSet technologies) {
@@ -101,6 +107,11 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
     @Override
     public int getCweId() {
         return 215;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private String getAlertName() {

@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -33,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CorsScanRule}. */
@@ -107,6 +111,30 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         rule.scan();
         // Then
         assertExpectedAlert(Alert.RISK_MEDIUM);
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(942)));
+        assertThat(wasc, is(equalTo(14)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue())));
     }
 
     private void assertExpectedAlert(int risk) {

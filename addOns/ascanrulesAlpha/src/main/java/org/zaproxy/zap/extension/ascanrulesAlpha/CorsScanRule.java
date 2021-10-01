@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -36,6 +37,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * The CORS scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly lenient or
@@ -47,6 +49,10 @@ public class CorsScanRule extends AbstractAppPlugin {
     private static final Logger LOG = LogManager.getLogger(CorsScanRule.class);
     private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
     private static final String ACAC = "Access-Control-Allow-Credentials";
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     @Override
     public void scan() {
@@ -174,6 +180,11 @@ public class CorsScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 14;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which attempts Web Cache Deception attack.
@@ -48,6 +50,11 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
     protected static final String[] TEST_EXTENSIONS = {
         "css", "jpg", "js", "html", "gif", "png", "svg", "php", "txt", "pdf", "asp"
     };
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public int getId() {
@@ -175,5 +182,10 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
     @Override
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
