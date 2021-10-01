@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -48,6 +50,10 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.stricttransportsecurity.";
     private static final int PLUGIN_ID = 10035;
     private static final String STS_HEADER = "Strict-Transport-Security";
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     // max-age=0 disabled HSTS. It's allowed by the spec,
     // and is used to reset browser's settings for HSTS.
@@ -177,6 +183,10 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "rule.name");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private String getAlertElement(VulnType currentVT, String element) {

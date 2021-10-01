@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -44,6 +46,10 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
     private static final Logger logger = LogManager.getLogger(ServerHeaderInfoLeakScanRule.class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -100,6 +106,10 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString("pscanbeta.serverheader.rule.name");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private void raiseAlert(

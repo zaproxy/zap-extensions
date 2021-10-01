@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.HTMLElementName;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PiiUtils;
 import org.zaproxy.addon.commonlib.binlist.BinList;
 import org.zaproxy.addon.commonlib.binlist.BinRecord;
@@ -50,6 +52,10 @@ public class PiiScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.pii.";
 
     private static final int PLUGIN_ID = 10062;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     private enum CreditCard {
         AMERICAN_EXPRESS("American Express", "\\b(?:3[47][0-9]{13})\\b"),
@@ -235,6 +241,10 @@ public class PiiScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private static class Candidate {

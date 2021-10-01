@@ -76,8 +76,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                         // strip off any leading space for the second and subsequent proxies
                         if (proxyServerDetails.startsWith(" "))
                             proxyServerDetails = proxyServerDetails.substring(1);
-                        if (logger.isTraceEnabled())
-                            logger.trace("Proxy HIT/MISS details [" + proxyServerDetails + "]");
+                        logger.trace("Proxy HIT/MISS details [{}]", proxyServerDetails);
                         String[] proxyServerDetailsArray = proxyServerDetails.split(" ", 3);
                         if (proxyServerDetailsArray.length >= 1) {
                             String hitormiss =
@@ -119,9 +118,13 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
             List<String> ageHeaders = msg.getResponseHeader().getHeaderValues("Age");
             if (!ageHeaders.isEmpty()) {
                 for (String ageHeader : ageHeaders) {
-                    if (logger.isTraceEnabled())
-                        logger.trace("Validating Age header value [" + ageHeader + "]");
-                    Long ageAsLong = Long.parseLong(ageHeader);
+                    logger.trace("Validating Age header value [{}]", ageHeader);
+                    Long ageAsLong = null;
+                    try {
+                        ageAsLong = Long.parseLong(ageHeader);
+                    } catch (NumberFormatException nfe) {
+                        // Ignore
+                    }
                     if (ageAsLong != null && ageAsLong >= 0) {
                         String evidence = "Age: " + ageHeader;
                         logger.debug(

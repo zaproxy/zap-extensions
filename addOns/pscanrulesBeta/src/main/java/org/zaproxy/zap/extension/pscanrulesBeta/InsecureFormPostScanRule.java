@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -27,6 +28,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -38,6 +40,11 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.insecureformpost.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public String getName() {
@@ -130,5 +137,9 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner {
                 MESSAGE_PREFIX + "extrainfo",
                 msg.getRequestHeader().getURI().toString(),
                 formElement.toString());
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

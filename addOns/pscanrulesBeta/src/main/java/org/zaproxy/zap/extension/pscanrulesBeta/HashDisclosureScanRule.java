@@ -31,6 +31,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -156,6 +157,11 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.hashdisclosure.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     @Override
     public String getName() {
@@ -285,6 +291,10 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
 
     private String getExtraInfo(HttpMessage msg, String arg0) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     static class HashAlert {

@@ -21,15 +21,18 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class XChromeLoggerDataInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<XChromeLoggerDataInfoLeakScanRule> {
@@ -120,5 +123,25 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(malformedEncodedValue));
         String otherInfo = "Header value could not be base64 decoded: " + malformedEncodedValue;
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(otherInfo));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
     }
 }

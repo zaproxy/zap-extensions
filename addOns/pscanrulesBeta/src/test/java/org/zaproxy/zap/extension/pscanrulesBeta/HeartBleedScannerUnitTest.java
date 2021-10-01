@@ -20,14 +20,17 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
 
@@ -134,6 +137,25 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertAlertAttributes(alertsRaised.get(0), vulnerableVersion);
+    }
+
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
     }
 
     private static HttpMessage createMsg(String serverHeader) throws HttpMalformedHeaderException {

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +28,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -41,6 +43,10 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10044;
 
     private static final Logger logger = LogManager.getLogger(BigRedirectsScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -129,5 +135,9 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
 
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
