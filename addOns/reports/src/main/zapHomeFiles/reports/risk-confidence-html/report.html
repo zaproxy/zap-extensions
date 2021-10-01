@@ -212,7 +212,7 @@
 												</th-block>
 											</th-block>
 											<th-block data-th-case="*">
-												<span data-th-text="${sourceMsg}">Source</span> <a data-th-href="@{https://www.zaproxy.org/docs/alerts/{pluginId}/(pluginId=${userObject.pluginId})}" href="https://www.zaproxy.org/docs/alerts/" data-th-text="|(${scanJobResultData.getRuleData(userObject.pluginId).name})|">rule name</a>
+												<span data-th-text="${sourceMsg}">Source</span> <span>(<a data-th-href="@{https://www.zaproxy.org/docs/alerts/{pluginId}/(pluginId=${userObject.pluginId})}" href="https://www.zaproxy.org/docs/alerts/" data-th-text="${scanJobResultData.getRuleData(userObject.pluginId).name}">rule name</a>)</span>
 											</th-block>
 										</th-block>
 									</th-block>
