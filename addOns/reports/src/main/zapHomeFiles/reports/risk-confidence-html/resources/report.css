@@ -107,7 +107,7 @@ caption {
 	text-align: left;
 }
 
-code {
+code, .request-method-n-url {
 	overflow-wrap: anywhere;
 	white-space: break-spaces;
 }
