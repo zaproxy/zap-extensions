@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -81,6 +83,10 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
     private static final Logger log = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
 
     private static final int DEFAULT_SLEEP_TIME = 15;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     private boolean doTimeBased;
     private int doTimeMaxRequests;
@@ -319,5 +325,10 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 19;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

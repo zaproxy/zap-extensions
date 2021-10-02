@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -54,6 +56,10 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
     // going to classify this as #45, Fingerprinting.
     // #01, Authentication could be applicable.
     private static final String[] HIGH_RISK_COOKIE_NAMES = {"session", "userid"};
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
     private static Logger log = LogManager.getLogger(SlackerCookieScanRule.class);
 
@@ -331,5 +337,10 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
     public int getWascId() {
         // The WASC ID - fingerprinting
         return 45;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

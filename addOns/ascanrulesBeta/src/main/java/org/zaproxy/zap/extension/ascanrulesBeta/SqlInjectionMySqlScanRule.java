@@ -31,12 +31,13 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The SqlInjectionMyqlScanRule identifies MySQL specific SQL Injection vulnerabilities using MySQL
+ * The SqlInjectionMySqlScanRule identifies MySQL specific SQL Injection vulnerabilities using MySQL
  * specific syntax. If it doesn't use MySQL specific syntax, it belongs in the generic SQLInjection
  * class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2) Boolean Based
  * (N/A - uses standard syntax) 3) UNION based (N/A - uses standard syntax) 4) Stacked (N/A - uses
@@ -48,7 +49,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
 
     private boolean doTimeBased = false;
 
@@ -188,8 +189,13 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                 + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in WHERE clause.
     };
 
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionMyqlScanRule.class);
+    private static Logger log = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
 
     @Override
     public int getId() {
@@ -461,5 +467,10 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 19;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

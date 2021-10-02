@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -40,6 +41,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -87,6 +89,10 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
             Pattern.compile(
                     "<html"); // helps eliminate some common false positives in the case of 403s,
     // 302s, etc.
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     /** returns the plugin id */
     @Override
@@ -236,6 +242,11 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 34; // Predictable Resource Location
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private boolean shouldStop(AlertThreshold alertThreshold, HttpMessage msg) {

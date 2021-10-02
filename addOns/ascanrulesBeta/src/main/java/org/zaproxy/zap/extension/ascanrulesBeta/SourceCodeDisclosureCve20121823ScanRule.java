@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -53,6 +55,10 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
             Pattern.compile(
                     ".*(<\\?=.+?\\?>).*",
                     Pattern.MULTILINE | Pattern.DOTALL); // PHP "echo short tag"
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
     /**
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input
@@ -222,5 +228,10 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 20; // Improper Input Handling
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

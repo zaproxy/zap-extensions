@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 public class HttPoxyScanRule extends AbstractAppPlugin {
 
@@ -38,6 +40,10 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.httpoxy.";
 
     private static final int PLUGIN_ID = 10107;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
     private static final Logger log = LogManager.getLogger(HttPoxyScanRule.class);
 
@@ -69,6 +75,11 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 20; // Improper Input Validation
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

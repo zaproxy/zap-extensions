@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** @author yhawke (2014) */
 public class PaddingOracleScanRule extends AbstractAppParamPlugin {
@@ -45,6 +47,10 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
         "cryptographicexception",
         "crypto"
     };
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     // Logger object
     private static final Logger log = LogManager.getLogger(PaddingOracleScanRule.class);
@@ -90,6 +96,11 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
         // so we consider the general "Improper Input Handling" class
         // http://projects.webappsec.org/w/page/13246933/Improper%20Input%20Handling
         return 20;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

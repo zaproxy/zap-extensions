@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -130,6 +132,11 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             Pattern.compile(
                     "<html"); // helps eliminate some common false positives in the case of 403s,
     // 302s, etc.
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     /** returns the plugin id */
     @Override
@@ -516,6 +523,11 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     @Override
     public int getWascId() {
         return 33; // Path Traversal
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     /**

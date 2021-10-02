@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -49,6 +51,9 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     // Get the correct vulnerability description from WASC
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_43");
     private static final int CHALLENGE_LENGTH = 16;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A04_XXE);
 
     // Payload built on examples retrieved in:
     // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
@@ -161,6 +166,11 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     @Override
     public int getWascId() {
         return 43;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

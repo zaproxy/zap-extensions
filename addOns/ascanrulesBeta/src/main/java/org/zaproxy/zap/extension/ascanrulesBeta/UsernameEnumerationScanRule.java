@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
@@ -41,6 +42,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
@@ -62,6 +64,11 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
     /** The characters used to generate the random username. */
     private static final char[] RANDOM_USERNAME_CHARS = "abcdefghijklmnopqrstuvwyxz".toCharArray();
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static ExtensionAuthentication extAuth =
             (ExtensionAuthentication)
@@ -759,5 +766,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 13; // Info leakage
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

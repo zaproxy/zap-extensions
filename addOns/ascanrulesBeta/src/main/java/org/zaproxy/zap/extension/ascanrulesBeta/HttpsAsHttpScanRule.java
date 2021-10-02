@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which checks whether or not HTTPS content is also available via HTTP
@@ -42,6 +44,10 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.httpsashttp.";
 
     private static final int PLUGIN_ID = 10047;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static final Logger log = LogManager.getLogger(HttpsAsHttpScanRule.class);
 
@@ -88,6 +94,11 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 4; // WASC-04: Insufficient Transport Layer Protection
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

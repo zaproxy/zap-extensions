@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Map;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which raises an alert if a site accessed via HTTP is not served under HTTPS
@@ -48,6 +50,10 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
 
     private static final int PLUGIN_ID = 10106;
     private static final int REDIR_LIMIT = 10;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private static final Logger log = LogManager.getLogger(HttpOnlySiteScanRule.class);
 
@@ -94,6 +100,11 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
     @Override
     public int getWascId() {
         return 4; // WASC-04: Insufficient Transport Layer Protection
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     public void raiseAlert(HttpMessage newRequest, String message) {

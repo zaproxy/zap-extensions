@@ -27,9 +27,11 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -246,6 +248,30 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         // Then
         assertThat(alertsRaised, hasSize(0));
         assertThat(httpMessagesSent, hasSize(1)); // Win attack
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(20)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
     }
 
     private abstract static class RceResponse extends NanoServerHandler {

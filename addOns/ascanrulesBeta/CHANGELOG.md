@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- OWASP Top Ten 2021/2017 mappings.
+
 ### Changed
+- Now targeting ZAP 2.11.
 - Maintenance changes.
 - Use OAST Callbacks for the XXE Scan Rule.
 - Backup File Disclosure Scan Rule: When checkout a parent folder for 404 behavior assume a minimum folder name length of four to further eliminate chance of collision on short folder names (Issue 5330).

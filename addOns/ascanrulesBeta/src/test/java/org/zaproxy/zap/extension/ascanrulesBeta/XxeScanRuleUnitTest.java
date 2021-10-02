@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
@@ -46,6 +47,7 @@ import org.parosproxy.paros.db.paros.ParosTableHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
@@ -324,6 +326,28 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
                 return newFixedLengthResponse(status, NanoHTTPD.MIME_PLAINTEXT, responseBody);
             }
         };
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(611)));
+        assertThat(wasc, is(equalTo(43)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A04_XXE.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A04_XXE.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A04_XXE.getValue())));
     }
 
     private static class ValidatedResponse extends NanoServerHandler {

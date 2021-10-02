@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -54,6 +55,10 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.csrftoken.";
     private static final int PLUGIN_ID = 20012;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private List<String> ignoreList = new ArrayList<>();
     private String ignoreAttName;
@@ -305,5 +310,10 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 9;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

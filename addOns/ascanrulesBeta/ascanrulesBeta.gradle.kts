@@ -5,7 +5,7 @@ description = "The beta quality Active Scanner rules"
 zapAddOn {
     addOnName.set("Active scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -14,7 +14,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.4.0 & < 2.0.0")
+                    version.set(">= 1.5.0 & < 2.0.0")
                 }
                 register("oast") {
                     version.set(">= 0.3.0")
@@ -39,7 +39,14 @@ zapAddOn {
     }
 }
 
+repositories {
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    zap("org.zaproxy:zap:2.11.0-20210929.165234-4")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)

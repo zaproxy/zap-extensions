@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Random;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement
@@ -51,6 +53,10 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
     private static final int MEAN_VALUE = 100000;
 
     private static final Random RAND = new Random();
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     @Override
     public int getId() {
@@ -93,6 +99,11 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
         // so we consider the general "Improper Input Handling" class
         // http://projects.webappsec.org/w/page/13246933/Improper%20Input%20Handling
         return 20;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override
