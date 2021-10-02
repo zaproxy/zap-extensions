@@ -91,16 +91,12 @@ p:last-of-type {
 	margin-bottom: 0;
 }
 
-#risk-confidence-counts-table > caption {
-	margin-bottom: 1.5em;
-}
-
 #contents li, #alerts li, #alert-types > ol > li {
 	margin-top: 1.5em;
 }
 
-.alert-types-table li:not(:first-of-type) {
-	margin-top: 1.5em;
+#alert-types h4 {
+	margin-bottom: 0;
 }
 
 a {
@@ -116,6 +112,10 @@ code {
 	white-space: break-spaces;
 }
 
+table {
+	border-collapse: collapse;
+}
+
 #report-description--container, #report-parameters--container {
 	margin-left: 2ch;
 	padding: 0 2ch;
@@ -129,11 +129,7 @@ code {
 	text-align: center;
 }
 
-.alert-types-table ol, #contents ol {
-	list-style-type: square;
-}
-
-#alerts ol, .alert-types-table ol {
+#alerts ol {
 	padding-left: 0;
 }
 
@@ -144,42 +140,98 @@ code {
 	padding: 1.5em 3ch;
 }
 
-#contents ol, .alert-types-table ol {
-	list-style-position: inside;
-}
-
 #contents ol {
+	list-style-position: inside;
+	list-style-type: square;
 	padding-left: 4ch;
 }
 
-.alert-types-table {
-	width: 100%;
+#risk-confidence-counts-table > caption {
+	margin-bottom: 1.5em;
 }
 
-.alert-types-table th {
-	width: 20%;
+#risk-confidence-counts-table th[scope="row"] {
+	height: 3em;
 }
 
-.alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td {
-	padding: 1.5em 1ch;
+#risk-confidence-counts-table th[scope="rowgroup"] {
+	padding: 0 .5ch;
+	vertical-align: middle;
 }
 
-.alerts-table tr > th, .alert-types-table th, .alert-types-table td {
-	vertical-align: baseline;
+#risk-confidence-counts-table th[scope="rowgroup"], #risk-confidence-counts-table th[scope="row"], #risk-confidence-counts-table td:not([colspan]) {
+	border-top: .05em solid;
+}
+
+#risk-confidence-counts-table th[scope="row"], #risk-confidence-counts-table td {
+	vertical-align: top;
+}
+
+#risk-confidence-counts-table th[scope="col"] {
+	vertical-align: bottom;
+}
+
+#risk-confidence-counts-table th[scope="col"], #risk-confidence-counts-table th[scope="row"] {
+	font-family: monospace, monospace;
+	font-weight: bold;
+}
+
+#risk-confidence-counts-table th[scope="colgroup"], #risk-confidence-counts-table th[scope="rowgroup"] {
+	font-weight: normal;
 }
 
 #risk-confidence-counts-table td, #risk-confidence-counts-table th[scope="col"], #risk-confidence-counts-table th[scope="row"] {
 	text-align: right;
 }
 
+.alerts-table, .alert-types-table {
+	border-collapse: separate;
+	border-spacing: 2ch 1.5em;
+	width: 100%;
+}
+
+.alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td {
+	vertical-align: top;
+}
+
 .alerts-table td, .alert-types-table td {
 	overflow-wrap: anywhere;
 }
 
+.alerts-table th, .alert-types-table th {
+	padding: 0 1ch;
+}
+
+.alerts-table td, .alert-types-table td {
+	padding: 0 2ch;
+}
+
+.alerts-table summary {
+	margin-bottom: 1.5em;
+}
+
+.alert-types-table {
+	padding-top: 0;
+}
+
+.alert-types-table th {
+	width: 20%;
+}
+
+.alert-types-table ol {
+	list-style-position: inside;
+	list-style-type: square;
+	padding-left: 0;
+}
+
+.alert-types-table li:not(:first-of-type) {
+	margin-top: 1.5em;
+}
+
 #zap-logo {
 	height: 1em;
-	width: 1em;
 	margin-right: .25ch;
+	width: 1em;
 }
 
 h1, h2 {

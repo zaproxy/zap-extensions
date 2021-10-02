@@ -61,3 +61,21 @@ header a:active {
 h2, h3, h4, h5, h6 {
 	color: #00549e;
 }
+
+#risk-confidence-counts-table th[scope="colgroup"], #risk-confidence-counts-table th[scope="rowgroup"] {
+	background-color: #00549e;
+	color: #fff;
+}
+
+#risk-confidence-counts-table th[scope="col"], #risk-confidence-counts-table th[scope="row"] {
+	color: #00549e;
+}
+
+#risk-confidence-counts-table th[scope="rowgroup"], #risk-confidence-counts-table th[scope="row"], #risk-confidence-counts-table td:not([colspan]) {
+	border-top-color: #00549e;
+}
+
+.alerts-table th, .alert-types-table th {
+	background-color: #306aa0;
+	color: #fff;
+}
