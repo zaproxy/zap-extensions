@@ -237,3 +237,11 @@ table {
 h1, h2 {
 	font-family: Georgia, serif;
 }
+
+.risk-level, .confidence-level {
+	font-family: monospace, monospace;
+}
+
+.context, .site, .request-method-n-url {
+	font-family: monospace, monospace;
+}
