@@ -31,7 +31,17 @@
 							<li data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"><a href="#risk-confidence-counts" data-th-text="#{report.template.section.riskConfidenceCounts}">Table of alert counts by risk and confidence</a></li>
 						</ol>
 					</li>
-					<li data-th-if="${reportData.isIncludeSection('alerts')}"><a href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a></li>
+					<li data-th-if="${reportData.isIncludeSection('alerts')}"><a href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a>
+						<ol>
+							<th-block data-th-each="riskCode: ${includedRiskCodes}" data-th-with="filteredAlerts=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}}">
+								<th-block data-th-unless="${filteredAlerts.isEmpty()}">
+									<th-block data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="filteredAlerts=${#confidenceCode=confidenceCode, filteredAlerts.{? #this.userObject.confidence == #confidenceCode}}">
+										<li data-th-unless="${filteredAlerts.isEmpty()}"><a data-th-href="@{#alerts--risk-{riskCode}-confidence-{confidenceCode}(riskCode=${riskCode}, confidenceCode=${confidenceCode})}"><span data-th-text="#{report.template.risk}">Risk</span>: <code data-th-text="${helper.getRiskString(riskCode)}">Risk level</code> and <span data-th-text="#{report.template.confidence}">Confidence</span>: <code data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence level</code> <span data-th-text="|(${filteredAlerts.size()})|">(count)</span></a></li>
+									</th-block>
+								</th-block>
+							</th-block>
+						</ol>
+					</li>
 					<li data-th-if="${reportData.isIncludeSection('appendix')}"><a href="#appendix" data-th-text="#{report.template.section.appendix}">Appendix</a>
 						<ol>
 							<li data-th-if="${reportData.isIncludeSection('alertTypes')}"><a href="#alert-types" data-th-text="#{report.template.section.alertTypes}">Alert types</a></li>
@@ -153,7 +163,7 @@
 				<th-block data-th-each="riskCode: ${includedRiskCodes}" data-th-with="filteredAlerts=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}}">
 					<th-block data-th-unless="${filteredAlerts.isEmpty()}">
 						<th-block data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="filteredAlerts=${#confidenceCode=confidenceCode, filteredAlerts.{? #this.userObject.confidence == #confidenceCode}}">
-							<li data-th-unless="${filteredAlerts.isEmpty()}">
+							<li data-th-unless="${filteredAlerts.isEmpty()}" data-th-id="|alerts--risk-${riskCode}-confidence-${confidenceCode}|">
 								<h3><span data-th-text="#{report.template.risk}">Risk</span>: <code data-th-text="${helper.getRiskString(riskCode)}">Risk level</code> and <span data-th-text="#{report.template.confidence}">Confidence</span>: <code data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence level</code> <span data-th-text="|(${filteredAlerts.size()})|">(count)</span></h3>
 								<ol>
 									<th-block data-th-each="site: ${reportData.sites}" data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host && #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort && #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
