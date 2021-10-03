@@ -179,20 +179,6 @@
     "icon": "SQLite.png",
     "website": "http://www.sqlite.org"
   },
-  "Stitches": {
-    "cats": [
-      12,
-      47
-    ],
-    "description": "Stitches is a is a CSS-in-JS styling framework with near-zero runtime, SSR, and multi-variant support.",
-    "dom": "style#stitches",
-    "icon": "Stitches.svg",
-    "oss": true,
-    "meta": {
-      "generator": "^c-[A-Za-z]{5}$"
-    },
-    "website": "https://stitches.dev"
-  },
   "STUDIO": {
     "cats": [
       51
