@@ -5,8 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title data-th-text="${reportTitle}">Report Title</title>
 	<link data-th-href="@{{pathToResources}/normalize/normalize.css(pathToResources=${resources})}" href="resources/normalize/normalize.css" rel="stylesheet">
-	<link data-th-href="@{{pathToResources}/report.css(pathToResources=${resources})}" href="resources/report.css" rel="stylesheet">
-	<link data-th-href="@{{pathToResources}/themes/{theme}.css(pathToResources=${resources}, theme=${reportData.theme})}" href="resources/themes/original.css" rel="stylesheet">
+	<link data-th-href="@{{pathToResources}/themes/{theme}/main.css(pathToResources=${resources}, theme=${reportData.theme})}" href="resources/themes/original/main.css" rel="stylesheet">
+	<link data-th-href="@{{pathToResources}/themes/{theme}/colors.css(pathToResources=${resources}, theme=${reportData.theme})}" href="resources/themes/original/colors.css" rel="stylesheet">
 </head>
 <body>
 	<header>
