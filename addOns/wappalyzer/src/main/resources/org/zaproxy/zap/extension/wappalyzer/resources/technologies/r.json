@@ -164,6 +164,25 @@
     "scripts": "raphael(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://dmitrybaranovskiy.github.io/raphael/"
   },
+  "RapidSec": {
+    "cats": [
+      16
+    ],
+    "description": "RapidSec offers automated client-side security and monitoring.",
+    "headers": {
+      "Content-Security-Policy": "\\.rapidsec\\.net",
+      "Content-Security-Policy-Report-Only": "\\.rapidsec\\.net",
+      "report-to": "\\.rapidsec\\.net"
+    },
+    "icon": "RapidSec.svg",
+    "pricing": [
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://rapidsec.com"
+  },
   "RapidSpike": {
     "cats": [
       13,
@@ -278,6 +297,23 @@
     ],
     "scripts": "checkout\\.razorpay\\.com",
     "website": "https://razorpay.com/"
+  },
+  "Re:amaze": {
+    "cats": [
+      52
+    ],
+    "description": "Re:amaze is a multi-brand customer service, live chat, and help desk solution.",
+    "icon": "Re-amaze.png",
+    "js": {
+      "reamaze.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.reamaze\\.com/",
+    "website": "https://www.reamaze.com"
   },
   "ReDoc": {
     "cats": [
@@ -564,6 +600,22 @@
     "scripts": "mark\\.reevoo\\.com",
     "website": "https://www.reevoo.com/"
   },
+  "ReferralCandy": {
+    "cats": [
+      94,
+      84
+    ],
+    "description": "ReferralCandy is a marketing platform that gets shoppers to refer their friends.",
+    "dom": "iframe[src*='.referralcandy.com/'],li > a[href*='.referralcandy.com/'],div > a[href*='.referralcandy.com/'] ",
+    "icon": "ReferralCandy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.referralcandy\\.com/",
+    "website": "https://www.referralcandy.com"
+  },
   "Refersion": {
     "cats": [
       71,
@@ -821,6 +873,15 @@
     "icon": "Revel.png",
     "implies": "Go",
     "website": "https://revel.github.io"
+  },
+  "RevenueHut": {
+    "cats": [
+      71
+    ],
+    "description": "RevenueHut is an affiliate marketing and advertising company specializing in paid surveys and cost per lead campaigns.",
+    "icon": "RevenueHut.png",
+    "scripts": "admin\\.revenuehunt\\.com/",
+    "website": "https://revenuehut.com"
   },
   "RevolverMaps": {
     "cats": [
@@ -1170,11 +1231,11 @@
       "recurring",
       "payg",
       "low"
-    ],   
+    ],
     "saas": true,
     "scripts": "cdn\\.ryviu\\.com",
     "website": "https://www.ryviu.com/"
-  }, 
+  },
   "reCAPTCHA": {
     "cats": [
       16

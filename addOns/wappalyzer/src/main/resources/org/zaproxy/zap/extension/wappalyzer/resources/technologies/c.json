@@ -209,6 +209,19 @@
     "scripts": "\\.createsend1\\.com/",
     "website": "https://www.campaignmonitor.com"
   },
+  "Canto": {
+    "cats": [
+      95
+    ],
+    "description": "Canto is a digital asset management solution.",
+    "dom": "link[href*='.canto.com/'], a[href*='.canto.com/'], img[src*='.canto.com/']",
+    "icon": "Canto.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.canto.com"
+  },
   "Captch Me": {
     "cats": [
       16,
@@ -360,6 +373,21 @@
       "generator": "Chamilo ([\\d.]+)\\;version:\\1"
     },
     "website": "http://www.chamilo.org"
+  },
+  "ChannelAdvisor": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "ChannelAdvisor is a provider of cloud-based solutions to ecommerce companies.",
+    "dom": "link[href*='.channeladvisor.com']",
+    "icon": "ChannelAdvisor.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.channeladvisor\\.com/",
+    "website": "https://www.channeladvisor.com"
   },
   "Chaport": {
     "cats": [
@@ -553,12 +581,12 @@
       93
     ],
     "description": "Chinese Menu Online is an online food ordering service.",
-    "icon": "Chinese Menu Online.png",
     "dom": "li > a[href*='chinesemenuonline.com']",
-    "saas": true,
+    "icon": "Chinese Menu Online.png",
     "pricing": [
       "payg"
     ],
+    "saas": true,
     "website": "https://www.chinesemenuonline.com"
   },
   "Chitika": {
@@ -1146,6 +1174,35 @@
     "icon": "Combeenation.png",
     "website": "https://www.combeenation.com"
   },
+  "Commanders Act TagCommander": {
+    "cats": [
+      42
+    ],
+    "description": "Commanders Act TagCommander is a European company providing a tag management product designed to handle website tags.",
+    "icon": "Commanders Act.svg",
+    "js": {
+      "tc_vars": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.tagcommander\\.com",
+    "website": "https://www.commandersact.com/en/solutions/tagcommander/"
+  },
+  "Commanders Act TrustCommander": {
+    "cats": [
+      67
+    ],
+    "description": "Commanders Act TrustCommander is a consent management platform (CMP) which allows you to comply with the general data protection regulation (GDPR) regulation in terms of collecting consent.",
+    "icon": "Commanders Act.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.trustcommander\\.net/privacy/.+_v([\\d]+)_([\\d]+)\\.js\\;version:\\1.\\2",
+    "website": "https://www.commandersact.com/en/solutions/trustcommander/"
+  },
   "Commerce Server": {
     "cats": [
       6
@@ -1664,6 +1721,20 @@
     "icon": "CoverManager.svg",
     "website": "https://www.covermanager.com"
   },
+  "Covet.pics": {
+    "cats": [
+      5
+    ],
+    "description": "Covet.pics is a customizable Shopify app for Instagram and Lookbook shoppable galleries.",
+    "icon": "Covet.pics.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.covet\\.pics/.+widget@([\\d\\.]+)\\;version:\\1",
+    "website": "https://covet.pics"
+  },
   "Cowboy": {
     "cats": [
       22
@@ -1795,18 +1866,18 @@
     "implies": [
       "Shopify",
       "Cart Functionality"
-    ],    
+    ],
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "saas": true,    
+    "saas": true,
     "scripts": [
       "load\\.csell\\.co"
     ],
     "website": "https://csell.io/"
-  },  
+  },
   "CrossBox": {
     "cats": [
       30

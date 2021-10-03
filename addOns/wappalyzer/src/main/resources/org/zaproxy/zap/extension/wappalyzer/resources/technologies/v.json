@@ -12,6 +12,16 @@
     },
     "website": "http://vivvo.net"
   },
+  "VK Pixel": {
+    "cats": [
+      10
+    ],
+    "description": "VK is a Russian online social media and social networking service.",
+    "dom": "img[src*='vk.com/rtrg?p=VK-RTRG-']",
+    "icon": "vk.svg",
+    "scripts": "vk\\.com/js/api/openapi\\.js",
+    "website": "https://vk.com/"
+  },
   "VP-ASP": {
     "cats": [
       6
@@ -309,13 +319,48 @@
       14
     ],
     "description": "Vimeo is a video hosting, sharing and services platform. Vimeo operation an ad-free basis by providing subscription plans.",
-    "html": "(?:<(?:param|embed)[^>]+vimeo\\.com/moogaloop|<iframe[^>]player\\.vimeo\\.com)",
+    "dom": "iframe[src*='vimeo.com'],embed[src*='vimeo.com']",
     "icon": "Vimeo.svg",
     "js": {
       "Vimeo.Player": "",
       "VimeoPlayer": ""
     },
+    "saas": true,
     "website": "http://vimeo.com"
+  },
+  "Vimeo OTT": {
+    "cats": [
+      14
+    ],
+    "description": "Vimeo OTT allows brands and creators to launch their own white-label video subscription channels, where subscribers can access video content for free, as a rental, or for purchase.",
+    "icon": "Vimeo.svg",
+    "implies": "Vimeo",
+    "js": {
+      "VHX.config": "",
+      "_vhx": ""
+    },
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://vimeo.com/ott",
+    "xhr": "api\\.vhx\\.tv"
+  },
+  "Viral Loops": {
+    "cats": [
+      94
+    ],
+    "description": "Viral Loops is a viral and referral marketing platform to launch ranking competitions, sweepstakes, pre-launch and referral programs.",
+    "dom": "link[href*='wp-content/plugins/viral-loops-wp-integration/assets/']",
+    "icon": "Viral Loops.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "app\\.viral-loops\\.com/",
+    "website": "https://viral-loops.com"
   },
   "Virgool": {
     "cats": [
@@ -507,7 +552,7 @@
     "saas": true,
     "scripts": "vuex\\.vue\\.ai",
     "website": "https://vue.ai/"
-  },  
+  },
   "Vue.js": {
     "cats": [
       12

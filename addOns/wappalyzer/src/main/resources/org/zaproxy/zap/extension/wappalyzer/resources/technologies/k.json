@@ -78,7 +78,7 @@
       "mid"
     ],
     "saas": true,
-    "website": "https://newkajabi.com"
+    "website": "https://kajabi.com"
   },
   "Kameleoon": {
     "cats": [
@@ -115,6 +115,25 @@
     },
     "scripts": "cdn\\.mykamva\\.ir",
     "website": "https://kamva.ir"
+  },
+  "Kapture CRM": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Kapture CRM is an enterprise-grade SaaS-based customer support automation platform.",
+    "icon": "Kapture CRM.png",
+    "js": {
+      "Kapchat": "",
+      "kap_chat_js": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.kapturecrm\\.com/.+\\?ver=([\\d\\.]+)\\;version:\\1",
+    "website": "https://www.kapturecrm.com"
   },
   "Karma": {
     "cats": [
@@ -324,6 +343,24 @@
     "icon": "kinsta.svg",
     "implies": "WordPress",
     "website": "https://kinsta.com"
+  },
+  "Kitcart": {
+    "cats": [
+      6
+    ],
+    "description": "KitCart is a cloud-based solution that helps businesses build ecommerce stores, manage inventory, and more.",
+    "dom": "a[href*='kitcart.net'][target='_blank'], form[action*='kitcart.net/']",
+    "icon": "Kitcart.png",
+    "implies": [
+      "Laravel",
+      "PHP"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://kitcart.net"
   },
   "Kiwi Sizing": {
     "cats": [

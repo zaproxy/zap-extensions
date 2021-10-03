@@ -242,6 +242,23 @@
     "scripts": "acsbapp?\\.com/.*/acsb\\.js",
     "website": "https://accessibe.com"
   },
+  "Accessible360": {
+    "cats": [
+      68
+    ],
+    "description": "Accessible360 is a web accessibility company based in Edina, Minnesota.",
+    "dom": "a[href*='accessible360.com/'][target='_blank'], a[href*='accessible360.com/'] > img",
+    "icon": "Accessible360.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "/npm/@accessible360/accessible-slick@([\\d\\.]+)/\\;version:\\1",
+      "/accessible360/accessible-slick/slick/slick\\.min\\.js\\?v=([\\d\\.]+)\\;version:\\1"
+    ],
+    "website": "https://accessible360.com"
+  },
   "Accessibly": {
     "cats": [
       76
@@ -282,6 +299,38 @@
     "oss": true,
     "website": "https://ackee.electerious.com"
   },
+  "Acquia Campaign Factory": {
+    "cats": [
+      32
+    ],
+    "description": "Acquia Campaign Factory is centralized marketing management system powered by Mautic.",
+    "icon": "acquia-campaign-factory.png",
+    "implies": [
+      "Mautic"
+    ],
+    "saas": true,
+    "scripts": [
+      "mautic\\.net",
+      "maestro\\.mautic\\.com"
+    ],
+    "website": "https://www.acquia.com/products/marketing-cloud/campaign-factory"
+  },
+  "Acquia Cloud IDE": {
+    "cats": [
+      47
+    ],
+    "description": "Acquia Cloud IDE is a browser-based source code editor and a Drupal development stack running on the Acquia Cloud Platform.",
+    "icon": "acquia-cloud-ide.png",
+    "implies": [
+      "Acquia Cloud Platform"
+    ],
+    "saas": true,
+    "scripts": [
+      "https?:\\/\\/.+\\.web\\.ahdev\\.cloud"
+    ],
+    "url": "https:?\\/\\/.+\\.web\\.ahdev\\.cloud",
+    "website": "https://www.acquia.com/products/drupal-cloud/cloud-ide"
+  },
   "Acquia Cloud Platform": {
     "cats": [
       62
@@ -292,13 +341,119 @@
     },
     "icon": "acquia-cloud.png",
     "implies": [
-      "Drupal\\;confidence:95",
+      "Drupal",
       "Apache",
-      "Percona",
-      "Amazon EC2"
+      "Percona"
     ],
     "saas": true,
     "website": "https://www.acquia.com/"
+  },
+  "Acquia Cloud Site Factory": {
+    "cats": [
+      88
+    ],
+    "description": "Acquia Site Factory is a multisite platform for Drupal.",
+    "dom": [
+      "script[src*='sites/g/files']",
+      "img[src*='sites/g/files']",
+      "img[data-src*='sites/g/files']",
+      "link[href*='sites/g/files']"
+    ],
+    "icon": "acquia-site-factory.png",
+    "implies": [
+      "Acquia Cloud Platform"
+    ],
+    "saas": true,
+    "scripts": [
+      "sites\\/g\\/files"
+    ],
+    "website": "https://www.acquia.com/products/drupal-cloud/site-factory"
+  },
+  "Acquia Content Hub": {
+    "cats": [
+      19
+    ],
+    "description": "Acquia Content Hub is a cloud-based, centralized content distribution and syndication service.",
+    "dom": [
+      "[data-lift-slot]"
+    ],
+    "headers": {
+      "content-security-policy": "content-hub\\.acquia\\.com"
+    },
+    "icon": "acquia-content-hub.png",
+    "implies": [
+      "Acquia Cloud Platform"
+    ],
+    "saas": true,
+    "scripts": [
+      "content-hub\\.acquia\\.com"
+    ],
+    "url": "https?:\\/\\/.+\\.content-hub\\.acquia\\.com",
+    "website": "https://www.acquia.com/products/drupal-cloud/content-hub"
+  },
+  "Acquia Customer Data Platform": {
+    "cats": [
+      10
+    ],
+    "description": "Acquia Customer Data Platform (formerly AgilOne) is a customer data platform for Drupal.",
+    "dom": [
+      "[data-function*='Agilone']"
+    ],
+    "icon": "acquia-cdp.png",
+    "implies": [
+      "Acquia Cloud Platform"
+    ],
+    "js": {
+      "agiloneObject": ""
+    },
+    "saas": true,
+    "scripts": [
+      "^https?:\\/\\/.+\\.agilone\\.com",
+      "^https?:\\/\\/scripts\\.agilone\\.com\\/latest\\/a1.js"
+    ],
+    "website": "https://www.acquia.com/products/marketing-cloud/customer-data-platform"
+  },
+  "Acquia Personalization": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "Acquia Personalization (formerly Acquia Lift) lets you track customers' behavior throughout your website.",
+    "dom": [
+      "[data-lift-slot]"
+    ],
+    "icon": "acquia-personalization.png",
+    "implies": [
+      "Acquia Cloud Platform\\;confidence:95"
+    ],
+    "js": {
+      "AcquiaLift": "",
+      "_tcaq": ""
+    },
+    "saas": true,
+    "scripts": [
+      "lift\\.acquia\\.com"
+    ],
+    "website": "https://www.acquia.com/products/marketing-cloud/personalization",
+    "xhr": "lift\\.acquia\\.com"
+  },
+  "Acquia Site Studio": {
+    "cats": [
+      51
+    ],
+    "description": "Site Studio (formerly Cohesion) is a low-code, Drupal add-on page builder.",
+    "dom": [
+      "div[class*='coh-component coh-component-instance']"
+    ],
+    "icon": "acquia-site-studio.png",
+    "implies": [
+      "Acquia Cloud Platform"
+    ],
+    "saas": true,
+    "scripts": [
+      "sites/\\w*/files/cohesion"
+    ],
+    "website": "https://www.acquia.com/products/drupal-cloud/site-studio"
   },
   "Act-On": {
     "cats": [
@@ -803,8 +958,8 @@
   },
   "Adobe Target": {
     "cats": [
-      32,
-      74
+      74,
+      76
     ],
     "description": "Adobe Target is an A/B testing, multi-variate testing, personalisation, and optimisation application",
     "icon": "Adobe.svg",
@@ -1240,6 +1395,24 @@
     "scripts": "/alertify/alertify\\.min\\.js",
     "website": "https://alertifyjs.com"
   },
+  "Alexa Certified Site Metrics": {
+    "cats": [
+      10
+    ],
+    "description": "Alexa Certified Site Metrics is an analytics service wich monitors and analyses web traffic and can be used to keep track of user behavior.",
+    "icon": "Alexa.svg",
+    "js": {
+      "_atrk_opts.domain": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.cloudfront\\.net/atrk\\.js",
+    "website": "https://support.alexa.com/hc/en-us/sections/200063374"
+  },
   "Algolia": {
     "cats": [
       29
@@ -1340,6 +1513,7 @@
       36
     ],
     "description": "Amazon Advertising (formerly AMS or Amazon Marketing Services) is a service that works in a similar way to pay-per-click ads on Google.",
+    "dom": "iframe[src*='.amazon-adsystem.com/']",
     "icon": "Amazon.svg",
     "pricing": [
       "payg"
@@ -1388,6 +1562,19 @@
     "saas": true,
     "website": "http://aws.amazon.com/cloudfront/"
   },
+  "Amazon Cognito": {
+    "cats": [
+      69
+    ],
+    "description": "Amazon Cognito lets you add user sign-up, sign-in, and access control to your web and mobile apps. Amazon Cognito supports sign-in with social identity providers, such as Apple, Facebook, Google, and Amazon, and enterprise identity providers via SAML 2.0 and OpenID Connect.",
+    "icon": "aws.svg",
+    "implies": "Amazon Web Services",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://aws.amazon.com/cognito/",
+    "xhr": "cognito-idp\\..+\\.amazonaws\\.com"
+  },
   "Amazon EC2": {
     "cats": [
       22
@@ -1433,7 +1620,7 @@
       41
     ],
     "description": "Amazon Pay is an online payments processing service that is owned by Amazon. It lets you use the payment methods associated with your Amazon account to make payments for goods and services.",
-    "dom": "img[src*='amazonpay'], [aria-labelledby='pi-amazon']",
+    "dom": "img[src*='amazonpay'], [aria-labelledby='pi-amazon'], meta[id='amazon-payments-metadata']",
     "icon": "Amazon Pay.svg",
     "js": {
       "AmazonPayments": "",
@@ -1516,6 +1703,23 @@
     },
     "saas": true,
     "website": "https://aws.amazon.com/marketplace/pp/Amazon-Web-Services-Amazon-Webstore/B007NLVI2S"
+  },
+  "Ambassador": {
+    "cats": [
+      94
+    ],
+    "description": "Ambassador is a marketer-friendly software that simplifies referral marketing and helps automating the enrolment, tracking, rewarding and management process.",
+    "icon": "Ambassador.png",
+    "js": {
+      "_mbsy.integrations": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.getambassador\\.com/",
+    "website": "https://www.getambassador.com"
   },
   "Amber": {
     "cats": [
@@ -2392,18 +2596,6 @@
     "icon": "Auth0.png",
     "scripts": "/lock/([\\d.]+)/lock(?:.min)?\\.js\\;version:\\1",
     "website": "https://auth0.com/docs/libraries/lock"
-  },
-  "Automattic": {
-    "cats": [
-      62
-    ],
-    "description": "Automattic is a freemium blogging service and an open-source blogging software.",
-    "headers": {
-      "X-Hacker": "(?:automattic\\.com/jobs|wpvip\\.com/careers)"
-    },
-    "icon": "automattic.png",
-    "implies": "WordPress",
-    "website": "https://automattic.com/"
   },
   "Autopilot": {
     "cats": [

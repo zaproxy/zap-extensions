@@ -30,6 +30,25 @@
     "saas": true,
     "website": "http://modx.com"
   },
+  "MTCaptcha": {
+    "cats": [
+      16
+    ],
+    "description": "MTCaptcha is a captcha service that is GDPR and WCAG compliant, providing the confidence of privacy and accessibility.",
+    "icon": "MTCaptcha.png",
+    "js": {
+      "mtcaptcha.getVerifiedToken": "",
+      "mtcaptchaConfig.sitekey": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "service(?:2)?\\.mtcaptcha\\.com/",
+    "website": "https://www.mtcaptcha.com"
+  },
   "MadAdsMedia": {
     "cats": [
       36
@@ -666,13 +685,29 @@
     "url": "^https?//.+\\.memberstack\\.io",
     "website": "https://www.memberstack.io"
   },
+  "Mention Me": {
+    "cats": [
+      94
+    ],
+    "description": "Mention Me is a referral marketing platform for conversion-obsessed ecommerce brands.",
+    "icon": "Mention Me.png",
+    "js": {
+      "MentionMe": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.mention-me\\.com/",
+    "website": "https://www.mention-me.com"
+  },
   "Menufy Online Ordering": {
     "cats": [
       93
     ],
     "description": "Menufy is an online and mobile meal ordering service.",
-    "icon": "Menufy.png",
     "dom": "a[href*='.menufy.com/'][target='_blank']",
+    "icon": "Menufy.png",
     "pricing": [
       "payg"
     ],
@@ -688,11 +723,11 @@
     "js": {
       "Views_Website_Layouts_Footer_Menufy": ""
     },
-    "scripts": "sitecontent-menufycom\\.netdna-ssl\\.com/",
     "pricing": [
       "payg"
     ],
     "saas": true,
+    "scripts": "sitecontent-menufycom\\.netdna-ssl\\.com/",
     "website": "https://restaurant.menufy.com"
   },
   "Mercado Shops": {
@@ -1621,7 +1656,8 @@
       "payg"
     ],
     "saas": true,
-    "website": "https://microcms.io"
+    "website": "https://microcms.io",
+    "xhr": "\\.microcms\\.io"
   },
   "mini_httpd": {
     "cats": [
@@ -1642,7 +1678,7 @@
     "icon": "Mobicred.png",
     "scripts": "app\\.mobicredwidget\\.co\\.za",
     "website": "https://mobicred.co.za/"
-  },  
+  },
   "mod_auth_pam": {
     "cats": [
       33

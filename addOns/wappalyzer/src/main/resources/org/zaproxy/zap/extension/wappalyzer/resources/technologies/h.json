@@ -624,6 +624,110 @@
     },
     "website": "http://gohugo.io"
   },
+  "HulkApps Age Verification": {
+    "cats": [
+      5
+    ],
+    "description": "HulkApps Age Verification allow your customers to certify their age before they land in your store.",
+    "icon": "HulkApps.svg",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "age-verification\\.hulkapps\\.com/",
+    "website": "https://www.hulkapps.com/products/age-verification-shopify"
+  },
+  "HulkApps Form Builder": {
+    "cats": [
+      73
+    ],
+    "description": "HulkApps Form Builder is an application that creates customizable, job-specific forms for unit needs.",
+    "icon": "HulkApps.svg",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "formbuilder\\.hulkapps\\.com/",
+    "website": "https://www.hulkapps.com/products/form-builder-shopify"
+  },
+  "HulkApps GDPR/CCPA Compliance Manager": {
+    "cats": [
+      67
+    ],
+    "description": "HulkApps GDPR/CCPA Compliance Manager is a consent management solution.",
+    "icon": "HulkApps.svg",
+    "implies": "Shopify",
+    "js": {
+      "hulkSetCookie": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cookiebar\\.hulkapps\\.com/hulk_cookie_bar\\.js",
+    "website": "https://www.hulkapps.com/products/gdpr-ccpa-cookie-manager-shopify-app"
+  },
+  "HulkApps Infinite Product Options": {
+    "cats": [
+      76
+    ],
+    "description": "HulkApps Infinite Product Options is a unlimited custom options for products. Display variant options as buttons, color and image swatches, and more.",
+    "icon": "HulkApps.svg",
+    "implies": "Shopify",
+    "js": {
+      "hulkapps.po_url": "productoption\\.hulkapps\\.com"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hulkapps.com/products/infinite-product-options-shopify"
+  },
+  "HulkApps Product Reviews": {
+    "cats": [
+      90
+    ],
+    "description": "HulkApps Product Reviews is a customer product reviews app for building social proof for store.",
+    "dom": "link[href*='reviews.hulkapps.com/']",
+    "icon": "HulkApps.svg",
+    "implies": "Shopify",
+    "js": {
+      "hulkappsProductReview": "",
+      "hulkappsReviews": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hulkapps.com/products/product-reviews-shopify"
+  },
+  "Hushly": {
+    "cats": [
+      32
+    ],
+    "description": "Hushly is an all-in-one B2B marketing software platform.",
+    "dom": "link[href*='.hushly.com/']",
+    "icon": "Hushly.png",
+    "js": {
+      "__hly_widget_object": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.hushly\\.com/",
+    "website": "https://www.hushly.com"
+  },
   "Hyperspeed": {
     "cats": [
       92

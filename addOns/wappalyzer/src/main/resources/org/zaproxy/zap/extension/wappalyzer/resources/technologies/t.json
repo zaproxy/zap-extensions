@@ -161,18 +161,6 @@
     "website": "https://www.taboola.com",
     "xhr": "\\.taboola\\.com"
   },
-  "TagCommander": {
-    "cats": [
-      42
-    ],
-    "description": "TagCommander is an enterprise tag management system (TMS) that makes it easy to add and remove vendor tags from your Drupal-based websites.",
-    "icon": "tagcommander.png",
-    "js": {
-      "tc_vars": ""
-    },
-    "scripts": "\\.tagcommander\\.com",
-    "website": "https://www.commandersact.com/en/solutions/tagcommander/"
-  },
   "Taggbox": {
     "cats": [
       5
@@ -209,6 +197,21 @@
     },
     "website": "http://taiga.io"
   },
+  "Tailwind CSS": {
+    "cats": [
+      66
+    ],
+    "description": "Tailwind is a utility-first CSS framework.",
+    "dom": {
+      "link[rel='stylesheet'][href*='tailwind']": {
+        "attributes": {
+          "href": "tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css\\;version:\\1"
+        }
+      }
+    },
+    "icon": "tailwindcss.svg",
+    "website": "https://tailwindcss.com/"
+  },
   "TakeDrop": {
     "cats": [
       6
@@ -225,6 +228,23 @@
     ],
     "saas": true,
     "website": "https://takedrop.pl"
+  },
+  "Talkable": {
+    "cats": [
+      74,
+      84,
+      94
+    ],
+    "description": "Talkable is a cloud-based referral marketing system that assists medium to large businesses with campaign creation and channel performance tracking.",
+    "icon": "Talkable.svg",
+    "js": {
+      "talkable.config.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.talkable.com"
   },
   "Tamago": {
     "cats": [
@@ -594,7 +614,7 @@
       83
     ],
     "description": "LexisNexis ThreatMetrix is an enterprise solution for online risk and fraud protection ('digital identity intelligence and digital authentication').",
-    "icon": "ThreatMetrix.svg",
+    "icon": "threatmetrix.png",
     "pricing": [
       "poa"
     ],
@@ -790,6 +810,20 @@
       "titanEnabled": ""
     },
     "website": "http://titan360.com"
+  },
+  "TomTom Maps": {
+    "cats": [
+      35
+    ],
+    "description": "TomTom Maps is a web mapping service.",
+    "icon": "TomTom.svg",
+    "js": {
+      "tomtom.Map": ""
+    },
+    "saas": true,
+    "scripts": "api\\.tomtom\\.com",
+    "website": "https://www.tomtom.com",
+    "xhr": "api\\.tomtom\\.com"
   },
   "TomatoCart": {
     "cats": [
@@ -1017,19 +1051,6 @@
     "scripts": "consent\\.trustarc\\.com",
     "website": "http://trustarc.com"
   },
-  "Trustspot": {
-    "cats": [
-      90
-    ],
-    "description": "TrustSpot provides a solution to capture ratings & reviews, video testimonials, photos, social experiences, and product Q&A.",
-    "icon": "Trustspot.png",
-    "js": {
-      "trustspot_key": ""
-    },
-    "saas": true,
-    "scripts": "trustspot\\.io",
-    "website": "https://trustspot.io/"
-  },
   "TrustYou": {
     "cats": [
       5
@@ -1045,6 +1066,20 @@
     "icon": "TrustYou.svg",
     "saas": true,
     "website": "https://www.trustyou.com"
+  },
+  "Trusted Shops": {
+    "cats": [
+      90
+    ],
+    "description": "Trusted Shops is a company that acts as a 3'rd party representing the common interests of both consumers and retailers.",
+    "icon": "Trusted Shops.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "widgets\\.trustedshops\\.com/",
+    "website": "https://www.trustedshops.co.uk"
   },
   "Trustpilot": {
     "cats": [
@@ -1063,6 +1098,19 @@
     "saas": true,
     "scripts": "\\.trustpilot\\.com",
     "website": "https://business.trustpilot.com"
+  },
+  "Trustspot": {
+    "cats": [
+      90
+    ],
+    "description": "TrustSpot provides a solution to capture ratings & reviews, video testimonials, photos, social experiences, and product Q&A.",
+    "icon": "Trustspot.png",
+    "js": {
+      "trustspot_key": ""
+    },
+    "saas": true,
+    "scripts": "trustspot\\.io",
+    "website": "https://trustspot.io/"
   },
   "Tumblr": {
     "cats": [
@@ -1324,24 +1372,6 @@
     ],
     "scripts": "use\\.typekit\\.com",
     "website": "http://typekit.com"
-  },
-  "tailwindcss": {
-    "cats": [
-      66
-    ],
-    "description": "Tailwind is a utility-first CSS framework.",
-    "dom": {
-      "link[rel='stylesheet'][href*='tailwind']": {
-        "attributes": {
-          "href": ""
-        }
-      }
-    },
-    "html": [
-      "<link[^>]+?href=\"[^\"]+tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css\\;version:\\1"
-    ],
-    "icon": "tailwindcss.svg",
-    "website": "https://tailwindcss.com/"
   },
   "theTradeDesk": {
     "cats": [

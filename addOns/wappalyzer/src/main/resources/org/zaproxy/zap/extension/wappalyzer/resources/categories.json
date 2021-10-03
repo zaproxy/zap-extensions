@@ -260,7 +260,7 @@
     "priority": 9
   },
   "69": {
-    "name": "Social logins",
+    "name": "Authentication",
     "priority": 6
   },
   "70": {
@@ -357,6 +357,14 @@
   },
   "93": {
     "name": "Reservations & delivery",
+    "priority": 9
+  },
+  "94": {
+    "name": "Referral marketing",
+    "priority": 9
+  },
+  "95": {
+    "name": "Digital asset management",
     "priority": 9
   }
 }

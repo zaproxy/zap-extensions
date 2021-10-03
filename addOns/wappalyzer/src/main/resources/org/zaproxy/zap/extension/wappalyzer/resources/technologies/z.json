@@ -292,7 +292,7 @@
     "icon": "Zoko.png",
     "implies": [
       "WhatsApp Business Chat"
-    ],    
+    ],
     "js": {
       "__zoko_app_version": ""
     },
@@ -300,11 +300,11 @@
       "recurring",
       "payg",
       "mid"
-    ],   
+    ],
     "saas": true,
     "scripts": "zoko-shopify-prod\\.web\\.app",
     "website": "https://www.zoko.io/"
-  },   
+  },
   "Zone.js": {
     "cats": [
       12
@@ -362,6 +362,31 @@
     },
     "icon": "Zope.png",
     "website": "http://zope.org"
+  },
+  "Zozo": {
+    "cats": [
+      6
+    ],
+    "description": "Zozo is a multi-channel ecommerce services provider from Vietnam.",
+    "dom": {
+      "a[href*='/zozo.vn/'][href*='footerurl'][target='_blank']": {
+        "text": "^Zozo"
+      }
+    },
+    "excludes": "OpenCart",
+    "icon": "Zozo.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "Zozo Ecommerce"
+    },
+    "scripts": [
+      "catalog/view/theme/[^\"]+/javascript/common\\.js",
+      "zozo-main\\.min\\.js"
+    ],
+    "website": "https://zozo.vn"
   },
   "Zyro": {
     "cats": [

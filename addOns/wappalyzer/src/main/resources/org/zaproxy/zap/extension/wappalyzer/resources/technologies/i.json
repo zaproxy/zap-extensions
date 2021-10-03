@@ -142,6 +142,23 @@
     "scripts": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
   },
+  "Image Relay": {
+    "cats": [
+      95
+    ],
+    "description": "Image Relay is a digital asset management system that allows organizations to upload, manage, organize, monitor and track their digital assets.",
+    "dom": "a[href*='.imagerelay.com/'][target='_blank']",
+    "icon": "Image Relay.svg",
+    "js": {
+      "ImageRelay.accounts": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "static\\.imagerelay\\.com/",
+    "website": "https://www.imagerelay.com"
+  },
   "Immutable.js": {
     "cats": [
       59
