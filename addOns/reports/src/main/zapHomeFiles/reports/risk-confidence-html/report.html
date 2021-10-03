@@ -295,20 +295,38 @@
 			<tr>
 				<th scope="row" data-th-text="#{report.template.alertsTable.request}">Request</th>
 				<td>
-					<pre><code data-th-text="${userObject.message.requestHeader}">Request header</code></pre>
-					<details data-th-with="requestBody=${userObject.message.requestBody}, bodyLength=${requestBody.length}" data-th-open="${bodyLength < 2048}">
+					<details data-th-with="requestHeader=${userObject.message.requestHeader}, headerLength=${requestHeader.toString().length}" data-th-open="${headerLength < 2048 || !reportData.isIncludeSection('requestHeader')}">
+						<summary data-th-text="|#{report.template.alertsTable.requestHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Request line and header section (x bytes)</summary>
+						<th-block data-th-switch="${reportData.isIncludeSection('requestHeader')}">
+							<pre data-th-case="true"><code data-th-text="${userObject.message.requestHeader}">Request line and header section</code></pre>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+						</th-block>
+					</details>
+					<details class="request-body" data-th-with="requestBody=${userObject.message.requestBody}, bodyLength=${requestBody.length}" data-th-open="${bodyLength < 2048 || !reportData.isIncludeSection('requestBody')}">
 						<summary data-th-text="|#{report.template.alertsTable.requestBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Request body (x bytes)</summary>
-						<pre><code data-th-text="${userObject.message.requestBody}">Request body</code></pre>
+						<th-block data-th-switch="${reportData.isIncludeSection('requestBody')}">
+							<pre data-th-case="true"><code data-th-text="${userObject.message.requestBody}">Request body</code></pre>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+						</th-block>
 					</details>
 				</td>
 			</tr>
 			<tr>
 				<th scope="row" data-th-text="#{report.template.alertsTable.response}">Response</th>
 				<td>
-					<pre><code data-th-text="${userObject.message.responseHeader}">Response header</code></pre>
-					<details data-th-with="responseBody=${userObject.message.responseBody}, bodyLength=${responseBody.length}" data-th-open="${bodyLength < 2048}">
+					<details data-th-with="responseHeader=${userObject.message.responseHeader}, headerLength=${responseHeader.toString().length}" data-th-open="${headerLength < 2048 || !reportData.isIncludeSection('responseHeader')}">
+						<summary data-th-text="|#{report.template.alertsTable.responseHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Status line and header section (x bytes)</summary>
+						<th-block data-th-switch="${reportData.isIncludeSection('responseHeader')}">
+							<pre data-th-case="true"><code data-th-text="${userObject.message.responseHeader}">Status line and header section</code></pre>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+						</th-block>
+					</details>
+					<details class="response-body" data-th-with="responseBody=${userObject.message.responseBody}, bodyLength=${responseBody.length}" data-th-open="${bodyLength < 2048 || !reportData.isIncludeSection('responseBody')}">
 						<summary data-th-text="|#{report.template.alertsTable.responseBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Response body (x bytes)</summary>
-						<pre><code data-th-text="${userObject.message.responseBody}">Response body</code></pre>
+						<th-block data-th-switch="${reportData.isIncludeSection('responseBody')}">
+							<pre data-th-case="true"><code data-th-text="${userObject.message.responseBody}">Response body</code></pre>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+						</th-block>
 					</details>
 				</td>
 			</tr>

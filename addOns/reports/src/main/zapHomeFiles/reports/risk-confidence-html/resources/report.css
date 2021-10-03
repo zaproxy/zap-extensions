@@ -220,6 +220,10 @@ table {
 	margin-top: 0;
 }
 
+.request-body, .response-body {
+	margin-top: 1.5em;
+}
+
 .request-method-n-url {
 	margin-bottom: 0;
 }
