@@ -38,7 +38,7 @@ body {
 }
 
 a:active, header a:active {
-	outline: #f4ba00 solid;
+	outline-style: solid;
 }
 
 header, main {
