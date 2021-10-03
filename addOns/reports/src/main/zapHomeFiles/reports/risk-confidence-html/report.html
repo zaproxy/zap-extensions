@@ -122,7 +122,9 @@
 		</section>
 
 		<th-block data-th-switch="${alerts.isEmpty()}">
-			<p style="font-weight: bold" data-th-case="true" data-th-text="#{report.template.noAlerts}">No alerts were found within the report parameters.</p>
+			<section>
+				<p data-th-case="true"><strong data-th-text="#{report.template.noAlerts}">No alerts were found within the report parameters.</strong></p>
+			</section>
 			<th-block data-th-case="false">
 				<section data-th-if="${reportData.isIncludeSection('summaries')}" id="summaries" class="summaries">
 					<h2 data-th-text="#{report.template.section.summaries}">Summaries</h2>
