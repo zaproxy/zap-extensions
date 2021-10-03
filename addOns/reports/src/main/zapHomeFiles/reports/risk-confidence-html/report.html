@@ -157,7 +157,7 @@
 			</section>
 		</section>
 
-		<section data-th-if="${reportData.isIncludeSection('alerts')}" id="alerts">
+		<section data-th-if="${reportData.isIncludeSection('alerts')}" id="alerts" class="alerts">
 			<h2 data-th-text="#{report.template.section.alerts}">Alerts</h2>
 			<ol>
 				<th-block data-th-each="riskCode: ${includedRiskCodes}" data-th-with="filteredAlerts=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}}">
@@ -275,6 +275,17 @@
 
 	<th-block data-th-fragment="alertsTable(alert)">
 		<table data-th-with="userObject=${alert.userObject}" class="alerts-table">
+			<tr data-th-unless="${userObject.tags.isEmpty()}">
+				<th scope="row" data-th-text="#{report.template.alertsTable.tags}">Tags</th>
+				<td>
+					<ul class="alert-tags-list">
+						<li data-th-each="entry: ${filteredAlert.userObject.tags}" data-th-switch="${entry.value.startsWith('https://') or entry.value.startsWith('http://')}">
+							<span data-th-case="true"><a data-th-href="${entry.value}" data-th-text="${entry.key}">url</a></span>
+							<span data-th-case="false" data-th-text="|${entry.key} = ${entry.value}|">key = value</span>
+						</li>
+					</ul>
+				</td>
+			</tr>
 			<tr data-th-unless="${userObject.description.isEmpty()}">
 				<th scope="row" data-th-text="#{report.template.alertsTable.description}">Description</th><td><th-block data-th-replace="::nl2p(text=${userObject.description})">Description</th-block></td>
 			</tr>

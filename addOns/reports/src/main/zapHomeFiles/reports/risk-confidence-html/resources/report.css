@@ -91,7 +91,7 @@ p:last-of-type {
 	margin-bottom: 0;
 }
 
-#contents li, #alerts li, #alert-types > ol > li {
+#contents li, .alerts li, #alert-types > ol > li {
 	margin-top: 1.5em;
 }
 
@@ -125,11 +125,11 @@ table {
 	border-bottom: .05em solid;
 }
 
-#alerts h4 {
+.alerts h4 {
 	text-align: center;
 }
 
-#alerts ol {
+.alerts ol {
 	padding-left: 0;
 }
 
@@ -208,6 +208,16 @@ table {
 
 .alerts-table summary {
 	margin-bottom: 1.5em;
+}
+
+.alert-tags-list {
+	list-style-position: inside;
+	list-style-type: square;
+	padding-left: 0;
+}
+
+.alert-tags-list > li {
+	margin-top: 0;
 }
 
 .alert-types-table {
