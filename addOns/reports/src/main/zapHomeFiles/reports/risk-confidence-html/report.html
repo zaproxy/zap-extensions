@@ -11,12 +11,12 @@
 <body>
 	<header>
 		<h1 data-th-text="${reportTitle}">Report Title</h1>
-		<p><span data-th-text="#{report.template.generatedWith}">Generated with</span> <a href="https://zaproxy.org"><img data-th-src="@{{pathToResources}/zap32x32.png(pathToResources=${resources})}" src="resources/zap32x32.png" alt="The ZAP logo" id="zap-logo">ZAP</a> <span data-th-text="${#dates.format(new java.util.Date(), #messages.msg('report.template.generatedDatetime'))}">on date, at time</span></p>
+		<p><span data-th-text="#{report.template.generatedWith}">Generated with</span> <a href="https://zaproxy.org"><img data-th-src="@{{pathToResources}/zap32x32.png(pathToResources=${resources})}" src="resources/zap32x32.png" alt="The ZAP logo" class="zap-logo">ZAP</a> <span data-th-text="${#dates.format(new java.util.Date(), #messages.msg('report.template.generatedDatetime'))}">on date, at time</span></p>
 	</header>
 
 	<main data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${alertTree.children.hasMoreElements()? alertTree.depthFirstEnumeration().{? #this.isLeaf()}: {}}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}">
 
-		<section data-th-if="${reportData.isIncludeSection('contents')}" id="contents">
+		<section data-th-if="${reportData.isIncludeSection('contents')}" id="contents" class="contents">
 			<h2 data-th-text="#{report.template.section.contents}">Contents</h2>
 			<nav>
 				<ol>
@@ -51,12 +51,12 @@
 			</nav>
 		</section>
 
-		<section data-th-if="${reportData.isIncludeSection('aboutThisReport')}" id="about-this-report">
+		<section data-th-if="${reportData.isIncludeSection('aboutThisReport')}" id="about-this-report" class="about-this-report">
 			<h2 data-th-text="#{report.template.section.aboutThisReport}">About this report</h2>
 
 			<section data-th-if="${reportData.isIncludeSection('reportDescription')}" id="report-description">
 				<h3 data-th-text="#{report.template.section.reportDescription}">Report description</h3>
-				<div id="report-description--container">
+				<div class="report-description--container">
 					<th-block data-th-replace="::nl2pbr(text=${description})">
 						<p>Report description</p>
 					</th-block>
@@ -65,7 +65,7 @@
 
 			<section data-th-if="${reportData.isIncludeSection('reportParameters')}" id="report-parameters">
 				<h3 data-th-text="#{report.template.section.reportParameters}">Report parameters</h3>
-				<div id="report-parameters--container">
+				<div class="report-parameters--container">
 					<h4 data-th-text="#{report.template.reportParameters.contexts}">Contexts</h4>
 					<th-block data-th-with="includedContexts=${reportData.getContexts()}">
 						<th-block data-th-switch="${includedContexts.size}">
@@ -119,12 +119,12 @@
 			</section>
 		</section>
 
-		<section data-th-if="${reportData.isIncludeSection('summaries')}" id="summaries">
+		<section data-th-if="${reportData.isIncludeSection('summaries')}" id="summaries" class="summaries">
 			<h2 data-th-text="#{report.template.section.summaries}">Summaries</h2>
 
 			<section data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}" id="risk-confidence-counts">
 				<h3 data-th-text="#{report.template.section.riskConfidenceCounts}">Table of alert counts by risk and confidence</h3>
-				<table id="risk-confidence-counts-table" data-th-with="alertsSize=${alerts.size()}">
+				<table class="risk-confidence-counts-table" data-th-with="alertsSize=${alerts.size()}">
 					<caption>
 						<p data-th-text="#{report.template.riskConfidenceCounts.caption}">This table shows the number of alerts for each level of risk and confidence included in the report. (Percentages are rounded to the nearest integer.)</p>
 					</caption>
@@ -197,10 +197,10 @@
 			</ol>
 		</section>
 
-		<section data-th-if="${reportData.isIncludeSection('appendix')}" id="appendix">
+		<section data-th-if="${reportData.isIncludeSection('appendix')}" id="appendix" class="appendix">
 			<h2 data-th-text="#{report.template.section.appendix}">Appendix</h2>
 
-			<section data-th-if="${reportData.isIncludeSection('alertTypes')}" id="alert-types">
+			<section data-th-if="${reportData.isIncludeSection('alertTypes')}" id="alert-types" class="alert-types">
 				<h3 data-th-text="#{report.template.section.alertTypes}">Alert types</h3>
 				<ol>
 					<li data-th-each="userObject, iterStat: ${alertTree.children.{userObject}}" data-th-id="|alert-type-${iterStat.index}|">
