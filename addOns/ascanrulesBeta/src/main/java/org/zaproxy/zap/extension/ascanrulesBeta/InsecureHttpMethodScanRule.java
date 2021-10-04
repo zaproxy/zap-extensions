@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -51,6 +52,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -90,6 +92,11 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         INSECURE_METHODS.addAll(INSECURE_DEFAULT_METHODS);
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public int getId() {
@@ -336,6 +343,11 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 45; // Fingerprinting
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private static String getNonNullHeader(HttpMessage msg, String headerName) {

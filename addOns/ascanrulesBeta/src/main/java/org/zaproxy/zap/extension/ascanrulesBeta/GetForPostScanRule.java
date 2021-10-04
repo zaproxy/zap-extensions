@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which checks whether or not POST requests with parameters are accepted as GET
@@ -42,6 +44,10 @@ public class GetForPostScanRule extends AbstractAppPlugin {
     private static final Logger LOG = LogManager.getLogger(GetForPostScanRule.class);
     private static final String MESSAGE_PREFIX = "ascanbeta.getforpost.";
     private static final int PLUGIN_ID = 10058;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public int getId() {
@@ -133,5 +139,10 @@ public class GetForPostScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 20; // Improper Input Handling
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +42,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * A class to actively check if the web server is configured to allow Cross Domain access, from a
@@ -67,6 +69,11 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
 
     /** Silverlight's cross domain policy file name */
     static final String SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE = "clientaccesspolicy.xml";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private DocumentBuilder docBuilder;
     private XPath xpath;
@@ -321,5 +328,10 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
     @Override
     public int getWascId() {
         return 14; // WASC-14: Server Misconfiguration
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

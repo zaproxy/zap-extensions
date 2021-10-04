@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -66,6 +68,10 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "cmd.exe /C echo " + RANDOM_STRING);
     private static final String NIX_PAYLOAD =
             PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "echo " + RANDOM_STRING);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
     @Override
     public int getId() {
@@ -223,5 +229,10 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 20; // Improper Input Handling
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

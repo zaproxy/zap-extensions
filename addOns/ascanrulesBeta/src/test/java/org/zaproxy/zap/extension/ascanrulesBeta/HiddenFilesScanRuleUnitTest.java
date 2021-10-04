@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -35,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +47,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ascanrulesBeta.HiddenFilesScanRule.HiddenFile;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
@@ -626,6 +629,30 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(538)));
+        assertThat(wasc, is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {

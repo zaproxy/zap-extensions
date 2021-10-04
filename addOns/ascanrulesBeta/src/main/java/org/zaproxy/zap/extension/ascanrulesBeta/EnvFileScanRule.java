@@ -19,9 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 public class EnvFileScanRule extends AbstractAppFilePlugin {
 
@@ -33,6 +35,10 @@ public class EnvFileScanRule extends AbstractAppFilePlugin {
     private static final Pattern COMMENT_PATTERN =
             Pattern.compile("^#\\s{0,10}\\w+", Pattern.MULTILINE);
     private static final Pattern KEYVAL_PATTERN = Pattern.compile("^\\w+=\\w+", Pattern.MULTILINE);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     public EnvFileScanRule() {
         super(".env", MESSAGE_PREFIX);
@@ -41,6 +47,11 @@ public class EnvFileScanRule extends AbstractAppFilePlugin {
     @Override
     public int getId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     // Environment files come in many flavors but mostly they are KEY=VALUE formatted Here's the

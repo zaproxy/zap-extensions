@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -43,6 +45,11 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author 70pointer
  */
 public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     int numExtensionsToTry = 0;
     int numSuffixesToTry = 0;
@@ -393,6 +400,11 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 34; // Predictable Resource Location
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private boolean isEmptyResponse(byte[] response) {

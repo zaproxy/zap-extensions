@@ -23,6 +23,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -30,6 +31,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -39,6 +41,11 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.integeroverflow.";
 
     private static final int PLUGIN_ID = 30003;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+
     private static final Logger log = LogManager.getLogger(IntegerOverflowScanRule.class);
 
     @Override
@@ -129,6 +136,11 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
     public int getWascId() {
         // The WASC ID
         return 3;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private String randomIntegerString(int length) {

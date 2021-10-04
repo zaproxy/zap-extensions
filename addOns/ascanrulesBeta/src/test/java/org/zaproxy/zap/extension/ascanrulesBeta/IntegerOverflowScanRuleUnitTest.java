@@ -27,8 +27,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -130,5 +132,29 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         assertThat(
                 alertsRaised.get(0).getEvidence(), equalTo("HTTP/1.1 500 Internal Server Error "));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(190)));
+        assertThat(wasc, is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
     }
 }

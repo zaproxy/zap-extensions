@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -34,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** Unit test for {@link EnvFileScanRule}. */
 class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
@@ -215,5 +219,25 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = ((EnvFileScanRule) rule).getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 }

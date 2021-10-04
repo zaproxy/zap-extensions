@@ -44,6 +44,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * a scan rule that looks for server side issues that could cause confusion as to the relative path
@@ -165,6 +166,11 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                     + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS)
                     + "/"
                     + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public int getId() {
@@ -647,5 +653,10 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 20; // Improper Input Handling
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

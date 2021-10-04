@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -50,6 +51,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
@@ -64,6 +66,10 @@ import org.zaproxy.zap.model.Context;
  * @author 70pointer
  */
 public class SessionFixationScanRule extends AbstractAppPlugin {
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(SessionFixationScanRule.class);
@@ -1462,5 +1468,10 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 37;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -43,6 +44,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which checks whether various URL paths are exposed.
@@ -62,7 +64,10 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     private static final String MESSAGE_PREFIX = "ascanbeta.hidden.files.";
     private static final int PLUGIN_ID = 40035;
     private static final Logger LOG = LogManager.getLogger(HiddenFilesScanRule.class);
-
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
     static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
 
     private static final List<String> HIDDEN_FILES = new ArrayList<>();
@@ -229,6 +234,11 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     @Override
     public int getWascId() {
         return 13; // WASC-13: Information Leakage
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private String getReferences(HiddenFile file) {

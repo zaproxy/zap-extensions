@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpVersion;
@@ -40,6 +41,7 @@ import org.parosproxy.paros.network.HttpMethodHelper;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.users.User;
 
@@ -57,6 +59,10 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     private static final String METADATA_HOST = "169.154.169.254";
 
     private static final Logger LOG = LogManager.getLogger(CloudMetadataScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public int getId() {
@@ -94,13 +100,8 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     }
 
     @Override
-    public int getCweId() {
-        return 0;
-    }
-
-    @Override
-    public int getWascId() {
-        return 0;
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     public void raiseAlert(HttpMessage newRequest) {

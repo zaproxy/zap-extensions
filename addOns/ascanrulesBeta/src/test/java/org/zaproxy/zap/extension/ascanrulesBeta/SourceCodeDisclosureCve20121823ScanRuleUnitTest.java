@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -361,6 +363,30 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(PHP_SOURCE_ECHO_TAG)));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(20)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
     }
 
     private HttpMessage httpMessage404NotFound() throws Exception {

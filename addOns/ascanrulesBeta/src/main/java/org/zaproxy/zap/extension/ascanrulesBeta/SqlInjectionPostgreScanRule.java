@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -175,6 +176,11 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                 + " )"
                 + SQL_ONE_LINE_COMMENT, // Param in WHERE clause.
     };
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(SqlInjectionPostgreScanRule.class);
@@ -405,5 +411,10 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 19;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

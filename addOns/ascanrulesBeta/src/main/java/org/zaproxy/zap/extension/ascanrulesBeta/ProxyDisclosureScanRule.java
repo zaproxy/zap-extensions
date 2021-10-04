@@ -44,6 +44,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Detect and fingerprint forward proxies and reverse proxies configured between the Zap instance
@@ -128,6 +129,11 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
     /** the number of Max-Forwards to apply. Set depending on the Attack strength. */
     private int MAX_FORWARDS_MAXIMUM = 0;
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(ProxyDisclosureScanRule.class);
@@ -791,5 +797,10 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 45; // Fingerprinting
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

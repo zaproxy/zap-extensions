@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Map;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -34,6 +36,10 @@ public class TraceAxdScanRule extends AbstractAppFilePlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.traceaxd.";
     private static final int PLUGIN_ID = 40029;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     public TraceAxdScanRule() {
         super("trace.axd", MESSAGE_PREFIX);
@@ -42,6 +48,11 @@ public class TraceAxdScanRule extends AbstractAppFilePlugin {
     @Override
     public int getId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

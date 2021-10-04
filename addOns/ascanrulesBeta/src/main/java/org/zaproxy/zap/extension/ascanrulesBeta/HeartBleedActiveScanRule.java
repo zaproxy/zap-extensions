@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * A class to actively check if the web server is vulnerable to the HeartBleed OpenSSL vulnerability
@@ -51,6 +53,11 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.heartbleed.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
     static final byte handShakeClientHello = 0x01;
 
@@ -1047,6 +1054,10 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
         return 20; // WASC-20: Improper Input Handling
     }
 
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
     /**
      * determines if the SSL server behind the streams is vulnerable based on its response to
      * malformed heartbeat message
