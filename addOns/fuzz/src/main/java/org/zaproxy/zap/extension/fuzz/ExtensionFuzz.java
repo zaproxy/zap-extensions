@@ -115,6 +115,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFuzz.class);
 
+    private FuzzAPI api;
+
     private static final ImageIcon SCRIPT_PAYLOAD_GENERATOR_ICON =
             new ImageIcon(
                     ExtensionFuzz.class.getResource(
@@ -326,6 +328,9 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(fuzzOptions);
         extensionHook.addAddonFilesChangedListener(new FuzzerFilesUpdater());
+
+        this.api = new FuzzAPI(this);
+        extensionHook.addApiImplementor(this.api);
 
         if (getView() != null) {
             PayloadGeneratorUIHandlersRegistry payloadGeneratorsUIRegistry =

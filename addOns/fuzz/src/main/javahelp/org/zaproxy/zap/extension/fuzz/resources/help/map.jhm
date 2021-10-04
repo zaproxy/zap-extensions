@@ -13,4 +13,5 @@
     <mapID target="addon.fuzzer.processors" url="contents/processors.html" />
     <mapID target="addon.fuzzer.options" url="contents/options.html" />
     <mapID target="addon.fuzzer.tab" url="contents/tab.html" />
+    <mapID target="addon.fuzzer.api" url="contents/api.html" />
 </map>

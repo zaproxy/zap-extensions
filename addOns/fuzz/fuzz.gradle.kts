@@ -22,6 +22,10 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.fuzz.FuzzAPI")
+    }
 }
 
 dependencies {
