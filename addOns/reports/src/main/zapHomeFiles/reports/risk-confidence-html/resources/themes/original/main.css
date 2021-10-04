@@ -302,7 +302,7 @@ h1, h2 {
 	font-family: Georgia, serif;
 }
 
-.risk-level, .confidence-level {
+.risk-level, .confidence-level, .included-risk-codes, .included-confidence-codes {
 	font-family: monospace, monospace;
 }
 

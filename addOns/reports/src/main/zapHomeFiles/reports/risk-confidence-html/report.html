@@ -96,13 +96,17 @@
 					<p><span data-th-text="#{report.template.reportParameters.included}">Included</span>: 
 						<th-block data-th-switch="${includedRiskCodesSize}">
 							<span data-th-case="0" data-th-text="#{report.template.reportParameters.none}">None</span>
-							<span data-th-case="*" class="risk-level" data-th-text="${#helper=helper, #strings.arrayJoin(includedRiskCodes.{#riskCode=#this, #helper.getRiskString(#riskCode)}, ', ')}">included risk levels</span>
+							<span data-th-case="*" class="included-risk-codes">
+								<th-block data-th-each="riskCode, iterStat: ${includedRiskCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block>
+							</span>
 						</th-block>
 					</p>
 					<p><span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>: 
 						<th-block data-th-switch="${includedRiskCodesSize}">
 							<span data-th-case="${MAX_RISK_CODE + 1}" data-th-text="#{report.template.reportParameters.none}">None</span>
-							<span data-th-case="*" class="risk-level" data-th-text="${#helper=helper, #includedRiskCodes=includedRiskCodes, #strings.arrayJoin(#numbers.sequence(MAX_RISK_CODE, 0, -1).{? #this not in #includedRiskCodes}.{#riskCode=#this, #helper.getRiskString(#riskCode)}, ', ')}">excluded risk levels</span>
+							<span data-th-case="*" class="included-risk-codes">
+								<th-block data-th-each="riskCode, iterStat: ${#numbers.sequence(MAX_RISK_CODE, 0, -1).{? #this not in #includedRiskCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block>
+							</span>
 						</th-block>
 					</p>
 
@@ -110,13 +114,18 @@
 					<p><span data-th-text="#{report.template.reportParameters.included}">Included</span>: 
 						<th-block data-th-switch="${includedConfidenceCodesSize}">
 							<span data-th-case="0" data-th-text="#{report.template.reportParameters.none}">None</span>
-							<span data-th-case="*" class="confidence-level" data-th-text="${#helper=helper, #strings.arrayJoin(includedConfidenceCodes.{#confidenceCode=#this, #helper.getConfidenceString(#confidenceCode)}, ', ')}">included confidence levels</span>
+							<span data-th-case="*" class="included-confidence-codes">
+								<th-block data-th-each="confidenceCode, iterStat: ${includedConfidenceCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block>
+							</span>
 						</th-block>
 					</p>
 					<p><span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>: 
 						<th-block data-th-switch="${includedConfidenceCodesSize}">
 							<span data-th-case="${MAX_CONFIDENCE_CODE + 1}" data-th-text="#{report.template.reportParameters.none}">None</span>
-							<span data-th-case="*" class="confidence-level" data-th-text="${#helper=helper, #includedConfidenceCodes=includedConfidenceCodes, #strings.arrayJoin(#numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #this not in #includedConfidenceCodes}.{#confidenceCode=#this, #helper.getConfidenceString(#confidenceCode)}, ', ')}">excluded confidence levels</span>
+							<span data-th-case="*" class="included-confidence-codes">
+								<th-block data-th-each="confidenceCode, iterStat: ${#numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #this not in #includedConfidenceCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block>
+							</span>
+						</th-block>
 					</p>
 				</div>
 			</section>
