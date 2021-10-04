@@ -195,12 +195,6 @@ table {
 	text-align: right;
 }
 
-.alerts-table, .alert-types-table {
-	border-collapse: separate;
-	border-spacing: 2ch 1.5em;
-	width: 100%;
-}
-
 .alert-type-counts-table {
 	width: 100%;
 }
@@ -241,6 +235,12 @@ table {
 
 .alert-type-counts-table thead > th:first-of-type {
 	width: 45%;
+}
+
+.alerts-table, .alert-types-table {
+	border-collapse: separate;
+	border-spacing: 2ch 1.5em;
+	width: 100%;
 }
 
 .alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td {
