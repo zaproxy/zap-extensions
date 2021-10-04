@@ -150,12 +150,19 @@ table {
 	padding-left: 4ch;
 }
 
+.risk-confidence-counts-table {
+	width: 100%;
+}
+
 .risk-confidence-counts-table > caption {
 	margin-bottom: 1.5em;
 }
 
 .risk-confidence-counts-table th[scope="row"] {
 	height: 3em;
+	hyphens: auto;
+	overflow-wrap: anywhere;
+	word-break: break-all;
 }
 
 .risk-confidence-counts-table th[scope="rowgroup"] {

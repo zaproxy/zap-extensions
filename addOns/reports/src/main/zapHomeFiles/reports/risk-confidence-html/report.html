@@ -146,7 +146,7 @@
 								<p data-th-text="#{report.template.riskConfidenceCounts.caption}">This table shows the number of alerts for each level of risk and confidence included in the report. (Percentages are rounded to the nearest integer.)</p>
 							</caption>
 							<colgroup><col><col></colgroup>
-							<colgroup data-th-with="widthCss=|width: ${100.0 / (includedConfidenceCodesSize + 1)}%|"><col data-th-each="i: ${#numbers.sequence(0, includedConfidenceCodesSize - 1)}" data-th-style="${widthCss}"><col data-th-style="${widthCss}"></colgroup>
+							<colgroup data-th-with="widthCss=|width: ${70.0 / (includedConfidenceCodesSize + 1)}%|"><col data-th-each="i: ${#numbers.sequence(0, includedConfidenceCodesSize - 1)}" data-th-style="${widthCss}"><col data-th-style="${widthCss}"></colgroup>
 							<thead>
 								<tr>
 									<td colspan="2" rowspan="2"></td>
