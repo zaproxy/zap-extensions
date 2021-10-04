@@ -724,7 +724,7 @@ class BodyGeneratorUnitTest extends TestUtils {
                         .getBody();
         // Then
         assertEquals(
-                "[{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"]},{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"]}]",
+                "[{\"type\":\"John Doe\",\"tags\":[\"John Doe\"],\"includes\":\"John Doe\",\"metadata\":\"John Doe\",\"extra\":{},\"filtered_keys\":[\"John Doe\"]},{\"type\":\"John Doe\",\"tags\":[\"John Doe\"],\"includes\":\"John Doe\",\"metadata\":\"John Doe\",\"extra\":{},\"filtered_keys\":[\"John Doe\"]}]",
                 request);
     }
 

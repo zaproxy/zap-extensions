@@ -23,6 +23,16 @@ components:
       properties:
         type:
           type: mytype
+        tags:
+          type: array
+          items: {}
+        includes:
+          type: array
+        metadata:
+          type: object
+        extra:
+          type: object
+          properties: {}
         filtered_keys:
           type: array
           items:
