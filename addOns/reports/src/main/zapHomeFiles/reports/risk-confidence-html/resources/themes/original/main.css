@@ -67,6 +67,10 @@ main > section {
 	margin-bottom: 3em;
 }
 
+.summaries section {
+	margin-bottom: 3em;
+}
+
 h2 {
 	margin-bottom: .75em;
 }
@@ -188,6 +192,48 @@ table {
 	border-collapse: separate;
 	border-spacing: 2ch 1.5em;
 	width: 100%;
+}
+
+.alert-type-counts-table {
+	width: 100%;
+}
+
+.alert-type-counts-table th, .alert-type-counts-table td {
+	padding: 0 1rem;
+	text-align: left;
+	vertical-align: top;
+}
+
+.alert-type-counts-table td:nth-last-of-type(2) {
+	padding-left: 1.5rem;
+}
+
+.alert-type-counts-table tbody tr {
+	border-bottom: 0.05em dotted;
+}
+
+.alert-type-counts-table th[scope="col"] {
+	border-left: 1rem solid;
+}
+
+.alert-type-counts-table th[scope="col"]:first-of-type {
+	border-left: 0;
+}
+
+.alert-type-counts-table th[scope="col"]:last-of-type, .alert-type-counts-table td:last-of-type {
+	text-align: right;
+}
+
+.alert-type-counts-table th[scope="col"], .alert-type-counts-table th[scope="row"] {
+	font-weight: normal;
+}
+
+.alert-type-counts-table th[scope="row"], .alert-type-counts-table td {
+	padding-bottom: 1.5em;
+}
+
+.alert-type-counts-table thead > th:first-of-type {
+	width: 45%;
 }
 
 .alerts-table th, .alerts-table td, .alert-types-table th, .alert-types-table td {

@@ -9,6 +9,7 @@ sections:
  - reportParameters
  - summaries
  - riskConfidenceCounts
+ - alertTypeCounts
  - alerts
  - requestHeader
  - requestBody

@@ -30,6 +30,7 @@
 						<li data-th-if="${reportData.isIncludeSection('summaries')}"><a href="#summaries" data-th-text="#{report.template.section.summaries}">Summaries</a>
 							<ol>
 								<li data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"><a href="#risk-confidence-counts" data-th-text="#{report.template.section.riskConfidenceCounts}">Table of alert counts by risk and confidence</a></li>
+								<li data-th-if="${reportData.isIncludeSection('alertTypeCounts')}"><a href="#alert-type-counts" data-th-text="#{report.template.section.alertTypeCounts}">Table of alert counts by alert type</a></li>
 							</ol>
 						</li>
 						<li data-th-if="${reportData.isIncludeSection('alerts')}"><a href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a>
@@ -160,6 +161,27 @@
 									<td><span data-th-text="${alertsSize}">total count for all included risk and confidence levels</span><br><span>(100%)</span></td>
 								</tr>
 							</tbody>
+						</table>
+					</section>
+
+					<section data-th-if="${reportData.isIncludeSection('alertTypeCounts')}" id="alert-type-counts">
+						<h3 data-th-text="#{report.template.section.alertTypeCounts}">Table of alert counts by alert type</h3>
+						<table class="alert-type-counts-table" data-th-with="alertsSize=${alerts.size()}">
+							<thead>
+								<tr>
+									<th scope="col" data-th-text="#{report.template.alertTypeCounts.alertType}">Alert type</th><th scope="col" data-th-text="#{report.template.alertTypeCounts.risk}">Risk</th><th scope="col" data-th-text="#{report.template.alertTypeCounts.count}">Count</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-th-each="node, iterStat: ${alertTree.children}">
+									<th scope="row"><a data-th-href="@{#alert-type-{index}(index=${iterStat.index})}" data-th-text="${node.nodeName}">Alert type name</a></th><td class="risk-level" data-th-text="${helper.getRiskString(node.risk)}">Risk level</td><td data-th-with="count=${node.childCount}"><span data-th-text="${count}">Count</span><br><span data-th-text="|(${#numbers.formatPercent(count * 1.0 / alertsSize, 1, 1)})|">(% of total number of alerts)</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th scope="row" data-th-text="#{report.template.alertTypeCounts.total}">Total</th><td></td><td data-th-text="${alertsSize}">Total count</td>
+								</tr>
+							</tfoot>
 						</table>
 					</section>
 				</section>

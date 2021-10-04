@@ -75,6 +75,19 @@ h2, h3, h4, h5, h6 {
 	border-top-color: #00549e;
 }
 
+.alert-type-counts-table tbody tr {
+	border-bottom-color: #00549e;
+}
+
+.alert-type-counts-table th[scope="col"] {
+	background-color: #00549e;
+	color: #fff;
+}
+
+.alert-type-counts-table th[scope="col"] {
+	border-left-color: #fff;
+}
+
 .alerts-table th, .alert-types-table th {
 	background-color: #306aa0;
 	color: #fff;
