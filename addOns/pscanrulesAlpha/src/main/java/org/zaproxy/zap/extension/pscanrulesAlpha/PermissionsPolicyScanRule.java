@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -41,6 +43,10 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
     private static final String DEPRECATED_HEADER = "Feature-Policy";
     private static final String MESSAGE_PREFIX = "pscanalpha.permissionspolicymissing.";
     private static final Logger LOGGER = LogManager.getLogger(PermissionsPolicyScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
     private static final int PLUGIN_ID = 10063;
 
     @Override
@@ -108,6 +114,10 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private static String getAlertAttribute(String key) {

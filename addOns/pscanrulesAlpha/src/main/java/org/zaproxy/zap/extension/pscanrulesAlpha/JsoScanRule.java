@@ -22,12 +22,14 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.net.HttpCookie;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -40,6 +42,10 @@ public class JsoScanRule extends PluginPassiveScanner {
     private static final byte[] JSO_BYTE_MAGIC_SEQUENCE = {(byte) 0xac, (byte) 0xed, 0x00, 0x05};
     private static final String JSO_BASE_64_MAGIC_SEQUENCE = "rO0AB";
     private static final String JSO_URI_ENCODED_MAGIC_SEQUENCE = "%C2%AC%C3%AD%00%05";
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL);
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -150,5 +156,9 @@ public class JsoScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return 90002;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
