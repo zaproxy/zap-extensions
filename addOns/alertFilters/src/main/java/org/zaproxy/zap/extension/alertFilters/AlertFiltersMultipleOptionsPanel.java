@@ -20,11 +20,11 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.Component;
+import java.awt.Window;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
@@ -50,11 +50,13 @@ public class AlertFiltersMultipleOptionsPanel
     private DialogAddAlertFilter addDialog = null;
     private DialogModifyAlertFilter modifyDialog = null;
     private Context uiSharedContext;
+    private Window owner;
 
     public AlertFiltersMultipleOptionsPanel(
-            ExtensionAlertFilters extension, AlertFilterTableModel model) {
+            ExtensionAlertFilters extension, Window owner, AlertFilterTableModel model) {
         super(model);
         this.extension = extension;
+        this.owner = owner;
 
         Component rendererComponent;
         if (getTable().getColumnExt(0).getHeaderRenderer()
@@ -97,16 +99,14 @@ public class AlertFiltersMultipleOptionsPanel
     public AlertFilter showAddDialogue(AlertFilter alertFilter) {
 
         if (addDialog == null) {
-            addDialog =
-                    new DialogAddAlertFilter(
-                            this.extension, View.getSingleton().getOptionsDialog(null));
+            addDialog = new DialogAddAlertFilter(this.extension, owner);
             addDialog.pack();
         }
+        addDialog.clearFields();
         addDialog.setWorkingContext(this.uiSharedContext);
         addDialog.setCanChangeContext(alertFilter != null);
         addDialog.setAlertFilter(alertFilter);
         addDialog.setVisible(true);
-        addDialog.clearFields();
 
         return addDialog.getAlertFilter();
     }
@@ -118,16 +118,14 @@ public class AlertFiltersMultipleOptionsPanel
 
     public AlertFilter showModifyDialogue(AlertFilter alertFilter, boolean canChangeContext) {
         if (modifyDialog == null) {
-            modifyDialog =
-                    new DialogModifyAlertFilter(
-                            this.extension, View.getSingleton().getOptionsDialog(null));
+            modifyDialog = new DialogModifyAlertFilter(this.extension, owner);
             modifyDialog.pack();
         }
+        modifyDialog.clearFields();
         modifyDialog.setWorkingContext(this.uiSharedContext);
         modifyDialog.setAlertFilter(alertFilter);
         modifyDialog.setCanChangeContext(canChangeContext);
         modifyDialog.setVisible(true);
-        modifyDialog.clearFields();
 
         return modifyDialog.getAlertFilter();
     }
@@ -138,7 +136,7 @@ public class AlertFiltersMultipleOptionsPanel
         Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
         int option =
                 JOptionPane.showOptionDialog(
-                        View.getSingleton().getMainFrame(),
+                        this,
                         messages,
                         REMOVE_DIALOG_TITLE,
                         JOptionPane.OK_CANCEL_OPTION,
