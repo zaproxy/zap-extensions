@@ -23,12 +23,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -41,7 +43,10 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanbeta.xchromeloggerdata.";
     private static final int PLUGIN_ID = 10052;
-
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
     private static final Logger logger =
             LogManager.getLogger(XChromeLoggerDataInfoLeakScanRule.class);
 
@@ -119,5 +124,9 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
                     + " "
                     + headerValue;
         }
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

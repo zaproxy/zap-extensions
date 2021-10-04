@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -44,6 +46,10 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
     private static final Logger logger =
             LogManager.getLogger(ContentSecurityPolicyMissingScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -152,5 +158,9 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
     private String getAlertAttribute(String key) {
         return Constant.messages.getString(MESSAGE_PREFIX + key);
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

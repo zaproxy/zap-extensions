@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -49,6 +51,10 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
     private static final String _BLANK = "_blank";
     private static final String OPENER = "opener";
     private static final String NOOPENER = "noopener";
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     private String trustedConfig = "";
     private List<String> trustedDomainRegexes = new ArrayList<>();
@@ -219,5 +225,9 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
 
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
