@@ -266,10 +266,10 @@
 											</th-block>
 										</td>
 									</tr>
-									<tr data-th-unless="${userObject.cweId == -1}">
-										<th scope="row" data-th-text="#{report.template.alertType.cweId}">CWE ID</th><td data-th-text="${userObject.cweId}">CWE ID value</td>
+									<tr data-th-if="${userObject.cweId &gt; 0}">
+										<th scope="row" data-th-text="#{report.template.alertType.cweId}">CWE ID</th><td><a data-th-href="@{https://cwe.mitre.org/data/definitions/{id}.html(id=${userObject.cweId})}" data-th-text="${userObject.cweId}" href="https://cwe.mitre.org/data/index.html">CWE ID value</a></td>
 									</tr>
-									<tr data-th-unless="${userObject.wascId == -1}">
+									<tr data-th-if="${userObject.wascId &gt; 0}">
 										<th scope="row" data-th-text="#{report.template.alertType.wascId}">WASC ID</th><td data-th-text="${userObject.wascId}">WASC ID value</td>
 									</tr>
 									<tr data-th-unless="${userObject.reference.isEmpty()}">
