@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Fixed StackOverflow in the Body/DataGenerator when an invalid openapi property type is specified. ([Issue #6591](https://github.com/zaproxy/zaproxy/issues/6591))
+
 ### Added
 - Use path and operation servers ([Issue #6754](https://github.com/zaproxy/zaproxy/issues/6754)).
 

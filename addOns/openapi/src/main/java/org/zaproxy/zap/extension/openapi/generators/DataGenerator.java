@@ -71,7 +71,9 @@ public class DataGenerator {
     }
 
     private static String generateDefaultValue(Parameter parameter) {
-        if (parameter.getSchema() == null) return "";
+        if (parameter.getSchema() == null) {
+            return "";
+        }
         String value = getDefaultValue(parameter.getSchema());
         if (value != null) {
             return value;
@@ -174,7 +176,9 @@ public class DataGenerator {
     }
 
     private String getExampleValue(Parameter parameter) {
-        if (parameter.getSchema() == null) return "";
+        if (parameter.getSchema() == null) {
+            return "";
+        }
         String in = parameter.getIn();
         String type = parameter.getSchema().getType();
         if ("cookie".equals(in) && "string".equals(type)) {
