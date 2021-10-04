@@ -71,6 +71,7 @@ public class DataGenerator {
     }
 
     private static String generateDefaultValue(Parameter parameter) {
+        if (parameter.getSchema() == null) return "";
         String value = getDefaultValue(parameter.getSchema());
         if (value != null) {
             return value;
@@ -101,11 +102,11 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
-        if (isArray(parameter.getSchema().getType())) {
+        if (parameter.getSchema() != null && isArray(parameter.getSchema().getType())) {
             return generateArrayValue(name, parameter);
         }
 
-        if (parameter.getSchema() instanceof ArraySchema) {
+        if (parameter.getSchema() != null && parameter.getSchema() instanceof ArraySchema) {
             Schema<?> items = ((ArraySchema) (parameter.getSchema())).getItems();
             if (items != null) {
                 return generateValue(name, items, isPath(parameter.getIn()));
@@ -173,6 +174,7 @@ public class DataGenerator {
     }
 
     private String getExampleValue(Parameter parameter) {
+        if (parameter.getSchema() == null) return "";
         String in = parameter.getIn();
         String type = parameter.getSchema().getType();
         if ("cookie".equals(in) && "string".equals(type)) {

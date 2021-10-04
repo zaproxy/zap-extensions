@@ -33,9 +33,11 @@ import io.swagger.v3.oas.models.media.Schema;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,6 +50,8 @@ public class BodyGenerator {
     private Generators generators;
     private DataGenerator dataGenerator;
     private static final Logger LOG = LogManager.getLogger(BodyGenerator.class);
+    private static final List<String> knownTypes =
+            Arrays.asList("array", "boolean", "integer", "number", "object", "string");
     public static final String TEXT_FILE_CONTENTS =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur";
     public static final String IMAGE_FILE_CONTENTS =
@@ -119,7 +123,9 @@ public class BodyGenerator {
         }
 
         // primitive type, or schema without properties
-        if (schema.getType() == null || schema.getType().equals("object")) {
+        if (schema.getType() == null
+                || schema.getType().equals("object")
+                || !knownTypes.contains(schema.getType())) {
             schema.setType("string");
         }
 
