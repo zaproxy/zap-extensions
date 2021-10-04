@@ -86,6 +86,23 @@
     "scripts": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
     "website": "http://www.question2answer.org"
   },
+  "Queue-it": {
+    "cats": [
+      92
+    ],
+    "description": "Queue-it is a virtual waiting room platform designed to protect your website and mobile app from slowdowns or crashes during end-user peaks.",
+    "icon": "Queue-it.png",
+    "js": {
+      "QueueIt.Javascript.Version": "([\\d\\.]+)\\;version:\\1",
+      "queueit_clientside_config": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.queue-it\\.net/",
+    "website": "https://queue-it.com"
+  },
   "Quick.CMS": {
     "cats": [
       1

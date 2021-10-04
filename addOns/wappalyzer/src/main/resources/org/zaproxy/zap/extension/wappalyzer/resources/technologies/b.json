@@ -172,6 +172,25 @@
     "scripts": "cdn\\.trybeans\\.com",
     "website": "https://www.trybeans.com/"
   },
+  "Beeketing": {
+    "cats": [
+      32
+    ],
+    "description": "Beeketing is a suite of marketing apps for ecommerce shop owners.",
+    "icon": "Beeketing.svg",
+    "js": {
+      "beeketingAnalyticsParams": "",
+      "beeketingSDKLoaded": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "sdk\\.beeketing\\.com/",
+    "website": "https://beeketing.com"
+  },
   "Bentobox": {
     "cats": [
       1
@@ -213,11 +232,11 @@
     ],
     "description": "BeyondMenu is an online food ordering service.",
     "icon": "BeyondMenu.png",
-    "scripts": "static\\.beyondmenu\\.com/",
-    "saas": true,
     "pricing": [
       "payg"
     ],
+    "saas": true,
+    "scripts": "static\\.beyondmenu\\.com/",
     "website": "https://www.beyondmenu.com/contactus.aspx"
   },
   "Big Cartel": {
@@ -920,6 +939,22 @@
     ],
     "website": "https://branch.io"
   },
+  "Brandfolder": {
+    "cats": [
+      95
+    ],
+    "description": "Brandfolder is a cloud-based digital asset management platform.",
+    "icon": "Brandfolder.svg",
+    "js": {
+      "Brandfolder.account": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.brandfolder\\.com/",
+    "website": "https://brandfolder.com"
+  },
   "Braze": {
     "cats": [
       32,
@@ -1224,6 +1259,16 @@
     "saas": true,
     "website": "https://bump.sh"
   },
+  "Bunny": {
+    "cats": [
+      31
+    ],
+    "headers": {
+      "Server": "^BunnyCDN"
+    },
+    "icon": "Bunny.png",
+    "website": "https://bunny.net"
+  },
   "Business Catalyst": {
     "cats": [
       1
@@ -1265,6 +1310,43 @@
     ],
     "website": "http://buysellads.com"
   },
+  "Buyapowa": {
+    "cats": [
+      94
+    ],
+    "description": "Buyapowa is a scalable referral marketing and advocacy platform designed for all industries.",
+    "icon": "Buyapowa.svg",
+    "js": {
+      "Buyapowa.CanaryCheck": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.co-buying\\.com/",
+    "website": "https://www.buyapowa.com"
+  },
+  "Bynder": {
+    "cats": [
+      95
+    ],
+    "cookies": {
+      "bynder": "^[\\dA-Z]+-[\\dA-Z]+-[\\dA-Z]+-[\\dA-Z]+$"
+    },
+    "description": "Bynder is a cloud-based marketing platform where brands create, find, and use all their digital content.",
+    "icon": "Bynder.svg",
+    "js": {
+      "Bynder.cloudfront": "\\.cloudfront\\.net/frontend/([\\d\\.]+)/\\;version:\\1"
+    },
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.bynder.com"
+  },
   "basket.js": {
     "cats": [
       59
@@ -1273,7 +1355,6 @@
     "js": {
       "basket.isValidItem": ""
     },
-    "scripts": "basket.*\\.js\\;confidence:10",
     "website": "https://addyosmani.github.io/basket.js/"
   }
 }

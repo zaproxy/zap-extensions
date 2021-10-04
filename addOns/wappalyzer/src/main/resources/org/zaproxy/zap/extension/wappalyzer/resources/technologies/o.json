@@ -117,6 +117,25 @@
     "scripts": "ocnk-min\\.js",
     "website": "https://www.ocnk.com"
   },
+  "Octane AI": {
+    "cats": [
+      5,
+      52
+    ],
+    "description": "Octane AI provides an all-in-one platform for engaging quizzes, data collection, and personalised Facebook Messenger and SMS automation.",
+    "icon": "Octane AI.svg",
+    "js": {
+      "OctaneConfig": "",
+      "oct8neApi": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.(?:octaneai|oct8ne)\\.com/",
+    "website": "https://www.octaneai.com"
+  },
   "October CMS": {
     "cats": [
       1
@@ -463,9 +482,12 @@
     "cats": [
       22
     ],
+    "excludes": "Apache",
     "headers": {
       "Server": "^OpenBSD httpd"
     },
+    "icon": "OpenBSD httpd.svg",
+    "oss": true,
     "website": "https://man.openbsd.org/httpd.8"
   },
   "OpenCart": {
@@ -802,6 +824,25 @@
     },
     "icon": "Oracle.png",
     "website": "http://oracle.com"
+  },
+  "Orankl": {
+    "cats": [
+      90
+    ],
+    "description": "Orankl is a provider email marketing and review services.",
+    "icon": "Orankl.png",
+    "js": {
+      "Orankl": "",
+      "oranklInit": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "www\\.orankl\\.com/",
+    "website": "https://www.orankl.com"
   },
   "Orchard CMS": {
     "cats": [

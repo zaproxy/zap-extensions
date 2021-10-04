@@ -337,18 +337,6 @@
     "scripts": "app\\.paybright\\.com",
     "website": "https://paybright.com"
   },
-  "Payflex": {
-    "cats": [
-      41,
-      91
-    ],
-    "description": "Payflex offers an online payment gateway solution to South African merchants that allows shoppers to pay over 6 weeks, interest-free.",
-    "dom": "[aria-labelledby='pi-payflex']",
-    "icon": "Payflex.png",
-    "saas": true,
-    "scripts": "partpayassets\\.blob\\.core\\.windows\\.net",
-    "website": "https://payflex.co.za/"
-  },
   "PayFast": {
     "cats": [
       41
@@ -357,7 +345,7 @@
     "dom": "[aria-labelledby='pi-payfast_instant_eft']",
     "icon": "Payfast.svg",
     "website": "https://www.payfast.co.za/"
-  },  
+  },
   "PayKickStart": {
     "cats": [
       5,
@@ -383,7 +371,7 @@
       "button": {
         "text": "PayPal"
       },
-      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], link[href*='paypal-express-checkout']": {
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], link[href*='paypal-express-checkout'], [aria-labelledby='pi-paypal']": {
         "exists": ""
       }
     },
@@ -405,6 +393,36 @@
     "scripts": "paypalobjects\\.com",
     "website": "https://paypal.com",
     "xhr": "\\.paypal\\.com"
+  },
+  "PayPal Marketing Solutions": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "PayPal Marketing Solutions enables merchants to see shopper insights and provide custom rewards for buyers with PayPal accounts.",
+    "icon": "PayPal.svg",
+    "implies": "PayPal",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.paypalobjects\\.com/muse/",
+      "\\.paypal\\.com/tagmanager/pptm\\.js"
+    ],
+    "website": "https://developer.paypal.com/docs/marketing-solutions"
+  },
+  "Payflex": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Payflex offers an online payment gateway solution to South African merchants that allows shoppers to pay over 6 weeks, interest-free.",
+    "dom": "[aria-labelledby='pi-payflex']",
+    "icon": "Payflex.png",
+    "saas": true,
+    "scripts": "partpayassets\\.blob\\.core\\.windows\\.net",
+    "website": "https://payflex.co.za/"
   },
   "Payl8r": {
     "cats": [
@@ -489,6 +507,23 @@
     "scripts": "\\.pendo\\.io/",
     "website": "https://www.pendo.io"
   },
+  "Pepperjam": {
+    "cats": [
+      71
+    ],
+    "description": "Pepperjam is an affiliate marketing solutions provider.",
+    "icon": "Pepperjam.png",
+    "js": {
+      "Pepperjam": "",
+      "PepperjamTracking": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.pepperjam\\.com/",
+    "website": "https://www.pepperjam.com"
+  },
   "Percona": {
     "cats": [
       34
@@ -537,6 +572,7 @@
       72
     ],
     "description": "Periodic is a white-label scheduling system.",
+    "dom": "#periodic-embedded-calendar-script, .periodic-embedded-calendar-window, .bookingmain__maincontent",
     "icon": "Periodic.svg",
     "pricing": [
       "low",
@@ -661,20 +697,50 @@
   },
   "PhotoShelter": {
     "cats": [
-      1
+      1,
+      6
     ],
-    "html": [
-      "<!--\\s+#+ Powered by the PhotoShelter Beam platform",
-      "<link[^>]+c\\.photoshelter\\.com"
-    ],
+    "description": "PhotoShelter is a cloud storage service that doubles as a website and ecommerce platform for photographers.",
+    "dom": "link[href*='.c.photoshelter.com']",
     "icon": "PhotoShelter.png",
     "implies": [
       "PHP",
       "MySQL",
       "jQuery"
     ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.psecn\\.photoshelter\\.com/",
     "url": "photoshelter\\.com",
     "website": "https://www.photoshelter.com"
+  },
+  "PhotoShelter for Brands": {
+    "cats": [
+      95
+    ],
+    "description": "PhotoShelter for Brands is a cloud-based media management system for companies and organizations.",
+    "dom": {
+      "a[href*='.photoshelter.com/']": {
+        "attributes": {
+          "href": "^(?:(?!psecn).)*$"
+        }
+      },
+      "a[href*='brands.photoshelter.com/']": {
+        "attributes": {
+          "text": "^Powered by PhotoShelter for Brands$"
+        }
+      }
+    },
+    "excludes": "PhotoShelter",
+    "icon": "PhotoShelter.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://brands.photoshelter.com"
   },
   "Phusion Passenger": {
     "cats": [
@@ -1101,13 +1167,13 @@
     "cats": [
       68
     ],
-    "description": "Pojo.me provides a Accessibility overlay plug-in for any WordPress Theme or Page Builder.",   
+    "description": "Pojo.me provides a Accessibility overlay plug-in for any WordPress Theme or Page Builder.",
     "icon": "Pojo.me.png",
     "js": {
       "PojoA11yOptions": ""
     },
     "website": "https://pojo.me/plugins/accessibility/"
-  },  
+  },
   "Polyfill": {
     "cats": [
       59
@@ -1246,7 +1312,13 @@
       59
     ],
     "description": "Preact is a JavaScript library that describes itself as a fast 3kB alternative to React with the same ES6 API.",
-    "dom": "meta[data-preact-helmet='true']",
+    "dom": {
+      "#app, .app, #root, .root, body, body > *, body > * > *, body > * > * > *": {
+        "properties": {
+          "__k": ""
+        }
+      }
+    },
     "icon": "Preact.svg",
     "oss": true,
     "website": "https://preactjs.com"
@@ -1299,6 +1371,20 @@
     },
     "scripts": "prefixfree\\.js",
     "website": "https://leaverou.github.io/prefixfree/"
+  },
+  "Pressable": {
+    "cats": [
+      62
+    ],
+    "description": "Pressable is a managed hoting platform for WordPress.",
+    "headers": {
+      "host-header": "^Pressable"
+    },
+    "icon": "pressable.svg",
+    "implies": [
+      "WordPress"
+    ],
+    "website": "https://pressable.com"
   },
   "PrestaShop": {
     "cats": [
@@ -1395,7 +1481,7 @@
       1
     ],
     "description": "Prismic is a headless CMS for Jamstack.",
-    "dom": "img[src*='images.prismic.io'",
+    "dom": "img[src*='images.prismic.io']",
     "icon": "Prismic.svg",
     "pricing": [
       "low",
@@ -1543,6 +1629,22 @@
       "generator": "Proximis Unified Commerce"
     },
     "website": "https://www.proximis.com"
+  },
+  "PubGuru": {
+    "cats": [
+      36
+    ],
+    "description": "PubGuru is a header wrapper and ad ops platform.",
+    "icon": "PubGuru.png",
+    "js": {
+      "pg.version": "^([\\d\\.]+)$\\;version:\\1\\;confidence:25"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.pubguru\\.com/",
+    "website": "https://pubguru.com"
   },
   "PubMatic": {
     "cats": [

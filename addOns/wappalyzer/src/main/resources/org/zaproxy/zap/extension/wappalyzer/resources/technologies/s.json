@@ -229,6 +229,26 @@
     "scripts": "swfobject.*\\.js",
     "website": "https://github.com/swfobject/swfobject"
   },
+  "SaaSquatch": {
+    "cats": [
+      94,
+      84
+    ],
+    "description": "SaaSquatch is a cloud-based loyalty, referral and rewards marketing platform.",
+    "icon": "SaaSquatch.svg",
+    "js": {
+      "SAASQUATCH_TENANT_ALIAS": "",
+      "squatch.CtaWidget": "",
+      "squatchQuery": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js",
+    "website": "https://www.saasquatch.com"
+  },
   "Saber": {
     "cats": [
       57
@@ -305,6 +325,24 @@
     ],
     "saas": true,
     "website": "https://www.salecycle.com"
+  },
+  "SalesFire": {
+    "cats": [
+      76,
+      29
+    ],
+    "description": "SalesFire is a SaaS company specialising in conversion rate optimisation, intelligent personalisation and on-site search solutions.",
+    "icon": "SalesFire.svg",
+    "js": {
+      "loadSalesfire": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "cdn\\.salesfire\\.co\\.uk/",
+    "website": "https://www.salesfire.co.uk"
   },
   "Salesfloor": {
     "cats": [
@@ -430,6 +468,19 @@
     "saas": true,
     "scripts": "service\\.force\\.com",
     "website": "https://www.salesforce.com/au/products/service-cloud/"
+  },
+  "Salsify": {
+    "cats": [
+      95
+    ],
+    "description": "Salsify is a product experience management platform which connects digital asset management, content syndication, and digital catalog capabilities.",
+    "dom": "a[href*='.salsify.com/'][target='_blank'], img[data-src*='images.salsify.com/'], link[href*='.salsify.com']",
+    "icon": "Salsify.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.salsify.com"
   },
   "Sana Commerce": {
     "cats": [
@@ -576,6 +627,24 @@
       "generator": "^Seamless\\.?CMS"
     },
     "website": "http://www.seamlesscms.com"
+  },
+  "Searchanise": {
+    "cats": [
+      29
+    ],
+    "description": "Searchanise is a complete search and filter solution for ecommerce.",
+    "icon": "Searchanise.svg",
+    "js": {
+      "Searchanise": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "searchanise(?:-.+\\.kxcdn)?\\.com/",
+    "website": "https://start.searchanise.com"
   },
   "Searchspring": {
     "cats": [
@@ -804,7 +873,7 @@
     ],
     "saas": true,
     "website": "https://selz.com/"
-  },  
+  },
   "Semantic UI": {
     "cats": [
       66
@@ -1307,6 +1376,20 @@
       "productreviews\\.shopifycdn\\.com"
     ],
     "website": "https://apps.shopify.com/product-reviews"
+  },
+  "Shopistry": {
+    "cats": [
+      1
+    ],
+    "description": "Shopistry is a data-driven, headless customer management system.",
+    "dom": "img[src*='cdn.shopistrystage.com/'],link[imagesrcset*='cdn.shopistrystage.com/']",
+    "icon": "Shopistry.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.shopistry.com/"
   },
   "Shopline": {
     "cats": [
@@ -1894,12 +1977,12 @@
       93
     ],
     "description": "Slice is an online food ordering platform for independent pizzerias.",
-    "icon": "Slice.svg",
     "dom": "a[href*='slicelife.com/restaurants/']",
-    "saas": true,
+    "icon": "Slice.svg",
     "pricing": [
       "payg"
     ],
+    "saas": true,
     "website": "https://slicelife.com/owners"
   },
   "Slick": {
@@ -2592,12 +2675,12 @@
     "js": {
       "Spothopper": ""
     },
-    "scripts": "static\\.spotapps\\.co/",
-    "saas":true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
+    "scripts": "static\\.spotapps\\.co/",
     "website": "https://www.spothopperapp.com"
   },
   "SpotX": {
@@ -2655,6 +2738,42 @@
     "implies": "Java",
     "website": "https://spring.io/"
   },
+  "Spring for creators": {
+    "cats": [
+      6
+    ],
+    "description": "Spring for creators (formerly Teespring) is a creator-centric social ecommerce platform.",
+    "icon": "Spring for creators.svg",
+    "js": {
+      "webpackJsonpteespring-custom-storefront": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scripts": "\\.creator-spring\\.com/",
+    "website": "https://www.spri.ng"
+  },
+  "Spryker": {
+    "cats": [
+      6,
+      62
+    ],
+    "description": "Spryker is a ecommerce technology platform that enables global enterprises to build transactional business models.",
+    "icon": "Spryker.svg",
+    "js": {
+      "spryker.config": ""
+    },
+    "meta": {
+      "generator": "spryker"
+    },
+    "pricing": [
+      "high",
+      "poa"
+    ],
+    "saas": false,
+    "website": "https://www.spryker.com"
+  },
   "Sqreen": {
     "cats": [
       16,
@@ -2702,13 +2821,12 @@
     ],
     "description": "Squarespace provides Software-as-a-Service (SaaS) for website building and hosting, and allows users to use pre-built website templates.",
     "headers": {
-      "X-ServedBy": "squarespace"
+      "server": "Squarespace"
     },
-    "html": "<!-- This is Squarespace\\. -->",
-    "icon": "Squarespace.png",
+    "icon": "Squarespace.svg",
     "js": {
       "Squarespace": "",
-      "Static.SQUARESPACE_CONTEXT": ""
+      "Static.SQUARESPACE_CONTEXT.templateVersion": "^(\\d(?:\\.\\d)?)$\\;version:\\1"
     },
     "pricing": [
       "low",
@@ -2722,11 +2840,10 @@
       6
     ],
     "description": "Squarespace Commerce is an ecommerce platform designed to facilitate the creation of websites and online stores, with domain registration and web hosting included.",
-    "icon": "Squarespace.png",
+    "icon": "Squarespace.svg",
     "implies": "Squarespace",
     "js": {
-      "SQUARESPACE_ROLLUPS.squarespace-commerce": "",
-      "SquarespaceCommerceCartBundle": ""
+      "SQUARESPACE_ROLLUPS.squarespace-commerce": ""
     },
     "pricing": [
       "low",
@@ -2929,6 +3046,29 @@
     "html": "<[^>]+data-controller",
     "icon": "Stimulus.png",
     "website": "https://stimulusjs.org/"
+  },
+  "Stitches": {
+    "cats": [
+      12,
+      47
+    ],
+    "description": "Stitches is a is a CSS-in-JS styling framework with near-zero runtime, SSR, and multi-variant support.",
+    "dom": "style#stitches, .StudioCanvas, .publish-studio-style",
+    "icon": "Stitches.svg",
+    "implies": [
+      "React",
+      "Next.js",
+      "Gatsby",
+      "Svelte",
+      "SvelteKit",
+      "Vue.js",
+      "Angular"
+    ],
+    "meta": {
+      "generator": "^c-[A-Za-z]{5}$"
+    },
+    "oss": true,
+    "website": "https://stitches.dev"
   },
   "Store Systems": {
     "cats": [

@@ -311,6 +311,22 @@
     "icon": "Detectify.svg",
     "website": "https://detectify.com/"
   },
+  "Dianomi": {
+    "cats": [
+      36
+    ],
+    "description": "Dianomi is an advertiser campaign management software for financial services, premium lifestyle, technology and corporate sectors.",
+    "dom": "iframe[src*='.dianomi.com/']",
+    "icon": "Dianomi.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.dianomi\\.com/",
+    "website": "https://www.dianomi.com"
+  },
   "Didomi": {
     "cats": [
       67
@@ -457,6 +473,22 @@
     "website": "https://districtm.net",
     "xhr": "\\.districtm\\.io"
   },
+  "Dito": {
+    "cats": [
+      53
+    ],
+    "description": "Dito is a tool that centralizes and manages the relationship between brands and their customers.",
+    "icon": "Dito.svg",
+    "js": {
+      "dito.AppSettings": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "storage\\.googleapis\\.com/dito/sdk\\.js",
+    "website": "https://www.dito.com.br"
+  },
   "Divi": {
     "cats": [
       51,
@@ -486,14 +518,14 @@
       91
     ],
     "description": "Dividebuy provides retailer financing solutions.",
-    "dom": "div[class*='dividebuy-softcredit']",    
+    "dom": "div[class*='dividebuy-softcredit']",
     "icon": "DivideBuy.png",
     "js": {
       "display_dividebuy_modal": ""
     },
     "saas": true,
     "website": "https://dividebuy.co.uk/"
-  }, 
+  },
   "Divido": {
     "cats": [
       41,
@@ -817,12 +849,24 @@
     ],
     "website": "http://drupalcommerce.org"
   },
+  "Drupal Multisite": {
+    "cats": [
+      88
+    ],
+    "description": "Drupal Multisite enables separate, independent sites to be served from a single codebase.",
+    "icon": "Drupal.svg",
+    "implies": "Drupal",
+    "oss": true,
+    "scripts": [
+      "sites\\/(?!default|all).*\\/files"
+    ],
+    "website": "https://www.drupal.org/docs/multisite-drupal"
+  },
   "Duda": {
     "cats": [
       1
     ],
     "description": "Duda is a web design platform for companies that offer web design services.",
-    "html": "<div[^>]*id=\"P6iryBW0Wu\"",
     "icon": "duda.png",
     "js": {
       "SystemID": "^.*DIRECT.*$",

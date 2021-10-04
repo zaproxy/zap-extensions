@@ -351,6 +351,32 @@
     "scripts": "api\\.at\\.getsocial\\.io",
     "website": "https://getsocial.io"
   },
+  "GetYourGuide": {
+    "cats": [
+      72
+    ],
+    "description": "GetYourGuide is a Berlin-based online travel agency and online marketplace for tour guides and excursions.",
+    "dom": {
+      "a[href*='.getyourguide.']": {
+        "attributes": {
+          "href": "\\.getyourguide\\.\\w+/\\?partner_id="
+        }
+      },
+      "img[src*='cdn.getyourguide.com/']": {
+        "src": ""
+      },
+      "link[href*='cdn.getyourguide.com/']": {
+        "src": ""
+      }
+    },
+    "icon": "GetYourGuide.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "\\.getyourguide\\.com/",
+    "website": "https://partner.getyourguide.com"
+  },
   "Getintent": {
     "cats": [
       36
@@ -363,6 +389,21 @@
     "saas": true,
     "website": "https://getintent.com",
     "xhr": "\\.adhigh\\.net"
+  },
+  "Getsitecontrol": {
+    "cats": [
+      5,
+      73
+    ],
+    "description": "Getsitecontrol is a form and popup builder.",
+    "icon": "Getsitecontrol.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": "\\.getsitecontrol\\.com/",
+    "website": "https://getsitecontrol.com"
   },
   "Ghost": {
     "cats": [
@@ -894,22 +935,13 @@
       69
     ],
     "description": "Google Sign-In is a secure authentication system that reduces the burden of login for users, by enabling them to sign in with their Google account.",
-    "dom": {
-      "button": {
-        "text": "(Sign|Log) in with Google"
-      }
-    },
-    "html": [
-      "<meta[^>]*google-signin-client_id",
-      "<meta[^>]*google-signin-scope",
-      "<iframe[^>]*accounts\\.google\\.com/o/oauth2",
-      "<a[^>]*accounts\\.google\\.com/o/oauth2"
-    ],
+    "dom": "iframe[src*='accounts.google.com/o/oauth2'], a[href*='accounts.google.com/o/oauth2']",
     "icon": "Google.svg",
-    "scripts": [
-      "apis\\.google\\.com/js/platform\\.js",
-      "accounts\\.google\\.com/gsi/client"
-    ],
+    "meta": {
+      "google-signin-client_id": "",
+      "google-signin-scope": ""
+    },
+    "scripts": "accounts\\.google\\.com/gsi/client",
     "website": "https://developers.google.com/identity/sign-in/web"
   },
   "Google Sites": {

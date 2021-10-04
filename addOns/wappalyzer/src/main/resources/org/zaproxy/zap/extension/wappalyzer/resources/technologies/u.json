@@ -210,14 +210,22 @@
       68
     ],
     "description": "UsableNet is a technology for web accessibility and digital transformation, providing end-to-end services.",
-    "html": "<iframe[ˆ>]*\\.usablenet\\.com/pt/",
+    "dom": "iframe[src*='.usablenet.com/pt/']",
     "icon": "UsableNet.png",
+    "js": {
+      "enableUsableNetAssistive": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
     "scripts": "\\.usablenet\\.com/pt/",
-    "website": "https://usablenet.com/"
+    "website": "https://usablenet.com"
   },
   "Uscreen": {
     "cats": [
-      1
+      14
     ],
     "description": "Uscreen is a CMS to monetize VOD and live content. They provide site hosting, video hosting, and a payment gateway for selling video based content.",
     "dom": {

@@ -68,6 +68,25 @@
     "scripts": "//connect\\.facebook\\.([a-z]+)/[^/]*/[a-z]*\\.js",
     "website": "http://facebook.com"
   },
+  "Facebook Chat Plugin": {
+    "cats": [
+      52
+    ],
+    "description": "Facebook Chat Plugin is a website plugin that businesses with a Facebook Page can install on their website.",
+    "dom": {
+      "iframe[src*='.facebook.com/']": {
+        "attributes": {
+          "src": "\\.facebook\\.com/v([\\d\\.]+)/plugins/customerchat\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Facebook.svg",
+    "js": {
+      "facebookChatSettings": ""
+    },
+    "scripts": "connect\\.facebook\\.net/.+\\.customerchat\\.js",
+    "website": "https://developers.facebook.com/docs/messenger-platform/discovery/facebook-chat-plugin/"
+  },
   "Facebook Login": {
     "cats": [
       69
@@ -89,6 +108,10 @@
     "js": {
       "_fbq": ""
     },
+    "scripts": [
+      "connect\\.facebook.\\w+/signals/config/\\d+\\?v=([\\d\\.]+)\\;version:\\1",
+      "connect\\.facebook\\.\\w+/.+/fbevents\\.js"
+    ],
     "website": "http://facebook.com"
   },
   "Facil-iti": {
@@ -336,6 +359,20 @@
     "scripts": "@findify/bundle@([\\d.]+)/dist/.+\\.js\\;version:\\1",
     "website": "https://www.findify.io"
   },
+  "Fing": {
+    "cats": [
+      62
+    ],
+    "description": "Fing is a cloud service to deploy and manage your applications without being worried about your infrastructure and environment.",
+    "headers": {
+      "server": "^Fing"
+    },
+    "icon": "Fing.svg",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://fing.ir"
+  },
   "FingerprintJS": {
     "cats": [
       59,
@@ -527,6 +564,25 @@
     },
     "scripts": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
     "website": "https://flickity.metafizzy.co/"
+  },
+  "Flocktory": {
+    "cats": [
+      94,
+      84
+    ],
+    "description": "Flocktory is a social referral marketing platform that enables users to share personalised offers via social networks.",
+    "dom": "iframe[src*='.flocktory.com/']",
+    "icon": "Flocktory.png",
+    "js": {
+      "flocktory": "",
+      "flocktoryPurchase": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "\\.flocktory\\.com/",
+    "website": "https://www.flocktory.com"
   },
   "Flow": {
     "cats": [
@@ -895,6 +951,27 @@
     ],
     "website": "https://www.freshworks.com/crm"
   },
+  "Friendbuy": {
+    "cats": [
+      94
+    ],
+    "description": "Friendbuy is a cloud-based referral marketing solution designed to help ecommerce businesses of all sizes.",
+    "icon": "Friendbuy.svg",
+    "js": {
+      "friendbuy": "",
+      "friendbuyAPI.merchantId": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.cloudfront\\.net/js/friendbuy\\.min\\.js",
+      "static\\.fbot\\.me/friendbuy\\.js"
+    ],
+    "website": "https://www.friendbuy.com"
+  },
   "Froala Editor": {
     "cats": [
       24
@@ -932,6 +1009,19 @@
     "icon": "Frontastic.png",
     "saas": true,
     "website": "https://www.frontastic.cloud/"
+  },
+  "Frontify": {
+    "cats": [
+      95
+    ],
+    "description": "Frontify is a cloud-based brand management platform for creators and collaborators of brands.",
+    "dom": "a[href*='.frontify.com/'], img[src*='.frontify.com/'], link[href*='.frontify.com/']",
+    "icon": "Frontify.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.frontify.com"
   },
   "Frontity": {
     "cats": [

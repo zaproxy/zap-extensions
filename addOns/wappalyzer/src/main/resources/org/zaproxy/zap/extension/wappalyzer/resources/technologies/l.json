@@ -700,6 +700,22 @@
     "scripts": "\\.loggly\\.com/",
     "website": "https://www.loggly.com"
   },
+  "LogiCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "LogiCommerce is the headless ecommerce platform.",
+    "icon": "LogiCommerce.svg",
+    "meta": {
+      "generator": "^LogiCommerce$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.logicommerce.com"
+  },
   "Login with Amazon": {
     "cats": [
       69
