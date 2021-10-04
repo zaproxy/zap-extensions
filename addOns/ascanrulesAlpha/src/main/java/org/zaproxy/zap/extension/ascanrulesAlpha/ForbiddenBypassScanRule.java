@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * Active scan rule which attempts various 403 bypass techniques.
@@ -41,6 +43,10 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanalpha.forbiddenBypass.";
     private static final Logger LOG = LogManager.getLogger(ForbiddenBypassScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
     @Override
     public int getId() {
@@ -168,6 +174,11 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
     @Override
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

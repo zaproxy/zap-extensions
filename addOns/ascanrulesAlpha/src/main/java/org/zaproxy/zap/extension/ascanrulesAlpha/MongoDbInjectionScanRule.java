@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.sf.json.JSONException;
@@ -38,6 +39,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Tech;
@@ -133,6 +135,10 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private static final String URI_EX_LOG = "trying to get the message's Uri";
     private static final String STOP_LOG = "Stopping the scan due to a user request";
     private static final Logger LOG = LogManager.getLogger(MongoDbInjectionScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(
@@ -201,6 +207,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
 
     public String getExtraInfo(String attack) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo." + attack);
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

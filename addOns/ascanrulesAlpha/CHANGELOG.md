@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Spring Boot Actuator Scan Rule
+- Spring Boot Actuator Scan Rule.
+- OWASP Top Ten 2021/2017 mappings.
 
 ### Changed
 - Maintenance changes.

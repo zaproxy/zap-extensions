@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
 
 /**
@@ -61,6 +62,10 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
     // Use an inverse map to avoid multimap use
     // ----------------------------------------
     private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<>();
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
     private int matchThreshold = 0;
     private int andRequests = 0;
 
@@ -646,5 +651,10 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 29;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

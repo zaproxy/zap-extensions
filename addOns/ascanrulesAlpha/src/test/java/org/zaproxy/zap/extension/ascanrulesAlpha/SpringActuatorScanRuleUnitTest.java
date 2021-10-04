@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -308,5 +310,29 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         Alert alert = alertsRaised.get(0);
         assertEquals(Alert.RISK_MEDIUM, alert.getRisk());
         assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(215)));
+        assertThat(wasc, is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue())));
     }
 }
