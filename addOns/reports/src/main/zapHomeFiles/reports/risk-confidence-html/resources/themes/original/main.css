@@ -34,7 +34,14 @@ html {
 }
 
 body {
-	padding: 1.5em 2ch;
+	margin: 1.5em 0;
+}
+
+@media screen and (min-width: 50em) {
+	body {
+		margin: 1.5em 2ch;
+		padding: 1.5em 2ch;
+	}
 }
 
 a:active, header a:active {
@@ -112,6 +119,7 @@ a {
 }
 
 caption {
+	margin-bottom: 1.5em;
 	text-align: left;
 }
 
@@ -158,15 +166,21 @@ table {
 	width: 100%;
 }
 
-.risk-confidence-counts-table > caption {
-	margin-bottom: 1.5em;
+.risk-confidence-counts-table tr {
+	height: 4.5em;
 }
 
-.risk-confidence-counts-table th[scope="row"] {
-	height: 4.5em;
+.risk-confidence-counts-table thead > tr {
+	height: 3em;
+}
+
+.risk-confidence-counts-table th[scope="row"], .risk-confidence-counts-table th[scope="rowgroup"] {
 	hyphens: auto;
 	overflow-wrap: anywhere;
 	word-break: break-all;
+}
+
+.risk-confidence-counts-table th[scope="row"] {
 	padding-right: 5%;
 }
 
@@ -210,12 +224,15 @@ table {
 	width: 100%;
 }
 
-.site-risk-counts-table > caption {
-	margin-bottom: 1.5em;
+.site-risk-counts-table tr {
+	height: 4.5em;
+}
+
+.site-risk-counts-table thead > tr:first-of-type {
+	height: 3em;
 }
 
 .site-risk-counts-table th[scope="row"], .site-risk-counts-table th[scope="col"] {
-	height: 4.5em;
 	hyphens: auto;
 	overflow-wrap: anywhere;
 	word-break: break-all;
