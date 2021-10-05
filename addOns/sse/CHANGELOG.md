@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Terminology
 
 ### Changed
-- Update minimum ZAP version to 2.10.0.
+- Update minimum ZAP version to 2.11.0.
 - Adjust log levels to be less verbose.
 - Maintenance changes.
 

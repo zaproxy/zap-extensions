@@ -184,6 +184,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         return alerts;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

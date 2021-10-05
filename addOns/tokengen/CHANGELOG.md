@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
 
 ## [14] - 2020-12-15
 ### Added

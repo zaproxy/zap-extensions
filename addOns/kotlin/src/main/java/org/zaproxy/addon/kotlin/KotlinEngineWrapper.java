@@ -27,6 +27,7 @@ import javax.script.ScriptException;
 import javax.swing.ImageIcon;
 import kotlin.script.experimental.jsr223.KotlinJsr223DefaultScriptEngineFactory;
 import kotlin.script.experimental.jsr223.KotlinJsr223DefaultScriptEngineFactoryKt;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 
@@ -57,8 +58,7 @@ public class KotlinEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public String getSyntaxStyle() {
-        // TODO Use constant when available: SyntaxConstants.SYNTAX_STYLE_KOTLIN
-        return "text/kotlin";
+        return SyntaxConstants.SYNTAX_STYLE_KOTLIN;
     }
 
     @Override

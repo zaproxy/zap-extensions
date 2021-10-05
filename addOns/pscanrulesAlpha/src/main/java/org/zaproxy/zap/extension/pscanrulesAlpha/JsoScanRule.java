@@ -158,6 +158,7 @@ public class JsoScanRule extends PluginPassiveScanner {
         return 90002;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

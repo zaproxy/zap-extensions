@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Stats for alerts changed
 
+### Changed
+- Update minimum ZAP version to 2.11.0.
+
 ### Fixed
 - Dialogs being shown under the owning dialog / frame.
 

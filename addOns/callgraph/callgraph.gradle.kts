@@ -2,7 +2,7 @@ description = "Allows the user to view a call graph of the selected resources"
 
 zapAddOn {
     addOnName.set("Call Graph")
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("Colm O'Flaherty")

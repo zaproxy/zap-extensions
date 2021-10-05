@@ -8,7 +8,7 @@ extra["targetOs"] = DownloadWebDriver.OS.WIN
 zapAddOn {
     addOnName.set("Windows WebDrivers")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add repo URL.
 
 ### Changed
-- Update minimum ZAP version to 2.10.0.
+- Update minimum ZAP version to 2.11.0.
 - Promote to release status.
 - Change info URL to link to the site.
 

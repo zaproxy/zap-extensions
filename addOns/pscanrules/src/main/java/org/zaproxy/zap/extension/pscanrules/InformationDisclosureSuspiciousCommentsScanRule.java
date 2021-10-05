@@ -244,6 +244,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

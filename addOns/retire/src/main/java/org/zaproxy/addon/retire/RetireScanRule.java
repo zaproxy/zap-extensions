@@ -129,6 +129,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         return sb.toString();
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

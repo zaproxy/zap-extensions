@@ -157,6 +157,7 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", hashType, hashValue);
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Warn when unable to save (malformed) HTTP message (Issue 4235).
-- Update minimum ZAP version to 2.10.0.
+- Update minimum ZAP version to 2.11.0.
 - Maintenance changes.
 - Add button to automatically update content length (Issue 6254).
 

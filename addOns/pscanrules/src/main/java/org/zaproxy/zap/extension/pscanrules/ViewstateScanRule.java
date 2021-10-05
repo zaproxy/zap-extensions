@@ -185,6 +185,7 @@ public class ViewstateScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

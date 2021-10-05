@@ -26,7 +26,7 @@ if (JavaVersion.current() <= JavaVersion.VERSION_1_10) {
 
 zapAddOn {
     addOnName.set("Browser View")
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")

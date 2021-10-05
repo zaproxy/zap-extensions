@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update links to zaproxy and zap-extensions repos.
+- Update minimum ZAP version to 2.11.0.
 
 ## [3.0.0] - 2020-12-15
 ### Added

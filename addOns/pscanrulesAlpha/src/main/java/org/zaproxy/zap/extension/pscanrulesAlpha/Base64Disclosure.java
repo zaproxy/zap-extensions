@@ -369,6 +369,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return 10094;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

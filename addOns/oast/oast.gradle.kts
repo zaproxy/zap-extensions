@@ -2,7 +2,7 @@ description = "Allows you to exploit out-of-band vulnerabilities"
 
 zapAddOn {
     addOnName.set("OAST Support")
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")

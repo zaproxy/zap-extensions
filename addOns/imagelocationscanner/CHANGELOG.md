@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update link to repository.
-- Minimum ZAP version is now 2.10.
+- Update minimum ZAP version to 2.11.0.
 - Maintenance changes.
 
 ## [2] - 2020-07-03

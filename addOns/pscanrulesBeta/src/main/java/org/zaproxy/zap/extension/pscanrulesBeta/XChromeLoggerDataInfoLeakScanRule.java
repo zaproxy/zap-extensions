@@ -126,6 +126,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
         }
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

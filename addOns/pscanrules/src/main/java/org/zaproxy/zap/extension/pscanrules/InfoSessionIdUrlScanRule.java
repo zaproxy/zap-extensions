@@ -119,6 +119,7 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
         return Alert.RISK_MEDIUM;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

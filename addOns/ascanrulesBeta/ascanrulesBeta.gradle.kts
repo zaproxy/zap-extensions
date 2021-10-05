@@ -39,14 +39,7 @@ zapAddOn {
     }
 }
 
-repositories {
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
 dependencies {
-    zap("org.zaproxy:zap:2.11.0-20210929.165234-4")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Ignore CSS, JavaScript, images, or font files when scanning for source code disclosures (Issues: 6595, 6795, & 6820).
+- Update minimum ZAP version to 2.11.0.
 
 ## [33] - 2021-07-07
 ### Fixed

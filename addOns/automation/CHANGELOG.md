@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - API support: runplan action and planprogress view.
 ### Changed
  - Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
+
 ### Fixed
  - "Unexpected obj object java.lang.String" error shown during initialization
 

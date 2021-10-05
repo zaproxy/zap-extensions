@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Common alert tags for OWASP Top Ten 2021 and 2017.
 
+### Changed
+- Update minimum ZAP version to 2.11.0.
+
 ## [1.4.0] - 2021-06-23
 ### Added
 - An HTTP date parser/formatter.

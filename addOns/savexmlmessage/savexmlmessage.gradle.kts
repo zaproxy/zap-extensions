@@ -2,7 +2,7 @@ description = "Allows to save content of HTTP messages as XML"
 
 zapAddOn {
     addOnName.set("Save XML Message")
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("thatsn0tmysite")

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add info and repo URLs.
 
 ### Changed
-- Update minimum ZAP version to 2.10.0.
+- Update minimum ZAP version to 2.11.0.
 - Issue 2000 - Updated strings shown in active scan dialog with title caps.
 - Enable help button in Sequence tab of Active Scan dialog.
 - Maintenance changes.

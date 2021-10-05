@@ -265,6 +265,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence, formattedDate);
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

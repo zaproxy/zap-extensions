@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.Action;
@@ -79,8 +78,6 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
     private static final String RESOURCE_DARK = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
     private static final String RESOURCE_LIGHT = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
 
-    private Boolean supportsDarkLaF;
-    private Method isDarkLookAndFeelMethod;
     private Boolean darkLaF;
 
     public SyntaxHighlightTextArea() {
@@ -96,8 +93,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         addSyntaxStyle(SCALA_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_SCALA);
         addSyntaxStyle(HTML_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_HTML);
         addSyntaxStyle(CSS_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_CSS);
-        // TODO Use constant when available: SyntaxConstants.SYNTAX_STYLE_KOTLIN
-        addSyntaxStyle(KOTLIN_SYNTAX_LABEL, "text/kotlin");
+        addSyntaxStyle(KOTLIN_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_KOTLIN);
 
         initActions();
 
@@ -136,7 +132,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         }
         this.setFont(font);
 
-        if (isDarkLaF()) {
+        if (DisplayUtils.isDarkLookAndFeel()) {
             darkLaF = true;
             setLookAndFeel(true);
         } else {
@@ -201,39 +197,11 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         }
     }
 
-    private boolean isDarkLaF() {
-        // TODO Update to calling the DisplayUtils.isDarkLookAndFeel() method directly once it is
-        // available
-        if (supportsDarkLaF == null) {
-            supportsDarkLaF = false;
-            try {
-                Class<DisplayUtils> cls = DisplayUtils.class;
-                isDarkLookAndFeelMethod = cls.getMethod("isDarkLookAndFeel");
-                if (isDarkLookAndFeelMethod != null) {
-                    supportsDarkLaF = true;
-                }
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
-        if (isDarkLookAndFeelMethod != null) {
-            try {
-                Object obj = isDarkLookAndFeelMethod.invoke(null);
-                if (obj instanceof Boolean) {
-                    return (Boolean) obj;
-                }
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
-        return false;
-    }
-
     @Override
     public void updateUI() {
         super.updateUI();
-        if (darkLaF != null && darkLaF != isDarkLaF()) {
-            if (isDarkLaF()) {
+        if (darkLaF != null && darkLaF != DisplayUtils.isDarkLookAndFeel()) {
+            if (DisplayUtils.isDarkLookAndFeel()) {
                 darkLaF = true;
             } else {
                 darkLaF = false;
