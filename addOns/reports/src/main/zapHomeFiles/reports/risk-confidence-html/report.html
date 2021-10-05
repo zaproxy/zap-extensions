@@ -76,7 +76,7 @@
 							<p data-th-case="0" data-th-text="#{report.template.reportParameters.contexts.noContextsSelected}">No contexts were selected, so all contexts were included by default.</p>
 							<th-block data-th-case="*">
 								<p data-th-text="#{report.template.reportParameters.contexts.selectedContexts}">The following contexts were selected to be included:</p>
-								<ul>
+								<ul class="contexts-list">
 									<li data-th-each="context: ${includedContexts}"><span class="context" data-th-text="${context.name}">context</span></li>
 								</ul>
 							</th-block>
@@ -86,7 +86,7 @@
 					<h4 data-th-text="#{report.template.reportParameters.sites}">Sites</h4>
 					<th-block data-th-with="includedSites=${reportData.getSites()}">
 						<p data-th-text="#{report.template.reportParameters.sites.includedSites}">The following sites were included:</p>
-						<ul>
+						<ul class="sites-list">
 							<li data-th-each="site: ${includedSites}"><span class="site" data-th-text="${site}">site</span></li>
 						</ul>
 					</th-block>

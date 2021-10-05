@@ -166,6 +166,10 @@ table {
 	padding-left: 4ch;
 }
 
+.contexts-list, .sites-list {
+	list-style-type: square;
+}
+
 .risk-confidence-counts-table {
 	width: 100%;
 }
