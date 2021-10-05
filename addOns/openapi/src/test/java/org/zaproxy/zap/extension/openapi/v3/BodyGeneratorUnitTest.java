@@ -708,6 +708,26 @@ class BodyGeneratorUnitTest extends TestUtils {
                         "Not generating request body for operation xml, the content application/xml is not supported."));
     }
 
+    @Test
+    void shouldGenerateStringTypeForInvalidPropertyType() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("Schema_invalid_property_type.yaml");
+        // When
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v4/endpoint",
+                                        openAPI.getPaths().get("/v4/endpoint").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        // Then
+        assertEquals(
+                "[{\"type\":\"John Doe\",\"tags\":[\"John Doe\"],\"includes\":\"John Doe\",\"metadata\":\"John Doe\",\"extra\":{},\"filtered_keys\":[\"John Doe\"]},{\"type\":\"John Doe\",\"tags\":[\"John Doe\"],\"includes\":\"John Doe\",\"metadata\":\"John Doe\",\"extra\":{},\"filtered_keys\":[\"John Doe\"]}]",
+                request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

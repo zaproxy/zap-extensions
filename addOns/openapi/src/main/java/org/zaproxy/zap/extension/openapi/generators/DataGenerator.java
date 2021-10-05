@@ -71,6 +71,9 @@ public class DataGenerator {
     }
 
     private static String generateDefaultValue(Parameter parameter) {
+        if (parameter.getSchema() == null) {
+            return "";
+        }
         String value = getDefaultValue(parameter.getSchema());
         if (value != null) {
             return value;
