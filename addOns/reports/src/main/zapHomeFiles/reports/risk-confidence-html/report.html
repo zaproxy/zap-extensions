@@ -163,12 +163,12 @@
 									<th data-th-if="${iterStat.first}" scope="rowgroup" data-th-rowspan="${includedRiskCodesSize + 1}" data-th-text="#{report.template.risk}">Risk</th>
 									<th scope="row" data-th-text="${helper.getRiskString(riskCode)}">Risk level</th>
 									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-text="${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode && #userObject.confidence == #confidenceCode}.size()}">count</td>
-									<td data-th-with="riskLevelTotal=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}.size()}"><span data-th-text="${riskLevelTotal}">total count for risk level</span><br><span data-th-text="|(${#numbers.formatPercent(riskLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
+									<td data-th-with="riskLevelTotal=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}.size()}"><span data-th-text="${riskLevelTotal}">total count for risk level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(riskLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
 								</tr>
 								<tr>
 									<th scope="row" data-th-text="#{report.template.riskConfidenceCounts.total}">Total</th>
-									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="confidenceLevelTotal=${#confidenceCode=confidenceCode, alerts.{? #this.userObject.confidence == #confidenceCode}.size()}"><span data-th-text="${confidenceLevelTotal}">total count for confidence level</span><br><span data-th-text="|(${#numbers.formatPercent(confidenceLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
-									<td><span data-th-text="${alertsSize}">total count for all included risk and confidence levels</span><br><span>(100%)</span></td>
+									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="confidenceLevelTotal=${#confidenceCode=confidenceCode, alerts.{? #this.userObject.confidence == #confidenceCode}.size()}"><span data-th-text="${confidenceLevelTotal}">total count for confidence level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(confidenceLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
+									<td><span data-th-text="${alertsSize}">total count for all included risk and confidence levels</span><br><span class="additional-info-percentages">(100%)</span></td>
 								</tr>
 							</tbody>
 						</table>
@@ -224,7 +224,7 @@
 							</thead>
 							<tbody>
 								<tr data-th-each="node, iterStat: ${alertTree.children}">
-									<th scope="row"><a data-th-href="@{#alert-type-{index}(index=${iterStat.index})}" data-th-text="${node.nodeName}">Alert type name</a></th><td class="risk-level" data-th-text="${helper.getRiskString(node.risk)}">Risk level</td><td data-th-with="count=${node.childCount}"><span data-th-text="${count}">Count</span><br><span data-th-text="|(${#numbers.formatPercent(count * 1.0 / alertsSize, 1, 1)})|">(% of total number of alerts)</td>
+									<th scope="row"><a data-th-href="@{#alert-type-{index}(index=${iterStat.index})}" data-th-text="${node.nodeName}">Alert type name</a></th><td class="risk-level" data-th-text="${helper.getRiskString(node.risk)}">Risk level</td><td data-th-with="count=${node.childCount}"><span data-th-text="${count}">Count</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(count * 1.0 / alertsSize, 1, 1)})|">(% of total number of alerts)</td>
 								</tr>
 							</tbody>
 							<tfoot>
