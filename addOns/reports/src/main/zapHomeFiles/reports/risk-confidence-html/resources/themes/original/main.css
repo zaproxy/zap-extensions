@@ -206,6 +206,61 @@ table {
 	text-align: right;
 }
 
+.site-risk-counts-table {
+	width: 100%;
+}
+
+.site-risk-counts-table > caption {
+	margin-bottom: 1.5em;
+}
+
+.site-risk-counts-table th[scope="row"], .site-risk-counts-table th[scope="col"] {
+	height: 3em;
+	hyphens: auto;
+	overflow-wrap: anywhere;
+	word-break: break-all;
+}
+
+.site-risk-counts-table th[scope="row"] {
+	padding-right: 1%;
+}
+
+@media screen and (max-width: 50em) {
+	.site-risk-counts-table th[scope="row"] {
+		padding-right: 1ch;
+	}
+}
+
+.site-risk-counts-table th[scope="rowgroup"] {
+	padding: 0 .5ch;
+	vertical-align: middle;
+}
+
+.site-risk-counts-table > tbody > tr {
+	border-top: .05em solid;
+}
+
+.site-risk-counts-table th[scope="row"], .site-risk-counts-table td {
+	vertical-align: top;
+}
+
+.site-risk-counts-table th[scope="col"] {
+	vertical-align: bottom;
+}
+
+.site-risk-counts-table th[scope="col"], .site-risk-counts-table th[scope="row"] {
+	font-family: monospace, monospace;
+	font-weight: bold;
+}
+
+.site-risk-counts-table th[scope="colgroup"], .site-risk-counts-table th[scope="rowgroup"] {
+	font-weight: normal;
+}
+
+.site-risk-counts-table td, .site-risk-counts-table th[scope="col"], .site-risk-counts-table th[scope="row"] {
+	text-align: right;
+}
+
 .alert-type-counts-table {
 	width: 100%;
 }
@@ -320,7 +375,7 @@ h1, h2 {
 	font-family: Georgia, serif;
 }
 
-.risk-level, .confidence-level, .included-risk-codes, .included-confidence-codes {
+.risk-level, .confidence-level, .included-risk-codes, .included-confidence-codes, .additional-info-percentages {
 	font-family: monospace, monospace;
 }
 
