@@ -302,7 +302,11 @@
 																<span data-th-text="${sourceMsg}">Source</span>
 															</th-block>
 															<th-block data-th-case="*">
-																<span data-th-text="${sourceMsg}">Source</span> <span data-th-text="|(#{report.template.alertType.source.pluginId}: ${userObject.pluginId})|">(plugin ID: pluginId)</span>
+																<span data-th-text="${sourceMsg}">Source</span>
+																<th-block data-th-switch="${sourceStr}">
+																	<th-block data-th-case="ACTIVE">(<span data-th-text="#{report.template.alertType.source.pluginId}">plugin ID</span>: <a data-th-href="@{https://www.zaproxy.org/docs/alerts/{id}/(id=${userObject.pluginId})}" data-th-text="${userObject.pluginId}">pluginId</a>)</th-block>
+																	<span data-th-case="*" data-th-text="|(#{report.template.alertType.source.pluginId}: ${userObject.pluginId})|">(plugin ID: pluginId)</span>
+																</th-block>
 															</th-block>
 														</th-block>
 													</th-block>
