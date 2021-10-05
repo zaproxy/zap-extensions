@@ -72,11 +72,11 @@
 					<h4 data-th-text="#{report.template.reportParameters.contexts}">Contexts</h4>
 					<th-block data-th-with="includedContexts=${reportData.getContexts()}">
 						<th-block data-th-switch="${includedContexts.size}">
-							<p data-th-case="0">No contexts were selected, so all contexts were included by default.</p>
+							<p data-th-case="0" data-th-text="#{report.template.reportParameters.contexts.noContextsSelected}">No contexts were selected, so all contexts were included by default.</p>
 							<th-block data-th-case="*">
-								<p>The following contexts were selected to be included:</p>
+								<p data-th-text="#{report.template.reportParameters.contexts.selectedContexts}">The following contexts were selected to be included:</p>
 								<ul>
-									<li data-th-each="context: ${includedContexts}"><span class="context" data-th-text="${context.name}"></span></li>
+									<li data-th-each="context: ${includedContexts}"><span class="context" data-th-text="${context.name}">context</span></li>
 								</ul>
 							</th-block>
 						</th-block>
@@ -84,13 +84,13 @@
 
 					<h4 data-th-text="#{report.template.reportParameters.sites}">Sites</h4>
 					<th-block data-th-with="includedSites=${reportData.getSites()}">
-						<p>The following sites were included:</p>
+						<p data-th-text="#{report.template.reportParameters.sites.includedSites}">The following sites were included:</p>
 						<ul>
-							<li data-th-each="site: ${includedSites}"><span class="site" data-th-text="${site}"></span></li>
+							<li data-th-each="site: ${includedSites}"><span class="site" data-th-text="${site}">site</span></li>
 						</ul>
 					</th-block>
-					<p>(If no sites were selected, all sites were included by default.)</p>
-					<p>An included site must also be within one of the included contexts for its data to be included in the report.</p>
+					<p data-th-text="#{report.template.reportParameters.sites.noneSelectedAllIncluded}">(If no sites were selected, all sites were included by default.)</p>
+					<p data-th-text="#{report.template.reportParameters.sites.alsoWithinIncludedContext}">An included site must also be within one of the included contexts for its data to be included in the report.</p>
 
 					<h4 data-th-text="#{report.template.reportParameters.riskLevels}">Risk levels</h4>
 					<p><span data-th-text="#{report.template.reportParameters.included}">Included</span>: 
@@ -153,7 +153,7 @@
 									<th scope="colgroup" data-th-colspan="${includedConfidenceCodesSize + 1}" data-th-text="#{report.template.confidence}">Confidence</th>
 								</tr>
 								<tr>
-									<th data-th-each="confidenceCode: ${includedConfidenceCodes}" scope="col" data-th-text="${helper.getConfidenceString(confidenceCode)}"></th>
+									<th data-th-each="confidenceCode: ${includedConfidenceCodes}" scope="col" data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence level</th>
 									<th scope="col" data-th-text="#{report.template.riskConfidenceCounts.total}">Total</th>
 								</tr>
 							</thead>
@@ -242,7 +242,7 @@
 						<h3 data-th-text="#{report.template.section.alertTypes}">Alert types</h3>
 						<ol>
 							<li data-th-each="userObject, iterStat: ${alertTree.children.{userObject}}" data-th-id="|alert-type-${iterStat.index}|">
-								<h4 data-th-text="${userObject.name}"></h4>
+								<h4 data-th-text="${userObject.name}">alert type name</h4>
 								<table class="alert-types-table">
 									<tr>
 										<th scope="row" data-th-text="#{report.template.alertType.source}">Source</th>
@@ -320,7 +320,7 @@
 				<td>
 					<ul class="alert-tags-list">
 						<li data-th-each="entry: ${filteredAlert.userObject.tags}" data-th-switch="${entry.value.startsWith('https://') or entry.value.startsWith('http://')}">
-							<span data-th-case="true"><a data-th-href="${entry.value}" data-th-text="${entry.key}">url</a></span>
+							<span data-th-case="true"><a data-th-href="${entry.value}" data-th-text="${entry.key}">URL</a></span>
 							<span data-th-case="false" data-th-text="|${entry.key} = ${entry.value}|">key = value</span>
 						</li>
 					</ul>
@@ -339,14 +339,14 @@
 						<summary data-th-text="|#{report.template.alertsTable.requestHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Request line and header section (x bytes)</summary>
 						<th-block data-th-switch="${reportData.isIncludeSection('requestHeader')}">
 							<pre data-th-case="true"><code data-th-text="${userObject.message.requestHeader}">Request line and header section</code></pre>
-							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded from report]</p>
 						</th-block>
 					</details>
 					<details class="request-body" data-th-with="requestBody=${userObject.message.requestBody}, bodyLength=${requestBody.length}" data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('requestBody')}">
 						<summary data-th-text="|#{report.template.alertsTable.requestBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Request body (x bytes)</summary>
 						<th-block data-th-switch="${reportData.isIncludeSection('requestBody')}">
 							<pre data-th-case="true"><code data-th-text="${userObject.message.requestBody}">Request body</code></pre>
-							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded from report]</p>
 						</th-block>
 					</details>
 				</td>
@@ -358,14 +358,14 @@
 						<summary data-th-text="|#{report.template.alertsTable.responseHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Status line and header section (x bytes)</summary>
 						<th-block data-th-switch="${reportData.isIncludeSection('responseHeader')}">
 							<pre data-th-case="true"><code data-th-text="${userObject.message.responseHeader}">Status line and header section</code></pre>
-							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded from report]</p>
 						</th-block>
 					</details>
 					<details class="response-body" data-th-with="responseBody=${userObject.message.responseBody}, bodyLength=${responseBody.length}" data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('responseBody')}">
 						<summary data-th-text="|#{report.template.alertsTable.responseBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Response body (x bytes)</summary>
 						<th-block data-th-switch="${reportData.isIncludeSection('responseBody')}">
 							<pre data-th-case="true"><code data-th-text="${userObject.message.responseBody}">Response body</code></pre>
-							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">Excluded from report</p>
+							<p data-th-case="false" data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded from report]</p>
 						</th-block>
 					</details>
 				</td>
