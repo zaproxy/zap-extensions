@@ -167,6 +167,13 @@ table {
 	hyphens: auto;
 	overflow-wrap: anywhere;
 	word-break: break-all;
+	padding-right: 5%;
+}
+
+@media screen and (max-width: 50em) {
+	.risk-confidence-counts-table th[scope="row"] {
+		padding-right: 1ch;
+	}
 }
 
 .risk-confidence-counts-table th[scope="rowgroup"] {
