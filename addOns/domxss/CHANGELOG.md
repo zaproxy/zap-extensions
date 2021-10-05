@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- OWASP Top Ten 2021/2017 mappings.
+
 ### Fixed
 - False Positives caused by un-related alerts or Basic auth prompts (Issue 6484).
 

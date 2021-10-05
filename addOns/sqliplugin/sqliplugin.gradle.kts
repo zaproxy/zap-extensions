@@ -15,6 +15,14 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.5.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
@@ -25,6 +33,8 @@ crowdin {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
     implementation("org.jdom:jdom:2.0.2")
 }
 

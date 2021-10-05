@@ -21,13 +21,18 @@ zapAddOn {
                 register("selenium") {
                     version.set("15.*")
                 }
+                register("commonlib") {
+                    version.set(">= 1.5.0 & < 2.0.0")
+                }
             }
         }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("selenium")!!)
     testImplementation("io.github.bonigarcia:webdrivermanager:4.2.2")
     testImplementation(project(":testutils"))
