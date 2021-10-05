@@ -104,9 +104,6 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
-        if (parameter.getSchema() == null) {
-            return "";
-        }
         if (isArray(parameter.getSchema().getType())) {
             return generateArrayValue(name, parameter);
         }
