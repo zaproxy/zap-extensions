@@ -163,7 +163,7 @@ table {
 }
 
 .risk-confidence-counts-table th[scope="row"] {
-	height: 3em;
+	height: 4.5em;
 	hyphens: auto;
 	overflow-wrap: anywhere;
 	word-break: break-all;

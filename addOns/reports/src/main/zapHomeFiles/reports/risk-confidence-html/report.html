@@ -144,7 +144,8 @@
 						<h3 data-th-text="#{report.template.section.riskConfidenceCounts}">Alert counts by risk and confidence</h3>
 						<table class="risk-confidence-counts-table" data-th-with="alertsSize=${alerts.size()}">
 							<caption>
-								<p data-th-text="#{report.template.riskConfidenceCounts.caption}">This table shows the number of alerts for each level of risk and confidence included in the report. (Percentages are rounded to the nearest integer.)</p>
+								<p data-th-text="#{report.template.riskConfidenceCounts.captionP1}">This table shows the number of alerts for each level of risk and confidence included in the report.</p>
+								<p data-th-text="#{report.template.riskConfidenceCounts.captionP2}">(The percentages in brackets represent the count as a percentage of the total number of alerts included in the report, rounded to one decimal place.)</p>
 							</caption>
 							<colgroup><col><col></colgroup>
 							<colgroup data-th-with="widthCss=|width: ${70.0 / (includedConfidenceCodesSize + 1)}%|"><col data-th-each="i: ${#numbers.sequence(0, includedConfidenceCodesSize - 1)}" data-th-style="${widthCss}"><col data-th-style="${widthCss}"></colgroup>
@@ -162,12 +163,12 @@
 								<tr data-th-each="riskCode, iterStat: ${includedRiskCodes}">
 									<th data-th-if="${iterStat.first}" scope="rowgroup" data-th-rowspan="${includedRiskCodesSize + 1}" data-th-text="#{report.template.risk}">Risk</th>
 									<th scope="row" data-th-text="${helper.getRiskString(riskCode)}">Risk level</th>
-									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-text="${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode && #userObject.confidence == #confidenceCode}.size()}">count</td>
-									<td data-th-with="riskLevelTotal=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}.size()}"><span data-th-text="${riskLevelTotal}">total count for risk level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(riskLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
+									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="count=${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode && #userObject.confidence == #confidenceCode}.size()}"><span data-th-text="${count}">count</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(count * 1.0/alertsSize, 1, 1)})|">(% of total number of alerts)</span></td>
+									<td data-th-with="riskLevelTotal=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}.size()}"><span data-th-text="${riskLevelTotal}">total count for risk level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(riskLevelTotal * 1.0/alertsSize, 1, 1)})|">(% of total count for all included risk and confidence levels)</span></td>
 								</tr>
 								<tr>
 									<th scope="row" data-th-text="#{report.template.riskConfidenceCounts.total}">Total</th>
-									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="confidenceLevelTotal=${#confidenceCode=confidenceCode, alerts.{? #this.userObject.confidence == #confidenceCode}.size()}"><span data-th-text="${confidenceLevelTotal}">total count for confidence level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(confidenceLevelTotal * 1.0/ alertsSize, 1, 0)})|">(% of total count for all included risk and confidence levels)</span></td>
+									<td data-th-each="confidenceCode: ${includedConfidenceCodes}" data-th-with="confidenceLevelTotal=${#confidenceCode=confidenceCode, alerts.{? #this.userObject.confidence == #confidenceCode}.size()}"><span data-th-text="${confidenceLevelTotal}">total count for confidence level</span><br><span class="additional-info-percentages" data-th-text="|(${#numbers.formatPercent(confidenceLevelTotal * 1.0/ alertsSize, 1, 1)})|">(% of total count for all included risk and confidence levels)</span></td>
 									<td><span data-th-text="${alertsSize}">total count for all included risk and confidence levels</span><br><span class="additional-info-percentages">(100%)</span></td>
 								</tr>
 							</tbody>
