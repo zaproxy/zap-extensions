@@ -58,6 +58,20 @@ header a:active {
 	outline-color: #fff6db;
 }
 
+summary:focus {
+	background-color: #ffd54d;
+}
+
+summary:hover {
+	background-color: #ffd54d;
+}
+
+summary:active {
+	background-color: #ffd54d;
+	color: #003261;
+	outline-color: #f4ba00;
+}
+
 h2, h3, h4, h5, h6 {
 	color: #00549e;
 }
