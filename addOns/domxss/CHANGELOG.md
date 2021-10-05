@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update links to repository.
 - Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
 
 ## [10] - 2020-12-15
 ### Added

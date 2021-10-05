@@ -745,6 +745,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         return Alert.RISK_HIGH;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Added OWASP Top Ten 2021/2017 mappings.
+- Update minimum ZAP version to 2.11.0.
 
 ## [40] - 2021-06-17
 ### Changed

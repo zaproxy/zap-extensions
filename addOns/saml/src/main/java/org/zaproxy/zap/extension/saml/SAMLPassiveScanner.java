@@ -45,13 +45,9 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     private void scanMessage(HttpMessage msg, int id) {
         SAMLInspectionResult samlInspectionResult = SAMLUtils.inspectMessage(msg);
         if (samlInspectionResult.hasSAMLMessage()) {
-            addTag(id);
+            parent.addTag("SAML");
             raiseAlert(samlInspectionResult);
         }
-    }
-
-    private void addTag(int id) {
-        parent.addTag(id, "SAML");
     }
 
     private void raiseAlert(SAMLInspectionResult samlInspectionResult) {

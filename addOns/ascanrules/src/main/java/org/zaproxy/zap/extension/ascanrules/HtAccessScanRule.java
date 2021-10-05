@@ -82,6 +82,7 @@ public class HtAccessScanRule extends AbstractAppFilePlugin {
         return false;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

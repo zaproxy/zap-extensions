@@ -144,6 +144,7 @@ public class CrlfInjectionScanRule extends AbstractAppParamPlugin {
         return Alert.RISK_MEDIUM;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

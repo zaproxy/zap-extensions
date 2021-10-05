@@ -62,15 +62,7 @@ zapAddOn {
     }
 }
 
-repositories {
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
 dependencies {
-    zap("org.zaproxy:zap:2.11.0-20210923.152813-2")
-
     compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)

@@ -145,6 +145,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
         return 90003;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

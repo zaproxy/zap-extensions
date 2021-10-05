@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The 'Delay when Fuzzing (in milliseconds)' value can now be up to an hour (3,600,000ms), and the control was changed from a slider to a spinner (Issue 6651).
 - Updated the fuzzer options documentation (Issue 6791).
 - Fixed title caps on items in the Fuzzer options panel (Issue 2000).
+- Update minimum ZAP version to 2.11.0.
 
 ## [13.2.0] - 2021-06-01
 ### Changed

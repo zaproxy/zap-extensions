@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Reverse Tabnabbing Scan Rule will now alert when the 'opener' keyword is present.
 - Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
 
 ## [26] - 2021-07-29
 ### Fixed

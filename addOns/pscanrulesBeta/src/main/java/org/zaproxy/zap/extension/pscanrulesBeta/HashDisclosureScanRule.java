@@ -293,6 +293,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

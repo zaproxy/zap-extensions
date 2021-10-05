@@ -508,11 +508,11 @@ public class ConsolePanel extends AbstractPanel implements Tab {
      * @see #getStopButton()
      * @see #setButtonsAllowRunScript(boolean)
      * @see #updateButtonsStateScriptRunning()
-     * @see ScriptWrapper#isRunableStandalone()
+     * @see ScriptWrapper#isRunnableStandalone()
      */
     private void updateButtonsState() {
         // The only type that can be run directly from the console
-        if (script == null || !script.isRunableStandalone()) {
+        if (script == null || !script.isRunnableStandalone()) {
             setButtonsAllowRunScript(false);
             return;
         }

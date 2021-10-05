@@ -145,6 +145,7 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

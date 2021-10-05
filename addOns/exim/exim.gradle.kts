@@ -5,7 +5,7 @@ description = "Import and Export functionality"
 zapAddOn {
     addOnName.set("Import/Export")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team & thatsn0tmysite")

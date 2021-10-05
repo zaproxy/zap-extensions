@@ -719,6 +719,7 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         return 10099;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

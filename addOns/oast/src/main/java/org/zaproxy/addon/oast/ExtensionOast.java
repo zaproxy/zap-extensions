@@ -48,7 +48,7 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
-    static final int HISTORY_TYPE_OAST = 22; // Equal to HistoryReference.TYPE_OAST
+    static final int HISTORY_TYPE_OAST = HistoryReference.TYPE_OAST;
 
     private final Map<String, OastService> services = new HashMap<>();
     private OastOptionsPanel oastOptionsPanel;
@@ -183,12 +183,6 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    // TODO: Remove once targeting >= 2.11, refer to issue 6536.
-    @Override
-    public void unload() {
-        stop();
     }
 
     @Override

@@ -20,7 +20,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.10.0")
+    compileOnly("org.zaproxy:zap:2.11.0-20210929.165234-4")
 
     api("org.hamcrest:hamcrest-library:1.3")
     api("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")

@@ -64,6 +64,7 @@ public class ElmahScanRule extends AbstractHostFilePlugin {
         return PLUGIN_ID;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

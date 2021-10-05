@@ -1092,6 +1092,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                 .raise();
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

@@ -156,6 +156,7 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
         return Alert.RISK_MEDIUM;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

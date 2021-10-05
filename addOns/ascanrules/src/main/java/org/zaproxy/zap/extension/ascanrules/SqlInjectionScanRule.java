@@ -1971,6 +1971,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         return result;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

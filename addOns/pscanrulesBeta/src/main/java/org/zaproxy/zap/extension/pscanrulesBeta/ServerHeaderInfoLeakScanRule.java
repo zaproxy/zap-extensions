@@ -108,6 +108,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
         return Constant.messages.getString("pscanbeta.serverheader.rule.name");
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

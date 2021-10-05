@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Allow to choose Kotlin for syntax highlighting (requires newer ZAP version).
+- Allow to choose Kotlin for syntax highlighting.
 
 ### Changed
 - Do not show `Null` script engine in Edit Script dialogue.
@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance Changes.
 - 'Copy as curl command menu.js' is now preceded by a separator, and the Title Caps of the menu item were fixed (Issue 2000).
 - 'Copy as curl command menu.js' is now available in safe mode.
+- Update minimum ZAP version to 2.11.0.
 
 ## [28] - 2020-12-18
 

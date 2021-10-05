@@ -19,15 +19,7 @@ zapAddOn {
     }
 }
 
-repositories {
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
 dependencies {
-    zap("org.zaproxy:zap:2.11.0-20210923.152813-2")
-
     api("org.seleniumhq.selenium:selenium-server:3.141.59")
     api("org.seleniumhq.selenium:htmlunit-driver:2.36.0")
     api("com.codeborne:phantomjsdriver:1.4.4")

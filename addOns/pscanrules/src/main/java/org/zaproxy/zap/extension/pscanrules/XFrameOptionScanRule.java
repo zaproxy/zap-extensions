@@ -152,6 +152,7 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

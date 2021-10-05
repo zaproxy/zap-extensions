@@ -210,7 +210,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
     }
 
     @Override
-    public boolean isRunableStandalone() {
+    public boolean isRunnableStandalone() {
         // We can always prompt for parameters :)
         return true;
     }

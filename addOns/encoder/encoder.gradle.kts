@@ -5,7 +5,7 @@ description = "Adds encode/decode/hash dialog and support for scripted processor
 zapAddOn {
     addOnName.set("Encoder")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.10.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")

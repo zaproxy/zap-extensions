@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
 
 ## [0.8.0] - 2021-08-25
 ### Changed

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Don't set the font color for inherited entries (Issue 6397).
-- Update minimum ZAP version to 2.10.0.
+- Update minimum ZAP version to 2.11.0.
 - Maintenance changes (some changes impact the visibility of variables and add getters/setters, which may impact third party add-ons or scripts).
 - Change to no longer rely on core report classes, which are going to be deleted.
 

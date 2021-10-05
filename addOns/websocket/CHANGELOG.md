@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update links to repository.
 - Support passive scan alert examples so they can be added to the website
 - Missing default scripts will always be added and enabled on start up.
+- Update minimum ZAP version to 2.11.0.
 
 ## [23] - 2020-12-18
 ### Changed

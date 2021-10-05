@@ -287,6 +287,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         return "Failed to load vulnerability reference from file";
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

@@ -187,7 +187,7 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(9)));
+        assertThat(params.size(), is(equalTo(10)));
 
         assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
         assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
@@ -198,6 +198,7 @@ class ActiveScanJobUnitTest {
         assertThat(params.containsKey("maxScanDurationInMins"), is(equalTo(true)));
         assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
+        assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
     }
 
     private static class ScannerParamWrapper {

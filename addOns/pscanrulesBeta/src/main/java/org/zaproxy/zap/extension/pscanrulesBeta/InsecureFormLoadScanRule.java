@@ -139,6 +139,7 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner {
                 formElement.toString());
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

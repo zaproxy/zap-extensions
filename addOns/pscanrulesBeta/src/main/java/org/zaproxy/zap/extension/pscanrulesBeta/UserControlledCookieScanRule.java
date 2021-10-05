@@ -174,6 +174,7 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner {
         // Nothing to do.
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }

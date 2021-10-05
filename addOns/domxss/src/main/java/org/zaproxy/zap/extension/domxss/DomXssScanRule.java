@@ -702,6 +702,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         return 8;
     }
 
+    @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
