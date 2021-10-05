@@ -122,8 +122,7 @@ public class BodyGenerator {
             resolveNotSchema(schema);
         }
 
-        // primitive type, or schema without properties
-        if (schema.getType() == null || !PRIMITIVE_TYPES.contains(schema.getType())) {
+        if (!PRIMITIVE_TYPES.contains(schema.getType())) {
             schema.setType("string");
         }
 
