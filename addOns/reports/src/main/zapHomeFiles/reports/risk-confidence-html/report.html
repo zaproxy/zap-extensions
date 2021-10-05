@@ -29,9 +29,9 @@
 					<data-th-block data-th-unless="${alerts.isEmpty()}">
 						<li data-th-if="${reportData.isIncludeSection('summaries')}"><a href="#summaries" data-th-text="#{report.template.section.summaries}">Summaries</a>
 							<ol>
-								<li data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"><a href="#risk-confidence-counts" data-th-text="#{report.template.section.riskConfidenceCounts}">Table of alert counts by risk and confidence</a></li>
+								<li data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"><a href="#risk-confidence-counts" data-th-text="#{report.template.section.riskConfidenceCounts}">Alert counts by risk and confidence</a></li>
 								<li data-th-if="${reportData.isIncludeSection('siteRiskCounts')}"><a href="#site-risk-counts" data-th-text="#{report.template.section.siteRiskCounts}">Alert counts by site and risk</a></li>
-								<li data-th-if="${reportData.isIncludeSection('alertTypeCounts')}"><a href="#alert-type-counts" data-th-text="#{report.template.section.alertTypeCounts}">Table of alert counts by alert type</a></li>
+								<li data-th-if="${reportData.isIncludeSection('alertTypeCounts')}"><a href="#alert-type-counts" data-th-text="#{report.template.section.alertTypeCounts}">Alert counts by alert type</a></li>
 							</ol>
 						</li>
 						<li data-th-if="${reportData.isIncludeSection('alerts')}"><a href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a>
@@ -141,7 +141,7 @@
 					<h2 data-th-text="#{report.template.section.summaries}">Summaries</h2>
 
 					<section data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}" id="risk-confidence-counts">
-						<h3 data-th-text="#{report.template.section.riskConfidenceCounts}">Table of alert counts by risk and confidence</h3>
+						<h3 data-th-text="#{report.template.section.riskConfidenceCounts}">Alert counts by risk and confidence</h3>
 						<table class="risk-confidence-counts-table" data-th-with="alertsSize=${alerts.size()}">
 							<caption>
 								<p data-th-text="#{report.template.riskConfidenceCounts.caption}">This table shows the number of alerts for each level of risk and confidence included in the report. (Percentages are rounded to the nearest integer.)</p>
@@ -215,7 +215,7 @@
 					</section>
 
 					<section data-th-if="${reportData.isIncludeSection('alertTypeCounts')}" id="alert-type-counts">
-						<h3 data-th-text="#{report.template.section.alertTypeCounts}">Table of alert counts by alert type</h3>
+						<h3 data-th-text="#{report.template.section.alertTypeCounts}">Alert counts by alert type</h3>
 						<table class="alert-type-counts-table" data-th-with="alertsSize=${alerts.size()}">
 							<thead>
 								<tr>
