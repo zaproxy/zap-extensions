@@ -286,6 +286,7 @@
 
 					<section data-th-if="${reportData.isIncludeSection('alertTypes')}" id="alert-types" class="alert-types">
 						<h3 data-th-text="#{report.template.section.alertTypes}">Alert types</h3>
+						<p class="alert-types-intro" data-th-text="#{report.template.alertTypes.intro}">This section contains additional information on the types of alerts in the report.</p>
 						<ol>
 							<li data-th-each="userObject, iterStat: ${alertTree.children.{userObject}}" data-th-id="|alert-type-${iterStat.index}|">
 								<h4 data-th-text="${userObject.name}">alert type name</h4>
