@@ -104,6 +104,9 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
+        if (parameter.getSchema() == null) {
+            return "";
+        }
         if (isArray(parameter.getSchema().getType())) {
             return generateArrayValue(name, parameter);
         }
@@ -176,9 +179,6 @@ public class DataGenerator {
     }
 
     private String getExampleValue(Parameter parameter) {
-        if (parameter.getSchema() == null) {
-            return "";
-        }
         String in = parameter.getIn();
         String type = parameter.getSchema().getType();
         if ("cookie".equals(in) && "string".equals(type)) {
