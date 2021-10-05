@@ -215,7 +215,7 @@ table {
 }
 
 .site-risk-counts-table th[scope="row"], .site-risk-counts-table th[scope="col"] {
-	height: 3em;
+	height: 4.5em;
 	hyphens: auto;
 	overflow-wrap: anywhere;
 	word-break: break-all;
