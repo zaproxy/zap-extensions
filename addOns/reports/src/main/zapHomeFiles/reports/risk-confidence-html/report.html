@@ -218,6 +218,10 @@
 					<section data-th-if="${reportData.isIncludeSection('alertTypeCounts')}" id="alert-type-counts">
 						<h3 data-th-text="#{report.template.section.alertTypeCounts}">Alert counts by alert type</h3>
 						<table class="alert-type-counts-table" data-th-with="alertsSize=${alerts.size()}">
+							<caption>
+								<p data-th-text="#{report.template.alertTypeCounts.captionP1}">This table shows the number of alerts of each alert type, together with the alert type's risk level.</p>
+								<p data-th-text="#{report.template.alertTypeCounts.captionP2}">(The percentages in brackets represent each count as a percentage, rounded to one decimal place, of the total number of alerts included in this report.)</p>
+							</caption>
 							<thead>
 								<tr>
 									<th scope="col" data-th-text="#{report.template.alertTypeCounts.alertType}">Alert type</th><th scope="col" data-th-text="#{report.template.alertTypeCounts.risk}">Risk</th><th scope="col" data-th-text="#{report.template.alertTypeCounts.count}">Count</th>
