@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add help and link to the code.
 - Add info and repo URLs.
+- OWASP Top Ten 2021/2017 mappings.
 
 ### Fixed
  - Terminology

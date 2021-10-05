@@ -55,6 +55,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -112,7 +113,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private static final String RULE_BROWSER_ID = "rules.domxss.browserid";
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
-
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A07_XSS);
     private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers = new HashMap<>();
     private static List<WebDriverWrapper> takenDrivers = new ArrayList<>();
 
@@ -697,6 +700,10 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 8;
+    }
+
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

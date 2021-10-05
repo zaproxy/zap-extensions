@@ -69,15 +69,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
-        assertThat(
-                tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
-                is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A07_XSS.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
         assertThat(
-                tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
-                is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+                tags.get(CommonAlertTag.OWASP_2017_A07_XSS.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A07_XSS.getValue())));
     }
 
     @Test

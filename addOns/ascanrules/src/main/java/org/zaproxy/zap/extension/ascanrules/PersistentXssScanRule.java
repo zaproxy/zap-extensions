@@ -48,8 +48,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A07_XSS);
 
     private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
     private static final List<Integer> GET_POST_TYPES =
