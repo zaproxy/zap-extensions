@@ -181,7 +181,7 @@ table {
 	vertical-align: middle;
 }
 
-.risk-confidence-counts-table th[scope="rowgroup"], .risk-confidence-counts-table th[scope="row"], .risk-confidence-counts-table td:not([colspan]) {
+.risk-confidence-counts-table > tbody > tr {
 	border-top: .05em solid;
 }
 
@@ -275,7 +275,7 @@ table {
 	padding-left: 1.5rem;
 }
 
-.alert-type-counts-table tbody tr {
+.alert-type-counts-table > tbody > tr {
 	border-bottom: 0.05em dotted;
 }
 

@@ -75,7 +75,7 @@ h2, h3, h4, h5, h6 {
 	color: #00549e;
 }
 
-.risk-confidence-counts-table th[scope="rowgroup"], .risk-confidence-counts-table th[scope="row"], .risk-confidence-counts-table td:not([colspan]) {
+.risk-confidence-counts-table > tbody > tr {
 	border-top-color: #00549e;
 }
 
@@ -92,7 +92,7 @@ h2, h3, h4, h5, h6 {
 	border-top-color: #00549e;
 }
 
-.alert-type-counts-table tbody tr {
+.alert-type-counts-table > tbody > tr {
 	border-bottom-color: #00549e;
 }
 
