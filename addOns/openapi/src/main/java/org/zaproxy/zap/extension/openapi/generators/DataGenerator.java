@@ -104,11 +104,14 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
-        if (parameter.getSchema() != null && isArray(parameter.getSchema().getType())) {
+        if (parameter.getSchema() == null) {
+            return "";
+        }
+        if (isArray(parameter.getSchema().getType())) {
             return generateArrayValue(name, parameter);
         }
 
-        if (parameter.getSchema() != null && parameter.getSchema() instanceof ArraySchema) {
+        if (parameter.getSchema() instanceof ArraySchema) {
             Schema<?> items = ((ArraySchema) (parameter.getSchema())).getItems();
             if (items != null) {
                 return generateValue(name, items, isPath(parameter.getIn()));
