@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [4] - 2021-10-06
 ### Changed
 - Update minimum ZAP version to 2.11.0.
 - Maintenance changes.
@@ -23,4 +23,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[4]: https://github.com/zaproxy/zap-extensions/releases/reveal-v4
 [3]: https://github.com/zaproxy/zap-extensions/releases/reveal-v3

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [35] - 2021-10-06
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.11.0.
@@ -251,6 +251,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[35]: https://github.com/zaproxy/zap-extensions/releases/zest-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/zest-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/zest-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/zest-v32

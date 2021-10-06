@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [11] - 2021-10-06
 ### Changed
 - Send HTTP messages with ZAP, making use of all its features (e.g. user authentication, custom user-agent, HTTP Sender scripts) (Issues 173 and 3060).
 - Now using 2.10 logging infrastructure (Log4j 2.x).
@@ -77,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[11]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v8

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [30] - 2021-10-06
 ### Added
 - Automation link
 
@@ -149,6 +149,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v27
