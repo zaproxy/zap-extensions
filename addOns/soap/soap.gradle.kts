@@ -7,6 +7,15 @@ zapAddOn {
     manifest {
         author.set("Alberto (albertov91) + ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/soap-support/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.5.0 & < 2.0.0")
+                }
+            }
+        }
+
         extensions {
             register("org.zaproxy.zap.extension.soap.automation.ExtensionSoapAutomation") {
                 classnames {
@@ -31,6 +40,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     implementation("com.predic8:soa-model-core:1.6.3")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.3")
     implementation("jakarta.xml.soap:jakarta.xml.soap-api:1.4.2")
@@ -42,5 +52,6 @@ dependencies {
     implementation("org.codehaus.groovy:groovy:3.0.8")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

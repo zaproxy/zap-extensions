@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.soap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.NodeList;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * SOAP XML Injection Active scan rule
@@ -42,8 +44,11 @@ import org.w3c.dom.NodeList;
 public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
-
     private static final Logger LOG = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     @Override
     public int getId() {
@@ -196,5 +201,10 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
     public int getWascId() {
         // The WASC ID
         return 0;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
