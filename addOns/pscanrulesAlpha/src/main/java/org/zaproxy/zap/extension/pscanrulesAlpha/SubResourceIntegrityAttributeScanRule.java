@@ -30,14 +30,26 @@ import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner {
+
+    private static final Logger logger =
+            LogManager.getLogger(SubResourceIntegrityAttributeScanRule.class);
 
     private enum SupportedElements {
         // From
@@ -98,23 +110,63 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
+        SiteMap tree = Model.getSingleton().getSession().getSiteTree();
         List<Element> sourceElements = source.getAllElements();
         sourceElements.stream()
                 .filter(element -> SupportedElements.contains(element.getName()))
                 .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
                 .forEach(
-                        element ->
-                                newAlert()
-                                        .setRisk(Alert.RISK_MEDIUM)
-                                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                                        .setDescription(getString("desc"))
-                                        .setSolution(getString("soln"))
-                                        .setReference(getString("refs"))
-                                        .setEvidence(element.toString())
-                                        .setCweId(345) // CWE-345: Insufficient Verification of Data
-                                        // Authenticity
-                                        .setWascId(15) // Application Misconfiguration
-                                        .raise());
+                        element -> {
+                            String integrityHash = calculateIntegrityHash(msg, element, tree);
+                            String otherInfo =
+                                    integrityHash.isEmpty()
+                                            ? ""
+                                            : Constant.messages.getString(
+                                                    MESSAGE_PREFIX + "otherInfo", integrityHash);
+                            newAlert()
+                                    .setRisk(Alert.RISK_MEDIUM)
+                                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                                    .setDescription(getString("desc"))
+                                    .setSolution(getString("soln"))
+                                    .setReference(getString("refs"))
+                                    .setEvidence(element.toString())
+                                    .setCweId(345) // CWE-345: Insufficient Verification of Data
+                                    // Authenticity
+                                    .setWascId(15) // Application Misconfiguration
+                                    .setOtherInfo(otherInfo)
+                                    .raise();
+                        });
+    }
+
+    private String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
+        String src = element.getAttributeValue("src");
+        String integrityHash = "";
+        if (src != null) {
+            URI newURI = null;
+
+            try {
+                String newuri = msg.getRequestHeader().getURI().toString();
+                newURI = new URI(newuri);
+                newURI = newURI.resolve(src);
+                SiteNode node =
+                        tree.findNode(
+                                new org.apache.commons.httpclient.URI(newURI.toString(), true));
+                integrityHash =
+                        DigestUtils.sha384Hex(
+                                node.getHistoryReference()
+                                        .getHttpMessage()
+                                        .getResponseBody()
+                                        .toString());
+            } catch (URISyntaxException | IllegalArgumentException e) {
+                logger.debug("URI syntax exception. Error: {}", e.getMessage(), e);
+            } catch (URIException | HttpMalformedHeaderException | DatabaseException e) {
+                logger.debug(
+                        "URI exception or malformed http header exception or database exception. Error: {}",
+                        e.getMessage(),
+                        e);
+            }
+        }
+        return integrityHash;
     }
 
     private static Predicate<Element> unsafeSubResource(String origin) {

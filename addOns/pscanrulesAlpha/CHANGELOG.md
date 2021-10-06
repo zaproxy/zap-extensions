@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Add info alerts for each scripts found along with the integrity hash in subresource intergrity attribute scan rule (Issue 5894).
+
 ## [34] - 2021-10-07
 ### Added
 - OWASP Top Ten 2021/2017 mappings.
