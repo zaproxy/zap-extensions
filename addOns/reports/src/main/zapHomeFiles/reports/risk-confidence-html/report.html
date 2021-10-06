@@ -172,26 +172,14 @@
 						<th-block data-th-switch="${includedRiskCodesSize}"> <span
 							data-th-case="0"
 							data-th-text="#{report.template.reportParameters.none}">None</span>
-						<span data-th-case="*" class="included-risk-codes"> <th-block
-								data-th-each="riskCode, iterStat: ${includedRiskCodes}">
-							<th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block>
-							<span class="risk-level"
-								data-th-text="${helper.getRiskString(riskCode)}">risk
-								level</span></th-block>
-						</span> </th-block>
+						<span data-th-case="*" class="included-risk-codes"><th-block data-th-each="riskCode, iterStat: ${includedRiskCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block></span></th-block>
 					</p>
 					<p>
 						<span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>:
 						<th-block data-th-switch="${includedRiskCodesSize}"> <span
 							data-th-case="${MAX_RISK_CODE + 1}"
 							data-th-text="#{report.template.reportParameters.none}">None</span>
-						<span data-th-case="*" class="included-risk-codes"> <th-block
-								data-th-each="riskCode, iterStat: ${#numbers.sequence(MAX_RISK_CODE, 0, -1).{? #this not in #includedRiskCodes}}">
-							<th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block>
-							<span class="risk-level"
-								data-th-text="${helper.getRiskString(riskCode)}">risk
-								level</span></th-block>
-						</span> </th-block>
+						<span data-th-case="*" class="included-risk-codes"><th-block data-th-each="riskCode, iterStat: ${#numbers.sequence(MAX_RISK_CODE, 0, -1).{? #this not in #includedRiskCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block></span></th-block>
 					</p>
 
 					<h4
@@ -202,26 +190,14 @@
 						<th-block data-th-switch="${includedConfidenceCodesSize}">
 						<span data-th-case="0"
 							data-th-text="#{report.template.reportParameters.none}">None</span>
-						<span data-th-case="*" class="included-confidence-codes"> <th-block
-								data-th-each="confidenceCode, iterStat: ${includedConfidenceCodes}">
-							<th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block>
-							<span class="confidence-level"
-								data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence
-								level</span></th-block>
-						</span> </th-block>
+						<span data-th-case="*" class="included-confidence-codes"><th-block data-th-each="confidenceCode, iterStat: ${includedConfidenceCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block></span></th-block>
 					</p>
 					<p>
 						<span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>:
 						<th-block data-th-switch="${includedConfidenceCodesSize}">
 						<span data-th-case="${MAX_CONFIDENCE_CODE + 1}"
 							data-th-text="#{report.template.reportParameters.none}">None</span>
-						<span data-th-case="*" class="included-confidence-codes"> <th-block
-								data-th-each="confidenceCode, iterStat: ${#numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #this not in #includedConfidenceCodes}}">
-							<th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block>
-							<span class="confidence-level"
-								data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence
-								level</span></th-block>
-						</span> </th-block>
+						<span data-th-case="*" class="included-confidence-codes"> <th-block data-th-each="confidenceCode, iterStat: ${#numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #this not in #includedConfidenceCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block></span></th-block>
 					</p>
 				</div>
 			</section>
@@ -646,9 +622,7 @@
 					line and header section (x bytes)</summary>
 				<th-block
 					data-th-switch="${reportData.isIncludeSection('requestHeader')}">
-				<pre data-th-case="true">
-					<code data-th-text="${userObject.message.requestHeader}">Request line and header section</code>
-				</pre>
+				<pre data-th-case="true"><code data-th-text="${userObject.message.requestHeader}">Request line and header section</code></pre>
 				<p data-th-case="false"
 					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
 					from report]</p>
@@ -661,9 +635,7 @@
 					body (x bytes)</summary>
 				<th-block
 					data-th-switch="${reportData.isIncludeSection('requestBody')}">
-				<pre data-th-case="true">
-					<code data-th-text="${userObject.message.requestBody}">Request body</code>
-				</pre>
+				<pre data-th-case="true"><code data-th-text="${userObject.message.requestBody}">Request body</code></pre>
 				<p data-th-case="false"
 					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
 					from report]</p>
@@ -680,9 +652,7 @@
 					line and header section (x bytes)</summary>
 				<th-block
 					data-th-switch="${reportData.isIncludeSection('responseHeader')}">
-				<pre data-th-case="true">
-					<code data-th-text="${userObject.message.responseHeader}">Status line and header section</code>
-				</pre>
+				<pre data-th-case="true"><code data-th-text="${userObject.message.responseHeader}">Status line and header section</code></pre>
 				<p data-th-case="false"
 					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
 					from report]</p>
@@ -695,9 +665,7 @@
 					body (x bytes)</summary>
 				<th-block
 					data-th-switch="${reportData.isIncludeSection('responseBody')}">
-				<pre data-th-case="true">
-					<code data-th-text="${userObject.message.responseBody}">Response body</code>
-				</pre>
+				<pre data-th-case="true"><code data-th-text="${userObject.message.responseBody}">Response body</code></pre>
 				<p data-th-case="false"
 					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
 					from report]</p>
@@ -707,21 +675,15 @@
 	<tr data-th-unless="${userObject.param.isEmpty()}">
 		<th scope="row"
 			data-th-text="#{report.template.alertsTable.parameter}">Parameter</th>
-		<td><pre>
-				<code data-th-text="${userObject.param}">Parameter</code>
-			</pre></td>
+		<td><pre><code data-th-text="${userObject.param}">Parameter</code></pre></td>
 	</tr>
 	<tr data-th-unless="${userObject.attack.isEmpty()}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.attack}">Attack</th>
-		<td><pre>
-				<code data-th-text="${userObject.attack}">Attack</code>
-			</pre></td>
+		<td><pre><code data-th-text="${userObject.attack}">Attack</code></pre></td>
 	</tr>
 	<tr data-th-unless="${userObject.evidence.isEmpty()}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.evidence}">Evidence</th>
-		<td><pre>
-				<code data-th-text="${userObject.evidence}">Evidence</code>
-			</pre></td>
+		<td><pre><code data-th-text="${userObject.evidence}">Evidence</code></pre></td>
 	</tr>
 	<tr data-th-unless="${userObject.solution.isEmpty()}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.solution}">Solution</th>

@@ -66,6 +66,7 @@ spotless {
         eclipseWtp(EclipseWtpFormatterStep.HTML)
         target(fileTree(projectDir) {
             include("src/**/*.html")
+            exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
             exclude("src/test/**/*.html")
         })
     })

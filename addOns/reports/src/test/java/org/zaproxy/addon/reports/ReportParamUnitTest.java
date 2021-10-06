@@ -65,7 +65,7 @@ class ReportParamUnitTest {
         // Then
         assertThat(reportParam.getTitle(), is(equalTo("!reports.report.title!")));
         assertThat(reportParam.getDescription(), is(equalTo("")));
-        assertThat(reportParam.getTemplate(), is(equalTo("modern")));
+        assertThat(reportParam.getTemplate(), is(equalTo("risk-confidence-html")));
         assertThat(
                 reportParam.getReportNamePattern(), is(equalTo(ReportParam.DEFAULT_NAME_PATTERN)));
         assertThat(reportParam.getReportDirectory(), is(equalTo(System.getProperty("user.home"))));

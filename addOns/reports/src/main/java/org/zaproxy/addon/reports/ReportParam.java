@@ -50,7 +50,7 @@ public class ReportParam extends AbstractParam {
     private static final String PARAM_REPORT_SECTIONS_PREFIX = PARAM_BASE_KEY + ".report.sections.";
     private static final String PARAM_REPORT_THEME_PREFIX = PARAM_BASE_KEY + ".report.theme.";
 
-    public static final String DEFAULT_TEMPLATE = "modern";
+    public static final String DEFAULT_TEMPLATE = "risk-confidence-html";
     public static final String DEFAULT_NAME_PATTERN = "{{yyyy-MM-dd}}-ZAP-Report-[[site]]";
     public static final String DEFAULT_TEMPLATES_DIR = Constant.getZapHome() + "/reports/";
 
