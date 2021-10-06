@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [10] - 2021-10-06
 ### Added
 - OWASP Top Ten 2021/2017 alert tags.
 
@@ -80,6 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/soap-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/soap-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/soap-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/soap-v7

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.9.0] - 2021-10-06
 ### Added
 - OWASP Top Ten 2021/2017 mappings.
 
@@ -57,6 +57,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.6.0

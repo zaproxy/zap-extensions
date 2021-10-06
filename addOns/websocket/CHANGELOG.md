@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2021-10-06
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes (some changes impact the visibility of variables and add getters/setters, which may impact third party add-ons or scripts).
@@ -173,6 +173,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/websocket-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/websocket-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/websocket-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/websocket-v21
