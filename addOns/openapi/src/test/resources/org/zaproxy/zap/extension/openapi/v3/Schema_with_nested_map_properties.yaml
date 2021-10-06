@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: Market Data Exporter API
+paths:
+  /v4/endpoint:
+    post:
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TypeQuery'
+        required: true
+      responses:
+        '400':
+          description: The request was ill-formed
+
+components:
+  schemas:
+    TypeQuery:
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+        filtered_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/NaturalKey'
+        io:
+          type: object
+          items:
+            $ref: '#/components/schemas/IOType'
+    NaturalKey:
+      type: object
+      additionalProperties:
+        type: string
+    IOType:
+      type: object
+      additionalProperties: true
+      properties:
+        input:
+          $ref: '#/components/schemas/InType'
+        output:
+          type: object
+          additionalProperties: false
+          properties:
+            name:
+              type: string
+            desc:
+              type: string
+    InType:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        desc:
+          type: string
+        subthing:
+          type: object
+          additionalProperties: true
+          properties:
+            thing1:
+              type: string
+            thing2:
+              type: string

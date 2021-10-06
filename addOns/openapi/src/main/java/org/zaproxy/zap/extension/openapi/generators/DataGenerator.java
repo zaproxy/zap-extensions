@@ -140,7 +140,13 @@ public class DataGenerator {
                     .generate(name, (ArraySchema) property, "csv", false);
         }
         if (isMap(property)) {
-            return generators.getMapGenerator().generate(TYPES, property);
+            if (property.getAdditionalProperties() instanceof Schema) {
+                return generators.getMapGenerator().generate(TYPES, property);
+            } else if (property.getProperties() != null && !property.getProperties().isEmpty()) {
+                return generators.getBodyGenerator().generate(property);
+            } else {
+                return "";
+            }
         }
         return generateValue(name, property, false);
     }
