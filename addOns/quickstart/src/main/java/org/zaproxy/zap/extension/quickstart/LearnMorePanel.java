@@ -47,7 +47,8 @@ public class LearnMorePanel extends QuickStartSubPanel {
     private static final String GETTING_STARTED_LINK = "https://www.zaproxy.org/getting-started/";
     private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://www.zaproxy.org/docs/desktop/";
-    private static final String ZAP_IN_TEN_LINK = "https://www.alldaydevops.com/zap-in-ten";
+    private static final String ZAP_VIDEOS_LINK = "https://www.zaproxy.org/videos/";
+    private static final String ZAP_AUTOMATE_LINK = "https://www.zaproxy.org/docs/automate/";
 
     private JPanel contentPanel;
     private JLabel lowerPadding;
@@ -198,7 +199,12 @@ public class LearnMorePanel extends QuickStartSubPanel {
                             1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             contentPanel.add(
-                    getOnlineLink("quickstart.link.zapinten", ZAP_IN_TEN_LINK),
+                    getOnlineLink("quickstart.link.videos", ZAP_VIDEOS_LINK),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+
+            contentPanel.add(
+                    getOnlineLink("quickstart.link.automate", ZAP_AUTOMATE_LINK),
                     LayoutHelper.getGBC(
                             1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
