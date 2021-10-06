@@ -53,6 +53,10 @@ public class EncoderConfig {
     private static final String DEFAULT_BUNDLED_CONFIG_FILE =
             "resources/" + DEFAULT_CONFIG_FILE_NAME;
 
+    private EncoderConfig() {
+        // Utility Class
+    }
+
     public static List<TabModel> loadConfig() throws ConfigurationException, IOException {
         Path config = getConfigPath(CONFIG_FILE);
         if (Files.notExists(config)) {

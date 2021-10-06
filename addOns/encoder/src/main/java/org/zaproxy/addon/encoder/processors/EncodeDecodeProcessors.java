@@ -120,9 +120,8 @@ public class EncodeDecodeProcessors {
         for (ScriptWrapper scriptWrapper : ExtensionEncoder.getEncodeDecodeScripts()) {
             String scriptName = scriptWrapper.getName();
             encodeDecodeScripts.add(scriptName);
-            if (!scriptProcessors.containsKey(scriptName)) {
-                scriptProcessors.put(scriptName, createItemFromScriptWrapper(scriptWrapper));
-            }
+            scriptProcessors.computeIfAbsent(
+                    scriptName, k -> createItemFromScriptWrapper(scriptWrapper));
         }
 
         // Delete not existing

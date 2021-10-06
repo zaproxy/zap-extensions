@@ -27,7 +27,8 @@ public class UnicodeEncoder extends DefaultEncodeDecodeProcessor {
         String tmp;
         StringBuilder sb = new StringBuilder();
         char c;
-        int i, j;
+        int i;
+        int j;
         sb.setLength(0);
         for (i = 0; i < str.length(); i++) {
             c = str.charAt(i);

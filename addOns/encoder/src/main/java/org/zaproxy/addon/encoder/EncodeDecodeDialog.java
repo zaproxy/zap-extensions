@@ -21,8 +21,12 @@ package org.zaproxy.addon.encoder;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -37,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -64,9 +69,9 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(EncodeDecodeDialog.class);
     private final EncodeDecodeProcessors encodeDecodeProcessors;
-    private JTabbedPane jTabbed = null;
-    private JPanel jPanel = null;
-    private javax.swing.JToolBar panelToolbar = null;
+    private JTabbedPane mainTabbedPane = null;
+    private JPanel mainPanel = null;
+    private JToolBar panelToolbar = null;
     private List<TabModel> tabs = new ArrayList<>();
     private ZapTextArea inputField = null;
     private JButton addTabButton;
@@ -104,7 +109,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     }
 
     public void setTabs(List<TabModel> tabModels) {
-        getTabbedPane().removeAll();
+        getMainTabbedPane().removeAll();
 
         for (TabModel tabModel : tabModels) {
             List<OutputPanelModel> outputPanels = tabModel.getOutputPanels();
@@ -114,7 +119,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
 
         updatePanelState();
         if (!tabs.isEmpty()) {
-            getTabbedPane().setSelectedIndex(0);
+            getMainTabbedPane().setSelectedIndex(0);
         }
     }
 
@@ -157,22 +162,22 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         this.setTitle(Constant.messages.getString("encoder.dialog.title"));
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
 
-            panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new java.awt.GridBagLayout());
+            panelToolbar = new JToolBar();
+            panelToolbar.setLayout(new GridBagLayout());
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
+            panelToolbar.setPreferredSize(new Dimension(800, 30));
             panelToolbar.setName("Encode Decode Toolbar");
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.insets = new java.awt.Insets(0, 0, 0, 0);
-            gbc.anchor = java.awt.GridBagConstraints.WEST;
+            gbc.insets = new Insets(0, 0, 0, 0);
+            gbc.anchor = GridBagConstraints.WEST;
 
             panelToolbar.add(getAddTabButton(), gbc);
             ++gbc.gridx;
@@ -188,7 +193,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
 
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
-            gbc.anchor = java.awt.GridBagConstraints.EAST;
+            gbc.anchor = GridBagConstraints.EAST;
             panelToolbar.add(new JLabel(), gbc);
             ++gbc.gridx;
             panelToolbar.add(getResetButton(), gbc);
@@ -234,9 +239,9 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     }
 
     private void deleteSelectedTab() {
-        int selectedIndex = getTabbedPane().getSelectedIndex();
+        int selectedIndex = getMainTabbedPane().getSelectedIndex();
         if (selectedIndex != -1) {
-            getTabbedPane().remove(selectedIndex);
+            getMainTabbedPane().remove(selectedIndex);
             tabs.remove(selectedIndex);
             updatePanelState();
         }
@@ -264,29 +269,29 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         TabModel tabModel = showAddTabDialogue();
         if (tabModel != null) {
             addTab(tabModel, new ArrayList<>());
-            SwingUtilities.invokeLater(() -> jPanel.repaint());
+            SwingUtilities.invokeLater(() -> mainPanel.repaint());
             updatePanelState();
         }
     }
 
     private void addTab(TabModel tabModel, List<OutputPanelModel> outputPanelModels) {
-        if (tabModel.getOutputPanels().size() > 0) {
+        if (!tabModel.getOutputPanels().isEmpty()) {
             throw new IllegalArgumentException("Can not add Tab with output panels");
         }
 
         tabs.add(tabModel);
         int tabIndex = getIndex(tabModel);
 
-        final JPanel jPanel = new JPanel();
-        jPanel.setLayout(new GridBagLayout());
-        getTabbedPane()
+        final JPanel newPanel = new JPanel();
+        newPanel.setLayout(new GridBagLayout());
+        getMainTabbedPane()
                 .insertTab(
                         createTabTitle(tabModel),
                         null,
-                        jPanel,
+                        newPanel,
                         null,
-                        getTabbedPane().getTabCount());
-        getTabbedPane().setSelectedIndex(tabIndex);
+                        getMainTabbedPane().getTabCount());
+        getMainTabbedPane().setSelectedIndex(tabIndex);
 
         for (OutputPanelModel outputPanel : outputPanelModels) {
             addOutputPanel(outputPanel, tabIndex);
@@ -335,14 +340,14 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     private void addOutputPanelToCurrentTab() {
         OutputPanelModel outputPanelModel = showAddOutputDialogue();
         if (outputPanelModel != null) {
-            int tabIndex = getTabbedPane().getSelectedIndex();
+            int tabIndex = getMainTabbedPane().getSelectedIndex();
             addOutputPanel(outputPanelModel, tabIndex);
-            SwingUtilities.invokeLater(() -> jPanel.repaint());
+            SwingUtilities.invokeLater(() -> mainPanel.repaint());
         }
     }
 
     private void addOutputPanel(OutputPanelModel outputPanelModel, int tabIndex) {
-        Component component = getTabbedPane().getComponentAt(tabIndex);
+        Component component = getMainTabbedPane().getComponentAt(tabIndex);
         if (component instanceof JPanel) {
             JPanel parentPanel = (JPanel) component;
             TabModel foundTab = getTabByIndex(tabIndex);
@@ -377,20 +382,20 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
             return;
         }
 
-        Component tab = getTabbedPane().getComponentAt(outputPanelPos.getTabIndex());
+        Component tab = getMainTabbedPane().getComponentAt(outputPanelPos.getTabIndex());
         if (tab instanceof JPanel) {
             JPanel parentPanel = (JPanel) tab;
             parentPanel.remove(outputPanelPos.getOutputPanelIndex());
             getTabByIndex(outputPanelPos.getTabIndex())
                     .getOutputPanels()
                     .remove(outputPanelPos.getOutputPanelIndex());
-            SwingUtilities.invokeLater(() -> jPanel.repaint());
+            SwingUtilities.invokeLater(() -> mainPanel.repaint());
         }
     }
 
     private OutputPanelPosition findOutputPanel(JTextComponent searched) {
-        for (int i = 0; i < getTabbedPane().getTabCount(); i++) {
-            Component tab = getTabbedPane().getComponentAt(i);
+        for (int i = 0; i < getMainTabbedPane().getTabCount(); i++) {
+            Component tab = getMainTabbedPane().getComponentAt(i);
             if (tab instanceof JPanel) {
                 JPanel parentPanel = (JPanel) tab;
                 for (int j = 0; j < parentPanel.getComponentCount(); j++) {
@@ -432,7 +437,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         final GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = globalOutputPanelIndex++;
-        gbc.insets = new java.awt.Insets(1, 1, 1, 1);
+        gbc.insets = new Insets(1, 1, 1, 1);
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0.5D;
@@ -452,31 +457,31 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         parent.add(jsp, gbc);
     }
 
-    private JTabbedPane getTabbedPane() {
-        if (jTabbed == null) {
-            jTabbed = new JTabbedPane();
-            jTabbed.setPreferredSize(new java.awt.Dimension(800, 500));
+    private JTabbedPane getMainTabbedPane() {
+        if (mainTabbedPane == null) {
+            mainTabbedPane = new JTabbedPane();
+            mainTabbedPane.setPreferredSize(new Dimension(800, 500));
         }
-        return jTabbed;
+        return mainTabbedPane;
     }
 
     /**
-     * This method initializes jPanel
+     * This method initializes mainPanel
      *
      * @return javax.swing.JPanel
      */
     private JPanel getMainPanel() {
-        if (jPanel == null) {
+        if (mainPanel == null) {
 
-            // jPanel is the outside one
-            jPanel = new JPanel();
-            jPanel.setPreferredSize(new java.awt.Dimension(800, 600));
-            jPanel.setLayout(new GridBagLayout());
+            // mainPanel is the outside one
+            mainPanel = new JPanel();
+            mainPanel.setPreferredSize(new Dimension(800, 600));
+            mainPanel.setLayout(new GridBagLayout());
 
             final GridBagConstraints gbcScrollPanel = new GridBagConstraints();
             gbcScrollPanel.gridx = 0;
             gbcScrollPanel.gridy = 1;
-            gbcScrollPanel.insets = new java.awt.Insets(1, 1, 1, 1);
+            gbcScrollPanel.insets = new Insets(1, 1, 1, 1);
             gbcScrollPanel.anchor = GridBagConstraints.NORTHWEST;
             gbcScrollPanel.fill = GridBagConstraints.BOTH;
             gbcScrollPanel.weightx = 1.0D;
@@ -485,7 +490,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
             final GridBagConstraints gbcTabPanel = new GridBagConstraints();
             gbcTabPanel.gridx = 0;
             gbcTabPanel.gridy = 3;
-            gbcTabPanel.insets = new java.awt.Insets(1, 1, 1, 1);
+            gbcTabPanel.insets = new Insets(1, 1, 1, 1);
             gbcTabPanel.anchor = GridBagConstraints.NORTHWEST;
             gbcTabPanel.fill = GridBagConstraints.BOTH;
             gbcTabPanel.weightx = 1.0D;
@@ -506,15 +511,15 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
             final GridBagConstraints gbcToolbar = new GridBagConstraints();
             gbcToolbar.gridx = 0;
             gbcToolbar.gridy = 2;
-            gbcToolbar.insets = new java.awt.Insets(1, 1, 1, 1);
+            gbcToolbar.insets = new Insets(1, 1, 1, 1);
             gbcToolbar.anchor = GridBagConstraints.NORTHWEST;
             gbcToolbar.fill = GridBagConstraints.BOTH;
 
-            jPanel.add(scrollPanelWithInputField, gbcScrollPanel);
-            jPanel.add(getPanelToolbar(), gbcToolbar);
-            jPanel.add(getTabbedPane(), gbcTabPanel);
+            mainPanel.add(scrollPanelWithInputField, gbcScrollPanel);
+            mainPanel.add(getPanelToolbar(), gbcToolbar);
+            mainPanel.add(getMainTabbedPane(), gbcTabPanel);
         }
-        return jPanel;
+        return mainPanel;
     }
 
     private ZapTextArea newField(boolean editable) {
@@ -525,9 +530,9 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
         field.setName(ENCODE_DECODE_RESULTFIELD);
 
         field.addMouseListener(
-                new java.awt.event.MouseAdapter() {
+                new MouseAdapter() {
                     @Override
-                    public void mousePressed(java.awt.event.MouseEvent e) {
+                    public void mousePressed(MouseEvent e) {
                         if (SwingUtilities.isRightMouseButton(e)) {
                             View.getSingleton()
                                     .getPopupMenu()
@@ -559,13 +564,15 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
                                 }
 
                                 @Override
-                                public void changedUpdate(DocumentEvent documentEvent) {}
+                                public void changedUpdate(DocumentEvent documentEvent) {
+                                    // Nothing to do
+                                }
                             });
 
             inputField.addMouseListener(
-                    new java.awt.event.MouseAdapter() {
+                    new MouseAdapter() {
                         @Override
-                        public void mousePressed(java.awt.event.MouseEvent e) {
+                        public void mousePressed(MouseEvent e) {
                             if (SwingUtilities.isRightMouseButton(e)) {
                                 View.getSingleton()
                                         .getPopupMenu()
@@ -583,7 +590,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     }
 
     private ZapTextArea findZapTextArea(OutputPanelPosition position) {
-        Component currentTab = getTabbedPane().getComponentAt(position.getTabIndex());
+        Component currentTab = getMainTabbedPane().getComponentAt(position.getTabIndex());
         if (currentTab instanceof JPanel) {
             JPanel tabPanel = (JPanel) currentTab;
             Component component = tabPanel.getComponent(position.getOutputPanelIndex());
