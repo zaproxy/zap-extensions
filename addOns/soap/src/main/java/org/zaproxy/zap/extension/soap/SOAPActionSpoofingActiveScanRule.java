@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.soap;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /**
  * SOAP Action Spoofing Active scan rule
@@ -48,8 +50,11 @@ import org.w3c.dom.NodeList;
 public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
-
     private static final Logger LOG = LogManager.getLogger(SOAPActionSpoofingActiveScanRule.class);
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     public enum ResponseType {
         INVALID_FORMAT,
@@ -291,5 +296,10 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
     public int getWascId() {
         // The WASC ID
         return 0;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
