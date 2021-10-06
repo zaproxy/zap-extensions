@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - OWASP Web Security Testing Guide v4.2 mappings where applicable.
+- Sub Resource Integrity Attribute Missing scan rule will now include the suggested integrity hash (Base64 encoded SHA384 hash) as part of the relevant Alert's Other Info details if the referenced script can be found in the Sites Tree (Issue 5894).
 
 ## [34] - 2021-10-07
 ### Added
