@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [5] - 2021-10-07
 ### Changed
 - Warn when unable to save (malformed) HTTP message (Issue 4235).
 - Update minimum ZAP version to 2.11.0.
@@ -38,4 +38,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/requester-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/requester-v4
