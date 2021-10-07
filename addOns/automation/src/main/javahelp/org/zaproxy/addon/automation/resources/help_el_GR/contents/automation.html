@@ -31,6 +31,14 @@ However you can choose to run Automation Framework jobs using the ZAP desktop to
 <H2>GUI</H2>
 A <a href="gui.html">GUI</a> is under development and currently provides a limited set of functionality.
 
+<H2>API</H2>
+The following API endpoints are provided by this add-on:
+<ul>
+<li>Action: runPlan(filePath) - loads and asynchronously runs the plan in the specified file, returning a planId</li>
+<li>View: planProgress(planId) - returns the progress details for the specified planId</li>
+</ul>
+If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
+
 <H2>Environment</H2>
 The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
 
