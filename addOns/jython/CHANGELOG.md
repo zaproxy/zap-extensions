@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [12] - 2021-10-07
 ### Added
 - encode-decode default and rot13 templates.
 
@@ -74,4 +74,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/jython-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/jython-v11
