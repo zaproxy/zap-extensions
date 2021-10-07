@@ -60,6 +60,9 @@ public class ReportJob extends AutomationJob {
         data = new Data(this, this.parameters);
         this.getParameters().setTemplate(ReportParam.DEFAULT_TEMPLATE);
         this.getParameters().setReportDir(System.getProperty("user.home"));
+        this.getParameters().setReportTitle(this.getExtReport().getReportParam().getTitle());
+        this.getParameters()
+                .setReportDescription(this.getExtReport().getReportParam().getDescription());
     }
 
     @Override
