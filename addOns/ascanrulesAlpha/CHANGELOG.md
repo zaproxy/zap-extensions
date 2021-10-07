@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [32] - 2021-10-07
 ### Added
 - Spring Boot Actuator Scan Rule.
 - OWASP Top Ten 2021/2017 mappings.
@@ -247,6 +247,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v29

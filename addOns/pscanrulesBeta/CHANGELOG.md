@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [27] - 2021-10-07
 ### Added
 - OWASP Top Ten 2021/2017 mappings.
 
@@ -210,6 +210,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v24

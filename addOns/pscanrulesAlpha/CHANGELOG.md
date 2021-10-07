@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [34] - 2021-10-07
 ### Added
 - OWASP Top Ten 2021/2017 mappings.
 
@@ -286,6 +286,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v31
