@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [11] - 2021-10-06
 ### Changed
 - Send HTTP messages with ZAP, making use of all its features (e.g. user authentication, custom user-agent, HTTP Sender scripts) (Issues 173 and 3060).
