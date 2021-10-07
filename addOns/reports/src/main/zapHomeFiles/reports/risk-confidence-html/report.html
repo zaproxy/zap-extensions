@@ -42,7 +42,7 @@
 							this report</a>
 						<ol>
 							<li
-								data-th-if="${reportData.isIncludeSection('reportDescription')}"><a
+								data-th-if="${reportData.isIncludeSection('reportDescription') and description != null and !description.isEmpty()}"><a
 								href="#report-description"
 								data-th-text="#{report.template.section.reportDescription}">Report
 									description</a></li>
@@ -113,7 +113,7 @@
 				this report</h2>
 
 			<section
-				data-th-if="${reportData.isIncludeSection('reportDescription')}"
+				data-th-if="${reportData.isIncludeSection('reportDescription') and description != null and !description.isEmpty()}"
 				id="report-description">
 				<h3 data-th-text="#{report.template.section.reportDescription}">Report
 					description</h3>
