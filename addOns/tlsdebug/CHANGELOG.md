@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [5] - 2021-10-07
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 - Maintenance changes.
@@ -30,4 +30,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/tlsdebug-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/tlsdebug-v4
