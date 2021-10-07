@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Default report title and description to new report jobs.
 
 ### Fixed
-- In risk-confidence-html template, guard against scanJobResultData being null.
+- risk-confidence-html template: guard against scanJobResultData being null; fix handling of empty paragraphs and nulls; and do not include description section if description is null or empty.
 
 ## [0.7.0] - 2021-10-06
 ### Added
