@@ -570,7 +570,7 @@
 <th-block data-th-remove="all"> <th-block
 	data-th-fragment="nl2p(text)"> <th-block
 	data-th-each="paragraph: ${text.split('\n')}">
-<p data-th-if="${!text.isEmpty()}" data-th-text="${paragraph}">text</p>
+<p data-th-if="${!paragraph.isEmpty()}" data-th-text="${paragraph}">text</p>
 </th-block> </th-block> <th-block data-th-fragment="nl2pbr(text)"
 	data-th-each="paragraph, iterStat: ${text.trim().split('\n\n')}">
 <th-block data-th-with="trimmedParagraph=${paragraph.trim()}">
