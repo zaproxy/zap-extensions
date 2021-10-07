@@ -526,7 +526,8 @@
 										data-th-text="${sourceMsg}">Source</span> <span>(<a
 										data-th-href="@{https://www.zaproxy.org/docs/alerts/{pluginId}/(pluginId=${userObject.pluginId})}"
 										href="https://www.zaproxy.org/docs/alerts/"
-										data-th-text="${scanJobResultData.getRuleData(userObject.pluginId).name}">rule
+										data-th-with="ruleData=${scanJobResultData.getRuleData(userObject.pluginId)}, pluginIdStr=|#{report.template.alertType.source.pluginId}: ${userObject.pluginId}|"
+										data-th-text="${ruleData == null? pluginIdStr: ruleData.name}">rule
 											name</a>)
 									</span> </th-block> </th-block> </th-block>
 								</td>
