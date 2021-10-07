@@ -11,17 +11,34 @@ Seçenekler Fuzz ekranı
 <p>
 Bu ekran şunu ayarlamanıza izin verir <a href="concepts.html">belirsizleştirme</a> seçenekler:
 
-<h3>Varsayılan kategori</h3>
-İlk olarak seçilen bu kategori gösterirki <a href="dialogue.html">Fuzz diyaloğu</a> gösterildi. 
+<h3>Default Category</h3>
+The category that will initially be selected when the <a href="dialogue.html">Fuzz diyaloğu</a> gösterildi.
 
-<h3>Host başına eş zamanlı tarayıcı parçacıklar</h3>
-Tarayıcının ana bilgisayar başına kullanacağı iş parçacığı sayısı.<br>
-Parçacık sayısını arttırmak taramayı hızlandıracaktır ancak ZAP'ın çalıştığı bilgisayara ve hedef host'a ekstra yük bindirebilir.
+<h3>Add Custom Fuzz File</h3>
+Allows you to add your own files to be used when fuzzing.<br>
+These should be text files with one payload per line.<br>
+Files are added to the 'fuzzers' directory underneath the ZAP home directory.
 
-<h3>Özel Fuzz dosyası ekle</h3>
-Belirsizleştirme durumunda sizin kendi dosyalarınızı eklemenize izin verir.<br>
-Satır başına bir saldırı olan yazi dosyaları olmalıdır.<br>
-Dosyalar, ZAP girişinin altındaki 'belirsizler' dizinine dahil edilir.
+<h3>Finished Fuzzers in UI</h3>
+It defines the numbers of fuzzers (that have completed their execution)
+visible in the fuzzer tab.
+
+<h3>Retries on IO Error</h3>
+The number of retries when an input/output error occurs sending a request to the target.
+
+<h3>Max. Errors Allowed</h3>
+If the number of errors exceed this limit, fuzzer will stop its execution.
+
+<h3>Payload Replacement Strategy</h3>
+Rules defined to control the order that multiple payload lists are iterated.
+
+<h3>Concurrent Scanning Threads per Scan</h3>
+The number of threads the fuzzer will use per scan.<br>
+Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on as well as the target.
+
+<h3>Delay when Fuzzing (in milliseconds)</h3>
+The number of milliseconds between requests by the fuzzer to the target host, usually done to
+avoid getting blocked by the target or if the target implements some sort of throttling requirement.
 
 <h2>Ayrıca Bakınız</h2>
 <table>

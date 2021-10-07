@@ -11,17 +11,34 @@ Pantalla de opciones Fuzz
 <p>
 Esta pantalla permite configurar las <a href="concepts.html">fuzzing</a> opciones:
 
-<h3>Categoría predeterminada</h3>
-La categoría que se seleccionará inicialmente se muestra cuando el <a href="dialogue.html">Diálogo Fuzz</a> se muestre. 
+<h3>Default Category</h3>
+The category that will initially be selected when the <a href="dialogue.html">Diálogo Fuzz</a> se muestre.
 
-<h3>Subprocesos simultáneos de escaneo por host</h3>
-La cantidad de subprocesos que usará el escáner por host.<br>
-Aumentar el número de subprocesos acelerará el escaneo, pero puede ejercer más presión sobre la computadora en la que se está ejecutando ZAP y el host de destino.
+<h3>Add Custom Fuzz File</h3>
+Allows you to add your own files to be used when fuzzing.<br>
+These should be text files with one payload per line.<br>
+Files are added to the 'fuzzers' directory underneath the ZAP home directory.
 
-<h3>Agregue un archivo Fuzz personalizado</h3>
-Te permite agregar tus propios archivos para usarlos cuando fuzzing.<br>
-Estos deberían ser archivos de texto con un ataque por línea.<br>
-Los archivos se agregan al directorio 'fuzzers' debajo del directorio inicial de ZAP.
+<h3>Finished Fuzzers in UI</h3>
+It defines the numbers of fuzzers (that have completed their execution)
+visible in the fuzzer tab.
+
+<h3>Retries on IO Error</h3>
+The number of retries when an input/output error occurs sending a request to the target.
+
+<h3>Max. Errors Allowed</h3>
+If the number of errors exceed this limit, fuzzer will stop its execution.
+
+<h3>Payload Replacement Strategy</h3>
+Rules defined to control the order that multiple payload lists are iterated.
+
+<h3>Concurrent Scanning Threads per Scan</h3>
+The number of threads the fuzzer will use per scan.<br>
+Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on as well as the target.
+
+<h3>Delay when Fuzzing (in milliseconds)</h3>
+The number of milliseconds between requests by the fuzzer to the target host, usually done to
+avoid getting blocked by the target or if the target implements some sort of throttling requirement.
 
 <h2>Véase también</h2>
 <table>
