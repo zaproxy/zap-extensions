@@ -17,7 +17,7 @@ zapAddOn {
     }
 
     apiClientGen {
-        api.set("org.zaproxy.addon.retest.RetestApi")
+        api.set("org.zaproxy.addon.retest.RetestAPI")
         messages.set(file("src/main/resources/org/zaproxy/addon/retest/resources/Messages.properties"))
     }
 }
