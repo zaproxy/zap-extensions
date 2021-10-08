@@ -23,6 +23,7 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -39,6 +41,13 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * passively scans requests for insecure authentication
  */
 public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                    CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
+                    CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH,
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(InsecureAuthenticationScanRule.class);
@@ -239,6 +248,19 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
     }
 
     @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
+    }
+
+    public int getCweId() {
+        return 326; // CWE Id - Inadequate Encryption Strength
+    }
+
+    public int getWascId() {
+        return 4; // WASC Id - Insufficient Transport Layer Protection
+    }
+
+    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getRequestHeader().isSecure()) {
             // If SSL is used then the use of 'weak' authentication methods isnt really an issue
@@ -257,8 +279,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                             .setSolution(getSolution())
                             .setReference(getReference())
                             .setEvidence(HttpHeader.WWW_AUTHENTICATE + ": " + auth)
-                            .setCweId(326) // CWE Id - Inadequate Encryption Strength
-                            .setWascId(4) // WASC Id - Insufficient Transport Layer Protection
+                            .setCweId(getCweId())
+                            .setWascId(getWascId())
                             .raise();
                 }
             }

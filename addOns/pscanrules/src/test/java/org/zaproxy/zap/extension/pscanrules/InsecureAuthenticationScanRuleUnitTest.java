@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class InsecureAuthenticationScanRuleUnitTest
         extends PassiveScannerTest<InsecureAuthenticationScanRule> {
@@ -50,6 +53,42 @@ class InsecureAuthenticationScanRuleUnitTest
     @Override
     protected InsecureAuthenticationScanRule createScanner() {
         return new InsecureAuthenticationScanRule();
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(326)));
+        assertThat(wasc, is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
     }
 
     @Test
