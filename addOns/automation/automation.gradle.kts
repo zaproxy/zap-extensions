@@ -8,6 +8,11 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/automation-framework/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.automation.AutomationAPI")
+        messages.set(file("src/main/resources/org/zaproxy/addon/automation/resources/Messages.properties"))
+    }
 }
 
 crowdin {
