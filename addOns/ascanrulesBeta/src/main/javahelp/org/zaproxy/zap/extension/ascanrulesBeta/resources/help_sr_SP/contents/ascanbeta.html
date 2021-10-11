@@ -261,7 +261,7 @@ The rule tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMyqlScanRule.java">SqlInjectionMyqlScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMySqlScanRule.java">SqlInjectionMySqlScanRule.java</a>
 
 <h2>SQL Injection - Oracle (Time Based)</h2>
 
@@ -342,8 +342,8 @@ Applications which parse XML input may be subject to XXE when weakly or poorly c
 handle XML input containing reference to an external entity such as a local file, HTTP requests to 
 internal or tertiary systems, etc. The number of tags which are tested individually depends on the strength of the rule.<br>
 <br>
-It requires the Callback extension, so will not work if this extension is disabled or removed. 
-It is also recommended that you test that the Callback extension is correctly configured for your target site.
+This scan rule will only run if the OAST add-on is installed and available.
+It is also recommended that you test that the Callbacks service in the OAST add-on is correctly configured for your target site.
 If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XxeScanRule.java">XxeScanRule.java</a>
