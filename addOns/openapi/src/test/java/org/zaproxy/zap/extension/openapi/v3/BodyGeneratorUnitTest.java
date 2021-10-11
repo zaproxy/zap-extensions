@@ -728,6 +728,23 @@ class BodyGeneratorUnitTest extends TestUtils {
                 request);
     }
 
+    @Test
+    void shouldGenerateNestedMapProperties() throws IOException {
+        OpenAPI openAPI = parseResource("Schema_with_nested_map_properties.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v4/endpoint",
+                                        openAPI.getPaths().get("/v4/endpoint").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        assertEquals(
+                "[{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"],\"io\":[{\"input\":{\"name\":\"John Doe\",\"desc\":\"John Doe\",\"subthing\":{\"thing1\":\"John Doe\",\"thing2\":\"John Doe\"}},\"output\":{\"name\":\"John Doe\",\"desc\":\"John Doe\"}}]},{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"],\"io\":[{\"input\":{\"name\":\"John Doe\",\"desc\":\"John Doe\",\"subthing\":{\"thing1\":\"John Doe\",\"thing2\":\"John Doe\"}},\"output\":{\"name\":\"John Doe\",\"desc\":\"John Doe\"}}]}]",
+                request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
