@@ -11,6 +11,36 @@ components:
           type: string
           example: Fluffy
 paths:
+  /query-parameter-with-example:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 42
+      responses:
+        '201':
+          description: Created
+  /query-parameter-with-examples:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+          examples:
+            petId:
+              value: 42
+      responses:
+        '201':
+          description: Created
   # Using Example defined in a references schema
   /pets-with-example:
     post:
