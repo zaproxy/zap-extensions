@@ -50,6 +50,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
+import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
@@ -97,6 +98,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         this.registerAutomationJob(new RequestorJob());
         this.registerAutomationJob(new PassiveScanWaitJob());
         this.registerAutomationJob(new SpiderJob());
+        this.registerAutomationJob(new DelayJob());
         this.registerAutomationJob(new ActiveScanJob());
         this.registerAutomationJob(new ParamsJob());
         // Instantiate early so its visible to potential consumers
@@ -116,9 +118,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             extensionHook.getHookView().addStatusPanel(getAutomationPanel());
         }
     }
-
-    @Override
-    public void optionsLoaded() {}
 
     @Override
     public boolean canUnload() {
