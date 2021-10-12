@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
@@ -30,10 +31,13 @@ import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DataGenerator {
 
@@ -78,10 +82,21 @@ public class DataGenerator {
         if (value != null) {
             return value;
         }
-        if (parameter.getExample() != null) {
-            return parameter.getExample().toString();
+        String example = extractExample(parameter);
+        if (example != null) {
+            return example;
         }
         return "";
+    }
+
+    private static String extractExample(Parameter parameter) {
+        return Optional.ofNullable(parameter.getExamples())
+                .map(Map::values)
+                .map(Collection::stream)
+                .map(stream -> stream.map(Example::getValue).filter(Objects::nonNull).findFirst())
+                .orElse(Optional.ofNullable(parameter.getExample()))
+                .map(Object::toString)
+                .orElse(null);
     }
 
     private static String getDefaultValue(Schema<?> schema) {
