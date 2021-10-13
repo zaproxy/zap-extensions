@@ -7,7 +7,7 @@
 			"@host": "[(${helper.legacyEscapeText(helper.getHostForSite(site), true)})]",
 			"@port": "[(${helper.getPortForSite(site)})]",
 			"@ssl": "[(${helper.isSslSite(site)})]",
-			"alerts": [ [#th:block th:each="alert, alertState: ${helper.getAlertsForSite(alertTree, site)}" th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.pluginId)}"]
+			"alerts": [ [#th:block th:each="alert, alertState: ${helper.getAlertsForSite(alertTree, site)}" th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.name, alert.risk)}"]
 				{
 					"pluginid": "[(${alert.pluginId})]",
 					"alertRef": "[(${alert.alertRef})]",
