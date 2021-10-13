@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - OWASP Top Ten 2021/2017 mappings for Insecure Authentication scan rule.
 
+### Changed
+- Timestamp Disclosure scan rule now excludes values in "Expect-CT" headers (Issue 6725).
+
 ## [36] - 2021-10-06
 ### Added
 - OWASP Top Ten 2021/2017 mappings.

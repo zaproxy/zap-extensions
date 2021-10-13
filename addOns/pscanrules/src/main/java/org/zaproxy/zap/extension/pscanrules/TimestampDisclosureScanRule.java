@@ -84,7 +84,8 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         "Age",
         "Strict-Transport-Security",
         "Report-To",
-        "NEL"
+        "NEL",
+        "Expect-CT"
     };
 
     static final Pattern PATTERN_FONT_EXTENSIONS =

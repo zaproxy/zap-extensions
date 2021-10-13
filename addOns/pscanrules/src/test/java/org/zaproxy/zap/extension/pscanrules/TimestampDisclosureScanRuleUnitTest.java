@@ -23,17 +23,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
@@ -73,24 +75,29 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     }
 
     @Test
-    void verifyExcludedHeadersListAsExpected() {
+    void verifyIgnoredHeadersListAsExpected() {
         // Given / When
         List<String> ignoreList =
                 Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
         // Then
-        assertEquals(7, ignoreList.size());
-        assertTrue(ignoreList.contains("NEL"));
-        assertTrue(ignoreList.contains("Report-To"));
+        assertEquals(8, ignoreList.size());
     }
 
-    @Test
-    void shouldNotRaiseAlertOnSTSHeader() throws Exception {
+    private static Stream<Arguments> headersToIgnoreSource() {
+        return Arrays.stream(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE)
+                .map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("headersToIgnoreSource")
+    void shouldNotRaiseAlertOnIgnorableHeaders(String header) throws Exception {
         // Given
         HttpMessage msg = createMessage("");
+        // This creates a header that would be Alerted upon if not ignored
+        // It does not necessarily create a header with realistic content
+        String headerToTest = header + ": 2147483647";
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Strict-Transport-Security: max-age=15552000; includeSubDomains\r\n");
+                "HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n" + headerToTest + "\r\n");
         // When
         scanHttpResponseReceive(msg);
         // Then
