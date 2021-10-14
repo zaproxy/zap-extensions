@@ -20,7 +20,16 @@
 package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
 
@@ -48,6 +57,108 @@ public class ContextWrapper {
         }
     }
 
+    public ContextWrapper(Map<?, ?> contextData, AutomationProgress progress) {
+        this.data = new Data();
+        for (Entry<?, ?> cdata : contextData.entrySet()) {
+            Object value = cdata.getValue();
+            if (value == null) {
+                continue;
+            }
+            switch (cdata.getKey().toString()) {
+                case "name":
+                    data.setName(value.toString());
+                    break;
+                case "urls":
+                    if (!(value instanceof ArrayList)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badurlslist", value));
+
+                    } else {
+                        ArrayList<?> urlList = (ArrayList<?>) value;
+                        for (Object urlObj : urlList) {
+                            String url = urlObj.toString();
+                            data.getUrls().add(url);
+                            try {
+                                if (!url.contains("${")) {
+                                    // Cannot validate urls containing envvars
+                                    new URI(url, true);
+                                }
+                            } catch (URIException e) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.context.badurl", urlObj));
+                            }
+                        }
+                    }
+                    break;
+                case "url":
+                    // For backwards compatibility
+                    String url = value.toString();
+                    data.getUrls().add(url);
+                    try {
+                        if (!url.contains("${")) {
+                            // Cannot validate urls containing envvars
+                            new URI(url, true);
+                        }
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.context.url.deprecated"));
+                    } catch (URIException e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badurl", value.toString()));
+                    }
+                    break;
+                case "includePaths":
+                    data.setIncludePaths(verifyRegexes(value, "badincludelist", progress));
+                    break;
+                case "excludePaths":
+                    data.setExcludePaths(verifyRegexes(value, "badexcludelist", progress));
+                    break;
+                default:
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.options.unknown",
+                                    AutomationEnvironment.AUTOMATION_CONTEXT_NAME,
+                                    cdata.getKey().toString()));
+            }
+        }
+        if (StringUtils.isEmpty(data.getName())) {
+            progress.error(
+                    Constant.messages.getString("automation.error.context.noname", contextData));
+        }
+        if (data.getUrls().isEmpty()) {
+            progress.error(
+                    Constant.messages.getString("automation.error.context.nourl", contextData));
+        }
+    }
+
+    private List<String> verifyRegexes(Object value, String key, AutomationProgress progress) {
+        if (!(value instanceof ArrayList<?>)) {
+            progress.error(Constant.messages.getString("automation.error.context." + key, value));
+            return Collections.emptyList();
+        }
+        ArrayList<String> regexes = new ArrayList<>();
+        for (Object regex : (ArrayList<?>) value) {
+            String regexStr = regex.toString();
+            regexes.add(regexStr);
+            try {
+                if (!regexStr.contains("${")) {
+                    // Only validate the regex if it doesnt contain vars
+                    Pattern.compile(regexStr);
+                }
+            } catch (PatternSyntaxException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.badregex",
+                                regex.toString(),
+                                e.getMessage()));
+            }
+        }
+        return regexes;
+    }
+
     public Context getContext() {
         return this.context;
     }
@@ -68,14 +179,22 @@ public class ContextWrapper {
         this.data = data;
     }
 
-    public void createContext(Session session, AutomationEnvironment env) {
-        Context oldContext = session.getContext(getData().getName());
+    public void createContext(
+            Session session, AutomationEnvironment env, AutomationProgress progress) {
+        String contextName = env.replaceVars((getData().getName()));
+        Context oldContext = session.getContext(contextName);
         if (oldContext != null) {
             session.deleteContext(oldContext);
         }
-        this.context = session.getNewContext(getData().getName());
+        this.context = session.getNewContext(contextName);
         for (String url : getData().getUrls()) {
-            this.context.addIncludeInContextRegex(env.replaceVars(url) + ".*");
+            try {
+                String urlWithEnvs = env.replaceVars(url);
+                new URI(urlWithEnvs, true);
+                this.context.addIncludeInContextRegex(urlWithEnvs + ".*");
+            } catch (Exception e) {
+                progress.error(Constant.messages.getString("automation.error.context.badurl", url));
+            }
         }
         List<String> includePaths = getData().getIncludePaths();
         if (includePaths != null) {
