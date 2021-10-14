@@ -110,6 +110,11 @@ public class ReportHelper {
         return list;
     }
 
+    /**
+     * @deprecated Use {@link getAlertInstancesForSite(AlertNode, String, String int)} instead -
+     *     this method can return the instances for different alerts with the same pluginId.
+     */
+    @Deprecated
     public static List<Alert> getAlertInstancesForSite(
             AlertNode rootNode, String site, int pluginId) {
         List<Alert> list = new ArrayList<>();
@@ -119,6 +124,28 @@ public class ReportHelper {
             // Only the instances have userObjects, not the top level nodes :/
             if (alertNode.getChildAt(0) != null
                     && alertNode.getChildAt(0).getUserObject().getPluginId() == pluginId) {
+                for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                    AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                    if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                        list.add(instanceNode.getUserObject());
+                    }
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    public static List<Alert> getAlertInstancesForSite(
+            AlertNode rootNode, String site, String alertName, int alertRisk) {
+        List<Alert> list = new ArrayList<>();
+
+        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
+            AlertNode alertNode = rootNode.getChildAt(alertIndex);
+            // Only the instances have userObjects, not the top level nodes :/
+            if (alertNode.getChildAt(0) != null
+                    && alertNode.getRisk() == alertRisk
+                    && alertNode.getChildAt(0).getUserObject().getName().equals(alertName)) {
                 for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
                     AlertNode instanceNode = alertNode.getChildAt(instIndex);
                     if (instanceNode.getUserObject().getUri().startsWith(site)) {

@@ -7,7 +7,7 @@
 			<alerts>
 				<th:block
 					th:each="alert: ${helper.getAlertsForSite(alertTree, site)}"
-					th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.pluginId)}">
+					th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.name, alert.risk)}">
 					<alertitem>
 						<pluginid th:text="${alert.pluginId}"></pluginid>
 						<alertRef th:text="${alert.alertRef}"></alertRef>

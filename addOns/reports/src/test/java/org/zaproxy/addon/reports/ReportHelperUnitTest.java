@@ -23,7 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.alert.AlertNode;
 
 class ReportHelperUnitTest {
 
@@ -81,5 +84,78 @@ class ReportHelperUnitTest {
         assertThat(
                 ReportHelper.legacyEscapeParagraph("New\nLines\r\nTest"),
                 is("<p>New</p><p>Lines</p><p>Test</p>"));
+    }
+
+    @Test
+    void shouldGetAlertInstancesForSite() {
+        // Given
+        String example1Com = "https:///www.example-1.com";
+        String example2Org = "https:///www.example-2.org";
+        String example3Xyz = "https:///www.example-3.xyz";
+        AlertNode rootNode = new AlertNode(-1, "Root");
+
+        String xssAlertName = "XSS";
+        // Note that the first child is always the same as the top node
+        AlertNode xssNode = newAlertNode(3, xssAlertName, example1Com + "/");
+        xssNode.add(newAlertNode(3, xssAlertName, example1Com + "/2"));
+        xssNode.add(newAlertNode(3, xssAlertName, example1Com + "/3"));
+        xssNode.add(newAlertNode(3, xssAlertName, example2Org + "/3"));
+        rootNode.add(xssNode);
+
+        String sqlAlertName = "SQLi";
+        AlertNode sql3Node = newAlertNode(3, sqlAlertName, example2Org + "/1");
+        sql3Node.add(newAlertNode(3, sqlAlertName, example2Org + "/1"));
+        sql3Node.add(newAlertNode(3, sqlAlertName, example3Xyz + "/"));
+        rootNode.add(sql3Node);
+
+        // Level 2 risk instead of 3 above
+        AlertNode sql2Node = newAlertNode(2, sqlAlertName, example3Xyz + "/1");
+        sql2Node.add(newAlertNode(2, sqlAlertName, example3Xyz + "/1"));
+        rootNode.add(sql2Node);
+
+        // When
+        List<Alert> ex1xssAlerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example1Com, xssAlertName, 3);
+        List<Alert> ex2xssAlerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example2Org, xssAlertName, 3);
+        List<Alert> ex3xssAlerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example3Xyz, xssAlertName, 3);
+
+        List<Alert> ex1sql3Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example1Com, sqlAlertName, 3);
+        List<Alert> ex2sql3Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example2Org, sqlAlertName, 3);
+        List<Alert> ex3sql3Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example3Xyz, sqlAlertName, 3);
+
+        List<Alert> ex1sql2Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example1Com, sqlAlertName, 2);
+        List<Alert> ex2sql2Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example2Org, sqlAlertName, 2);
+        List<Alert> ex3sql2Alerts =
+                ReportHelper.getAlertInstancesForSite(rootNode, example3Xyz, sqlAlertName, 2);
+
+        // Then
+        assertThat(ex1xssAlerts.size(), is(2));
+        assertThat(ex2xssAlerts.size(), is(1));
+        assertThat(ex3xssAlerts.size(), is(0));
+
+        assertThat(ex1sql3Alerts.size(), is(0));
+        assertThat(ex2sql3Alerts.size(), is(1));
+        assertThat(ex3sql3Alerts.size(), is(1));
+
+        assertThat(ex1sql2Alerts.size(), is(0));
+        assertThat(ex2sql2Alerts.size(), is(0));
+        assertThat(ex3sql2Alerts.size(), is(1));
+    }
+
+    AlertNode newAlertNode(int risk, String name, String url) {
+        AlertNode node = new AlertNode(risk, name);
+        Alert alert = new Alert(1);
+        alert.setName(name);
+        alert.setUri(url);
+        alert.setRisk(risk);
+        node.setUserObject(alert);
+        return node;
     }
 }
