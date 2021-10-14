@@ -48,9 +48,19 @@ public class ReportHelper {
     }
 
     public static String getHostForSite(String site) {
-        String[] schemeHostPort = site.split(":");
-        // http://www.example.com:8080 - the host will start with //
-        String host = schemeHostPort[1].substring(2);
+        if (site == null) {
+            return "";
+        }
+        String host = site;
+        if (site.contains(":")) {
+            String[] schemeHostPort = site.split(":");
+            String start = schemeHostPort[0].toLowerCase();
+            if (start.equals("http")
+                    || start.equals("https") && schemeHostPort[1].startsWith("//")) {
+                // http://www.example.com:8080 - the host will start with //
+                host = schemeHostPort[1].substring(2);
+            }
+        }
         int slashIndex = host.indexOf("/");
         if (slashIndex > 0) {
             host = host.substring(0, slashIndex);
@@ -59,9 +69,16 @@ public class ReportHelper {
     }
 
     public static int getPortForSite(String site) {
+        if (site == null) {
+            return 80;
+        }
         String[] schemeHostPort = site.split(":");
         if (schemeHostPort.length == 3) {
-            return Integer.parseInt(schemeHostPort[2]);
+            try {
+                return Integer.parseInt(schemeHostPort[2]);
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
         }
         if (schemeHostPort[0].equalsIgnoreCase("https")) {
             return 443;

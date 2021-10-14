@@ -48,6 +48,10 @@ class ReportHelperUnitTest {
         assertThat(
                 ReportHelper.getHostForSite("http://www.example.com/path/more"),
                 is("www.example.com"));
+        assertThat(ReportHelper.getHostForSite("www.example.com/path/more"), is("www.example.com"));
+        assertThat(
+                ReportHelper.getHostForSite("http.example.com/path/more"), is("http.example.com"));
+        assertThat(ReportHelper.getHostForSite(null), is(""));
     }
 
     @Test
@@ -59,6 +63,10 @@ class ReportHelperUnitTest {
         assertThat(ReportHelper.getPortForSite("http://www.example.com:8080"), is(8080));
         assertThat(ReportHelper.getPortForSite("https://www.example.com"), is(443));
         assertThat(ReportHelper.getPortForSite("http://www.example.com"), is(80));
+        assertThat(ReportHelper.getPortForSite("www.example.com"), is(80));
+        assertThat(ReportHelper.getPortForSite("https://www.example.com:bad"), is(443));
+        assertThat(ReportHelper.getPortForSite("http://www.example.com:bad"), is(80));
+        assertThat(ReportHelper.getPortForSite(null), is(80));
     }
 
     @Test
