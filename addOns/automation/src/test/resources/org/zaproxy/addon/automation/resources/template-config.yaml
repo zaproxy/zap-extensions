@@ -37,6 +37,10 @@ jobs:
       context: 
       url: 
 
+  - type: delay
+    name: delay
+    parameters:
+
   - type: passiveScan-wait
     name: passiveScan-wait
     parameters:

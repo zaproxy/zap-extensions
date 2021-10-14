@@ -26,6 +26,7 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -44,6 +45,7 @@ public class AutomationAPI extends ApiImplementor {
     private static final String PREFIX = "automation";
 
     private static final String ACTION_RUN_PLAN = "runPlan";
+    private static final String ACTION_END_DELAY_JOB = "endDelayJob";
     private static final String VIEW_PLAN_PROGRESS = "planProgress";
 
     private static final String PARAM_FILE_PATH = "filePath";
@@ -64,6 +66,7 @@ public class AutomationAPI extends ApiImplementor {
         super();
         this.extension = extension;
         this.addApiAction(new ApiAction(ACTION_RUN_PLAN, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_END_DELAY_JOB));
         this.addApiView(new ApiView(VIEW_PLAN_PROGRESS, new String[] {PARAM_PLAN_ID}));
     }
 
@@ -92,6 +95,9 @@ public class AutomationAPI extends ApiImplementor {
             } catch (IOException | ApiException e) {
                 throw new ApiException(Type.DOES_NOT_EXIST, e.getMessage());
             }
+        } else if (name.equals(ACTION_END_DELAY_JOB)) {
+            DelayJob.setEndJob(true);
+            return ApiResponseElement.OK;
         }
         throw new ApiException(Type.BAD_ACTION);
     }

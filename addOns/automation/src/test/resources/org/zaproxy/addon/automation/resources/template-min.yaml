@@ -41,6 +41,10 @@ jobs:
         operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
         value: 100                                      # Int: Change this to the number of URLs you expect to find
         onFail: 'info'                                  # String: One of 'warn', 'error', 'info', mandatory
+  - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
+    parameters:
+      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
+      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
   - type: passiveScan-wait             # Passive scan wait for the passive scanner to finish
     parameters:
       maxDuration: 5                   # Int: The max time to wait for the passive scanner, default: 0 unlimited
