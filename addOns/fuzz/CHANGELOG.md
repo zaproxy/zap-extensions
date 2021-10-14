@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13.4.0] - 2021-10-14
 ### Added
 - A right click (context menu) item to facilitate adding a fuzz message to the Sites Tree and History panel (Issue 1437).
 
@@ -154,6 +154,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.4.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.4.0
 [13.3.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.3.0
 [13.2.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.2.0
 [13.1.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.1.0
