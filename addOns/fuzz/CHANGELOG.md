@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- A right click (context menu) item to facilitate adding a fuzz message to the Sites Tree and History panel (Issue 1437).
 
 ## [13.3.0] - 2021-10-06
 ### Fixed
