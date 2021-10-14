@@ -50,7 +50,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
     private final JRadioButton depthFirstPayloadReplacementStrategyRadioButton;
     private final JRadioButton breadthFirstPayloadReplacementStrategyRadioButton;
     private final JSlider defaultThreadsPerFuzzerSlider;
-    private final JSlider defaultFuzzDelayInMsSlider;
+    private final ZapNumberSpinner defaultFuzzDelayInMsSpinner;
 
     private final FuzzerHandlerOptionsPanel<FO> fuzzerHandlerOptions;
 
@@ -100,17 +100,12 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         currentDefaultThreadsPerFuzzerLabel.setText(
                 Integer.toString(defaultOptions.getThreadCount()));
 
-        JLabel currentDefaultFuzzDelayLabel = new JLabel();
-        defaultFuzzDelayInMsSlider =
-                createDefaultFuzzDelayInMsSlider(
-                        (int) defaultOptions.getSendMessageDelay(),
-                        1000,
-                        currentDefaultFuzzDelayLabel);
+        defaultFuzzDelayInMsSpinner =
+                new ZapNumberSpinner(
+                        0, (int) defaultOptions.getSendMessageDelay(), FuzzOptions.MAX_DELAY_IN_MS);
         JLabel defaultFuzzDelayLabel =
                 new JLabel(resourceBundle.getString("fuzz.options.label.delayInMs"));
-        defaultFuzzDelayLabel.setLabelFor(defaultFuzzDelayInMsSlider);
-        currentDefaultFuzzDelayLabel.setText(
-                Integer.toString((int) defaultOptions.getSendMessageDelay()));
+        defaultFuzzDelayLabel.setLabelFor(defaultFuzzDelayInMsSpinner);
 
         ButtonGroup replacementStrategyButtonGroup = new ButtonGroup();
         depthFirstPayloadReplacementStrategyRadioButton =
@@ -213,13 +208,9 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                                                                 currentDefaultThreadsPerFuzzerLabel))
                                         .addComponent(defaultThreadsPerFuzzerSlider))
                         .addGroup(
-                                layout.createParallelGroup()
-                                        .addGroup(
-                                                layout.createSequentialGroup()
-                                                        .addComponent(defaultFuzzDelayLabel)
-                                                        .addComponent(currentDefaultFuzzDelayLabel))
-                                        .addComponent(defaultFuzzDelayInMsSlider))
-                        .addComponent(this.fuzzerHandlerOptions.getPanel()));
+                                layout.createSequentialGroup()
+                                        .addComponent(defaultFuzzDelayLabel)
+                                        .addComponent(defaultFuzzDelayInMsSpinner)));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -252,13 +243,9 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                                                                 currentDefaultThreadsPerFuzzerLabel))
                                         .addComponent(defaultThreadsPerFuzzerSlider))
                         .addGroup(
-                                layout.createSequentialGroup()
-                                        .addGroup(
-                                                layout.createParallelGroup()
-                                                        .addComponent(defaultFuzzDelayLabel)
-                                                        .addComponent(currentDefaultFuzzDelayLabel))
-                                        .addComponent(defaultFuzzDelayInMsSlider))
-                        .addComponent(this.fuzzerHandlerOptions.getPanel()));
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(defaultFuzzDelayLabel)
+                                        .addComponent(defaultFuzzDelayInMsSpinner)));
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(innerPanel);
@@ -275,28 +262,13 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         return threadsSlider;
     }
 
-    private static JSlider createDefaultFuzzDelayInMsSlider(
-            int delayInMs, int maxDelayInMs, final JLabel currentValueFeedbackLabel) {
-        final JSlider delaySlider = new JSlider();
-        delaySlider.setMinimum(0);
-        delaySlider.setValue(delayInMs);
-        delaySlider.setMaximum(maxDelayInMs);
-        delaySlider.setMinorTickSpacing(25);
-        delaySlider.setMajorTickSpacing(100);
-        delaySlider.setPaintTicks(true);
-        delaySlider.setPaintLabels(true);
-        delaySlider.addChangeListener(
-                e -> currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue())));
-        return delaySlider;
-    }
-
     public boolean validateFields() {
         FuzzerOptions baseOptions =
                 new FuzzerOptions(
                         defaultThreadsPerFuzzerSlider.getValue(),
                         retriesOnIOErrorNumberSpinner.getValue().intValue(),
                         getMaxErrorsAllowed(),
-                        defaultFuzzDelayInMsSlider.getValue(),
+                        defaultFuzzDelayInMsSpinner.getValue(),
                         TimeUnit.MILLISECONDS,
                         getSelectedStrategy());
 
@@ -326,7 +298,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                         defaultThreadsPerFuzzerSlider.getValue(),
                         retriesOnIOErrorNumberSpinner.getValue().intValue(),
                         getMaxErrorsAllowed(),
-                        defaultFuzzDelayInMsSlider.getValue(),
+                        defaultFuzzDelayInMsSpinner.getValue(),
                         TimeUnit.MILLISECONDS,
                         getSelectedStrategy());
 
@@ -338,7 +310,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         retriesOnIOErrorNumberSpinner.setValue(defaultOptions.getRetriesOnIOError());
         maxErrorsAllowedEnabledCheckBox.setSelected(true);
         maxErrorsAllowedNumberSpinner.setValue(defaultOptions.getMaxErrorsAllowed());
-        defaultFuzzDelayInMsSlider.setValue((int) defaultOptions.getSendMessageDelay());
+        defaultFuzzDelayInMsSpinner.setValue((int) defaultOptions.getSendMessageDelay());
         depthFirstPayloadReplacementStrategyRadioButton.setSelected(
                 MessageLocationsReplacementStrategy.DEPTH_FIRST
                         == defaultOptions.getPayloadsReplacementStrategy());

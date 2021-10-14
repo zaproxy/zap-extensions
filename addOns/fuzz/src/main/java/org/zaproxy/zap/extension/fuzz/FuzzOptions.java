@@ -33,7 +33,7 @@ public class FuzzOptions extends VersionedAbstractParam {
     public static final int DEFAULT_THREADS_PER_FUZZER = 5;
 
     public static final int DEFAULT_FUZZ_DELAY_IN_MS = 0;
-
+    public static final int MAX_DELAY_IN_MS = 3600000;
     public static final int DEFAULT_RETRIES_ON_IO_ERROR = 3;
 
     public static final int DEFAULT_MAX_ERRORS_ALLOWED = 1000;

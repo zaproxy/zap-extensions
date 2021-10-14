@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - A right click (context menu) item to facilitate adding a fuzz message to the Sites Tree and History panel (Issue 1437).
 
+### Fixed
+- The 'Delay when Fuzzing (in milliseconds)' value can now also properly be controlled from the main fuzz window, and the options value won't be overridden (Issue 6651).
+
 ## [13.3.0] - 2021-10-06
 ### Fixed
 - The Numberzz payload generator should not set the increment to zero when creating subsequent payloads.

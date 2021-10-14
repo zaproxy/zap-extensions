@@ -56,8 +56,6 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 4273217959656622745L;
 
-    private static final int MAX_DELAY_IN_MS = 3600000;
-
     private final CustomFileFuzzerAddedListener customFileFuzzerAddedListener;
 
     private final String customCategoryName;
@@ -126,7 +124,8 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                 Integer.toString(FuzzOptions.DEFAULT_THREADS_PER_FUZZER));
 
         defaultFuzzDelayInMsSpinner =
-                new ZapNumberSpinner(0, FuzzOptions.DEFAULT_FUZZ_DELAY_IN_MS, MAX_DELAY_IN_MS);
+                new ZapNumberSpinner(
+                        0, FuzzOptions.DEFAULT_FUZZ_DELAY_IN_MS, FuzzOptions.MAX_DELAY_IN_MS);
         JLabel defaultFuzzDelayLabel =
                 new JLabel(resourceBundle.getString("fuzz.options.label.delayInMs"));
         defaultFuzzDelayLabel.setLabelFor(defaultFuzzDelayInMsSpinner);
