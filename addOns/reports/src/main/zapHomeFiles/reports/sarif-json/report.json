@@ -1,0 +1,154 @@
+{
+  "version": "2.1.0",
+  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "OWASP Zap",
+          "fullName" : "OWASP Zed Attack Proxy",
+          "informationUri": "https://www.zaproxy.org",
+          "semanticVersion" : [[${zapVersion}]],
+          "taxa" : [
+          	
+          ],
+          "supportedTaxonomies": [
+	          {
+		          "name": "CWE",
+		          "index": 1,
+		          "guid": "33333333-0000-1111-8888-000000000000"
+	          }
+          ]
+        }
+      },
+      
+      "webRequst" : [ ],
+      
+      "webResponses" : [ ],
+      
+      "results": [
+      	    {
+			    "ruleId": "ABC0003",
+			    "kind": "fail",
+			    "level": "note",
+			    "message": {
+			      "text": "Consider using 'nameof(start)' instead of hard-coding
+			               the parameter name 'start'."
+			    },
+			    "locations": [
+			      {
+			
+			        "physicalLocation": {
+			          "uri": "https://test.example.org/api/vulnerable",
+			          "region": {
+			            "startLine": 6
+			          }
+			        }
+			      }
+			    ]
+			  }
+      		[#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
+      		
+      		[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
+      ]
+    }
+  ],
+   "taxonomies": [
+    {
+      "name": "CWE",
+      "version": "3.2",
+      "releaseDateUtc": "2019-01-03",
+      "guid": "33333333-0000-1111-8888-000000000000",
+      "informationUri": "https://cwe.mitre.org/data/published/cwe_v3.2.pdf/",
+      "downloadUri": "https://cwe.mitre.org/data/xml/cwec_v3.2.xml.zip",
+      "organization": "MITRE",
+      "shortDescription": {
+        "text": "The MITRE Common Weakness Enumeration"
+      },
+
+      "contents": [
+
+        "localizedData",
+
+        "nonLocalizedData"
+
+      ],
+
+      "isComprehensive": true,
+      "minimumRequiredLocalizedDataSemanticVersion": "3.2",
+      "taxa": [
+
+        {
+
+          "id": "327",
+          "guid": "33333333-0000-1111-8888-111111111111",
+          "name": "BrokenOrRiskyCryptographicAlgorithm",
+          "shortDescription": {
+            "text": "Use of a Broken or Risky Cryptographic Algorithm."
+          },
+
+          "defaultConfiguration": {
+            "level": "warning"
+          }
+        },
+
+        {
+          "id": "924",
+          "guid": "33333333-0000-1111-8888-222222222222",
+          "name": "TransmittedMessageIntegrity",
+          "shortDescription": {
+            "text": "Improper Enforcement of Message Integrity ..."
+          },
+          "defaultConfiguration": {
+            "level": "warning"
+          }
+        }
+
+      ]
+
+    }
+
+  ],
+}
+,
+
+{
+	"@version": [[${zapVersion}]],
+	"@generated": [[${generatedString}]],
+	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
+		{
+			"@name": "[(${helper.legacyEscapeText(site, true)})]",
+			"@host": "[(${helper.legacyEscapeText(helper.getHostForSite(site), true)})]",
+			"@port": "[(${helper.getPortForSite(site)})]",
+			"@ssl": "[(${helper.isSslSite(site)})]",
+			"alerts": [ [#th:block th:each="alert, alertState: ${helper.getAlertsForSite(alertTree, site)}" th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.name, alert.risk)}"]
+				{
+					"pluginid": "[(${alert.pluginId})]",
+					"alertRef": "[(${alert.alertRef})]",
+					"alert": "[(${helper.legacyEscapeText(alert.name, true)})]",
+					"name": "[(${helper.legacyEscapeText(alert.name, true)})]",
+					"riskcode": "[(${alert.risk})]",
+					"confidence": "[(${alert.confidence})]",
+					"riskdesc": "[(${helper.legacyEscapeText(helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.confidence) + ')', true)})]",
+					"desc": "[(${helper.legacyEscapeParagraph(alert.description, true)})]",
+					"instances":[ [#th:block th:each="instance, instState: ${instances}"][#th:block th:if="${! instState.first}"],[/th:block]
+						{
+							"uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
+							"method": "[(${helper.legacyEscapeText(instance.method, true)})]",
+							"param": "[(${helper.legacyEscapeText(instance.param, true)})]",
+							"attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
+							"evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]"
+						}[/th:block]
+					],
+					"count": "[(${instances.size})]",
+					"solution": "[(${helper.legacyEscapeParagraph(alert.solution, true)})]",
+					"otherinfo": "[(${helper.legacyEscapeParagraph(alert.otherinfo, true)})]",
+					"reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",
+					"cweid": "[(${alert.cweid})]",
+					"wascid": "[(${alert.wascid})]",
+					"sourceid": "[(${alert.sourceHistoryId})]"
+				}[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
+			]
+		}[/th:block]
+	]
+}
