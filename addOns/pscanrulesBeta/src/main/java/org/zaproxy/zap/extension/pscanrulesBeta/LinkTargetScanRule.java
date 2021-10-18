@@ -158,23 +158,18 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
             String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
             if (relAtt != null) {
                 relAtt = relAtt.toLowerCase();
-                if (!relAtt.contains(OPENER)) {
-                    // Its ok
-                    return false;
-                } else if (relAtt.contains(NOOPENER)) {
-                    return false;
+                if (relAtt.contains(OPENER) && !relAtt.contains(NOOPENER)) {
+                    newAlert()
+                            .setRisk(Alert.RISK_MEDIUM)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setDescription(getDescription())
+                            .setSolution(getSolution())
+                            .setReference(getReference())
+                            .setEvidence(link.toString())
+                            .raise();
+                    return true;
                 }
             }
-            // Its bad
-            newAlert()
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription())
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .setEvidence(link.toString())
-                    .raise();
-            return true;
         }
         return false;
     }
