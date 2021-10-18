@@ -38,15 +38,14 @@ public class ImportExportApi extends ApiImplementor {
 
     private static final Logger LOG = LogManager.getLogger(ImportExportApi.class);
     private static final String PREFIX = "exim";
-    private static final String ACTION_IMPORTHAR = "importhar";
     private static final String PARAM_FILE_PATH = "filePath";
-
-    private static final String ACTION_IMPORTURLS = "importurls";
+    private static final String ACTION_IMPORT_HAR = "importHar";
+    private static final String ACTION_IMPORT_URLS = "importUrls";
 
     public ImportExportApi() {
         super();
-        this.addApiAction(new ApiAction(ACTION_IMPORTHAR, new String[] {PARAM_FILE_PATH}));
-        this.addApiAction(new ApiAction(ACTION_IMPORTURLS, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_HAR, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_URLS, new String[] {PARAM_FILE_PATH}));
     }
 
     @Override
@@ -61,11 +60,11 @@ public class ImportExportApi extends ApiImplementor {
         boolean success;
         File file;
         switch (name) {
-            case ACTION_IMPORTHAR:
+            case ACTION_IMPORT_HAR:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
                 success = HarImporter.importHarFile(file);
                 return handleFileImportResponse(success, file);
-            case ACTION_IMPORTURLS:
+            case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
                 success = UrlsImporter.importUrlFile(file);
                 return handleFileImportResponse(success, file);
