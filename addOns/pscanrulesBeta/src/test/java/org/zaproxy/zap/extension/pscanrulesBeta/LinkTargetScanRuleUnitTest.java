@@ -78,6 +78,20 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
     }
 
     @Test
+    void dontRaiseIssueWhenOnlyTargetBlank() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        // When
+        msg.setResponseBody(
+                "<html><a href=\"http://www.example.com\" target=\"_blank\">link</a></html>");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void dontRaiseIssueWhenNoLinks() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
