@@ -23,6 +23,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
+import org.zaproxy.addon.exim.log.MenuItemImportLogs;
 import org.zaproxy.addon.exim.urls.MenuItemImportUrls;
 
 public class ExtensionExim extends ExtensionAdaptor {
@@ -44,6 +45,7 @@ public class ExtensionExim extends ExtensionAdaptor {
 
             extensionHook.getHookMenu().addImportMenuItem(new MenuImportHar());
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportUrls());
+            extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportLogs());
         }
         extensionHook.addApiImplementor(new ImportExportApi());
     }
