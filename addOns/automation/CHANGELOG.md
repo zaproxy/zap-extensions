@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Delay job
+- Session management support (but not currently exposed - its a stepping stone to full authentication support)
 
 ### Fixed
 - Plans saved without default ".yaml" extension.

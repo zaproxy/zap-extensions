@@ -187,7 +187,7 @@ public class JobUtils {
             } catch (Exception e1) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.options.methods",
+                                "automation.error.options.method",
                                 obj.getClass().getCanonicalName(),
                                 optionsGetterName,
                                 e1.getMessage()));
@@ -223,9 +223,7 @@ public class JobUtils {
             LOG.error(e1.getMessage(), e1);
             progress.error(
                     Constant.messages.getString(
-                            "automation.error.options.methods",
-                            objectName, // TODO changed params
-                            e1.getMessage()));
+                            "automation.error.options.methods", objectName, e1.getMessage()));
             return;
         }
 
@@ -238,7 +236,6 @@ public class JobUtils {
                 continue;
             }
 
-            String resolvedValue = param.getValue().toString();
             String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
             Method optMethod = methodMap.get(paramMethodName);
             if (optMethod != null) {
@@ -246,7 +243,7 @@ public class JobUtils {
                     Object value = null;
                     Class<?> paramType = optMethod.getParameterTypes()[0];
                     try {
-                        value = stringToType(resolvedValue, paramType);
+                        value = objectToType(param.getValue(), paramType);
                     } catch (NumberFormatException e1) {
                         progress.error(
                                 Constant.messages.getString(
@@ -384,9 +381,7 @@ public class JobUtils {
             LOG.error(e1.getMessage(), e1);
             progress.error(
                     Constant.messages.getString(
-                            "automation.error.options.methods",
-                            objectName, // TODO changed params
-                            e1.getMessage()));
+                            "automation.error.options.methods", objectName, e1.getMessage()));
             return;
         }
     }
@@ -405,24 +400,32 @@ public class JobUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> T stringToType(String str, T t) {
+    static <T> T objectToType(Object obj, T t) {
         if (String.class.equals(t)) {
-            return (T) str;
+            return (T) obj.toString();
         } else if (Integer.class.equals(t) || int.class.equals(t)) {
-            return (T) (Object) Integer.parseInt(str);
+            return (T) (Object) Integer.parseInt(obj.toString());
         } else if (Long.class.equals(t) || long.class.equals(t)) {
-            return (T) (Object) Long.parseLong(str);
+            return (T) (Object) Long.parseLong(obj.toString());
         } else if (Boolean.class.equals(t) || boolean.class.equals(t)) {
             // Don't use Boolean.parseBoolean as it won't reject illegal values
-            String s = str.trim().toLowerCase();
+            String s = obj.toString().trim().toLowerCase();
             if ("true".equals(s)) {
                 return (T) Boolean.TRUE;
             } else if ("false".equals(s)) {
                 return (T) Boolean.FALSE;
             }
-            throw new IllegalArgumentException("Invalid boolean value: " + str);
+            throw new IllegalArgumentException("Invalid boolean value: " + obj.toString());
+        } else if (Map.class.equals(t)) {
+            if (obj instanceof Map) {
+                HashMap map = new HashMap<>();
+                map.putAll((Map) obj);
+                return (T) map;
+            } else {
+                LOG.error("Unable to map to a Map from {}", obj.getClass().getCanonicalName());
+            }
         } else if (Enum.class.isAssignableFrom((Class<T>) t)) {
-            T enumType = (T) EnumUtils.getEnumIgnoreCase((Class<Enum>) t, str);
+            T enumType = (T) EnumUtils.getEnumIgnoreCase((Class<Enum>) t, obj.toString());
             if (enumType != null) {
                 return enumType;
             }
