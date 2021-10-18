@@ -104,6 +104,17 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         assertEquals(0, alertsRaised.size());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"00000000", "000000000", "0000000000"})
+    void shouldNotRaiseAlertOnZeroValues(String value) throws Exception {
+        // Given
+        HttpMessage msg = createMessage(value);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
     @Test
     void shouldRaiseAlertOnValidCurrentTimestamp() throws Exception {
         // Given

@@ -51,6 +51,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
+    private static final Date EPOCH_START = new Date(0L);
     /** a map of a regular expression pattern to details of the timestamp type found */
     static Map<Pattern, String> timestampPatterns = new HashMap<>();
 
@@ -151,12 +152,15 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                 Matcher matcher = timestampPattern.matcher(haystack);
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    java.util.Date timestamp = null;
+                    Date timestamp = null;
                     try {
                         // parse the number as a Unix timestamp
-                        timestamp = new java.util.Date((long) Integer.parseInt(evidence) * 1000);
+                        timestamp = new Date((long) Integer.parseInt(evidence) * 1000);
                     } catch (NumberFormatException nfe) {
                         // the number is not formatted correctly to be a timestamp. Skip it.
+                        continue;
+                    }
+                    if (EPOCH_START.equals(timestamp)) {
                         continue;
                     }
                     log.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
