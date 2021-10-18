@@ -174,7 +174,7 @@ class AutomationEnvironmentUnitTest {
                         + "  contexts:\n"
                         + "    - name: test\n"
                         + "      urls:\n"
-                        + "    - Not a url\n";
+                        + "      - Not a url\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data =
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
@@ -186,13 +186,34 @@ class AutomationEnvironmentUnitTest {
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(2)));
-        assertThat(
-                progress.getErrors().contains("!automation.error.env.badcontext!"),
-                is(equalTo(true)));
-        assertThat(
-                progress.getErrors().contains("!automation.error.context.nourl!"),
-                is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
+    }
+
+    @Test
+    void shouldFailAtRunTimeIfBadContextUrl() {
+        // Given
+        // Note that URLs containing env vrs are not checked on load
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: test\n"
+                        + "      urls:\n"
+                        + "      - Not a url with ${envvar}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
     }
 
     @Test
@@ -781,11 +802,12 @@ class AutomationEnvironmentUnitTest {
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
-                        + "    - name: context 1\n"
+                        + "    - name: context ${myVar2}\n"
                         + "      urls:\n"
                         + "      - https://www.${myEnvVar}.example.com\n"
                         + "  vars:\n"
-                        + "    myVar: ${myEnvVar}.suffix\n";
+                        + "    myVar: ${myEnvVar}.suffix\n"
+                        + "    myVar2: blah\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data =
                 yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
@@ -800,10 +822,14 @@ class AutomationEnvironmentUnitTest {
         // Then
         verify(contexts.get(0)).addIncludeInContextRegex("https://www.envVarValue.example.com.*");
         assertThat(env.getData().getVars().get("myVar"), is(equalTo("${myEnvVar}.suffix")));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getName(),
+                is(equalTo("context ${myVar2}")));
+        verify(session).getNewContext("context blah");
     }
 
     @Test
-    public void shouldWarnOnSingleUrl() {
+    void shouldWarnOnSingleUrl() {
         // Given
         String contextStr =
                 "env:\n"

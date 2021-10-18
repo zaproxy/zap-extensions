@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Delay job
 
+### Fixed
+- Plans saved without default ".yaml" extension.
+- Env vars in context names replaced on load, so lost if the plan saved again via the GUI.
+
 ## [0.7.0] - 2021-10-06
 ### Added
  - API support: runplan action and planprogress view.

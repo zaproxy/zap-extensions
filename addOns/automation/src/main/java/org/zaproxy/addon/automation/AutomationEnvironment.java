@@ -20,7 +20,6 @@
 package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,10 +28,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.gui.EnvironmentDialog;
@@ -105,113 +101,8 @@ public class AutomationEnvironment {
                                 "automation.error.env.badcontext", contextObject));
                 return;
             }
-            ContextWrapper cdw = parseContextData((LinkedHashMap<?, ?>) contextObject, progress);
-            if (cdw != null) {
-                this.contexts.add(cdw);
-            }
+            this.contexts.add(new ContextWrapper((LinkedHashMap<?, ?>) contextObject, progress));
         }
-    }
-
-    public ContextWrapper parseContextData( // TODO move into constructor?
-            Map<?, ?> contextData, AutomationProgress progress) {
-        String name = null;
-        List<String> urls = new ArrayList<>();
-        List<?> includeRegexes = null;
-        List<?> excludeRegexes = null;
-        for (Entry<?, ?> cdata : contextData.entrySet()) {
-            Object value = cdata.getValue();
-            if (value == null) {
-                continue;
-            }
-            switch (cdata.getKey().toString()) {
-                case "name":
-                    name = replaceVars(value);
-                    break;
-                case "urls":
-                    if (!(value instanceof ArrayList)) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.context.badurlslist", value));
-
-                    } else {
-                        ArrayList<?> urlList = (ArrayList<?>) value;
-                        for (Object urlObj : urlList) {
-                            try {
-                                String url = urlObj.toString();
-                                if (!url.contains("${")) {
-                                    // Cannot validate urls containing envvars
-                                    new URI(url, true);
-                                }
-                                urls.add(url);
-                            } catch (URIException e) {
-                                progress.error(
-                                        Constant.messages.getString(
-                                                "automation.error.context.badurl", urlObj));
-                            }
-                        }
-                    }
-                    break;
-                case "url":
-                    // For backwards compatibility
-                    try {
-                        String url = value.toString();
-                        if (!url.contains("${")) {
-                            // Cannot validate urls containing envvars
-                            new URI(url, true);
-                        }
-                        urls.add(url);
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.context.url.deprecated"));
-                    } catch (URIException e) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.context.badurl", value.toString()));
-                    }
-                    break;
-                case "includePaths":
-                    includeRegexes = verifyRegexes(value, "badincludelist", progress);
-                    break;
-                case "excludePaths":
-                    excludeRegexes = verifyRegexes(value, "badexcludelist", progress);
-                    break;
-                default:
-                    progress.warn(
-                            Constant.messages.getString(
-                                    "automation.error.options.unknown",
-                                    AUTOMATION_CONTEXT_NAME,
-                                    cdata.getKey().toString()));
-            }
-        }
-        if (name == null) {
-            progress.error(
-                    Constant.messages.getString("automation.error.context.noname", contextData));
-            return null;
-        }
-        if (urls.isEmpty()) {
-            progress.error(
-                    Constant.messages.getString("automation.error.context.nourl", contextData));
-            return null;
-        }
-        ContextWrapper.Data ctxWrapperData = new ContextWrapper.Data();
-        ctxWrapperData.setName(name);
-        ctxWrapperData.setUrls(urls);
-
-        List<String> incUrls = new ArrayList<>();
-        if (includeRegexes != null) {
-            for (Object regex : includeRegexes) {
-                incUrls.add(regex.toString());
-            }
-        }
-        ctxWrapperData.setIncludePaths(incUrls);
-        List<String> excUrls = new ArrayList<>();
-        if (excludeRegexes != null) {
-            for (Object regex : excludeRegexes) {
-                excUrls.add(regex.toString());
-            }
-        }
-        ctxWrapperData.setExcludePaths(excUrls);
-        return new ContextWrapper(ctxWrapperData);
     }
 
     public void addContext(Context context) {
@@ -227,7 +118,7 @@ public class AutomationEnvironment {
         this.warnings.clear();
 
         for (ContextWrapper context : this.contexts) {
-            context.createContext(session, this);
+            context.createContext(session, this, progress);
             if (!context.getUrls().isEmpty()) {
                 hasUrls = true;
             }
@@ -244,30 +135,6 @@ public class AutomationEnvironment {
         }
         this.errors.addAll(progress.getErrors());
         this.warnings.addAll(progress.getWarnings());
-    }
-
-    private List<?> verifyRegexes(Object value, String key, AutomationProgress progress) {
-        if (!(value instanceof ArrayList)) {
-            progress.error(Constant.messages.getString("automation.error.context." + key, value));
-            return Collections.emptyList();
-        }
-        ArrayList<?> regexes = (ArrayList<?>) value;
-        for (Object regex : regexes) {
-            try {
-                String regexStr = regex.toString();
-                if (!regexStr.contains("${")) {
-                    // Only validate the regex if it doesnt contain vars
-                    Pattern.compile(regexStr);
-                }
-            } catch (PatternSyntaxException e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.context.badregex",
-                                regex.toString(),
-                                e.getMessage()));
-            }
-        }
-        return regexes;
     }
 
     public String replaceVars(Object value) {
