@@ -92,10 +92,13 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
     static {
         // No quote payloads
+        NIX_OS_PAYLOADS.put(NIX_TEST_CMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put(";" + NIX_TEST_CMD + ";", NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put(WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("&" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        PS_PAYLOADS.put(PS_TEST_CMD, PS_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD, PS_CTRL_PATTERN);
 
         // Double quote payloads
@@ -393,23 +396,17 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
         switch (this.getAttackStrength()) {
             case LOW:
-                // This works out as a total of 2+2 reqs / param per tech / per interface (i.e.: on
-                // windows we check both commandline and then powershell)
-                // Probably blind should be enabled only starting from MEDIUM (TBE)
-                targetCount = 2;
+                targetCount = 3;
                 blindTargetCount = 2;
                 break;
 
             case MEDIUM:
-                // This works out as a total of 6+6 reqs / param per tech / per interface (i.e.: on
-                // windows we check both commandline and then powershell)
-                targetCount = 6;
+                targetCount = 7;
                 blindTargetCount = 6;
                 break;
 
             case HIGH:
-                // Up to around 24 requests / param / page
-                targetCount = 12;
+                targetCount = 13;
                 blindTargetCount = 12;
                 break;
 
@@ -499,6 +496,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         Iterator<String> it = osPayloads.keySet().iterator();
         List<Long> responseTimes = new ArrayList<>(targetCount);
         long elapsedTime;
+        boolean firstPayload = true;
 
         // -----------------------------------------------
         // Check 1: Feedback based OS Command Injection
@@ -514,7 +512,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             }
 
             HttpMessage msg = getNewMsg();
-            paramValue = value + payload;
+            paramValue = firstPayload ? payload : value + payload;
+            firstPayload = false;
             setParameter(msg, paramName, paramValue);
 
             log.debug("Testing [{}] = [{}]", paramName, paramValue);

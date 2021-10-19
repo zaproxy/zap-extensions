@@ -27,7 +27,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -36,8 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.apache.commons.configuration.Configuration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -57,14 +63,14 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
             case LOW:
-                return recommendMax + 6;
+                return recommendMax + 9;
             case MEDIUM:
             default:
-                return recommendMax + 20;
+                return recommendMax + 23;
             case HIGH:
-                return recommendMax + 27;
+                return recommendMax + 30;
             case INSANE:
-                return recommendMax + 14;
+                return recommendMax + 17;
         }
     }
 
@@ -239,6 +245,28 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    private static Stream<Arguments> shouldReturnRelevantTechs() {
+        return Stream.of(
+                Arguments.of(Tech.Windows), Arguments.of(Tech.Linux), Arguments.of(Tech.MacOS));
+    }
+
+    @ParameterizedTest
+    @MethodSource("shouldReturnRelevantTechs")
+    void firstPayloadShouldNotHaveParamValue(Tech targetedTech)
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", targetedTech);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertFalse(httpMessagesSent.get(0).getUrlParams().first().getValue().startsWith("a"));
+        assertTrue(httpMessagesSent.get(1).getUrlParams().first().getValue().startsWith("a"));
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
