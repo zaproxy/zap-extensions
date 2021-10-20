@@ -67,6 +67,7 @@ public class SQLiPayloadManager {
     public static final int WHERE_NEGATIVE = 2;
     public static final int WHERE_REPLACE = 3;
 
+    private static final Random RAND = new Random();
     // Initialization elements for payload generation
     public static final String charsStart = ":" + randomString(3, true, null) + ":";
     public static final String charsStop = ":" + randomString(3, true, null) + ":";
@@ -80,7 +81,6 @@ public class SQLiPayloadManager {
     private static final String PAYLOAD_FILE = "resources/payloads.xml";
     private static final String TAG_BOUNDARY = "boundary";
     private static final String TAG_TEST = "test";
-    private static final Random RAND = new Random();
 
     private static final String PAYLOAD_DELIMITER = "\\x00";
     // Regular expression used for replacing non-alphanum characters
