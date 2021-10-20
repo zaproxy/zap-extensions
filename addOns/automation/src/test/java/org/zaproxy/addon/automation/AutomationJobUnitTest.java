@@ -972,7 +972,7 @@ class AutomationJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.methods!")));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.method!")));
     }
 
     @Test
