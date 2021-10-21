@@ -45,7 +45,7 @@
       "nv.addGraph": "",
       "nv.version": "^(.+)$\\;confidence:0\\;version:\\1"
     },
-    "scripts": "nv\\.d3(?:\\.min)?\\.js",
+    "scriptSrc": "nv\\.d3(?:\\.min)?\\.js",
     "website": "http://nvd3.org"
   },
   "Nacelle": {
@@ -72,7 +72,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.nagich\\.co(?:m|\\.il)/core/([\\d.]+)/accessibility\\.js\\;version:\\1",
+    "scriptSrc": "\\.nagich\\.co(?:m|\\.il)/core/([\\d.]+)/accessibility\\.js\\;version:\\1",
     "website": "https://www.nagich.co.il"
   },
   "Najva": {
@@ -89,7 +89,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "app\\.najva\\.com/",
+    "scriptSrc": "app\\.najva\\.com/",
     "website": "https://www.najva.com"
   },
   "Narrativ": {
@@ -98,7 +98,7 @@
     ],
     "description": "Narrativ is a subscription technology platform for brands to acquire new customers through trusted creators.",
     "icon": "Narrativ.png",
-    "scripts": "static\\.narrativ\\.com/",
+    "scriptSrc": "static\\.narrativ\\.com/",
     "website": "https://narrativ.com/"
   },
   "Navegg": {
@@ -106,7 +106,7 @@
       10
     ],
     "icon": "Navegg.png",
-    "scripts": "tag\\.navdmp\\.com",
+    "scriptSrc": "tag\\.navdmp\\.com",
     "website": "https://www.navegg.com/"
   },
   "Neos CMS": {
@@ -178,7 +178,7 @@
     "js": {
       "NETO": ""
     },
-    "scripts": "jquery\\.neto.*\\.js",
+    "scriptSrc": "jquery\\.neto.*\\.js",
     "website": "https://www.neto.com.au"
   },
   "Nette Framework": {
@@ -221,7 +221,7 @@
     },
     "icon": "themeisle.png",
     "requires": "WordPress",
-    "scripts": "themes/neve\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": "themes/neve\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/neve/"
   },
   "New Relic": {
@@ -304,7 +304,7 @@
     ],
     "icon": "NextGEN Gallery.png",
     "requires": "WordPress",
-    "scripts": "/nextgen-gallery/js/",
+    "scriptSrc": "/nextgen-gallery/js/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
   },
   "Nextsale": {
@@ -323,7 +323,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "(?:api|sdk)\\.nextsale\\.io/",
+    "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
   },
   "Nginx": {
@@ -351,6 +351,20 @@
     },
     "website": "https://nitropack.io/"
   },
+  "Noddus": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Noddus offers brands and agencies access to an advanced proprietary content marketing platform automating content production, distribution and analytics.",
+    "icon": "Noddus.png",
+    "scriptSrc": "noddus\\.com/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.enterprise.noddus.com"
+  },
   "Node.js": {
     "cats": [
       27
@@ -370,8 +384,27 @@
     },
     "icon": "NodeBB.png",
     "implies": "Node.js",
-    "scripts": "^/nodebb\\.min\\.js\\?",
+    "scriptSrc": "^/nodebb\\.min\\.js\\?",
     "website": "https://nodebb.org"
+  },
+  "Norton Shopping Guarantee": {
+    "cats": [
+      16
+    ],
+    "description": "Norton Shopping Guarantee offering a third-party shopping guarantee to customers provides added protection and validation that you are safe to buy from.",
+    "icon": "Norton Shopping Guarantee.svg",
+    "implies": "Cart Functionality",
+    "js": {
+      "DO_NORTON_SHOPPING": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "nsg\\.symantec\\.com/",
+    "website": "https://norton.buysafe.com"
   },
   "Nosto": {
     "cats": [
@@ -391,7 +424,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "connect\\.nosto\\.\\w+/",
+    "scriptSrc": "connect\\.nosto\\.\\w+/",
     "website": "https://www.nosto.com"
   },
   "Nukeviet CMS": {
@@ -427,7 +460,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.nuqlium\\.com/api",
+    "scriptSrc": "\\.nuqlium\\.com/api",
     "website": "https://www.nuqlium.com"
   },
   "Nuvemshop": {
@@ -468,7 +501,7 @@
     "js": {
       "$nuxt": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "/_nuxt/"
     ],
     "website": "https://nuxtjs.org"
@@ -498,5 +531,21 @@
     },
     "oss": true,
     "website": "http://www.nopcommerce.com"
+  },
+  "Niagahoster": {
+    "cats": [
+      88
+    ],
+    "headers": {
+      "x-powered-by": "Niagahoster"
+    },
+    "description": "Niagahoster is a web hosting service for small and medium enterprises. It provides shared hosting, WordPress hosting, Virtual Private Server (VPS), and more.",
+    "icon": "niagahoster.png",
+    "implies": "Niagahoster",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://niagahoster.co.id"
   }
 }

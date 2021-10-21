@@ -19,7 +19,7 @@
     "description": "VK is a Russian online social media and social networking service.",
     "dom": "img[src*='vk.com/rtrg?p=VK-RTRG-']",
     "icon": "vk.svg",
-    "scripts": "vk\\.com/js/api/openapi\\.js",
+    "scriptSrc": "vk\\.com/js/api/openapi\\.js",
     "website": "https://vk.com/"
   },
   "VP-ASP": {
@@ -29,7 +29,7 @@
     "html": "<a[^>]+>Powered By VP-ASP Shopping Cart</a>",
     "icon": "VP-ASP.png",
     "implies": "Microsoft ASP.NET",
-    "scripts": "vs350\\.js",
+    "scriptSrc": "vs350\\.js",
     "website": "http://www.vpasp.com"
   },
   "VTEX": {
@@ -55,7 +55,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "io\\.vtex\\.com\\.br",
+    "scriptSrc": "io\\.vtex\\.com\\.br",
     "website": "https://vtex.com/"
   },
   "VWO": {
@@ -74,7 +74,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "dev\\.visualwebsiteoptimizer\\.com/?([\\d.]+)\\;version:\\1"
     ],
     "website": "https://vwo.com/"
@@ -93,7 +93,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.pushcrew\\.\\w+",
+    "scriptSrc": "cdn\\.pushcrew\\.\\w+",
     "website": "https://vwo.com/engage"
   },
   "Vaadin": {
@@ -105,7 +105,7 @@
     "js": {
       "vaadin": ""
     },
-    "scripts": "vaadinBootstrap\\.js(?:\\?v=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": "vaadinBootstrap\\.js(?:\\?v=([\\d.]+))?\\;version:\\1",
     "website": "https://vaadin.com"
   },
   "ValueCommerce": {
@@ -126,7 +126,7 @@
       }
     },
     "icon": "ValueCommerce.png",
-    "scripts": "\\.valuecommerce\\.com",
+    "scriptSrc": "\\.valuecommerce\\.com",
     "website": "https://www.valuecommerce.co.jp"
   },
   "Vanilla": {
@@ -177,7 +177,7 @@
       41
     ],
     "description": "Venmo is a mobile payment service owned by PayPal. Venmo account holders can transfer funds to others via a mobile phone app.",
-    "dom": "[aria-labelledby='pi-venmo']",
+    "dom": "[aria-labelledby='pi-venmo'], [data-venmo-supported='true']",
     "icon": "Venmo.svg",
     "website": "https://venmo.com"
   },
@@ -190,7 +190,7 @@
     "js": {
       "VuVeoxaContent": ""
     },
-    "scripts": "tracking\\.veoxa\\.com",
+    "scriptSrc": "tracking\\.veoxa\\.com",
     "website": "http://veoxa.com"
   },
   "Vercel": {
@@ -223,7 +223,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.id\\.services",
       "cdn\\.verifypass\\.com"
     ],
@@ -242,7 +242,7 @@
       }
     },
     "icon": "Verizon Media.svg",
-    "scripts": "\\.advertising\\.com",
+    "scriptSrc": "\\.advertising\\.com",
     "website": "https://www.verizonmedia.com"
   },
   "Verloop": {
@@ -273,7 +273,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.vidazoo\\.com",
+    "scriptSrc": "\\.vidazoo\\.com",
     "website": "https://www.vidazoo.com"
   },
   "VideoJS": {
@@ -288,7 +288,7 @@
       "videojs": "",
       "videojs.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "zencdn\\.net/c/video\\.js",
       "cdnjs\\.cloudflare\\.com\\/ajax\\/libs\\/video\\.js\\/([\\d\\.]+)\\/\\;version:\\1"
     ],
@@ -303,7 +303,7 @@
     },
     "html": "<link[^>]* href=[^>]+(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
     "icon": "vigbo.png",
-    "scripts": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
+    "scriptSrc": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
     "website": "https://vigbo.com"
   },
   "Vignette": {
@@ -359,7 +359,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "app\\.viral-loops\\.com/",
+    "scriptSrc": "app\\.viral-loops\\.com/",
     "website": "https://viral-loops.com"
   },
   "Virgool": {
@@ -415,7 +415,7 @@
     ],
     "description": "Visa facilitates electronic funds transfers throughout the world, most commonly through Visa-branded credit cards, debit cards and prepaid cards.",
     "icon": "visa.png",
-    "scripts": "secure\\.checkout\\.visa\\.com",
+    "scriptSrc": "secure\\.checkout\\.visa\\.com",
     "website": "https://checkout.visa.com"
   },
   "Visual Composer": {
@@ -471,7 +471,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.vizury\\.com",
+    "scriptSrc": "\\.vizury\\.com",
     "website": "https://www.vizury.com"
   },
   "Volusion": {
@@ -492,7 +492,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "/volusion\\.js(?:\\?([\\d.]*))?\\;version:\\1",
+    "scriptSrc": "/volusion\\.js(?:\\?([\\d.]*))?\\;version:\\1",
     "website": "https://www.volusion.com"
   },
   "Voog.com Website Builder": {
@@ -502,7 +502,7 @@
     ],
     "html": "<script [^>]*src=\"[^\"]*voog\\.com/tracker\\.js",
     "icon": "Voog.png",
-    "scripts": "voog\\.com/tracker\\.js",
+    "scriptSrc": "voog\\.com/tracker\\.js",
     "website": "https://www.voog.com/"
   },
   "Voracio": {
@@ -535,7 +535,7 @@
     "meta": {
       "generator": "^Vue Storefront ([0-9.]+)?$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "vsf-layout\\;version:1"
     ],
     "website": "https://www.vuestorefront.io/"
@@ -550,7 +550,7 @@
       "vuex": ""
     },
     "saas": true,
-    "scripts": "vuex\\.vue\\.ai",
+    "scriptSrc": "vuex\\.vue\\.ai",
     "website": "https://vue.ai/"
   },
   "Vue.js": {
@@ -563,7 +563,7 @@
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "vue[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "(?:/([\\d.]+))?/vue(?:\\.min)?\\.js\\;version:\\1"
     ],
@@ -630,7 +630,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "www\\.vcita\\.com/widgets/",
       "widgets\\.vcdnita\\.com/"
     ],

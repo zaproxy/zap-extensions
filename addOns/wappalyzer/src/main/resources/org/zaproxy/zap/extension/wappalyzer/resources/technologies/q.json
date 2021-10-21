@@ -13,7 +13,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.qualtrics\\.com/",
+    "scriptSrc": "\\.qualtrics\\.com/",
     "website": "https://www.qualtrics.com"
   },
   "Quantcast Choice": {
@@ -27,7 +27,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "quantcast\\.mgr\\.consensu\\.org",
+    "scriptSrc": "quantcast\\.mgr\\.consensu\\.org",
     "website": "https://www.quantcast.com/products/choice-consent-management-platform"
   },
   "Quantcast Measure": {
@@ -44,7 +44,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.quantserve\\.com/quant\\.js",
+    "scriptSrc": "\\.quantserve\\.com/quant\\.js",
     "website": "https://www.quantcast.com/products/measure-audience-insights"
   },
   "Quantum Metric": {
@@ -54,7 +54,7 @@
     "description": "Quantum Metric is a continuous product design platform that helps organizations build better products faster.",
     "icon": "Quantummetric.png",
     "saas": true,
-    "scripts": "cdn\\.quantummetric\\.com",
+    "scriptSrc": "cdn\\.quantummetric\\.com",
     "website": "https://www.quantummetric.com/"
   },
   "Qubit": {
@@ -72,7 +72,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "static\\.goqubit\\.com",
+    "scriptSrc": "static\\.goqubit\\.com",
     "website": "https://www.qubit.com"
   },
   "Question2Answer": {
@@ -83,7 +83,7 @@
     "html": "<!-- Powered by Question2Answer",
     "icon": "question2answer.png",
     "implies": "PHP",
-    "scripts": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
+    "scriptSrc": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
     "website": "http://www.question2answer.org"
   },
   "Queue-it": {
@@ -100,7 +100,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.queue-it\\.net/",
+    "scriptSrc": "\\.queue-it\\.net/",
     "website": "https://queue-it.com"
   },
   "Quick.CMS": {
@@ -137,7 +137,7 @@
       "drupalSettings.quicklink": "",
       "quicklink": ""
     },
-    "scripts": "quicklink@([\\d.]+)/dist/quicklink.*\\.js\\;version:\\1",
+    "scriptSrc": "quicklink@([\\d.]+)/dist/quicklink.*\\.js\\;version:\\1",
     "website": "https://getquick.link/"
   },
   "Quill": {

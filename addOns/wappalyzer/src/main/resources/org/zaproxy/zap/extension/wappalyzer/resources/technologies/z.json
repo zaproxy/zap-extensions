@@ -6,7 +6,7 @@
     "html": "<!-- ZK [.\\d\\s]+-->",
     "icon": "ZK.png",
     "implies": "Java",
-    "scripts": "zkau/",
+    "scriptSrc": "zkau/",
     "website": "http://zkoss.org"
   },
   "ZURB Foundation": {
@@ -49,7 +49,7 @@
     "js": {
       "zanox": ""
     },
-    "scripts": "zanox\\.com/scripts/zanox\\.js$",
+    "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "http://zanox.com"
   },
   "Zen Cart": {
@@ -103,7 +103,7 @@
       "low"
     ],
     "saas": true,
-    "scripts": "static\\.zdassets\\.com",
+    "scriptSrc": "static\\.zdassets\\.com",
     "website": "https://zendesk.com"
   },
   "Zendesk Chat": {
@@ -117,7 +117,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "v2\\.zopim\\.com",
+    "scriptSrc": "v2\\.zopim\\.com",
     "website": "http://zopim.com"
   },
   "Zenfolio": {
@@ -131,6 +131,20 @@
     },
     "website": "https://zenfolio.com"
   },
+  "Zeotap": {
+    "cats": [
+      97
+    ],
+    "description": "Zeotap is a customer intelligence platform that helps brands better understand their customers and predict behaviors.",
+    "icon": "Zeotap.png",
+    "dom": "link[href*='.zeotap.com']",
+    "scriptSrc": "\\.zeotap\\.com",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://zeotap.com"
+  },
   "Zepto": {
     "cats": [
       59
@@ -139,8 +153,25 @@
     "js": {
       "Zepto": ""
     },
-    "scripts": "zepto.*\\.js",
+    "scriptSrc": "zepto.*\\.js",
     "website": "http://zeptojs.com"
+  },
+  "ZestMoney": {
+    "cats": [
+      91
+    ],
+    "description": "ZestMoney is a fintech company that uses digital EMI without the need for a credit card or a credit score.",
+    "icon": "ZestMoney.png",
+    "js": {
+      "ZestMoneyWidget": "",
+      "zestBind": "",
+      "zestMerchant": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.zestmoney.in"
   },
   "Zimbra": {
     "cats": [
@@ -192,13 +223,14 @@
     "icon": "zip_pay.svg",
     "js": {
       "QuadPayShopify": "",
+      "checkout.enabledpayments.zip": "^true$",
       "quadpayID": ""
     },
     "pricing": [
       "payg"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "quadpay\\.com",
       "static\\.zipmoney\\.com\\.au",
       "zip\\.co"
@@ -219,6 +251,23 @@
     "icon": "Zipkin.png",
     "website": "https://zipkin.io/"
   },
+  "Zmags Creator": {
+    "cats": [
+      95
+    ],
+    "description": "Zmags Creator enables marketers to design and publish endless types of interactive digital experiences without coding.",
+    "icon": "Zmags Creator.png",
+    "js": {
+      "__zmags": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "c(?:reator)?\\.zmags\\.com/",
+    "website": "https://www.creatorbyzmags.com"
+  },
   "Zocdoc": {
     "cats": [
       72
@@ -230,7 +279,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "offsiteschedule\\.zocdoc\\.com",
+    "scriptSrc": "offsiteschedule\\.zocdoc\\.com",
     "website": "https://www.zocdoc.com"
   },
   "Zoey": {
@@ -249,7 +298,7 @@
       "zoey.developer": "",
       "zoeyDev": ""
     },
-    "scripts": "cdna4\\.zoeysite\\.com",
+    "scriptSrc": "cdna4\\.zoeysite\\.com",
     "website": "https://www.zoey.com/"
   },
   "Zoho": {
@@ -302,7 +351,7 @@
       "mid"
     ],
     "saas": true,
-    "scripts": "zoko-shopify-prod\\.web\\.app",
+    "scriptSrc": "zoko-shopify-prod\\.web\\.app",
     "website": "https://www.zoko.io/"
   },
   "Zone.js": {
@@ -330,8 +379,22 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.zonos\\.com/",
+    "scriptSrc": "\\.zonos\\.com/",
     "website": "https://zonos.com"
+  },
+  "ZoodPay": {
+    "cats": [
+      91
+    ],
+    "description": "ZoodPay is a headquartered in Switzerland buy now, pay later solution provider.",
+    "icon": "ZoodPay.png",
+    "dom": "img[src*='zoodpay']",
+    "scriptSrc": "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.zoodpay.com"
   },
   "Zoominfo": {
     "cats": [
@@ -340,7 +403,7 @@
     "description": "ZoomInfo provides actionable B2B contact and company information for sales and marketing teams.",
     "icon": "Zoominfo.svg",
     "saas": true,
-    "scripts": "ws\\.zoominfo\\.com",
+    "scriptSrc": "ws\\.zoominfo\\.com",
     "website": "https://www.zoominfo.com/"
   },
   "Zoominfo Chat": {
@@ -350,7 +413,7 @@
     "description": "ZoomInfo chat is a live chat solution.",
     "icon": "Zoominfo.svg",
     "saas": true,
-    "scripts": "madstreetden\\.widget\\.insent\\.ai",
+    "scriptSrc": "madstreetden\\.widget\\.insent\\.ai",
     "website": "https://www.zoominfo.com/chat"
   },
   "Zope": {
@@ -382,7 +445,7 @@
     "meta": {
       "generator": "Zozo Ecommerce"
     },
-    "scripts": [
+    "scriptSrc": [
       "catalog/view/theme/[^\"]+/javascript/common\\.js",
       "zozo-main\\.min\\.js"
     ],
@@ -403,7 +466,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "userapp\\.zyrosite\\.com/",
+    "scriptSrc": "userapp\\.zyrosite\\.com/",
     "website": "https://zyro.com"
   }
 }

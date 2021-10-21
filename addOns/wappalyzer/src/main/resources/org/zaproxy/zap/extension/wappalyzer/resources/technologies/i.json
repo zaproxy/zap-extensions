@@ -4,7 +4,7 @@
       10
     ],
     "icon": "IBM.svg",
-    "scripts": "cmdatatagutils\\.js",
+    "scriptSrc": "cmdatatagutils\\.js",
     "website": "http://ibm.com/software/marketing-solutions/coremetrics"
   },
   "IBM DataPower": {
@@ -53,7 +53,7 @@
       "iam_data": "",
       "szmvars": ""
     },
-    "scripts": "^https?://(?:[^/]+\\.)?i(?:oam|v)wbox\\.de/",
+    "scriptSrc": "^https?://(?:[^/]+\\.)?i(?:oam|v)wbox\\.de/",
     "website": "https://www.infonline.de"
   },
   "IPB": {
@@ -75,7 +75,7 @@
       "ipb_var": "",
       "ipsSettings": ""
     },
-    "scripts": "jscripts/ips_",
+    "scriptSrc": "jscripts/ips_",
     "website": "https://invisioncommunity.com/"
   },
   "IPInfoDB": {
@@ -99,7 +99,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "\\.myideasoft\\.com/([\\d.]+)\\;version:\\1"
     ],
     "website": "https://www.ideasoft.com.tr"
@@ -139,7 +139,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "template-assets\\.iluria\\.com/commons/",
+    "scriptSrc": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
   },
   "Image Relay": {
@@ -156,7 +156,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "static\\.imagerelay\\.com/",
+    "scriptSrc": "static\\.imagerelay\\.com/",
     "website": "https://www.imagerelay.com"
   },
   "Immutable.js": {
@@ -168,7 +168,7 @@
       "Immutable": "",
       "Immutable.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "^immutable\\.(?:min\\.)?js$",
+    "scriptSrc": "^immutable\\.(?:min\\.)?js$",
     "website": "https://facebook.github.io/immutable-js/"
   },
   "Impact": {
@@ -181,7 +181,7 @@
       "ImpactRadiusEvent": "",
       "irEvent": ""
     },
-    "scripts": "d\\.impactradius-event\\.com",
+    "scriptSrc": "d\\.impactradius-event\\.com",
     "website": "https://impact.com/"
   },
   "Imperva": {
@@ -192,7 +192,7 @@
       "X-Iinfo": ""
     },
     "icon": "Imperva.svg",
-    "scripts": [
+    "scriptSrc": [
       "/_Incapsula_Resource"
     ],
     "website": "https://www.imperva.com/"
@@ -211,7 +211,7 @@
     "meta": {
       "generator": "ImpressCMS"
     },
-    "scripts": "include/linkexternal\\.js",
+    "scriptSrc": "include/linkexternal\\.js",
     "website": "http://www.impresscms.org"
   },
   "ImpressPages": {
@@ -225,6 +225,24 @@
       "generator": "ImpressPages(?: CMS)?( [\\d.]*)?\\;version:\\1"
     },
     "website": "http://impresspages.org"
+  },
+  "Imweb": {
+    "cats": [
+      6
+    ],
+    "description": "Imweb is a ecommerce website builder software.",
+    "icon": "Imweb.png",
+    "js": {
+      "IMWEB_TEMPLATE": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "vendor-cdn\\.imweb\\.me/",
+    "website": "https://imweb.me"
   },
   "Incapsula": {
     "cats": [
@@ -325,7 +343,7 @@
   },
   "Insider": {
     "cats": [
-      32
+      97
     ],
     "description": "Insider is the first integrated Growth Management Platform helping digital marketers drive growth across the funnel, from Acquisition to Activation, Retention, and Revenue from a unified platform powered by Artificial Intelligence and Machine Learning.",
     "icon": "Insider.svg",
@@ -336,7 +354,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "api\\.useinsider\\.\\w+/",
+    "scriptSrc": "api\\.useinsider\\.\\w+/",
     "website": "https://useinsider.com"
   },
   "Inspectlet": {
@@ -351,7 +369,7 @@
       "__insp": "",
       "__inspld": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.inspectlet\\.com"
     ],
     "website": "https://www.inspectlet.com/"
@@ -369,7 +387,7 @@
     "js": {
       "Instabot": ""
     },
-    "scripts": "/rokoInstabot\\.js",
+    "scriptSrc": "/rokoInstabot\\.js",
     "website": "https://instabot.io/"
   },
   "Instana": {
@@ -388,7 +406,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "eum\\.instana\\.io",
+    "scriptSrc": "eum\\.instana\\.io",
     "website": "https://www.instana.com"
   },
   "Instant.Page": {
@@ -399,7 +417,7 @@
     "description": "Instant.Page is a JavaScript library which uses just-in-time preloading technique to make websites faster.",
     "icon": "Instant.page.svg",
     "oss": true,
-    "scripts": "instant\\.page",
+    "scriptSrc": "instant\\.page",
     "website": "https://instant.page/"
   },
   "InstantCMS": {
@@ -428,7 +446,7 @@
       "InstantClick": ""
     },
     "oss": true,
-    "scripts": "instantclick\\.min\\.js",
+    "scriptSrc": "instantclick\\.min\\.js",
     "website": "http://instantclick.io/"
   },
   "Instapage": {
@@ -452,7 +470,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.instapagemetrics\\.com",
       "heatmap-events-collector\\.instapage\\.com"
     ],
@@ -477,7 +495,7 @@
     ],
     "description": "IntenseDebate is a blog commenting system that supports Typepad, Blogger and Wordpress blogs. The system allows blog owners to track and moderate comments from one place with features like threading, comment analytics, user reputation, and comment aggregation.",
     "icon": "IntenseDebate.png",
-    "scripts": "intensedebate\\.com",
+    "scriptSrc": "intensedebate\\.com",
     "website": "http://intensedebate.com"
   },
   "Intercom": {
@@ -495,7 +513,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "(?:api\\.intercom\\.io/api|static\\.intercomcdn\\.com/intercom\\.v1)",
+    "scriptSrc": "(?:api\\.intercom\\.io/api|static\\.intercomcdn\\.com/intercom\\.v1)",
     "website": "https://www.intercom.com"
   },
   "Intercom Articles": {
@@ -507,13 +525,32 @@
     "icon": "Intercom.svg",
     "website": "https://www.intercom.com/articles"
   },
+  "Intersection Observer": {
+    "cats": [
+      92,
+      59
+    ],
+    "description": "Intersection Observer is a browser API that provides a way to observe the visibility and position of a DOM element relative to the containing root element or viewport.",
+    "icon": "W3C.png",
+    "scriptSrc": [
+      "cdn\\.jsdelivr\\.net/npm/intersection-observer@([\\d\\.]+)\\;version:\\1",
+      "/assets/(?:.+)?intersection-observer\\.[\\d\\w\\.]+\\.js"
+    ],
+    "website": "https://www.w3.org/TR/intersection-observer"
+  },
   "Intershop": {
     "cats": [
       6
     ],
+    "description": "Intershop is an ecommerce platform, tailored to the needs of complex business processes and major organisations.",
     "html": "<ish-root",
     "icon": "Intershop.png",
-    "scripts": "(?:is-bin|INTERSHOP)",
+    "pricing": [
+      "onetime",
+      "high"
+    ],
+    "saas": true,
+    "scriptSrc": "(?:is-bin|INTERSHOP)",
     "website": "http://intershop.com"
   },
   "Invenio": {
@@ -542,7 +579,7 @@
       "InvApp": "\\;confidence:50",
       "invTagManagerParams": ""
     },
-    "scripts": "Scripts/_app/Inv(?:\\w+)\\.js\\?v=(.+)$\\;version:\\1",
+    "scriptSrc": "Scripts/_app/Inv(?:\\w+)\\.js\\?v=(.+)$\\;version:\\1",
     "website": "https://www.inveon.com"
   },
   "Ionic": {
@@ -601,7 +638,7 @@
       "iterableAnalytics": ""
     },
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "js\\.iterable\\.com"
     ],
     "website": "https://iterable.com/"
@@ -622,7 +659,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.izooto\\.\\w+",
+    "scriptSrc": "cdn\\.izooto\\.\\w+",
     "website": "https://www.izooto.com"
   },
   "iEXExchanger": {
@@ -706,7 +743,7 @@
     ],
     "saas": true,
     "website": "https://ip-api.com/",
-    "xhr": "ip-api\\.com/"
+    "xhr": "ip-api\\.com"
   },
   "ip-label": {
     "cats": [
@@ -716,7 +753,7 @@
     "js": {
       "clobs": ""
     },
-    "scripts": "clobs\\.js",
+    "scriptSrc": "clobs\\.js",
     "website": "http://www.ip-label.com"
   },
   "ipapi": {
@@ -792,7 +829,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.ipify\\.org",
+    "scriptSrc": "\\.ipify\\.org",
     "website": "https://ipify.org",
     "xhr": "(?:api|api64|geo)\\.ipify\\.org"
   },
@@ -818,7 +855,7 @@
       67
     ],
     "icon": "iubenda.png",
-    "scripts": [
+    "scriptSrc": [
       "iubenda\\.com/cookie-solution/confs/js/"
     ],
     "website": "https://www.iubenda.com/"

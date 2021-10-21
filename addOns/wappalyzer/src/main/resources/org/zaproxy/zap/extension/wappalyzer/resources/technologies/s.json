@@ -38,7 +38,7 @@
       69
     ],
     "icon": "SAP.svg",
-    "scripts": "\\.gigya\\.com/JS/gigya\\.js",
+    "scriptSrc": "\\.gigya\\.com/JS/gigya\\.js",
     "website": "https://www.sap.com/uk/acquired-brands/what-is-gigya.html"
   },
   "SAP Upscale Commerce": {
@@ -79,7 +79,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "www\\.semrush\\.com",
+    "scriptSrc": "www\\.semrush\\.com",
     "website": "https://www.semrush.com"
   },
   "SIMsite": {
@@ -90,7 +90,7 @@
     "meta": {
       "SIM.medium": ""
     },
-    "scripts": "/sim(?:site|core)/js",
+    "scriptSrc": "/sim(?:site|core)/js",
     "website": "http://simgroep.nl/internet/portfolio-contentbeheer_41623/"
   },
   "SMF": {
@@ -226,7 +226,7 @@
       "SWFObject": ""
     },
     "oss": true,
-    "scripts": "swfobject.*\\.js",
+    "scriptSrc": "swfobject.*\\.js",
     "website": "https://github.com/swfobject/swfobject"
   },
   "SaaSquatch": {
@@ -246,7 +246,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js",
+    "scriptSrc": "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js",
     "website": "https://www.saasquatch.com"
   },
   "Saber": {
@@ -310,7 +310,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "ak\\.sail-horizon\\.com",
+    "scriptSrc": "ak\\.sail-horizon\\.com",
     "website": "https://www.sailthru.com"
   },
   "SaleCycle": {
@@ -341,8 +341,39 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.salesfire\\.co\\.uk/",
+    "scriptSrc": "cdn\\.salesfire\\.co\\.uk/",
     "website": "https://www.salesfire.co.uk"
+  },
+  "SALESmanago": {
+    "cats": [
+      97,
+      32
+    ],
+    "description": "SALESmanago is a no-code marketing automation and customer data platform designed for mid-sized buinesses and enterprises.",
+    "icon": "SALESmanago.svg",
+    "js": {
+      "SalesmanagoObject": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.salesmanago\\.com/",
+    "website": "https://www.salesmanago.com"
+  },
+  "SalesReps.io": {
+    "cats": [
+      10
+    ],
+    "description": "SalesReps.io is a sales representative performance and commission reporting software provider.",
+    "icon": "SalesReps.io.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "api\\.salesreps\\.io/",
+    "website": "https://salesreps.io"
   },
   "Salesfloor": {
     "cats": [
@@ -360,7 +391,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.salesfloor\\.net/",
+    "scriptSrc": "\\.salesfloor\\.net/",
     "website": "https://salesfloor.net"
   },
   "Salesforce": {
@@ -392,7 +423,8 @@
   },
   "Salesforce Audience Studio": {
     "cats": [
-      86
+      86,
+      97
     ],
     "description": "Salesforce Audience Studio is a customer data marketplace that only other platform users can access.",
     "dom": "link[href*='.krxd.net']",
@@ -406,7 +438,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.krxd\\.net/",
+    "scriptSrc": "\\.krxd\\.net/",
     "website": "https://www.salesforce.com/products/marketing-cloud/data-management"
   },
   "Salesforce Commerce Cloud": {
@@ -430,7 +462,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "/demandware\\.static/",
+    "scriptSrc": "/demandware\\.static/",
     "website": "http://demandware.com"
   },
   "Salesforce Interaction Studio": {
@@ -448,7 +480,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "cdn\\.evgnet\\.com",
+    "scriptSrc": "cdn\\.evgnet\\.com",
     "website": "https://www.salesforce.com/products/marketing-cloud/customer-interaction"
   },
   "Salesforce Service Cloud": {
@@ -466,7 +498,7 @@
       "low"
     ],
     "saas": true,
-    "scripts": "service\\.force\\.com",
+    "scriptSrc": "service\\.force\\.com",
     "website": "https://www.salesforce.com/au/products/service-cloud/"
   },
   "Salsify": {
@@ -541,6 +573,26 @@
     },
     "website": "https://sapper.svelte.dev"
   },
+  "Sapren": {
+    "cats": [
+      1
+    ],
+    "description": "Sapren is a CMS produced by PHP, Laravel framework and MySQL.",
+    "icon": "Sapren.png",
+    "implies": [
+      "Laravel",
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^Saprenco.com Website Builder$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.sapren.net"
+  },
   "Sarka-SPIP": {
     "cats": [
       1
@@ -581,7 +633,7 @@
     "description": "Scalapay is a payment method for e-commerce merchants in Europe that allows customers to buy now and pay later (BNPL).",
     "icon": "Scalapay.svg",
     "saas": true,
-    "scripts": "cdn\\.scalapay\\.com",
+    "scriptSrc": "cdn\\.scalapay\\.com",
     "website": "https://www.scalapay.com/"
   },
   "Schedule Engine": {
@@ -590,7 +642,7 @@
     ],
     "description": "Schedule Engine is a customer support solution built for contractors.",
     "icon": "Schedule Engine.svg",
-    "scripts": "webchat.scheduleengine.net",
+    "scriptSrc": "webchat.scheduleengine.net",
     "website": "https://www.scheduleengine.com/"
   },
   "Scientific Linux": {
@@ -605,6 +657,21 @@
     "icon": "Scientific Linux.png",
     "website": "http://scientificlinux.org"
   },
+  "Scoop.it": {
+    "cats": [
+      96
+    ],
+    "description": "Scoop.it is a content marketing software company based in San Francisco which provide content curation platform.",
+    "dom": "iframe[src*='.scoop.it/'], a[href*='.scoop.it/'][target='_blank']",
+    "icon": "Scoop.it.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.scoop.it"
+  },
   "Scorpion": {
     "cats": [
       1
@@ -615,7 +682,7 @@
     "js": {
       "Process.UserData": ""
     },
-    "scripts": "cdn.cxc.scorpion.direct",
+    "scriptSrc": "cdn.cxc.scorpion.direct",
     "website": "https://www.scorpion.co/"
   },
   "SeamlessCMS": {
@@ -643,7 +710,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "searchanise(?:-.+\\.kxcdn)?\\.com/",
+    "scriptSrc": "searchanise(?:-.+\\.kxcdn)?\\.com/",
     "website": "https://start.searchanise.com"
   },
   "Searchspring": {
@@ -662,7 +729,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.searchspring\\.net",
+    "scriptSrc": "cdn\\.searchspring\\.net",
     "website": "https://searchspring.com"
   },
   "Sectigo": {
@@ -692,7 +759,7 @@
       67
     ],
     "icon": "seersco.png",
-    "scripts": [
+    "scriptSrc": [
       "seersco.com/script/cb\\.js"
     ],
     "website": "http://www.seersco.com"
@@ -712,12 +779,12 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "pge\\.segmanta\\.com/widget_embed_js(?:/widgetEmbed-v([\\d.]+)\\.min\\.js)?\\;version:\\1",
+    "scriptSrc": "pge\\.segmanta\\.com/widget_embed_js(?:/widgetEmbed-v([\\d.]+)\\.min\\.js)?\\;version:\\1",
     "website": "https://segmanta.com"
   },
   "Segment": {
     "cats": [
-      10
+      97
     ],
     "description": "Segment is a customer data platform (CDP) that helps you collect, clean, and control your customer data.",
     "dns": {
@@ -735,7 +802,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.segment\\.com/analytics\\.js",
       "/segment-wrapper\\.min\\.js"
     ],
@@ -751,7 +818,7 @@
       "consentManager.version": "([\\d.]+)\\;version:\\1"
     },
     "saas": true,
-    "scripts": "@segment/consent-manager@([\\d.]+)\\;version:\\1",
+    "scriptSrc": "@segment/consent-manager@([\\d.]+)\\;version:\\1",
     "website": "https://segment.com/blog/how-to-build-consent-management-into-your-site-in-less-than-a-week"
   },
   "SegmentStream": {
@@ -768,7 +835,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.segmentstream\\.com",
+    "scriptSrc": "cdn\\.segmentstream\\.com",
     "website": "https://segmentstream.com"
   },
   "Select2": {
@@ -781,7 +848,7 @@
     "js": {
       "jQuery.fn.select2": ""
     },
-    "scripts": "select2(?:\\.min|\\.full)?\\.js",
+    "scriptSrc": "select2(?:\\.min|\\.full)?\\.js",
     "website": "https://select2.org/"
   },
   "Sellacious": {
@@ -807,6 +874,24 @@
     ],
     "saas": true,
     "website": "https://www.sellacious.com"
+  },
+  "Sellfy": {
+    "cats": [
+      6
+    ],
+    "description": "Sellfy is an ecommerce platform designed specifically for selling digital products, such as music, illustrations, photos, books or videos in digital files.",
+    "icon": "Sellfy.svg",
+    "js": {
+      "_sellfy.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "recurring",
+      "low",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "sellfy\\.com/js/",
+    "website": "https://sellfy.com"
   },
   "Sellingo": {
     "cats": [
@@ -842,7 +927,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.sellix\\.io/static/js/embed\\.js",
+    "scriptSrc": "cdn\\.sellix\\.io/static/js/embed\\.js",
     "website": "https://sellix.io/"
   },
   "Selly": {
@@ -857,7 +942,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "embed\\.selly\\.(?:gg|io)",
+    "scriptSrc": "embed\\.selly\\.(?:gg|io)",
     "website": "https://selly.io/"
   },
   "Selz": {
@@ -883,7 +968,7 @@
       "<link[^>]+semantic(?:\\.min)\\.css\""
     ],
     "icon": "Semantic-ui.png",
-    "scripts": "/semantic(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "/semantic(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://semantic-ui.com/"
   },
   "Sencha Touch": {
@@ -893,7 +978,7 @@
     ],
     "description": "Sencha Touch is a user interface (UI) JavaScript library, or web framework, specifically built for the Mobile Web.",
     "icon": "Sencha Touch.png",
-    "scripts": "sencha-touch.*\\.js",
+    "scriptSrc": "sencha-touch.*\\.js",
     "website": "http://www.sencha.com/products/touch"
   },
   "Sendgrid": {
@@ -925,7 +1010,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "sib(?:automation|forms)\\.com/",
+    "scriptSrc": "sib(?:automation|forms)\\.com/",
     "website": "https://www.sendinblue.com"
   },
   "Sensors Data": {
@@ -941,7 +1026,7 @@
       "sa.lib_version": "([\\d.]+)\\;version:\\1",
       "sensorsdata_app_js_bridge_call_js": ""
     },
-    "scripts": "sensorsdata",
+    "scriptSrc": "sensorsdata",
     "website": "https://www.sensorsdata.cn"
   },
   "Sentry": {
@@ -961,10 +1046,28 @@
       "__SENTRY__": "",
       "ravenOptions.whitelistUrls": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "browser\\.sentry\\-cdn\\.com/([0-9.]+)/bundle(?:\\.tracing)?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://sentry.io/"
+  },
+  "SeQura": {
+    "cats": [
+      91
+    ],
+    "description": "SeQura is a FinTech company based in Barcelona, providing digital flexible payment solutions, with a geographical focus on Southern Europe and Latin America.",
+    "icon": "SeQura.svg",
+    "js": {
+      "Sequra": "",
+      "SequraConfiguration": "",
+      "sequraProducts": ""
+    },
+    "scriptSrc": "live\\.sequracdn\\.com/",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.sequra.es"
   },
   "Seravo": {
     "cats": [
@@ -991,6 +1094,23 @@
     },
     "website": "http://s9y.org"
   },
+  "Service Management Group": {
+    "cats": [
+      73
+    ],
+    "description": "Service Management Group offers customer experience measurement, employee engagement, social monitoring, publishing, and brand research services.",
+    "dom": "link[href*='api.smg.com']",
+    "icon": "Service Management Group.png",
+    "js": {
+      "smgETrackParams": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.smg\\.com/",
+    "website": "https://www.smg.com"
+  },
   "Service Provider Pro": {
     "cats": [
       41,
@@ -1014,7 +1134,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "js/spp_clients\\.js\\;confidence:50",
       "\\.spp\\.io/js/"
     ],
@@ -1055,7 +1175,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "my\\.setmore\\.\\w+/",
       "/setmore-appointments/script/"
     ],
@@ -1078,7 +1198,7 @@
     "js": {
       "SevenroomsWidget": ""
     },
-    "scripts": "sevenrooms\\.\\w+/widget/embed\\.js",
+    "scriptSrc": "sevenrooms\\.\\w+/widget/embed\\.js",
     "website": "https://sevenrooms.com"
   },
   "Sezzle": {
@@ -1093,7 +1213,7 @@
       "sezzle_footer_images": ""
     },
     "saas": true,
-    "scripts": "widget\\.sezzle\\.in",
+    "scriptSrc": "widget\\.sezzle\\.in",
     "website": "https://sezzle.com/"
   },
   "Shapecss": {
@@ -1105,7 +1225,7 @@
     "js": {
       "Shapecss": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "shapecss[-.]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "/([\\d.]+)/shapecss(?:\\.min)?\\.js\\;version:\\1",
       "shapecss.*\\.js"
@@ -1121,7 +1241,7 @@
     "js": {
       "SHARETHIS": ""
     },
-    "scripts": "w\\.sharethis\\.com/",
+    "scriptSrc": "w\\.sharethis\\.com/",
     "website": "http://sharethis.com"
   },
   "SharpSpring": {
@@ -1138,7 +1258,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.marketingautomation\\.services.+(?:ver=)([\\d.]+)\\;version:\\1",
+    "scriptSrc": "\\.marketingautomation\\.services.+(?:ver=)([\\d.]+)\\;version:\\1",
     "website": "https://sharpspring.com"
   },
   "SharpSpring Ads": {
@@ -1154,7 +1274,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.perfectaudience\\.com",
+    "scriptSrc": "\\.perfectaudience\\.com",
     "website": "https://sharpspring.com/ads"
   },
   "ShellInABox": {
@@ -1191,7 +1311,7 @@
     "js": {
       "SSsdk": ""
     },
-    "scripts": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
+    "scriptSrc": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
     "website": "http://shinystat.com"
   },
   "Shogun": {
@@ -1220,7 +1340,7 @@
       }
     },
     "icon": "Shopify.svg",
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.shopify\\.com/shopifycloud/shopify_pay/"
     ],
     "website": "https://shop.app"
@@ -1253,7 +1373,7 @@
     "meta": {
       "keywords": "Shopatron"
     },
-    "scripts": "mediacdn\\.shopatron\\.com",
+    "scriptSrc": "mediacdn\\.shopatron\\.com",
     "website": "http://ecommerce.shopatron.com"
   },
   "Shopcada": {
@@ -1345,12 +1465,23 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "sdks\\.shopifycdn\\.com",
       "cdn\\.shopify\\.com"
     ],
     "url": "^https?//.+\\.myshopify\\.com",
     "website": "http://shopify.com"
+  },
+  "Shopify Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Shopify Chat is Shopify's native live chat function that allows you to have real-time conversations with customers visiting your Shopify store.",
+    "icon": "Shopify.svg",
+    "scriptSrc": [
+      "cdn\\.shopify\\.com/shopifycloud/shopify_chat/"
+    ],
+    "website": "https://www.shopify.com/inbox"
   },
   "Shopify Consent Management": {
     "cats": [
@@ -1358,7 +1489,7 @@
     ],
     "description": "Shopify Consent Management let's you create a tracking consent banner for EU customers.",
     "icon": "Shopify.svg",
-    "scripts": [
+    "scriptSrc": [
       "cookie_consent_shopify\\.js"
     ],
     "website": "https://apps.shopify.com/customer-privacy-banner"
@@ -1372,7 +1503,7 @@
     "js": {
       "SPR": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "productreviews\\.shopifycdn\\.com"
     ],
     "website": "https://apps.shopify.com/product-reviews"
@@ -1422,7 +1553,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.shoplo\\.\\w+/",
+    "scriptSrc": "cdn\\.shoplo\\.\\w+/",
     "website": "https://www.shoplo.com"
   },
   "Shoporama": {
@@ -1440,6 +1571,20 @@
     "robots": "# Powered by Shoporama",
     "website": "https://www.shoporama.dk"
   },
+  "Shoppiko": {
+    "cats": [
+      6
+    ],
+    "description": "Shoppiko is an ecommerce platform solution in India, which provides ecommerce website or ecommerce mobile application.",
+    "dom": "a[href*='shoppiko.com'][target='_blank']",
+    "icon": "Shoppiko.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://shoppiko.com"
+  },
   "Shoppy": {
     "cats": [
       6
@@ -1455,7 +1600,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.shoppy\\.gg",
+    "scriptSrc": "\\.shoppy\\.gg",
     "website": "https://shoppy.gg"
   },
   "Shoprunner": {
@@ -1475,7 +1620,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "/shoprunner/shoprunner_init\\.js",
+    "scriptSrc": "/shoprunner/shoprunner_init\\.js",
     "website": "https://www.shoprunner.com"
   },
   "Shoptet": {
@@ -1492,7 +1637,7 @@
     "meta": {
       "web_author": "^Shoptet"
     },
-    "scripts": [
+    "scriptSrc": [
       "^https?://cdn\\.myshoptet\\.com/"
     ],
     "website": "http://www.shoptet.cz"
@@ -1525,7 +1670,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "(?:(shopware)|/web/cache/[0-9]{10}_.+)\\.js\\;version:\\1?4:5",
       "/jquery\\.shopware\\.min\\.js",
       "/engine/Shopware/"
@@ -1551,7 +1696,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "shuttle(?:-assets-new|-storage)\\.s3\\.amazonaws\\.com",
+    "scriptSrc": "shuttle(?:-assets-new|-storage)\\.s3\\.amazonaws\\.com",
     "website": "https://www.devisto.com"
   },
   "Sift": {
@@ -1570,7 +1715,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.sift(?:science)?\\.com/s\\.js",
+    "scriptSrc": "cdn\\.sift(?:science)?\\.com/s\\.js",
     "website": "https://sift.com/"
   },
   "Signal": {
@@ -1583,7 +1728,7 @@
     "js": {
       "signalData": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "//s\\.btstatic\\.com/tag\\.js",
       "//s\\.thebrighttag\\.com/iframe\\?"
     ],
@@ -1604,7 +1749,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.signifyd\\.com",
+    "scriptSrc": "\\.signifyd\\.com",
     "website": "https://www.signifyd.com"
   },
   "SilverStripe": {
@@ -1633,15 +1778,16 @@
   },
   "Simon": {
     "cats": [
-      10
+      97
     ],
     "description": "Simon is a customer data platform (CDP) that helps you collect, clean, and control your customer data.",
     "icon": "Simon.svg",
+    "dom": "link[href*='.simonsignal.com']",
     "js": {
       "SimonData": ""
     },
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "static\\.simonsignal\\.com"
     ],
     "website": "https://www.simondata.com/"
@@ -1661,7 +1807,7 @@
     ],
     "description": "Simpli.fi is a programmatic advertising and agency management software.",
     "icon": "Simplifi.png",
-    "scripts": "i\\.simpli\\.fi",
+    "scriptSrc": "i\\.simpli\\.fi",
     "website": "https://simpli.fi/"
   },
   "Simplo7": {
@@ -1675,7 +1821,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.simplo7\\.\\w+/",
+    "scriptSrc": "cdn\\.simplo7\\.\\w+/",
     "website": "https://www.simplo7.com.br"
   },
   "Simplébo": {
@@ -1703,9 +1849,31 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "template\\.sirclocdn\\.com/",
+    "scriptSrc": "template\\.sirclocdn\\.com/",
     "url": "^https?//.+\\.sirclo\\.me",
     "website": "https://sirclo.com/"
+  },
+  "Sirdata": {
+    "cats": [
+      97,
+      67,
+      86
+    ],
+    "description": "Sirdata is a self-service, third party data-collecting platform that specialises in the collection of behavioural data, predictive targeting and selling of audience segments.",
+    "icon": "Sirdata.svg",
+    "js": {
+      "SDDAN.cmp": "",
+      "Sddan.cmpLoaded": ""
+    },
+    "scriptSrc": [
+      "(?:choices|cache)\\.consentframework\\.com/",
+      "js\\.sddan\\.com/"
+    ],
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sirdata.com"
   },
   "Site Kit": {
     "cats": [
@@ -1725,7 +1893,7 @@
       10
     ],
     "icon": "Site Meter.png",
-    "scripts": "sitemeter\\.com/js/counter\\.js\\?site=",
+    "scriptSrc": "sitemeter\\.com/js/counter\\.js\\?site=",
     "website": "http://www.sitemeter.com"
   },
   "Site24x7": {
@@ -1745,7 +1913,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.site24x7rum\\.com",
+    "scriptSrc": "\\.site24x7rum\\.com",
     "website": "https://www.site24x7.com"
   },
   "SiteEdit": {
@@ -1776,7 +1944,7 @@
     "description": "Sitejabber is the leading destination for customer ratings and reviews of businesses. Consumers find ratings and read reviews to ensure they buy from the best companies.",
     "icon": "SiteJabber.svg",
     "saas": true,
-    "scripts": "biz\\.sitejabber\\.com",
+    "scriptSrc": "biz\\.sitejabber\\.com",
     "website": "https://www.sitejabber.com/"
   },
   "SiteMinder": {
@@ -1791,7 +1959,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "widget\\.siteminder\\.com",
+    "scriptSrc": "widget\\.siteminder\\.com",
     "website": "https://www.siteminder.com"
   },
   "SiteSpect": {
@@ -1807,8 +1975,40 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "/__ssobj/core\\.js",
+    "scriptSrc": "/__ssobj/core\\.js",
     "website": "https://www.sitespect.com"
+  },
+  "SiteVibes": {
+    "cats": [
+      10
+    ],
+    "description": "SiteVibes is a cloud-based user generated content and visual marketing platform.",
+    "icon": "SiteVibes.png",
+    "js": {
+      "SiteVibesManager": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.sitevibes\\.com/",
+    "website": "https://sitevibes.com"
+  },
+  "SiteW": {
+    "cats": [
+      51
+    ],
+    "description": "SiteW is a French-based company that offers a website building service.",
+    "dom": "link[href*='.sitew.com']",
+    "icon": "SiteW.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.en.sitew.com"
   },
   "Sitecore": {
     "cats": [
@@ -1825,7 +2025,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://sitecore.net"
+    "website": "https://www.sitecore.com/"
   },
   "Sitefinity": {
     "cats": [
@@ -1855,7 +2055,7 @@
       "low"
     ],
     "saas": true,
-    "scripts": "siteglide\\.js",
+    "scriptSrc": "siteglide\\.js",
     "website": "https://www.siteglide.com"
   },
   "Sitevision CMS": {
@@ -1872,7 +2072,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "sitevision/system-resource/(?:[\\w\\d]+)/js/docready-min\\.js\\;confidence:25",
       "sitevision/system-resource/(?:[\\w\\d]+)/js/AppRegistry\\.js\\;confidence:25",
       "sitevision/system-resource/(?:[\\w\\d]+)/webapps/webapp_sdk-min\\.js\\;confidence:50",
@@ -1896,7 +2096,7 @@
     ],
     "html": "(?:<a [^>]*href=\"[^/]*//[^/]*serving-sys\\.com/|<img [^>]*src=\"[^/]*//[^/]*serving-sys\\.com/)",
     "icon": "Sizmek.png",
-    "scripts": "serving-sys\\.com/",
+    "scriptSrc": "serving-sys\\.com/",
     "website": "http://sizmek.com"
   },
   "Skedify": {
@@ -1908,7 +2108,7 @@
     "js": {
       "Skedify.Plugin.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "plugin\\.skedify\\.io",
+    "scriptSrc": "plugin\\.skedify\\.io",
     "website": "https://calendly.com/"
   },
   "Skimlinks": {
@@ -1925,7 +2125,7 @@
     "pricing": [
       "payg"
     ],
-    "scripts": "\\.skimresources\\.com",
+    "scriptSrc": "\\.skimresources\\.com",
     "website": "https://skimlinks.com",
     "xhr": "\\.skimresources\\.com"
   },
@@ -1969,7 +2169,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
   },
   "Slice": {
@@ -1991,7 +2191,7 @@
     ],
     "html": "<link [^>]+(?:/([\\d.]+)/)?slick-theme\\.css\\;version:\\1",
     "implies": "jQuery",
-    "scripts": "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://kenwheeler.github.io/slick"
   },
   "SlickStack": {
@@ -2018,7 +2218,7 @@
     "html": "<link [^>]*href=\"[^/]*slimbox(?:-rtl)?\\.css",
     "icon": "Slimbox.png",
     "implies": "MooTools",
-    "scripts": "slimbox\\.js",
+    "scriptSrc": "slimbox\\.js",
     "website": "http://www.digitalia.be/software/slimbox"
   },
   "Slimbox 2": {
@@ -2028,7 +2228,7 @@
     "html": "<link [^>]*href=\"[^/]*slimbox2(?:-rtl)?\\.css",
     "icon": "Slimbox 2.png",
     "implies": "jQuery",
-    "scripts": "slimbox2\\.js",
+    "scriptSrc": "slimbox2\\.js",
     "website": "http://www.digitalia.be/software/slimbox2"
   },
   "Smart Ad Server": {
@@ -2069,7 +2269,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.?smct\\.(?:io|co)/",
+    "scriptSrc": "\\.?smct\\.(?:io|co)/",
     "website": "https://smarterclick.com"
   },
   "Smartstore": {
@@ -2108,7 +2308,7 @@
       6
     ],
     "icon": "Smartstore.biz.png",
-    "scripts": "smjslib\\.js",
+    "scriptSrc": "smjslib\\.js",
     "website": "http://smartstore.com"
   },
   "Smartsupp": {
@@ -2126,7 +2326,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.smartsuppchat\\.com",
+    "scriptSrc": "\\.smartsuppchat\\.com",
     "website": "https://www.smartsupp.com"
   },
   "Smile": {
@@ -2144,7 +2344,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "js\\.smile\\.io/v([\\d.]+)/\\;version:\\1",
+    "scriptSrc": "js\\.smile\\.io/v([\\d.]+)/\\;version:\\1",
     "website": "https://smile.io"
   },
   "SmugMug": {
@@ -2194,7 +2394,7 @@
       "snaptr.pixelIdList": ""
     },
     "saas": true,
-    "scripts": "intg\\.snapchat\\.com/",
+    "scriptSrc": "intg\\.snapchat\\.com/",
     "website": "https://businesshelp.snapchat.com/s/article/snap-pixel-about"
   },
   "Snap.svg": {
@@ -2205,7 +2405,7 @@
     "js": {
       "Snap.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "snap\\.svg(?:-min)?\\.js",
+    "scriptSrc": "snap\\.svg(?:-min)?\\.js",
     "website": "http://snapsvg.io"
   },
   "SnapEngage": {
@@ -2249,8 +2449,25 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "https://cdn\\.snipcart\\.com/themes/v([\\w.]+)/default/snipcart\\.js\\;version:\\1",
+    "scriptSrc": "https://cdn\\.snipcart\\.com/themes/v([\\w.]+)/default/snipcart\\.js\\;version:\\1",
     "website": "https://snipcart.com"
+  },
+  "Sniply": {
+    "cats": [
+      96
+    ],
+    "description": "Sniply is a special URL shortener that allows to add a call-to-action to any landing page.",
+    "icon": "Sniply.svg",
+    "js": {
+      "sniply.create_sniply_bar": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "gosniply\\.com/",
+    "website": "https://sniply.io"
   },
   "Snoobi": {
     "cats": [
@@ -2260,7 +2477,7 @@
     "js": {
       "snoobi": ""
     },
-    "scripts": "snoobi\\.com/snoop\\.php",
+    "scriptSrc": "snoobi\\.com/snoop\\.php",
     "website": "http://www.snoobi.com"
   },
   "Snowplow Analytics": {
@@ -2283,7 +2500,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "sp\\.js\\;confidence:50",
       "d1fc8wv8zag5ca\\.cloudfront\\.net/.+/sp\\.js",
       "cdn\\.jsdelivr\\.net/gh/snowplow/sp-js-assets@(?:.+)/sp\\.js",
@@ -2315,7 +2532,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://social9.com"
   },
   "Socket.io": {
@@ -2328,8 +2545,21 @@
       "io.Socket": "",
       "io.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "socket\\.io.*\\.js",
+    "scriptSrc": "socket\\.io.*\\.js",
     "website": "https://socket.io"
+  },
+  "Soisy": {
+    "cats": [
+      91
+    ],
+    "description": "Soisy is a buy now, pay later solution provider.",
+    "icon": "Soisy.png",
+    "scriptSrc": "cdn\\.soisy\\.it/",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.soisy.it"
   },
   "SoftTr": {
     "cats": [
@@ -2353,7 +2583,7 @@
     "meta": {
       "web_author": "^solidpixels"
     },
-    "scripts": [
+    "scriptSrc": [
       "^https?://cdn\\.solidpixels\\.net/"
     ],
     "website": "https://www.solidpixels.net"
@@ -2405,7 +2635,7 @@
       "_adcopy-puzzle-image-image": "",
       "adcopy-puzzle-image-image": ""
     },
-    "scripts": "^https?://api\\.solvemedia\\.com/",
+    "scriptSrc": "^https?://api\\.solvemedia\\.com/",
     "website": "http://solvemedia.com"
   },
   "SonarQubes": {
@@ -2426,7 +2656,7 @@
     "meta": {
       "application-name": "^SonarQubes$"
     },
-    "scripts": "^/js/bundles/sonar\\.js?v=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": "^/js/bundles/sonar\\.js?v=([\\d.]+)$\\;version:\\1",
     "website": "https://www.sonarqube.org/"
   },
   "Sonobi": {
@@ -2502,7 +2732,7 @@
       "sovrn_render": ""
     },
     "saas": true,
-    "scripts": "\\.lijit\\.com",
+    "scriptSrc": "\\.lijit\\.com",
     "website": "https://www.sovrn.com",
     "xhr": "\\.lijit\\.com"
   },
@@ -2521,7 +2751,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)",
+    "scriptSrc": "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)",
     "website": "https://www.sovrn.com/publishers/commerce/"
   },
   "SparkPost": {
@@ -2553,7 +2783,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.speedcurve\\.com",
+    "scriptSrc": "\\.speedcurve\\.com",
     "website": "https://www.speedcurve.com"
   },
   "SpeedKit": {
@@ -2566,6 +2796,20 @@
       "speedKit": ""
     },
     "website": "https://www.baqend.com/"
+  },
+  "Speedimize": {
+    "cats": [
+      92
+    ],
+    "description": "Speedimize is a Shopify agency that focuses on website speed optimisation and performance issues.",
+    "icon": "Speedimize.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.shopify\\.com/.+/assets/speedimize\\.js",
+    "website": "https://speedimize.io"
   },
   "Sphinx": {
     "cats": [
@@ -2612,7 +2856,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.split\\.io/(?:sdk/split-([\\d\\.]+)\\.min\\.js)?\\;version:\\1",
+    "scriptSrc": "\\.split\\.io/(?:sdk/split-([\\d\\.]+)\\.min\\.js)?\\;version:\\1",
     "website": "https://www.split.io"
   },
   "SplitIt": {
@@ -2629,8 +2873,21 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.production\\.splitit\\.com/",
+    "scriptSrc": "\\.production\\.splitit\\.com/",
     "website": "https://www.splitit.com"
+  },
+  "SplittyPay": {
+    "cats": [
+      91
+    ],
+    "description": "SplittyPay is an alternative payment platform designed for group reservations and purchases.",
+    "icon": "SplittyPay.png",
+    "dom": "img[src*='splittypay']",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.splittypay.com"
   },
   "Splitbee": {
     "cats": [
@@ -2640,7 +2897,7 @@
     "js": {
       "splitbee": ""
     },
-    "scripts": "^https://cdn\\.splitbee\\.io/sb\\.js",
+    "scriptSrc": "^https://cdn\\.splitbee\\.io/sb\\.js",
     "website": "https://splitbee.io"
   },
   "Splunk": {
@@ -2680,7 +2937,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "static\\.spotapps\\.co/",
+    "scriptSrc": "static\\.spotapps\\.co/",
     "website": "https://www.spothopperapp.com"
   },
   "SpotX": {
@@ -2700,7 +2957,7 @@
       "SpotX.VERSION": "([\\d.]+)\\;version:\\1"
     },
     "saas": true,
-    "scripts": "js\\.spotx\\.tv",
+    "scriptSrc": "js\\.spotx\\.tv",
     "website": "https://www.spotx.tv",
     "xhr": "\\.spotx(?:change|cdn)\\.com"
   },
@@ -2715,7 +2972,7 @@
       "spotiiConfig": ""
     },
     "saas": true,
-    "scripts": "widget\\.spotii\\.me",
+    "scriptSrc": "widget\\.spotii\\.me",
     "website": "https://www.spotii.com/"
   },
   "Spree": {
@@ -2726,6 +2983,25 @@
     "icon": "Spree.png",
     "implies": "Ruby on Rails",
     "website": "https://spreecommerce.org"
+  },
+  "Sprig": {
+    "cats": [
+      73,
+      10
+    ],
+    "description": "Sprig is a UX analysis and management tool to understand what motivates customers to sign up, engage, and remain loyal to products.",
+    "icon": "Sprig.png",
+    "js": {
+      "UserLeap": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.userleap\\.com/",
+    "website": "https://sprig.com"
   },
   "Spring": {
     "cats": [
@@ -2751,8 +3027,97 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "\\.creator-spring\\.com/",
+    "scriptSrc": "\\.creator-spring\\.com/",
     "website": "https://www.spri.ng"
+  },
+  "SpurIT": {
+    "cats": [
+      5
+    ],
+    "description": "SpurIT is a team of certified Shopify experts which provide ecommerce software solutions.",
+    "icon": "SpurIT.svg",
+    "implies": "Shopify",
+    "js": {
+      "Spurit.global.version": "(.+)\\;version:\\1"
+    },
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://spur-i-t.com"
+  },
+  "SpurIT Abandoned Cart Reminder": {
+    "cats": [
+      98
+    ],
+    "description": "SpurIT Abandoned Cart Reminder bring back your Shopify store visitors who moved to another tab by blinking your store tab.",
+    "icon": "SpurIT.svg",
+    "implies": "Shopify",
+    "js": {
+      "ACR_SPURIT_Params.folderCss": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/"
+    },
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://spur-i-t.com/shopify-apps/abandoned-cart-reminder/"
+  },
+  "SpurIT Recurring Payments App": {
+    "cats": [
+      41
+    ],
+    "description": "SpurIT Recurring Payments App is a simple way to create a system of bill payment,subscriptions and invoicing.",
+    "icon": "SpurIT.svg",
+    "implies": "Shopify",
+    "js": {
+      "Spurit.recurringInvoices": ""
+    },
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/recurring-invoices/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://spur-i-t.com/shopify-apps/recurring-order-subscription"
+  },
+  "SpurIT Partial Payments App": {
+    "cats": [
+      41
+    ],
+    "description": "SpurIT Partial Payments App allow your customers to pay for the order in several ways or to share a payment with other people.",
+    "icon": "SpurIT.svg",
+    "implies": "Shopify",
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/split-payments/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://spur-i-t.com/shopify-apps/split-partial-payments/"
+  },
+  "SpurIT Loyalty App": {
+    "cats": [
+      84,
+      94
+    ],
+    "description": "SpurIT Loyalty App is a turnkey solution allowing you to reward existing customers in a number of ways.",
+    "icon": "SpurIT.svg",
+    "implies": "Shopify",
+    "js": {
+      "Spurit.Loyaltypoints": ""
+    },
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/loyaltypoints/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://spur-i-t.com/shopify-apps/loyalty-points-manager"
   },
   "Spryker": {
     "cats": [
@@ -2797,7 +3162,7 @@
     "pricing": [
       "poa"
     ],
-    "scripts": "static\\.squadded\\.co",
+    "scriptSrc": "static\\.squadded\\.co",
     "website": "https://www.squadded.co/"
   },
   "Square": {
@@ -2811,7 +3176,7 @@
       "Square.Analytics": "",
       "__BOOTSTRAP_STATE__.storeInfo.square_application_id": ""
     },
-    "scripts": "js\\.squareup\\.com",
+    "scriptSrc": "js\\.squareup\\.com",
     "website": "https://squareup.com/",
     "xhr": "\\.squareup\\.com"
   },
@@ -2850,7 +3215,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "assets\\.squarespace\\.\\w+/universal/scripts-compressed/commerce-\\w+-min\\.[\\w+\\-]+\\.js",
+    "scriptSrc": "assets\\.squarespace\\.\\w+/universal/scripts-compressed/commerce-\\w+-min\\.[\\w+\\-]+\\.js",
     "website": "https://www.squarespace.com/ecommerce-website"
   },
   "SquirrelMail": {
@@ -2896,7 +3261,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "api\\.stackanalytix\\.com",
+    "scriptSrc": "api\\.stackanalytix\\.com",
     "website": "https://www.stackanalytix.com"
   },
   "StackCommerce": {
@@ -2924,13 +3289,20 @@
   },
   "Stackla": {
     "cats": [
-      5
+      96,
+      95
     ],
+    "description": "Stackla is a cloud-based content marketing platform that helps discover, curate, display and engage with user-generated content across all digital marketing platforms.",
     "icon": "Stackla.png",
     "js": {
       "Stackla": ""
     },
-    "scripts": "assetscdn\\.stackla\\.com\\/media\\/js\\/widget\\/(?:[a-zA-Z0-9.]+)?\\.js",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.stackla\\.com/",
     "website": "http://stackla.com/"
   },
   "Stamped": {
@@ -2947,7 +3319,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.stamped\\.io/",
+    "scriptSrc": "\\.stamped\\.io/",
     "website": "https://stamped.io/"
   },
   "Starhost": {
@@ -3011,7 +3383,7 @@
       "sc_project": "\\;confidence:50",
       "sc_security": "\\;confidence:50"
     },
-    "scripts": "statcounter\\.com/counter/counter",
+    "scriptSrc": "statcounter\\.com/counter/counter",
     "website": "http://www.statcounter.com"
   },
   "Statically": {
@@ -3035,7 +3407,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.steelhousemedia\\.com/(?:spx\\?dxver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": "\\.steelhousemedia\\.com/(?:spx\\?dxver=([\\d.]+))?\\;version:\\1",
     "website": "https://steelhouse.com"
   },
   "Stimulus": {
@@ -3078,6 +3450,20 @@
     "icon": "Store Systems.png",
     "website": "http://store-systems.de"
   },
+  "StoreHippo": {
+    "cats": [
+      6
+    ],
+    "description": "StoreHippo is a SaaS based ecommerce platform.",
+    "dom": "link[href*='.storehippo.com'], img[src*='.storehippo.com']",
+    "icon": "StoreHippo.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.storehippo.com"
+  },
   "Storeden": {
     "cats": [
       6
@@ -3087,6 +3473,35 @@
     },
     "icon": "storeden.svg",
     "website": "https://www.storeden.com"
+  },
+  "StorifyMe": {
+    "cats": [
+      5
+    ],
+    "description": "StorifyMe is a storytelling platform for creating and distributing web stories on social networks and the open web.",
+    "dom": "link[href*='cdn.storifyme.com/']",
+    "icon": "StorifyMe.png",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.storifyme\\.com/",
+    "website": "https://www.storifyme.com"
+  },
+  "StoryStream": {
+    "cats": [
+      96
+    ],
+    "description": "StoryStream is a content curation platform that specialises in user generated content.",
+    "icon": "StoryStream.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "apps\\.storystream\\.ai/",
+    "website": "https://storystream.ai"
   },
   "Storyblok": {
     "cats": [
@@ -3107,7 +3522,7 @@
       "Bootstrap",
       "Google Code Prettify"
     ],
-    "scripts": "strapdown\\.js",
+    "scriptSrc": "strapdown\\.js",
     "website": "http://strapdownjs.com"
   },
   "Strapi": {
@@ -3151,13 +3566,14 @@
     "html": "<input[^>]+data-stripe",
     "icon": "Stripe.svg",
     "js": {
-      "Stripe.version": "^(.+)$\\;version:\\1"
+      "Stripe.version": "^(.+)$\\;version:\\1",
+      "checkout.enabledpayments.stripe": "^true$"
     },
     "pricing": [
       "payg"
     ],
     "saas": true,
-    "scripts": "js\\.stripe\\.com",
+    "scriptSrc": "js\\.stripe\\.com",
     "website": "http://stripe.com"
   },
   "Stylitics": {
@@ -3176,7 +3592,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "\\.stylitics\\.com/v([\\d.]+)\\;version:\\1",
       "/stylitics/js/stylitics\\.js\\?ver=v([\\d.]+)\\;version:\\1"
     ],
@@ -3199,7 +3615,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "static\\.subbly\\.me/assets/",
+    "scriptSrc": "static\\.subbly\\.me/assets/",
     "website": "https://www.subbly.co"
   },
   "SublimeVideo": {
@@ -3211,7 +3627,7 @@
     "js": {
       "sublimevideo": ""
     },
-    "scripts": "cdn\\.sublimevideo\\.net/js/[a-z\\d]+\\.js",
+    "scriptSrc": "cdn\\.sublimevideo\\.net/js/[a-z\\d]+\\.js",
     "website": "http://sublimevideo.net"
   },
   "Subrion": {
@@ -3249,7 +3665,7 @@
     "description": "Suiteshare powers conversational shopping experiences.",
     "icon": "Suiteshare.png",
     "saas": true,
-    "scripts": "static\\.suiteshare\\.com",
+    "scriptSrc": "static\\.suiteshare\\.com",
     "website": "https://suiteshare.com/"
   },
   "Sulu": {
@@ -3295,7 +3711,7 @@
     ],
     "description": "Sumo is a plugin offering set of marketing tools to automate a website's growth. These tools help drive extra traffic, engage visitors, increase email subscribers and build community.",
     "icon": "SumoMe.png",
-    "scripts": "load\\.sumome\\.com",
+    "scriptSrc": "load\\.sumome\\.com",
     "website": "http://sumome.com"
   },
   "SunOS": {
@@ -3319,7 +3735,7 @@
     "icon": "Super Socializer.png",
     "oss": true,
     "requires": "WordPress",
-    "scripts": "plugins/super-socializer/.+?ver=([\\d.]+)\\;version:\\1",
+    "scriptSrc": "plugins/super-socializer/.+?ver=([\\d.]+)\\;version:\\1",
     "website": "https://super-socializer-wordpress.heateor.com"
   },
   "Supersized": {
@@ -3327,7 +3743,7 @@
       25
     ],
     "icon": "Supersized.png",
-    "scripts": "supersized(?:\\.([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
+    "scriptSrc": "supersized(?:\\.([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
     "website": "http://buildinternet.com/project/supersized"
   },
   "Superspeed": {
@@ -3337,7 +3753,7 @@
     "description": "Superspeed is a page speed optimizer app for Shopify based sites.",
     "icon": "Superspeed.png",
     "implies": "Shopify",
-    "scripts": "superspeed\\.gadget-edge\\.com",
+    "scriptSrc": "superspeed\\.gadget-edge\\.com",
     "website": "https://apps.shopify.com/superspeed-free-speed-boost"
   },
   "Svbtle": {
@@ -3384,7 +3800,7 @@
     "description": "Swagger UI is a collection of HTML, JavaScript, and CSS assets that dynamically generate documentation from a Swagger-compliant API.",
     "icon": "Swagger UI.svg",
     "oss": true,
-    "scripts": "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1",
+    "scriptSrc": "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1",
     "website": "https://swagger.io/tools/swagger-ui"
   },
   "SweetAlert": {
@@ -3395,7 +3811,7 @@
     "html": "<link[^>]+?href=\"[^\"]+sweet-alert(?:\\.min)?\\.css",
     "icon": "SweetAlert.png",
     "oss": true,
-    "scripts": "sweet(?:-)?alert(?:\\.min)?\\.js",
+    "scriptSrc": "sweet(?:-)?alert(?:\\.min)?\\.js",
     "website": "https://sweetalert.js.org"
   },
   "SweetAlert2": {
@@ -3410,7 +3826,7 @@
       "Sweetalert2": ""
     },
     "oss": true,
-    "scripts": [
+    "scriptSrc": [
       "sweetalert2(?:\\.all)?(?:\\.min)?\\.js",
       "/npm/sweetalert2@([\\d.]+)\\;version:\\1",
       "sweetalert2@([\\d.]+)/dist/sweetalert2(?:\\.all)(?:\\.min)\\.js",
@@ -3446,7 +3862,7 @@
     "js": {
       "Swiftype": ""
     },
-    "scripts": "swiftype\\.com/embed\\.js$",
+    "scriptSrc": "swiftype\\.com/embed\\.js$",
     "website": "http://swiftype.com"
   },
   "Swiper Slider": {
@@ -3458,7 +3874,7 @@
     "js": {
       "Swiper": ""
     },
-    "scripts": "swiper(?:\\.min)?\\.js",
+    "scriptSrc": "swiper(?:\\.min)?\\.js",
     "website": "https://swiperjs.com"
   },
   "Sydney": {
@@ -3478,7 +3894,7 @@
     },
     "icon": "athemes.png",
     "requires": "WordPress",
-    "scripts": "themes/sydney\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": "themes/sydney\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://athemes.com/theme/sydney/"
   },
   "Sylius": {
@@ -3501,7 +3917,7 @@
     "icon": "Sylius.svg",
     "implies": "Symfony",
     "oss": true,
-    "scripts": [
+    "scriptSrc": [
       "syliusshop/script\\.js",
       "syliusgtmenhancedecommerceplugin"
     ],
@@ -3552,7 +3968,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.syndeca\\.com/",
+    "scriptSrc": "\\.syndeca\\.com/",
     "website": "https://www.syndeca.com"
   },
   "Synerise": {
@@ -3560,7 +3976,7 @@
       10
     ],
     "icon": "Synerise.svg",
-    "scripts": "snrcdn\\.net/sdk/(3\\.0)/synerise-javascript-sdk\\.min\\.js\\;version:\\1",
+    "scriptSrc": "snrcdn\\.net/sdk/(3\\.0)/synerise-javascript-sdk\\.min\\.js\\;version:\\1",
     "website": "https://synerise.com/"
   },
   "Synology DiskStation": {
@@ -3574,7 +3990,7 @@
       "application-name": "Synology DiskStation",
       "description": "^DiskStation provides a full-featured network attached storage"
     },
-    "scripts": "webapi/entry\\.cgi\\?api=SYNO\\.(?:Core|Filestation)\\.Desktop\\.",
+    "scriptSrc": "webapi/entry\\.cgi\\?api=SYNO\\.(?:Core|Filestation)\\.Desktop\\.",
     "website": "http://synology.com"
   },
   "SyntaxHighlighter": {
@@ -3605,7 +4021,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "cdn\\.syteapi\\.com/",
+    "scriptSrc": "cdn\\.syteapi\\.com/",
     "website": "https://www.syte.ai"
   },
   "sIFR": {
@@ -3614,7 +4030,7 @@
     ],
     "description": "sIFR is a JavaScript and Adobe Flash dynamic web fonts implementation.",
     "icon": "sIFR.png",
-    "scripts": "sifr\\.js",
+    "scriptSrc": "sifr\\.js",
     "website": "https://www.mikeindustries.com/blog/sifr"
   },
   "sNews": {
@@ -3635,7 +4051,7 @@
     "js": {
       "Scriptaculous.Version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "/(?:scriptaculous|protoaculous)(?:\\.js|/)",
+    "scriptSrc": "/(?:scriptaculous|protoaculous)(?:\\.js|/)",
     "website": "https://script.aculo.us"
   },
   "scrollreveal": {
@@ -3647,7 +4063,7 @@
     "js": {
       "ScrollReveal().version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "scrollreveal(?:\\.min)(?:\\.js)",
+    "scriptSrc": "scrollreveal(?:\\.min)(?:\\.js)",
     "website": "https://scrollrevealjs.org"
   },
   "shine.js": {
@@ -3657,7 +4073,7 @@
     "js": {
       "Shine": ""
     },
-    "scripts": "shine(?:\\.min)?\\.js",
+    "scriptSrc": "shine(?:\\.min)?\\.js",
     "website": "https://bigspaceship.github.io/shine.js/"
   },
   "snigel AdConsent": {
@@ -3675,7 +4091,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "(?:staging-)?cdn\\.snigelweb\\.com/(?:snhb|adconsent)/",
+    "scriptSrc": "(?:staging-)?cdn\\.snigelweb\\.com/(?:snhb|adconsent)/",
     "website": "https://www.snigel.com/adconsent/"
   },
   "snigel AdEngine": {
@@ -3688,7 +4104,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "(?:staging-)?cdn\\.snigelweb\\.com/adengine/",
       "adengine\\.snigelweb\\.com"
     ],

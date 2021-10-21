@@ -9,7 +9,7 @@
       "YAHOO.VERSION": "^(.+)$\\;version:\\1",
       "YUI.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "(?:/yui/|yui\\.yahooapis\\.com)",
+    "scriptSrc": "(?:/yui/|yui\\.yahooapis\\.com)",
     "website": "http://yuilibrary.com"
   },
   "YUI Doc": {
@@ -41,7 +41,7 @@
     "js": {
       "adxinserthtml": ""
     },
-    "scripts": "adinterax\\.com",
+    "scriptSrc": "adinterax\\.com",
     "website": "http://advertising.yahoo.com"
   },
   "Yahoo! Ecommerce": {
@@ -64,7 +64,7 @@
     ],
     "html": "<!-- (?:End )?Yahoo! Tag Manager -->",
     "icon": "yahoo.png",
-    "scripts": "b\\.yjtag\\.jp/iframe",
+    "scriptSrc": "b\\.yjtag\\.jp/iframe",
     "website": "https://tagmanager.yahoo.co.jp/"
   },
   "Yahoo! Web Analytics": {
@@ -75,7 +75,7 @@
     "js": {
       "YWA": ""
     },
-    "scripts": "d\\.yimg\\.com/mi/ywa\\.js",
+    "scriptSrc": "d\\.yimg\\.com/mi/ywa\\.js",
     "website": "http://web.analytics.yahoo.com"
   },
   "Yandex.Direct": {
@@ -89,7 +89,7 @@
       "yandex_ad_format": "",
       "yandex_partner_id": ""
     },
-    "scripts": "https?://an\\.yandex\\.ru/",
+    "scriptSrc": "https?://an\\.yandex\\.ru/",
     "website": "http://partner.yandex.com"
   },
   "Yandex.Messenger": {
@@ -105,7 +105,7 @@
     "pricing": [
       "payg"
     ],
-    "scripts": "chat\\.s3\\.yandex\\.net/widget\\.js",
+    "scriptSrc": "chat\\.s3\\.yandex\\.net/widget\\.js",
     "website": "https://dialogs.yandex.ru"
   },
   "Yandex.Metrika": {
@@ -117,7 +117,7 @@
     "js": {
       "yandex_metrika": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "mc\\.yandex\\.ru/metrika/(?:tag|watch)\\.js",
       "cdn\\.jsdelivr\\.net/npm/yandex\\-metrica\\-watch/watch\\.js"
     ],
@@ -161,7 +161,7 @@
       }
     },
     "icon": "Yelp.svg",
-    "scripts": "yelp\\.com/biz_badge_js",
+    "scriptSrc": "yelp\\.com/biz_badge_js",
     "website": "http://yelp.com"
   },
   "Yepcomm": {
@@ -189,7 +189,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.yieldify\\.com",
+    "scriptSrc": "\\.yieldify\\.com",
     "website": "https://www.yieldify.com"
   },
   "Yieldlab": {
@@ -197,7 +197,7 @@
       36
     ],
     "icon": "Yieldlab.png",
-    "scripts": "^https?://(?:[^/]+\\.)?yieldlab\\.net/",
+    "scriptSrc": "^https?://(?:[^/]+\\.)?yieldlab\\.net/",
     "website": "http://yieldlab.de"
   },
   "Yii": {
@@ -215,7 +215,7 @@
     ],
     "icon": "Yii.png",
     "implies": "PHP",
-    "scripts": [
+    "scriptSrc": [
       "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
       "/yii\\.(?:validation|activeForm)\\.js"
     ],
@@ -254,7 +254,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "staticw2\\.yotpo\\.com",
+    "scriptSrc": "staticw2\\.yotpo\\.com",
     "website": "https://www.yotpo.com/"
   },
   "Yottaa": {
@@ -269,7 +269,7 @@
       "X-Yottaa-Metrics": "",
       "X-Yottaa-Optimizations": ""
     },
-    "scripts": "cdn\\.yottaa\\.\\w+/",
+    "scriptSrc": "cdn\\.yottaa\\.\\w+/",
     "website": "https://www.yottaa.com"
   },
   "YouTrack": {

@@ -72,7 +72,7 @@
     "js": {
       "JSChart": ""
     },
-    "scripts": "jscharts.{0,32}\\.js",
+    "scriptSrc": "jscharts.{0,32}\\.js",
     "website": "http://www.jscharts.com"
   },
   "JSEcoin": {
@@ -84,7 +84,7 @@
     "js": {
       "jseMine": ""
     },
-    "scripts": "^(?:https):?//load\\.jsecoin\\.com/load/",
+    "scriptSrc": "^(?:https):?//load\\.jsecoin\\.com/load/",
     "website": "https://jsecoin.com/"
   },
   "JShop": {
@@ -131,7 +131,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "\\.jwplayer\\.com",
       "\\.jwpcdn\\.com"
     ],
@@ -188,7 +188,7 @@
       "$jit": "",
       "$jit.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "jit(?:-yc)?\\.js",
+    "scriptSrc": "jit(?:-yc)?\\.js",
     "website": "https://philogb.github.io/jit/"
   },
   "JavaServer Faces": {
@@ -298,7 +298,7 @@
     "meta": {
       "generator": "Jibres"
     },
-    "scripts": "/jibres\\.js",
+    "scriptSrc": "/jibres\\.js",
     "website": "https://jibres.com"
   },
   "Jimdo": {
@@ -328,7 +328,7 @@
     "js": {
       "jirafe": ""
     },
-    "scripts": "/jirafe\\.js",
+    "scriptSrc": "/jirafe\\.js",
     "website": "https://docs.jirafe.com"
   },
   "Jitsi": {
@@ -337,7 +337,7 @@
     ],
     "description": "Jitsi is a free and open-source multiplatform voice (VoIP), videoconferencing and instant messaging applications for the web platform.",
     "icon": "Jitsi.png",
-    "scripts": "lib-jitsi-meet.*\\.js",
+    "scriptSrc": "lib-jitsi-meet.*\\.js",
     "website": "https://jitsi.org"
   },
   "Jive": {
@@ -370,7 +370,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.jivosite\\.com",
+    "scriptSrc": "\\.jivosite\\.com",
     "website": "https://www.jivosite.com"
   },
   "JobberBase": {
@@ -402,7 +402,7 @@
       "freemium",
       "onetime"
     ],
-    "scripts": "/components/com_jshopping/",
+    "scriptSrc": "/components/com_jshopping/",
     "website": "https://www.webdesigner-profi.de/joomla-webdesign/joomla-shop"
   },
   "Joomla": {
@@ -442,7 +442,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.judge\\.me",
+    "scriptSrc": "cdn\\.judge\\.me",
     "website": "https://judge.me/"
   },
   "Jumbo": {
@@ -452,7 +452,7 @@
     "description": "Jumbo is a page speed optimizer app for Shopify based sites.",
     "icon": "Jumbo.png",
     "implies": "Shopify",
-    "scripts": "mt\\.tryjumbo\\.com",
+    "scriptSrc": "mt\\.tryjumbo\\.com",
     "website": "https://www.tryjumbo.com/"
   },
   "Jumpseller": {
@@ -469,7 +469,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "assets\\.jumpseller\\.\\w+/",
       "jumpseller-apps\\.herokuapp\\.\\w+/"
     ],
@@ -486,7 +486,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.getjusto\\.com/",
+    "scriptSrc": "\\.getjusto\\.com/",
     "website": "https://www.getjusto.com"
   },
   "Justuno": {
@@ -503,7 +503,7 @@
       "low"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "my\\.jst\\.ai",
       "cdn\\.justuno\\.com"
     ],
@@ -530,7 +530,7 @@
     "js": {
       "jQT": ""
     },
-    "scripts": "jqtouch.*\\.js",
+    "scriptSrc": "jqtouch.*\\.js",
     "website": "http://jqtouch.com"
   },
   "jQuery": {
@@ -544,7 +544,7 @@
       "$.fn.jquery": "([\\d.]+)\\;version:\\1",
       "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "jquery",
       "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
       "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-]\\;version:\\1"
@@ -562,7 +562,7 @@
       "$.devbridgeAutocomplete": "",
       "jQuery.devbridgeAutocomplete": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "/devbridgeAutocomplete(?:-min)?\\.js",
       "/jquery\\.devbridge-autocomplete/([0-9.]+)/jquery\\.autocomplete(?:.min)?\\.js\\;version:\\1"
     ],
@@ -580,7 +580,7 @@
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },
-    "scripts": "jquery[.-]migrate(?:-([\\d.]+))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": "jquery[.-]migrate(?:-([\\d.]+))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
     "website": "https://github.com/jquery/jquery-migrate"
   },
   "jQuery Mobile": {
@@ -593,7 +593,7 @@
     "js": {
       "jQuery.mobile.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
     "website": "https://jquerymobile.com"
   },
   "jQuery Sparklines": {
@@ -602,7 +602,7 @@
     ],
     "description": "jQuery Sparklines is a plugin that generates sparklines (small inline charts) directly in the browser using data supplied either inline in the HTML, or via javascript.",
     "implies": "jQuery",
-    "scripts": "jquery\\.sparkline.*\\.js",
+    "scriptSrc": "jquery\\.sparkline.*\\.js",
     "website": "http://omnipotent.net/jquery.sparkline/"
   },
   "jQuery UI": {
@@ -616,7 +616,7 @@
     "js": {
       "jQuery.ui.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "jquery-ui[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "([\\d.]+)/jquery-ui(?:\\.min)?\\.js\\;version:\\1",
       "jquery-ui.*\\.js"
@@ -638,7 +638,7 @@
       "pjax-replace": "",
       "pjax-timeout": ""
     },
-    "scripts": "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
     "website": "https://github.com/defunkt/jquery-pjax"
   },
   "jqPlot": {
@@ -647,7 +647,7 @@
     ],
     "icon": "jqPlot.png",
     "implies": "jQuery",
-    "scripts": "jqplot.*\\.js",
+    "scriptSrc": "jqplot.*\\.js",
     "website": "http://www.jqplot.com"
   },
   "jsDelivr": {
@@ -657,7 +657,7 @@
     "description": "JSDelivr is a free public CDN for open-source projects. It can serve web files directly from the npm registry and GitHub repositories without any configuration.",
     "dom": "link[href*='cdn.jsdelivr.net']",
     "icon": "jsdelivr-icon.svg",
-    "scripts": "cdn\\.jsdelivr\\.net",
+    "scriptSrc": "cdn\\.jsdelivr\\.net",
     "website": "https://www.jsdelivr.com/",
     "xhr": "cdn\\.jsdelivr\\.net"
   }

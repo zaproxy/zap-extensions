@@ -60,7 +60,7 @@
       "katex.version": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scripts": "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1",
+    "scriptSrc": "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1",
     "website": "https://katex.org/"
   },
   "Kajabi": {
@@ -99,7 +99,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.kameleoon\\.\\w+/kameleoon\\.js",
+    "scriptSrc": "\\.kameleoon\\.\\w+/kameleoon\\.js",
     "website": "https://kameleoon.com/"
   },
   "Kamva": {
@@ -113,7 +113,7 @@
     "meta": {
       "generator": "[CK]amva"
     },
-    "scripts": "cdn\\.mykamva\\.ir",
+    "scriptSrc": "cdn\\.mykamva\\.ir",
     "website": "https://kamva.ir"
   },
   "Kapture CRM": {
@@ -132,7 +132,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.kapturecrm\\.com/.+\\?ver=([\\d\\.]+)\\;version:\\1",
+    "scriptSrc": "\\.kapturecrm\\.com/.+\\?ver=([\\d\\.]+)\\;version:\\1",
     "website": "https://www.kapturecrm.com"
   },
   "Karma": {
@@ -146,7 +146,7 @@
       "karma.vars.version": "(.+)\\;version:\\1"
     },
     "oss": true,
-    "scripts": "karma\\.mdpcdn\\.com",
+    "scriptSrc": "karma\\.mdpcdn\\.com",
     "website": "https://karma-runner.github.io"
   },
   "Kartra": {
@@ -165,7 +165,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "app\\.kartra\\.com",
+    "scriptSrc": "app\\.kartra\\.com",
     "website": "https://home.kartra.com"
   },
   "Keap": {
@@ -180,7 +180,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "property\\.infusionsoft\\.com",
+    "scriptSrc": "property\\.infusionsoft\\.com",
     "website": "https://keap.com",
     "xhr": "property\\.infusionsoft\\.com"
   },
@@ -229,7 +229,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "/CMSPages/GetResource\\.ashx",
+    "scriptSrc": "/CMSPages/GetResource\\.ashx",
     "website": "http://www.kentico.com"
   },
   "Kerberos": {
@@ -293,7 +293,7 @@
     "pricing": [
       "poa"
     ],
-    "scripts": "cdn-tp\\d+\\.mozu\\.com",
+    "scriptSrc": "cdn-tp\\d+\\.mozu\\.com",
     "website": "https://kibocommerce.com"
   },
   "Kibo Personalization": {
@@ -314,7 +314,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "\\.monetate\\.net",
       "\\.baynote\\.net"
     ],
@@ -329,7 +329,7 @@
       "Kinetic": "",
       "Kinetic.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "kinetic(?:-v?([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "kinetic(?:-v?([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://github.com/ericdrowell/KineticJS/"
   },
   "Kinsta": {
@@ -377,7 +377,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.static\\.kiwisizing\\.com/",
+    "scriptSrc": "cdn\\.static\\.kiwisizing\\.com/",
     "website": "https://www.kiwisizing.com"
   },
   "Klarna Checkout": {
@@ -403,7 +403,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.klarnaservices\\.com/lib\\.js",
+    "scriptSrc": "\\.klarnaservices\\.com/lib\\.js",
     "website": "https://www.klarna.com/international/"
   },
   "Klaviyo": {
@@ -416,7 +416,7 @@
       "KlaviyoSubscribe": "",
       "klaviyo": ""
     },
-    "scripts": "klaviyo\\.com",
+    "scriptSrc": "klaviyo\\.com",
     "website": "https://www.klaviyo.com/"
   },
   "Klevu": {
@@ -435,8 +435,21 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1",
+    "scriptSrc": "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1",
     "website": "https://www.klevu.com"
+  },
+  "Klickly": {
+    "cats": [
+      36
+    ],
+    "description": "Klickly is an invite-only, commission-based advertising platform.",
+    "icon": "Klickly.svg",
+    "scriptSrc": "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.klickly.com"
   },
   "Knockout.js": {
     "cats": [
@@ -465,7 +478,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "ko-fi\\.com/widgets",
+    "scriptSrc": "ko-fi\\.com/widgets",
     "website": "https://ko-fi.com"
   },
   "Koa": {
@@ -559,7 +572,7 @@
     "meta": {
       "generator": "Koken ([\\d.]+)\\;version:\\1"
     },
-    "scripts": "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1",
+    "scriptSrc": "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1",
     "website": "http://koken.me"
   },
   "Komodo CMS": {
@@ -588,7 +601,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.k-analytix\\.com",
+    "scriptSrc": "\\.k-analytix\\.com",
     "website": "https://www.konduto.com"
   },
   "Koobi": {
@@ -611,7 +624,7 @@
     },
     "icon": "Kooboo CMS.png",
     "implies": "Microsoft ASP.NET",
-    "scripts": "/Kooboo",
+    "scriptSrc": "/Kooboo",
     "website": "http://kooboo.com"
   },
   "Kooomo": {
@@ -641,7 +654,7 @@
       1
     ],
     "icon": "Kotisivukone.png",
-    "scripts": "kotisivukone(?:\\.min)?\\.js",
+    "scriptSrc": "kotisivukone(?:\\.min)?\\.js",
     "website": "http://www.kotisivukone.fi"
   },
   "Kount": {
@@ -659,7 +672,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "shopify\\.kount\\.net/js"
     ],
     "website": "https://kount.com"
@@ -689,7 +702,7 @@
     "pricing": [
       "payg"
     ],
-    "scripts": "cdn\\.kueskipay\\.com",
+    "scriptSrc": "cdn\\.kueskipay\\.com",
     "website": "https://kueskipay.com/"
   },
   "Kustomer": {
@@ -702,9 +715,25 @@
     "js": {
       "Kustomer": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.kustomerapp\\.com"
     ],
     "website": "https://www.kustomer.com/"
+  },
+  "k-eCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "k-eCommerce is mdf commerce’s platform for SMBs, providing all-in-one ecommerce and digital payment solutions integrated to Microsoft Dynamics and SAP Business One. ",
+    "dom": "a[href*='.k-ecommerce.com/'][target='_blank']",
+    "icon": "k-eCommerce.png",
+    "meta": {
+      "generator": "k-eCommerce"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.k-ecommerce.com"
   }
 }

@@ -65,8 +65,20 @@
     ],
     "description": "Facebook is an online social media and social networking service.",
     "icon": "Facebook.svg",
-    "scripts": "//connect\\.facebook\\.([a-z]+)/[^/]*/[a-z]*\\.js",
+    "scriptSrc": "//connect\\.facebook\\.([a-z]+)/[^/]*/[a-z]*\\.js",
     "website": "http://facebook.com"
+  },
+  "Facebook Ads": {
+    "cats": [
+      36
+    ],
+    "description": "Facebook Ads is an online advertising platform developed by Facebook.",
+    "icon": "Facebook.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.facebook.com/business/ads"
   },
   "Facebook Chat Plugin": {
     "cats": [
@@ -84,7 +96,7 @@
     "js": {
       "facebookChatSettings": ""
     },
-    "scripts": "connect\\.facebook\\.net/.+\\.customerchat\\.js",
+    "scriptSrc": "connect\\.facebook\\.net/.+\\.customerchat\\.js",
     "website": "https://developers.facebook.com/docs/messenger-platform/discovery/facebook-chat-plugin/"
   },
   "Facebook Login": {
@@ -108,7 +120,7 @@
     "js": {
       "_fbq": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "connect\\.facebook.\\w+/signals/config/\\d+\\?v=([\\d\\.]+)\\;version:\\1",
       "connect\\.facebook\\.\\w+/.+/fbevents\\.js"
     ],
@@ -120,7 +132,7 @@
     ],
     "description": "Facil-iti is a web accessibility overlay which provides support for some people with disabilities and seniors.",
     "icon": "Facil-iti.svg",
-    "scripts": "ws\\.facil-iti\\.com/tag/faciliti-tag\\.min\\.js",
+    "scriptSrc": "ws\\.facil-iti\\.com/tag/faciliti-tag\\.min\\.js",
     "website": "https://www.facil-iti.com/"
   },
   "Fact Finder": {
@@ -130,7 +142,7 @@
     "description": "Fact Finder is a platform which, combines search, navigation, and merchandising solutions to streamline online search and power sales.",
     "html": "<!-- Factfinder",
     "icon": "Fact Finder.png",
-    "scripts": "Suggest\\.ff",
+    "scriptSrc": "Suggest\\.ff",
     "url": "(?:/ViewParametricSearch|ffsuggest\\.[a-z]htm)",
     "website": "http://fact-finder.com"
   },
@@ -146,8 +158,26 @@
       "Fancybox.version": "^(.+)$\\;version:\\1",
       "jQuery.fancybox.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "jquery\\.fancybox(?:\\.pack|\\.min)?\\.js(?:\\?v=([\\d.]+))?$\\;version:\\1",
+    "scriptSrc": "jquery\\.fancybox(?:\\.pack|\\.min)?\\.js(?:\\?v=([\\d.]+))?$\\;version:\\1",
     "website": "http://fancyapps.com/fancybox"
+  },
+  "Fanplayr": {
+    "cats": [
+      76
+    ],
+    "description": "Fanplayr is a real-time insights platform that provides website optimisation and personalisation solutions for businesses.",
+    "dom": "link[href*='cdn.fanplayr.com']",
+    "icon": "Fanplayr.svg",
+    "js": {
+      "fanplayr.platform.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.fanplayr\\.com/.+/([\\d\\.]+)\\;version:\\1",
+    "website": "https://fanplayr.com"
   },
   "FaraPy": {
     "cats": [
@@ -170,7 +200,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "fareharbor\\.com/embeds/api/",
+    "scriptSrc": "fareharbor\\.com/embeds/api/",
     "website": "https://fareharbor.com"
   },
   "Fast Checkout": {
@@ -187,7 +217,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "js\\.fast\\.co/",
+    "scriptSrc": "js\\.fast\\.co/",
     "website": "https://www.fast.co"
   },
   "Fastcommerce": {
@@ -251,7 +281,7 @@
       "<(?:iframe)[^>]+FatZebraFrame"
     ],
     "icon": "fatzebra.png",
-    "scripts": "paynow\\.pmnts\\.io",
+    "scriptSrc": "paynow\\.pmnts\\.io",
     "website": "https://www.fatzebra.com/"
   },
   "Fat-Free Framework": {
@@ -264,6 +294,23 @@
     "icon": "Fat-Free Framework.png",
     "implies": "PHP",
     "website": "http://fatfreeframework.com"
+  },
+  "Fathom": {
+    "cats": [
+      10
+    ],
+    "description": "Fathom is easy-yet-powerful website analytics that protects digital privacy.",
+    "icon": "Fathom.svg",
+    "js": {
+      "fathom.blockTrackingForMe": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.usefathom\\.com/",
+    "website": "https://usefathom.com"
   },
   "Fbits": {
     "cats": [
@@ -293,7 +340,7 @@
     ],
     "description": "Feedback Fish is a widget for collecting website feedback from users.",
     "icon": "feedback-fish.svg",
-    "scripts": "^https://feedback\\.fish/ff\\.js",
+    "scriptSrc": "^https://feedback\\.fish/ff\\.js",
     "website": "https://feedback.fish"
   },
   "Fera": {
@@ -310,7 +357,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.fera\\.ai",
+    "scriptSrc": "cdn\\.fera\\.ai",
     "website": "https://fera.ai/"
   },
   "FilePond": {
@@ -324,7 +371,7 @@
       "FilePond.create": "",
       "FilePond.setOptions": ""
     },
-    "scripts": "filepond.js",
+    "scriptSrc": "filepond.js",
     "website": "https://pqina.nl/filepond/"
   },
   "FinanceAds": {
@@ -356,7 +403,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "@findify/bundle@([\\d.]+)/dist/.+\\.js\\;version:\\1",
+    "scriptSrc": "@findify/bundle@([\\d.]+)/dist/.+\\.js\\;version:\\1",
     "website": "https://www.findify.io"
   },
   "Fing": {
@@ -391,7 +438,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "fingerprint(?:/fp)?(\\d)?(?:\\.min)?\\.js\\;version:\\1",
       "fingerprintjs(?:\\-pro|2)?(?:@|/)(\\d.*?)?/\\;version:\\1"
     ],
@@ -406,7 +453,7 @@
     "js": {
       "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
       "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
     ],
@@ -435,7 +482,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.firepush\\.\\w+",
+    "scriptSrc": "cdn\\.firepush\\.\\w+",
     "website": "https://getfirepush.com"
   },
   "FirstImpression.io": {
@@ -448,7 +495,7 @@
       "FI.options": "",
       "fiPrebidAnalyticsHandler": ""
     },
-    "scripts": "\\.firstimpression\\.io",
+    "scriptSrc": "\\.firstimpression\\.io",
     "website": "https://www.firstimpression.io",
     "xhr": "\\.firstimpression\\.io"
   },
@@ -467,7 +514,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.fitanalytics\\.com",
+    "scriptSrc": "\\.fitanalytics\\.com",
     "website": "https://www.fitanalytics.com"
   },
   "FlagSmith": {
@@ -486,7 +533,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.flagsmith\\.com/",
+    "scriptSrc": "cdn\\.flagsmith\\.com/",
     "website": "https://flagsmith.com"
   },
   "Flarum": {
@@ -550,7 +597,7 @@
     "description": "FlexSlider is a free jQuery slider plugin.",
     "icon": "FlexSlider.png",
     "implies": "jQuery",
-    "scripts": [
+    "scriptSrc": [
       "jquery\\.flexslider(?:\\.min)?\\.js$"
     ],
     "website": "https://woocommerce.com/flexslider/"
@@ -562,7 +609,7 @@
     "js": {
       "Flickity": ""
     },
-    "scripts": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
+    "scriptSrc": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
     "website": "https://flickity.metafizzy.co/"
   },
   "Flocktory": {
@@ -581,7 +628,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.flocktory\\.com/",
+    "scriptSrc": "\\.flocktory\\.com/",
     "website": "https://www.flocktory.com"
   },
   "Flow": {
@@ -599,7 +646,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "(?:shopify-)?cdn\\.flow\\.io/",
+    "scriptSrc": "(?:shopify-)?cdn\\.flow\\.io/",
     "website": "https://www.flow.io/"
   },
   "FluxBB": {
@@ -654,7 +701,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "fomo\\.com/api/v",
+    "scriptSrc": "fomo\\.com/api/v",
     "website": "https://fomo.com"
   },
   "Font Awesome": {
@@ -676,7 +723,7 @@
       "freemium",
       "recurring"
     ],
-    "scripts": [
+    "scriptSrc": [
       "(?:F|f)o(?:n|r)t-?(?:A|a)wesome(?:.*?([0-9a-fA-F]{7,40}|[\\d]+(?:.[\\d]+(?:.[\\d]+)?)?)|)",
       "\\.fontawesome\\.com/([0-9a-z]+).js"
     ],
@@ -726,7 +773,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "formitable\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
       "cdn\\.formitable\\.com"
     ],
@@ -756,7 +803,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "checkout\\.forte\\.net",
+    "scriptSrc": "checkout\\.forte\\.net",
     "website": "https://www.forte.net"
   },
   "Forter": {
@@ -775,7 +822,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "forter\\.com",
+    "scriptSrc": "forter\\.com",
     "website": "https://www.forter.com"
   },
   "Fortune3": {
@@ -784,7 +831,7 @@
     ],
     "html": "(?:<link [^>]*href=\"[^\\/]*\\/\\/www\\.fortune3\\.com\\/[^\"]*siterate\\/rate\\.css|Powered by <a [^>]*href=\"[^\"]+fortune3\\.com)",
     "icon": "Fortune3.png",
-    "scripts": "cartjs\\.php\\?(?:.*&)?s=[^&]*myfortune3cart\\.com",
+    "scriptSrc": "cartjs\\.php\\?(?:.*&)?s=[^&]*myfortune3cart\\.com",
     "website": "http://fortune3.com"
   },
   "Foswiki": {
@@ -826,20 +873,24 @@
       "Four": ""
     },
     "saas": true,
-    "scripts": "scripts\\.paywithfour\\.com",
+    "scriptSrc": "scripts\\.paywithfour\\.com",
     "website": "https://paywithfour.com/"
   },
   "Foursixty": {
     "cats": [
-      5
+      96
     ],
-    "description": "Foursixty is a widget which turns Instagram content and UGC into shoppable galleries.",
+    "description": "Foursixty is a widget which turns Instagram content and user-generated content into shoppable galleries.",
     "icon": "Foursixty.png",
     "js": {
       "FoursixtyEmbed": ""
     },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
     "saas": true,
-    "scripts": "foursixty\\.com",
+    "scriptSrc": "foursixty\\.com",
     "website": "https://foursixty.com/"
   },
   "Foxy.io": {
@@ -853,7 +904,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.foxycart\\.com",
+    "scriptSrc": "cdn\\.foxycart\\.com",
     "website": "https://www.foxy.io"
   },
   "FreeBSD": {
@@ -887,7 +938,7 @@
       10
     ],
     "icon": "Freespee.svg",
-    "scripts": "analytics\\.freespee\\.com/js/external/fs\\.(?:min\\.)?js",
+    "scriptSrc": "analytics\\.freespee\\.com/js/external/fs\\.(?:min\\.)?js",
     "website": "https://www.freespee.com"
   },
   "Freshchat": {
@@ -904,7 +955,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "wchat\\.freshchat\\.com/js/widget\\.js",
+    "scriptSrc": "wchat\\.freshchat\\.com/js/widget\\.js",
     "website": "https://www.freshworks.com/live-chat-software/"
   },
   "Freshop": {
@@ -924,7 +975,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "asset(?:cdn)?\\.freshop\\.com/",
+    "scriptSrc": "asset(?:cdn)?\\.freshop\\.com/",
     "website": "https://www.freshop.com"
   },
   "Freshworks CRM": {
@@ -945,7 +996,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.freshmarketer\\.com",
       "cdn\\.zarget\\.com"
     ],
@@ -966,7 +1017,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "\\.cloudfront\\.net/js/friendbuy\\.min\\.js",
       "static\\.fbot\\.me/friendbuy\\.js"
     ],
@@ -1055,7 +1106,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "frosmo\\.easy\\.js",
+    "scriptSrc": "frosmo\\.easy\\.js",
     "website": "https://frosmo.com"
   },
   "FullStory": {
@@ -1073,7 +1124,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.fullstory\\.com/",
+    "scriptSrc": "\\.fullstory\\.com/",
     "website": "https://www.fullstory.com"
   },
   "Fusion Ads": {
@@ -1084,7 +1135,7 @@
     "js": {
       "_fusion": ""
     },
-    "scripts": "^[^\\/]*//[ac]dn\\.fusionads\\.net/(?:api/([\\d.]+)/)?\\;version:\\1",
+    "scriptSrc": "^[^\\/]*//[ac]dn\\.fusionads\\.net/(?:api/([\\d.]+)/)?\\;version:\\1",
     "website": "http://fusionads.net"
   },
   "Future Shop": {
@@ -1092,7 +1143,7 @@
       6
     ],
     "icon": "futureshop.png",
-    "scripts": "future-shop.*\\.js",
+    "scriptSrc": "future-shop.*\\.js",
     "website": "https://www.future-shop.jp"
   }
 }
