@@ -8,7 +8,7 @@
     "icon": "EC-CUBE.svg",
     "implies": "PHP",
     "oss": true,
-    "scripts": [
+    "scriptSrc": [
       "eccube\\.js",
       "win_op\\.js"
     ],
@@ -97,7 +97,7 @@
     "pricing": [
       "poa"
     ],
-    "scripts": [
+    "scriptSrc": [
       "\\.ex\\.co",
       "\\.playbuzz\\.com"
     ],
@@ -150,7 +150,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.easystore\\.co/",
+    "scriptSrc": "\\.easystore\\.co/",
     "website": "https://www.easystore.co"
   },
   "Ecwid": {
@@ -169,7 +169,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "https://app\\.multiscreenstore\\.com/script\\.js",
       "https://app\\.ecwid\\.com/script\\.js"
     ],
@@ -263,7 +263,7 @@
     "js": {
       "elementorFrontend.getElements": ""
     },
-    "scripts": "elementor/assets/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": "elementor/assets/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
     "website": "https://elementor.com"
   },
   "Elevar": {
@@ -326,13 +326,13 @@
       "elqSiteID": "",
       "elq_global": ""
     },
-    "scripts": "elqCfg\\.js",
+    "scriptSrc": "elqCfg\\.js",
     "website": "http://eloqua.com"
   },
   "Emarsys": {
     "cats": [
       32,
-      76
+      97
     ],
     "description": "Emarsys is a cloud-based B2C marketing platform.",
     "icon": "Emarsys.svg",
@@ -340,8 +340,26 @@
       "Scarab": "",
       "ScarabQueue": ""
     },
-    "scripts": "(?:static|cdn)\\.scarabresearch\\.com",
+    "scriptSrc": "(?:static|cdn)\\.scarabresearch\\.com",
     "website": "https://emarsys.com/"
+  },
+  "EmbedSocial": {
+    "cats": [
+      5
+    ],
+    "description": "EmbedSocial is a social media management platform.",
+    "icon": "EmbedSocial.svg",
+    "js": {
+      "EMBEDSOCIALHASHTAG": "",
+      "EmbedSocialIframeLightbox": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "embedsocial\\.com/",
+    "website": "https://embedsocial.com"
   },
   "EmbedThis Appweb": {
     "cats": [
@@ -361,8 +379,10 @@
     "cpe": "cpe:/a:emberjs:ember.js",
     "icon": "Ember.js.png",
     "implies": "Handlebars",
+    "scripts": "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1",
     "js": {
       "Ember": "",
+      "EmberENV": "",
       "Ember.VERSION": "^(.+)$\\;version:\\1"
     },
     "website": "http://emberjs.com"
@@ -382,7 +402,7 @@
       10
     ],
     "icon": "Engagio.png",
-    "scripts": [
+    "scriptSrc": [
       "web-analytics\\.engagio\\.com/js/ei\\.js",
       "web-analytics\\.engagio\\.com/api/"
     ],
@@ -404,7 +424,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.enjin\\.com/",
+    "scriptSrc": "\\.enjin\\.com/",
     "website": "https://www.enjin.com"
   },
   "Ensighten": {
@@ -413,7 +433,7 @@
     ],
     "description": "Ensighten is a solution that enables secure management, implementation and control of website technologies.",
     "icon": "ensighten.png",
-    "scripts": "//nexus\\.ensighten\\.com/",
+    "scriptSrc": "//nexus\\.ensighten\\.com/",
     "website": "https://success.ensighten.com/hc/en-us"
   },
   "Envoy": {
@@ -439,7 +459,7 @@
     "js": {
       "enyo": ""
     },
-    "scripts": "enyo\\.js",
+    "scriptSrc": "enyo\\.js",
     "website": "http://enyojs.com"
   },
   "Epoch": {
@@ -448,7 +468,7 @@
     ],
     "html": "<link[^>]+?href=\"[^\"]+epoch(?:\\.min)?\\.css",
     "implies": "D3",
-    "scripts": "epoch(?:\\.min)?\\.js",
+    "scriptSrc": "epoch(?:\\.min)?\\.js",
     "website": "https://fastly.github.io/epoch"
   },
   "Epom": {
@@ -468,7 +488,7 @@
     ],
     "description": "EqualWeb provides a web accessibility overlay, and helps some people with disabilities access digital information.",
     "icon": "EqualWeb.png",
-    "scripts": "cdn\\.equalweb\\.com.*\\.js",
+    "scriptSrc": "cdn\\.equalweb\\.com.*\\.js",
     "website": "https://www.equalweb.com/"
   },
   "Erlang": {
@@ -516,7 +536,7 @@
     ],
     "description": "Estore Compare is a website optimisation software that offers A/B testing, CVR and LTV measuring tools.",
     "icon": "EstoreCompare.svg",
-    "scripts": "cdn\\d+\\.estore\\.jp/",
+    "scriptSrc": "cdn\\d+\\.estore\\.jp/",
     "website": "https://estore.co.jp/estorecompare/"
   },
   "Estore Shopserve": {
@@ -530,7 +550,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cart\\d+\\.shopserve\\.jp/",
+    "scriptSrc": "cart\\d+\\.shopserve\\.jp/",
     "website": "https://estore.co.jp/shopserve"
   },
   "Etherpad": {
@@ -548,10 +568,27 @@
       "padeditbar": "",
       "padimpexp": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "/ep_etherpad-lite/"
     ],
     "website": "https://etherpad.org"
+  },
+  "etika": {
+    "cats": [
+      91
+    ],
+    "description": "etika is a fintech company based in Manchester which provide buy now pay later solution.",
+    "icon": "etika.svg",
+    "js": {
+      "etikaGlobal": "",
+      "EtikaProductJsHelper": "",
+      "etikaBannerInject": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://etika.com"
   },
   "Etracker": {
     "cats": [
@@ -568,7 +605,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.etracker\\.com",
+    "scriptSrc": "\\.etracker\\.com",
     "website": "https://www.etracker.com"
   },
   "Eveve": {
@@ -596,7 +633,7 @@
       "Exhibit": "",
       "Exhibit.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "exhibit.*\\.js",
+    "scriptSrc": "exhibit.*\\.js",
     "website": "http://simile-widgets.org/exhibit/"
   },
   "ExitIntel": {
@@ -616,7 +653,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "(?:get.)?exitintel\\.com",
+    "scriptSrc": "(?:get.)?exitintel\\.com",
     "website": "https://exitintelligence.com"
   },
   "ExpertRec": {
@@ -630,12 +667,12 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "expertrec\\.com/api/js/ci_common\\.js\\?id=.*",
-    "website": "https://www.expertrec.com"
+    "scriptSrc": "expertrec\\.com/api/js/ci_common\\.js\\?id=.*",
+    "website": "https://www.expertrec.com/"
   },
   "Exponea": {
     "cats": [
-      32
+      97
     ],
     "description": "Exponea is a cloud-based marketing analysis platform suitable for large and midsize organisations in a variety of industries.",
     "icon": "Exponea.svg",
@@ -646,7 +683,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "(?:\\.exponea\\.com)?/js/exponea\\.min\\.js",
+    "scriptSrc": "(?:\\.exponea\\.com)?/js/exponea\\.min\\.js",
     "website": "https://go.exponea.com"
   },
   "Express": {
@@ -690,7 +727,7 @@
       "Ext.version": "^(.+)$\\;version:\\1",
       "Ext.versions.extjs.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "ext-base\\.js",
+    "scriptSrc": "ext-base\\.js",
     "website": "https://www.sencha.com"
   },
   "Extole": {
@@ -708,7 +745,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.(?:extole|xtlo)\\.(?:com|net)/",
+    "scriptSrc": "\\.(?:extole|xtlo)\\.(?:com|net)/",
     "website": "https://www.extole.com"
   },
   "Ezoic": {
@@ -730,7 +767,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.ezo(?:js|ic|dn)\\.(?:com|net)",
+    "scriptSrc": "\\.ezo(?:js|ic|dn)\\.(?:com|net)",
     "website": "https://www.ezoic.com"
   },
   "e-goi": {
@@ -750,7 +787,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.e-goi\\.com/egoimmerce\\.js",
+    "scriptSrc": "\\.e-goi\\.com/egoimmerce\\.js",
     "website": "https://www.e-goi.com"
   },
   "e107": {
@@ -765,7 +802,7 @@
     },
     "icon": "e107.png",
     "implies": "PHP",
-    "scripts": "[^a-z\\d]e107\\.js",
+    "scriptSrc": "[^a-z\\d]e107\\.js",
     "website": "http://e107.org"
   },
   "eBay Partner Network": {
@@ -775,7 +812,7 @@
     ],
     "description": "eBay Partner Network is an online referral program where eBay pays commissions to referrers on sales generated by customers they’ve referred.",
     "icon": "eBay.svg",
-    "scripts": "epnt\\.ebay\\.com/",
+    "scriptSrc": "epnt\\.ebay\\.com/",
     "website": "https://partnernetwork.ebay.com"
   },
   "eClass": {
@@ -881,7 +918,7 @@
     "description": "eWAY is a global omnichannel payment provider. The company processes secure credit card payments for merchants. eWay works through eCommerce.",
     "html": "<img [^>]*src=\"[^/]*//[^/]*eway\\.com",
     "icon": "eway.png",
-    "scripts": "secure\\.ewaypayments\\.com",
+    "scriptSrc": "secure\\.ewaypayments\\.com",
     "website": "https://www.eway.com.au/"
   },
   "eZ Platform": {
@@ -923,7 +960,7 @@
       "ef.version": "^(.+)$\\;version:\\1",
       "efCore": ""
     },
-    "scripts": "/ef(?:-core)?(?:\\.min|\\.dev)?\\.js",
+    "scriptSrc": "/ef(?:-core)?(?:\\.min|\\.dev)?\\.js",
     "website": "http://ef.js.org"
   },
   "emBlue": {
@@ -942,7 +979,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.embluemail\\.com/(?:library/([\\d.]+))?\\;version:\\1",
+    "scriptSrc": "\\.embluemail\\.com/(?:library/([\\d.]+))?\\;version:\\1",
     "website": "https://www.embluemail.com/en"
   },
   "enduro.js": {
@@ -961,7 +998,7 @@
       67
     ],
     "icon": "eucookie.png",
-    "scripts": "eucookie\\.eu/public/gdpr-cookie-consent\\.js",
+    "scriptSrc": "eucookie\\.eu/public/gdpr-cookie-consent\\.js",
     "website": "https://www.eucookie.eu/"
   },
   "experiencedCMS": {

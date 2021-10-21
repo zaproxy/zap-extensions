@@ -40,7 +40,7 @@
     "js": {
       "GOVUKFrontend": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "govuk-frontend(?:[^>]*?([0-9a-fA-F]{7,40}|[\\d]+(?:.[\\d]+(?:.[\\d]+)?)?)|)[^>]*?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://design-system.service.gov.uk/"
@@ -60,7 +60,7 @@
     "js": {
       "GOVUK": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "govuk-template\\.js"
     ],
     "website": "https://github.com/alphagov/govuk_template/"
@@ -89,7 +89,7 @@
       "gsap.version": "([\\d.]+)\\;version:\\1",
       "gsapVersions": ""
     },
-    "scripts": "TweenMax(?:\\.min)?\\.js",
+    "scriptSrc": "TweenMax(?:\\.min)?\\.js",
     "website": "https://greensock.com/gsap"
   },
   "GX WebManager": {
@@ -130,7 +130,7 @@
     "js": {
       "gambio": ""
     },
-    "scripts": "gm_javascript\\.js\\.php",
+    "scriptSrc": "gm_javascript\\.js\\.php",
     "website": "http://gambio.de"
   },
   "Gatsby": {
@@ -178,7 +178,7 @@
       "gemius_pending": "",
       "pp_gemius_hit": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "hit\\.gemius\\.pl/xgemius\\.js",
       "hit\\.gemius\\.pl\\;confidence:80",
       "xgemius\\.js\\;confidence:30"
@@ -196,7 +196,7 @@
     "js": {
       "gx.gxVersion": "^(.+)-.*$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "/static/gxgral\\.js",
       "/static/gxtimezone\\.js"
     ],
@@ -224,7 +224,7 @@
     },
     "icon": "generatepress.png",
     "requires": "WordPress",
-    "scripts": [
+    "scriptSrc": [
       "themes/generatepress\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
     ],
     "website": "https://generatepress.com/"
@@ -240,7 +240,7 @@
       "genesis_responsive_menu": ""
     },
     "requires": "WordPress",
-    "scripts": "/wp-content/themes/genesis/lib/js/",
+    "scriptSrc": "/wp-content/themes/genesis/lib/js/",
     "website": "https://www.studiopress.com/themes/genesis"
   },
   "Genesys Cloud": {
@@ -259,7 +259,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "apps\\.mypurecloud\\.\\w+/widgets/([\\d.]+)\\;version:\\1",
       "apps\\.mypurecloud\\.\\w+"
     ],
@@ -297,7 +297,7 @@
     "meta": {
       "title": "^Gerrit Code Review$"
     },
-    "scripts": "^gerrit_ui/gerrit_ui",
+    "scriptSrc": "^gerrit_ui/gerrit_ui",
     "website": "http://www.gerritcodereview.com"
   },
   "Get Satisfaction": {
@@ -320,6 +320,24 @@
       "usabilla_live": ""
     },
     "website": "https://www.getfeedback.com"
+  },
+  "GetMeAShop": {
+    "cats": [
+      6
+    ],
+    "description": "GetMeAShop is a cloud-based ecommerce solution for small and midsize businesses across industries such as retail and manufacturing.",
+    "dom": "link[href*='.getmeashop.com']",
+    "icon": "GetMeAShop.png",
+    "js": {
+      "gmas_base_url": "'\\.getmeashop\\.com",
+      "search_api_base_uri": "search\\.getmeashop\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.getmeashop.com"
   },
   "GetSimple CMS": {
     "cats": [
@@ -348,7 +366,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "api\\.at\\.getsocial\\.io",
+    "scriptSrc": "api\\.at\\.getsocial\\.io",
     "website": "https://getsocial.io"
   },
   "GetYourGuide": {
@@ -374,7 +392,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.getyourguide\\.com/",
+    "scriptSrc": "\\.getyourguide\\.com/",
     "website": "https://partner.getyourguide.com"
   },
   "Getintent": {
@@ -402,7 +420,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.getsitecontrol\\.com/",
+    "scriptSrc": "\\.getsitecontrol\\.com/",
     "website": "https://getsitecontrol.com"
   },
   "Ghost": {
@@ -526,7 +544,7 @@
       "Gladly": ""
     },
     "saas": true,
-    "scripts": "cdn\\.gladly\\.com",
+    "scriptSrc": "cdn\\.gladly\\.com",
     "website": " https://www.gladly.com/"
   },
   "GlassFish": {
@@ -560,7 +578,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.global-e\\.com",
+    "scriptSrc": "\\.global-e\\.com",
     "website": "https://www.global-e.com"
   },
   "Glyphicons": {
@@ -590,6 +608,20 @@
     },
     "icon": "GoAhead.png",
     "website": "http://embedthis.com/products/goahead/index.html"
+  },
+  "GoAnywhere": {
+    "cats": [
+      19
+    ],
+    "description": "GoAnywhere by HelpSystems is a Managed File Transfer (MFT) system with sharing and collaboration features",
+    "headers": {
+      "Server": "goanywhere"
+    },
+    "icon": "goanywhere.png",
+    "js": {
+      "appContainer": "GoAnywhereWebClientContainer"
+    },
+    "website": "https://www.goanywhere.com/"
   },
   "GoCache": {
     "cats": [
@@ -660,7 +692,7 @@
     "meta": {
       "keywords": "go, git, self-hosted, gogs"
     },
-    "scripts": "js/gogs\\.js",
+    "scriptSrc": "js/gogs\\.js",
     "website": "http://gogs.io"
   },
   "Google AdSense": {
@@ -676,7 +708,7 @@
       "google_ad_": ""
     },
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "googlesyndication\\.com/",
       "ad\\.ca\\.doubleclick\\.net",
       "2mdn\\.net",
@@ -709,7 +741,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "\\.googleadservices\\.com/pagead/conversion_async\\.js",
+    "scriptSrc": "\\.googleadservices\\.com/pagead/conversion_async\\.js",
     "website": "https://support.google.com/google-ads/answer/1722022"
   },
   "Google Analytics": {
@@ -728,7 +760,7 @@
       "GoogleAnalyticsObject": "",
       "gaGlobal": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "google-analytics\\.com/(?:ga|urchin|analytics)\\.js",
       "googletagmanager\\.com/gtag/js"
     ],
@@ -747,7 +779,7 @@
     "js": {
       "gaplugins.EC": ""
     },
-    "scripts": "google-analytics\\.com\\/plugins\\/ua\\/(?:ec|ecommerce)\\.js",
+    "scriptSrc": "google-analytics\\.com\\/plugins\\/ua\\/(?:ec|ecommerce)\\.js",
     "website": "https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce"
   },
   "Google App Engine": {
@@ -774,7 +806,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "gstatic\\.com/call-tracking/.+\\.js",
+    "scriptSrc": "gstatic\\.com/call-tracking/.+\\.js",
     "website": "https://support.google.com/google-ads/answer/6100664"
   },
   "Google Charts": {
@@ -829,11 +861,12 @@
     ],
     "description": "Google Core Web Vitals is a tiny, modular library for measuring all the web vitals metrics on real users.",
     "icon": "Google Core Web Vitals.svg",
+    "scripts": "(8999999999999[\\s\\S]+1e12[\\s\\S]+(largest-contentful-paint|first-input|layout-shift)|(largest-contentful-paint|first-input|layout-shift)[\\s\\S]+8999999999999[\\s\\S]+1e12)",
     "js": {
       "webVitals.getCLS": ""
     },
     "oss": true,
-    "scripts": "web-vitals@([\\d.]+)/dist/web-vitals.*\\.js\\;version:\\1",
+    "scriptSrc": "web-vitals@([\\d.]+)/dist/web-vitals.*\\.js\\;version:\\1",
     "website": "https://github.com/GoogleChrome/web-vitals"
   },
   "Google Font API": {
@@ -846,7 +879,7 @@
     "js": {
       "WebFonts": ""
     },
-    "scripts": "googleapis\\.com/.+webfont",
+    "scriptSrc": "googleapis\\.com/.+webfont",
     "website": "http://google.com/fonts"
   },
   "Google Maps": {
@@ -855,7 +888,7 @@
     ],
     "description": "Google Maps is a web mapping service. It offers satellite imagery, aerial photography, street maps, 360° interactive panoramic views of streets, real-time traffic conditions, and route planning for traveling by foot, car, bicycle and air, or public transportation.",
     "icon": "Google Maps.svg",
-    "scripts": [
+    "scriptSrc": [
       "(?:maps\\.google\\.com/maps\\?file=api(?:&v=([\\d.]+))?|maps\\.google\\.com/maps/api/staticmap)\\;version:API v\\1",
       "//maps\\.google(?:apis)?\\.com/maps/api/js"
     ],
@@ -878,13 +911,14 @@
     "js": {
       "google_optimize": ""
     },
-    "scripts": "googleoptimize\\.com/optimize\\.js",
+    "scriptSrc": "googleoptimize\\.com/optimize\\.js",
     "website": "https://optimize.google.com"
   },
   "Google PageSpeed": {
     "cats": [
       23,
-      33
+      33,
+      92
     ],
     "description": "Google PageSpeed is a family of tools designed to help websites performance optimisations.",
     "headers": {
@@ -901,7 +935,7 @@
     "description": "Google Pay is a digital wallet platform and online payment system developed by Google to power in-app and tap-to-pay purchases on mobile devices, enabling users to make payments with Android phones, tablets or watches.",
     "dom": "[aria-labelledby='pi-google_pay'], ul[data-shopify-buttoncontainer] li",
     "icon": "Google.svg",
-    "scripts": [
+    "scriptSrc": [
       "pay\\.google\\.com/([a-z/]+)/pay\\.js"
     ],
     "website": "https://pay.google.com"
@@ -912,7 +946,7 @@
     ],
     "description": "Google Publisher Tag (GPT) is an ad tagging library for Google Ad Manager which is used to dynamically build ad requests.",
     "icon": "Google Publisher Tag.svg",
-    "scripts": [
+    "scriptSrc": [
       "googletagservices\\.com/tag/js/gpt\\.js",
       "securepubads\\.g\\.doubleclick\\.net/gpt"
     ],
@@ -941,7 +975,7 @@
       "google-signin-client_id": "",
       "google-signin-scope": ""
     },
-    "scripts": "accounts\\.google\\.com/gsi/client",
+    "scriptSrc": "accounts\\.google\\.com/gsi/client",
     "website": "https://developers.google.com/identity/sign-in/web"
   },
   "Google Sites": {
@@ -967,7 +1001,7 @@
       "googletag": ""
     },
     "saas": true,
-    "scripts": "googletagmanager\\.com/gtm\\.js",
+    "scriptSrc": "googletagmanager\\.com/gtm\\.js",
     "website": "http://www.google.com/tagmanager"
   },
   "Google Wallet": {
@@ -976,7 +1010,7 @@
     ],
     "icon": "Google Wallet.png",
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "checkout\\.google\\.com",
       "wallet\\.google\\.com"
     ],
@@ -1053,7 +1087,7 @@
     "description": "Grab Pay Later is a Buy now pay later solution offered by Grab.",
     "icon": "Grab.svg",
     "saas": true,
-    "scripts": "grab-paylater\\.js",
+    "scriptSrc": "grab-paylater\\.js",
     "website": "https://www.grab.com/sg/finance/pay-later/"
   },
   "Grafana": {
@@ -1067,7 +1101,7 @@
       "grafanaBootData.settings.buildInfo['version']": "([\\d.]+)\\;version:\\1"
     },
     "oss": true,
-    "scripts": "grafana\\..+\\.com/public/build/",
+    "scriptSrc": "grafana\\..+\\.com/public/build/",
     "website": "https://grafana.com"
   },
   "Graffiti CMS": {
@@ -1082,7 +1116,7 @@
     "meta": {
       "generator": "Graffiti CMS ([^\"]+)\\;version:\\1"
     },
-    "scripts": "/graffiti\\.js",
+    "scriptSrc": "/graffiti\\.js",
     "website": "http://graffiticms.codeplex.com"
   },
   "GrandNode": {
@@ -1176,7 +1210,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "(?:cdn|id)\\.gravitec\\.(?:media|net)",
+    "scriptSrc": "(?:cdn|id)\\.gravitec\\.(?:media|net)",
     "website": "https://gravitec.net"
   },
   "Gravity Forms": {
@@ -1192,7 +1226,7 @@
     ],
     "icon": "gravityforms.svg",
     "requires": "WordPress",
-    "scripts": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
     "website": "http://gravityforms.com"
   },
   "Green Valley CMS": {
@@ -1249,8 +1283,24 @@
       "Grin": ""
     },
     "saas": true,
-    "scripts": "grin-sdk\\.js",
+    "scriptSrc": "grin-sdk\\.js",
     "website": "https://grin.co/"
+  },
+  "GrocerKey": {
+    "cats": [
+      6
+    ],
+    "description": "GrocerKey is an ecommerce platform that helps grocery stores build an online store.",
+    "icon": "GrocerKey.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.grocerywebsite\\.com/",
+      "grocerkey-widget\\.s3\\.amazonaws\\.com/"
+    ],
+    "website": "https://grocerkey.com"
   },
   "GroupBy": {
     "cats": [
@@ -1259,7 +1309,7 @@
     "description": "GroupBy is a search enging for eCommerce sites.",
     "icon": "Groupby.svg",
     "saas": true,
-    "scripts": "cdn\\.groupbycloud\\.com",
+    "scriptSrc": "cdn\\.groupbycloud\\.com",
     "website": "https://groupbyinc.com/"
   },
   "GrowingIO": {
@@ -1271,7 +1321,7 @@
       "grwng_uid": ""
     },
     "icon": "GrowingIO.png",
-    "scripts": "assets\\.growingio\\.com/([\\d.]+)/gio\\.js\\;version:\\1",
+    "scriptSrc": "assets\\.growingio\\.com/([\\d.]+)/gio\\.js\\;version:\\1",
     "website": "https://www.growingio.com/"
   },
   "Guestonline": {
@@ -1286,7 +1336,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "ib\\.guestonline\\.\\w+",
+    "scriptSrc": "ib\\.guestonline\\.\\w+",
     "website": "https://www.guestonline.io"
   },
   "GumGum": {
@@ -1314,7 +1364,7 @@
       "gumlet": ""
     },
     "saas": true,
-    "scripts": "cdn\\.gumlet\\.com",
+    "scriptSrc": "cdn\\.gumlet\\.com",
     "website": "https://www.gumlet.com/"
   },
   "Gumstack": {
@@ -1327,7 +1377,7 @@
       "Gumstack": ""
     },
     "saas": true,
-    "scripts": "w\\.gumstack\\.com",
+    "scriptSrc": "w\\.gumstack\\.com",
     "website": "https://gumstack.com/"
   },
   "git": {
@@ -1366,7 +1416,7 @@
     "meta": {
       "generator": "gitweb(?:/([\\d.]+\\d))?\\;version:\\1"
     },
-    "scripts": "static/gitweb\\.js$",
+    "scriptSrc": "static/gitweb\\.js$",
     "website": "http://git-scm.com"
   },
   "govCMS": {

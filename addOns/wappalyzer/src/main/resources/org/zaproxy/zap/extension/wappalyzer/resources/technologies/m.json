@@ -1,4 +1,20 @@
 {
+  "MGID": {
+    "cats": [
+      36
+    ],
+    "description": "MGID is a programmatic advertising platform frequently used by misinformation websites.",
+    "icon": "MGID.png",
+    "js": {
+      "MgSensor.mgqWorker": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.mgid\\.com/",
+    "website": "https://www.mgid.com"
+  },
   "MODX": {
     "cats": [
       1
@@ -30,6 +46,23 @@
     "saas": true,
     "website": "http://modx.com"
   },
+  "mParticle": {
+    "cats": [
+      97
+    ],
+    "description": "mParticle is a mobile-focused event tracking and data ingestion tool.",
+    "icon": "mParticle.svg",
+    "js": {
+      "mParticle.config.snippetVersion": "(.+)\\;version:\\1",
+      "mParticle": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.mparticle\\.com/",
+    "website": "https://www.mparticle.com"
+  },
   "MTCaptcha": {
     "cats": [
       16
@@ -46,8 +79,23 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "service(?:2)?\\.mtcaptcha\\.com/",
+    "scriptSrc": "service(?:2)?\\.mtcaptcha\\.com/",
     "website": "https://www.mtcaptcha.com"
+  },
+  "MAAK": {
+    "cats": [
+      1
+    ],
+    "description": "MAAK is a Laravel based CMS developed by Mahdi Akbari.",
+    "icon": "MAAK.png",
+    "meta": {
+      "author": "^MAAK$"
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://maak-code.ir"
   },
   "MadAdsMedia": {
     "cats": [
@@ -58,7 +106,7 @@
       "setMIframe": "",
       "setMRefURL": ""
     },
-    "scripts": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
+    "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
     "website": "http://madadsmedia.com"
   },
   "Magento": {
@@ -86,7 +134,7 @@
     },
     "magento": "Magento/([0-9.]+)\\;version:\\1",
     "oss": true,
-    "scripts": [
+    "scriptSrc": [
       "js/mage",
       "skin/frontend/(?:default|(enterprise))\\;version:\\1?Enterprise:Community",
       "static/_requirejs\\;confidence:50\\;version:2"
@@ -122,7 +170,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "s3\\.amazonaws\\.com/downloads\\.mailchimp\\.com/js/mc-validate\\.js",
       "cdn-images\\.mailchimp\\.com/[^>]*\\.css",
       "mailchimp-woocommerce-public\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
@@ -162,7 +210,7 @@
       68
     ],
     "icon": "Make-Sense.png",
-    "scripts": "mk-sense\\.com/aweb\\?license",
+    "scriptSrc": "mk-sense\\.com/aweb\\?license",
     "website": "https://mk-sense.com/"
   },
   "MakeShopKorea": {
@@ -194,7 +242,7 @@
     ],
     "description": "Mangeznotez is a restaurant table booking widget.",
     "icon": "Mangeznotez.svg",
-    "scripts": [
+    "scriptSrc": [
       "www\\.mangeznotez\\.\\w+",
       "\\w+.mangeznotez\\.\\w+(?:.*\\?ver=([\\d.]+))?\\;version:\\1"
     ],
@@ -220,7 +268,7 @@
     "js": {
       "mcwidget": ""
     },
-    "scripts": "widget\\.manychat\\.com",
+    "scriptSrc": "widget\\.manychat\\.com",
     "website": "https://manychat.com/"
   },
   "ManyContacts": {
@@ -234,7 +282,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.manycontacts\\.com",
+    "scriptSrc": "\\.manycontacts\\.com",
     "website": "https://www.manycontacts.com"
   },
   "Mapbox GL JS": {
@@ -247,7 +295,7 @@
     "js": {
       "mapboxgl.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
-    "scripts": "mapbox-gl.js",
+    "scriptSrc": "mapbox-gl.js",
     "website": "https://github.com/mapbox/mapbox-gl-js"
   },
   "Mapplic": {
@@ -262,7 +310,7 @@
       "onetime"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "wp-content/plugins/mapplic/",
       "/include/mapplic/mapplic\\.js"
     ],
@@ -291,7 +339,7 @@
       "Marionette": "",
       "Marionette.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scripts": "backbone\\.marionette.*\\.js",
+    "scriptSrc": "backbone\\.marionette.*\\.js",
     "website": "https://marionettejs.com"
   },
   "Marked": {
@@ -303,7 +351,7 @@
     "js": {
       "marked": ""
     },
-    "scripts": "/marked(?:\\.min)?\\.js",
+    "scriptSrc": "/marked(?:\\.min)?\\.js",
     "website": "https://marked.js.org"
   },
   "Marketo": {
@@ -319,7 +367,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "munchkin\\.marketo\\.\\w+/(?:([\\d.]+)/)?munchkin\\.js\\;version:\\1",
+    "scriptSrc": "munchkin\\.marketo\\.\\w+/(?:([\\d.]+)/)?munchkin\\.js\\;version:\\1",
     "website": "https://www.marketo.com"
   },
   "Marketo Forms": {
@@ -335,7 +383,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "marketo\\.\\w+/js/forms(?:[\\d.]+)/js/forms([\\d.]+)\\.min\\.js\\;version:\\1",
       "v([\\d.]+)/js/marketo-alt-form\\.min\\.js\\;version:\\1"
     ],
@@ -388,7 +436,7 @@
     "js": {
       "MaterialIconToggle": ""
     },
-    "scripts": "(?:/([\\d.]+))?/material(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "(?:/([\\d.]+))?/material(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://getmdl.io"
   },
   "Materialize CSS": {
@@ -398,7 +446,7 @@
     "description": "Materialize CSS is a css framework which is used to create responsive websites.",
     "html": "<link[^>]* href=\"[^\"]*materialize(?:\\.min)?\\.css",
     "icon": "Materialize CSS.png",
-    "scripts": "materialize(?:\\.min)?\\.js",
+    "scriptSrc": "materialize(?:\\.min)?\\.js",
     "website": "http://materializecss.com"
   },
   "MathJax": {
@@ -411,7 +459,7 @@
       "MathJax": "",
       "MathJax.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "([\\d.]+)?/mathjax\\.js\\;version:\\1",
+    "scriptSrc": "([\\d.]+)?/mathjax\\.js\\;version:\\1",
     "website": "https://www.mathjax.org"
   },
   "Matomo Analytics": {
@@ -434,7 +482,7 @@
       "generator": "(?:Matomo|Piwik) - Open Source Web Analytics",
       "google-play-app": "app-id=org\\.piwik\\.mobile2"
     },
-    "scripts": "piwik\\.js|piwik\\.php",
+    "scriptSrc": "piwik\\.js|piwik\\.php",
     "website": "https://matomo.org"
   },
   "Matomo Tag Manager": {
@@ -477,7 +525,7 @@
     "js": {
       "MauticTrackingObject": ""
     },
-    "scripts": "[^a-z]mtc.*\\.js",
+    "scriptSrc": "[^a-z]mtc.*\\.js",
     "website": "https://www.mautic.org/"
   },
   "MaxCDN": {
@@ -504,7 +552,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "(?:device|js)\\.maxmind\\.com/",
       "geoip\\.maxmind\\.min\\.js"
     ],
@@ -550,7 +598,7 @@
       "k_track": "",
       "kampyle": ""
     },
-    "scripts": "cf\\.kampyle\\.com/k_button\\.js",
+    "scriptSrc": "cf\\.kampyle\\.com/k_button\\.js",
     "website": "https://www.medallia.com"
   },
   "MediaElement.js": {
@@ -600,7 +648,7 @@
     "js": {
       "$mediavine.web": ""
     },
-    "scripts": "\\.mediavine\\.com/",
+    "scriptSrc": "\\.mediavine\\.com/",
     "website": "https://www.mediavine.com"
   },
   "Medium": {
@@ -613,7 +661,7 @@
     },
     "icon": "Medium.svg",
     "implies": "Node.js",
-    "scripts": "medium\\.com",
+    "scriptSrc": "medium\\.com",
     "url": "^https?://(?:www\\.)?medium\\.com",
     "website": "https://medium.com"
   },
@@ -633,7 +681,7 @@
     "description": "Meeting Scheduler is a schedule appointments widget.",
     "dom": "a[href*='bookmenow.info/book']",
     "icon": "Meeting Scheduler.png",
-    "scripts": "bookmenow\\.info/(?:runtime|main).+\\.js",
+    "scriptSrc": "bookmenow\\.info/(?:runtime|main).+\\.js",
     "website": "https://bookmenow.info"
   },
   "Melis Platform": {
@@ -681,7 +729,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "memberstack\\.js",
+    "scriptSrc": "memberstack\\.js",
     "url": "^https?//.+\\.memberstack\\.io",
     "website": "https://www.memberstack.io"
   },
@@ -698,7 +746,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.mention-me\\.com/",
+    "scriptSrc": "\\.mention-me\\.com/",
     "website": "https://www.mention-me.com"
   },
   "Menufy Online Ordering": {
@@ -727,7 +775,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "sitecontent-menufycom\\.netdna-ssl\\.com/",
+    "scriptSrc": "sitecontent-menufycom\\.netdna-ssl\\.com/",
     "website": "https://restaurant.menufy.com"
   },
   "Mercado Shops": {
@@ -743,7 +791,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "frontend-assets/mshops-web-home/vendor",
+    "scriptSrc": "frontend-assets/mshops-web-home/vendor",
     "website": "https://www.mercadoshops.com"
   },
   "Mermaid": {
@@ -754,7 +802,7 @@
     "js": {
       "mermaid": ""
     },
-    "scripts": "/mermaid(?:\\.min)?\\.js",
+    "scriptSrc": "/mermaid(?:\\.min)?\\.js",
     "website": "https://mermaidjs.github.io/"
   },
   "Meteor": {
@@ -794,10 +842,30 @@
       67
     ],
     "icon": "metomic.png",
-    "scripts": [
+    "scriptSrc": [
       "metomic\\.js"
     ],
     "website": "https://metomic.io"
+  },
+  "Metrilo": {
+    "cats": [
+      10,
+      75
+    ],
+    "description": "Metrilo is an ecommerce analytics, email marketing software provider.",
+    "icon": "Metrilo.svg",
+    "js": {
+      "metrilo": "",
+      "metriloBotRegexp": "",
+      "metriloCookie": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.metrilo\\.com/",
+    "website": "https://www.metrilo.com"
   },
   "Microsoft 365": {
     "cats": [
@@ -851,7 +919,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "bat\\.bing\\.com/bat\\.js",
+    "scriptSrc": "bat\\.bing\\.com/bat\\.js",
     "website": "https://ads.microsoft.com"
   },
   "Microsoft Clarity": {
@@ -867,7 +935,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "www\\.clarity\\.ms/.+/([\\d.]+)/clarity\\.js\\;version:\\1",
+    "scriptSrc": "www\\.clarity\\.ms/.+/([\\d.]+)/clarity\\.js\\;version:\\1",
     "website": "https://clarity.microsoft.com"
   },
   "Microsoft Excel": {
@@ -976,7 +1044,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.miestro\\.com",
+    "scriptSrc": "\\.miestro\\.com",
     "website": "https://miestro.com"
   },
   "Milligram": {
@@ -1004,7 +1072,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\w+\\.healcode\\.com",
+    "scriptSrc": "\\w+\\.healcode\\.com",
     "website": "https://www.mindbodyonline.com"
   },
   "Minero.cc": {
@@ -1012,7 +1080,7 @@
       56
     ],
     "description": "Minero.cc is a bot that helps run crypto mining application.",
-    "scripts": [
+    "scriptSrc": [
       "//minero\\.cc/lib/minero(?:-miner|-hidden)?\\.min\\.js"
     ],
     "website": "http://minero.cc/"
@@ -1025,7 +1093,7 @@
     "js": {
       "Mint": ""
     },
-    "scripts": "mint/\\?js",
+    "scriptSrc": "mint/\\?js",
     "website": "https://haveamint.com"
   },
   "Misskey": {
@@ -1059,7 +1127,7 @@
       "mivaJS.Screen": "",
       "mivaJS.Store_Code": ""
     },
-    "scripts": "mvga\\.js",
+    "scriptSrc": "mvga\\.js",
     "website": "http://www.miva.com"
   },
   "Mixin": {
@@ -1092,7 +1160,7 @@
     "js": {
       "mixpanel": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.mxpnl\\.com/libs/mixpanel\\-([0-9.]+)\\.min\\.js\\;version:\\1",
       "api\\.mixpanel\\.com/track"
     ],
@@ -1126,7 +1194,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "cdn\\.moengage\\.\\w+",
+    "scriptSrc": "cdn\\.moengage\\.\\w+",
     "website": "https://www.moengage.com"
   },
   "Moat": {
@@ -1135,7 +1203,7 @@
     ],
     "description": "Moat is a digital ad analytics tool.",
     "icon": "Moat.svg",
-    "scripts": [
+    "scriptSrc": [
       "moatads\\.com"
     ],
     "website": "https://moat.com/"
@@ -1150,7 +1218,7 @@
       "__mobxGlobals": "",
       "__mobxInstanceCount": ""
     },
-    "scripts": "(?:/([\\d\\.]+))?/mobx(?:\\.[a-z]+){0,2}\\.js(?:$|\\?)\\;version:\\1",
+    "scriptSrc": "(?:/([\\d\\.]+))?/mobx(?:\\.[a-z]+){0,2}\\.js(?:$|\\?)\\;version:\\1",
     "website": "https://mobx.js.org"
   },
   "Mobify": {
@@ -1166,7 +1234,7 @@
     "js": {
       "Mobify": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "//cdn\\.mobify\\.com/",
       "//a\\.mobify\\.com/"
     ],
@@ -1195,7 +1263,7 @@
       "MochiKit": "",
       "MochiKit.MochiKit.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scripts": "MochiKit(?:\\.min)?\\.js",
+    "scriptSrc": "MochiKit(?:\\.min)?\\.js",
     "website": "https://mochi.github.io/mochikit/"
   },
   "MochiWeb": {
@@ -1217,7 +1285,7 @@
     "js": {
       "Modernizr._version": "^(.+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "([\\d.]+)?/modernizr(?:\\.([\\d.]+))?.*\\.js\\;version:\\1?\\1:\\2"
     ],
     "website": "https://modernizr.com"
@@ -1240,7 +1308,7 @@
     "html": "<link[^>]+href=[\"'][^\"]+mg-(?:core|plugins|templates)/",
     "icon": "Moguta.CMS.png",
     "implies": "PHP",
-    "scripts": "mg-(?:core|plugins|templates)/",
+    "scriptSrc": "mg-(?:core|plugins|templates)/",
     "website": "https://moguta.ru"
   },
   "MoinMoin": {
@@ -1257,7 +1325,7 @@
     "js": {
       "show_switch2gui": ""
     },
-    "scripts": "moin(?:_static(\\d)(\\d)(\\d)|.+)/common/js/common\\.js\\;version:\\1.\\2.\\3",
+    "scriptSrc": "moin(?:_static(\\d)(\\d)(\\d)|.+)/common/js/common\\.js\\;version:\\1.\\2.\\3",
     "website": "https://moinmo.in"
   },
   "Mojolicious": {
@@ -1279,7 +1347,7 @@
     "cpe": "cpe:/a:acquia:mollom",
     "html": "<img[^>]+\\.mollom\\.com",
     "icon": "Mollom.png",
-    "scripts": "mollom(?:\\.min)?\\.js",
+    "scriptSrc": "mollom(?:\\.min)?\\.js",
     "website": "http://mollom.com"
   },
   "Moment Timezone": {
@@ -1288,7 +1356,7 @@
     ],
     "icon": "Moment.js.svg",
     "implies": "Moment.js",
-    "scripts": "moment-timezone(?:-data)?(?:\\.min)?\\.js",
+    "scriptSrc": "moment-timezone(?:-data)?(?:\\.min)?\\.js",
     "website": "http://momentjs.com/timezone/"
   },
   "Moment.js": {
@@ -1302,7 +1370,7 @@
       "moment": "",
       "moment.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "moment(?:\\.min)?\\.js",
+    "scriptSrc": "moment(?:\\.min)?\\.js",
     "website": "https://momentjs.com"
   },
   "Mondo Media": {
@@ -1366,7 +1434,7 @@
     "js": {
       "_monoTracker": ""
     },
-    "scripts": "monotracker(?:\\.min)?\\.js",
+    "scriptSrc": "monotracker(?:\\.min)?\\.js",
     "website": "https://www.mono.net/en"
   },
   "MooTools": {
@@ -1378,7 +1446,7 @@
       "MooTools": "",
       "MooTools.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "mootools.*\\.js",
+    "scriptSrc": "mootools.*\\.js",
     "website": "https://mootools.net"
   },
   "Moodle": {
@@ -1408,7 +1476,7 @@
       12
     ],
     "icon": "moon.svg",
-    "scripts": "/moon(?:\\.min)?\\.js$",
+    "scriptSrc": "/moon(?:\\.min)?\\.js$",
     "website": "https://kbrsh.github.io/moon/"
   },
   "Moove GDPR Consent": {
@@ -1440,7 +1508,7 @@
       "AngularJS",
       "jQuery"
     ],
-    "scripts": "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js",
+    "scriptSrc": "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js",
     "website": "http://motocms.com"
   },
   "Mouse Flow": {
@@ -1451,7 +1519,7 @@
     "js": {
       "_mfq": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.mouseflow\\.com"
     ],
     "website": "https://mouseflow.com/"
@@ -1493,6 +1561,24 @@
     "url": "/mozard/!suite",
     "website": "http://mozard.nl"
   },
+  "Mulberry": {
+    "cats": [
+      5
+    ],
+    "description": "Mulberry is a developer of personalised product protection solutions used to help brands unlock additional revenue.",
+    "icon": "Mulberry.svg",
+    "implies": "Cart Functionality",
+    "js": {
+      "mulberry.cta": "",
+      "mulberryShop": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.getmulberry\\.com/",
+    "website": "https://www.getmulberry.com"
+  },
   "Mura CMS": {
     "cats": [
       1,
@@ -1514,7 +1600,7 @@
     "js": {
       "Mustache.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "mustache(?:\\.min)?\\.js",
+    "scriptSrc": "mustache(?:\\.min)?\\.js",
     "website": "https://mustache.github.io"
   },
   "My Food Link": {
@@ -1550,7 +1636,7 @@
       5
     ],
     "icon": "MyBlogLog.png",
-    "scripts": "pub\\.mybloglog\\.com",
+    "scriptSrc": "pub\\.mybloglog\\.com",
     "website": "http://www.mybloglog.com"
   },
   "MyCashFlow": {
@@ -1577,7 +1663,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "mylivechat\\.com/",
+    "scriptSrc": "mylivechat\\.com/",
     "website": "https://mylivechat.com"
   },
   "MyOnlineStore": {
@@ -1605,20 +1691,60 @@
       51
     ],
     "description": "MyWebsite is website builder designed for easy editing and fast results.",
-    "icon": "Ionos-by-1and1-logo.svg",
-    "implies": "Duda",
+    "excludes": "Jimdo",
+    "icon": "MyWebsite.svg",
     "js": {
-      "SystemID": "^.*1AND1.*$"
+      "SystemID": "^.*1AND1.*$\\;version:8"
     },
     "meta": {
-      "generator": "^.*MyWebsite.*$\\;version:8"
+      "generator": "IONOS MyWebsite\\;version:8"
     },
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\/\\/integration\\.mywebsite-editor\\.com.*\\.js\\;version:9",
+    "website": "https://www.ionos.com"
+  },
+  "MyWebsite Creator": {
+    "cats": [
+      51
+    ],
+    "description": "MyWebsite Creator is website builder designed for easy editing and fast results.",
+    "dom": "body#dmRoot",
+    "icon": "MyWebsite.svg",
+    "implies": "Duda",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "website-editor\\.net",
+      "mywebsite-editor\\.com"
+    ],
+    "website": "https://www.ionos.com"
+  },
+  "MyWebsite Now": {
+    "cats": [
+      51
+    ],
+    "description": "MyWebsite Now is a website builder designed for getting online quickly.",
+    "dom": "img[src*='/-_-/res/']",
+    "icon": "MyWebsite.svg",
+    "implies": [
+      "React",
+      "Node.js",
+      "GraphQL"
+    ],
+    "meta": {
+      "generator": "MyWebsite NOW"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://www.ionos.com"
   },
   "Mynetcap": {
@@ -1639,7 +1765,7 @@
     "js": {
       "mathjs": ""
     },
-    "scripts": "math(?:\\.min)?\\.js",
+    "scriptSrc": "math(?:\\.min)?\\.js",
     "website": "http://mathjs.org"
   },
   "microCMS": {
@@ -1676,7 +1802,7 @@
     ],
     "description": "Mobicred is a credit facility that allows you to safely shop online with our participating retailers.",
     "icon": "Mobicred.png",
-    "scripts": "app\\.mobicredwidget\\.co\\.za",
+    "scriptSrc": "app\\.mobicredwidget\\.co\\.za",
     "website": "https://mobicred.co.za/"
   },
   "mod_auth_pam": {

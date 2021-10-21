@@ -79,7 +79,7 @@
     ],
     "description": "Haddock is a tool for automatically generating documentation from annotated Haskell source code.",
     "html": "<p>Produced by <a href=\"http://www\\.haskell\\.org/haddock/\">Haddock</a> version ([0-9.]+)</p>\\;version:\\1",
-    "scripts": "haddock-util\\.js",
+    "scriptSrc": "haddock-util\\.js",
     "website": "http://www.haskell.org/haddock/"
   },
   "Halo": {
@@ -104,7 +104,7 @@
       "Hammer": "",
       "Hammer.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scripts": "hammer(?:\\.min)?\\.js",
+    "scriptSrc": "hammer(?:\\.min)?\\.js",
     "website": "https://hammerjs.github.io"
   },
   "Handlebars": {
@@ -119,7 +119,7 @@
       "Handlebars": "",
       "Handlebars.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scripts": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "http://handlebarsjs.com"
   },
   "Handtalk": {
@@ -131,7 +131,7 @@
     "js": {
       "HandTalk": ""
     },
-    "scripts": "api\\.handtalk\\.me",
+    "scriptSrc": "api\\.handtalk\\.me",
     "website": "https://www.handtalk.me/"
   },
   "Haravan": {
@@ -143,7 +143,7 @@
     "js": {
       "Haravan": ""
     },
-    "scripts": "haravan.*\\.js",
+    "scriptSrc": "haravan.*\\.js",
     "website": "https://www.haravan.com"
   },
   "Haskell": {
@@ -162,7 +162,7 @@
     "js": {
       "head.browser.name": ""
     },
-    "scripts": "head\\.(?:core|load)(?:\\.min)?\\.js",
+    "scriptSrc": "head\\.(?:core|load)(?:\\.min)?\\.js",
     "website": "http://headjs.com"
   },
   "Heap": {
@@ -179,7 +179,7 @@
       "high"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.heapanalytics\\.com",
       "heap-\\d+\\.js"
     ],
@@ -197,7 +197,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.heartlandportico\\.com",
+    "scriptSrc": "\\.heartlandportico\\.com",
     "website": "https://www.heartlandpaymentsystems.com"
   },
   "Helix Ultimate": {
@@ -215,11 +215,19 @@
     "cats": [
       5
     ],
+    "description": "Hello Bar is a customizable notification bar that draws visitors to an important call to action on the website.",
     "icon": "Hello Bar.png",
     "js": {
-      "HelloBar": ""
+      "HelloBar": "",
+      "hellobarSiteSettings": ""
     },
-    "scripts": "hellobar\\.js",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.?hellobar\\.(?:com|js)",
     "website": "http://hellobar.com"
   },
   "Hello Elementor": {
@@ -268,7 +276,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.helpdocs\\.io",
+    "scriptSrc": "cdn\\.helpdocs\\.io",
     "website": "https://www.helpdocs.io"
   },
   "Helpscout": {
@@ -285,7 +293,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "beacon-v2\\.helpscout\\.net",
+    "scriptSrc": "beacon-v2\\.helpscout\\.net",
     "website": "https://www.helpscout.com/"
   },
   "Hero": {
@@ -300,7 +308,7 @@
     "js": {
       "HeroWebPluginSettings": ""
     },
-    "scripts": "cdn\\.usehero\\.com",
+    "scriptSrc": "cdn\\.usehero\\.com",
     "website": "https://www.usehero.com/"
   },
   "Heroku": {
@@ -337,7 +345,7 @@
     },
     "icon": "themeisle.png",
     "requires": "WordPress",
-    "scripts": "themes/hestia.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": "themes/hestia.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/hestia/"
   },
   "Hexo": {
@@ -369,7 +377,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "deploy\\.hiconversion\\.com",
+    "scriptSrc": "deploy\\.hiconversion\\.com",
     "website": "https://www.hiconversion.com"
   },
   "Hiawatha": {
@@ -393,7 +401,7 @@
       "Highcharts": "",
       "Highcharts.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "highcharts.*\\.js",
+    "scriptSrc": "highcharts.*\\.js",
     "website": "https://www.highcharts.com"
   },
   "Highlight.js": {
@@ -405,7 +413,7 @@
       "hljs.highlightBlock": "",
       "hljs.listLanguages": ""
     },
-    "scripts": "/(?:([\\d.])+/)?highlight(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": "/(?:([\\d.])+/)?highlight(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://highlightjs.org/"
   },
   "Highstock": {
@@ -414,8 +422,24 @@
     ],
     "html": "<svg[^>]*><desc>Created with Highstock ([\\d.]*)\\;version:\\1",
     "icon": "Highcharts.png",
-    "scripts": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
+    "scriptSrc": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
     "website": "http://highcharts.com/products/highstock"
+  },
+  "Highstreet": {
+    "cats": [
+      19
+    ],
+    "description": "Highstreet is the enterprise-grade D2C app platform for global fashion and lifestyle brands.",
+    "icon": "Highstreet.png",
+    "js": {
+      "highstreetBanner.config": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.api\\.highstreetapp\\.com/",
+    "website": "https://www.highstreetmobile.com"
   },
   "HikeOrders": {
     "cats": [
@@ -423,7 +447,7 @@
     ],
     "description": "HikeOrders is a web accessibility overlay that claims to make your site disability friendly.",
     "icon": "HikeOrders.png",
-    "scripts": "hikeorders\\.com/main/assets/js/hko-accessibility\\.min\\.js",
+    "scriptSrc": "hikeorders\\.com/main/assets/js/hko-accessibility\\.min\\.js",
     "website": "https://hikeorders.com/"
   },
   "Hinza Advanced CMS": {
@@ -443,7 +467,7 @@
       19
     ],
     "description": "Manage session history with JavaScript",
-    "scripts": [
+    "scriptSrc": [
       "/history(@|/)([\\d.]+)(?:/[a-z]+)?/history(?:(.production|.development))?(?:.min)?\\.js\\;version:\\2"
     ],
     "website": "https://github.com/ReactTraining/history"
@@ -456,7 +480,7 @@
     "js": {
       "Hogan": ""
     },
-    "scripts": [
+    "scriptSrc": [
       "hogan-[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "([\\d.]+)/hogan(?:\\.min)?\\.js\\;version:\\1"
     ],
@@ -478,6 +502,22 @@
     "saas": true,
     "website": "https://www.homestead.com"
   },
+  "hoolah": {
+    "cats": [
+      91
+    ],
+    "description": "hoolah is Asia's omni-channel buy now pay later platform.",
+    "icon": "hoolah.png",
+    "js": {
+      "hoolah": ""
+    },
+    "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hoolah.co"
+  },
   "Hostmeapp": {
     "cats": [
       93,
@@ -490,7 +530,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "tables\\.hostmeapp\\.com",
+    "scriptSrc": "tables\\.hostmeapp\\.com",
     "website": "https://www.hostmeapp.com"
   },
   "Hotaru CMS": {
@@ -518,7 +558,7 @@
       "HotleadController": "",
       "hj.apiUrlBase": ""
     },
-    "scripts": "//static\\.hotjar\\.com/",
+    "scriptSrc": "//static\\.hotjar\\.com/",
     "website": "https://www.hotjar.com"
   },
   "Howler.js": {
@@ -533,7 +573,7 @@
     },
     "oss": true,
     "saas": false,
-    "scripts": [
+    "scriptSrc": [
       "howler@([\\d.]+)/dist/howler\\.min\\.js\\;version:\\1",
       "howler/([\\d.]+)/howler(?:\\.core)?\\.min\\.js\\;version:\\1"
     ],
@@ -563,7 +603,7 @@
     ],
     "description": "HubSpot is a marketing and sales software that helps companies attract visitors, convert leads, and close customers.",
     "icon": "HubSpot.png",
-    "scripts": "js\\.hs-analytics\\.net/analytics",
+    "scriptSrc": "js\\.hs-analytics\\.net/analytics",
     "website": "https://www.hubspot.com/products/marketing/analytics"
   },
   "HubSpot CMS Hub": {
@@ -600,7 +640,7 @@
       "freemium"
     ],
     "saas": true,
-    "scripts": "js\\.usemessages\\.com",
+    "scriptSrc": "js\\.usemessages\\.com",
     "website": "https://www.hubspot.com/products/crm/live-chat"
   },
   "HubSpot Cookie Policy Banner": {
@@ -636,7 +676,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "age-verification\\.hulkapps\\.com/",
+    "scriptSrc": "age-verification\\.hulkapps\\.com/",
     "website": "https://www.hulkapps.com/products/age-verification-shopify"
   },
   "HulkApps Form Builder": {
@@ -652,7 +692,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "formbuilder\\.hulkapps\\.com/",
+    "scriptSrc": "formbuilder\\.hulkapps\\.com/",
     "website": "https://www.hulkapps.com/products/form-builder-shopify"
   },
   "HulkApps GDPR/CCPA Compliance Manager": {
@@ -670,7 +710,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cookiebar\\.hulkapps\\.com/hulk_cookie_bar\\.js",
+    "scriptSrc": "cookiebar\\.hulkapps\\.com/hulk_cookie_bar\\.js",
     "website": "https://www.hulkapps.com/products/gdpr-ccpa-cookie-manager-shopify-app"
   },
   "HulkApps Infinite Product Options": {
@@ -711,6 +751,25 @@
     "saas": true,
     "website": "https://www.hulkapps.com/products/product-reviews-shopify"
   },
+  "Humm": {
+    "cats": [
+      91
+    ],
+    "description": "Humm (formerly Flexigroup) is a buy now pay later service operating in Australia.",
+    "icon": "Humm.svg",
+    "js": {
+      "checkout.enabledpayments.humm": "^true$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widgets\\.shophumm\\.com",
+      "/wp-content/plugins/oxipay-payment-gateway/"
+    ],
+    "website": "https://www.shophumm.com"
+  },
   "Hushly": {
     "cats": [
       32
@@ -725,7 +784,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.hushly\\.com/",
+    "scriptSrc": "\\.hushly\\.com/",
     "website": "https://www.hushly.com"
   },
   "Hyperspeed": {
@@ -751,7 +810,7 @@
     ],
     "html": "<style[^>]+[^<]+#cf-hcaptcha-container[^<]+</style>",
     "icon": "hCaptcha.svg",
-    "scripts": "https://hcaptcha.com/([\\d]+?)/api.js\\;version:\\1",
+    "scriptSrc": "https://hcaptcha.com/([\\d]+?)/api.js\\;version:\\1",
     "website": "https://www.hcaptcha.com/"
   },
   "hantana": {
@@ -762,7 +821,7 @@
     "js": {
       "Hantana": ""
     },
-    "scripts": "//hantana\\.org/widget",
+    "scriptSrc": "//hantana\\.org/widget",
     "website": "https://hantana.org/"
   }
 }

@@ -19,7 +19,7 @@
     "meta": {
       "generator": "X-Cart(?: (\\d+))?\\;version:\\1"
     },
-    "scripts": "/skin/common_files/modules/Product_Options/func\\.js",
+    "scriptSrc": "/skin/common_files/modules/Product_Options/func\\.js",
     "website": "http://x-cart.com"
   },
   "X.ai": {
@@ -37,7 +37,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js",
+    "scriptSrc": "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js",
     "website": "https://x.ai"
   },
   "XAMPP": {
@@ -87,7 +87,7 @@
     "js": {
       "XRegExp.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": [
+    "scriptSrc": [
       "xregexp[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "/([\\d.]+)/xregexp(?:\\.min)?\\.js\\;version:\\1",
       "xregexp.*\\.js"
@@ -115,7 +115,7 @@
       59
     ],
     "icon": "Xajax.png",
-    "scripts": "xajax_core.*\\.js",
+    "scriptSrc": "xajax_core.*\\.js",
     "website": "http://xajax-project.org"
   },
   "Xanario": {
@@ -162,7 +162,7 @@
     "html": "<input type=\"hidden\" name=\"_sys_bind_\\d+\" id=\"_sys_bind_\\d+\" />",
     "icon": "xeora.png",
     "implies": "Microsoft ASP.NET",
-    "scripts": "/_bi_sps_v.+\\.js",
+    "scriptSrc": "/_bi_sps_v.+\\.js",
     "website": "http://www.xeora.org"
   },
   "Xitami": {
@@ -186,7 +186,7 @@
     "meta": {
       "keywords": "xonic-solutions"
     },
-    "scripts": "core/jslib/jquery\\.xonic\\.js\\.php",
+    "scriptSrc": "core/jslib/jquery\\.xonic\\.js\\.php",
     "website": "http://www.xonic-solutions.de"
   },
   "XpressEngine": {
@@ -198,6 +198,35 @@
       "generator": "XpressEngine"
     },
     "website": "http://www.xpressengine.com/"
+  },
+  "Xpresslane": {
+    "cats": [
+      41
+    ],
+    "description": "Xpresslane is a checkout platform for ecommerce that focuses on increasing conversion during the checkout process.",
+    "dom": {
+      "link[href*='/assets/xpresslane.css']": {
+        "attributes": {
+          "href": "cdn\\.shopify\\.com/.+/assets/xpresslane\\.css"
+        }
+      }
+    },
+    "icon": "Xpresslane.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "apps\\.xpresslane\\.in/",
+    "website": "https://www.xpresslane.in"
+  },
+  "XSLT": {
+    "cats": [
+      27
+    ],
+    "description": "XSLT is designed for use as part of XSL, which is a stylesheet language for XML.",
+    "icon": "W3C.png",
+    "html": "<xsl[^>]* version=\"(.+)\"\\;version:\\1",
+    "website": "https://www.w3.org/TR/xslt-10"
   },
   "Xtremepush": {
     "cats": [
@@ -219,7 +248,7 @@
     "js": {
       "xChart": ""
     },
-    "scripts": "xcharts\\.js",
+    "scriptSrc": "xcharts\\.js",
     "website": "https://tenxer.github.io/xcharts/"
   },
   "xtCommerce": {

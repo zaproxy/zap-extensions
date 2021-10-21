@@ -7,7 +7,7 @@
     "html": "<link [^>]*href=\"[^\"]+owl\\.carousel(?:\\.min)?\\.css",
     "icon": "OWL Carousel.png",
     "implies": "jQuery",
-    "scripts": "owl\\.carousel.*\\.js",
+    "scriptSrc": "owl\\.carousel.*\\.js",
     "website": "https://owlcarousel2.github.io/OwlCarousel2/"
   },
   "OXID eShop": {
@@ -73,7 +73,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "app\\.getoccasion\\.com",
+    "scriptSrc": "app\\.getoccasion\\.com",
     "website": "https://www.getoccasion.com"
   },
   "OceanWP": {
@@ -97,7 +97,7 @@
       "recurring"
     ],
     "requires": "WordPress",
-    "scripts": "themes/oceanwp\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": "themes/oceanwp\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://oceanwp.org"
   },
   "Ochanoko": {
@@ -114,7 +114,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "ocnk-min\\.js",
+    "scriptSrc": "ocnk-min\\.js",
     "website": "https://www.ocnk.com"
   },
   "Octane AI": {
@@ -133,7 +133,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "\\.(?:octaneai|oct8ne)\\.com/",
+    "scriptSrc": "\\.(?:octaneai|oct8ne)\\.com/",
     "website": "https://www.octaneai.com"
   },
   "October CMS": {
@@ -163,7 +163,7 @@
     "meta": {
       "generator": "Octopress"
     },
-    "scripts": "/octopress\\.js",
+    "scriptSrc": "/octopress\\.js",
     "website": "http://octopress.org"
   },
   "Odoo": {
@@ -185,7 +185,7 @@
       "generator": "Odoo"
     },
     "oss": true,
-    "scripts": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+    "scriptSrc": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
     "website": "http://odoo.com"
   },
   "Okendo": {
@@ -229,8 +229,23 @@
       "freemium",
       "recurring"
     ],
-    "scripts": "oktacdn\\.com/.+/([\\d.]+)/\\;version:\\1",
+    "scriptSrc": "oktacdn\\.com/.+/([\\d.]+)/\\;version:\\1",
     "website": "https://developer.okta.com"
+  },
+  "Olapic": {
+    "cats": [
+      96
+    ],
+    "description": "Olapic is a content marketing tool specifically focused on visual marketing content.",
+    "icon": "Olapic.svg",
+    "js": {
+      "olapic.version": "^v([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.olapic.com"
   },
   "Olark": {
     "cats": [
@@ -242,12 +257,13 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "\\.olark\\.com",
+    "scriptSrc": "\\.olark\\.com",
     "website": "https://www.olark.com/"
   },
   "Ometria": {
     "cats": [
-      32
+      32,
+      97
     ],
     "cookies": {
       "ometria": ""
@@ -264,7 +280,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "cdn\\.ometria\\.com",
+    "scriptSrc": "cdn\\.ometria\\.com",
     "website": "https://ometria.com"
   },
   "Omise": {
@@ -280,7 +296,7 @@
     "pricing": [
       "payg"
     ],
-    "scripts": "cdn\\.omise\\.co",
+    "scriptSrc": "cdn\\.omise\\.co",
     "website": "https://www.omise.co"
   },
   "Omniconvert": {
@@ -297,7 +313,7 @@
       "mid",
       "recurring"
     ],
-    "scripts": "cdn\\.omniconvert\\.com",
+    "scriptSrc": "cdn\\.omniconvert\\.com",
     "website": "https://www.omniconvert.com"
   },
   "Omnisend": {
@@ -322,8 +338,23 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "omnisrc\\.com",
+    "scriptSrc": "omnisrc\\.com",
     "website": "https://www.omnisend.com"
+  },
+  "OnUniverse": {
+    "cats": [
+      51
+    ],
+    "description": "OnUniverse is the first website builder and commerce platform built for mobile devices.",
+    "dom": "link[href*='onuniverse-assets.imgix.net'], img[src*='onuniverse-assets.imgix.net']",
+    "icon": "OnUniverse.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://onuniverse.com"
   },
   "OneAPM": {
     "cats": [
@@ -349,7 +380,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "api\\.oneall\\.com/socialize",
+    "scriptSrc": "api\\.oneall\\.com/socialize",
     "website": "https://www.oneall.com"
   },
   "OneSignal": {
@@ -369,7 +400,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "cdn\\.onesignal\\.com",
+    "scriptSrc": "cdn\\.onesignal\\.com",
     "website": "https://onesignal.com"
   },
   "OneStat": {
@@ -391,7 +422,7 @@
     },
     "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "icon": "OneTrust.png",
-    "scripts": [
+    "scriptSrc": [
       "cdn\\.cookielaw\\.org",
       "optanon\\.blob\\.core\\.windows\\.net",
       "otSDKStub\\.js",
@@ -411,7 +442,7 @@
     "meta": {
       "generator": "Onshop Ecommerce"
     },
-    "scripts": "/opencart_custom\\.js",
+    "scriptSrc": "/opencart_custom\\.js",
     "website": "https://onshop.asia"
   },
   "Open AdStream": {
@@ -513,7 +544,7 @@
     "html": "<link href=\"/opencms/",
     "icon": "OpenCms.png",
     "implies": "Java",
-    "scripts": "opencms",
+    "scriptSrc": "opencms",
     "website": "http://www.opencms.org"
   },
   "OpenGSE": {
@@ -552,7 +583,7 @@
       "OpenLayers.VERSION_NUMBER": "([\\d.]+)\\;version:\\1",
       "ol.CanvasMap": ""
     },
-    "scripts": "openlayers",
+    "scriptSrc": "openlayers",
     "website": "https://openlayers.org"
   },
   "OpenNemas": {
@@ -575,7 +606,7 @@
     ],
     "description": "Openpay is an innovative online and in-store payment solution enabling you to purchase now and pay later, with no interest.",
     "icon": "openpay.png",
-    "scripts": "openpay\\.com.\\au",
+    "scriptSrc": "openpay\\.com.\\au",
     "website": "https://www.openpay.com.au/"
   },
   "OpenResty": {
@@ -631,7 +662,7 @@
     "js": {
       "sap.ui.version": "^(.+)$\\;version:\\1"
     },
-    "scripts": "sap-ui-core\\.js",
+    "scriptSrc": "sap-ui-core\\.js",
     "website": "http://openui5.org/"
   },
   "OpenX": {
@@ -646,7 +677,7 @@
       "openx.name": "openx"
     },
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "https?://[^/]*\\.openx\\.net",
       "https?://[^/]*\\.servedbyopenx\\.com"
     ],
@@ -667,7 +698,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "\\.foresee\\.com/code/([\\d.]+)-oo/oo_engine\\.min\\.js\\;version:\\1",
+    "scriptSrc": "\\.foresee\\.com/code/([\\d.]+)-oo/oo_engine\\.min\\.js\\;version:\\1",
     "website": "https://www.opinionlab.com"
   },
   "Optimise": {
@@ -680,7 +711,7 @@
     "js": {
       "OMID": "^[0-9]+$"
     },
-    "scripts": "track\\.omguk\\.com",
+    "scriptSrc": "track\\.omguk\\.com",
     "website": "https://www.optimisemedia.com"
   },
   "Optimizely": {
@@ -700,8 +731,26 @@
       "high"
     ],
     "saas": true,
-    "scripts": "optimizely\\.com.*\\.js",
+    "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
+  },
+  "Optimove": {
+    "cats": [
+      97
+    ],
+    "description": "Optimove is a relationship marketing hub powered by a combination of advanced customer modeling, predictive micro-segmentation and campaign automation technologies.",
+    "icon": "Optimove.svg",
+    "js": {
+      "optimoveSDK": "",
+      "optimoveSDKVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "scriptSrc": "\\.optimove\\.net/.+v([\\d\\.]+)\\.js\\;version:\\1",
+    "saas": true,
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://www.optimove.com"
   },
   "Oracle Application Server": {
     "cats": [
@@ -728,7 +777,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "tags\\.(?:bluekai|bkrtx)\\.com/",
+    "scriptSrc": "tags\\.(?:bluekai|bkrtx)\\.com/",
     "website": "https://www.oracle.com/cx/marketing/data-management-platform"
   },
   "Oracle Commerce": {
@@ -784,7 +833,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "c\\.oracleinfinity\\.io",
+    "scriptSrc": "c\\.oracleinfinity\\.io",
     "website": "https://www.oracle.com/cx/marketing/digital-intelligence/"
   },
   "Oracle Maxymiser": {
@@ -802,7 +851,7 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "service\\.maxymiser\\.net",
+    "scriptSrc": "service\\.maxymiser\\.net",
     "website": "https://www.oracle.com/uk/cx/marketing/personalization-testing"
   },
   "Oracle Recommendations On Demand": {
@@ -810,7 +859,7 @@
       10
     ],
     "icon": "Oracle.png",
-    "scripts": "atgsvcs.+atgsvcs\\.js",
+    "scriptSrc": "atgsvcs.+atgsvcs\\.js",
     "website": "http://www.oracle.com/us/products/applications/commerce/recommendations-on-demand/index.html"
   },
   "Oracle Web Cache": {
@@ -841,7 +890,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "www\\.orankl\\.com/",
+    "scriptSrc": "www\\.orankl\\.com/",
     "website": "https://www.orankl.com"
   },
   "Orchard CMS": {
@@ -904,7 +953,7 @@
     "js": {
       "ORIBI": ""
     },
-    "scripts": "cdn\\.oribi\\.io",
+    "scriptSrc": "cdn\\.oribi\\.io",
     "website": "https://oribi.io/"
   },
   "OroCommerce": {
@@ -920,7 +969,7 @@
       "PHP",
       "MySQL"
     ],
-    "scripts": [
+    "scriptSrc": [
       "oro\\.min\\.js\\?version=([\\d.]+)\\;version:\\1"
     ],
     "website": "https://oroinc.com"
@@ -940,7 +989,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": [
+    "scriptSrc": [
       "cookieconsent\\.min\\.js",
       "cmp\\.osano\\.com/"
     ],
@@ -965,7 +1014,7 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "scripts/OutSystems(?:[\\w]+)?\\.js",
+    "scriptSrc": "scripts/OutSystems(?:[\\w]+)?\\.js",
     "website": "https://www.outsystems.com"
   },
   "Outbrain": {
@@ -985,7 +1034,7 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "widgets\\.outbrain\\.com/outbrain\\.js",
+    "scriptSrc": "widgets\\.outbrain\\.com/outbrain\\.js",
     "website": "https://www.outbrain.com"
   },
   "Outlook Web App": {
@@ -1025,7 +1074,7 @@
     "description": "Oxi Social Login provides one click login with services like Facebook, Google and many more.",
     "icon": "OxiSocialLogin.png",
     "saas": true,
-    "scripts": "social-login\\.oxiapps\\.com",
+    "scriptSrc": "social-login\\.oxiapps\\.com",
     "website": "https://www.oxiapps.com/"
   },
   "Oxygen": {
@@ -1040,7 +1089,7 @@
     ],
     "icon": "Oxygen.png",
     "requires": "WordPress",
-    "scripts": [
+    "scriptSrc": [
       "wp-content/plugins/oxygen"
     ],
     "website": "https://oxygenbuilder.com"
@@ -1090,7 +1139,7 @@
     "html": "<!--\\s+OTRS: Copyright",
     "icon": "otrs.png",
     "implies": "Perl",
-    "scripts": "^/otrs-web/js/",
+    "scriptSrc": "^/otrs-web/js/",
     "website": "https://www.otrs.com"
   },
   "ownCloud": {
