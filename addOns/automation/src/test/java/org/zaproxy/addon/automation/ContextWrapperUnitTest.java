@@ -79,7 +79,7 @@ class ContextWrapperUnitTest {
         // Then
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),
-                is(equalTo(ContextWrapper.SessionManagementData.METHOD_COOKIE)));
+                is(equalTo(SessionManagementData.METHOD_COOKIE)));
         assertThat(cw.getData().getSessionManagement().getScriptEngine(), is(nullValue()));
         assertThat(cw.getData().getSessionManagement().getScript(), is(nullValue()));
     }
@@ -95,7 +95,7 @@ class ContextWrapperUnitTest {
         // Then
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),
-                is(equalTo(ContextWrapper.SessionManagementData.METHOD_HTTP)));
+                is(equalTo(SessionManagementData.METHOD_HTTP)));
         assertThat(cw.getData().getSessionManagement().getScriptEngine(), is(nullValue()));
         assertThat(cw.getData().getSessionManagement().getScript(), is(nullValue()));
     }
@@ -152,7 +152,7 @@ class ContextWrapperUnitTest {
         assertNotNull(env.getContextWrappers().get(0).getData().getSessionManagement());
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
-                is(ContextWrapper.SessionManagementData.METHOD_COOKIE));
+                is(SessionManagementData.METHOD_COOKIE));
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
                 is(nullValue()));
@@ -187,7 +187,7 @@ class ContextWrapperUnitTest {
         assertNotNull(env.getContextWrappers().get(0).getData().getSessionManagement());
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
-                is(ContextWrapper.SessionManagementData.METHOD_HTTP));
+                is(SessionManagementData.METHOD_HTTP));
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
                 is(nullValue()));
@@ -224,7 +224,7 @@ class ContextWrapperUnitTest {
         assertNotNull(env.getContextWrappers().get(0).getData().getSessionManagement());
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
-                is(ContextWrapper.SessionManagementData.METHOD_SCRIPT));
+                is(SessionManagementData.METHOD_SCRIPT));
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
                 is("example_script"));
@@ -264,5 +264,340 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is("bad"));
+    }
+
+    @Test
+    void shouldErrorOnBadUsers() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      users: 'Freda'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!automation.error.context.baduserslist!")));
+    }
+
+    @Test
+    void shouldHandleEmptyUsers() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      users:";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldLoadValidUsers() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      users:\n"
+                        + "      - name: 'Freda'\n"
+                        + "        username: 'freda@example.com'\n"
+                        + "        password: 'freda123'\n"
+                        + "      - name: 'Fred'\n"
+                        + "        username: 'fred@example.com'\n"
+                        + "        password: 'fred456'\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getUsers());
+        assertThat(env.getContextWrappers().get(0).getData().getUsers().size(), is(2));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(0).getName(), is("Freda"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(0).getUsername(),
+                is("freda@example.com"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(0).getPassword(),
+                is("freda123"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getName(), is("Fred"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getUsername(),
+                is("fred@example.com"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getPassword(),
+                is("fred456"));
+    }
+
+    @Test
+    void shouldErrorOnBadAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication: 'None'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.env.badauth!")));
+    }
+
+    @Test
+    void shouldErrorOnBadAuthMethod() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'Bad'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("!automation.error.env.auth.type.bad!")));
+    }
+
+    @Test
+    void shouldWarnOnBadAuthKey() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'manual'\n"
+                        + "        abc: xyz";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo(("!automation.error.options.unknown!"))));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_MANUAL));
+    }
+
+    @Test
+    void shouldWarnOnBadAuthParam() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'manual'\n"
+                        + "        parameters:\n"
+                        + "          abc: xyz";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo(("!automation.error.env.auth.param.unknown!"))));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_MANUAL));
+    }
+
+    @Test
+    void shouldHandleEmptyAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldLoadManualAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'manual'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_MANUAL));
+    }
+
+    @Test
+    void shouldLoadHttpAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'http'\n"
+                        + "        parameters:\n"
+                        + "          hostname: https://www.example.com\n"
+                        + "          realm: test\n"
+                        + "          port: 8080";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_HTTP));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .size(),
+                is(3));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_HOSTNAME),
+                is("https://www.example.com"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_REALM),
+                is("test"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_PORT),
+                is(8080));
     }
 }
