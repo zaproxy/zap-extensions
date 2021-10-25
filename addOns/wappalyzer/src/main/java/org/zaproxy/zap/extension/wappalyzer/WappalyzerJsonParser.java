@@ -139,7 +139,7 @@ public class WappalyzerJsonParser {
                     app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
                     app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
                     app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
-                    app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
+                    app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scriptSrc")));
                     app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                     app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
                     app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));

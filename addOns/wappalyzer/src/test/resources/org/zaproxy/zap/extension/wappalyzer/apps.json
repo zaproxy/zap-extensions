@@ -37,7 +37,7 @@
           }
         }
       },
-      "scripts": [
+      "scriptSrc": [
         "testentry\\.com/",
         "ad\\.ca\\.testentry\\.net"
       ],
@@ -57,7 +57,7 @@
       "html": "(?:<link[^>]+components/bitrix|(?:src|href)=\"/bitrix/(?:js|templates))",
       "icon": "1C-Bitrix.png",
       "implies": "PHP",
-      "scripts": "1c-bitrix",
+      "scriptSrc": "1c-bitrix",
       "website": "http://www.1c-bitrix.ru"
     },
     "Apache": {
@@ -95,7 +95,7 @@
             "Modern"
         }
       },
-      "scripts": [
+      "scriptSrc": [
         "([\\d.]+)?/modernizr(?:\\.([\\d.]+))?.*\\.js\\;version:\\1?\\1:\\2"
       ],
       "website": "https://modernizr.com"
