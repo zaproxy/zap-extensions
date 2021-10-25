@@ -20,8 +20,9 @@
 package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -216,7 +217,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         // Given / When
         String name = rule.getName();
         // Then
-        assertThat(name, not(isEmptyOrNullString()));
+        assertThat(name, is(not(emptyOrNullString())));
         assertThat(
                 "Name does not seem to be i18n'ed, not found in the resource bundle:" + name,
                 extensionResourceBundle.keySet().stream()

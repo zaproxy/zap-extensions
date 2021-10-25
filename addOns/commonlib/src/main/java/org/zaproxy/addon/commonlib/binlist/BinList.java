@@ -69,7 +69,14 @@ public final class BinList {
                 BOMInputStream bomStream = new BOMInputStream(in);
                 InputStreamReader inStream =
                         new InputStreamReader(bomStream, StandardCharsets.UTF_8)) {
-            records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(inStream).getRecords();
+
+            records =
+                    CSVFormat.Builder.create()
+                            .setHeader()
+                            .setSkipHeaderRecord(true)
+                            .build()
+                            .parse(inStream)
+                            .getRecords();
         } catch (NullPointerException | IOException e) {
             LOGGER.warn("Exception while loading: {}", BINLIST, e);
             return trie;

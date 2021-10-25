@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

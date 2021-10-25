@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - A message is displayed if the "data" object in an introspection response
   is `null` ([Issue 6890](https://github.com/zaproxy/zaproxy/issues/6890)).
 
+### Changed
+- Dependency updates.
+
 ## [0.6.0] - 2021-10-06
 ### Changed
 - Update minimum ZAP version to 2.11.0.

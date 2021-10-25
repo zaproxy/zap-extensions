@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Authentication verification support (as above)
 - Set ZAP exit code when "-cmd" and "-autorun" options used
 
+### Changed
+- Dependency updates.
+
 ### Fixed
 - Plans saved without default ".yaml" extension.
 - Env vars in context names replaced on load, so lost if the plan saved again via the GUI.

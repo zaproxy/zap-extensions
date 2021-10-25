@@ -4,7 +4,7 @@ import org.zaproxy.gradle.addon.AddOnStatus
 plugins {
     `maven-publish`
     signing
-    id("me.champeau.gradle.japicmp") version "0.2.9"
+    id("me.champeau.gradle.japicmp") version "0.3.0"
 }
 
 group = "org.zaproxy.addon"
@@ -35,8 +35,8 @@ crowdin {
 }
 
 dependencies {
-    implementation("commons-io:commons-io:2.6")
-    implementation("org.apache.commons:commons-csv:1.8")
+    implementation("commons-io:commons-io:2.11.0")
+    implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-collections4:4.4")
 
     testImplementation(project(":testutils"))

@@ -19,7 +19,7 @@ dependencies {
         // Not needed.
         exclude(group = "junit")
     }
-    implementation("org.kohsuke:github-api:1.109") {
+    implementation("org.kohsuke:github-api:1.135") {
         // Not needed.
         exclude(group = "com.infradna.tool")
         // Provided by ZAP.

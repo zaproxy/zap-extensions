@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.IOException;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;

@@ -34,7 +34,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("selenium")!!)
-    testImplementation("io.github.bonigarcia:webdrivermanager:4.2.2")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.0.3")
     testImplementation(project(":testutils"))
 }
 
