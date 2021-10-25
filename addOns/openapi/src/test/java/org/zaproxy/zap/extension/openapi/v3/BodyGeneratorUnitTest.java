@@ -705,7 +705,7 @@ class BodyGeneratorUnitTest extends TestUtils {
         assertThat(
                 generators.getErrorMessages(),
                 contains(
-                        "Not generating request body for operation xml, the content application/xml is not supported."));
+                        "Not generating request body for operation xml, the content type application/xml is not supported."));
     }
 
     @Test

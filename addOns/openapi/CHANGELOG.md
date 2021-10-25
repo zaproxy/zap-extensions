@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Use examples defined in parameters ([Issue #6870](https://github.com/zaproxy/zaproxy/issues/6870)).
+- Tweak error message shown when content type is not supported.
 
 ### Fixed
 - Fixed ClassCastException when using nested map properties with mixed definition styles. 
@@ -18,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use path and operation servers ([Issue #6754](https://github.com/zaproxy/zaproxy/issues/6754)).
 
 ### Changed
-- Warn when request has content `application/xml`, not supported (Related to [Issue #6767](https://github.com/zaproxy/zaproxy/issues/6767)).
+- Warn when request has content type `application/xml`, not supported (Related to [Issue #6767](https://github.com/zaproxy/zaproxy/issues/6767)).
 - Maintenance changes.
 - Update minimum ZAP version to 2.11.0.
 
