@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Delay job
 - Session management support (but not currently exposed - its a stepping stone to full authentication support)
 - User and HTTP authentication support (as above)
+- Authentication verification support (as above)
 
 ### Fixed
 - Plans saved without default ".yaml" extension.
