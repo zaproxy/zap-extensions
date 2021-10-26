@@ -40,12 +40,15 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_REALM = "realm";
     public static final String PARAM_PORT = "port";
 
+    public static final String VERIFICATION_ELEMENT = "verification";
+
     private static List<String> validMethods = Arrays.asList(METHOD_MANUAL, METHOD_HTTP);
 
     private String method;
     private String script;
     private String scriptEngine;
     private Map<String, Object> parameters = new LinkedHashMap<>();
+    private VerificationData verification;
 
     public AuthenticationData() {}
 
@@ -58,14 +61,18 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_HOSTNAME, httpAuthMethod);
             JobUtils.addPrivateField(parameters, PARAM_PORT, httpAuthMethod);
         }
+        if (authMethod != null) {
+            setVerification(new VerificationData(context));
+        }
     }
 
     public AuthenticationData(Object data, AutomationProgress progress) {
         if (!(data instanceof LinkedHashMap)) {
             progress.error(Constant.messages.getString("automation.error.env.badauth", data));
         } else {
+            LinkedHashMap<?, ?> dataMap = (LinkedHashMap<?, ?>) data;
             JobUtils.applyParamsToObject(
-                    (LinkedHashMap<?, ?>) data, this, "authentication", null, progress);
+                    dataMap, this, "authentication", new String[] {VERIFICATION_ELEMENT}, progress);
 
             if (!StringUtils.isEmpty(method)
                     && !validMethods.contains(method.toLowerCase(Locale.ROOT))) {
@@ -103,34 +110,45 @@ public class AuthenticationData extends AutomationData {
                                         "automation.error.env.auth.param.unknown", data));
                 }
             }
+            if (dataMap.containsKey(VERIFICATION_ELEMENT)) {
+                this.setVerification(
+                        new VerificationData(dataMap.get(VERIFICATION_ELEMENT), progress));
+            }
         }
     }
 
     public void initContextAuthentication(Context context, AutomationProgress progress) {
-        switch (getMethod().toLowerCase(Locale.ROOT)) {
-            case AuthenticationData.METHOD_MANUAL:
-                // Nothing to do
-                break;
-            case AuthenticationData.METHOD_HTTP:
-                HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
-                httpAuthMethod.setHostname(
-                        getParameters().get(AuthenticationData.PARAM_HOSTNAME).toString());
-                httpAuthMethod.setRealm(
-                        getParameters().get(AuthenticationData.PARAM_REALM).toString());
-                try {
-                    httpAuthMethod.setPort(
-                            Integer.parseInt(
-                                    getParameters().get(AuthenticationData.PARAM_PORT).toString()));
-                } catch (NumberFormatException e) {
-                    // Ignore - will have been already reported
-                }
-                context.setAuthenticationMethod(httpAuthMethod);
-                break;
-            default:
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.env.auth.type.bad", getMethod()));
-                break;
+        if (getMethod() != null) {
+            switch (getMethod().toLowerCase(Locale.ROOT)) {
+                case AuthenticationData.METHOD_MANUAL:
+                    // Nothing to do
+                    break;
+                case AuthenticationData.METHOD_HTTP:
+                    HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
+                    httpAuthMethod.setHostname(
+                            getParameters().get(AuthenticationData.PARAM_HOSTNAME).toString());
+                    httpAuthMethod.setRealm(
+                            getParameters().get(AuthenticationData.PARAM_REALM).toString());
+                    try {
+                        httpAuthMethod.setPort(
+                                Integer.parseInt(
+                                        getParameters()
+                                                .get(AuthenticationData.PARAM_PORT)
+                                                .toString()));
+                    } catch (NumberFormatException e) {
+                        // Ignore - will have been already reported
+                    }
+                    context.setAuthenticationMethod(httpAuthMethod);
+                    break;
+                default:
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.auth.type.bad", getMethod()));
+                    break;
+            }
+        }
+        if (this.verification != null) {
+            this.verification.initAuthenticationVerification(context, progress);
         }
     }
 
@@ -168,5 +186,13 @@ public class AuthenticationData extends AutomationData {
 
     public void addParameter(String key, String value) {
         this.parameters.put(key, value);
+    }
+
+    public VerificationData getVerification() {
+        return verification;
+    }
+
+    public void setVerification(VerificationData verification) {
+        this.verification = verification;
     }
 }

@@ -600,4 +600,208 @@ class ContextWrapperUnitTest {
                         .get(AuthenticationData.PARAM_PORT),
                 is(8080));
     }
+
+    @Test
+    void shouldLoadVerificationData() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        verification:\n"
+                        + "          method: 'poll'\n"
+                        + "          loggedInRegex: 'aaa'\n"
+                        + "          loggedOutRegex: 'bbb'\n"
+                        + "          pollFrequency: 123\n"
+                        + "          pollUnits: 'seconds'\n"
+                        + "          pollUrl: 'https://www.example.com/poll'\n"
+                        + "          pollPostData: 'aaa=bbb&ccc=ddd'\n"
+                        + "          pollAdditionalHeaders:\n"
+                        + "          - header: 'Content-Type'\n"
+                        + "            value: 'application/json'\n"
+                        + "          - header: 'X-Requested-With'\n"
+                        + "            value: 'XMLHttpRequest'"
+                        + "";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertNotNull(
+                env.getContextWrappers().get(0).getData().getAuthentication().getVerification());
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getMethod(),
+                is(VerificationData.METHOD_POLL));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getLoggedInRegex(),
+                is("aaa"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getLoggedOutRegex(),
+                is("bbb"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollFrequency(),
+                is(123));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollUnits(),
+                is(VerificationData.POLL_UNIT_SECONDS));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollUrl(),
+                is("https://www.example.com/poll"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollPostData(),
+                is("aaa=bbb&ccc=ddd"));
+        assertNotNull(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollAdditionalHeaders());
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollAdditionalHeaders()
+                        .size(),
+                is(2));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollAdditionalHeaders()
+                        .get(0)
+                        .getHeader(),
+                is("Content-Type"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getPollAdditionalHeaders()
+                        .get(0)
+                        .getValue(),
+                is("application/json"));
+    }
+
+    @Test
+    void shouldErrorOnBadVerification() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        verification: bad";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0), is(equalTo("!automation.error.env.badverification!")));
+    }
+
+    @Test
+    void shouldErrorOnBadVerificationElements() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        verification:\n"
+                        + "          method: 'Bad'\n"
+                        + "          loggedInRegex: '*'\n"
+                        + "          loggedOutRegex: '*'\n"
+                        + "          pollFrequency: 'aa'\n"
+                        + "          pollUnits: 'minutes'\n"
+                        + "          pollAdditionalHeaders: 'string'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(5)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badint!")));
+        assertThat(
+                progress.getErrors().get(1),
+                is(equalTo("!automation.error.env.verification.type.bad!")));
+        assertThat(
+                progress.getErrors().get(2),
+                is(equalTo("!automation.error.env.verification.pollunits.bad!")));
+        assertThat(
+                progress.getErrors().get(3),
+                is(equalTo("!automation.error.env.verification.loginregex.bad!")));
+        assertThat(
+                progress.getErrors().get(4),
+                is(equalTo("!automation.error.env.verification.logoutregex.bad!")));
+    }
 }
