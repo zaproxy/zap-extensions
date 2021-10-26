@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -462,5 +464,40 @@ public class JobUtils {
             return defaultStr;
         }
         return s;
+    }
+
+    public static void addPrivateField(Map<String, Object> list, String fieldName, Object obj) {
+        Object val = getPrivateField(obj, fieldName);
+        if (val != null) {
+            list.put(fieldName, val);
+        }
+    }
+
+    public static Object getPrivateField(Object obj, String fieldName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            return FieldUtils.readField(field, obj, true);
+        } catch (Exception e) {
+            LOG.error(
+                    "Failed get {} private field: {}",
+                    obj.getClass().getCanonicalName(),
+                    fieldName,
+                    e);
+        }
+        return null;
+    }
+
+    public static void setPrivateField(Object obj, String fieldName, Object value) {
+        try {
+            // Have to use reflection on private field :(
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            FieldUtils.writeField(field, obj, value, true);
+        } catch (Exception e) {
+            LOG.error(
+                    "Failed set {} private field: {}",
+                    obj.getClass().getCanonicalName(),
+                    fieldName,
+                    e);
+        }
     }
 }
