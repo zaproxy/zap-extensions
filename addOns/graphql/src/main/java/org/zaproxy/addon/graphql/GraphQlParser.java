@@ -93,9 +93,12 @@ public class GraphQlParser {
                 throw new IOException("The response was empty.");
             }
             @SuppressWarnings("unchecked")
-            Document schema =
-                    new IntrospectionResultToSchema()
-                            .createSchemaDefinition((Map<String, Object>) result.get("data"));
+            Map<String, Object> data = (Map<String, Object>) result.get("data");
+            if (data == null) {
+                throw new IOException(
+                        "The \"data\" object in the introspection response was null.");
+            }
+            Document schema = new IntrospectionResultToSchema().createSchemaDefinition(data);
             String schemaSdl = new SchemaPrinter().print(schema);
             parse(schemaSdl);
         } catch (JsonSyntaxException e) {
