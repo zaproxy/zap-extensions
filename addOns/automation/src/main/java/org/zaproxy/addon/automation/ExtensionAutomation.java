@@ -57,6 +57,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 
@@ -513,7 +514,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     @Override
     public void execute(CommandLineArgument[] args) {
         if (arguments[ARG_AUTO_RUN_IDX].isEnabled()) {
-            runAutomationFile(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
+            AutomationProgress progress =
+                    runAutomationFile(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
+            if (ProcessType.cmdline.equals(ZAP.getProcessType())) {
+                if (progress.hasErrors()) {
+                    Control.getSingleton()
+                            .setExitStatus(
+                                    1,
+                                    "Automation Framework setting exit status to due to plan errors");
+                } else if (progress.hasWarnings()) {
+                    Control.getSingleton()
+                            .setExitStatus(
+                                    2,
+                                    "Automation Framework setting exit status to due to plan warnings");
+                }
+            }
         }
         if (arguments[ARG_AUTO_GEN_MIN_IDX].isEnabled()) {
             generateTemplateFile(
