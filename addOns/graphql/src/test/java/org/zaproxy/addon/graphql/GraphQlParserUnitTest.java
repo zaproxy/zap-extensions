@@ -50,7 +50,7 @@ class GraphQlParserUnitTest extends TestUtils {
         nano.addHandler(new StaticContentServerHandler("/", ""));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
         // When/Then
-        assertThrows(IOException.class, () -> gqp.introspect());
+        assertThrows(IOException.class, gqp::introspect);
     }
 
     @Test
@@ -59,6 +59,15 @@ class GraphQlParserUnitTest extends TestUtils {
         nano.addHandler(new StaticContentServerHandler("/", "not json"));
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
         // When/Then
-        assertThrows(IOException.class, () -> gqp.introspect());
+        assertThrows(IOException.class, gqp::introspect);
+    }
+
+    @Test
+    void shouldFailIntrospectionWhenResponseDataIsNull() throws Exception {
+        // Given
+        nano.addHandler(new StaticContentServerHandler("/", "{\"data\": null}"));
+        GraphQlParser gqp = new GraphQlParser(endpointUrl);
+        // When/Then
+        assertThrows(IOException.class, gqp::introspect);
     }
 }
