@@ -36,6 +36,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
+import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
@@ -48,6 +51,9 @@ public class ContextWrapper {
     private Data data;
 
     private ExtensionUserManagement extUserMgmt;
+
+    private static final String MANUAL_AUTH_CREDS_CANONICAL_NAME =
+            "org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationCredentials";
 
     private static final Logger LOG = LogManager.getLogger(ContextWrapper.class);
 
@@ -87,6 +93,10 @@ public class ContextWrapper {
                     users.add(
                             new UserData(
                                     user.getName(), upCreds.getUsername(), upCreds.getPassword()));
+                } else if (MANUAL_AUTH_CREDS_CANONICAL_NAME.equals(
+                        user.getAuthenticationCredentials().getClass().getCanonicalName())) {
+                    // Cannot use instanceof as its a private class :/
+                    users.add(new UserData(user.getName()));
                 } else {
                     LOG.debug(
                             "Auth credentials {} not yet supported",
@@ -289,13 +299,21 @@ public class ContextWrapper {
     private void initContextUsers(Context context, AutomationEnvironment env) {
         if (getExtUserMgmt() != null) {
             for (UserData ud : getData().getUsers()) {
-                // Initially just support UsernamePasswordAuthenticationCredentials
-                UsernamePasswordAuthenticationCredentials upCreds =
-                        new UsernamePasswordAuthenticationCredentials(
-                                env.replaceVars(ud.getUsername()),
-                                env.replaceVars(ud.getPassword()));
                 User user = new User(context.getId(), env.replaceVars(ud.getName()));
-                user.setAuthenticationCredentials(upCreds);
+                AuthenticationMethod authMethod = context.getAuthenticationMethod();
+                if (authMethod instanceof HttpAuthenticationMethod) {
+                    UsernamePasswordAuthenticationCredentials upCreds =
+                            new UsernamePasswordAuthenticationCredentials(
+                                    env.replaceVars(ud.getUsername()),
+                                    env.replaceVars(ud.getPassword()));
+                    user.setAuthenticationCredentials(upCreds);
+                } else if (authMethod instanceof ManualAuthenticationMethod) {
+                    user.setAuthenticationCredentials(
+                            authMethod.getType().createAuthenticationCredentials());
+                } else {
+                    LOG.error(
+                            "Users not supported for {}", authMethod.getClass().getCanonicalName());
+                }
                 user.setEnabled(true);
                 extUserMgmt.getContextUserAuthManager(context.getId()).addUser(user);
             }
@@ -314,7 +332,7 @@ public class ContextWrapper {
         return extUserMgmt;
     }
 
-    public static class Data {
+    public static class Data extends AutomationData {
         private String name;
         private List<String> urls = new ArrayList<>();
         private List<String> includePaths;
@@ -386,6 +404,10 @@ public class ContextWrapper {
         private String password;
 
         public UserData() {}
+
+        public UserData(String name) {
+            this.name = name;
+        }
 
         public UserData(String name, String username, String password) {
             this.name = name;
