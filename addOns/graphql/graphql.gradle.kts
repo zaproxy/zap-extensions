@@ -40,8 +40,8 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
-    implementation("com.google.code.gson:gson:2.8.6")
-    implementation("com.graphql-java:graphql-java:15.0")
+    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.graphql-java:graphql-java:17.3")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))

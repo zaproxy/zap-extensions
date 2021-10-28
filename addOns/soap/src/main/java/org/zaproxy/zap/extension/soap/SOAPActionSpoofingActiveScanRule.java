@@ -19,14 +19,14 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;

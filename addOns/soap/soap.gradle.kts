@@ -42,14 +42,14 @@ dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     implementation("com.predic8:soa-model-core:1.6.3")
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.3")
-    implementation("jakarta.xml.soap:jakarta.xml.soap-api:1.4.2")
+    implementation("com.sun.xml.messaging.saaj:saaj-impl:2.0.1")
+    implementation("jakarta.xml.soap:jakarta.xml.soap-api:2.0.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
     // Dependency of "com.predic8:soa-model-core:1.6.3".
-    implementation("org.codehaus.groovy:groovy:3.0.8")
+    implementation("org.codehaus.groovy:groovy:3.0.9")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)

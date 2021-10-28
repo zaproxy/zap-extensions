@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 import org.parosproxy.paros.network.HttpBody;
 
 public class SoapMessageFactory {

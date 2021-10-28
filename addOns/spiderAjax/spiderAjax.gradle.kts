@@ -57,23 +57,23 @@ dependencies {
     implementation(files("lib/crawljax-core-3.7.jar"))
     implementation("commons-math:commons-math:1.2")
     implementation("com.codahale.metrics:metrics-core:3.0.2")
-    implementation("com.google.code.findbugs:jsr305:3.0.0")
-    implementation("com.google.inject.extensions:guice-assistedinject:3.0") {
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("com.google.inject.extensions:guice-assistedinject:5.0.1") {
         // Not needed.
         exclude(group = "org.sonatype.sisu.inject", module = "cglib")
     }
     implementation("net.jcip:jcip-annotations:1.0")
-    implementation("net.sourceforge.nekohtml:nekohtml:1.9.21") {
+    implementation("net.sourceforge.nekohtml:nekohtml:1.9.22") {
         // Not needed.
         exclude(group = "xerces", module = "xercesImpl")
     }
-    implementation("org.slf4j:jcl-over-slf4j:1.7.6")
-    implementation("org.slf4j:jul-to-slf4j:1.7.6")
-    implementation("org.slf4j:slf4j-log4j12:1.7.6") {
+    implementation("org.slf4j:jcl-over-slf4j:1.7.32")
+    implementation("org.slf4j:jul-to-slf4j:1.7.32")
+    implementation("org.slf4j:slf4j-log4j12:1.7.32") {
         // Provided by ZAP.
         exclude(group = "log4j", module = "log4j")
     }
-    implementation("xmlunit:xmlunit:1.5")
+    implementation("xmlunit:xmlunit:1.6")
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }

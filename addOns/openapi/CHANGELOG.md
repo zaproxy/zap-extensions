@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Use examples defined in parameters ([Issue #6870](https://github.com/zaproxy/zaproxy/issues/6870)).
 - Tweak error message shown when content type is not supported.
+- Dependency updates.
 
 ### Fixed
 - Fixed ClassCastException when using nested map properties with mixed definition styles. 
