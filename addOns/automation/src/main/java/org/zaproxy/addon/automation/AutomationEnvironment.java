@@ -138,6 +138,9 @@ public class AutomationEnvironment {
     }
 
     public String replaceVars(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (this.combinedVars == null) {
             this.combinedVars = new HashMap<>(System.getenv());
             this.combinedVars.putAll(this.getData().getVars());
