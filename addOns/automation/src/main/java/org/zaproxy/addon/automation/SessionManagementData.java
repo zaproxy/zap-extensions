@@ -134,9 +134,28 @@ public class SessionManagementData extends AutomationData {
                                     f.getAbsolutePath()));
                 } else {
                     ScriptWrapper sw = getScriptWrapper(f, getScriptEngine(), progress);
+
                     ScriptBasedSessionManagementMethod smm =
                             getScriptBasedSessionManagementMethod(context.getId());
-                    if (sw != null && smm != null) {
+
+                    if (sw == null) {
+                        LOG.error(
+                                "Error setting script session management - failed to find script wrapper");
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        f.getAbsolutePath()));
+
+                    } else if (smm == null) {
+                        LOG.error(
+                                "Error setting script session management - failed to get session management method");
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        f.getAbsolutePath()));
+
+                    } else {
+                        JobUtils.setPrivateField(smm, SCRIPT_SESSION_MANAGEMENT_SCRIPT_FIELD, sw);
                         Object paramValues =
                                 JobUtils.getPrivateField(
                                         smm, SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD);
