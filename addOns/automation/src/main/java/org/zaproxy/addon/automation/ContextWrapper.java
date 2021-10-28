@@ -99,7 +99,8 @@ public class ContextWrapper {
         }
     }
 
-    public ContextWrapper(Map<?, ?> contextData, AutomationProgress progress) {
+    public ContextWrapper(
+            Map<?, ?> contextData, AutomationEnvironment env, AutomationProgress progress) {
         this.data = new Data();
         for (Entry<?, ?> cdata : contextData.entrySet()) {
             Object value = cdata.getValue();
@@ -162,7 +163,15 @@ public class ContextWrapper {
                                 UserData ud = new UserData();
                                 JobUtils.applyParamsToObject(
                                         (LinkedHashMap<?, ?>) userObj, ud, "users", null, progress);
-                                users.add(ud);
+                                if (env.getUser(ud.getName()) != null) {
+                                    progress.error(
+                                            Constant.messages.getString(
+                                                    "automation.error.context.dupuser",
+                                                    data.getName(),
+                                                    ud.getUsername()));
+                                } else {
+                                    users.add(ud);
+                                }
                             }
                         }
                         data.setUsers(users);
@@ -300,6 +309,27 @@ public class ContextWrapper {
                 extUserMgmt.getContextUserAuthManager(context.getId()).addUser(user);
             }
         }
+    }
+
+    public List<String> getUserNames() {
+        List<String> userNames = new ArrayList<>();
+        if (this.getData().getUsers() != null) {
+            this.getData().getUsers().stream().forEach(u -> userNames.add(u.getName()));
+        }
+        return userNames;
+    }
+
+    public User getUser(String name) {
+        if (getExtUserMgmt() != null) {
+            for (User user : extUserMgmt.getContextUserAuthManager(context.getId()).getUsers()) {
+                if (user.getName().equals(name)) {
+                    LOG.debug("User {} found in context {}", name, context.getName());
+                    return user;
+                }
+            }
+        }
+        LOG.debug("User {} not found in context {}", name, context.getName());
+        return null;
     }
 
     private ExtensionUserManagement getExtUserMgmt() {

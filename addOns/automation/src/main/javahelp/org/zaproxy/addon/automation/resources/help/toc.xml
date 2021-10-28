@@ -9,6 +9,7 @@
 			<tocitem text="Automation Framework" image="automation-icon" target="automation">
 				<tocitem text="GUI" target="automation.gui"/>
 				<tocitem text="Environment" target="automation.env"/>
+				<tocitem text="Authentication" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
 				<tocitem text="Job: passiveScanConfig" target="automation.pscanconf"/>
 				<tocitem text="Job: passiveScanWait" target="automation.pscanwait"/>

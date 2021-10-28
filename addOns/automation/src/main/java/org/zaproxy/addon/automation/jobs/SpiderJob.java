@@ -47,6 +47,7 @@ import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -91,6 +92,9 @@ public class SpiderJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        this.verifyUser(this.getParameters().getUser(), progress);
+
         if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
                 || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
             progress.warn(
@@ -148,13 +152,14 @@ public class SpiderJob extends AutomationJob {
             progress.error(Constant.messages.getString("automation.error.context.badurl", urlStr));
             return;
         }
+        User user = this.getUser(this.getParameters().getUser(), progress);
 
         // Request all specified URLs
         for (String u : context.getUrls()) {
             urlStr = env.replaceVars(u);
             progress.info(
                     Constant.messages.getString("automation.info.requrl", this.getName(), urlStr));
-            this.urlRequester.requestUrl(urlStr, progress);
+            this.urlRequester.requestUrl(urlStr, user, progress);
         }
 
         if (env.isTimeToQuit()) {
@@ -169,7 +174,7 @@ public class SpiderJob extends AutomationJob {
             contextSpecificObjects.add(uri);
         }
 
-        int scanId = this.getExtSpider().startScan(target, null, contextSpecificObjects.toArray());
+        int scanId = this.getExtSpider().startScan(target, user, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
         if (parameters.getMaxDuration() != null && parameters.getMaxDuration() > 0) {
@@ -301,10 +306,15 @@ public class SpiderJob extends AutomationJob {
                             HttpSender.SPIDER_INITIATOR);
         }
 
-        public void requestUrl(String url, AutomationProgress progress) {
+        public void requestUrl(String url, User user, AutomationProgress progress) {
             // Request the URL
             try {
                 final HttpMessage msg = new HttpMessage(new URI(url, true));
+
+                if (user != null) {
+                    msg.setRequestingUser(user);
+                }
+
                 httpSender.sendAndReceive(msg, true);
 
                 if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
@@ -380,6 +390,7 @@ public class SpiderJob extends AutomationJob {
 
     public static class Parameters extends AutomationData {
         private String context;
+        private String user;
         private String url;
         private Integer maxDuration;
         private Integer maxDepth;
@@ -421,6 +432,14 @@ public class SpiderJob extends AutomationJob {
 
         public void setContext(String context) {
             this.context = context;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
 
         public String getUrl() {

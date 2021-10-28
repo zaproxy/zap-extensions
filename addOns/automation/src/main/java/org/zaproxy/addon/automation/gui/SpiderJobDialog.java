@@ -50,6 +50,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     private static final String TITLE = "automation.dialog.spider.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
     private static final String CONTEXT_PARAM = "automation.dialog.spider.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String URL_PARAM = "automation.dialog.spider.url";
     private static final String MAX_DURATION_PARAM = "automation.dialog.spider.maxduration";
     private static final String MAX_DEPTH_PARAM = "automation.dialog.spider.maxdepth";
@@ -88,6 +89,12 @@ public class SpiderJobDialog extends StandardFieldsDialog {
         // Add blank option
         contextNames.add(0, "");
         this.addComboField(0, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        // Add blank option
+        users.add(0, "");
+        this.addComboField(0, USER_PARAM, users, this.job.getData().getParameters().getUser());
+
         // Cannot select the node as it might not be present in the Sites tree
         this.addNodeSelectField(0, URL_PARAM, null, true, false);
         Component urlField = this.getField(URL_PARAM);
@@ -250,6 +257,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
         this.job.getParameters().setMaxDepth(this.getIntValue(MAX_DEPTH_PARAM));
