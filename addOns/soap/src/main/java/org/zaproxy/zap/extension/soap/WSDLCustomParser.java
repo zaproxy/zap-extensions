@@ -356,7 +356,9 @@ public class WSDLCustomParser {
     private List<Part> detectParameters(Definitions wsdl, BindingOperation bindOp) {
         for (PortType pt : wsdl.getPortTypes()) {
             for (Operation op : pt.getOperations()) {
-                if (op.getName().trim().equals(bindOp.getName().trim())) {
+                if (op.getName().trim().equals(bindOp.getName().trim())
+                        && op.getInput() != null
+                        && op.getInput().getMessage() != null) {
                     return op.getInput().getMessage().getParts();
                 }
             }
