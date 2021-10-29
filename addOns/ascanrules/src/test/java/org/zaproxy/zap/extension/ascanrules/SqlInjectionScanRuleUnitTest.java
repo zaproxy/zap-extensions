@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -165,11 +166,93 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
     }
 
     @Test
+    void shouldAlertIfTrueExpressionsAreSuccessful() throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ConditionBasedHandler(
+                        "/", param, ConditionBasedHandler.Condition.AND_FALSE.expression));
+
+        rule.init(
+                getHttpMessage("GET", NanoHTTPD.MIME_HTML, "/?" + param + "=admin", "Some content"),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(containsString(ConditionBasedHandler.Condition.AND_TRUE.expression)));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldAlertIfFalseExpressionsAreSuccessful() throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ConditionBasedHandler(
+                        "/", param, ConditionBasedHandler.Condition.OR_TRUE.expression));
+
+        rule.init(
+                getHttpMessage("GET", NanoHTTPD.MIME_HTML, "/?" + param + "=admin", "Some content"),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(containsString(ConditionBasedHandler.Condition.OR_TRUE.expression)));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
     void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
                 new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldAlertIfSumExpressionsAreRedirected() throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM) {
+                    @Override
+                    protected Response getResponse(String value) {
+                        Response response =
+                                newFixedLengthResponse(
+                                        Response.Status.REDIRECT, NanoHTTPD.MIME_HTML, "");
+                        response.addHeader("Location", "http://somewhere");
+                        return response;
+                    }
+                });
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
                 parent);
@@ -261,6 +344,38 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         String param = "id";
         nano.addHandler(
                 new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldAlertIfMultExpressionsAreRedirected() throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT) {
+                    @Override
+                    protected Response getResponse(String value) {
+                        Response response =
+                                newFixedLengthResponse(
+                                        Response.Status.REDIRECT, NanoHTTPD.MIME_HTML, "");
+                        response.addHeader("Location", "http://somewhere");
+                        return response;
+                    }
+                });
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
@@ -412,12 +527,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         }
 
         public ExpressionBasedHandler(
-                String parth,
+                String path,
                 String param,
                 Expression expression,
                 boolean confirmationFails,
                 String contentAddition) {
-            this(parth, param, expression, confirmationFails);
+            this(path, param, expression, confirmationFails);
             this.contentAddition = contentAddition;
         }
 
@@ -425,8 +540,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         protected Response serve(IHTTPSession session) {
             String value = getFirstParamValue(session, param);
             if (isValidValue(value)) {
-                return newFixedLengthResponse(
-                        Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
+                return getResponse(value);
             }
             return newFixedLengthResponse(
                     Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
@@ -441,6 +555,53 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
         protected String getContent(String value) {
             return "Some Content " + contentAddition;
+        }
+
+        protected Response getResponse(String value) {
+            return newFixedLengthResponse(
+                    Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
+        }
+    }
+
+    private static class ConditionBasedHandler extends NanoServerHandler {
+
+        public enum Condition {
+            AND_TRUE(" AND 1=1 --"),
+            AND_FALSE(" AND 1=2 --"),
+            OR_TRUE(" OR 1=1 --");
+
+            private final String expression;
+
+            Condition(String expression) {
+                this.expression = expression;
+            }
+        }
+
+        private final String param;
+
+        private final String confirmationExpression;
+
+        public ConditionBasedHandler(String name, String param, String confirmationExpression) {
+            super(name);
+            this.param = param;
+            this.confirmationExpression = confirmationExpression;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String value = getFirstParamValue(session, param);
+            if (value.contains(confirmationExpression)) {
+                Response response =
+                        newFixedLengthResponse(
+                                Response.Status.REDIRECT, NanoHTTPD.MIME_HTML, getContent());
+                response.addHeader("Location", "http://somewhere");
+                return response;
+            }
+            return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, getContent());
+        }
+
+        protected String getContent() {
+            return "Some content";
         }
     }
 }

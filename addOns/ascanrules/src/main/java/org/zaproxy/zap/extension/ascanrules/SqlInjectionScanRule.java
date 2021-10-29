@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,6 +44,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
@@ -830,6 +832,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
             mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
             mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+            String locationHeaderNormal =
+                    refreshedmessage.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
             if (!sqlInjectionFoundForUrl
                     && doExpressionBased
@@ -863,7 +867,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 param,
                                 origParamValue,
                                 modifiedParamValueForAdd,
-                                modifiedParamValueConfirmForAdd);
+                                modifiedParamValueConfirmForAdd,
+                                locationHeaderNormal);
                         // bale out if we were asked nicely
                         if (isStop()) {
                             LOGGER.debug("Stopping the scan due to a user request");
@@ -888,7 +893,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                     param,
                                     origParamValue,
                                     modifiedParamValueForMult,
-                                    modifiedParamValueConfirmForMult);
+                                    modifiedParamValueConfirmForMult,
+                                    locationHeaderNormal);
                             // bale out if we were asked nicely
                             if (isStop()) {
                                 LOGGER.debug("Stopping the scan due to a user request");
@@ -977,6 +983,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
             mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
+            locationHeaderNormal =
+                    refreshedmessage.getResponseHeader().getHeader(HttpHeader.LOCATION);
+
             // boolean booleanBasedSqlInjectionFoundForParam = false;
 
             // try each of the AND syntax values in turn.
@@ -1020,6 +1029,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 String resBodyANDTrueStripped =
                         stripOffOriginalAndAttackParam(
                                 resBodyANDTrueUnstripped, origParamValue, sqlBooleanAndTrueValue);
+                String headerAndTrue = msg2.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                 // set up two little arrays to ease the work of checking the unstripped output, and
                 // then the stripped output
@@ -1077,6 +1087,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                         resBodyANDFalseUnstripped,
                                         origParamValue,
                                         sqlBooleanAndFalseValue);
+                        String headerAndFalse =
+                                msg2_and_false.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                         String andFalseBodyOutput[] = {
                             resBodyANDFalseUnstripped, resBodyANDFalseStripped
@@ -1138,8 +1150,22 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
                             sqlInjectionFoundForUrl = true;
 
-                            break; // No further need to loop through SQL_AND
+                            break; // No further need to loop through header check
 
+                        } else if (StringUtils.compare(locationHeaderNormal, headerAndTrue) == 0
+                                && StringUtils.compare(headerAndTrue, headerAndFalse) != 0) {
+                            // or we get redirected, likely an SQL Injection too
+                            sqlInjectionAttack = sqlBooleanAndTrueValue;
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(sqlInjectionAttack)
+                                    .setMessage(msg2)
+                                    .raise();
+
+                            sqlInjectionFoundForUrl = true;
+
+                            break; // No further need to loop through SQL_AND
                         } else {
                             // the results of the always false condition are the same as for the
                             // original unmodified parameter
@@ -1186,6 +1212,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             String resBodyORTrueStripped =
                                     stripOffOriginalAndAttackParam(
                                             resBodyORTrueUnstripped, origParamValue, orValue);
+                            String headerOrTrue =
+                                    msg2_or_true.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                             String orTrueBodyOutput[] = {
                                 resBodyORTrueUnstripped, resBodyORTrueStripped
@@ -1193,7 +1221,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
                             int compareOrToOriginal =
                                     orTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
-                                            normalBodyOutput[booleanStrippedUnstrippedIndex]);
+                                                    normalBodyOutput[
+                                                            booleanStrippedUnstrippedIndex])
+                                            | StringUtils.compare(
+                                                    locationHeaderNormal, headerOrTrue);
                             if (compareOrToOriginal != 0) {
                                 LOGGER.debug(
                                         "Check 2, {} html output for OR TRUE condition [{}] different to (refreshed) original results for {}",
@@ -1346,12 +1377,14 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 countBooleanBasedRequests++;
 
                 String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
+                String locationHeaderOrTrue =
+                        msg2.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                 // if the results of the "OR 1=1" exceed the original query (unstripped, by more
-                // than a 20% size difference, say), we may be onto something.
+                // than a 20% size difference, say) or got redirected, we may be onto something.
                 // TODO: change the percentage difference threshold based on the alert threshold
-                if ((resBodyORTrueUnstripped.length()
-                        > (mResBodyNormalUnstripped.length() * 1.2))) {
+                if ((resBodyORTrueUnstripped.length() > (mResBodyNormalUnstripped.length() * 1.2))
+                        || (StringUtils.compare(locationHeaderNormal, locationHeaderOrTrue) != 0)) {
                     LOGGER.debug(
                             "Check 2a, unstripped html output for OR TRUE condition [{}] produced sufficiently larger results than the original message",
                             sqlBooleanOrTrueValue);
@@ -1377,6 +1410,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                     resBodyANDFalseUnstripped,
                                     origParamValue,
                                     sqlBooleanAndFalseValue);
+                    String headerAndFalse =
+                            msg2_and_false.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                     // does the "AND 1=2" version produce the same as the original (for
                     // stripped/unstripped versions)
@@ -1384,7 +1419,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             resBodyANDFalseUnstripped.compareTo(mResBodyNormalUnstripped) == 0;
                     boolean verificationUsingStripped =
                             resBodyANDFalseStripped.compareTo(mResBodyNormalStripped) == 0;
-                    if (verificationUsingUnstripped || verificationUsingStripped) {
+                    boolean verificationUsingLocationHeader =
+                            StringUtils.compare(headerAndFalse, locationHeaderOrTrue) != 0;
+
+                    if (verificationUsingUnstripped
+                            || verificationUsingStripped
+                            || verificationUsingLocationHeader) {
                         LOGGER.debug(
                                 "Check 2, {} html output for AND FALSE condition [{}] matches the (refreshed) original results",
                                 (verificationUsingStripped ? "STRIPPED" : "UNSTRIPPED"),
@@ -1398,7 +1438,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                             sqlBooleanOrTrueValue,
                                             sqlBooleanAndFalseValue,
                                             "");
-                        } else {
+                        } else if (verificationUsingUnstripped) {
                             extraInfo =
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
@@ -1852,7 +1892,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             String param,
             String originalParam,
             String modifiedParamValue,
-            String modifiedParamValueConfirm)
+            String modifiedParamValueConfirm,
+            String originalLocationHeader)
             throws IOException {
         // those of you still paying attention will note that if handled as expressions (such as by
         // a database), these represent the same value.
@@ -1876,12 +1917,14 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 stripOffOriginalAndAttackParam(
                         modifiedExpressionOutputUnstripped, originalParam, modifiedParamValue);
         String normalBodyOutputStripped = stripOff(mResBodyNormalStripped, modifiedParamValue);
+        String locationHeaderModified = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
         if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests) {
             // if the results of the modified request match the original query, we may be onto
             // something.
 
-            if (modifiedExpressionOutputStripped.compareTo(normalBodyOutputStripped) == 0) {
+            if (modifiedExpressionOutputStripped.compareTo(normalBodyOutputStripped) == 0
+                    && StringUtils.compare(locationHeaderModified, originalLocationHeader) == 0) {
                 LOGGER.debug(
                         "Check 4, STRIPPED html output for modified expression parameter [{}] matched (refreshed) original results for {}",
                         modifiedParamValue,
@@ -1913,11 +1956,16 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 confirmExpressionOutputUnstripped,
                                 originalParam,
                                 modifiedParamValueConfirm);
+                String confirmExpressionLocationHeader =
+                        msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
 
                 normalBodyOutputStripped =
                         stripOff(mResBodyNormalStripped, modifiedParamValueConfirm);
 
-                if (confirmExpressionOutputStripped.compareTo(normalBodyOutputStripped) != 0) {
+                if (confirmExpressionOutputStripped.compareTo(normalBodyOutputStripped) != 0
+                        || StringUtils.compare(
+                                        confirmExpressionLocationHeader, locationHeaderModified)
+                                != 0) {
                     // the confirm query did not return the same results.  This means that arbitrary
                     // queries are not all producing the same page output.
                     // this means the fact we earlier reproduced the original page output with a
