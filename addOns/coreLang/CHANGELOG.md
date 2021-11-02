@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [14] - 2021-11-02
 ### Changed
 - Update the languages files from Crowdin.
 - Update minimum ZAP version to 2.11.0.
@@ -58,3 +58,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - These are the language files included with the 2.3.0 release
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/coreLang-v14
