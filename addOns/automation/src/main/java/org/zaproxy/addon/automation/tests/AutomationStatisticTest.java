@@ -101,10 +101,11 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     private static LinkedHashMap<?, ?> paramsToData(
-            String key, String name, String operator, long value, String onFail) {
+            String key, String name, String site, String operator, long value, String onFail) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("statistic", key);
         map.put("name", name);
+        map.put("site", site);
         map.put("operator", operator);
         map.put("value", value);
         map.put("onFail", onFail);
@@ -120,7 +121,20 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
             AutomationJob job,
             AutomationProgress progress)
             throws IllegalArgumentException {
-        this(paramsToData(key, name, operator, value, onFail), job, progress);
+        this(paramsToData(key, name, "", operator, value, onFail), job, progress);
+    }
+
+    public AutomationStatisticTest(
+            String key,
+            String name,
+            String site,
+            String operator,
+            long value,
+            String onFail,
+            AutomationJob job,
+            AutomationProgress progress)
+            throws IllegalArgumentException {
+        this(paramsToData(key, name, site, operator, value, onFail), job, progress);
     }
 
     public AutomationStatisticTest(AutomationJob job, AutomationProgress progress)
@@ -139,25 +153,12 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
             return false;
         }
 
-        InMemoryStats inMemoryStats =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionStats.class)
-                        .getInMemoryStats();
         stat =
-                inMemoryStats != null
-                        ? inMemoryStats.getStat(this.getData().getStatistic()) != null
-                                ? inMemoryStats.getStat(this.getData().getStatistic())
-                                : 0
-                        : 0;
+                getStatistic(
+                        this.getData().getStatistic(),
+                        this.getJob().getEnv().replaceVars(this.getData().getSite()));
 
-        Operator operator =
-                Arrays.stream(Operator.values())
-                        .filter(o -> o.getSymbol().equals(this.getData().getOperator()))
-                        .findFirst()
-                        .get();
-
-        switch (operator) {
+        switch (getOperator(this.getData().getOperator())) {
             case LESS:
                 return stat < this.getData().getValue();
             case GREATER:
@@ -173,6 +174,29 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
             default:
                 throw new RuntimeException("Unexpected operator " + this.getData().getOperator());
         }
+    }
+
+    private Operator getOperator(String opString) {
+        return Arrays.stream(Operator.values())
+                .filter(o -> o.getSymbol().equals(opString))
+                .findFirst()
+                .get();
+    }
+
+    private long getStatistic(String stat, String site) {
+        InMemoryStats inMemoryStats =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionStats.class)
+                        .getInMemoryStats();
+
+        if (inMemoryStats == null) {
+            return 0;
+        }
+        if (StringUtils.isEmpty(site)) {
+            return JobUtils.unBox(inMemoryStats.getStat(stat));
+        }
+        return JobUtils.unBox(inMemoryStats.getStat(site, stat));
     }
 
     @Override
@@ -215,13 +239,7 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     private Operator getInverseOperator() {
-        Operator operator =
-                Arrays.stream(Operator.values())
-                        .filter(o -> o.getSymbol().equals(this.getData().getOperator()))
-                        .findFirst()
-                        .get();
-
-        switch (operator) {
+        switch (getOperator(this.getData().getOperator())) {
             case LESS:
                 return Operator.GREATER_OR_EQUAL;
             case GREATER:
@@ -252,6 +270,7 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     public static class Data extends TestData {
 
         private String statistic;
+        private String site;
         private String operator;
         private Long value;
 
@@ -265,6 +284,14 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
 
         public void setStatistic(String key) {
             this.statistic = key;
+        }
+
+        public String getSite() {
+            return site;
+        }
+
+        public void setSite(String site) {
+            this.site = site;
         }
 
         public String getOperator() {

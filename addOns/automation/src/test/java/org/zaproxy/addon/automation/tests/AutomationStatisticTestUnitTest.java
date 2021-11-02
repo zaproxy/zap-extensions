@@ -24,7 +24,9 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -81,6 +84,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         boolean hasRunFirst = test.hasRun();
@@ -94,8 +98,8 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(test.getJobType(), is("activeScan"));
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().size(), is(6));
-        assertThat(progress.getInfos().get(5), is("!automation.tests.pass!"));
+        assertThat(progress.getInfos().size(), is(7));
+        assertThat(progress.getInfos().get(6), is("!automation.tests.pass!"));
         assertThat(test.hasRun(), is(true));
         assertThat(test.hasPassed(), is(true));
     }
@@ -122,6 +126,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(statValue);
@@ -145,6 +150,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, "example name", "==", value, "warn", new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value);
@@ -172,6 +178,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -196,6 +203,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -220,6 +228,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
 
         // When
         when(extStats.getInMemoryStats().getStat(key)).thenReturn(value - 1);
@@ -228,7 +237,59 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(false));
         assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.getInfos().size(), is(6));
-        assertThat(progress.getInfos().get(5), is("!automation.tests.fail!"));
+        assertThat(progress.getInfos().size(), is(7));
+        assertThat(progress.getInfos().get(6), is("!automation.tests.fail!"));
+    }
+
+    @Test
+    void shouldReturnZeroForUnknownStat() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String name = "example name";
+        String key = "stats.unknown";
+        String operator = "==";
+        String onFail = "warn";
+        long value = 0;
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        key, name, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
+
+        // When
+        test.logToProgress(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(progress.hasWarnings(), is(false));
+        assertThat(test.hasPassed(), is(true));
+    }
+
+    @Test
+    void shouldReplaceSiteEnvVar() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        Map<String, String> map = new HashMap<>();
+        map.put("site", "www.example");
+        String name = "example name";
+        String site = "https://${site}.com";
+        String key = "stats.job.something";
+        String operator = "==";
+        String onFail = "warn";
+        long value = 7;
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        key, name, site, operator, value, onFail, new ActiveScanJob(), progress);
+        test.getJob().setEnv(env);
+
+        // When
+        when(extStats.getInMemoryStats().getStat("https://www.example.com", key)).thenReturn(value);
+        env.getData().setVars(map);
+        test.logToProgress(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(progress.hasWarnings(), is(false));
+        assertThat(test.hasPassed(), is(true));
     }
 }

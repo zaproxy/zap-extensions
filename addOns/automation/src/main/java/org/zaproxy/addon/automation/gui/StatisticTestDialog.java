@@ -34,6 +34,7 @@ public class StatisticTestDialog extends StandardFieldsDialog {
     private static final String TITLE = "automation.dialog.statistictest.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
     private static final String STATISTIC_PARAM = "automation.dialog.statistictest.statistic";
+    private static final String SITE_PARAM = "automation.dialog.statistictest.site";
     private static final String OPERATOR_PARAM = "automation.dialog.statistictest.operator";
     private static final String VALUE_PARAM = "automation.dialog.statistictest.value";
     private static final String ON_FAIL_PARAM = "automation.dialog.statistictest.onfail";
@@ -61,6 +62,7 @@ public class StatisticTestDialog extends StandardFieldsDialog {
             }
         }
         this.addTextField(STATISTIC_PARAM, test.getData().getStatistic());
+        this.addTextField(SITE_PARAM, test.getData().getSite());
 
         this.addComboField(
                 OPERATOR_PARAM,
@@ -77,6 +79,7 @@ public class StatisticTestDialog extends StandardFieldsDialog {
     public void save() {
         this.test.getData().setName(this.getStringValue(NAME_PARAM));
         this.test.getData().setStatistic(this.getStringValue(STATISTIC_PARAM));
+        this.test.getData().setSite(this.getStringValue(SITE_PARAM));
         this.test.getData().setOperator(this.getStringValue(OPERATOR_PARAM));
         this.test.getData().setValue(Long.valueOf(this.getIntValue(VALUE_PARAM)));
         this.test.getData().setOnFail(OnFail.i18nToOnFail(this.getStringValue(ON_FAIL_PARAM)));
