@@ -34,6 +34,7 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.gui.EnvironmentDialog;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.users.User;
 
 public class AutomationEnvironment {
 
@@ -101,7 +102,8 @@ public class AutomationEnvironment {
                                 "automation.error.env.badcontext", contextObject));
                 return;
             }
-            this.contexts.add(new ContextWrapper((LinkedHashMap<?, ?>) contextObject, progress));
+            this.contexts.add(
+                    new ContextWrapper((LinkedHashMap<?, ?>) contextObject, this, progress));
         }
     }
 
@@ -218,6 +220,25 @@ public class AutomationEnvironment {
         ContextWrapper wrapper = this.getContextWrapper(name);
         if (wrapper != null) {
             return wrapper.getContext();
+        }
+        return null;
+    }
+
+    public List<String> getAllUserNames() {
+        List<String> userNames = new ArrayList<>();
+        for (ContextWrapper context : contexts) {
+            userNames.addAll(context.getUserNames());
+        }
+
+        return userNames;
+    }
+
+    public User getUser(String name) {
+        for (ContextWrapper context : contexts) {
+            User user = context.getUser(name);
+            if (user != null) {
+                return user;
+            }
         }
         return null;
     }

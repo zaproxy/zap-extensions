@@ -41,6 +41,7 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.gui.RequestorJobDialog;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class RequestorJob extends AutomationJob {
@@ -48,6 +49,7 @@ public class RequestorJob extends AutomationJob {
     public static final String JOB_NAME = "requestor";
     private static final String REQUESTS = "requests";
 
+    private Parameters parameters = new Parameters();
     private Data data;
 
     private static final Logger LOG = LogManager.getLogger(RequestorJob.class);
@@ -58,7 +60,7 @@ public class RequestorJob extends AutomationJob {
                     HttpSender.MANUAL_REQUEST_INITIATOR);
 
     public RequestorJob() {
-        this.data = new Data(this);
+        this.data = new Data(this, parameters);
     }
 
     public RequestorJob(HttpSender httpSender) {
@@ -69,6 +71,11 @@ public class RequestorJob extends AutomationJob {
     @Override
     public void verifyParameters(AutomationProgress progress) {
         Map<?, ?> jobData = this.getJobData();
+        LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) jobData.get("parameters");
+        JobUtils.applyParamsToObject(params, this.parameters, this.getName(), null, progress);
+
+        this.verifyUser(this.getParameters().getUser(), progress);
+
         Object o = jobData.get(REQUESTS);
         if (o == null) {
             return;
@@ -77,6 +84,7 @@ public class RequestorJob extends AutomationJob {
             progress.error(Constant.messages.getString("automation.error.requestor.badlist", o));
             return;
         }
+
         ArrayList<?> requests = (ArrayList<?>) o;
         for (Object request : requests) {
             if (request instanceof LinkedHashMap<?, ?>) {
@@ -118,6 +126,9 @@ public class RequestorJob extends AutomationJob {
     }
 
     @Override
+    public void applyParameters(AutomationProgress progress) {}
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         for (Request req : this.getData().getRequests()) {
@@ -147,12 +158,24 @@ public class RequestorJob extends AutomationJob {
                 msg.getRequestBody().setBody(env.replaceVars(req.getData()));
                 msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
             }
+            User user = this.getUser(this.getParameters().getUser(), progress);
+
             try {
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.requrl",
-                                this.getName(),
-                                msg.getRequestHeader().getURI()));
+                if (user != null) {
+                    msg.setRequestingUser(user);
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.info.requrluser",
+                                    this.getName(),
+                                    msg.getRequestHeader().getURI(),
+                                    user.getName()));
+                } else {
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.info.requrl",
+                                    this.getName(),
+                                    msg.getRequestHeader().getURI()));
+                }
                 httpSender.sendAndReceive(msg);
             } catch (Exception e) {
                 progress.warn(
@@ -242,11 +265,18 @@ public class RequestorJob extends AutomationJob {
         return data;
     }
 
+    @Override
+    public Parameters getParameters() {
+        return parameters;
+    }
+
     public static class Data extends JobData {
+        private Parameters parameters;
         private List<Request> requests = new ArrayList<>();
 
-        public Data(AutomationJob job) {
+        public Data(AutomationJob job, Parameters parameters) {
             super(job);
+            this.parameters = parameters;
         }
 
         public List<Request> getRequests() {
@@ -259,6 +289,24 @@ public class RequestorJob extends AutomationJob {
 
         public void addRequest(Request req) {
             this.requests.add(req);
+        }
+
+        public Parameters getParameters() {
+            return parameters;
+        }
+    }
+
+    public static class Parameters extends AutomationData {
+        private String user;
+
+        public Parameters() {}
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
     }
 

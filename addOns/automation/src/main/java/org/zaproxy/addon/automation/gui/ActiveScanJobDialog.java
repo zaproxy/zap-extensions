@@ -55,6 +55,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
     private static final String TITLE = "automation.dialog.ascan.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
     private static final String CONTEXT_PARAM = "automation.dialog.ascan.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String POLICY_PARAM = "automation.dialog.ascan.policy";
     private static final String MAX_RULE_DURATION_PARAM = "automation.dialog.ascan.maxruleduration";
     private static final String MAX_SCAN_DURATION_PARAM = "automation.dialog.ascan.maxscanduration";
@@ -93,6 +94,12 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
         // Add blank option
         contextNames.add(0, "");
         this.addComboField(0, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        // Add blank option
+        users.add(0, "");
+        this.addComboField(0, USER_PARAM, users, this.job.getData().getParameters().getUser());
+
         this.addTextField(0, POLICY_PARAM, this.job.getParameters().getPolicy());
         this.addNumberField(
                 0,
@@ -204,6 +211,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getParameters().setPolicy(this.getStringValue(POLICY_PARAM));
         this.job
                 .getParameters()

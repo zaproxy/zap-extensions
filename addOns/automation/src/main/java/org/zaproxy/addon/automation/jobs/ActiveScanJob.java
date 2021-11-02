@@ -44,6 +44,7 @@ import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.users.User;
 
 public class ActiveScanJob extends AutomationJob {
 
@@ -83,6 +84,8 @@ public class ActiveScanJob extends AutomationJob {
         }
         LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) jobData.get("parameters");
         JobUtils.applyParamsToObject(params, this.parameters, this.getName(), null, progress);
+
+        this.verifyUser(this.getParameters().getUser(), progress);
 
         // Parse the policy defn
         Object policyDefn = this.getJobData().get("policyDefinition");
@@ -192,6 +195,7 @@ public class ActiveScanJob extends AutomationJob {
         Target target = new Target(context.getContext());
         target.setRecurse(true);
         List<Object> contextSpecificObjects = new ArrayList<>();
+        User user = this.getUser(this.getParameters().getUser(), progress);
 
         ScanPolicy scanPolicy = null;
         if (!StringUtils.isEmpty(this.getParameters().getPolicy())) {
@@ -210,7 +214,7 @@ public class ActiveScanJob extends AutomationJob {
             contextSpecificObjects.add(scanPolicy);
         }
 
-        int scanId = this.getExtAScan().startScan(target, null, contextSpecificObjects.toArray());
+        int scanId = this.getExtAScan().startScan(target, user, contextSpecificObjects.toArray());
 
         long endTime = Long.MAX_VALUE;
         if (JobUtils.unBox(this.getParameters().getMaxScanDurationInMins()) > 0) {
@@ -509,6 +513,7 @@ public class ActiveScanJob extends AutomationJob {
     public static class Parameters extends AutomationData {
 
         private String context;
+        private String user;
         private String policy;
         private Integer maxRuleDurationInMins;
         private Integer maxScanDurationInMins;
@@ -528,6 +533,14 @@ public class ActiveScanJob extends AutomationJob {
 
         public void setContext(String context) {
             this.context = context;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
 
         public String getPolicy() {
