@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update the languages files from Crowdin.
 - Update minimum ZAP version to 2.11.0.
 - Added more people to the credits.
 
