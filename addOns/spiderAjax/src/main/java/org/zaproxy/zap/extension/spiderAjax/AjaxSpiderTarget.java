@@ -203,7 +203,9 @@ public final class AjaxSpiderTarget {
          */
         public Builder setUser(User user) {
             this.user = user;
-            this.context = user.getContext();
+            if (user != null) {
+                this.context = user.getContext();
+            }
 
             return this;
         }
