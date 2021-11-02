@@ -279,6 +279,7 @@ class AutomationJobUnitTest {
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
+        job.setEnv(new AutomationEnvironment(progress));
         String key = "stats.job.something";
         long value = 10;
         String nameOne = "test one";

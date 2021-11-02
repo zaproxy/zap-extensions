@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Authentication verification support
 - Set ZAP exit code when "-cmd" and "-autorun" options used
 - Requestor, Spider and ActiveScan jobs changed to support an authenticated user
+- Support for site specific statistics
 
 ### Changed
 - Dependency updates.

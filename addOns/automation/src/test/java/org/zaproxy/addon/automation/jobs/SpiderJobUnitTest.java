@@ -387,6 +387,7 @@ class SpiderJobUnitTest extends TestUtils {
         given(extSpider.getScan(1)).willReturn(spiderScan);
         AutomationProgress progress = new AutomationProgress();
         SpiderJob job = new SpiderJob();
+        job.setEnv(new AutomationEnvironment(progress));
         job.setUrlRequester(urlRequester);
 
         // When
