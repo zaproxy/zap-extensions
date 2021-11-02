@@ -45,6 +45,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     private static final String TITLE = "spiderajax.automation.dialog.ajaxspider.title";
     private static final String NAME_PARAM = "spiderajax.automation.dialog.ajaxspider.name";
     private static final String CONTEXT_PARAM = "spiderajax.automation.dialog.ajaxspider.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String URL_PARAM = "spiderajax.automation.dialog.ajaxspider.url";
     private static final String MAX_DURATION_PARAM =
             "spiderajax.automation.dialog.ajaxspider.maxduration";
@@ -84,6 +85,12 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         // Add blank option
         contextNames.add(0, "");
         this.addComboField(0, CONTEXT_PARAM, contextNames, this.job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        // Add blank option
+        users.add(0, "");
+        this.addComboField(0, USER_PARAM, users, this.job.getParameters().getUser());
+
         // Cannot select the node as it might not be present in the Sites tree
         this.addNodeSelectField(0, URL_PARAM, null, true, false);
         Component urlField = this.getField(URL_PARAM);
@@ -198,6 +205,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     public void save() {
         this.job.setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getParameters().setUrl(this.getStringValue(URL_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
         this.job.getParameters().setMaxCrawlDepth(this.getIntValue(MAX_CRAWL_DEPTH_PARAM));

@@ -42,6 +42,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 
 public class AjaxSpiderJob extends AutomationJob {
@@ -132,6 +133,7 @@ public class AjaxSpiderJob extends AutomationJob {
         } else {
             context = env.getDefaultContextWrapper();
         }
+        User user = this.getUser(this.getParameters().getUser(), progress);
 
         String uriStr = this.getParameters().getUrl();
         if (uriStr == null) {
@@ -149,6 +151,7 @@ public class AjaxSpiderJob extends AutomationJob {
         AjaxSpiderTarget.Builder targetBuilder =
                 AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
                         .setContext(context.getContext())
+                        .setUser(user)
                         .setInScopeOnly(inScopeOnly)
                         .setOptions(getExtSpider().getAjaxSpiderParam())
                         .setStartUri(uri)
@@ -305,7 +308,7 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
-    public AutomationData getData() {
+    public Data getData() {
         return data;
     }
 
@@ -329,6 +332,7 @@ public class AjaxSpiderJob extends AutomationJob {
 
     public static class Parameters extends AutomationData {
         private String context;
+        private String user;
         private String url;
         private Integer maxDuration;
         private Integer maxCrawlDepth;
@@ -352,6 +356,14 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public void setContext(String context) {
             this.context = context;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
 
         public String getUrl() {
