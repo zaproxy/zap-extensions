@@ -677,5 +677,12 @@
     ],
     "name": "Cart abandonment",
     "priority": 9
+  },
+  "99": {
+    "groups": [
+      1
+    ],
+    "name": "Shipping carriers",
+    "priority": 9
   }
 }

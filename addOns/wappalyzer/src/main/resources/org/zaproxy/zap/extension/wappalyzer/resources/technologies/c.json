@@ -120,6 +120,19 @@
     ],
     "website": "http://www.cs-cart.com"
   },
+  "CTT": {
+    "cats": [
+      99
+    ],
+    "description": "CTT operates as the national postal service of Portugal.",
+    "icon": "CTT.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bTourline Express\\b",
+      "\\bCTT\\b"
+    ],
+    "website": "https://www.ctt.pt"
+  },
   "Caast.tv": {
     "cats": [
       5
@@ -217,8 +230,8 @@
     "description": "Callbell is a web-based live chat solution designed to help businesses manage team collaboration via multiple communication channels.",
     "icon": "Callbell.svg",
     "js": {
-      "callbellSettings": "",
-      "Callbell": ""
+      "Callbell": "",
+      "callbellSettings": ""
     },
     "pricing": [
       "low",
@@ -282,20 +295,6 @@
     "scriptSrc": "carbonads\\.com",
     "website": "http://carbonads.net"
   },
-  "CareCart Sales Pop Up": {
-    "cats": [
-      5
-    ],
-    "description": "CareCart Sales Pop Up is a stock countdown timer, recent sales notifications, live sales pop up widget.",
-    "icon": "CareCart.png",
-    "implies": "Shopify",
-    "scriptSrc": "sales-pop\\.carecart\\.io/",
-    "saas": true,
-    "pricing": [
-      "freemium"
-    ],
-    "website": "https://carecart.io/sales-pop-up-app"
-  },
   "CareCart": {
     "cats": [
       98
@@ -303,13 +302,27 @@
     "description": "CareCart is a smart app to recover big value carts on all sizes of shopify stores.",
     "icon": "CareCart.png",
     "implies": "Shopify",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "scriptSrc": "app\\.carecart\\.io/api/abandoned-cart/",
     "website": "https://carecart.io/abandoned-cart-recovery-app"
+  },
+  "CareCart Sales Pop Up": {
+    "cats": [
+      5
+    ],
+    "description": "CareCart Sales Pop Up is a stock countdown timer, recent sales notifications, live sales pop up widget.",
+    "icon": "CareCart.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "sales-pop\\.carecart\\.io/",
+    "website": "https://carecart.io/sales-pop-up-app"
   },
   "Cargo": {
     "cats": [
@@ -397,6 +410,18 @@
       "generator": "^Cecil(?: ([0-9.]+))?$\\;version:\\1"
     },
     "website": "https://cecil.app"
+  },
+  "Celeritas": {
+    "cats": [
+      99
+    ],
+    "description": "Celeritas offers transportation logistics services for package deliveries.",
+    "icon": "Celeritas.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bCeleritas\\b"
+    ],
+    "website": "https://celeritastransporte.com"
   },
   "CentOS": {
     "cats": [
@@ -604,6 +629,22 @@
     "scriptSrc": "cdn\\.checkout\\.com/js/.+js(?:\\?ver=)?([\\d\\.]+)?\\;version:\\1",
     "website": "https://www.checkout.com"
   },
+  "Chekkit": {
+    "cats": [
+      52
+    ],
+    "description": "Chekkit is an all-in-one review, messaging, and lead inbox software.",
+    "icon": "Chekkit.png",
+    "js": {
+      "chekkitSettings.toggleChat": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.chekkit.io"
+  },
   "Cherokee": {
     "cats": [
       22
@@ -701,6 +742,42 @@
     "html": "<meta data-chorus-version=",
     "icon": "Chorus.png",
     "website": "https://getchorus.voxmedia.com/"
+  },
+  "Chronofresh": {
+    "cats": [
+      99
+    ],
+    "description": "Chronofresh is an express transport service for food products.",
+    "icon": "Chronopost.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bChronofresh\\b"
+    ],
+    "website": "https://www.chronofresh.fr"
+  },
+  "Chronopost": {
+    "cats": [
+      99
+    ],
+    "description": "Chronopost provides a domestic and international express shipping and delivery service.",
+    "icon": "Chronopost.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bChronopost\\b"
+    ],
+    "website": "https://www.chronopost.fr"
+  },
+  "CityMail": {
+    "cats": [
+      99
+    ],
+    "description": "CityMail is a private postal organisation operating in Sweden.",
+    "icon": "CityMail.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bCitymail\\b"
+    ],
+    "website": "https://www.citymail.se"
   },
   "Ckan": {
     "cats": [
@@ -1049,10 +1126,10 @@
         }
       }
     },
+    "icon": "Cloudinary.svg",
     "js": {
       "_cloudinary": ""
     },
-    "icon": "Cloudinary.svg",
     "website": "https://cloudinary.com"
   },
   "Cloverly": {
@@ -1245,6 +1322,53 @@
     "scriptSrc": "https?://www\\.hashing\\.win/scripts/min\\.js",
     "website": "https://www.coinimp.com"
   },
+  "Colibri WP": {
+    "cats": [
+      80,
+      51
+    ],
+    "description": "Colibri WP is a drag-and-drop WordPress website builder.",
+    "dom": "link[href*='/wp-content/plugins/colibri-page-builder']",
+    "icon": "Colibri WP.png",
+    "js": {
+      "Colibri": "",
+      "colibriData": "",
+      "colibriFrontendData": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/colibri-page-builder.+\\.js(?:.+ver=([\\d\\.\\-\\w]+))?\\;version:\\1",
+    "website": "https://colibriwp.com"
+  },
+  "Colis Privé": {
+    "cats": [
+      99
+    ],
+    "description": "Colis Privé is a private parcel delivery service provider specialised in last-mile delivery.",
+    "icon": "Colis Prive.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bColis Priv[eé]\\b"
+    ],
+    "website": "https://www.colisprive.fr"
+  },
+  "Colissimo": {
+    "cats": [
+      99
+    ],
+    "description": "Colissimo is a 'drop off' parcel delivery service.",
+    "icon": "DPD.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bColissimo\\b"
+    ],
+    "website": "https://www.colissimo.entreprise.laposte.fr"
+  },
   "ColorMag": {
     "cats": [
       80
@@ -1260,7 +1384,7 @@
         }
       }
     },
-    "icon": "themegrill.png",
+    "icon": "ThemeGrill.png",
     "requires": "WordPress",
     "scriptSrc": "themes/colormag.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themegrill.com/themes/colormag/"
@@ -1275,6 +1399,85 @@
       "Colorme": ""
     },
     "website": "https://shop-pro.jp"
+  },
+  "Colorlib Activello": {
+    "cats": [
+      80
+    ],
+    "description": "Colorlib Activello is a clean, minimal multipurpose WordPress blog theme developer using the Bootstrap frontend framework making it fully responsive and mobile-friendly.",
+    "dom": "link#activello-style-css",
+    "icon": "Colorlib.png",
+    "js": {
+      "ActivelloIsMobile": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/activello/",
+    "website": "https://colorlib.com/wp/themes/activello"
+  },
+  "Colorlib Illdy": {
+    "cats": [
+      80
+    ],
+    "description": "Colorlib Illdy is a stunning multipurpose WordPress theme built based on Bootstrap frontend framework making it fully responsive and mobile friendly.",
+    "dom": "link#illdy-style-css",
+    "icon": "Colorlib.png",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/illdy/",
+    "website": "https://colorlib.com/wp/themes/illdy"
+  },
+  "Colorlib Shapely": {
+    "cats": [
+      80
+    ],
+    "description": "Colorlib Shapely is considered as a powerful, clean and beautiful full-width free WordPress theme.",
+    "dom": "link#shapely-style-css",
+    "icon": "Colorlib.png",
+    "js": {
+      "ShapelyAdminObject": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/shapely/",
+    "website": "https://colorlib.com/wp/themes/shapely"
+  },
+  "Colorlib Sparkling": {
+    "cats": [
+      80
+    ],
+    "description": "Colorlib Sparkling is a clean, modern, flat design WordPress theme developed using Bootstrap.",
+    "dom": "link#sparkling-style-css",
+    "icon": "Colorlib.png",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/sparkling/",
+    "website": "https://colorlib.com/wp/themes/sparkling"
+  },
+  "Colorlib Travelify": {
+    "cats": [
+      80
+    ],
+    "description": "Colorlib Travelify is a responsive, free, travel WordPress theme.",
+    "dom": "link#travelify-style-css",
+    "icon": "Colorlib.png",
+    "js": {
+      "travelify_slider_value": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/travelify/",
+    "website": "https://colorlib.com/wp/themes/travelify"
   },
   "Comandia": {
     "cats": [
@@ -1553,6 +1756,21 @@
     "website": "http://www.contentful.com",
     "xhr": "cdn\\.contentful\\.com"
   },
+  "Contently": {
+    "cats": [
+      96
+    ],
+    "description": "Contently is a SaaS content marketing platform from the company of the same name headquartered in New York.",
+    "icon": "Contently.png",
+    "js": {
+      "_contently.siteId": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://contently.com"
+  },
   "Contentstack": {
     "cats": [
       1
@@ -1796,6 +2014,15 @@
     "implies": "PHP",
     "website": "http://coppermine-gallery.net"
   },
+  "CopyPoison": {
+    "cats": [
+      19
+    ],
+    "description": "Copypoison is a plagarism protection tool that protects content by replacing text with symbols that are visually similar.",
+    "icon": "Copypoison.png",
+    "scriptSrc": "copypoison\\.com/cp\\.js",
+    "website": "https://copypoison.com/"
+  },
   "Corebine": {
     "cats": [
       1
@@ -1810,6 +2037,18 @@
       "poa"
     ],
     "website": "https://corebine.com"
+  },
+  "Correos": {
+    "cats": [
+      99
+    ],
+    "description": "Correos is a state-owned company responsible for providing postal service in Spain.",
+    "icon": "Correos.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bCorreos\\b"
+    ],
+    "website": "https://www.correos.es"
   },
   "Cosmoshop": {
     "cats": [
@@ -1852,6 +2091,18 @@
       "Countly": ""
     },
     "website": "https://count.ly"
+  },
+  "Coureon": {
+    "cats": [
+      99
+    ],
+    "description": "Coureon is a digital logistics carrier for international shipping.",
+    "icon": "Coureon.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bCoureon\\b"
+    ],
+    "website": "https://www.coureon.com"
   },
   "Coveo": {
     "cats": [
@@ -1951,21 +2202,21 @@
       1,
       6
     ],
+    "cookies": {
+      "cratejoy_muffin42": "",
+      "statjoy_metrics": ""
+    },
     "description": "Cratejoy is a brand new ecommerce platform with a focus on subscription payments.",
     "icon": "Cratejoy.png",
     "js": {
       "statjoyServer": "stats\\.cratejoy\\.com"
     },
-    "cookies": {
-      "statjoy_metrics": "",
-      "cratejoy_muffin42": ""
-    },
-    "saas": true,
     "pricing": [
       "low",
       "payg",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.cratejoy.com"
   },
   "Crazy Egg": {
@@ -2084,6 +2335,61 @@
     ],
     "website": "http://www.crownpeak.com"
   },
+  "Cryout Creations Fluida": {
+    "cats": [
+      80
+    ],
+    "description": "Fluida is a modern, crystal clear and squeaky clean WordPress theme by Cryout Creations.",
+    "dom": "link#fluida-themefonts-css",
+    "icon": "Cryout Creations.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/fluida(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.cryoutcreations.eu/wordpress-themes/fluida"
+  },
+  "Cryout Creations Mantra": {
+    "cats": [
+      80
+    ],
+    "description": "Mantra is a do-it-yourself WordPress theme, featuring a pack of over 100 customization option created by Cryout Creations.",
+    "dom": "link#mantra-style-css, img[src*='/wp-content/themes/mantra/']",
+    "icon": "Cryout Creations.svg",
+    "js": {
+      "mantra_mobilemenu_init": "",
+      "mantra_onload": "",
+      "mantra_options": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/mantra(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.cryoutcreations.eu/wordpress-themes/mantra"
+  },
+  "Cryout Creations Parabola": {
+    "cats": [
+      80
+    ],
+    "description": "Parabola is an fully responsive, clean and elegant design WordPress theme created by Cryout Creations.",
+    "dom": "link#parabola-style-css, img[src*='/wp-content/themes/parabola/']",
+    "icon": "Cryout Creations.svg",
+    "js": {
+      "parabola_mobilemenu_init": "",
+      "parabola_settings": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/parabola/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.cryoutcreations.eu/wordpress-themes/parabola"
+  },
   "Crypto-Loot": {
     "cats": [
       56
@@ -2114,6 +2420,18 @@
       "generator": "cubecart"
     },
     "website": "http://www.cubecart.com"
+  },
+  "Cubyn": {
+    "cats": [
+      99
+    ],
+    "description": "Cubyn is B2B logistics company headquartered in France.",
+    "icon": "Cubyn.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bCubyn\\b"
+    ],
+    "website": "https://www.cubyn.com"
   },
   "Cufon": {
     "cats": [
@@ -2157,6 +2475,22 @@
     "saas": true,
     "scriptSrc": "(?:cdn|app)\\.customily\\.com/",
     "website": "https://www.customily.com"
+  },
+  "CyberChimps Responsive": {
+    "cats": [
+      80
+    ],
+    "description": "CyberChimps Responsive is a modern, lightweight, fully customizable, fast and responsive WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/responsive/'], link[href*='/wp-content/themes/responsivepro/']",
+    "icon": "CyberChimps.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/responsive(?:pro)?/",
+    "website": "https://cyberchimps.com/responsive"
   },
   "Cybersource": {
     "cats": [

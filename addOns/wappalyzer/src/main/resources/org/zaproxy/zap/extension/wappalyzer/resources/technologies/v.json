@@ -195,10 +195,10 @@
   },
   "Vercel": {
     "cats": [
-      22
+      62
     ],
     "headers": {
-      "server": "^now$",
+      "server": "^now|Vercel$",
       "x-now-trace": "",
       "x-vercel-cache": "",
       "x-vercel-id": ""

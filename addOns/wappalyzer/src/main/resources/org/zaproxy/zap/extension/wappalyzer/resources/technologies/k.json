@@ -63,6 +63,43 @@
     "scriptSrc": "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1",
     "website": "https://katex.org/"
   },
+  "Kadence WP Kadence": {
+    "cats": [
+      80
+    ],
+    "description": "Kadence WP Kadence is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
+    "dom": "link#kadence-global-css",
+    "icon": "Kadence WP.svg",
+    "js": {
+      "kadence": "",
+      "kadenceConfig": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime",
+      "mid",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/kadence/.+navigation\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://www.kadencewp.com/kadence-theme"
+  },
+  "Kadence WP Virtue": {
+    "cats": [
+      80
+    ],
+    "description": "Kadence WP Virtue is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
+    "dom": "link[href*='/wp-content/themes/virtue/']",
+    "icon": "Kadence WP.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/virtue/.+main-min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://www.kadencewp.com/product/virtue-free-theme"
+  },
   "Kajabi": {
     "cats": [
       6
@@ -183,6 +220,18 @@
     "scriptSrc": "property\\.infusionsoft\\.com",
     "website": "https://keap.com",
     "xhr": "property\\.infusionsoft\\.com"
+  },
+  "Keen Delivery": {
+    "cats": [
+      99
+    ],
+    "description": "Keen Delivery is a Dutch shipping platform ",
+    "icon": "Keen Delivery.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bKeen Delivery\\b"
+    ],
+    "website": "https://www.keendelivery.com"
   },
   "Kemal": {
     "cats": [
@@ -444,11 +493,11 @@
     ],
     "description": "Klickly is an invite-only, commission-based advertising platform.",
     "icon": "Klickly.svg",
-    "scriptSrc": "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1",
-    "saas": true,
     "pricing": [
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1",
     "website": "https://www.klickly.com"
   },
   "Knockout.js": {

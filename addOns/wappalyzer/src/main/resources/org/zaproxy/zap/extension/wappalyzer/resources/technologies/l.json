@@ -348,6 +348,25 @@
     "scriptSrc": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
     "website": "http://lokeshdhakar.com/projects/lightbox2/"
   },
+  "Lightning": {
+    "cats": [
+      80
+    ],
+    "description": "Lightning is a very simple and easy to customize WordPress theme which is based on the Bootstrap.",
+    "dom": "link[href*='/wp-content/themes/lightning/'], link[href*='/wp-content/themes/lightning-pro/']",
+    "icon": "Lightning.png",
+    "js": {
+      "lightningOpt.header_scrool": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/lightning(?:-pro)?/.+lightning\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://lightning.vektor-inc.co.jp/en/"
+  },
   "Lightspeed eCom": {
     "cats": [
       6
@@ -829,6 +848,18 @@
     ],
     "website": "https://www.loginradius.com"
   },
+  "LogoiX": {
+    "cats": [
+      99
+    ],
+    "description": "LogoiX is a German shipping company.",
+    "icon": "LogoiX.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bLogoiX\\b"
+    ],
+    "website": "https://www.logoix.com"
+  },
   "Loja Integrada": {
     "cats": [
       6
@@ -953,6 +984,22 @@
     "scriptSrc": "loox\\.io/widget",
     "website": "https://loox.app"
   },
+  "Loqate": {
+    "cats": [
+      19
+    ],
+    "description": "Loqate is an address verification solution.",
+    "icon": "Loqate.svg",
+    "js": {
+      "loqateAccountCode": "",
+      "pca.platform.productList": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.loqate.com"
+  },
   "Lotus Domino": {
     "cats": [
       22
@@ -1015,6 +1062,41 @@
     },
     "website": "https://www.luigisbox.com"
   },
+  "LyraThemes Kale": {
+    "cats": [
+      80
+    ],
+    "description": "LyraThemes Kale is a charming and elegant, aesthetically minimal and uncluttered food blog WordPress theme.",
+    "icon": "LyraThemes.png",
+    "js": {
+      "kale_responsive_videos": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/kale(?:-pro)?/",
+    "website": "https://www.lyrathemes.com/kale"
+  },
+  "Lytics": {
+    "cats": [
+      97
+    ],
+    "description": "Lytics is a customer data platform built for marketing teams.",
+    "icon": "Lytics.svg",
+    "js": {
+      "__lytics__jstag__.version": "(.+)\\;version:\\1"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.lytics\\.io/",
+    "website": "https://www.lytics.com"
+  },
   "libwww-perl-daemon": {
     "cats": [
       22
@@ -1035,22 +1117,5 @@
     },
     "icon": "lighttpd.png",
     "website": "http://www.lighttpd.net"
-  },
-  "Lytics": {
-    "cats": [
-      97
-    ],
-    "description": "Lytics is a customer data platform built for marketing teams.",
-    "icon": "Lytics.svg",
-    "js": {
-      "__lytics__jstag__.version": "(.+)\\;version:\\1"
-    },
-    "scriptSrc": "\\.lytics\\.io/",
-    "saas": true,
-    "pricing": [
-      "high",
-      "recurring"
-    ],
-    "website": "https://www.lytics.com"
   }
 }

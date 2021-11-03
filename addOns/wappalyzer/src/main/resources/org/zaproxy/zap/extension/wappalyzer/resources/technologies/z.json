@@ -40,6 +40,27 @@
     "url": "\\/zabbix\\/\\;confidence:30",
     "website": "http://zabbix.com"
   },
+  "Zakra": {
+    "cats": [
+      80
+    ],
+    "description": "Zakra is flexible, fast, lightweight and modern multipurpose WordPress theme that comes with many starter free sites.",
+    "dom": "link#zakra-style-css",
+    "icon": "Zakra.png",
+    "js": {
+      "zakraFrontend": "",
+      "zakraNavHelper.dimension": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/zakra/",
+    "website": "https://zakratheme.com"
+  },
   "Zanox": {
     "cats": [
       36
@@ -51,6 +72,17 @@
     },
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "http://zanox.com"
+  },
+  "Zeleris": {
+    "cats": [
+      99
+    ],
+    "description": "Zeleris provides door to door shipment delivery to Ireland, UK and the EU.",
+    "requiresCategory": 6,
+    "text": [
+      "\\Zeleris\\b"
+    ],
+    "website": "https://www.zeleris.com"
   },
   "Zen Cart": {
     "cats": [
@@ -136,13 +168,13 @@
       97
     ],
     "description": "Zeotap is a customer intelligence platform that helps brands better understand their customers and predict behaviors.",
-    "icon": "Zeotap.png",
     "dom": "link[href*='.zeotap.com']",
-    "scriptSrc": "\\.zeotap\\.com",
-    "saas": true,
+    "icon": "Zeotap.png",
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "\\.zeotap\\.com",
     "website": "https://zeotap.com"
   },
   "Zepto": {
@@ -386,14 +418,13 @@
     "cats": [
       91
     ],
-    "description": "ZoodPay is a headquartered in Switzerland buy now, pay later solution provider.",
-    "icon": "ZoodPay.png",
     "dom": "img[src*='zoodpay']",
-    "scriptSrc": "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
-    "saas": true,
+    "icon": "ZoodPay.png",
     "pricing": [
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.zoodpay.com"
   },
   "Zoominfo": {

@@ -180,13 +180,35 @@
     "scriptSrc": "assets\\.pagar\\.me/",
     "website": "https://pagar.me"
   },
+  "Page Builder Framework": {
+    "cats": [
+      80
+    ],
+    "description": "Page Builder Framework is a lightweight (less than 50kb on the frontend) and highly customizible WordPress theme.",
+    "icon": "Page Builder Framework.png",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/page-builder-framework/.+site-min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wp-pagebuilderframework.com"
+  },
   "PageFly": {
     "cats": [
       51
     ],
     "description": "PageFly is an app for Shopify that allows you to build landing pages, product pages, blogs, and FAQs.",
+    "headers": {
+      "X-Powered-By": "PageFly"
+    },
     "icon": "pagefly.png",
-    "scriptSrc": "pagefly\\.io",
+    "js": {
+      "__pagefly_setting__": ""
+    },
+    "saas": true,
+    "scriptSrc": "cdn\\.pagefly\\.io",
     "website": "https://pagefly.io"
   },
   "Pagekit": {
@@ -246,6 +268,18 @@
       "Fastly"
     ],
     "website": "https://pantheon.io/"
+  },
+  "Parcelforce": {
+    "cats": [
+      99
+    ],
+    "description": "Parcelforce is a courier and logistics service in the United Kingdom.",
+    "icon": "Parcelforce.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bParcelforce\\b"
+    ],
+    "website": "https://www.parcelforce.com"
   },
   "Pardot": {
     "cats": [
@@ -358,6 +392,23 @@
     "saas": true,
     "website": "https://www.etsy.com/pattern"
   },
+  "Pay It Later": {
+    "cats": [
+      91
+    ],
+    "description": "Pay It Later collect payments in weekly instalments from you when you make a purchase online, so you can buy now and pay it later.",
+    "dom": "a[href='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']",
+    "icon": "Pay It Later.png",
+    "js": {
+      "payitlater": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/payitlater-gateway-for-woocommerce/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://www.payitlater.com.au"
+  },
   "PayBright": {
     "cats": [
       41,
@@ -380,6 +431,19 @@
     "dom": "[aria-labelledby='pi-payfast_instant_eft']",
     "icon": "Payfast.svg",
     "website": "https://www.payfast.co.za/"
+  },
+  "PayJustNow": {
+    "cats": [
+      91
+    ],
+    "description": "PayJustNow is a buy now, pay later checkout option for ecommerce sites.",
+    "icon": "PayJustNow.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.payjustnow\\.com/",
+    "website": "https://payjustnow.com"
   },
   "PayKickStart": {
     "cats": [
@@ -410,17 +474,17 @@
         "exists": ""
       }
     },
-    "meta": {
-      "id": "in-context-paypal-metadata"
-    },
     "icon": "PayPal.svg",
     "js": {
       "PAYPAL": "",
+      "__paypal_global__": "",
       "checkout.enabledpayments.paypal": "^true$",
       "enablePaypal": "",
       "paypalClientId": "",
-      "paypalJs": "",
-      "__paypal_global__": ""
+      "paypalJs": ""
+    },
+    "meta": {
+      "id": "in-context-paypal-metadata"
     },
     "pricing": [
       "payg"
@@ -459,36 +523,6 @@
     "saas": true,
     "scriptSrc": "partpayassets\\.blob\\.core\\.windows\\.net",
     "website": "https://payflex.co.za/"
-  },
-  "PayJustNow": {
-    "cats": [
-      91
-    ],
-    "description": "PayJustNow is a buy now, pay later checkout option for ecommerce sites.",
-    "icon": "PayJustNow.svg",
-    "scriptSrc": "\\.payjustnow\\.com/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://payjustnow.com"
-  },
-  "Pay It Later": {
-    "cats": [
-      91
-    ],
-    "description": "Pay It Later collect payments in weekly instalments from you when you make a purchase online, so you can buy now and pay it later.",
-    "icon": "Pay It Later.png",
-    "dom": "a[href='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']",
-    "js": {
-      "payitlater": ""
-    },
-    "scriptSrc": "/wp-content/plugins/payitlater-gateway-for-woocommerce/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
-    "pricing": [
-      "payg"
-    ],
-    "saas": true,
-    "website": "https://www.payitlater.com.au"
   },
   "Payl8r": {
     "cats": [
@@ -742,6 +776,22 @@
     "implies": "React",
     "scriptSrc": "/phenomic\\.browser\\.[a-f0-9]+\\.js",
     "website": "https://phenomic.io/"
+  },
+  "Phlox": {
+    "cats": [
+      80
+    ],
+    "description": "Phlox is a modern, lightweight and customizable WordPress theme gratify for almost any type of website.",
+    "dom": "link[href*='/wp-content/themes/phlox/'], link[href*='/wp-content/themes/phlox-pro/']",
+    "icon": "Phlox.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/phlox(?:-pro)?/",
+    "website": "https://www.phlox.pro"
   },
   "Phoenix": {
     "cats": [
@@ -1287,6 +1337,22 @@
     ],
     "website": "https://popper.js.org"
   },
+  "PopularFX": {
+    "cats": [
+      80
+    ],
+    "description": "PopularFX is a fully customizable responsive WordPress theme. It comes with drag and drop page builder.",
+    "dom": "link#popularfx-style-css",
+    "icon": "PopularFX.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/popularfx/.+\\?ver=([\\d\\.]+)\\;version:\\1",
+    "website": "https://popularfx.com"
+  },
   "Post Affiliate Pro": {
     "cats": [
       71
@@ -1309,6 +1375,30 @@
       "(?:affiliate|associate)\\..+/scripts/trackjs\\.js"
     ],
     "website": "https://www.postaffiliatepro.com"
+  },
+  "PostNL": {
+    "cats": [
+      99
+    ],
+    "description": "PostNL (formerly TNT) is a mail, parcel and ecommerce corporation with operations in the Netherlands, Germany, Italy, Belgium, and the United Kingdom.",
+    "icon": "PostNL.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bPostNL\\b"
+    ],
+    "website": "https://postnl.post"
+  },
+  "Poste Italiane": {
+    "cats": [
+      99
+    ],
+    "description": "Poste Italiane is the Italian postal service provider.",
+    "icon": "Poste Italiane.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bPoste Italiane\\b"
+    ],
+    "website": "https://www.poste.it"
   },
   "Posterous": {
     "cats": [
@@ -1464,6 +1554,57 @@
     "scriptSrc": "prefixfree\\.js",
     "website": "https://leaverou.github.io/prefixfree/"
   },
+  "Press Customizr": {
+    "cats": [
+      80
+    ],
+    "description": "Press Customizr is a multipurpose WordPress theme suitable for small businesses and ecommerce sites.",
+    "dom": "style#customizr-skin-inline-css, link#customizr-style-css",
+    "icon": "Press.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/customizr/.+js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://presscustomizr.com/customizr"
+  },
+  "Press Hueman": {
+    "cats": [
+      80
+    ],
+    "description": "Press Hueman is a mobile friendly WordPress theme for blogs, magazines and business websites.",
+    "dom": "link[*='/wp-content/themes/hueman/']",
+    "icon": "Press.svg",
+    "js": {
+      "HUParams": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/hueman/.+scripts\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://presscustomizr.com/hueman"
+  },
+  "PressMaximum Customify": {
+    "cats": [
+      80
+    ],
+    "description": "PressMaximum Customify is lightweight, responsive and flexible multipurpose WordPress theme.",
+    "icon": "PressMaximum.png",
+    "js": {
+      "Customify": "",
+      "Customify_JS": "",
+      "customify_is_mobile": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/customify/.+theme\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://pressmaximum.com/customify"
+  },
   "Pressable": {
     "cats": [
       62
@@ -1525,11 +1666,11 @@
     "js": {
       "PriceSpider.version": "(.+)\\;version:\\1"
     },
-    "scriptSrc": "cdn\\.pricespider\\.com/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "cdn\\.pricespider\\.com/",
     "website": "https://www.pricespider.com"
   },
   "Primis": {

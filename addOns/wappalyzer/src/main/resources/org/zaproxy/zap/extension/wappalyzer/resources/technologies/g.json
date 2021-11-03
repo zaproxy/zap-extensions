@@ -1,4 +1,16 @@
 {
+  "GEODIS": {
+    "cats": [
+      99
+    ],
+    "description": "GEODIS is a global transport and logistics company.",
+    "icon": "GEODIS.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bGeodis\\b"
+    ],
+    "website": "https://geodis.com"
+  },
   "GEOvendas": {
     "cats": [
       6
@@ -12,6 +24,18 @@
     ],
     "saas": true,
     "website": "https://www.geovendas.com"
+  },
+  "GLS": {
+    "cats": [
+      99
+    ],
+    "description": "GLS offers parcel, logistics and express services, throughout Europe as well as in the US and in Canada.",
+    "icon": "GLS.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bGLS\\b"
+    ],
+    "website": "https://gls-group.eu"
   },
   "GOV.UK Elements": {
     "cats": [
@@ -276,6 +300,19 @@
     },
     "icon": "Gentoo.png",
     "website": "http://www.gentoo.org"
+  },
+  "Geo Targetly": {
+    "cats": [
+      79
+    ],
+    "description": "Geo Targetly is a website geo personalisation software.",
+    "icon": "Geo Targetly.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "geotargetly\\.co/",
+    "website": "https://geotargetly.com"
   },
   "Gerrit": {
     "cats": [
@@ -635,6 +672,68 @@
     "icon": "GoCache.png",
     "website": "https://www.gocache.com.br/"
   },
+  "GoDaddy Escapade": {
+    "cats": [
+      80
+    ],
+    "description": "GoDaddy Escapade is a GoDaddy Primer child theme with a unique sidebar navigation.",
+    "dom": "link[href*='/wp-content/themes/escapade/']",
+    "excludes": "GoDaddy Primer",
+    "icon": "GoDaddy.svg",
+    "requires": "WordPress",
+    "website": "https://github.com/godaddy-wordpress/primer-child-escapade"
+  },
+  "GoDaddy Go": {
+    "cats": [
+      80
+    ],
+    "description": "GoDaddy Go is a flexible Gutenberg-first WordPress theme built for go-getters everywhere.",
+    "dom": "link#go-style-css",
+    "icon": "GoDaddy.svg",
+    "js": {
+      "goFrontend.openMenuOnHover": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/go/.+frontend\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://github.com/godaddy-wordpress/go"
+  },
+  "GoDaddy Lyrical": {
+    "cats": [
+      80
+    ],
+    "description": "GoDaddy Lyrical is a GoDaddy Primer child theme with a focus on photography and beautiful fonts.",
+    "dom": "link[href*='/wp-content/themes/lyrical/']",
+    "excludes": "GoDaddy Primer",
+    "icon": "GoDaddy.svg",
+    "requires": "WordPress",
+    "website": "https://github.com/godaddy-wordpress/primer-child-lyrical"
+  },
+  "GoDaddy Primer": {
+    "cats": [
+      80
+    ],
+    "description": "GoDaddy Primer is a powerful theme that brings clarity to your content in a fresh design. This is the parent for all themes in the GoDaddy Primer theme family.",
+    "dom": "link[href*='/wp-content/themes/primer/']",
+    "icon": "GoDaddy.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/primer/.+navigation\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://github.com/godaddy-wordpress/primer"
+  },
+  "GoDaddy Uptown Style": {
+    "cats": [
+      80
+    ],
+    "description": "GoDaddy Uptown Style is a GoDaddy Primer child theme with elegance and class.",
+    "dom": "link[href*='/wp-content/themes/uptown-style/']",
+    "excludes": "GoDaddy Primer",
+    "icon": "GoDaddy.svg",
+    "requires": "WordPress",
+    "website": "https://github.com/godaddy-wordpress/primer-child-uptownstyle"
+  },
   "GoDaddy Website Builder": {
     "cats": [
       1
@@ -642,7 +741,7 @@
     "cookies": {
       "dps_site_id": ""
     },
-    "icon": "godaddy.svg",
+    "icon": "GoDaddy.svg",
     "meta": {
       "generator": "Go Daddy Website Builder (.+)\\;version:\\1"
     },
@@ -854,20 +953,6 @@
       "prettyPrint": ""
     },
     "website": "http://code.google.com/p/google-code-prettify"
-  },
-  "Google Core Web Vitals": {
-    "cats": [
-      78
-    ],
-    "description": "Google Core Web Vitals is a tiny, modular library for measuring all the web vitals metrics on real users.",
-    "icon": "Google Core Web Vitals.svg",
-    "scripts": "(8999999999999[\\s\\S]+1e12[\\s\\S]+(largest-contentful-paint|first-input|layout-shift)|(largest-contentful-paint|first-input|layout-shift)[\\s\\S]+8999999999999[\\s\\S]+1e12)",
-    "js": {
-      "webVitals.getCLS": ""
-    },
-    "oss": true,
-    "scriptSrc": "web-vitals@([\\d.]+)/dist/web-vitals.*\\.js\\;version:\\1",
-    "website": "https://github.com/GoogleChrome/web-vitals"
   },
   "Google Font API": {
     "cats": [
@@ -1170,6 +1255,24 @@
     "icon": "GraphQL.svg",
     "oss": true,
     "website": "https://graphql.org"
+  },
+  "Graphene": {
+    "cats": [
+      80
+    ],
+    "description": "Graphene is a WordPress theme created by Graphene Themes.",
+    "icon": "Graphene Themes.png",
+    "js": {
+      "grapheneGetInfScrollBtnLbl": "",
+      "grapheneJS.templateUrl": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/graphene(?:-plus)?/.+graphene\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.graphene-theme.com/graphene-theme"
   },
   "Grav": {
     "cats": [

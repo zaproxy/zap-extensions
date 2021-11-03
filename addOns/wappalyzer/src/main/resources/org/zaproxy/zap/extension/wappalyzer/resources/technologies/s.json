@@ -1,4 +1,21 @@
 {
+  "SALESmanago": {
+    "cats": [
+      97,
+      32
+    ],
+    "description": "SALESmanago is a no-code marketing automation and customer data platform designed for mid-sized buinesses and enterprises.",
+    "icon": "SALESmanago.svg",
+    "js": {
+      "SalesmanagoObject": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.salesmanago\\.com/",
+    "website": "https://www.salesmanago.com"
+  },
   "SAP": {
     "cats": [
       53
@@ -81,6 +98,18 @@
     "saas": true,
     "scriptSrc": "www\\.semrush\\.com",
     "website": "https://www.semrush.com"
+  },
+  "SEUR": {
+    "cats": [
+      99
+    ],
+    "description": "SEUR is a Spanish shipments and express transport company.",
+    "icon": "DPD.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bSEUR\\b"
+    ],
+    "website": "https://www.seur.com"
   },
   "SIMsite": {
     "cats": [
@@ -344,23 +373,6 @@
     "scriptSrc": "cdn\\.salesfire\\.co\\.uk/",
     "website": "https://www.salesfire.co.uk"
   },
-  "SALESmanago": {
-    "cats": [
-      97,
-      32
-    ],
-    "description": "SALESmanago is a no-code marketing automation and customer data platform designed for mid-sized buinesses and enterprises.",
-    "icon": "SALESmanago.svg",
-    "js": {
-      "SalesmanagoObject": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.salesmanago\\.com/",
-    "website": "https://www.salesmanago.com"
-  },
   "SalesReps.io": {
     "cats": [
       10
@@ -501,6 +513,21 @@
     "scriptSrc": "service\\.force\\.com",
     "website": "https://www.salesforce.com/au/products/service-cloud/"
   },
+  "Salonist": {
+    "cats": [
+      72
+    ],
+    "description": "Salonist is a salon management software.",
+    "dom": "iframe[src*='.salonist.io/'], a[href*='.salonist.io/'][target='_blank']",
+    "icon": "Salonist.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://salonist.io"
+  },
   "Salsify": {
     "cats": [
       95
@@ -604,6 +631,23 @@
     },
     "website": "http://sarka-spip.net"
   },
+  "Satori": {
+    "cats": [
+      32
+    ],
+    "description": "Satori provides marketing automation software.",
+    "dom": "iframe[src*='satori.segs.jp/']",
+    "icon": "Satori.png",
+    "js": {
+      "SatoriForm": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "satori\\.segs\\.jp/",
+    "website": "https://satori.marketing"
+  },
   "Sazito": {
     "cats": [
       6
@@ -684,6 +728,24 @@
     },
     "scriptSrc": "cdn.cxc.scorpion.direct",
     "website": "https://www.scorpion.co/"
+  },
+  "SeQura": {
+    "cats": [
+      91
+    ],
+    "description": "SeQura is a FinTech company based in Barcelona, providing digital flexible payment solutions, with a geographical focus on Southern Europe and Latin America.",
+    "icon": "SeQura.svg",
+    "js": {
+      "Sequra": "",
+      "SequraConfiguration": "",
+      "sequraProducts": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "live\\.sequracdn\\.com/",
+    "website": "https://www.sequra.es"
   },
   "SeamlessCMS": {
     "cats": [
@@ -1051,24 +1113,6 @@
     ],
     "website": "https://sentry.io/"
   },
-  "SeQura": {
-    "cats": [
-      91
-    ],
-    "description": "SeQura is a FinTech company based in Barcelona, providing digital flexible payment solutions, with a geographical focus on Southern Europe and Latin America.",
-    "icon": "SeQura.svg",
-    "js": {
-      "Sequra": "",
-      "SequraConfiguration": "",
-      "sequraProducts": ""
-    },
-    "scriptSrc": "live\\.sequracdn\\.com/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://www.sequra.es"
-  },
   "Seravo": {
     "cats": [
       62,
@@ -1216,6 +1260,20 @@
     "scriptSrc": "widget\\.sezzle\\.in",
     "website": "https://sezzle.com/"
   },
+  "Shanon": {
+    "cats": [
+      32
+    ],
+    "description": "Shanon provides marketing automation software.",
+    "icon": "Shanon.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.shanon-services\\.com",
+    "website": "https://www.shanon.co.jp"
+  },
   "Shapecss": {
     "cats": [
       66
@@ -1340,6 +1398,9 @@
       }
     },
     "icon": "Shopify.svg",
+    "js": {
+      "ShopifyPay.apiHost": ""
+    },
     "scriptSrc": [
       "cdn\\.shopify\\.com/shopifycloud/shopify_pay/"
     ],
@@ -1781,8 +1842,8 @@
       97
     ],
     "description": "Simon is a customer data platform (CDP) that helps you collect, clean, and control your customer data.",
-    "icon": "Simon.svg",
     "dom": "link[href*='.simonsignal.com']",
+    "icon": "Simon.svg",
     "js": {
       "SimonData": ""
     },
@@ -1834,6 +1895,23 @@
     "icon": "Simplebo.png",
     "website": "https://www.simplebo.fr"
   },
+  "Sinatra": {
+    "cats": [
+      80
+    ],
+    "description": "Sinatra is a lightweight and highly customizable multi-purpose WordPress theme.",
+    "icon": "Sinatra.png",
+    "js": {
+      "sinatraSlideUp": "",
+      "sinatra_vars.nonce": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/sinatra/.+sinatra\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://try.sinatrawp.com"
+  },
   "Sirclo": {
     "cats": [
       6
@@ -1865,13 +1943,13 @@
       "SDDAN.cmp": "",
       "Sddan.cmpLoaded": ""
     },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
     "scriptSrc": [
       "(?:choices|cache)\\.consentframework\\.com/",
       "js\\.sddan\\.com/"
-    ],
-    "saas": true,
-    "pricing": [
-      "poa"
     ],
     "website": "https://www.sirdata.com"
   },
@@ -1895,6 +1973,22 @@
     "icon": "Site Meter.png",
     "scriptSrc": "sitemeter\\.com/js/counter\\.js\\?site=",
     "website": "http://www.sitemeter.com"
+  },
+  "Site Search 360": {
+    "cats": [
+      29
+    ],
+    "description": "Site Search 360 is a site search as a service solution.",
+    "icon": "Site Search 360.svg",
+    "js": {
+      "ss360Config": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.sitesearch360.com/"
   },
   "Site24x7": {
     "cats": [
@@ -1961,6 +2055,20 @@
     "saas": true,
     "scriptSrc": "widget\\.siteminder\\.com",
     "website": "https://www.siteminder.com"
+  },
+  "SiteOrigin Vantage": {
+    "cats": [
+      80
+    ],
+    "description": "SiteOrigin Vantage is a response, multi-purpose theme carefully developed with seamless integration into an array of amazing third-party plugins.",
+    "dom": "style#vantage-style-css",
+    "icon": "SiteOrigin.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/vantage/",
+    "website": "https://siteorigin.com/theme/vantage"
   },
   "SiteSpect": {
     "cats": [
@@ -2548,19 +2656,6 @@
     "scriptSrc": "socket\\.io.*\\.js",
     "website": "https://socket.io"
   },
-  "Soisy": {
-    "cats": [
-      91
-    ],
-    "description": "Soisy is a buy now, pay later solution provider.",
-    "icon": "Soisy.png",
-    "scriptSrc": "cdn\\.soisy\\.it/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://www.soisy.it"
-  },
   "SoftTr": {
     "cats": [
       6
@@ -2570,6 +2665,19 @@
       "author": "SoftTr E-Ticaret Sitesi Yazılımı"
     },
     "website": "http://www.softtr.com"
+  },
+  "Soisy": {
+    "cats": [
+      91
+    ],
+    "description": "Soisy is a buy now, pay later solution provider.",
+    "icon": "Soisy.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.soisy\\.it/",
+    "website": "https://www.soisy.it"
   },
   "SolidPixels": {
     "cats": [
@@ -2876,19 +2984,6 @@
     "scriptSrc": "\\.production\\.splitit\\.com/",
     "website": "https://www.splitit.com"
   },
-  "SplittyPay": {
-    "cats": [
-      91
-    ],
-    "description": "SplittyPay is an alternative payment platform designed for group reservations and purchases.",
-    "icon": "SplittyPay.png",
-    "dom": "img[src*='splittypay']",
-    "pricing": [
-      "payg"
-    ],
-    "saas": true,
-    "website": "https://www.splittypay.com"
-  },
   "Splitbee": {
     "cats": [
       10
@@ -2899,6 +2994,19 @@
     },
     "scriptSrc": "^https://cdn\\.splitbee\\.io/sb\\.js",
     "website": "https://splitbee.io"
+  },
+  "SplittyPay": {
+    "cats": [
+      91
+    ],
+    "description": "SplittyPay is an alternative payment platform designed for group reservations and purchases.",
+    "dom": "img[src*='splittypay']",
+    "icon": "SplittyPay.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.splittypay.com"
   },
   "Splunk": {
     "cats": [
@@ -3030,95 +3138,6 @@
     "scriptSrc": "\\.creator-spring\\.com/",
     "website": "https://www.spri.ng"
   },
-  "SpurIT": {
-    "cats": [
-      5
-    ],
-    "description": "SpurIT is a team of certified Shopify experts which provide ecommerce software solutions.",
-    "icon": "SpurIT.svg",
-    "implies": "Shopify",
-    "js": {
-      "Spurit.global.version": "(.+)\\;version:\\1"
-    },
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/",
-    "saas": true,
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "website": "https://spur-i-t.com"
-  },
-  "SpurIT Abandoned Cart Reminder": {
-    "cats": [
-      98
-    ],
-    "description": "SpurIT Abandoned Cart Reminder bring back your Shopify store visitors who moved to another tab by blinking your store tab.",
-    "icon": "SpurIT.svg",
-    "implies": "Shopify",
-    "js": {
-      "ACR_SPURIT_Params.folderCss": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/"
-    },
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://spur-i-t.com/shopify-apps/abandoned-cart-reminder/"
-  },
-  "SpurIT Recurring Payments App": {
-    "cats": [
-      41
-    ],
-    "description": "SpurIT Recurring Payments App is a simple way to create a system of bill payment,subscriptions and invoicing.",
-    "icon": "SpurIT.svg",
-    "implies": "Shopify",
-    "js": {
-      "Spurit.recurringInvoices": ""
-    },
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/recurring-invoices/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://spur-i-t.com/shopify-apps/recurring-order-subscription"
-  },
-  "SpurIT Partial Payments App": {
-    "cats": [
-      41
-    ],
-    "description": "SpurIT Partial Payments App allow your customers to pay for the order in several ways or to share a payment with other people.",
-    "icon": "SpurIT.svg",
-    "implies": "Shopify",
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/split-payments/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://spur-i-t.com/shopify-apps/split-partial-payments/"
-  },
-  "SpurIT Loyalty App": {
-    "cats": [
-      84,
-      94
-    ],
-    "description": "SpurIT Loyalty App is a turnkey solution allowing you to reward existing customers in a number of ways.",
-    "icon": "SpurIT.svg",
-    "implies": "Shopify",
-    "js": {
-      "Spurit.Loyaltypoints": ""
-    },
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/loyaltypoints/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://spur-i-t.com/shopify-apps/loyalty-points-manager"
-  },
   "Spryker": {
     "cats": [
       6,
@@ -3138,6 +3157,95 @@
     ],
     "saas": false,
     "website": "https://www.spryker.com"
+  },
+  "SpurIT": {
+    "cats": [
+      5
+    ],
+    "description": "SpurIT is a team of certified Shopify experts which provide ecommerce software solutions.",
+    "icon": "SpurIT.svg",
+    "js": {
+      "Spurit.global.version": "(.+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/",
+    "website": "https://spur-i-t.com"
+  },
+  "SpurIT Abandoned Cart Reminder": {
+    "cats": [
+      98
+    ],
+    "description": "SpurIT Abandoned Cart Reminder bring back your Shopify store visitors who moved to another tab by blinking your store tab.",
+    "icon": "SpurIT.svg",
+    "js": {
+      "ACR_SPURIT_Params.folderCss": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/",
+    "website": "https://spur-i-t.com/shopify-apps/abandoned-cart-reminder/"
+  },
+  "SpurIT Loyalty App": {
+    "cats": [
+      84,
+      94
+    ],
+    "description": "SpurIT Loyalty App is a turnkey solution allowing you to reward existing customers in a number of ways.",
+    "icon": "SpurIT.svg",
+    "js": {
+      "Spurit.Loyaltypoints": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/loyaltypoints/",
+    "website": "https://spur-i-t.com/shopify-apps/loyalty-points-manager"
+  },
+  "SpurIT Partial Payments App": {
+    "cats": [
+      41
+    ],
+    "description": "SpurIT Partial Payments App allow your customers to pay for the order in several ways or to share a payment with other people.",
+    "icon": "SpurIT.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/split-payments/",
+    "website": "https://spur-i-t.com/shopify-apps/split-partial-payments/"
+  },
+  "SpurIT Recurring Payments App": {
+    "cats": [
+      41
+    ],
+    "description": "SpurIT Recurring Payments App is a simple way to create a system of bill payment,subscriptions and invoicing.",
+    "icon": "SpurIT.svg",
+    "js": {
+      "Spurit.recurringInvoices": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn-spurit\\.com/shopify-apps/recurring-invoices/",
+    "website": "https://spur-i-t.com/shopify-apps/recurring-order-subscription"
   },
   "Sqreen": {
     "cats": [
@@ -3176,9 +3284,33 @@
       "Square.Analytics": "",
       "__BOOTSTRAP_STATE__.storeInfo.square_application_id": ""
     },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
     "scriptSrc": "js\\.squareup\\.com",
     "website": "https://squareup.com/",
     "xhr": "\\.squareup\\.com"
+  },
+  "Square Online": {
+    "cats": [
+      6
+    ],
+    "description": "Square Online is a subscription based service that provides ecommerce solutions to small and medium sized businesses.",
+    "icon": "Square.svg",
+    "implies": "Weebly",
+    "js": {
+      "APP_ORIGIN": "square\\.online"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "requires": "Weebly",
+    "saas": true,
+    "website": "https://squareup.com/us/en/online-store"
   },
   "Squarespace": {
     "cats": [
@@ -3598,6 +3730,22 @@
     ],
     "website": "https://stylitics.com"
   },
+  "Sub2Tech": {
+    "cats": [
+      97
+    ],
+    "description": "Sub2Tech is combining real time customer data with industry-leading technology.",
+    "icon": "Sub2Tech.png",
+    "js": {
+      "SUB2.codebaseversion": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.sub2tech\\.com/",
+    "website": "https://www.sub2tech.com"
+  },
   "Subbly": {
     "cats": [
       6
@@ -3876,26 +4024,6 @@
     },
     "scriptSrc": "swiper(?:\\.min)?\\.js",
     "website": "https://swiperjs.com"
-  },
-  "Sydney": {
-    "cats": [
-      80
-    ],
-    "description": "Sydney is a powerful business theme that provides a fast way for companies or freelancers to create an online presence. Built by aThemes.",
-    "dom": {
-      "body[class*='sydney-theme']": {
-        "text": ""
-      },
-      "link[id*='sydney']": {
-        "attributes": {
-          "href": "sydney\\S*\\.css(?:\\?ver=([0-9.]+))?\\;version:\\1"
-        }
-      }
-    },
-    "icon": "athemes.png",
-    "requires": "WordPress",
-    "scriptSrc": "themes/sydney\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
-    "website": "https://athemes.com/theme/sydney/"
   },
   "Sylius": {
     "cats": [

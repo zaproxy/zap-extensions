@@ -1,4 +1,14 @@
 {
+  "B2C Europe": {
+    "cats": [
+      99
+    ],
+    "description": "B2C Europe offers logistic solutions for your ecommerce businesses.",
+    "icon": "B2C Europe.svg",
+    "requiresCategory": 6,
+    "text": "\\bB2C Europe\\b",
+    "website": "https://www.b2ceurope.eu/"
+  },
   "BEM": {
     "cats": [
       12
@@ -32,6 +42,18 @@
       "generator": "^boom site builder$"
     },
     "website": "http://manaandisheh.com"
+  },
+  "BRT": {
+    "cats": [
+      99
+    ],
+    "description": "BRT, also known as Bartolini, is an Italian-based logistics service provider.",
+    "icon": "BRT.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBRT\\b"
+    ],
+    "website": "https://www.brt.it"
   },
   "Babel": {
     "cats": [
@@ -303,14 +325,26 @@
     ],
     "description": "Bikayi is a WhatsApp-integrated ecommerce store.",
     "icon": "Bikayi.svg",
-    "scriptSrc": "assets\\.bikayi\\.com/",
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "assets\\.bikayi\\.com/",
     "website": "https://bikayi.com"
+  },
+  "Billbee": {
+    "cats": [
+      99
+    ],
+    "description": "Billbee is an order processing and inventory management solution.",
+    "icon": "Billbee.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBillbee\\b"
+    ],
+    "website": "https://www.billbee.io/"
   },
   "Birdeye": {
     "cats": [
@@ -472,6 +506,27 @@
     ],
     "website": "https://putyourlightson.com/plugins/blitz"
   },
+  "Blocksy": {
+    "cats": [
+      80
+    ],
+    "description": "Blocksy is a blazing fast and lightweight WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/blocksy/']",
+    "icon": "Blocksy.svg",
+    "js": {
+      "blocksyJsonP": "",
+      "blocksyResponsiveMenuCache": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/blocksy/(?:.+main\\.js(?:\\?ver=([\\d\\.]+)))?\\;version:\\1",
+    "website": "https://creativethemes.com/blocksy"
+  },
   "Blogger": {
     "cats": [
       11
@@ -623,6 +678,19 @@
     },
     "scriptSrc": "bokeh.*\\.js",
     "website": "https://bokeh.org"
+  },
+  "Bol.com": {
+    "cats": [
+      99
+    ],
+    "description": "Bol.com is a webshop in the Netherlands and offers general merchandising products.",
+    "icon": "Bol.com.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBOL\\b",
+      "\\bbol\\.com\\b"
+    ],
+    "website": "https://www.bol.com"
   },
   "Bold Chat": {
     "cats": [
@@ -898,6 +966,53 @@
     "implies": "Laravel",
     "website": "https://botble.com"
   },
+  "BowNow": {
+    "cats": [
+      32
+    ],
+    "cookies": {
+      "bownow_act": "",
+      "bownow_aid": "",
+      "bownow_cid": "",
+      "bownow_mbid": ""
+    },
+    "description": "BowNow is a marketing automation tool with business card management, sales support, analysis, and e-mail magazine functions.",
+    "icon": "BowNow.png",
+    "js": {
+      "_bownow_ts": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bow-now.jp"
+  },
+  "Boxtal": {
+    "cats": [
+      99
+    ],
+    "description": "Boxtal is a cloud-based multi-carrier shipping solution.",
+    "icon": "Boxtal.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBoxtal\\b"
+    ],
+    "website": "https://www.boxtal.com"
+  },
+  "Bpost": {
+    "cats": [
+      99
+    ],
+    "description": "Bpost, also known as the Belgian Post Group, is the Belgian company responsible for the delivery of national and international mail.",
+    "icon": "Bpost.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBpost\\b"
+    ],
+    "website": "https://www.bpost.be"
+  },
   "BrainSINS": {
     "cats": [
       76
@@ -1167,6 +1282,18 @@
     ],
     "saas": true,
     "website": "http://bubble.io"
+  },
+  "Budbee": {
+    "cats": [
+      99
+    ],
+    "description": "Budbee is a tech company that operates a logistics service for ecommerce.",
+    "icon": "Budbee.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bBudbee\\b"
+    ],
+    "website": "https://app.budbee.com/"
   },
   "BugSnag": {
     "cats": [

@@ -133,6 +133,16 @@
     ],
     "website": "http://michalsnik.github.io/aos/"
   },
+  "APC": {
+    "cats": [
+      99
+    ],
+    "description": "APC offers door-to-door parcel and mail delivery.",
+    "icon": "APC.svg",
+    "requiresCategory": 6,
+    "text": "\\APC\\b",
+    "website": "https://www.apc-pli.com"
+  },
   "AT Internet Analyzer": {
     "cats": [
       10
@@ -239,7 +249,11 @@
     "description": "AccessTrade is an affiliate marketing platform based on the CPA model developed by Interspace Co.",
     "dom": "img[src*='.accesstrade.net'],img[data-src*='.accesstrade.net']",
     "icon": "AccessTrade.png",
-    "website": "https://www.accesstrade.ne.jp"
+    "scriptSrc": [
+      "accesstrade\\.net/js/",
+      "click\\.accesstra\\.de/js/nct/lp\\.js"
+    ],
+    "website": "https://accesstrade.global/"
   },
   "AccessiBe": {
     "cats": [
@@ -578,27 +592,21 @@
     "scriptSrc": "\\.adlightning\\.com",
     "website": "https://www.adlightning.com"
   },
-  "Addi": {
+  "AdBridg": {
     "cats": [
-      91
+      36
     ],
-    "icon": "addi.png",
-    "scriptSrc": "s3\\.amazonaws\\.com/widgets\\.addi\\.com/bundle\\.min\\.js",
-    "website": "https://www.addi.com/"
-  },
-  "Addsearch": {
-    "cats": [
-      29
-    ],
-    "description": "Addsearch is a site search solution for small and large websites.",
-    "icon": "AddSearch.png",
+    "description": "AdBridg is a bidding solutions provider for publishers looking to maximize their programmatic revenues.",
+    "icon": "AdBridg.png",
+    "js": {
+      "AdBridg.cmd": ""
+    },
     "pricing": [
-      "mid",
+      "poa",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "https://addsearch\\.com/js/",
-    "website": "https://www.addsearch.com/"
+    "website": "https://www.adbridg.com"
   },
   "AdInfinity": {
     "cats": [
@@ -764,22 +772,6 @@
     "scriptSrc": "c5\\.adalyser\\.com",
     "website": "https://adalyser.com/"
   },
-  "AdBridg": {
-    "cats": [
-      36
-    ],
-    "description": "AdBridg is a bidding solutions provider for publishers looking to maximize their programmatic revenues.",
-    "icon": "AdBridg.png",
-    "js": {
-      "AdBridg.cmd": ""
-    },
-    "saas": true,
-    "pricing": [
-      "poa",
-      "recurring"
-    ],
-    "website": "https://www.adbridg.com"
-  },
   "Adcash": {
     "cats": [
       36
@@ -835,6 +827,29 @@
     },
     "scriptSrc": "addtoany\\.com/menu/page\\.js",
     "website": "http://www.addtoany.com"
+  },
+  "Addi": {
+    "cats": [
+      91
+    ],
+    "description": "Addi is a service that allows users to make purchases and pay for them in installments over time",
+    "icon": "addi.png",
+    "scriptSrc": "s3\\.amazonaws\\.com/widgets\\.addi\\.com/bundle\\.min\\.js",
+    "website": "https://co.addi.com/"
+  },
+  "Addsearch": {
+    "cats": [
+      29
+    ],
+    "description": "Addsearch is a site search solution for small and large websites.",
+    "icon": "AddSearch.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "https://addsearch\\.com/js/",
+    "website": "https://www.addsearch.com/"
   },
   "Adminer": {
     "cats": [
@@ -1419,6 +1434,18 @@
     "oss": true,
     "website": "https://akaunting.com"
   },
+  "Akinon": {
+    "cats": [
+      6
+    ],
+    "description": "Akinon is a cloud-based headless commerce platform with an integrated application suite including omnichannel and marketplace capabilities, mobile and in-store solutions, and an OMS.",
+    "icon": "akinon.png",
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "cdn-mgsm\\.akinon\\.net/",
+    "website": "https://www.akinon.com/"
+  },
   "Akka HTTP": {
     "cats": [
       18,
@@ -1741,7 +1768,7 @@
     "saas": true,
     "scriptSrc": [
       "/amazonpayments(?:\\.min)?\\.js",
-      "\\.payments-amazon\\.com/OffAmazonPayments"
+      "\\.payments-amazon\\.com/"
     ],
     "website": "https://pay.amazon.com",
     "xhr": "payments\\.amazon\\.com"
@@ -1927,6 +1954,71 @@
     },
     "scriptSrc": "AnalysysFangzhou_JS_SDK\\.min\\.js\\?v=([\\d.]+)\\;version:\\1",
     "website": "https://ark.analysys.cn"
+  },
+  "AndersNoren Baskerville": {
+    "cats": [
+      80
+    ],
+    "description": "AndersNoren Baskerville is a responsive and retina-ready masonry WordPress theme for hoarders.",
+    "icon": "AndersNoren.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/baskerville(?:-2)?/",
+    "website": "https://andersnoren.se/teman/baskerville-wordpress-theme"
+  },
+  "AndersNoren Fukasawa": {
+    "cats": [
+      80
+    ],
+    "description": "AndersNoren Fukasawa is a minimal masonry style blog WordPress theme for photographers and collectors.",
+    "icon": "AndersNoren.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/fukasawa/",
+    "website": "https://andersnoren.se/teman/fukasawa-wordpress-theme"
+  },
+  "AndersNoren Hemingway": {
+    "cats": [
+      80
+    ],
+    "description": "AndersNoren Hemingway is a clean and beautiful two-column WordPress theme for bloggers.",
+    "icon": "AndersNoren.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/hemingway/",
+    "website": "https://andersnoren.se/teman/hemingway-wordpress-theme"
+  },
+  "AndersNoren Hitchcock": {
+    "cats": [
+      80
+    ],
+    "description": "AndersNoren Hitchcock is a portfolio WordPress theme for designers, photographers and other creatives.",
+    "icon": "AndersNoren.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/hitchcock/",
+    "website": "https://andersnoren.se/teman/hitchcock-wordpress-theme"
+  },
+  "AndersNoren Lovecraft": {
+    "cats": [
+      80
+    ],
+    "description": "AndersNoren Lovecraft is a beautiful two-column WordPress theme for bloggers.",
+    "icon": "AndersNoren.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/lovecraft/",
+    "website": "https://andersnoren.se/teman/lovecraft-wordpress-theme"
   },
   "Anetwork": {
     "cats": [
@@ -2181,6 +2273,21 @@
       "__APOLLO_CLIENT__.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://www.apollographql.com"
+  },
+  "Apollo13Themes Rife": {
+    "cats": [
+      80
+    ],
+    "description": "Apollo13Themes Rife is a great portfolio and photography WordPress theme with 7 ready-to-use demo layouts.",
+    "icon": "Apollo13Themes.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/rife(?:-free)?/(?:.+script\\.min\\.js(?:\\?ver=([\\d\\.]+)))?\\;version:\\1",
+    "website": "https://apollo13themes.com/rife"
   },
   "ApostropheCMS": {
     "cats": [
@@ -2488,6 +2595,16 @@
     "scriptSrc": "asciinema\\.org/",
     "website": "https://asciinema.org/"
   },
+  "Asendia": {
+    "cats": [
+      99
+    ],
+    "description": "Asendia is an international mail joint venture of French La Poste and Swiss Post.",
+    "icon": "Asendia.svg",
+    "requiresCategory": 6,
+    "text": "\\Asendia\\b",
+    "website": "https://www.asendia.com"
+  },
   "Astra": {
     "cats": [
       80
@@ -2633,6 +2750,18 @@
     "html": "<a[^>]*href=\"https?://(?:www\\.)?statuspage\\.io/powered-by[^>]+>",
     "icon": "Atlassian Statuspage.svg",
     "website": "https://www.statuspage.io/"
+  },
+  "Atome": {
+    "cats": [
+      91
+    ],
+    "description": "Atome is a brand that allows users to purchase products online and pay for them in monthly installments.",
+    "icon": "atome.png",
+    "js": {
+      "atomeWidget": ""
+    },
+    "scriptSrc": "gateway\\.apaylater\\.com/",
+    "website": "https://www.atome.sg/"
   },
   "Attentive": {
     "cats": [
@@ -2795,11 +2924,11 @@
     "js": {
       "avisVerifies": ""
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.netreviews.com"
   },
   "Aweber": {
@@ -2947,6 +3076,56 @@
       "generator": "a-blog cms"
     },
     "website": "http://www.a-blogcms.jp"
+  },
+  "aThemes Airi": {
+    "cats": [
+      80
+    ],
+    "description": "aThemes Airi is a powerful yet lightweight and flexible WordPress theme for organization or freelancer.",
+    "dom": "link#airi-style-css",
+    "icon": "aThemes.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/airi/",
+    "website": "https://athemes.com/theme/airi"
+  },
+  "aThemes Astrid": {
+    "cats": [
+      80
+    ],
+    "description": "aThemes Astrid is a powerful yet lightweight and flexible WordPress theme.",
+    "dom": "link#astrid-style-css",
+    "icon": "aThemes.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime",
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/astrid/",
+    "website": "https://athemes.com/theme/astrid"
+  },
+  "aThemes Sydney": {
+    "cats": [
+      80
+    ],
+    "description": "aThemes Sydney is a powerful business WordPress theme that provides a fast way for companies or freelancers to create an online presence.",
+    "dom": "link#sydney-style-css",
+    "icon": "aThemes.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime",
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/sydney(?:-pro-ii)?/",
+    "website": "https://athemes.com/theme/sydney"
   },
   "actionhero.js": {
     "cats": [

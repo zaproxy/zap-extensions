@@ -110,6 +110,17 @@
     },
     "website": "https://developers.facebook.com/docs/facebook-login/"
   },
+  "Facebook Pay": {
+    "cats": [
+      41
+    ],
+    "description": "Facebook pay is a payment solution which can be used on any site or app outside Facebook ecosystem.",
+    "dom": [
+      "[aria-labelledby='pi-facebook_pay']"
+    ],
+    "icon": "Facebook.svg",
+    "website": "https://pay.facebook.com/"
+  },
   "Facebook Pixel": {
     "cats": [
       10
@@ -145,6 +156,53 @@
     "scriptSrc": "Suggest\\.ff",
     "url": "(?:/ViewParametricSearch|ffsuggest\\.[a-z]htm)",
     "website": "http://fact-finder.com"
+  },
+  "FalguniThemes Nisarg": {
+    "cats": [
+      80
+    ],
+    "description": "FalguniThemes Nisarg is a new fully responsive and translation ready WordPress theme.",
+    "icon": "FalguniThemes.png",
+    "js": {
+      "nisargpro_script_vars": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/nisarg(?:pro)?/",
+    "website": "https://www.falgunithemes.com/downloads/nisarg"
+  },
+  "FameThemes OnePress": {
+    "cats": [
+      80
+    ],
+    "description": "FameThemes OnePress is a free portfolio one page WordPress theme suited for an individual or digital agency.",
+    "icon": "FameThemes.svg",
+    "js": {
+      "OnePress_Plus": "",
+      "onepressIsMobile": "",
+      "onepress_js_settings": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://www.famethemes.com/themes/onepress"
+  },
+  "FameThemes Screenr": {
+    "cats": [
+      80
+    ],
+    "description": "FameThemes Screenr is a fullscreen parallax WordPress theme suited for business, portfolio, digital agency, freelancers.",
+    "icon": "FameThemes.svg",
+    "js": {
+      "Screenr.autoplay": "",
+      "Screenr_Plus": ""
+    },
+    "requires": "WordPress",
+    "website": "https://www.famethemes.com/themes/screenr"
   },
   "FancyBox": {
     "cats": [
@@ -321,6 +379,18 @@
       "fbits": ""
     },
     "website": "https://www.traycorp.com.br"
+  },
+  "FedEx": {
+    "cats": [
+      99
+    ],
+    "description": "FedEx is an American multinational company which focuses on transportation, ecommerce and business services.",
+    "icon": "FedEx.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bFedEx\\b"
+    ],
+    "website": "https://www.fedex.com"
   },
   "Fedora": {
     "cats": [
@@ -907,6 +977,18 @@
     "scriptSrc": "cdn\\.foxycart\\.com",
     "website": "https://www.foxy.io"
   },
+  "France Express": {
+    "cats": [
+      99
+    ],
+    "description": "France Express is a delivery service based in France.",
+    "icon": "France Express.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bFrance Express\\b"
+    ],
+    "website": "https://www.france-express.com"
+  },
   "FreeBSD": {
     "cats": [
       28
@@ -940,6 +1022,18 @@
     "icon": "Freespee.svg",
     "scriptSrc": "analytics\\.freespee\\.com/js/external/fs\\.(?:min\\.)?js",
     "website": "https://www.freespee.com"
+  },
+  "Frequenceo": {
+    "cats": [
+      99
+    ],
+    "description": "Frequenceo is a fixed-rate postage service in France.",
+    "icon": "La Poste.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bFrequenceo\\b"
+    ],
+    "website": "https://www.laposte.fr/entreprise/produit-entreprise/frequenceo"
   },
   "Freshchat": {
     "cats": [
@@ -1145,5 +1239,22 @@
     "icon": "futureshop.png",
     "scriptSrc": "future-shop.*\\.js",
     "website": "https://www.future-shop.jp"
+  },
+  "Futurio": {
+    "cats": [
+      80
+    ],
+    "description": "Futurio is a lightweight and customizable multi-purpose and WooCommerce WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/futurio/']",
+    "icon": "Futurio.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/futurio/.+customscript\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://futuriowp.com"
   }
 }

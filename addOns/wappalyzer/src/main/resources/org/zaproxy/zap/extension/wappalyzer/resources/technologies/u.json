@@ -9,6 +9,18 @@
     "scriptSrc": "uikit.*\\.js",
     "website": "https://getuikit.com"
   },
+  "UK Mail": {
+    "cats": [
+      99
+    ],
+    "description": "UK Mail is a postal service company operating in the United Kingdom.",
+    "icon": "UK Mail.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bUK Mail\\b"
+    ],
+    "website": "https://www.ukmail.com"
+  },
   "UMI.CMS": {
     "cats": [
       1
@@ -30,6 +42,31 @@
     },
     "icon": "UNIX.png",
     "website": "http://unix.org"
+  },
+  "UPS": {
+    "cats": [
+      99
+    ],
+    "description": "UPS is an American multinational shipping & receiving and supply chain management company.",
+    "icon": "UPS.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bUPS\\b"
+    ],
+    "website": "https://www.ups.com"
+  },
+  "USWDS": {
+    "cats": [
+      18
+    ],
+    "description": "USWDS is a design system for the federal government.",
+    "icon": "USWDS.svg",
+    "js": {
+      "uswdsPresent": ""
+    },
+    "oss": true,
+    "scriptSrc": "\\buswds\\b",
+    "website": "https://designsystem.digital.gov"
   },
   "Ubercart": {
     "cats": [
@@ -264,19 +301,6 @@
     "saas": true,
     "website": "https://uscreen.tv/"
   },
-  "USWDS": {
-    "cats": [
-      18
-    ],
-    "description": "USWDS is a design system for the federal government.",
-    "icon": "USWDS.svg",
-    "js": {
-      "uswdsPresent": ""
-    },
-    "scriptSrc": "\\buswds\\b",
-    "oss": true,
-    "website": "https://designsystem.digital.gov"
-  },
   "UserLike": {
     "cats": [
       52
@@ -401,11 +425,11 @@
     "js": {
       "uSizyUniversal": ""
     },
-    "scriptSrc": "static\\.usizy\\.es/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "static\\.usizy\\.es/",
     "website": "https://usizy.com"
   },
   "uKnowva": {
