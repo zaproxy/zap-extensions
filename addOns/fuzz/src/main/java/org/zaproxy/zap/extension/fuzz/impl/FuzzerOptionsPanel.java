@@ -210,7 +210,10 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                         .addGroup(
                                 layout.createSequentialGroup()
                                         .addComponent(defaultFuzzDelayLabel)
-                                        .addComponent(defaultFuzzDelayInMsSpinner)));
+                                        .addComponent(defaultFuzzDelayInMsSpinner))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(fuzzerHandlerOptions.getPanel())));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -245,7 +248,10 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(defaultFuzzDelayLabel)
-                                        .addComponent(defaultFuzzDelayInMsSpinner)));
+                                        .addComponent(defaultFuzzDelayInMsSpinner))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(fuzzerHandlerOptions.getPanel())));
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(innerPanel);
