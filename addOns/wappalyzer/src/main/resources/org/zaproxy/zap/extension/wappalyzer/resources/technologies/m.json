@@ -1,4 +1,35 @@
 {
+  "MAAK": {
+    "cats": [
+      1
+    ],
+    "description": "MAAK is a Laravel based CMS developed by Mahdi Akbari.",
+    "icon": "MAAK.png",
+    "meta": {
+      "author": "^MAAK$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://maak-code.ir"
+  },
+  "MAJIN": {
+    "cats": [
+      32
+    ],
+    "description": "MAJIN reads the hearts and minds of each customer using real-world data to automate optimal marketing processes.",
+    "icon": "MAJIN.png",
+    "js": {
+      "ma.Touch": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://ma-jin.jp"
+  },
   "MGID": {
     "cats": [
       36
@@ -46,22 +77,17 @@
     "saas": true,
     "website": "http://modx.com"
   },
-  "mParticle": {
+  "MRW": {
     "cats": [
-      97
+      99
     ],
-    "description": "mParticle is a mobile-focused event tracking and data ingestion tool.",
-    "icon": "mParticle.svg",
-    "js": {
-      "mParticle.config.snippetVersion": "(.+)\\;version:\\1",
-      "mParticle": ""
-    },
-    "pricing": [
-      "poa"
+    "description": "MRW is a Spanish courier company specialised in express national and international shipping services.",
+    "icon": "MRW.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bMRW\\b"
     ],
-    "saas": true,
-    "scriptSrc": "\\.mparticle\\.com/",
-    "website": "https://www.mparticle.com"
+    "website": "https://www.mrw.es"
   },
   "MTCaptcha": {
     "cats": [
@@ -82,20 +108,20 @@
     "scriptSrc": "service(?:2)?\\.mtcaptcha\\.com/",
     "website": "https://www.mtcaptcha.com"
   },
-  "MAAK": {
+  "MachoThemes NewsMag": {
     "cats": [
-      1
+      80
     ],
-    "description": "MAAK is a Laravel based CMS developed by Mahdi Akbari.",
-    "icon": "MAAK.png",
-    "meta": {
-      "author": "^MAAK$"
-    },
-    "saas": true,
+    "description": "MachoThemes Newsmag is a clean and modern magazine, news or blog WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/Newsmag']",
+    "icon": "MachoThemes.png",
     "pricing": [
-      "poa"
+      "freemium",
+      "onetime"
     ],
-    "website": "https://maak-code.ir"
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/Newsmag(?:-child)?/",
+    "website": "https://www.machothemes.com/item/newsmag-lite"
   },
   "MadAdsMedia": {
     "cats": [
@@ -867,6 +893,24 @@
     "scriptSrc": "\\.metrilo\\.com/",
     "website": "https://www.metrilo.com"
   },
+  "Mews": {
+    "cats": [
+      72
+    ],
+    "description": "Mews is a hospitalitions service that enables hotels to track their bookings.",
+    "dom": "a[href*='.mews.li/'][target='_blank']",
+    "icon": "Mews.png",
+    "js": {
+      "Mews": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.mews\\.li/",
+    "website": "https://www.mews.com"
+  },
   "Microsoft 365": {
     "cats": [
       30,
@@ -1373,6 +1417,18 @@
     "scriptSrc": "moment(?:\\.min)?\\.js",
     "website": "https://momentjs.com"
   },
+  "Mondial Relay": {
+    "cats": [
+      99
+    ],
+    "description": "Mondial Relay is a parcel shipping and delivery service in Europe.",
+    "icon": "Mondial Relay.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bMondial Relay\\b"
+    ],
+    "website": "https://www.mondialrelay.com"
+  },
   "Mondo Media": {
     "cats": [
       6
@@ -1603,6 +1659,18 @@
     "scriptSrc": "mustache(?:\\.min)?\\.js",
     "website": "https://mustache.github.io"
   },
+  "My Flying Box": {
+    "cats": [
+      99
+    ],
+    "description": "My Flying Box is an international parcel shipping company.",
+    "icon": "My Flying Box.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bMy Flying Box\\b"
+    ],
+    "website": "https://www.myflyingbox.com/"
+  },
   "My Food Link": {
     "cats": [
       6
@@ -1756,6 +1824,66 @@
       "generator": "Mynetcap"
     },
     "website": "http://www.netcap-creation.fr"
+  },
+  "MysteryThemes News Portal": {
+    "cats": [
+      80
+    ],
+    "description": "News Portal is the ultimate magazine WordPress theme by MysteryThemes.",
+    "icon": "MysteryThemes.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/news-portal(?:-pro)?/.+np-custom-scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://mysterythemes.com/wp-themes/news-portal"
+  },
+  "MysteryThemes News Portal Lite": {
+    "cats": [
+      80
+    ],
+    "description": "News Portal Lite is child theme of News Portal ultimate magazine WordPress theme by MysteryThemes.",
+    "dom": "link[href*='/wp-content/themes/news-portal-lite/']",
+    "excludes": "MysteryThemes News Portal",
+    "icon": "MysteryThemes.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://mysterythemes.com/wp-themes/news-portal-lite"
+  },
+  "MysteryThemes News Portal Mag": {
+    "cats": [
+      80
+    ],
+    "description": "News Portal Mag is child theme of News Portal ultimate magazine WordPress theme by MysteryThemes.",
+    "dom": "link[href*='/wp-content/themes/news-portal-mag/']",
+    "excludes": "MysteryThemes News Portal",
+    "icon": "MysteryThemes.png",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://mysterythemes.com/wp-themes/news-portal-mag"
+  },
+  "mParticle": {
+    "cats": [
+      97
+    ],
+    "description": "mParticle is a mobile-focused event tracking and data ingestion tool.",
+    "icon": "mParticle.svg",
+    "js": {
+      "mParticle": "",
+      "mParticle.config.snippetVersion": "(.+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.mparticle\\.com/",
+    "website": "https://www.mparticle.com"
   },
   "math.js": {
     "cats": [

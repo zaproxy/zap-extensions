@@ -239,6 +239,17 @@
     "requires": "WordPress",
     "website": "https://yoast.com"
   },
+  "Yodel": {
+    "cats": [
+      99
+    ],
+    "description": "Yodel is a delivery company for B2B and B2C orders in the United Kingdom.",
+    "requiresCategory": 6,
+    "text": [
+      "\\bYodel\\b"
+    ],
+    "website": "https://www.yodel.co.uk/"
+  },
   "Yotpo": {
     "cats": [
       84,

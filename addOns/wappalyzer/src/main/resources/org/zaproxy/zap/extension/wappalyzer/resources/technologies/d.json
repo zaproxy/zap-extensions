@@ -30,6 +30,16 @@
     },
     "website": "https://derak.cloud"
   },
+  "DHL": {
+    "cats": [
+      99
+    ],
+    "description": "DHL is an international courier, package delivery and express mail service, which is a division of the German logistics firm Deutsche Post.",
+    "icon": "DHL.svg",
+    "requiresCategory": 6,
+    "text": "\\bDHL\\b",
+    "website": "https://www.dhl.com"
+  },
   "DHTMLX": {
     "cats": [
       59
@@ -79,6 +89,42 @@
       "/js/dnn\\.js"
     ],
     "website": "http://dnnsoftware.com"
+  },
+  "DPD": {
+    "cats": [
+      99
+    ],
+    "description": "DPD is an international parcel delivery service for sorter compatible parcels.",
+    "icon": "DPD.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bDPD\\b"
+    ],
+    "website": "https://www.dpd.com"
+  },
+  "DX": {
+    "cats": [
+      99
+    ],
+    "description": "DX (also known as DX Freight) is a British mail, courier and logistics company.",
+    "icon": "DX.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bDX\\b"
+    ],
+    "website": "https://www.dxdelivery.com"
+  },
+  "Dachser": {
+    "cats": [
+      99
+    ],
+    "description": "Dachser is a German freight company.",
+    "icon": "Dachser.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bDachser\\b"
+    ],
+    "website": "https://www.dachser.com"
   },
   "Daily Deals": {
     "cats": [
@@ -141,7 +187,6 @@
     ],
     "html": "/(?:<script)[^>]+(?:type=\"application/dart\")/",
     "icon": "Dart.svg",
-    "implies": "AngularDart",
     "js": {
       "___dart__$dart_dartObject_ZxYxX_0_": "",
       "___dart_dispatch_record_ZxYxX_0_": ""
@@ -315,6 +360,18 @@
     "scriptSrc": "dedeajax",
     "website": "http://dedecms.com"
   },
+  "Delivengo": {
+    "cats": [
+      99
+    ],
+    "description": "Delivengo is an international shipping service powered by La Poste.",
+    "icon": "La Poste.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bDelivengo\\b"
+    ],
+    "website": "https://mydelivengo.laposte.fr/"
+  },
   "Detectify": {
     "cats": [
       16
@@ -327,6 +384,18 @@
     },
     "icon": "Detectify.svg",
     "website": "https://detectify.com/"
+  },
+  "Deutsche Post": {
+    "cats": [
+      99
+    ],
+    "description": "Deutsche Post is a German multinational package delivery and supply chain management company in Germany.",
+    "icon": "Deutsche Post.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bDeutsche Post\\b"
+    ],
+    "website": "https://www.deutschepost.de"
   },
   "Dianomi": {
     "cats": [
@@ -393,6 +462,20 @@
     ],
     "website": "https://www.digistore24.com"
   },
+  "Digital Showroom": {
+    "cats": [
+      6
+    ],
+    "description": "Digital Showroom is an ecommerce platform.",
+    "dom": "div.dd-showrom__layout",
+    "icon": "Digital Showroom.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://digitalshowroom.in"
+  },
   "DigitalRiver": {
     "cats": [
       6,
@@ -413,20 +496,6 @@
     "saas": true,
     "scriptSrc": "\\.digitalriver\\.com/",
     "website": "https://www.digitalriver.com"
-  },
-  "Digital Showroom": {
-    "cats": [
-      6
-    ], 
-    "description": "Digital Showroom is an ecommerce platform.",
-    "icon": "Digital Showroom.png",
-    "dom": "div.dd-showrom__layout",
-    "saas": true,
-    "pricing": [
-      "freemium",
-      "payg"
-    ],
-    "website": "https://digitalshowroom.in"
   },
   "DirectAdmin": {
     "cats": [
@@ -605,6 +674,24 @@
       "django": ""
     },
     "website": "https://djangoproject.com"
+  },
+  "Django CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "django_language": ""
+    },
+    "description": "Django CMS is a free and open source content management system platform for publishing content on the World Wide Web and intranets.",
+    "icon": "Django CMS.png",
+    "implies": [
+      "Python",
+      "Django",
+      "PostgreSQL"
+    ],
+    "oss": true,
+    "scriptSrc": "/djangocms_",
+    "website": "https://www.django-cms.org"
   },
   "DocFX": {
     "cats": [

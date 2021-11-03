@@ -1,4 +1,16 @@
 {
+  "NACEX": {
+    "cats": [
+      99
+    ],
+    "description": "NACEX is an express courier company in Spain, Andorra and Portugal.",
+    "icon": "NACEX.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bNACEX\\b"
+    ],
+    "website": "https://www.nacex.es"
+  },
   "NEO - Omnichannel Commerce Platform": {
     "cats": [
       6
@@ -271,6 +283,18 @@
     ],
     "website": "https://newspack.pub/"
   },
+  "Nexive": {
+    "cats": [
+      99
+    ],
+    "description": "Nexive is a postal operator in Italy.",
+    "icon": "Nexive.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bNexive\\b"
+    ],
+    "website": "https://www.nexive.it"
+  },
   "Next.js": {
     "cats": [
       18,
@@ -340,6 +364,22 @@
     "icon": "Nginx.svg",
     "website": "http://nginx.org/en"
   },
+  "Niagahoster": {
+    "cats": [
+      88
+    ],
+    "description": "Niagahoster is a web hosting service for small and medium enterprises. It provides shared hosting, WordPress hosting, Virtual Private Server (VPS), and more.",
+    "headers": {
+      "x-powered-by": "Niagahoster"
+    },
+    "icon": "niagahoster.png",
+    "implies": "Niagahoster",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://niagahoster.co.id"
+  },
   "NitroPack": {
     "cats": [
       23
@@ -358,11 +398,11 @@
     ],
     "description": "Noddus offers brands and agencies access to an advanced proprietary content marketing platform automating content production, distribution and analytics.",
     "icon": "Noddus.png",
-    "scriptSrc": "noddus\\.com/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "noddus\\.com/",
     "website": "https://www.enterprise.noddus.com"
   },
   "Node.js": {
@@ -531,21 +571,5 @@
     },
     "oss": true,
     "website": "http://www.nopcommerce.com"
-  },
-  "Niagahoster": {
-    "cats": [
-      88
-    ],
-    "headers": {
-      "x-powered-by": "Niagahoster"
-    },
-    "description": "Niagahoster is a web hosting service for small and medium enterprises. It provides shared hosting, WordPress hosting, Virtual Private Server (VPS), and more.",
-    "icon": "niagahoster.png",
-    "implies": "Niagahoster",
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://niagahoster.co.id"
   }
 }

@@ -47,6 +47,23 @@
     },
     "website": "https://webxpay.com"
   },
+  "WEN Themes Education Hub": {
+    "cats": [
+      80
+    ],
+    "description": "WEN Themes Education Hub is a clean and elegant WordPress education theme.",
+    "icon": "WEN Themes.png",
+    "js": {
+      "EducationHubScreenReaderText": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/education-hub(?:-pro)?/",
+    "website": "https://wenthemes.com/item/wordpress-themes/education-hub"
+  },
   "WHMCS": {
     "cats": [
       1
@@ -79,6 +96,20 @@
     "implies": "WordPress",
     "website": "https://wpengine.com"
   },
+  "WP Puzzle Basic": {
+    "cats": [
+      80
+    ],
+    "description": "WP Puzzle Basic is fully responsive, clean and minimal WordPress theme.",
+    "icon": "WP Puzzle.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/basic/",
+    "website": "https://wp-puzzle.com/basic"
+  },
   "WP Rocket": {
     "cats": [
       23,
@@ -93,6 +124,40 @@
     "icon": "WP Rocket.png",
     "requires": "WordPress",
     "website": "http://wp-rocket.me"
+  },
+  "WP-Royal Ashe": {
+    "cats": [
+      80
+    ],
+    "description": "WP-Royal Ashe is a personal and multi-author WordPress blog theme.",
+    "dom": "link#ashe-style-css",
+    "icon": "WP-Royal.png",
+    "js": {
+      "ashePreloader": "",
+      "asheStickySidebar": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/ashe(?:-pro-premium)?/",
+    "website": "https://wp-royal.com/themes/item-ashe-free"
+  },
+  "WP-Royal Bard": {
+    "cats": [
+      80
+    ],
+    "description": "WP-Royal Bard is a personal and multi-author WordPress blog theme.",
+    "dom": "link#bard-style-css, style#bard_predefined_custom_css",
+    "icon": "WP-Royal.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/bard(?:-pro-premium)?/",
+    "website": "https://wp-royal.com/themes/item-bard-free"
   },
   "WP-Statistics": {
     "cats": [
@@ -583,6 +648,18 @@
     "scriptSrc": "wheelioapp\\.azureedge\\.net",
     "website": "https://wheelio-app.com/"
   },
+  "Whistl": {
+    "cats": [
+      99
+    ],
+    "description": "Whistl is a postal delivery company operating in the United Kingdom.",
+    "icon": "Whistl.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bWhistl\\b"
+    ],
+    "website": "https://www.whistl.co.uk"
+  },
   "Whooshkaa": {
     "cats": [
       5
@@ -813,14 +890,14 @@
       52
     ],
     "description": "Wix Answers is a cloud-based help desk software.",
-    "icon": "Wix Answers.svg",
     "dom": "iframe[src*='.wixanswers.com/']",
-    "scriptSrc": "\\.wixanswers\\.com/",
+    "icon": "Wix Answers.svg",
     "pricing": [
       "recurring",
       "payg"
     ],
     "saas": true,
+    "scriptSrc": "\\.wixanswers\\.com/",
     "website": "https://www.wixanswers.com"
   },
   "Wix eCommerce": {
@@ -847,11 +924,11 @@
     ],
     "description": "Wizpay is a buy now pay later solution.",
     "icon": "Wizpay.png",
-    "scriptSrc": "wp-content/plugins/creditcorp-wizardpay/.+\\?ver=([\\d\\.]+)\\;version:\\1",
     "pricing": [
       "payg"
     ],
     "saas": true,
+    "scriptSrc": "wp-content/plugins/creditcorp-wizardpay/.+\\?ver=([\\d\\.]+)\\;version:\\1",
     "website": "https://www.wizpay.com.au"
   },
   "Wolf CMS": {
@@ -956,6 +1033,20 @@
       "wp-embed\\.min\\.js"
     ],
     "website": "https://wordpress.org"
+  },
+  "WordPress Default": {
+    "cats": [
+      80
+    ],
+    "description": "WordPress Default is a default WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/default/']",
+    "icon": "WordPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/default/",
+    "website": "https://wordpress.org/themes/default"
   },
   "WordPress Super Cache": {
     "cats": [
@@ -1065,6 +1156,21 @@
     },
     "scriptSrc": "\\.wurfl\\.io",
     "website": "https://web.wurfl.io/"
+  },
+  "web-vitals": {
+    "cats": [
+      59,
+      78
+    ],
+    "description": "The web-vitals JavaScript is a tiny, modular library for measuring all the web vitals metrics on real users.",
+    "icon": "web-vitals.svg",
+    "js": {
+      "webVitals": ""
+    },
+    "oss": true,
+    "scriptSrc": "web-vitals@([\\d.]+)/dist/web-vitals.*\\.js\\;version:\\1",
+    "scripts": "(8999999999999[\\s\\S]+1e12[\\s\\S]+(largest-contentful-paint|first-input|layout-shift)|(largest-contentful-paint|first-input|layout-shift)[\\s\\S]+8999999999999[\\s\\S]+1e12)",
+    "website": "https://github.com/GoogleChrome/web-vitals"
   },
   "webEdition": {
     "cats": [

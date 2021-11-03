@@ -94,6 +94,15 @@
     ],
     "website": "http://xregexp.com"
   },
+  "XSLT": {
+    "cats": [
+      27
+    ],
+    "description": "XSLT is designed for use as part of XSL, which is a stylesheet language for XML.",
+    "html": "<xsl[^>]* version=\"(.+)\"\\;version:\\1",
+    "icon": "W3C.png",
+    "website": "https://www.w3.org/TR/xslt-10"
+  },
   "XWiki": {
     "cats": [
       8
@@ -218,15 +227,6 @@
     "saas": true,
     "scriptSrc": "apps\\.xpresslane\\.in/",
     "website": "https://www.xpresslane.in"
-  },
-  "XSLT": {
-    "cats": [
-      27
-    ],
-    "description": "XSLT is designed for use as part of XSL, which is a stylesheet language for XML.",
-    "icon": "W3C.png",
-    "html": "<xsl[^>]* version=\"(.+)\"\\;version:\\1",
-    "website": "https://www.w3.org/TR/xslt-10"
   },
   "Xtremepush": {
     "cats": [

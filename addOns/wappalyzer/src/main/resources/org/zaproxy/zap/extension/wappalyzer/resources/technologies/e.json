@@ -153,6 +153,30 @@
     "scriptSrc": "\\.easystore\\.co/",
     "website": "https://www.easystore.co"
   },
+  "Easylog": {
+    "cats": [
+      99
+    ],
+    "description": "EasyLog is a logistics company based in Brazil.",
+    "requiresCategory": 6,
+    "text": [
+      "\\bEasylog\\b"
+    ],
+    "website": "http://www.easylog.com.br"
+  },
+  "Ecovium": {
+    "cats": [
+      99
+    ],
+    "description": "Ecovium is an end-to-end logistics company in Germany.",
+    "icon": "Ecovium.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bMHP\\b",
+      "\\bEcovium\\b"
+    ],
+    "website": "https://ecovium.com"
+  },
   "Ecwid": {
     "cats": [
       6
@@ -202,6 +226,38 @@
       "elasticApm": ""
     },
     "website": "https://www.elastic.co/apm"
+  },
+  "ElasticSuite": {
+    "cats": [
+      29
+    ],
+    "cookies": {
+      "STUID": "\\;confidence:50",
+      "STVID": "\\;confidence:50"
+    },
+    "description": "ElasticSuite is a merchandising suite for Magento and OroCommerce.",
+    "html": [
+      "<input [^>]*Smile_Elasticsuite[^>]*>",
+      "<[\\S\\s.*]*Smile_Elasticsuite[\\S\\s.*]*>"
+    ],
+    "icon": "ElasticSuite.svg",
+    "implies": [
+      "PHP",
+      "Elasticsearch"
+    ],
+    "js": {
+      "smileTracker": ""
+    },
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "requires": [
+      "OroCommerce",
+      "Magento"
+    ],
+    "scriptSrc": "Smile_ElasticsuiteTracker/js/tracking\\.js",
+    "website": "https://elasticsuite.io"
   },
   "Elasticsearch": {
     "cats": [
@@ -378,13 +434,12 @@
     ],
     "cpe": "cpe:/a:emberjs:ember.js",
     "icon": "Ember.js.png",
-    "implies": "Handlebars",
-    "scripts": "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1",
     "js": {
       "Ember": "",
-      "EmberENV": "",
-      "Ember.VERSION": "^(.+)$\\;version:\\1"
+      "Ember.VERSION": "^(.+)$\\;version:\\1",
+      "EmberENV": ""
     },
+    "scripts": "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1",
     "website": "http://emberjs.com"
   },
   "Emotion": {
@@ -407,6 +462,19 @@
       "web-analytics\\.engagio\\.com/api/"
     ],
     "website": "https://www.engagio.com/"
+  },
+  "Enigma": {
+    "cats": [
+      80
+    ],
+    "description": "Enigma is the popular superfine multipurpose responsive WordPress theme from Infigo Software.",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/enigma/",
+    "website": "https://wordpress.org/themes/enigma"
   },
   "Enjin CMS": {
     "cats": [
@@ -435,6 +503,34 @@
     "icon": "ensighten.png",
     "scriptSrc": "//nexus\\.ensighten\\.com/",
     "website": "https://success.ensighten.com/hc/en-us"
+  },
+  "Envialia": {
+    "cats": [
+      99
+    ],
+    "description": "",
+    "icon": "Envialia.png",
+    "requiresCategory": 6,
+    "text": [
+      "\\bEnvialia\\b"
+    ],
+    "website": "https://www.envialia.com"
+  },
+  "Envo Storefront": {
+    "cats": [
+      80
+    ],
+    "description": "Envo Storefront is a fast, clean and modern-looking responsive WooCommerce theme for WordPress.",
+    "icon": "Envo Themes.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/envo-storefront/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://envothemes.com/free-envo-storefront"
   },
   "Envoy": {
     "cats": [
@@ -502,6 +598,22 @@
     },
     "icon": "Erlang.png",
     "website": "http://www.erlang.org"
+  },
+  "Errorception": {
+    "cats": [
+      10
+    ],
+    "description": "Errorception is a error reporting service for client-side in-browser JavaScript errors.",
+    "icon": "Errorception.png",
+    "js": {
+      "_errs": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://errorception.com"
   },
   "Essent SiteBuilder Pro": {
     "cats": [
@@ -572,23 +684,6 @@
       "/ep_etherpad-lite/"
     ],
     "website": "https://etherpad.org"
-  },
-  "etika": {
-    "cats": [
-      91
-    ],
-    "description": "etika is a fintech company based in Manchester which provide buy now pay later solution.",
-    "icon": "etika.svg",
-    "js": {
-      "etikaGlobal": "",
-      "EtikaProductJsHelper": "",
-      "etikaBannerInject": ""
-    },
-    "pricing": [
-      "payg"
-    ],
-    "saas": true,
-    "website": "https://etika.com"
   },
   "Etracker": {
     "cats": [
@@ -662,6 +757,9 @@
     ],
     "description": "ExpertRec is a collaborative Web search engine, which allows users share search histories through a web browser.",
     "icon": "ExpertRec.png",
+    "js": {
+      "_er_config": ""
+    },
     "pricing": [
       "low",
       "recurring"
@@ -729,6 +827,98 @@
     },
     "scriptSrc": "ext-base\\.js",
     "website": "https://www.sencha.com"
+  },
+  "ExtendThemes Calliope": {
+    "cats": [
+      80
+    ],
+    "description": "ExtendThemes Calliope is an flexible, multipurpose WordPress child theme of Colibri WP.",
+    "dom": "link[href*='/wp-content/themes/calliope/']",
+    "icon": "ExtendThemes.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/calliope/",
+    "website": "https://wordpress.org/themes/calliope"
+  },
+  "ExtendThemes EmpowerWP": {
+    "cats": [
+      80
+    ],
+    "description": "ExtendThemes EmpowerWP is an flexible, multipurpose WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/empowerwp']",
+    "excludes": "ExtendThemes Mesmerize",
+    "icon": "ExtendThemes.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/empowerwp(?:-pro)?/",
+    "website": "https://extendthemes.com/empowerwp"
+  },
+  "ExtendThemes Highlight": {
+    "cats": [
+      80
+    ],
+    "description": "ExtendThemes Highlight is an flexible, multipurpose WordPress theme.",
+    "dom": "link[href*='/wp-content/themes/highlight/'], link[href*='/wp-content/themes/highlight-pro/']",
+    "excludes": "ExtendThemes Mesmerize",
+    "icon": "ExtendThemes.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/highlight(?:-pro)?/",
+    "website": "https://extendthemes.com/highlight"
+  },
+  "ExtendThemes Materialis": {
+    "cats": [
+      80
+    ],
+    "description": "ExtendThemes Materialis is an flexible, multipurpose WordPress theme.",
+    "dom": "link#materialis-style-css",
+    "icon": "ExtendThemes.svg",
+    "js": {
+      "MaterialisTheme": "",
+      "materialisSetHeaderTopSpacing": "",
+      "materialis_theme_pro_settings": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/materialis(?:-pro)?/",
+    "website": "https://extendthemes.com/materialis"
+  },
+  "ExtendThemes Mesmerize": {
+    "cats": [
+      80
+    ],
+    "description": "ExtendThemes Mesmerize is an flexible, multipurpose WordPress theme.",
+    "dom": "link#mesmerize-style-css",
+    "icon": "ExtendThemes.svg",
+    "js": {
+      "MesmerizeKube": "",
+      "mesmerizeDomReady": "",
+      "mesmerizeFooterParalax": "",
+      "mesmerizeMenuSticky": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/mesmerize(?:-pro)?/",
+    "website": "https://extendthemes.com/mesmerize"
   },
   "Extole": {
     "cats": [
@@ -992,6 +1182,23 @@
     "icon": "enduro.js.svg",
     "implies": "Node.js",
     "website": "http://endurojs.com"
+  },
+  "etika": {
+    "cats": [
+      91
+    ],
+    "description": "etika is a fintech company based in Manchester which provide buy now pay later solution.",
+    "icon": "etika.svg",
+    "js": {
+      "EtikaProductJsHelper": "",
+      "etikaBannerInject": "",
+      "etikaGlobal": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://etika.com"
   },
   "eucookie.eu": {
     "cats": [

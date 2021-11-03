@@ -146,6 +146,21 @@
     "scriptSrc": "haravan.*\\.js",
     "website": "https://www.haravan.com"
   },
+  "HashThemes Total": {
+    "cats": [
+      80
+    ],
+    "description": "HashThemes Total is the powerful and creative multipurpose WordPress theme.",
+    "icon": "HashThemes.png",
+    "pricing": [
+      "freemium",
+      "onetime",
+      "low"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/(?:t|T)otal(?:-plus)?/",
+    "website": "https://hashthemes.com/wordpress-theme/total"
+  },
   "Haskell": {
     "cats": [
       27
@@ -295,6 +310,18 @@
     "saas": true,
     "scriptSrc": "beacon-v2\\.helpscout\\.net",
     "website": "https://www.helpscout.com/"
+  },
+  "Hermes": {
+    "cats": [
+      99
+    ],
+    "description": "Hermes offers integrated solutions along the supply chain and partners with national and international trading companies.",
+    "icon": "Hermes.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bHermes\\b"
+    ],
+    "website": "https://www.hermesworld.com"
   },
   "Hero": {
     "cats": [
@@ -486,6 +513,18 @@
     ],
     "website": "https://twitter.github.io/hogan.js/"
   },
+  "Homerr": {
+    "cats": [
+      99
+    ],
+    "description": "Homerr is a logistics company operating in the Netherlands and Belgium.",
+    "icon": "Homerr.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bHomerr\\b"
+    ],
+    "website": "https://www.homerr.com"
+  },
   "Homestead": {
     "cats": [
       51
@@ -501,22 +540,6 @@
     ],
     "saas": true,
     "website": "https://www.homestead.com"
-  },
-  "hoolah": {
-    "cats": [
-      91
-    ],
-    "description": "hoolah is Asia's omni-channel buy now pay later platform.",
-    "icon": "hoolah.png",
-    "js": {
-      "hoolah": ""
-    },
-    "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://www.hoolah.co"
   },
   "Hostmeapp": {
     "cats": [
@@ -651,6 +674,39 @@
     "dom": "#hs-eu-cookie-confirmation",
     "icon": "HubSpot.png",
     "website": "https://knowledge.hubspot.com/reports/customize-your-cookie-tracking-settings-and-privacy-policy-alert"
+  },
+  "Huberway": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "huberway_session": ""
+    },
+    "description": "Huberway is a content management system, based on PHP and JavaScript, used to create advanced sales portals oriented towards industrialization 4.0.",
+    "icon": "Huberway.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.huberway.com"
+  },
+  "Huberway Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Huberway Analytics is a free web analytics service that tracks and reports website traffic.",
+    "icon": "Huberway.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "analytics\\.huberway\\.com/pixel/",
+    "website": "https://www.huberway.com/analytics-software"
   },
   "Hugo": {
     "cats": [
@@ -823,5 +879,21 @@
     },
     "scriptSrc": "//hantana\\.org/widget",
     "website": "https://hantana.org/"
+  },
+  "hoolah": {
+    "cats": [
+      91
+    ],
+    "description": "hoolah is Asia's omni-channel buy now pay later platform.",
+    "icon": "hoolah.png",
+    "js": {
+      "hoolah": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
+    "website": "https://www.hoolah.co"
   }
 }
