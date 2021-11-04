@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Enhanced the help entry for the Options tab in the main fuzz dialog.
 
+### Fixed
+- Ensure the "Follow Redirects" option is displayed.
+
 ## [13.4.0] - 2021-10-14
 ### Added
 - A right click (context menu) item to facilitate adding a fuzz message to the Sites Tree and History panel (Issue 1437).
