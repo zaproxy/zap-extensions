@@ -5,6 +5,7 @@
 	<indexitem text="automation" target="automation"/>
     <indexitem text="automation - gui" target="automation.gui"/>
     <indexitem text="automation - environment" target="automation.env"/>
+    <indexitem text="automation - authentication" target="automation.auth"/>
     <indexitem text="automation - addOns job" target="automation.addons"/>
     <indexitem text="automation - passiveScan-config job" target="automation.pscanconf"/>
     <indexitem text="automation - passiveScan-wait job" target="automation.pscanwait"/>
