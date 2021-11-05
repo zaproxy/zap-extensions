@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency updates.
 
+### Added
+- Functionality for example alert handling in order to assist in documentation efforts.
+
 ## [11] - 2021-10-06
 ### Added
 - OWASP Top Ten 2021/2017 mappings.

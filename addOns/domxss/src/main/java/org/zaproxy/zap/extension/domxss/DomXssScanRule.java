@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.domxss;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -673,8 +674,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                 + result.getAttributeId();
             }
 
-            newAlert()
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
+            buildAlert()
                     .setUri(result.getUrl())
                     .setAttack(result.getAttack())
                     .setOtherInfo(otherInfo)
@@ -752,5 +752,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 }
             }
         }
+    }
+
+    private AlertBuilder buildAlert() {
+        return newAlert().setConfidence(Alert.CONFIDENCE_HIGH);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return Collections.singletonList(buildAlert().build());
     }
 }
