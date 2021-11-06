@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fixed false positive in Reverse Tabnabbing scan rule.
 
+### Changed
+- Maintenance changes.
+
 ## [27] - 2021-10-07
 ### Added
 - OWASP Top Ten 2021/2017 mappings.

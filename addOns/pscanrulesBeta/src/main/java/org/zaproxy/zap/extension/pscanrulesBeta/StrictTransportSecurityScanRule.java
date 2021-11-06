@@ -36,7 +36,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -87,11 +86,6 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
 
     private static final Logger logger =
             LogManager.getLogger(StrictTransportSecurityScanRule.class);
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
         newAlert()

@@ -26,7 +26,6 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** A class to passively scan responses for indications that this is a modern web application. */
@@ -93,11 +92,6 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
                     .setEvidence(evidence)
                     .raise();
         }
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override
