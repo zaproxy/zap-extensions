@@ -31,7 +31,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -53,11 +52,6 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
     private static final String X_DEBUG_TOKEN_HEADER = "X-Debug-Token";
     private static final String X_DEBUG_TOKEN_LINK_HEADER = "X-Debug-Token-Link";
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

@@ -50,7 +50,6 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -130,16 +129,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
-    }
-
-    /**
-     * Set the Scanner thread parent object
-     *
-     * @param parent the PassiveScanThread parent object
-     */
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     private static final Pattern PATHSESSIONIDPATTERN =

@@ -44,7 +44,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -88,11 +87,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             Optional.of(URI.parseURI("http://" + RAND_FQDN).get());
     private static final Optional<URLWithScheme> HTTPS_URI =
             Optional.of(URI.parseURI("https://" + RAND_FQDN).get());
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

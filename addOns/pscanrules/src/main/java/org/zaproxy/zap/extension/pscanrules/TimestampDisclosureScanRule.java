@@ -40,7 +40,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -205,16 +204,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
             log.error(e.getMessage(), e);
         }
         return false;
-    }
-
-    /**
-     * sets the parent
-     *
-     * @param parent
-     */
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     /**
