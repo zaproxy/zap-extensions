@@ -50,7 +50,6 @@ import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
 import org.zaproxy.zap.utils.I18N;
@@ -431,9 +430,6 @@ class PassiveScanConfigJobUnitTest {
         public int getPluginId() {
             return this.id;
         }
-
-        @Override
-        public void setParent(PassiveScanThread parent) {}
 
         @Override
         public String getName() {

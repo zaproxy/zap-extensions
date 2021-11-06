@@ -78,11 +78,6 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
     }
 
     @Override
-    public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
-    }
-
-    @Override
     public int getPluginId() {
         return 90030;
     }
