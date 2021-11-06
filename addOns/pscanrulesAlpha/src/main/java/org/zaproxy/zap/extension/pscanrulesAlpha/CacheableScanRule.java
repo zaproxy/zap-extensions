@@ -33,7 +33,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -86,11 +85,6 @@ public class CacheableScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10049;
 
     private static final Logger logger = LogManager.getLogger(CacheableScanRule.class);
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

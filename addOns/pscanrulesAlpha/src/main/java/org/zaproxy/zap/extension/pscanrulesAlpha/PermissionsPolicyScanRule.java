@@ -30,7 +30,6 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -99,11 +98,6 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
-    }
-
-    @Override
-    public void setParent(PassiveScanThread passiveScanThread) {
-        // Nothing to do.
     }
 
     @Override

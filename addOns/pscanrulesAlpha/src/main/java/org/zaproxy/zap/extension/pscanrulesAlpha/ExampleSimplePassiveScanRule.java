@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -44,11 +43,6 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
     private static final Logger logger = LogManager.getLogger(ExampleSimplePassiveScanRule.class);
 
     private Random rnd = new Random();
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {

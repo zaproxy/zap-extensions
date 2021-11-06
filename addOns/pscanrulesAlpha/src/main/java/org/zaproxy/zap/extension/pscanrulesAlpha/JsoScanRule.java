@@ -30,7 +30,6 @@ import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Java Serialized Objects (JSO) scan rule. Detect the magic sequence and generate an alert */
@@ -141,11 +140,6 @@ public class JsoScanRule extends PluginPassiveScanner {
 
     private String getString(String param) {
         return Constant.messages.getString(MESSAGE_PREFIX + param);
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override
