@@ -23,11 +23,14 @@ Fuzzer对话框
 您还可以使用"搜索选项卡"在模糊结果中搜索字符串。
 
 <h3>Options tab</h3>
-此选项卡允许你配置发生模糊时使用的选项。
+This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+
+<h4>Follow Redirects</h4>
+Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
 <h3>消息处理器选项卡</h3>
-消息处理器可以访问和更改被模糊的信息，控制模糊处理并与ZAP UI进行交互。<br>
-可用的消息处理器取决于被模糊的消息的类型，此附件包括 <a href="httpmessageprocessors.html">默认HTTP消息处理器</a>.
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
 <p>
 附件还可以定义附加的有效负载生成器，

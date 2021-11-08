@@ -23,11 +23,14 @@ Bulanıklığı yapılandırmak için:<br/>
 Ayrıca 'Arama sekmesi'ni kullanarak fuzz sonuçlarındaki string'leri arayabilirsiniz.
 
 <h3>Seçenekler sekmesi</h3>
-Bu sekme fuzzing yaparken kullanılacak seçenekleri yapılandırmanızı sağlar.
+This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+
+<h4>Follow Redirects</h4>
+Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
 <h3>Mesaj İşlemcileri sekmesi</h3>
-Mesaj İşlemcileri fuzzed'lanmakta olan mesajlara erişebilir ve onları değiştirebilir, fuzzing sürecini kontrol edebilir ve ZAP UI'ı ile etkileşime geçebilir.<br>
-Mevcut mesaj işlemcileri fuzz'lanmakta olan mesajın tipine göre değişir, bu eklenti <a href="httpmessageprocessors.html">varsayılan HTTP Mesaj işlemcilerini içerir</a>.
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
 <p>
 Eklentiler ek yük üreticileri olarak da tanımlanır.
