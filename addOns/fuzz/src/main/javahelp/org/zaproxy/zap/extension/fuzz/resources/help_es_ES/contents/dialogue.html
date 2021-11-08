@@ -24,11 +24,14 @@ También puede buscar cadenas en los resultados de fuzz usando la 'pestaña Busc
 
 <h3>Pestaña de opciones
 </h3>
-Esta pestaña le permite configurar las opciones que se utilizarán cuando fuzzing.
+This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+
+<h4>Follow Redirects</h4>
+Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
 <h3>Pestaña de Procesadores de mensajes</h3>
-Los procesadores de mensajes pueden acceder y cambiar los mensajes que se están enviando, controlar el proceso de fuzzing e interactuar con la interfaz de usuario de ZAP.<br>
-Los procesadores de mensajes disponibles dependen del tipo de mensaje que se está difuminando, este complemento incluye los <a href="httpmessageprocessors.html">procesadores de mensajes HTTP predeterminados</a>.
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
 <p>
 Los complementos también pueden definir generadores de carga adicionales.
