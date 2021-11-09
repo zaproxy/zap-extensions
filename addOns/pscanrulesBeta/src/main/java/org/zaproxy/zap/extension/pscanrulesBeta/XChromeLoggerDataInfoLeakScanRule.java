@@ -31,7 +31,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -49,11 +48,6 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
     private static final Logger logger =
             LogManager.getLogger(XChromeLoggerDataInfoLeakScanRule.class);
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
