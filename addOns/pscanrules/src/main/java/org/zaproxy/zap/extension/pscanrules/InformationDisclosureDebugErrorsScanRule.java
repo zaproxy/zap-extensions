@@ -37,7 +37,6 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScanner {
@@ -126,11 +125,6 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
             }
         }
         return strings;
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     public void setDebugErrorFile(Path path) {

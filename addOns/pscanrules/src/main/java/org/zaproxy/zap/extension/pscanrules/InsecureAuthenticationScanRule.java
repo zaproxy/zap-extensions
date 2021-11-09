@@ -34,7 +34,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /*
@@ -51,11 +50,6 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(InsecureAuthenticationScanRule.class);
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {

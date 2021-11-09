@@ -31,7 +31,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.CookieUtils;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class CookieSameSiteScanRule extends PluginPassiveScanner {
@@ -52,11 +51,6 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
     private static final String SAME_SITE_COOKIE_VALUE_NONE = "None";
 
     private Model model = null;
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
-    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

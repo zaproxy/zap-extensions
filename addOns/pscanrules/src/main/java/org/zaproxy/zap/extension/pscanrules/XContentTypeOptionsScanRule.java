@@ -29,7 +29,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
@@ -95,11 +94,6 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
                 .setCweId(getCweId())
                 .setWascId(getWascId())
                 .raise();
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override

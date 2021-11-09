@@ -36,7 +36,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
@@ -158,11 +157,6 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
             }
         }
         return null;
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     public int getRisk() {

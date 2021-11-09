@@ -40,7 +40,6 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PiiUtils;
 import org.zaproxy.addon.commonlib.binlist.BinList;
 import org.zaproxy.addon.commonlib.binlist.BinRecord;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner {
@@ -224,11 +223,6 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
 
     public int getRisk() {
         return Alert.RISK_INFO;
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override

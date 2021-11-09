@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Timestamp Disclosure scan rule now excludes values in "Expect-CT" headers (Issue 6725), as well as zero strings (Issue 6761).
 - Dependency updates.
+- Maintenance changes.
 
 ## [36] - 2021-10-06
 ### Added

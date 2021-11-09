@@ -34,7 +34,6 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 
@@ -89,11 +88,6 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
                 .setCweId(getCweId())
                 .setWascId(getWascId())
                 .raise();
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override
