@@ -34,7 +34,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Detect missing attribute integrity in supported elements */
@@ -124,11 +123,6 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
             return element.getAttributeValue("integrity") == null
                     && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
         };
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Nothing to do.
     }
 
     @Override
