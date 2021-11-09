@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Maintenance changes.
 
 ## [34] - 2021-10-07
 ### Added
@@ -13,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Ignore CSS, JavaScript, images, or font files when scanning for source code disclosures (Issues: 6595, 6795, & 6820).
 - Update minimum ZAP version to 2.11.0.
-- Maintenance changes.
 
 ## [33] - 2021-07-07
 ### Fixed
