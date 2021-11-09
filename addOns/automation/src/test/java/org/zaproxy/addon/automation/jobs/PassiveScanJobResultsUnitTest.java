@@ -50,7 +50,6 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -189,9 +188,6 @@ class PassiveScanJobResultsUnitTest {
             this.name = name;
             this.pluginId = pluginId;
         }
-
-        @Override
-        public void setParent(PassiveScanThread parent) {}
 
         @Override
         public String getName() {

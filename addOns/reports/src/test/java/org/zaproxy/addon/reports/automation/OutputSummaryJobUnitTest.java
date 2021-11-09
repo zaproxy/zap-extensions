@@ -56,7 +56,6 @@ import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.automation.OutputSummaryJob.Format;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.I18N;
 
@@ -669,9 +668,6 @@ class OutputSummaryJobUnitTest {
             this.id = id;
             this.name = name;
         }
-
-        @Override
-        public void setParent(PassiveScanThread parent) {}
 
         @Override
         public String getName() {
