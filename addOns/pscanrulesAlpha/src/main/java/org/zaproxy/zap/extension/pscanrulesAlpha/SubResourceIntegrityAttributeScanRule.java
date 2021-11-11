@@ -122,7 +122,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                                     integrityHash.isEmpty()
                                             ? ""
                                             : Constant.messages.getString(
-                                                    MESSAGE_PREFIX + "otherInfo", integrityHash);
+                                                    MESSAGE_PREFIX + "otherinfo", integrityHash);
                             newAlert()
                                     .setRisk(Alert.RISK_MEDIUM)
                                     .setConfidence(Alert.CONFIDENCE_HIGH)
@@ -151,12 +151,14 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                 SiteNode node =
                         tree.findNode(
                                 new org.apache.commons.httpclient.URI(newURI.toString(), true));
-                integrityHash =
-                        DigestUtils.sha384Hex(
-                                node.getHistoryReference()
-                                        .getHttpMessage()
-                                        .getResponseBody()
-                                        .toString());
+                if (node != null) {
+                    integrityHash =
+                            DigestUtils.sha384Hex(
+                                    node.getHistoryReference()
+                                            .getHttpMessage()
+                                            .getResponseBody()
+                                            .toString());
+                }
             } catch (URISyntaxException | IllegalArgumentException e) {
                 logger.debug("URI syntax exception. Error: {}", e.getMessage(), e);
             } catch (URIException | HttpMalformedHeaderException | DatabaseException e) {

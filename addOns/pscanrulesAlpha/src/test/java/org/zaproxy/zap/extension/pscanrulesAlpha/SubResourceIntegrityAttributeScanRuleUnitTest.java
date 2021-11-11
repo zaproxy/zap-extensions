@@ -22,12 +22,24 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_MOCKS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class SubResourceIntegrityAttributeScanRuleUnitTest
@@ -38,6 +50,39 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         SubResourceIntegrityAttributeScanRule rule = new SubResourceIntegrityAttributeScanRule();
         rule.setConfig(new ZapXmlConfiguration());
         return rule;
+    }
+
+    void setupMocks(boolean nodeFound) throws Exception {
+        setUpZap();
+
+        Model model = mock(Model.class, withSettings().lenient());
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().lenient());
+        given(model.getSession()).willReturn(session);
+
+        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        given(session.getSiteTree()).willReturn(siteMap);
+
+        SiteNode node = mock(SiteNode.class, withSettings().lenient());
+        if (nodeFound) {
+            given(siteMap.findNode(any(URI.class))).willReturn(node);
+        } else {
+            given(siteMap.findNode(any(URI.class))).willReturn(null);
+        }
+
+        if (nodeFound) {
+            HistoryReference historyRef = mock(HistoryReference.class);
+            given(node.getHistoryReference()).willReturn(historyRef);
+            HttpMessage message =
+                    mock(HttpMessage.class, withSettings().defaultAnswer(RETURNS_MOCKS));
+            given(historyRef.getHttpMessage()).willReturn(message);
+            HttpResponseBody hrb = mock(HttpResponseBody.class);
+            given(message.getResponseBody()).willReturn(hrb);
+            given(hrb.toString()).willReturn("foobar");
+            // "foobar" SHA-384:
+            // 3c9c30d9f665e74d515c842960d4a451c83a0125fd3de7392d7b37231af10c72ea58aedfcdf89a5765bf902af93ecf06
+        }
     }
 
     @Test
@@ -77,9 +122,9 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement() throws Exception {
         // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -91,11 +136,36 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The following hash was calculated for the resource in question "
+                                + "3c9c30d9f665e74d515c842960d4a451c83a0125fd3de7392d7b37231af10c72ea58aedfcdf89a5765bf902af93ecf06"));
     }
 
     @Test
-    void shouldIndicateElementWithoutIntegrityAttribute() throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElementResourceNodeNotFound()
+            throws Exception {
         // Given
+        setupMocks(false);
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
+        assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(""));
+    }
+
+    @Test
+    void shouldIndicateElementWithoutIntegrityAttribute() throws Exception {
+        // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -109,6 +179,11 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The following hash was calculated for the resource in question "
+                                + "3c9c30d9f665e74d515c842960d4a451c83a0125fd3de7392d7b37231af10c72ea58aedfcdf89a5765bf902af93ecf06"));
     }
 
     @Test
@@ -130,8 +205,9 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertGivenElementIsServedBySubDomain() throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenElementIsServedBySubDomain() throws Exception {
         // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -143,6 +219,11 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The following hash was calculated for the resource in question "
+                                + "3c9c30d9f665e74d515c842960d4a451c83a0125fd3de7392d7b37231af10c72ea58aedfcdf89a5765bf902af93ecf06"));
     }
 
     @Test
