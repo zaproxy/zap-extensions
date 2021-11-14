@@ -470,7 +470,7 @@
       "button": {
         "text": "PayPal"
       },
-      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], link[href*='paypal-express-checkout'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true']": {
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true']": {
         "exists": ""
       }
     },
@@ -588,7 +588,7 @@
     },
     "icon": "PencilBlue.png",
     "implies": "Node.js",
-    "website": "http://pencilblue.org"
+    "website": "https://github.com/pencilblue/pencilblue"
   },
   "Pendo": {
     "cats": [
@@ -1277,11 +1277,26 @@
     "cats": [
       59
     ],
+    "description": "Polyfill is a service which accepts a request for a set of browser features and returns only the polyfills that are needed by the requesting browser.",
     "icon": "polyfill.svg",
-    "scriptSrc": [
-      "^https?://cdn\\.polyfill\\.io/"
-    ],
+    "scriptSrc": "polyfill\\.io/v([\\d\\.]+)\\;version:\\1",
+    "oss": true,
     "website": "https://polyfill.io"
+  },
+  "Polylang": {
+    "cats": [
+      87,
+      89
+    ],
+    "description": "Polylang is a WordPress plugin which allows you to create a bilingual or multilingual WordPress site.",
+    "icon": "Polylang.svg",
+    "dom": "img[src*='/wp-content/plugins/polylang/']",
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://github.com/polylang/polylang"
   },
   "Polymer": {
     "cats": [
@@ -1352,6 +1367,24 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/popularfx/.+\\?ver=([\\d\\.]+)\\;version:\\1",
     "website": "https://popularfx.com"
+  },
+  "Popup Maker": {
+    "cats": [
+      87
+    ],
+    "description": "Popup Maker is a plugin that lets you create popup windows for your WordPress website.",
+    "icon": "Popup Maker.png",
+    "js": {
+      "pum_popups": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/popup-maker/(?:.+site(?:\\.min)?\\.js\\?.+ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wppopupmaker.com"
   },
   "Post Affiliate Pro": {
     "cats": [
@@ -1900,13 +1933,7 @@
       36
     ],
     "description": "PubMatic is a company that develops and implements online advertising software and strategies for the digital publishing and advertising industry.",
-    "dom": {
-      "iframe[src*='.pubmatic.com']": {
-        "attributes": {
-          "src": ""
-        }
-      }
-    },
+    "dom": "iframe[src*='.pubmatic.com'], link[href*='.pubmatic.com']",
     "icon": "PubMatic.svg",
     "pricing": [
       "payg"
@@ -2001,6 +2028,21 @@
     "saas": true,
     "scriptSrc": "cdn\\.pushowl\\.com",
     "website": "https://pushowl.com"
+  },
+  "PushPushGo": {
+    "cats": [
+      32
+    ],
+    "description": "PushPushGo is a GDPR-ready platform which enables startups, SMBs and corporations to create and send automatic web push notification campaigns on desktop and via mobile to manage various scenarios including abandoned carts, segmentation, cross-selling, customer engagement, and return rates.",
+    "icon": "PushPushGo.svg",
+    "dom": "link[href*='.pushpushgo.com/']",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.pushpushgo\\.com/",
+    "website": "https://pushpushgo.com"
   },
   "Pushnami": {
     "cats": [

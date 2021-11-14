@@ -143,6 +143,25 @@
     "scriptSrc": "assets\\.dailydeals\\.ai/",
     "website": "https://dailydeals.ai"
   },
+  "DailyKarma": {
+    "cats": [
+      5
+    ],
+    "description": "DailyKarma is a turnkey cause marketing solutions for ecommerce merchants.",
+    "icon": "DailyKarma.png",
+    "js": {
+      "dkWidgetInit": "\\;confidence:50",
+      "dk_widget": "\\;confidence:50"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "assets\\.dailykarma\\.io/",
+    "website": "https://www.dailykarma.com"
+  },
   "Dancer": {
     "cats": [
       18
@@ -913,6 +932,20 @@
     "scriptSrc": "googletagservices\\.com/tag/js/gpt(?:_mobile)?\\.js",
     "website": "http://www.google.com/dfp"
   },
+  "DoubleVerify": {
+    "cats": [
+      36,
+      10
+    ],
+    "description": "DoubleVerify is a software platform for digital media measurement, data, and analytics.",
+    "icon": "DoubleVerify.svg",
+    "dom": "link[href*='.doubleverify.com']",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://doubleverify.com"
+  },
   "Doxygen": {
     "cats": [
       4
@@ -934,6 +967,27 @@
     "icon": "draftjs.png",
     "scriptSrc": "draft-js(@|/)([\\d.]+)\\;version:\\2",
     "website": "https://draftjs.org/"
+  },
+  "Dreamdata": {
+    "cats": [
+      32,
+      10
+    ],
+    "description": "Dreamdata is a B2B revenue attribution platform.",
+    "icon": "Dreamdata.png",
+    "dom": "link[href*='.bizible.com']",
+    "js": {
+      "Bizible": "",
+      "BizTrackingA": ""
+    },
+    "scriptSrc": "\\.bizible\\.com/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://dreamdata.io"
   },
   "DreamWeaver": {
     "cats": [
@@ -1020,6 +1074,19 @@
       "sites\\/(?!default|all).*\\/files"
     ],
     "website": "https://www.drupal.org/docs/multisite-drupal"
+  },
+  "DTScout": {
+    "cats": [
+      36
+    ],
+    "description": "DTScout is a marketing data intelligence software.",
+    "icon": "DTScout.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.dtscout\\.com/",
+    "website": "https://www.dtscout.com"
   },
   "Duda": {
     "cats": [

@@ -380,6 +380,25 @@
     ],
     "website": "https://niagahoster.co.id"
   },
+  "Ninja Forms": {
+    "cats": [
+      87
+    ],
+    "description": "Ninja Forms is the WordPress form builder.",
+    "icon": "Ninja Forms.svg",
+    "dom": "link[href*='/wp-content/plugins/ninja-forms/']",
+    "js": {
+      "nfForms": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ninja-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://ninjaforms.com"
+  },
   "NitroPack": {
     "cats": [
       23

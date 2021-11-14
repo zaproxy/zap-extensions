@@ -91,16 +91,17 @@
     "website": "https://www.amp.dev",
     "xhr": "cdn\\.ampproject\\.org"
   },
-  "AMP Plugin": {
+  "AMP for WordPress": {
     "cats": [
-      1,
-      5,
       87
     ],
+    "description": "AMP for WordPress automatically adds Accelerated Mobile Pages (Google AMP Project) functionality to your WordPress site.",
     "icon": "Accelerated-Mobile-Pages.svg",
+    "implies": "AMP",
     "meta": {
       "generator": "^AMP Plugin v(\\d+\\.\\d+.*)$\\;version:\\1"
     },
+    "dom": "link[href*='/wp-content/plugins/amp/']",
     "requires": "WordPress",
     "website": "https://amp-wp.org"
   },
@@ -592,6 +593,19 @@
     "scriptSrc": "\\.adlightning\\.com",
     "website": "https://www.adlightning.com"
   },
+  "Adloox": {
+    "cats": [
+      36
+    ],
+    "description": "Adloox is a European-born buy-side ad verification and insights company.",
+    "icon": "Adloox.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.adlooxtracking\\.com/",
+    "website": "https://www.adloox.com"
+  },
   "AdBridg": {
     "cats": [
       36
@@ -652,6 +666,7 @@
     ],
     "description": "AdRoll is a digital marketing technology platform that specializes in retargeting.",
     "icon": "AdRoll.svg",
+    "dom": "link[href*='.adroll.com']",
     "js": {
       "adroll_adv_id": "",
       "adroll_pix_id": ""
@@ -821,12 +836,41 @@
       5
     ],
     "description": "AddToAny is a universal sharing platform that can be integrated into a website by use of a web widget or plugin.",
-    "icon": "AddToAny.png",
+    "icon": "AddToAny.svg",
     "js": {
       "a2apage_init": ""
     },
     "scriptSrc": "addtoany\\.com/menu/page\\.js",
     "website": "http://www.addtoany.com"
+  },
+  "AddToAny Share Buttons": {
+    "cats": [
+      87
+    ],
+    "description": "AddToAny Share Buttons plugin for WordPress increases traffic and engagement by helping people share your posts and pages to any service.",
+    "icon": "AddToAny.svg",
+    "implies": "AddToAny",
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/add-to-any/addtoany\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://github.com/projectestac/wordpress-add-to-any"
+  },
+  "Adform": {
+    "cats": [
+      36
+    ],
+    "description": "Adform is an all-in-one platform for digital advertising.",
+    "icon": "Adform.svg",
+    "dom": "link[href*='.adformdsp.net'], link[href*='.adform.net']",
+    "scriptSrc": "\\.adform\\.net/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://site.adform.com"
   },
   "Addi": {
     "cats": [
@@ -881,6 +925,43 @@
       "cdn\\.admitad\\.com"
     ],
     "website": "https://www.admitad.com"
+  },
+  "Admixer": {
+    "cats": [
+      36
+    ],
+    "description": "Admixer is an independent adtech company developing an ecosystem of full-stack programmatic solutions.",
+    "icon": "Admixer.svg",
+    "js": {
+      "admixerML": "",
+      "admixerAds": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring",
+      "onetime"
+    ],
+    "scriptSrc": "\\.admixer\\.net/",
+    "website": "https://admixer.com"
+  },
+  "Admo.tv": {
+    "cats": [
+      36
+    ],
+    "description": "Admo.tv is a company developing a TV and radio analytics platform.",
+    "icon": "Admo.tv.svg",
+    "dom": "link[href*='.admo.tv'], a[href*='.admo.tv'][target='_blank'], iframe[src*='.admo.tv/']",
+    "js": {
+      "ADMO_config": "",
+      "ADMO_TT": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.admo.tv"
   },
   "Adnegah": {
     "cats": [
@@ -1115,6 +1196,25 @@
     },
     "scriptSrc": "(?:ad\\.advertstream\\.com|adxcore\\.com)",
     "website": "http://www.advertstream.com"
+  },
+  "Advanced Custom Fields": {
+    "cats": [
+      87
+    ],
+    "description": "Advanced Custom Fields is a WordPress plugin which allows you to add extra content fields to your WordPress edit screens.",
+    "icon": "Advanced Custom Fields.png",
+    "js": {
+      "acf": "",
+      "acfL10n": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/advanced-custom-fields(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.advancedcustomfields.com"
   },
   "Adverticum": {
     "cats": [
@@ -1446,6 +1546,25 @@
     "scriptSrc": "cdn-mgsm\\.akinon\\.net/",
     "website": "https://www.akinon.com/"
   },
+  "Akismet": {
+    "cats": [
+      87
+    ],
+    "description": "Akismet is a service that filters spam from comments, trackbacks, and contact form messages.",
+    "icon": "Akismet.png",
+    "dom": "link[href*='/wp-content/plugins/akismet/']",
+    "js": {
+      "ak_js.checkValidity": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/akismet/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://akismet.com"
+  },
   "Akka HTTP": {
     "cats": [
       18,
@@ -1567,9 +1686,14 @@
     "cpe": "cpe:/a:semperfiwebdesign:all_in_one_seo_pack",
     "description": "All in One SEO plugin optimizes WordPress website and its content for search engines.",
     "html": "<!-- All in One SEO Pack ([\\d.]+) \\;version:\\1",
-    "icon": "all-in-One-SEO-Pack.png",
+    "icon": "AIOSEO.svg",
     "requires": "WordPress",
-    "website": "https://wordpress.org/plugins/all-in-one-seo-pack/"
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://aioseo.com"
   },
   "AlloyUI": {
     "cats": [
@@ -1921,6 +2045,22 @@
       "generator": "Amiro"
     },
     "website": "http://amirocms.com"
+  },
+  "Amplience": {
+    "cats": [
+      1
+    ],
+    "description": "Amplience is an API-first, headless content management platform for enterprise retail.",
+    "icon": "Amplience.png",
+    "dom": "link[href*='.amplience.net'], img[src*='.amplience.net']",
+    "js": {
+      "amplianceTemplates": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://amplience.com"
   },
   "Amplitude": {
     "cats": [
@@ -2320,7 +2460,7 @@
       36
     ],
     "description": "AppNexus is a cloud-based software platform that enables and optimizes programmatic online advertising.",
-    "dom": "iframe[src*='.adnxs.com'], img[src*='.adnxs.com']",
+    "dom": "iframe[src*='.adnxs.com'], img[src*='.adnxs.com'], link[href*='.adnxs.com']",
     "icon": "AppNexus.svg",
     "js": {
       "appnexus": "",
@@ -2894,6 +3034,22 @@
     "saas": true,
     "website": "https://www.autopilothq.com"
   },
+  "Autoptimize": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Autoptimize is a popular performance plugin for WordPress.",
+    "icon": "Autoptimize.png",
+    "dom": "link[href*='/wp-content/plugins/autoptimize/']",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/autoptimize/.+\\.js(?:\\?ao_version=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://autoptimize.com"
+  },
   "Avangate": {
     "cats": [
       6
@@ -3156,6 +3312,15 @@
     "scriptSrc": "amcharts.*\\.js",
     "website": "http://amcharts.com"
   },
+  "Amobee": {
+    "cats": [
+      36
+    ],
+    "description": "Amobee is a cloud-based advertising and data management platform.",
+    "icon": "Amobee.png",
+    "dom": "img[src*='.turn.com/r/beacon']",
+    "website": "https://www.amobee.com"
+  },
   "amoCRM": {
     "cats": [
       53
@@ -3196,5 +3361,17 @@
     "icon": "augmented-ui.png",
     "oss": true,
     "website": "http://augmented-ui.com"
+  },
+  "Alpine Linux": {
+    "cats": [
+      28
+    ],
+    "description": "Alpine Linux is a security-oriented, lightweight Linux distribution based on musl libc and busybox.",
+    "headers": {
+      "X-Powered-By": "Alpine"
+    },
+    "oss": true,
+    "icon": "Alpine Linux.svg",
+    "website": "https://www.alpinelinux.org"
   }
 }

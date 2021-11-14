@@ -503,6 +503,24 @@
     },
     "website": "http://pkp.sfu.ca/ojs"
   },
+  "OpenWeb": {
+    "cats": [
+      36
+    ],
+    "description": "OpenWeb is a social engagement platform that builds online communities around digital content.",
+    "icon": "OpenWeb.svg",
+    "meta": {
+      "spotim-ads": ""
+    },
+    "js": {
+      "SPOTIM.initConversation": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.openweb.com"
+  },
   "Open Web Analytics": {
     "cats": [
       10
@@ -691,7 +709,7 @@
     ],
     "cpe": "cpe:/a:openx:openx",
     "description": "OpenX is a programmatic advertising technology company.",
-    "dom": "iframe[src*='.openx.net'], img[src*='.openx.net']",
+    "dom": "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']",
     "icon": "OpenX.png",
     "js": {
       "openx.name": "openx"
@@ -741,7 +759,7 @@
     "cookies": {
       "optimizelyEndUserId": ""
     },
-    "description": "Optimizely is an American company that provides digital experience platform software as a service.",
+    "description": "Optimizely is an experimentation platform that helps developers build and run A/B tests on websites.",
     "icon": "Optimizely.svg",
     "js": {
       "optimizely": ""
@@ -753,6 +771,23 @@
     "saas": true,
     "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
+  },
+  "OptiMonk": {
+    "cats": [
+      98,
+      77
+    ],
+    "description": "OptiMonk is an on-site message toolkit used to improve conversions using action-based popups ad bars.",
+    "icon": "OptiMonk.svg",
+    "dom": "link[href*='.optimonk.com']",
+    "scriptSrc": "\\.optimonk\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "website": "https://www.optimonk.com"
   },
   "Optimove": {
     "cats": [
@@ -771,6 +806,23 @@
     "saas": true,
     "scriptSrc": "\\.optimove\\.net/.+v([\\d\\.]+)\\.js\\;version:\\1",
     "website": "https://www.optimove.com"
+  },
+  "OptinMonster": {
+    "cats": [
+      87
+    ],
+    "description": "OptinMonster is a lead-generation plugin for WordPress.",
+    "icon": "OptinMonster.png",
+    "js": {
+      "OptinMonsterApp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://optinmonster.com"
   },
   "Oracle Application Server": {
     "cats": [
@@ -1083,7 +1135,7 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "widgets\\.outbrain\\.com/outbrain\\.js",
+    "scriptSrc": "\\.outbrain\\.com/",
     "website": "https://www.outbrain.com"
   },
   "Outlook Web App": {

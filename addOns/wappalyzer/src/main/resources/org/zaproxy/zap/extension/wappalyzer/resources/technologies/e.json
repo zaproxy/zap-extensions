@@ -104,6 +104,26 @@
     "website": "https://ex.co",
     "xhr": "prd-collector-anon\\.ex\\.co"
   },
+  "ExactMetrics": {
+    "cats": [
+      87,
+      10
+    ],
+    "description": "ExactMetrics (formerly Google Analytics Dashboard for WP) plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.",
+    "icon": "ExactMetrics.svg",
+    "js": {
+      "ExactMetrics": "",
+      "exactmetrics_frontend": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/google-analytics-dashboard-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.exactmetrics.com"
+  },
   "EasyDigitalDownloads": {
     "cats": [
       6,
@@ -321,6 +341,23 @@
     },
     "scriptSrc": "elementor/assets/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
     "website": "https://elementor.com"
+  },
+  "Elementor Header & Footer Builder": {
+    "cats": [
+      87
+    ],
+    "description": "Elementor Header & Footer Builder is a simple yet powerful WordPress plugin that allows you to create a layout with Elementor and set it as.",
+    "icon": "Elementor Header & Footer Builder.svg",
+    "implies": "Elementor",
+    "dom": "link[href*='/wp-content/plugins/header-footer-elementor/']",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "WordPress",
+      "Elementor"
+    ],
+    "website": "https://github.com/brainstormforce/header-footer-elementor"
   },
   "Elevar": {
     "cats": [
@@ -642,6 +679,22 @@
     "icon": "syncfusion.svg",
     "website": "https://www.syncfusion.com/javascript-ui-controls"
   },
+  "Essential Addons for Elementor": {
+    "cats": [
+      87
+    ],
+    "description": "Essential Addons for Elementor gives you 70+ creative elements and extensions to help you extend the stock features of Elementor page builder.",
+    "icon": "Essential Addons for Elementor.svg",
+    "dom": "link[href*='/wp-content/uploads/essential-addons-elementor/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/uploads/essential-addons-elementor/",
+    "website": "https://essential-addons.com/elementor/"
+  },
   "Estore Compare": {
     "cats": [
       74
@@ -730,6 +783,22 @@
     },
     "scriptSrc": "exhibit.*\\.js",
     "website": "http://simile-widgets.org/exhibit/"
+  },
+  "ExoClick": {
+    "cats": [
+      36
+    ],
+    "description": "ExoClick is a Barcelona-based online advertising company, which provides online advertising services to both advertisers and publishers.",
+    "icon": "ExoClick.png",
+    "meta": {
+      "exoclick-site-verification": ""
+    },
+    "scriptSrc": "\\.exoclick\\.com/",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.exoclick.com"
   },
   "ExitIntel": {
     "cats": [
@@ -827,6 +896,23 @@
     },
     "scriptSrc": "ext-base\\.js",
     "website": "https://www.sencha.com"
+  },
+  "Extendify": {
+    "cats": [
+      87
+    ],
+    "description": "Extendify (formerly Redux framework) is one of the most popular, advanced, and free to use option panel frameworks for WordPress themes and plugins.",
+    "icon": "Extendify.svg",
+    "meta": {
+      "framework": "^Redux ([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://extendify.com"
   },
   "ExtendThemes Calliope": {
     "cats": [
@@ -1110,6 +1196,24 @@
     "icon": "eway.png",
     "scriptSrc": "secure\\.ewaypayments\\.com",
     "website": "https://www.eway.com.au/"
+  },
+  "EWWW Image Optimizer": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "EWWW Image Optimizer is an image optimisation WordPress plugin designed to improve the performance of your website.",
+    "icon": "EWWW Image Optimizer.png",
+    "js": {
+      "ewww_webp_supported": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ewww-image-optimizer/",
+    "website": "https://github.com/nosilver4u/ewww-image-optimizer"
   },
   "eZ Platform": {
     "cats": [

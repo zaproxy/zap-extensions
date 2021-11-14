@@ -188,6 +188,23 @@
     "scriptSrc": "underscore.*\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "http://underscorejs.org"
   },
+  "Understrap": {
+    "cats": [
+      80
+    ],
+    "description": "Understrap is a renowned WordPress starter theme framework that combined Underscores and Bootstrap.",
+    "icon": "Understrap.png",
+    "implies": [
+      "Bootstrap",
+      "Underscore.js"
+    ],
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "wp-content/themes/understrap(?:[masterchild-]+)?(?:[masterchild-]+)?/",
+    "website": "https://understrap.com"
+  },
   "Uniconsent": {
     "cats": [
       67
@@ -382,6 +399,7 @@
       67
     ],
     "description": "Usercentrics is a SaaS enterprise solution for Consent Management (CMP) that helps enterprise customers to obtain, manage and document the user consent.",
+    "dom": "link[href*='app.usercentrics.eu'], script[data-usercentrics]",
     "icon": "Usercentrics.svg",
     "js": {
       "usercentrics.appVersion": "([\\d.]+)\\;version:\\1"

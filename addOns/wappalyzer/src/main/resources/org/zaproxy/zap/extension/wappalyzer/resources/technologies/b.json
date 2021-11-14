@@ -119,6 +119,18 @@
     "scriptSrc": "hm\\.baidu\\.com/hm\\.js",
     "website": "https://tongji.baidu.com/"
   },
+  "Bambuser": {
+    "cats": [
+      19
+    ],
+    "js":{
+      "_bambuser": ""
+    },
+    "icon": "Bambuser.png",
+    "pricing": [ "poa" ],
+    "scriptSrc": "cdn\\.liveshopping\\.bambuser\\.com",
+    "website": "https://bambuser.com/"
+  },
   "Banshee": {
     "cats": [
       1,
@@ -590,6 +602,24 @@
     "scriptSrc": "\\.getblue\\.io",
     "website": "https://web.getblue.io/en/"
   },
+  "BlueConic": {
+    "cats": [
+      97
+    ],
+    "description": "BlueConic is the advanced customer data platform that liberates companies' first-party data from disparate systems.",
+    "icon": "BlueConic.svg",
+    "js": {
+      "blueConicClient": "",
+      "blueConicPreListeners": "",
+      "loadValuesFromBlueConic": "",
+      "BlueConicEngagement": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.blueconic.com"
+  },
   "Blue Triangle": {
     "cats": [
       16,
@@ -657,6 +687,15 @@
     "saas": true,
     "scriptSrc": "\\.blueknow\\.com",
     "website": "https://www.blueknow.com"
+  },
+  "Blueshift": {
+    "cats": [
+      10
+    ],
+    "description": "Blueshift offers the SmartHub CDP, which helps brands deliver relevant and connected experiences across every customer interaction.",
+    "icon": "Blueshift.png",
+    "scriptSrc": "cdn.getblueshift.com/",
+    "website": "https://blueshift.com/"
   },
   "Boba.js": {
     "cats": [
@@ -976,7 +1015,7 @@
       "bownow_cid": "",
       "bownow_mbid": ""
     },
-    "description": "BowNow is a marketing automation tool with business card management, sales support, analysis, and e-mail magazine functions.",
+    "description": "BowNow is a marketing automation tool with business card management, sales support, analysis, and email magazine functions.",
     "icon": "BowNow.png",
     "js": {
       "_bownow_ts": ""
@@ -1125,6 +1164,35 @@
     "saas": true,
     "scriptSrc": "\\.getbread\\.com",
     "website": "https://www.breadpayments.com"
+  },
+  "Breadcrumb NavXT": {
+    "cats": [
+      87
+    ],
+    "description": "Breadcrumb NavXT is a WordPress plugin compatible with WordPress versions 4.9 and up.",
+    "icon": "Breadcrumb NavXT.svg",
+    "html": "<!-- Breadcrumb NavXT ([\\d\\.]+)\\;version:\\1",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "oss": true,
+    "website": "https://github.com/mtekk/Breadcrumb-NavXT"
+  },
+  "Breinify": {
+    "cats": [
+      76
+    ],
+    "description": "Breinify is a powerful personalisation engine that enables brands to create personalised digital experiences at an individual level across web, e-mail, SMS and app channels.",
+    "icon": "Breinify.png",
+    "js": {
+      "Breinify.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://home.breinify.ai"
   },
   "BrightInfo": {
     "cats": [
@@ -1321,6 +1389,23 @@
     },
     "icon": "Bugcrowd.svg",
     "website": "https://www.bugcrowd.com"
+  },
+  "BugHerd": {
+    "cats": [
+      13
+    ],
+    "description": "BugHerd is a cloud-based feedback collection and bug management tool.",
+    "icon": "BugHerd.svg",
+    "js": {
+      "BugHerdConfig": ""
+    },
+    "saas": true,
+    "scriptSrc": "\\.bugherd\\.com/",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://bugherd.com"
   },
   "Bugzilla": {
     "cats": [

@@ -1,4 +1,20 @@
 {
+  "Iamport": {
+    "cats": [
+      41
+    ],
+    "description": "Iamport is an information technology company based in South Korea.",
+    "icon": "Iamport.png",
+    "js": {
+      "IMP.request_pay": ""
+    },
+    "scriptSrc": "cdn\\.iamport\\.kr/js/iamport\\.payment-([\\d\\.]+)\\.js\\;version:\\1",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.iamport.kr"
+  },
   "IBM Coremetrics": {
     "cats": [
       10
@@ -142,6 +158,24 @@
     "scriptSrc": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
   },
+  "Imagely NextGEN Gallery": {
+    "cats": [
+      87,
+      7
+    ],
+    "description": "NextGEN Gallery is a WordPress gallery plugin maintained by Imagely.",
+    "icon": "Imagely.png",
+    "dom": "link[href*='/wp-content/plugins/nextgen-gallery/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/nextgen-gallery(?:-pro|-plus)?/",
+    "website": "https://www.imagely.com/wordpress-gallery-plugin"
+  },
   "Image Relay": {
     "cats": [
       95
@@ -170,6 +204,20 @@
     },
     "scriptSrc": "^immutable\\.(?:min\\.)?js$",
     "website": "https://facebook.github.io/immutable-js/"
+  },
+  "i-mobile": {
+    "cats": [
+      36
+    ],
+    "description": "i-mobile is a advertising platform for clients to advertise their product and for publishers to monetize their cyberspace.",
+    "icon": "i-mobile.png",
+    "dom": "img[src*='.i-mobile.co.jp/']",
+    "scriptSrc": "\\.i-mobile\\.co\\.jp/",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "http://www2.i-mobile.co.jp"
   },
   "Impact": {
     "cats": [
@@ -341,6 +389,23 @@
     },
     "website": "https://infernojs.org"
   },
+  "Infolinks": {
+    "cats": [
+      36
+    ],
+    "description": "Infolinks is an online advertising platform for publishers and advertisers.",
+    "icon": "Infolinks.png",
+    "js": {
+      "infolinks_pid": "",
+      "infolinks_wsid": ""
+    },
+    "saas": true,
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "website": "https://www.infolinks.com"
+  },
   "Insider": {
     "cats": [
       97
@@ -475,6 +540,20 @@
       "heatmap-events-collector\\.instapage\\.com"
     ],
     "website": "https://instapage.com"
+  },
+  "Integral Ad Science": {
+    "cats": [
+      36
+    ],
+    "description": "Integral Ad Science is an American publicly owned technology company that analyses the value of digital advertising placements.",
+    "icon": "Integral Ad Science.svg",
+    "dom": "link[href*='.adsafeprotected.com']",
+    "scriptSrc": "\\.adsafeprotected\\.com/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://integralads.com"
   },
   "Intel Active Management Technology": {
     "cats": [
@@ -849,6 +928,23 @@
     "saas": true,
     "website": "https://ipstack.com",
     "xhr": "api\\.ipstack\\.com"
+  },
+  "iThemes Security": {
+    "cats": [
+      87,
+      16
+    ],
+    "description": " iThemes Security(formerly known as Better WP Security) plugin enhances the security and protection of your WordPress website.",
+    "icon": "iThemes Security.svg",
+    "dom": "link[href*='/wp-content/plugins/better-wp-security/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/better-wp-security/",
+    "website": "https://ithemes.com/security"
   },
   "iubenda": {
     "cats": [

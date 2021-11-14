@@ -555,6 +555,20 @@
     "scriptSrc": "cdn\\.firepush\\.\\w+",
     "website": "https://getfirepush.com"
   },
+  "FirstHive": {
+    "cats": [
+      97
+    ],
+    "description": "FirstHive is a full-stack customer data platform that enables consumer marketers and brands to take control of their first-party data from all sources.",
+    "icon": "FirstHive.svg",
+    "scriptSrc": "firsthive\\.com/engage/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://firsthive.com"
+  },
   "FirstImpression.io": {
     "cats": [
       36
@@ -988,6 +1002,25 @@
       "\\bFrance Express\\b"
     ],
     "website": "https://www.france-express.com"
+  },
+  "FreakOut": {
+    "cats": [
+      36
+    ],
+    "description": "FreakOut is a marketing technology company with programmatic solutions (DSP,SSP) that delivers in-feed display and video formats across global publishers.",
+    "icon": "FreakOut.png",
+    "dom": "img[src*='.fout.jp/'], link[href*='.fout.jp']",
+    "js": {
+      "FOut": "",
+      "_fout_queue": "",
+      "_fout_jsurl": ""
+    },
+    "scriptSrc": "\\.fout\\.jp/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.fout.co.jp"
   },
   "FreeBSD": {
     "cats": [

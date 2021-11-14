@@ -394,6 +394,22 @@
     "scriptSrc": "\\.limechat\\.ai/",
     "website": "https://www.limechat.ai"
   },
+  "Limit Login Attempts Reloaded": {
+    "cats": [
+      87,
+      16
+    ],
+    "description": "Limit Login Attempts Reloaded stops brute-force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.",
+    "icon": "Limit Login Attempts Reloaded.png",
+    "dom": "link#llar-login-page-styles-css",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://www.limitloginattempts.com"
+  },
   "LinkSmart": {
     "cats": [
       36
@@ -624,6 +640,18 @@
     },
     "scriptSrc": "gdpr\\.privacymanager\\.io",
     "website": "https://liveramp.com/our-platform/preference-consent-management"
+  },
+  "LiveRamp DPM": {
+    "cats": [
+      36
+    ],
+    "description": "LiveRamp DPM is a TV advertising metrics and analytics platform.",
+    "icon": "LiveRamp.svg",
+    "js": {
+      "dpmComscoreVars": ""
+    },
+    "scriptSrc": "c\\.tvpixel\\.com/js/current/dpm_pixel_min\\.js",
+    "website": "https://liveramp.com/data-plus-math"
   },
   "LiveStreet CMS": {
     "cats": [
