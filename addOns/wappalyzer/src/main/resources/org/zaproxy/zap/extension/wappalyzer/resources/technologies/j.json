@@ -257,6 +257,22 @@
     },
     "website": "https://jenkins.io/"
   },
+  "Jetpack": {
+    "cats": [
+      87
+    ],
+    "description": "Jetpack is a popular WordPress plugin created by Automattic, the people behind WordPress.com.",
+    "dom": "link[href*='/wp-content/plugins/jetpack/']",
+    "icon": "Jetpack.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/jetpack/",
+    "website": "https://jetpack.com"
+  },
   "Jetshop": {
     "cats": [
       6
@@ -444,6 +460,24 @@
     "saas": true,
     "scriptSrc": "cdn\\.judge\\.me",
     "website": "https://judge.me/"
+  },
+  "JuicyAds": {
+    "cats": [
+      36
+    ],
+    "description": "JuicyAds is a legitimate advertising network that specializes in adult content.",
+    "icon": "JuicyAds.png",
+    "meta": {
+      "juicyads-site-verification": ""
+    },
+    "js": {
+      "adsbyjuicy": ""
+    },
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.juicyads.com"
   },
   "Jumbo": {
     "cats": [

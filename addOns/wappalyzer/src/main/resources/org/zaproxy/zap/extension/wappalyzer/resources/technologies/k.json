@@ -100,6 +100,21 @@
     "scriptSrc": "/wp-content/themes/virtue/.+main-min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.kadencewp.com/product/virtue-free-theme"
   },
+  "Kaira Vogue": {
+    "cats": [
+      80
+    ],
+    "description": "Vogue is a very easy to use multipurpose WordPress theme created by Kaira.",
+    "icon": "Kaira.png",
+    "dom": "link#vogue-style-css",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/vogue(?:-child)?/",
+    "website": "https://kairaweb.com/wordpress-theme/vogue"
+  },
   "Kajabi": {
     "cats": [
       6
@@ -217,7 +232,7 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "property\\.infusionsoft\\.com",
+    "scriptSrc": "\\.infusionsoft\\.com/",
     "website": "https://keap.com",
     "xhr": "property\\.infusionsoft\\.com"
   },
@@ -393,6 +408,21 @@
     "implies": "WordPress",
     "website": "https://kinsta.com"
   },
+  "Kirki Customizer Framework": {
+    "cats": [
+      87
+    ],
+    "description": "Kirki Customizer Framework is a toolkit allowing WordPress developers to use the Customizer and take advantage of its advanced features and flexibility by abstracting the code.",
+    "icon": "Kirki Customizer Framework.png",
+    "dom": "link[href*='/wp-content/plugins/kirki/']",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/kirki/",
+    "website": "https://kirki.org"
+  },
   "Kitcart": {
     "cats": [
       6
@@ -454,6 +484,37 @@
     "saas": true,
     "scriptSrc": "\\.klarnaservices\\.com/lib\\.js",
     "website": "https://www.klarna.com/international/"
+  },
+  "Klaro": {
+    "cats": [
+      67
+    ],
+    "description": "Klaro is a simple consent management platform and privacy tool.",
+    "icon": "Klaro.png",
+    "js": {
+      "klaroConfig": "",
+      "klaro": ""
+    },
+    "saas": true,
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://heyklaro.com"
+  },
+  "Klasha": {
+    "cats": [
+      41
+    ],
+    "description": "Klasha is a payment solution provider that handles a store's entire checkout.",
+    "icon": "Klasha.svg",
+    "js": {
+      "KlashaClient": ""
+    },
+    "scriptSrc": "klasha-integration\\.js",
+    "website": "https://www.klasha.com/"
   },
   "Klaviyo": {
     "cats": [

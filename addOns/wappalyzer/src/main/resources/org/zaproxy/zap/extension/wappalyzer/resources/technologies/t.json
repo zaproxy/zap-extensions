@@ -97,6 +97,24 @@
     "url": "/typo3/",
     "website": "https://typo3.org/"
   },
+  "Typof": {
+    "cats": [
+      6
+    ],
+    "description": "Typof is an ecommerce platform for artisans that allows to create a premium website and sell items directly to the consumer.",
+    "icon": "Typof.png",
+    "cookies": {
+      "typof_session": "\\;confidence:50"
+    },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
+    "website": "https://typof.com"
+  },
   "Tabby": {
     "cats": [
       41,
@@ -148,6 +166,20 @@
     "icon": "TableCheck.svg",
     "scriptSrc": "tc_widget\\.js",
     "website": "https://www.tablecheck.com"
+  },
+  "TablePress": {
+    "cats": [
+      87
+    ],
+    "description": "TablePress is a free and open source plugin for the WordPress publishing platform. It enables you to create and manage tables on your website, without any coding knowledge.",
+    "icon": "TablePress.png",
+    "dom": "link[href*='/wp-content/plugins/tablepress/']",
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://tablepress.org"
   },
   "Taboola": {
     "cats": [
@@ -309,6 +341,25 @@
     "saas": true,
     "scriptSrc": "cdn\\.tamara\\.co",
     "website": "https://tamara.co/"
+  },
+  "Tapcart": {
+    "cats": [
+      19
+    ],
+    "description": "Tapcart is a mobile commerce SaaS platform that integrates directly with Shopify.",
+    "icon": "Tapcart.svg",
+    "requires": "Shopify",
+    "dom": "a[href*='tapcart.app'][target='_blank']",
+    "js": {
+      "tapcartwebBanner": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "cdn\\.tapcart\\.com/",
+    "website": "https://tapcart.com"
   },
   "Target2Sell": {
     "cats": [
@@ -603,6 +654,22 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thethemefoundry.com/wordpress-themes/make"
+  },
+  "The Events Calendar": {
+    "cats": [
+      87
+    ],
+    "description": "The Events Calendar is a free event management plugin for WordPress.",
+    "icon": "The Events Calendar.png",
+    "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
+    "website": "https://theeventscalendar.com"
   },
   "Thefork": {
     "cats": [
@@ -1191,15 +1258,18 @@
     "cats": [
       72
     ],
-    "description": "The Online Scheduling and Resource Management Software.",
+    "description": "Timify is an online scheduling and resource management software for small, medium and large businesses.",
     "icon": "Timify.svg",
+    "js": {
+      "TimifyWidget": ""
+    },
     "pricing": [
       "low",
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "https://widget\\.timify\\.com/js/widget\\.js",
-    "website": "https://www.timify.com/"
+    "scriptSrc": "\\.timify\\.com/",
+    "website": "https://www.timify.com"
   },
   "TinyMCE": {
     "cats": [
@@ -1450,6 +1520,7 @@
     ],
     "description": "Treasure Data is the only enterprise customer data platform.",
     "icon": "Treasure Data.svg",
+    "dom": "link[href*='.treasuredata.com']",
     "js": {
       "Treasure.version": "(.+)\\;version:\\1"
     },
@@ -1667,6 +1738,23 @@
     },
     "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
     "website": "https://turfjs.org/"
+  },
+  "TVSquared": {
+    "cats": [
+      36
+    ],
+    "description": "TVSquared is a cross-platform TV ad measurement, analytics and optimisation platform.",
+    "icon": "TVSquared.png",
+    "dom": "link[href*='.tvsquared.com']",
+    "js": {
+      "TV2Track": "",
+      "_tvq": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.tvsquared.com"
   },
   "Twenty Eleven": {
     "cats": [

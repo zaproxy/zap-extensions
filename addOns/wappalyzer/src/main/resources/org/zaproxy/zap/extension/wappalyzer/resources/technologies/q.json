@@ -1,4 +1,15 @@
 {
+  "Qualaroo": {
+    "cats": [
+      73
+    ],
+    "description": "Qualaroo provides surveys on websites and apps to get user feedback.",
+    "icon": "qualaroo.png",
+    "saas": true,
+    "pricing": [ "recurring", "mid" ],
+    "scriptSrc": "cl\\.qualaroo\\.com",
+    "website": "https://qualaroo.com/"
+  },
   "Qualtrics": {
     "cats": [
       73
@@ -36,6 +47,7 @@
     ],
     "description": "Quantcast Measure is an audience insights and analytics tool.",
     "icon": "Quantcast.png",
+    "dom": "link[href*='.quantserve.com']",
     "js": {
       "quantserve": ""
     },
@@ -150,5 +162,17 @@
       "Quill": ""
     },
     "website": "http://quilljs.com"
+  },
+  "Quora Pixel": {
+    "cats": [
+      10
+    ],
+    "description": "Quora Pixel is a tool that is placed in your website code to track traffic and conversions.",
+    "icon": "Quora.svg",
+    "js": {
+      "qp.qp": ""
+    },
+    "scriptSrc": "\\.quora\\.com/",
+    "website": "https://quoraadsupport.zendesk.com/hc/en-us/categories/115001573928-Pixels-Tracking"
   }
 }

@@ -289,6 +289,20 @@
     ],
     "website": "https://www.genesys.com"
   },
+  "Geniee": {
+    "cats": [
+      36
+    ],
+    "description": "Geniee is an ad technology company.",
+    "icon": "Geniee.png",
+    "dom": "img[src*='.gssprt.jp/'], link[href*='.gssprt.jp']",
+    "scriptSrc": "\\.gsspcln\\.jp/",  
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://geniee.co.jp"
+  },
   "Gentoo": {
     "cats": [
       28
@@ -375,6 +389,27 @@
     ],
     "saas": true,
     "website": "https://www.getmeashop.com"
+  },
+  "GetResponse": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "GetResponse is an email marketing app that allows you to create a mailing list and capture data onto it.",
+    "icon": "GetResponse.svg",
+    "dom": "form[action*='.getresponse.com/']",
+    "js": {
+      "GRAPP": "",
+      "GRWF2": ""
+    },
+    "scriptSrc": "\\.getresponse\\.com/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "recurring",
+      "payg"
+    ],
+    "website": "https://www.getresponse.com"
   },
   "GetSimple CMS": {
     "cats": [
@@ -671,6 +706,22 @@
     },
     "icon": "GoCache.png",
     "website": "https://www.gocache.com.br/"
+  },
+  "GoDaddy CoBlocks": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "GoDaddy CoBlocks is a suite of professional page building content blocks for the WordPress Gutenberg block editor.",
+    "icon": "GoDaddy.svg",
+    "dom": "link[href*='/wp-content/plugins/coblocks/']",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "oss": true,
+    "scriptSrc": "/wp-content/plugins/coblocks/",
+    "website": "https://github.com/godaddy-wordpress/coblocks"
   },
   "GoDaddy Escapade": {
     "cats": [
@@ -1088,6 +1139,22 @@
     "saas": true,
     "scriptSrc": "googletagmanager\\.com/gtm\\.js",
     "website": "http://www.google.com/tagmanager"
+  },
+  "Google Tag Manager for WordPress": {
+    "cats": [
+      87
+    ],
+    "description": "Google Tag Manager for WordPress plugin places the GTM container code snippets onto your wordpress website so that you do not need to add this manually.",
+    "icon": "Google Tag Manager for WordPress.png",
+    "implies": "Google Tag Manager",
+    "dom": "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/duracelltomi-google-tag-manager/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://gtm4wp.com"
   },
   "Google Wallet": {
     "cats": [

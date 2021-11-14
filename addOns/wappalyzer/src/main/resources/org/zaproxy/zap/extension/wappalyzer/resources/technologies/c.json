@@ -342,7 +342,20 @@
       6
     ],
     "description": "Websites that have a shopping cart or checkout page, either using a known ecommerce platform or a custom solution.",
-    "dom": "a[href*='/cart'], a[href*='/order'], a[href*='/basket'], a[href*='/trolley'], a[href*='/bag'], a[href*='/shoppingbag'], a[href*='/checkout'], [aria-controls='cart']",
+    "dom": [
+      "a[href*='/cart']",
+      "a[href*='/order']",
+      "a[href*='/basket']",
+      "a[href*='/trolley']",
+      "a[href*='/bag']",
+      "a[href*='/shoppingbag']",
+      "a[href*='/checkout']",
+      "[aria-controls='cart']",
+      "[class*='shopping-bag']",
+      "[class*='shopping-cart']",
+      "[class*='checkout']"
+    ],
+    "url": "/(?:cart|order|basket|trolley|bag|shoppingbag|checkout)",
     "icon": "Cart-generic.svg",
     "js": {
       "google_tag_params.ecomm_pagetype": ""
@@ -399,6 +412,21 @@
       "catberry.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://catberry.github.io/"
+  },
+  "Catch Themes Catch Box": {
+    "cats": [
+      80
+    ],
+    "description": "Catch Box is a lightweight, box shaped, clean responsive WordPress theme by Catch Themes.",
+    "icon": "Catch Themes.png",
+    "dom": "link[href*='/wp-content/themes/catch-box/']",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/catch-box(?:-pro)?/",
+    "website": "https://catchthemes.com/themes/catch-box"
   },
   "Cecil": {
     "cats": [
@@ -766,6 +794,17 @@
       "\\bChronopost\\b"
     ],
     "website": "https://www.chronopost.fr"
+  },
+  "CitrusPay": {
+    "cats": [
+      41
+    ],
+    "description": "CitrusPay provides payement gateway and wallet services.",
+    "scriptSrc": "checkout-static\\.citruspay\\.com/",
+    "icon": "citruspay.png",
+    "saas": true,
+    "pricing": [ "payg" ],
+    "website": "https://consumers.citruspay.com/"
   },
   "CityMail": {
     "cats": [
@@ -1650,6 +1689,23 @@
     "scriptSrc": "\\.ctctcdn\\.com/",
     "website": "https://www.constantcontact.com"
   },
+  "Contact Form 7": {
+    "cats": [
+      87
+    ],
+    "description": "Contact Form 7 is an WordPress plugin which can manage multiple contact forms. The form supports Ajax-powered submitting, CAPTCHA, Akismet spam filtering.",
+    "icon": "Contact Form 7.png",
+    "dom": "link[href*='/wp-content/plugins/contact-form-7/']",
+    "js": {
+      "wpcf7": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://contactform7.com"
+  },
   "Contao": {
     "cats": [
       1
@@ -1906,15 +1962,24 @@
     "description": "Cookie Information is a privacy tech company that develops software that helps making company websites and mobile apps GDPR and ePrivacy compliant.",
     "icon": "Cookie Information.svg",
     "js": {
-      "CookieInformation.config.version": "(.+)\\;version:\\1"
+      "CookieInformation.config.cdnUrl": ""
     },
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.app\\.cookieinformation\\.com/",
     "website": "https://cookieinformation.com"
+  },
+  "Cookie Notice": {
+    "cats": [
+      67,
+      87
+    ],
+    "description": "Cookie Notice provides a simple, customizable website banner that can be used to help your website comply with certain cookie consent requirements under the EU GDPR cookie law and CCPA regulations and includes seamless integration with Cookie Compliance to help your site comply with the latest updates to existing consent laws.",
+    "icon": "Cookie Notice.png",
+    "scriptSrc": "/wp-content/plugins/cookie-notice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/cookie-notice"
   },
   "Cookie Script": {
     "cats": [
@@ -2230,6 +2295,22 @@
     "scriptSrc": "script\\.crazyegg\\.com/pages/scripts/\\d+/\\d+\\.js",
     "website": "http://crazyegg.com"
   },
+  "Creativ.eMail": {
+    "cats": [
+      87,
+      75
+    ],
+    "description": "Creativ.eMail is a email editor WordPress plugin which simplifies email marketing campaign creation and pulls your WordPress blog posts, website images and WooCommerce products right into your email content.",
+    "icon": "Creativ.eMail.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/creative-mail-by-constant-contact/",
+    "website": "https://www.creativemail.com"
+  },
   "Crisp Live Chat": {
     "cats": [
       52
@@ -2249,6 +2330,7 @@
     ],
     "description": "Criteo provides personalised retargeting that works with Internet retailers to serve personalised online display advertisements to consumers who have previously visited the advertiser's website.",
     "icon": "Criteo.svg",
+    "dom": "link[href*='.criteo.com']",
     "js": {
       "Criteo": "",
       "criteo_pubtag": "",
@@ -2334,6 +2416,22 @@
       "js/crownpeak\\."
     ],
     "website": "http://www.crownpeak.com"
+  },
+  "Cryout Creations Bravada": {
+    "cats": [
+      80
+    ],
+    "description": "Bravada is an unparalleled fullscreen WordPress theme created by Cryout Creations.",
+    "dom": "link#bravada-style-css, img[src*='/wp-content/themes/bravada/']",
+    "icon": "Cryout Creations.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/bravada(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.cryoutcreations.eu/wordpress-themes/bravada"
   },
   "Cryout Creations Fluida": {
     "cats": [
@@ -2475,6 +2573,27 @@
     "saas": true,
     "scriptSrc": "(?:cdn|app)\\.customily\\.com/",
     "website": "https://www.customily.com"
+  },
+  "Cxense": {
+    "cats": [
+      76,
+      86
+    ],
+    "description": "Cxense was an AI-powered data management and intelligent personalisation platform.",
+    "icon": "Cxense.png",
+    "meta": {
+      "cXenseParse:pageclass": "",
+      "cXenseParse:itm-meta-keywords": "",
+      "cXenseParse:publishtime": "",
+      "cXenseParse:url": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "\\.cxense\\.com/",
+    "saas": true,
+    "website": "https://www.cxense.com"
   },
   "CyberChimps Responsive": {
     "cats": [

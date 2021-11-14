@@ -152,6 +152,23 @@
     "scriptSrc": "ramda.*\\.js",
     "website": "http://ramdajs.com"
   },
+  "RankMath SEO": {
+    "cats": [
+      87,
+      54
+    ],
+    "description": "RankMath SEO is a search engine optimization plugin for WordPress.",
+    "icon": "RankMath SEO.svg",
+    "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/seo-by-rank-math(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://rankmath.com"
+  },
   "Raphael": {
     "cats": [
       25
@@ -297,6 +314,20 @@
     ],
     "scriptSrc": "checkout\\.razorpay\\.com",
     "website": "https://razorpay.com/"
+  },
+  "Really Simple CAPTCHA": {
+    "cats": [
+      87
+    ],
+    "description": "Really Simple CAPTCHA does not work alone and is intended to work with other plugins. It is originally created for Contact Form 7, however, you can use it with your own plugin.",
+    "icon": "Really Simple CAPTCHA.png",
+    "dom": "img[src*='/wp-content/plugins/really-simple-captcha/']",
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/really-simple-captcha"
   },
   "Re:amaze": {
     "cats": [
@@ -888,6 +919,19 @@
     "scriptSrc": "assets\\.revlifter\\.io",
     "website": "https://www.revlifter.com"
   },
+  "RevJet": {
+    "cats": [
+      36
+    ],
+    "description": "RevJet is the first comprehensive Ad Experience Platform, for every audience, channel, format, inventory, and device.",
+    "icon": "RevJet.png",
+    "dom": "link[href*='.revjet.com']",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.revjet.com"
+  },
   "Reveal.js": {
     "cats": [
       12
@@ -1062,6 +1106,26 @@
     "scriptSrc": "riot(?:\\+compiler)?(?:\\.min)?\\.js",
     "website": "https://riot.js.org/"
   },
+  "Rise.ai": {
+    "cats": [
+      84,
+      94
+    ],
+    "description": "Rise.ai is a strategic re-engagement solution that provides brands and retailers with a unique currency of their own.",
+    "icon": "Rise.ai.svg",
+    "requires": "Shopify",
+    "js": {
+      "Rise.shop": "",
+      "RiseStoreFront": ""
+    },
+    "saas": true,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "scriptSrc": "strn\\.rise-ai\\.com/",
+    "website": "https://rise.ai"
+  },
   "Riskified": {
     "cats": [
       10,
@@ -1129,6 +1193,22 @@
       "robin_storage_settings": ""
     },
     "website": "http://www.robinhq.com"
+  },
+  "Rockerbox": {
+    "cats": [
+      32
+    ],
+    "description": "Rockerbox is a provider of multi-touch attribution software.",
+    "icon": "Rockerbox.png",
+    "js": {
+      "RB.source": "\\;confidence:50"
+    },
+    "scriptSrc": "wxyz\\.rb\\.js",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.rockerbox.com"
   },
   "RockRMS": {
     "cats": [

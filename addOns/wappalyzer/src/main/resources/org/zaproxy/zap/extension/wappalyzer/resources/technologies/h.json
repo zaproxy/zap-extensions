@@ -61,6 +61,19 @@
     "icon": "HP.svg",
     "website": "http://hp.com"
   },
+  "HrFlow.ai": {
+    "cats": [
+      19
+    ],
+    "description": "HrFlow.ai is an HR data automation API platform.",
+    "icon": "HrFlow.ai.svg",
+    "scriptSrc": "\\.hrflow\\.ai",
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://hrflow.ai"
+  },
   "HTTP/2": {
     "cats": [
       19
@@ -582,6 +595,22 @@
       "hj.apiUrlBase": ""
     },
     "scriptSrc": "//static\\.hotjar\\.com/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.hotjar.com"
+  },
+  "Hotjar Incoming Feedback": {
+    "cats": [
+      5
+    ],
+    "description": "Hotjar Incoming Feedback is a widget that sits at the edge of a page.",
+    "icon": "Hotjar.svg",
+    "dom": "a[href*='hotjar.com/incoming-feedback'][target='_blank']",
+    "scriptSrc": "\\.hotjar\\.com/preact-incoming-feedback",
     "website": "https://www.hotjar.com"
   },
   "Howler.js": {

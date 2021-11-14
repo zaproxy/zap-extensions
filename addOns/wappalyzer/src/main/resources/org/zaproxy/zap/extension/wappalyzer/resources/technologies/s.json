@@ -701,6 +701,21 @@
     "icon": "Scientific Linux.png",
     "website": "http://scientificlinux.org"
   },
+  "Scissor Themes Writee": {
+    "cats": [
+      80
+    ],
+    "description": "Writee is an elegant free personal WordPress blog theme and well suited for personal, food, travel, fashion, corporate, or any other amazing blog.",
+    "icon": "Scissor Themes.png",
+    "dom": "link#WRT-style-css",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/writee(?:-pro)?/",
+    "website": "https://www.scissorthemes.com/themes/writee-free"
+  },
   "Scoop.it": {
     "cats": [
       96
@@ -815,6 +830,23 @@
     },
     "icon": "sectionio.svg",
     "website": "https://www.section.io"
+  },
+  "SeedProd Coming Soon": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "SeedProd Coming Soon is a page builder allows you to add a new website under construction page to your WordPress site without hiring a developer.",
+    "icon": "SeedProd.svg",
+    "dom": "link[href*='/wp-content/plugins/coming-soon/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/coming-soon/",
+    "website": "https://www.seedprod.com/features/coming-soon-page-templates-for-wordpress"
   },
   "Seers": {
     "cats": [
@@ -1297,9 +1329,13 @@
     "description": "ShareThis provides free engagement and growth tools (e.g., share buttons, follow buttons, and reaction buttons) for site owners.",
     "icon": "ShareThis.png",
     "js": {
-      "SHARETHIS": ""
+      "SHARETHIS": "",
+      "__sharethis__docReady": ""
     },
-    "scriptSrc": "w\\.sharethis\\.com/",
+    "scriptSrc": "\\.sharethis\\.com/",
+    "pricing": [
+      "freemium"
+    ],
     "website": "http://sharethis.com"
   },
   "SharpSpring": {
@@ -1738,6 +1774,22 @@
     ],
     "website": "https://www.shopware.com"
   },
+  "Shortcodes Ultimate": {
+    "cats": [
+      87
+    ],
+    "description": "Shortcodes Ultimate is a comprehensive collection of visual components for WordPress.",
+    "icon": "Shortcodes Ultimate.svg",
+    "dom": "link[href*='/wp-content/plugins/shortcodes-ultimate/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/shortcodes-ultimate/.+index\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://getshortcodes.com"
+  },
   "Shuttle": {
     "cats": [
       1
@@ -2056,6 +2108,21 @@
     "scriptSrc": "widget\\.siteminder\\.com",
     "website": "https://www.siteminder.com"
   },
+  "SiteOrigin Page Builder": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Page Builder by SiteOrigin makes it easy to build responsive grid-based page content that adapts to mobile devices with pixel perfect accuracy.",
+    "icon": "SiteOrigin.svg",
+    "dom": "link[href*='/wp-content/plugins/siteorigin-panels/']",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/siteorigin-panels/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://siteorigin.com/page-builder"
+  },
   "SiteOrigin Vantage": {
     "cats": [
       80
@@ -2069,6 +2136,20 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/vantage/",
     "website": "https://siteorigin.com/theme/vantage"
+  },
+  "SiteOrigin Widgets Bundle": {
+    "cats": [
+      87
+    ],
+    "description": "SiteOrigin Widgets Bundle is a WordPress plugin that gives you all the elements you need to build modern, responsive, and engaging website pages.",
+    "icon": "SiteOrigin.svg",
+    "dom": "link[href*='/wp-content/plugins/so-widgets-bundle/']",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/so-widgets-bundle/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://siteorigin.com/widgets-bundle"
   },
   "SiteSpect": {
     "cats": [
@@ -2350,6 +2431,22 @@
     },
     "website": "http://smartadserver.com"
   },
+  "Smartling": {
+    "cats": [
+      89
+    ],
+    "description": "Smartling is a cloud-based translation management system.",
+    "icon": "Smartling.svg",
+    "js": {
+      "populateSmartlingDdl": ""
+    },
+    "scriptSrc": "\\.smartling\\.com/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.smartling.com"
+  },
   "SmartSite": {
     "cats": [
       1
@@ -2360,6 +2457,20 @@
       "author": "Redacteur SmartInstant"
     },
     "website": "http://www.seneca.nl/pub/Smartsite/Smartsite-Smartsite-iXperion"
+  },
+  "Smart Slider 3": {
+    "cats": [
+      87
+    ],
+    "description": "Smart Slider 3 is a responsive, SEO optimised WordPress plugin.",
+    "icon": "Smart Slider 3.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/smart-slider-3(?:-pro)?/",
+    "website": "https://smartslider3.com"
   },
   "Smarter Click": {
     "cats": [
@@ -2436,6 +2547,22 @@
     "saas": true,
     "scriptSrc": "\\.smartsuppchat\\.com",
     "website": "https://www.smartsupp.com"
+  },
+  "Smash Balloon Instagram Feed": {
+    "cats": [
+      87
+    ],
+    "description": "Instagram Feed displays Instagram posts from your Instagram accounts, either in the same single feed or in multiple different ones. Created by Smash Balloon.",
+    "icon": "Smash Balloon.svg",
+    "dom": "link[href*='/wp-content/plugins/instagram-feed/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/instagram-feed/",
+    "website": "https://smashballoon.com/instagram-feed"
   },
   "Smile": {
     "cats": [
@@ -2745,6 +2872,20 @@
     },
     "scriptSrc": "^https?://api\\.solvemedia\\.com/",
     "website": "http://solvemedia.com"
+  },
+  "Solvvy": {
+    "cats": [
+      52
+    ],
+    "description": "Solvvy provides live chat and chatbot services.",
+    "icon": "solvvy.png",
+    "js": {
+      "Solvvy": ""
+    },
+    "saas": true,
+    "pricing": [ "recurring", "poa" ],
+    "scriptSrc": "cdn\\.solvvy\\.com/",
+    "website": "https://solvvy.com/"
   },
   "SonarQubes": {
     "cats": [
@@ -3941,6 +4082,21 @@
     "oss": true,
     "website": "https://kit.svelte.dev"
   },
+  "SVG Support": {
+    "cats": [
+      87
+    ],
+    "description": "SVG Support is a WordPress plugin which allows you to safely upload SVG files to your media library and use them like any other image.",
+    "icon": "SVG Support.png",
+    "dom": "link[href*='/wp-content/plugins/svg-support/']",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "oss": true,
+    "scriptSrc": "/wp-content/plugins/svg-support/",
+    "website": "https://github.com/wp-plugins/svg-support"
+  },
   "Swagger UI": {
     "cats": [
       4
@@ -3950,6 +4106,24 @@
     "oss": true,
     "scriptSrc": "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1",
     "website": "https://swagger.io/tools/swagger-ui"
+  },
+  "Swagify": {
+    "cats": [
+      10
+    ],
+    "description": "Swagify allows you to upsell, cross-sell, and promote, by creating as many completely customizable offers as you want.",
+    "icon": "Swagify.png",
+    "js": {
+      "Swagify": ""
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "scriptSrc": "api\\.swagifyapp\\.com/",
+    "website": "https://swagifyapp.com"
   },
   "SweetAlert": {
     "cats": [

@@ -14,6 +14,17 @@
     "saas": true,
     "website": "https://maak-code.ir"
   },
+  "MainAd": {
+    "cats": [
+      36
+    ],
+    "description": "MainAd is an international advertising technology company specialising in real-time bidding and programmatic ad retargeting.",
+    "icon": "MainAd.svg",
+    "dom": "iframe[src*='.mainadv.com/']",
+    "saas": true,
+    "scriptSrc": "\\.mainadv\\.com/",
+    "website": "https://www.mainad.com"
+  },
   "MAJIN": {
     "cats": [
       32
@@ -144,16 +155,19 @@
     },
     "cpe": "cpe:/a:magento:magento",
     "description": "Magento is an open-source ecommerce platform written in PHP.",
-    "html": [
-      "<script [^>]+data-requiremodule=\"mage/\\;version:2",
-      "<script [^>]+data-requiremodule=\"Magento_\\;version:2",
-      "<script type=\"text/x-magento-init\">"
-    ],
     "icon": "Magento.svg",
     "implies": [
       "PHP",
       "MySQL"
     ],
+    "dom": {
+      "script[type='text/x-magento-init']": {
+        "exists": ""
+      },
+      "script[data-requiremodule*='mage'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
+        "exists": "\\;version:2"
+      }
+    },
     "js": {
       "Mage": "",
       "VarienForm": ""
@@ -187,9 +201,6 @@
       "<!-- Begin MailChimp Signup Form -->"
     ],
     "icon": "mailchimp.svg",
-    "js": {
-      "mc4wp": "\\;confidence:50"
-    },
     "pricing": [
       "low",
       "freemium",
@@ -199,11 +210,44 @@
     "scriptSrc": [
       "s3\\.amazonaws\\.com/downloads\\.mailchimp\\.com/js/mc-validate\\.js",
       "cdn-images\\.mailchimp\\.com/[^>]*\\.css",
-      "mailchimp-woocommerce-public\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
-      "mailchimp-for-wp/assets/js/forms\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
       "chimpstatic\\.com/mcjs-connected"
     ],
     "website": "http://mailchimp.com"
+  },
+  "MailChimp for WordPress": {
+    "cats": [
+      87,
+      32
+    ],
+    "description": "MailChimp for WordPress is an email marketing plugin that enables you to build subscriber lists.",
+    "icon": "MailChimp for WordPress.png",
+    "implies": "MailChimp",
+    "dom": "link[href*='/wp-content/plugins/mailchimp-for-wp/']",
+    "js": {
+      "mc4wp": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.mc4wp.com"
+  },
+  "MailChimp for WooCommerce": {
+    "cats": [
+      87
+    ],
+    "description": "MailChimp for WooCommerce gives you the ability to automatically sync customer purchase data to your MailChimp account.",
+    "icon": "mailchimp.svg",
+    "implies": "MailChimp",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/mailchimp-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://mailchimp.com/integrations/woocommerce"
   },
   "Mailgun": {
     "cats": [
@@ -230,6 +274,25 @@
     },
     "icon": "Mailjet.svg",
     "website": "https://www.mailjet.com/"
+  },
+  "Mailmunch": {
+    "cats": [
+      75,
+      32
+    ],
+    "description": "Mailmunch is a lead generation tool that combines landing pages, forms, and email marketing.",
+    "icon": "Mailmunch.svg",
+    "js": {
+      "mailmunch": "",
+      "MailMunchWidgets": ""
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "website": "https://www.mailmunch.com"
   },
   "Make-Sense": {
     "cats": [
@@ -627,6 +690,17 @@
     "scriptSrc": "cf\\.kampyle\\.com/k_button\\.js",
     "website": "https://www.medallia.com"
   },
+  "Media.net": {
+    "cats": [
+      36
+    ],
+    "description": "Media.net is an advertising company focused on providing monetization products to digital publishers.",
+    "icon": "Media.net.svg",
+    "dom": "link[href*='.media.net']",
+    "scriptSrc": "\\.media\\.net/",
+    "saas": true,
+    "website": "https://www.media.net"
+  },
   "MediaElement.js": {
     "cats": [
       14
@@ -831,6 +905,22 @@
     "scriptSrc": "/mermaid(?:\\.min)?\\.js",
     "website": "https://mermaidjs.github.io/"
   },
+  "MetaSlider": {
+    "cats": [
+      87
+    ],
+    "description": "MetaSlider is a WordPress plugin for adding responsive sliders and carousels to websites.",
+    "icon": "MetaSlider.svg",
+    "dom": "link[href*='/wp-content/plugins/ml-slider/'], link#metaslider-pro-public-css",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ml-slider(?:-pro)?/",
+    "website": "https://www.metaslider.com"
+  },
   "Meteor": {
     "cats": [
       12,
@@ -955,6 +1045,7 @@
     },
     "description": "Microsoft Advertising is an online advertising platform developed by Microsoft.",
     "icon": "Microsoft.png",
+    "dom": "link[href*='.bing.com']",
     "js": {
       "UET": "",
       "uetq": ""
@@ -1493,6 +1584,26 @@
     "scriptSrc": "monotracker(?:\\.min)?\\.js",
     "website": "https://www.mono.net/en"
   },
+  "MonsterInsights": {
+    "cats": [
+      87,
+      10
+    ],
+    "description": "MonsterInsights is the most popular Google Analytics plugin for WordPress.",
+    "icon": "MonsterInsights.png",
+    "js": {
+      "MonsterInsights": "",
+      "monsterinsights_frontend": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/google-analytics-for-wordpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.monsterinsights.com"
+  },
   "MooTools": {
     "cats": [
       12
@@ -1552,6 +1663,23 @@
     "requires": "WordPress",
     "saas": true,
     "website": "https://www.mooveagency.com/wordpress/gdpr-cookie-compliance-plugin"
+  },
+  "Mopinion": {
+    "cats": [
+      13
+    ],
+    "description": "Mopinion is an all-in-one user feedback platform that helps digital enterprises listen, understand, and act across all digital touchpoints.",
+    "icon": "Mopinion.svg",
+    "js": {
+      "Pastease": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "deploy\\.mopinion\\.com/",
+    "website": "https://mopinion.com"
   },
   "MotoCMS": {
     "cats": [
