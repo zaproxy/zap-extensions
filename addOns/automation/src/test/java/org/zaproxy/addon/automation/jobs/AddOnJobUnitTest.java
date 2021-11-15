@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -190,6 +191,7 @@ class AddOnJobUnitTest {
     }
 
     @Test
+    @Disabled("The updateAddons option is disabled.")
     void shouldCheckForUpdatesByDefault() {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));

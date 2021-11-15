@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Disabled addOns job updateAddOns option due to problems updating the framework and jobs while they are running
 
 ## [0.8.0] - 2021-11-02
 ### Added
