@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Dependency updates.
+- Add OWASP WSTG v4.2 Alert Tags.
 
 ### Fixed
 - Adjusted the tag of "OWASP_A10_LOGGING_FAIL" to match other alert tags for 2017/2021.
