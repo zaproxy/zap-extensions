@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Dependency updates.
 
+### Fixed
+- Adjusted the tag of "OWASP_A10_LOGGING_FAIL" to match other alert tags for 2017/2021.
+
 ## [1.5.0] - 2021-10-06
 ### Added
 - Common alert tags for OWASP Top Ten 2021 and 2017.

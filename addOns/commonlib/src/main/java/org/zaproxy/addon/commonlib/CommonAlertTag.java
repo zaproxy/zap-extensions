@@ -79,7 +79,7 @@ public enum CommonAlertTag {
             "OWASP_2017_A09",
             "https://owasp.org/www-project-top-ten/2017/A9_2017-Using_Components_with_Known_Vulnerabilities.html"),
     OWASP_2017_A10_LOGGING_FAIL(
-            "OWASP_2017_A10_LOGGING_FAIL",
+            "OWASP_2017_A10",
             "https://owasp.org/www-project-top-ten/2017/A10_2017-Insufficient_Logging%2526Monitoring.html");
 
     private String tag;
