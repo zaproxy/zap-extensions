@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## 15 - 2021-11-16
+### Added
+- Automation extention.
+### Updated
+- HttpsInfo panel
+- Threaded task implemented as passive scanner
+
+
 ## [13] - 2021-10-07
 ### Added
 - Add info and repo URLs.
