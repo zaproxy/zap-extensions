@@ -47,6 +47,8 @@ public class AddOnJob extends AutomationJob {
     private Parameters parameters = new Parameters();
     private Data data;
 
+    private boolean disableAutoupdate = true;
+
     public AddOnJob() {
         data = new Data(this, this.parameters);
     }
@@ -115,38 +117,43 @@ public class AddOnJob extends AutomationJob {
         ExtensionAutoUpdate extAutoUpd =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
         if (this.parameters.getUpdateAddOns()) {
-            try {
-                // Unfortunately we need to do some nasty reflection :/
-                Method glviMethod = extAutoUpd.getClass().getDeclaredMethod("getLatestVersionInfo");
-                glviMethod.setAccessible(true);
-                AddOnCollection aoc = (AddOnCollection) glviMethod.invoke(extAutoUpd);
+            if (this.disableAutoupdate) {
+                progress.info(Constant.messages.getString("automation.info.addons.noupdate"));
+            } else {
+                try {
+                    // Unfortunately we need to do some nasty reflection :/
+                    Method glviMethod =
+                            extAutoUpd.getClass().getDeclaredMethod("getLatestVersionInfo");
+                    glviMethod.setAccessible(true);
+                    AddOnCollection aoc = (AddOnCollection) glviMethod.invoke(extAutoUpd);
 
-                OptionsParamCheckForUpdates options = new OptionsParamCheckForUpdates();
-                options.load(new XMLPropertiesConfiguration());
-                options.setCheckOnStart(true);
-                options.setCheckAddonUpdates(true);
-                options.setInstallAddonUpdates(true);
+                    OptionsParamCheckForUpdates options = new OptionsParamCheckForUpdates();
+                    options.load(new XMLPropertiesConfiguration());
+                    options.setCheckOnStart(true);
+                    options.setCheckAddonUpdates(true);
+                    options.setInstallAddonUpdates(true);
 
-                Method cfuMethod =
-                        extAutoUpd
-                                .getClass()
-                                .getDeclaredMethod(
-                                        "checkForAddOnUpdates",
-                                        AddOnCollection.class,
-                                        OptionsParamCheckForUpdates.class);
-                cfuMethod.setAccessible(true);
-                cfuMethod.invoke(extAutoUpd, aoc, options);
+                    Method cfuMethod =
+                            extAutoUpd
+                                    .getClass()
+                                    .getDeclaredMethod(
+                                            "checkForAddOnUpdates",
+                                            AddOnCollection.class,
+                                            OptionsParamCheckForUpdates.class);
+                    cfuMethod.setAccessible(true);
+                    cfuMethod.invoke(extAutoUpd, aoc, options);
 
-                Method waitMethod =
-                        extAutoUpd.getClass().getDeclaredMethod("waitForDownloadInstalls");
-                waitMethod.setAccessible(true);
-                waitMethod.invoke(extAutoUpd);
+                    Method waitMethod =
+                            extAutoUpd.getClass().getDeclaredMethod("waitForDownloadInstalls");
+                    waitMethod.setAccessible(true);
+                    waitMethod.invoke(extAutoUpd);
 
-            } catch (Exception e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.addons.update", e.getMessage()));
-                return;
+                } catch (Exception e) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.addons.update", e.getMessage()));
+                    return;
+                }
             }
         }
         if (!this.data.getInstall().isEmpty()) {
@@ -262,7 +269,7 @@ public class AddOnJob extends AutomationJob {
     }
 
     public static class Parameters extends AutomationData {
-        private boolean updateAddOns = true;
+        private boolean updateAddOns = false;
 
         public boolean getUpdateAddOns() {
             return updateAddOns;

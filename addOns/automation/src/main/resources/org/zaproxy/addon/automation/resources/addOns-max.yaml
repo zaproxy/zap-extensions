@@ -1,5 +1,5 @@
   - type: addOns                       # Add-on management
     parameters:
-      updateAddOns: true               # Update any add-ons that have new versions
+      updateAddOns: false              # Currently disabled due to problems updating the framework and jobs while they are running
     install:                           # A list of non standard add-ons to install from the ZAP Marketplace
     uninstall:                         # A list of standard add-ons to uninstall

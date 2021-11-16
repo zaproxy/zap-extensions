@@ -58,7 +58,8 @@ public class AddOnJobDialog extends StandardFieldsDialog {
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
 
-        this.addCheckBoxField(UPDATE_ADDONS_PARAM, this.job.getParameters().getUpdateAddOns());
+        // XXX Disabled until this can work without breaking things
+        // this.addCheckBoxField(UPDATE_ADDONS_PARAM, this.job.getParameters().getUpdateAddOns());
 
         List<JButton> instButtons = new ArrayList<>();
         instButtons.add(getAddInstButton());
@@ -190,7 +191,8 @@ public class AddOnJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
-        this.job.getParameters().setUpdateAddOns(this.getBoolValue(UPDATE_ADDONS_PARAM));
+        // XXX Disabled until this can work without breaking things
+        // this.job.getParameters().setUpdateAddOns(this.getBoolValue(UPDATE_ADDONS_PARAM));
         List<String> addOns = this.getAddOnsInstallModel().getAddOns();
         if (addOns.isEmpty()) {
             this.job.getData().setInstall(null);
