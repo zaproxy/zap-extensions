@@ -19,63 +19,152 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import javax.swing.Icon;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.tree.TreeNode;
+
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.utils.ZapLabel;
-import org.zaproxy.zap.view.TabbedPanel2;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.search.ExtensionSearch;
+import org.zaproxy.zap.view.ScanPanel;
+import org.zaproxy.zap.view.SiteMapListener;
+import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
-public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChangedListener {
+public class ExtensionHttpsInfo extends ExtensionAdaptor
+        implements SessionChangedListener, SiteMapListener, HttpsInfoCertificationHolder {
 
     public static final String NAME = "ExtensionHttpsInfo";
-    public static final String ICON_PATH =
-            "/org/zaproxy/zap/extension/httpsinfo/resources/icon.png";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+
+    public static final String RESOURCE = "/org/zaproxy/zap/extension/httpsinfo/resources";
+
+    public static final ImageIcon HTTPSINFO_ICON =
+            new ImageIcon(ExtensionHttpsInfo.class.getResource(RESOURCE + "/icon.png"));
+
+
+    private HttpsInfoPanel httpsInfoPanel = null;
+
+    private ExtensionSearch extSearch = null;
+
+    private Map<String, HttpsInfoTableModel> siteHttpsInfoMap = new HashMap<>();
+    private boolean enabled;
+    private HttpsInfoParam httpsInfoParam;
+    private List<Certification> certifications = new ArrayList<>();
+
+
+    private static final Logger logger = LogManager.getLogger(ExtensionHttpsInfo.class);
+
+    /**
+     * The dependencies of the extension.
+     */
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
     static {
-        List<Class<? extends Extension>> dep = new ArrayList<>(1);
-        dep.add(ExtensionAlert.class);
-
-        DEPENDENCIES = Collections.unmodifiableList(dep);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
+        dependencies.add(ExtensionPassiveScan.class);
+        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    private MenuEntry httpsMenuEntry;
-    private AbstractPanel httpsInfoPanel;
-    private CardLayout httpsInfoPanelLayout;
-    private boolean usageShown;
-    private TabbedPanel2 httpsInfoTabsPanel;
+    private HttpsInfoScanner scanner;
+
 
     public ExtensionHttpsInfo() {
-        super();
+        super(NAME);
+        this.setOrder(202);
     }
 
     @Override
-    public String getUIName() {
-        return Constant.messages.getString("httpsinfo.ext.name");
+    public void init() {
+        super.init();
+
+        HttpsInfoData result = new HttpsInfoData();
+        this.certifications = result.getCertifications();
+
+        enabled = true;
+        httpsInfoParam = new HttpsInfoParam();
+        scanner = new HttpsInfoScanner(this);
     }
 
     @Override
-    public List<Class<? extends Extension>> getDependencies() {
-        return DEPENDENCIES;
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        extensionHook.addSessionListener(this);
+        extensionHook.addSiteMapListener(this);
+
+        if (getView() != null) {
+            @SuppressWarnings("unused")
+            ExtensionHookView pv = extensionHook.getHookView();
+            extensionHook.getHookView().addStatusPanel(getHttpsInfoPanel());
+        }
+
+        extensionHook.addOptionsParamSet(httpsInfoParam);
+
+        ExtensionPassiveScan extPScan =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionPassiveScan.class);
+        extPScan.addPassiveScanner(scanner);
     }
+
+    HttpsInfoScanner getScanner() {
+        return scanner;
+    }
+
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
+
+        setHttpsInfo(httpsInfoParam.isEnabled());
+    }
+
+
+    void setHttpsInfo(boolean enabled) {
+        if (this.enabled == enabled) {
+            return;
+        }
+        this.enabled = enabled;
+
+        httpsInfoParam.setEnabled(enabled);
+        getScanner().setEnabled(enabled);
+
+        if (View.isInitialised()) {
+            getHttpsInfoPanel().getEnableToggleButton().setSelected(enabled);
+        }
+    }
+
+    boolean isHttpsInfoEnabled() {
+        return enabled;
+    }
+
+    private HttpsInfoPanel getHttpsInfoPanel() {
+        if (httpsInfoPanel == null) {
+            httpsInfoPanel = new HttpsInfoPanel(this);
+        }
+        return httpsInfoPanel;
+    }
+
 
     @Override
     public boolean canUnload() {
@@ -85,146 +174,166 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     @Override
     public void unload() {
         super.unload();
+        ExtensionPassiveScan extPScan =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionPassiveScan.class);
+        extPScan.removePassiveScanner(scanner);
     }
 
     @Override
-    public void hook(ExtensionHook extensionHook) {
-        super.hook(extensionHook);
-
-        if (getView() != null) {
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenu());
-            extensionHook.getHookView().addStatusPanel(getHttpsInfoPanel());
-            extensionHook.addSessionListener(this);
-        }
-    }
-
-    private MenuEntry getPopupMsgMenu() {
-        if (httpsMenuEntry == null) {
-            httpsMenuEntry =
-                    new MenuEntry(
-                            Constant.messages.getString("httpsinfo.rightclick.menuitem"), this);
-            httpsMenuEntry.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
-        }
-        return httpsMenuEntry;
-    }
-
-    protected TabbedPanel2 getHttpsInfoTabsPanel() {
-        if (httpsInfoTabsPanel == null) {
-            httpsInfoTabsPanel =
-                    new TabbedPanel2() {
-                        private static final long serialVersionUID = -1422894398829082869L;
-
-                        @Override
-                        public void setVisible(Component component, boolean visible) {
-                            if (!visible) {
-                                removeTab((AbstractPanel) component);
-                            }
-                        }
-
-                        @Override
-                        public void removeTabAt(int index) {
-                            super.removeTabAt(index);
-
-                            if (getTabCount() == 0) {
-                                showUsagePanel();
-                            }
-                        }
-                    };
-        }
-        return httpsInfoTabsPanel;
-    }
-
-    private void showUsagePanel() {
-        if (!usageShown) {
-            httpsInfoPanelLayout.next(httpsInfoPanel);
-            usageShown = true;
-        }
-    }
-
-    protected AbstractPanel getHttpsInfoPanel() {
-        if (httpsInfoPanel == null) {
-            httpsInfoPanel = new AbstractPanel();
-            httpsInfoPanelLayout = new CardLayout();
-            httpsInfoPanel.setLayout(httpsInfoPanelLayout);
-            httpsInfoPanel.setName(Constant.messages.getString("httpsinfo.name"));
-            httpsInfoPanel.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
-            httpsInfoPanel.add(getHttpsInfoTabsPanel());
-            JPanel usagePanel = new JPanel(new BorderLayout());
-            ZapLabel usageInfo = new ZapLabel(Constant.messages.getString("httpsinfo.panel.usage"));
-            usageInfo.setLineWrap(true);
-            usageInfo.setWrapStyleWord(true);
-            JScrollPane scrollPane = new JScrollPane(usageInfo);
-            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            usagePanel.add(scrollPane);
-            httpsInfoPanel.add(usagePanel);
-            showUsagePanel();
-        }
-        return httpsInfoPanel;
+    public List<Class<? extends Extension>> getDependencies() {
+        return EXTENSION_DEPENDENCIES;
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("httpsinfo.desc");
+        return Constant.messages.getString("wappalyzer.desc");
     }
 
-    protected int getTabIndex(String tabName) {
-        int idx = 0;
-        for (; idx < getHttpsInfoTabsPanel().getTabCount(); idx++) {
-            if (getHttpsInfoTabsPanel().getTabList().get(idx).getName().equals(tabName)) {
-                break;
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("wappalyzer.name");
+    }
+
+
+    public Set<String> getSites() {
+        return Collections.unmodifiableSet(siteHttpsInfoMap.keySet());
+    }
+
+    static String normalizeSite(URI uri) {
+        String lead = uri.getScheme() + "://";
+        try {
+            return lead + uri.getAuthority();
+        } catch (URIException e) {
+            logger.debug("Unable to get authority from: {}", uri.toString(), e);
+            // Shouldn't happen, but sure fallback
+            return ScanPanel.cleanSiteName(uri.toString(), true);
+        }
+    }
+
+    static String normalizeSite(String site) {
+        try {
+            site = normalizeSite(new URI(site == null ? "" : site, false));
+        } catch (URIException ue) {
+            // Shouldn't happen, but sure fallback
+            logger.debug(
+                    "Falling back to 'CleanSiteName'. Failed to create URI from: {}", site, ue);
+            site = ScanPanel.cleanSiteName(site, true);
+        }
+        return site;
+    }
+
+    private ExtensionSearch getExtensionSearch() {
+        if (extSearch == null) {
+            extSearch =
+                    (ExtensionSearch)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionSearch.NAME);
+        }
+        return extSearch;
+    }
+
+    public void search(Pattern p, ExtensionSearch.Type type) {
+        ExtensionSearch extSearch = this.getExtensionSearch();
+        if (extSearch != null) {
+            extSearch.search(p.pattern(), type, true, false);
+        }
+    }
+
+    @Override
+    public void nodeSelected(SiteNode node) {
+        this.getHttpsInfoPanel().siteSelected(normalizeSite(node.getHistoryReference().getURI()));
+    }
+
+    @Override
+    public void onReturnNodeRendererComponent(
+            SiteMapTreeCellRenderer arg0, boolean arg1, SiteNode arg2) {
+    }
+
+    @Override
+    public void sessionAboutToChange(Session arg0) {
+        // Ignore
+    }
+
+    @Override
+    public void sessionChanged(final Session session) {
+        if (getView() == null) {
+            return;
+        }
+
+        if (EventQueue.isDispatchThread()) {
+            sessionChangedEventHandler(session);
+
+        } else {
+            try {
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
         }
-        return idx;
     }
 
-    protected void addTab(HttpMessage msg) {
-        if (usageShown) {
-            httpsInfoPanelLayout.next(httpsInfoPanel);
-            usageShown = false;
+    private void sessionChangedEventHandler(Session session) {
+        siteHttpsInfoMap = new HashMap<>();
+        this.getHttpsInfoPanel().reset();
+        if (session == null) {
+            // Closedown
+            return;
         }
 
-        String hostname = msg.getRequestHeader().getHostName();
-        String tabName =
-                hostname
-                        + " - "
-                        + (getHttpsInfoTabsPanel().getTabCount() == 0
-                                ? 0
-                                : getHttpsInfoTabsPanel().getTabCount());
+        SiteNode root = session.getSiteTree().getRoot();
+        @SuppressWarnings("unchecked")
+        Enumeration<TreeNode> en = root.children();
+        while (en.hasMoreElements()) {
+            String site =
+                    normalizeSite(((SiteNode) en.nextElement()).getHistoryReference().getURI());
+            this.getHttpsInfoPanel().addSite(site);
+        }
+    }
 
-        addTab(
-                tabName,
-                null,
-                new HttpsInfoOutputPanel(msg),
-                true,
-                true,
-                getHttpsInfoTabsPanel().getTabCount() == 0
-                        ? 0
-                        : getHttpsInfoTabsPanel().getTabCount());
+    @Override
+    public void sessionModeChanged(Mode arg0) {
+        // Ignore
+    }
 
+    @Override
+    public void sessionScopeChanged(Session arg0) {
+        // Ignore
+    }
+
+    @Override
+    public void postInstall() {
+        super.postInstall();
+        if (getView() != null) {
+            EventQueue.invokeLater(this::focusTab);
+        }
+    }
+
+    private void focusTab() {
         getHttpsInfoPanel().setTabFocus();
-        getHttpsInfoTabsPanel()
-                .setSelectedComponent(
-                        getHttpsInfoTabsPanel().getTabList().get(getTabIndex(tabName)));
     }
 
-    private void addTab(
-            String title, Icon icon, Component c, boolean hideable, boolean visible, int index) {
-        getHttpsInfoTabsPanel().addTab(title, icon, c, hideable, visible, index);
-        getHttpsInfoTabsPanel().getTabList().get(index).setName(title);
-    }
-
-    @Override
-    public void sessionAboutToChange(Session arg0) {}
-
-    @Override
-    public void sessionChanged(Session arg0) {
-        getHttpsInfoTabsPanel().removeAll();
-        showUsagePanel();
+    public HttpsInfoTableModel getHttpsInfoModelForSite(String site) {
+        HttpsInfoTableModel model = this.siteHttpsInfoMap.get(site);
+        if (model == null) {
+            model = new HttpsInfoTableModel();
+            this.siteHttpsInfoMap.put(site, model);
+            if (getView() != null) {
+                this.getHttpsInfoPanel().addSite(site);
+            }
+        }
+        return model;
     }
 
     @Override
-    public void sessionModeChanged(Mode arg0) {}
+    public void addCertificationToSite(String site, CertificateFound certificateFound) {
+        this.getHttpsInfoModelForSite(site).addCertificate(certificateFound);
+    }
 
     @Override
-    public void sessionScopeChanged(Session arg0) {}
+    public List<Certification> getCertifications() {
+        return this.certifications;
+    }
 }
