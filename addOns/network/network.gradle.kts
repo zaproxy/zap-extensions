@@ -28,5 +28,8 @@ crowdin {
 dependencies {
     zap("org.zaproxy:zap:2.11.0")
 
+    val nettyVersion = "4.1.70.Final"
+    implementation("io.netty:netty-codec:$nettyVersion")
+
     testImplementation(project(":testutils"))
 }
