@@ -58,7 +58,8 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                    CommonAlertTag.WSTG_V42_SESS_05_CSRF);
 
     private ExtensionAntiCSRF extensionAntiCSRF;
     private String csrfIgnoreList;

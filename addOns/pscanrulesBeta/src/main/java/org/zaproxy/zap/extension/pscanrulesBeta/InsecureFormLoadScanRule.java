@@ -43,7 +43,8 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                    CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL);
 
     @Override
     public String getName() {

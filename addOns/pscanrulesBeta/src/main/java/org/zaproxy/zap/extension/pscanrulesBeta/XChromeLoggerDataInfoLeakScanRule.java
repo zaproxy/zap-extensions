@@ -45,7 +45,8 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
     private static final Logger logger =
             LogManager.getLogger(XChromeLoggerDataInfoLeakScanRule.class);
 

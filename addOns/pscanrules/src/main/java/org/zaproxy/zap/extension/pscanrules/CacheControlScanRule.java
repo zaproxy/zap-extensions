@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -27,12 +28,16 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class CacheControlScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cachecontrol.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS);
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -94,6 +99,11 @@ public class CacheControlScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     public int getRisk() {

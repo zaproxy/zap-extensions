@@ -20,12 +20,14 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -37,6 +39,8 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanbeta.retrievedfromcache.";
     private static final int PLUGIN_ID = 10050;
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS);
 
     private static final Logger logger = LogManager.getLogger(RetrievedFromCacheScanRule.class);
 
@@ -172,5 +176,10 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
 
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

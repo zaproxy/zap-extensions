@@ -21,8 +21,10 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.time.Instant;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 
 /* All test-cases should raise storeable and cacheable alerts
@@ -81,6 +84,20 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
         CacheableScanRule thisScanner = createScanner();
         // Then
         assertThat(thisScanner.getName(), equalTo("Content Cacheability"));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
     }
 
     @Test

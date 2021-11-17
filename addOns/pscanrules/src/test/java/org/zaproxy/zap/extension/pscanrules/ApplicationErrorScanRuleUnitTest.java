@@ -80,7 +80,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         // Then
         assertThat(cwe, is(equalTo(200)));
         assertThat(wasc, is(equalTo(13)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -88,11 +88,22 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getValue())));
     }
 
     @Test

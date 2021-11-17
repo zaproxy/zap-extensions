@@ -45,7 +45,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

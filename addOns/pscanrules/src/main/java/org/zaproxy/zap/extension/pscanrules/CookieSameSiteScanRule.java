@@ -41,7 +41,8 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                    CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS);
 
     private static final int PLUGIN_ID = 10054;
 

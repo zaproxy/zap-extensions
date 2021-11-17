@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -83,7 +85,8 @@ public class CacheableScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
     private static final long SECONDS_IN_YEAR = TimeUnit.SECONDS.convert(365, TimeUnit.DAYS);
     private static final int PLUGIN_ID = 10049;
-
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS);
     private static final Logger logger = LogManager.getLogger(CacheableScanRule.class);
 
     @Override
@@ -711,6 +714,11 @@ public class CacheableScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX_STORABILITY_CACHEABILITY + "name");
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     /**
