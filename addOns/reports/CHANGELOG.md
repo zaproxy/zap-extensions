@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Dependency updates.
+- Maintenance changes.
 
 ## [0.9.1] - 2021-10-14
 ### Fixed

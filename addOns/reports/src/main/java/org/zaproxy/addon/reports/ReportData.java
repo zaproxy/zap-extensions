@@ -20,10 +20,10 @@
 package org.zaproxy.addon.reports;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.util.Arrays;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
