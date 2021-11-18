@@ -6,8 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- An option to allow selecting the OAST service which will be used in active scan rules.
+- An alert tag ("OUT_OF_BAND") for alerts raised by scan rules that make use of out-of-band services.
+
 ### Changed
 - Depend on Network add-on.
+
+### Fixed
+- Interactsh:
+  - Polling did not start automatically when a new payload was generated.
+  - The deregistration request did not include the secret key.
 
 ## [0.5.0] - 2021-10-06
 ### Changed

@@ -35,6 +35,16 @@ public abstract class OastService {
 
     public abstract void stopService();
 
+    public abstract boolean isRegistered();
+
+    /**
+     * Always returns a new payload. Registers with the service if required.
+     *
+     * @return a new URL that can be used for external interaction requests, never {@code null}.
+     * @throws Exception if it is unable to get a new payload.
+     */
+    public abstract String getNewPayload() throws Exception;
+
     public void poll() {}
 
     public void sessionChanged() {}

@@ -107,10 +107,25 @@ public class BoastService extends OastService implements OptionsChangedListener 
         return registeredServers;
     }
 
-    public BoastServer register(String boastUri) throws IOException {
+    public BoastServer register(String uri) throws IOException {
+        getParam().setBoastUri(uri);
+        return register();
+    }
+
+    public BoastServer register() throws IOException {
         LOGGER.debug("Registering BOAST Server.");
-        BoastServer boastServer = new BoastServer(boastUri);
+        BoastServer boastServer = new BoastServer(getParam().getBoastUri());
         registeredServers.add(boastServer);
         return boastServer;
+    }
+
+    @Override
+    public boolean isRegistered() {
+        return !registeredServers.isEmpty();
+    }
+
+    @Override
+    public String getNewPayload() throws IOException {
+        return register().getPayload();
     }
 }

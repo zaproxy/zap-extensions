@@ -29,6 +29,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.oast.ui.OastOptionsPanelTab;
@@ -130,7 +131,8 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
 
     private void registerButtonAction() {
         try {
-            boastService.register(getBoastUri().getText());
+            saveParam(Model.getSingleton().getOptionsParam());
+            boastService.register();
             getBoastServersTableModel().fireTableDataChanged();
         } catch (Exception exception) {
             View.getSingleton().showWarningDialog(this, exception.getLocalizedMessage());

@@ -39,16 +39,14 @@ public class OastOptionsPanel extends AbstractParamPanel {
 
     public OastOptionsPanel() {
         setName(Constant.messages.getString("oast.options.title"));
-
         setLayout(new GridBagLayout());
-
+        int rowIndex = -1;
         serviceTabsPane = new JTabbedPane();
-
         add(
                 serviceTabsPane,
                 LayoutHelper.getGBC(
                         0,
-                        1,
+                        ++rowIndex,
                         GridBagConstraints.REMAINDER,
                         1.0,
                         1.0,
@@ -75,6 +73,6 @@ public class OastOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return "oast";
+        return "oast.options";
     }
 }
