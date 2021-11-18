@@ -42,7 +42,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
-import org.zaproxy.zap.extension.autoupdate.InvalidCfuUrlException;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionCallHome extends ExtensionAdaptor {
@@ -53,6 +52,7 @@ public class ExtensionCallHome extends ExtensionAdaptor {
     protected static final String PREFIX = "callhome";
 
     private static final String ZAP_CFU_SERVICE = "https://cfu.zaproxy.org/ZAPcfu";
+    private static final String ZAP_NEWS_SERVICE = "https://news.zaproxy.org/ZAPnews";
 
     private static final String ISSUE_FILE = "/etc/issue";
 
@@ -135,11 +135,11 @@ public class ExtensionCallHome extends ExtensionAdaptor {
         return json;
     }
 
-    public ZapXmlConfiguration getCheckForUpdatesData()
-            throws IOException, ConfigurationException, InvalidCfuUrlException {
-        LOGGER.debug("Getting latest version info from {}", ZAP_CFU_SERVICE);
+    private ZapXmlConfiguration getServiceData(String url)
+            throws IOException, ConfigurationException, InvalidServiceUrlException {
+        LOGGER.debug("Getting ZAP service data from {}", url);
 
-        HttpMessage msg = new HttpMessage(new URI(ZAP_CFU_SERVICE, true));
+        HttpMessage msg = new HttpMessage(new URI(url, true));
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
         msg.getRequestBody().setBody(getMandatoryRequestData().toString());
@@ -155,8 +155,8 @@ public class ExtensionCallHome extends ExtensionAdaptor {
                             + "'");
         }
         if (!msg.getRequestHeader().isSecure()) {
-            // Only access the cfu page over https
-            throw new InvalidCfuUrlException(msg.getRequestHeader().getURI().toString());
+            // Only access the ZAP services over https
+            throw new InvalidServiceUrlException(msg.getRequestHeader().getURI().toString());
         }
 
         ZapXmlConfiguration config = new ZapXmlConfiguration();
@@ -164,6 +164,16 @@ public class ExtensionCallHome extends ExtensionAdaptor {
         config.load(new StringReader(msg.getResponseBody().toString()));
 
         return config;
+    }
+
+    public ZapXmlConfiguration getCheckForUpdatesData()
+            throws IOException, ConfigurationException, InvalidServiceUrlException {
+        return getServiceData(ZAP_CFU_SERVICE);
+    }
+
+    public ZapXmlConfiguration getNewsData()
+            throws IOException, ConfigurationException, InvalidServiceUrlException {
+        return getServiceData(ZAP_NEWS_SERVICE);
     }
 
     private ZapXmlConfiguration get() {
