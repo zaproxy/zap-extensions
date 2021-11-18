@@ -20,20 +20,22 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -68,6 +70,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     + "]>\n";
 
     protected static final String ATTACK_BODY = "<foo>" + ATTACK_ENTITY + "</foo>";
+
+    protected static final String ATTACK_MESSAGE = ATTACK_HEADER + ATTACK_BODY;
 
     // XML standard from W3C Consortium
     // ---------------------------------------------
@@ -202,7 +206,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
 
             // Skip XXE Remote File Inclusion Attack when callback extension is not available.
             if (ChallengeCallbackImplementor.getCallbackService() != null) {
-                String challenge = randomString(CHALLENGE_LENGTH);
+                String challenge = RandomStringUtils.randomAlphanumeric(CHALLENGE_LENGTH);
 
                 try {
                     // Prepare the attack message
@@ -226,12 +230,15 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                 }
             }
 
+            // Check #2 : Out-of-band XXE Attack
+            outOfBandFileInclusionAttack();
+
             // Check if we've to do only basic analysis (only remote should be done)...
             if (this.getAttackStrength() == AttackStrength.LOW) {
                 return;
             }
 
-            // Check #2 : XXE Local File Reflection Attack
+            // Check #3 : XXE Local File Reflection Attack
             localFileReflectionAttack(getNewMsg());
 
             // Check if we've to do only medium sized analysis
@@ -245,8 +252,36 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                 return;
             }
 
-            // Check #3 : XXE Local File Inclusion Attack
+            // Check #4 : XXE Local File Inclusion Attack
             localFileInclusionAttack(getNewMsg());
+        }
+    }
+
+    private void outOfBandFileInclusionAttack() {
+        try {
+            ExtensionOast extOast =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+            if (extOast != null && extOast.getActiveScanOastService() != null) {
+                HttpMessage msg = getNewMsg();
+                Alert alert =
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setMessage(msg)
+                                .setSource(Alert.Source.ACTIVE)
+                                .build();
+                String oastPayload = extOast.registerAlertAndGetPayload(alert);
+                String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
+                alert.setAttack(payload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+                // Try again with https
+                msg = getNewMsg();
+                payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+            }
+        } catch (Exception e) {
+            log.warn("Could not perform OOB XXE File Inclusion Attack.", e);
         }
     }
 
@@ -311,7 +346,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         try {
             for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                 String localFile = LOCAL_FILE_TARGETS[idx];
-                payload = MessageFormat.format(ATTACK_HEADER + ATTACK_BODY, localFile);
+                payload = MessageFormat.format(ATTACK_MESSAGE, localFile);
                 msg.setRequestBody(payload);
                 sendAndReceive(msg);
                 String response = msg.getResponseBody().toString();
@@ -360,26 +395,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     }
 
     private String getCallbackAttackPayload(String challenge) {
-        String message = ATTACK_HEADER + ATTACK_BODY;
-        return MessageFormat.format(message, callbackImplementor.getCallbackUrl(challenge));
-    }
-
-    /**
-     * Get a randomly built string with exactly lenght chars
-     *
-     * @param length the number of chars of this string
-     * @return a string element containing exactly "lenght" characters
-     */
-    private String randomString(int length) {
-        SecureRandom rand = new SecureRandom();
-        StringBuilder result = new StringBuilder(length);
-        String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        for (int i = 0; i < length; i++) {
-            result.append(alphabet.charAt(rand.nextInt(alphabet.length())));
-        }
-
-        return result.toString();
+        return MessageFormat.format(ATTACK_MESSAGE, callbackImplementor.getCallbackUrl(challenge));
     }
 
     /** Only for use in unit tests */
