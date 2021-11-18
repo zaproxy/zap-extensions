@@ -24,6 +24,10 @@ plugins {
 
 description = "Common configuration of the add-ons."
 
+val mandatoryAddOns = listOf(
+    "callhome"
+)
+
 val parentProjects = listOf(
     "webdrivers"
 )
@@ -264,6 +268,24 @@ tasks.register("reportMissingHelp") {
     }
 }
 
+tasks.register("copyMandatoryAddOns") {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Copies the mandatory add-ons to zaproxy project."
+
+    mandatoryProjects().forEach {
+        dependsOn(it.tasks.named("copyZapAddOn"))
+    }
+}
+
+tasks.register("deployMandatoryAddOns") {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Deploys the mandatory add-ons to the ZAP home dir."
+
+    mandatoryProjects().forEach {
+        dependsOn(it.tasks.named("deployZapAddOn"))
+    }
+}
+
 tasks.register<TestReport>("testReport") {
     destinationDir = file("$buildDir/reports/allTests")
     subprojects.forEach {
@@ -333,3 +355,10 @@ fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit
 
 fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("apiClientGen", configure)
+
+fun mandatoryProjects() =
+    mandatoryAddOns.map { name ->
+        val project = subprojects.find { it.name == name }
+        require(project != null) { "Add-on with project name $name not found." }
+        project
+    }
