@@ -110,7 +110,7 @@ subprojects {
 
     tasks.named<JacocoReport>("jacocoTestReport") {
         reports {
-            xml.isEnabled = true
+            xml.required.set(true)
         }
     }
 
