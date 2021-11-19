@@ -21,8 +21,7 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Container;
 import java.io.File;
-import java.io.StringReader;
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -50,15 +50,12 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.callhome.ExtensionCallHome;
+import org.zaproxy.addon.callhome.InvalidServiceUrlException;
 import org.zaproxy.addon.reports.ExtensionReports;
-import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -91,9 +88,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                     new ImageIcon(
                             QuickStartSubPanel.class.getResource(
                                     RESOURCES + "/document-pdf-text.png")));
-
-    private static final String DEFAULT_NEWS_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-news-";
-    private static final String DEV_NEWS_PAGE = "dev";
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStart.class);
 
@@ -159,6 +153,14 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         return true;
     }
 
+    private ZapXmlConfiguration getNews()
+            throws ConfigurationException, IOException, InvalidServiceUrlException {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCallHome.class)
+                .getNewsData();
+    }
+
     @Override
     public void optionsLoaded() {
         super.optionsLoaded();
@@ -166,73 +168,42 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             getQuickStartPanel().optionsLoaded(this.getQuickStartParam());
         }
 
-        // Check for silent mode - only available in 2.8.0 so must use reflection for now
-        try {
-            Method isSilentMethod = Constant.class.getMethod("isSilent");
-            Object res = isSilentMethod.invoke(null);
-            if (res instanceof Boolean) {
-                if ((Boolean) res) {
-                    LOGGER.info("Shh! No check-for-news - silent mode enabled");
-                    return;
-                }
-            }
-        } catch (Exception e) {
-            // Ignore
+        if (Constant.isSilent()) {
+            LOGGER.info("Shh! No check-for-news - silent mode enabled");
+            return;
         }
 
         new Thread("ZAP-NewsFetcher") {
             @Override
             public void run() {
                 // Try to read the news page
-                HttpMessage msg;
-                String newsPageUrl = getNewsPageURL();
                 try {
-                    HttpSender httpSender =
-                            new HttpSender(
-                                    Model.getSingleton().getOptionsParam().getConnectionParam(),
-                                    true,
-                                    HttpSender.CHECK_FOR_UPDATES_INITIATOR);
-                    httpSender.setFollowRedirect(true);
-                    msg = new HttpMessage(new URI(newsPageUrl, true));
-                    httpSender.sendAndReceive(msg, true);
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        String zapLocale = Constant.getLocale().toString();
+                    ZapXmlConfiguration xmlNews = getNews();
+                    String zapLocale = Constant.getLocale().toString();
 
-                        // Safely parse the XML
-                        ZapXmlConfiguration xmlNews = new ZapXmlConfiguration();
-                        xmlNews.load(new StringReader(msg.getResponseBody().toString()));
+                    ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
+                    if (newsNode != null) {
+                        String id = getFirstChildNodeString(newsNode, "id");
+                        ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
+                        if (localeNode == null) {
+                            localeNode = getFirstChildNode(newsNode, "default");
+                        }
+                        if (localeNode != null) {
+                            String itemText = getFirstChildNodeString(localeNode, "item");
 
-                        ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
-                        if (newsNode != null) {
-                            String id = getFirstChildNodeString(newsNode, "id");
-                            ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
-                            if (localeNode == null) {
-                                localeNode = getFirstChildNode(newsNode, "default");
-                            }
-                            if (localeNode != null) {
-                                String itemText = getFirstChildNodeString(localeNode, "item");
-
-                                if (itemText != null && itemText.length() > 0) {
-                                    announceNews(
-                                            new NewsItem(
-                                                    id,
-                                                    itemText,
-                                                    new URI(
-                                                            getFirstChildNodeString(
-                                                                    localeNode, "link"),
-                                                            true)));
-                                }
+                            if (itemText != null && itemText.length() > 0) {
+                                announceNews(
+                                        new NewsItem(
+                                                id,
+                                                itemText,
+                                                new URI(
+                                                        getFirstChildNodeString(localeNode, "link"),
+                                                        true)));
                             }
                         }
-
-                    } else {
-                        LOGGER.debug(
-                                "Response from {} : {}",
-                                newsPageUrl,
-                                msg.getResponseHeader().getStatusCode());
                     }
                 } catch (Exception e) {
-                    LOGGER.debug("Failed to read from {} : {}", newsPageUrl, e.getMessage(), e);
+                    LOGGER.debug("Failed to read news : {}", e.getMessage(), e);
                 }
             }
         }.start();
@@ -252,21 +223,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             return child.getValue().toString();
         }
         return null;
-    }
-
-    private String getNewsPageURL() {
-        String page = DEV_NEWS_PAGE;
-        if (!Constant.isDevBuild() && !Constant.isDailyBuild()) {
-            // Converts the ZAP version to something like 2-8
-            try {
-                Version zapVersion = new Version(Constant.PROGRAM_VERSION);
-                page = zapVersion.getMajorVersion() + "-" + zapVersion.getMinorVersion();
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("Failed to parse ZAP version {}", Constant.PROGRAM_VERSION, e);
-            }
-        }
-
-        return DEFAULT_NEWS_PAGE_URL_PREFIX + page;
     }
 
     private void announceNews(NewsItem newsItem) {
