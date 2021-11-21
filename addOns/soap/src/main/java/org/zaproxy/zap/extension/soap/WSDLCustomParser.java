@@ -25,6 +25,7 @@ import com.predic8.schema.Schema;
 import com.predic8.schema.SimpleType;
 import com.predic8.schema.restriction.BaseRestriction;
 import com.predic8.schema.restriction.facet.EnumerationFacet;
+import com.predic8.soamodel.WrongGrammarException;
 import com.predic8.wsdl.AbstractBinding;
 import com.predic8.wsdl.Binding;
 import com.predic8.wsdl.BindingOperation;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
@@ -202,7 +204,19 @@ public class WSDLCustomParser {
                 }
             }
             /* Sends a request to retrieve remote WSDL file's content. */
-            HttpMessage httpRequest = new HttpMessage(new URI(url, true));
+            HttpMessage httpRequest;
+            try {
+                httpRequest = new HttpMessage(new URI(url, true));
+            } catch (URIException ue) {
+                String uriWarn =
+                        Constant.messages.getString(
+                                "soap.topmenu.import.importWSDL.url.fail", url, ue.getMessage());
+                LOG.warn(uriWarn);
+                if (View.isInitialised()) {
+                    View.getSingleton().showWarningDialog(uriWarn);
+                }
+                return;
+            }
             HttpSender sender =
                     new HttpSender(
                             Model.getSingleton().getOptionsParam().getConnectionParam(),
@@ -239,6 +253,9 @@ public class WSDLCustomParser {
                 contentI.close();
                 parseWSDL(wsdl, sendMessages);
                 return true;
+            } catch (WrongGrammarException wge) {
+                LOG.warn("Are you sure this is a WSDL? {}", wge.getMessage());
+                return false;
             } catch (Exception e) {
                 LOG.error("There was an error while parsing WSDL content. ", e);
                 return false;

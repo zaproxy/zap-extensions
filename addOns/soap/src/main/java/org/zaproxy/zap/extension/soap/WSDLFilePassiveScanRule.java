@@ -21,13 +21,13 @@ package org.zaproxy.zap.extension.soap;
 
 import java.util.Map;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** @author albertov91 */
@@ -41,10 +41,11 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (getHelper().isPage404(msg) || getHelper().isPage500(msg)) {
+            return;
+        }
         if (isWsdl(msg)) {
             HttpResponseHeader header = msg.getResponseHeader();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
@@ -53,13 +54,19 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
     }
 
     public boolean isWsdl(HttpMessage msg) {
-        if (msg == null) return false;
-        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
+        if (msg == null) {
+            return false;
+        }
+        if (msg.getResponseBody().length() > 0
+                && msg.getResponseHeader().isText()
+                && !msg.getResponseHeader().isHtml()) {
             /* Alerts that a public WSDL file has been found. */
             HttpResponseHeader header = msg.getResponseHeader();
             String baseURL = msg.getRequestHeader().getURI().toString().trim();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-            return baseURL.endsWith(".wsdl") || contentType.equals("application/wsdl+xml");
+            return baseURL.endsWith(".wsdl")
+                    || StringUtils.endsWithIgnoreCase(baseURL, "?wsdl")
+                    || contentType.equals("application/wsdl+xml");
         }
         return false;
     }
