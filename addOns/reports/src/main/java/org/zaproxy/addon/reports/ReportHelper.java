@@ -27,12 +27,41 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.reports.sarif.SarifReportDataSupport;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
+
+    /**
+     * For some reports there is additional tooling necessary - e.g. for SARIF: Because the data
+     * structure is completely different to standard OWASP Zap model and would lead to unreadable
+     * and nearly unmaintainable report templates.<br>
+     * <br>
+     * The benefit here is, that the support objects are only created when wanted by the dedicated
+     * template (so lazy).<br>
+     * <br>
+     * Supported IDs:
+     *
+     * <ul>
+     *   <li>sarif creates a {@link SarifReportDataSupport} object for SARIF.
+     * </ul>
+     *
+     * @param id
+     * @param reportData
+     * @return support object
+     * @throws IllegalArgumentException when support with given id is not available
+     */
+    public static Object createSupport(String id, ReportData reportData) {
+        switch (id) {
+            case "sarif":
+                return new SarifReportDataSupport(reportData);
+            default:
+                throw new IllegalArgumentException("No support available for id:" + id);
+        }
+    }
 
     public static String getRiskString(int risk) {
         return Constant.messages.getString(ExtensionReports.PREFIX + ".report.risk." + risk);

@@ -1,154 +1,141 @@
-{
-  "version": "2.1.0",
-  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
-  "runs": [
-    {
-      "tool": {
-        "driver": {
-          "name": "OWASP Zap",
-          "fullName" : "OWASP Zed Attack Proxy",
-          "informationUri": "https://www.zaproxy.org",
-          "semanticVersion" : [[${zapVersion}]],
-          "taxa" : [
-          	
-          ],
-          "supportedTaxonomies": [
-	          {
-		          "name": "CWE",
-		          "index": 1,
-		          "guid": "33333333-0000-1111-8888-000000000000"
-	          }
-          ]
-        }
-      },
-      
-      "webRequst" : [ ],
-      
-      "webResponses" : [ ],
-      
-      "results": [
-      	    {
-			    "ruleId": "ABC0003",
-			    "kind": "fail",
-			    "level": "note",
-			    "message": {
-			      "text": "Consider using 'nameof(start)' instead of hard-coding
-			               the parameter name 'start'."
-			    },
-			    "locations": [
-			      {
-			
-			        "physicalLocation": {
-			          "uri": "https://test.example.org/api/vulnerable",
-			          "region": {
-			            "startLine": 6
-			          }
-			        }
-			      }
-			    ]
-			  }
-      		[#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
-      		
-      		[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
-      ]
-    }
-  ],
-   "taxonomies": [
-    {
-      "name": "CWE",
-      "version": "3.2",
-      "releaseDateUtc": "2019-01-03",
-      "guid": "33333333-0000-1111-8888-000000000000",
-      "informationUri": "https://cwe.mitre.org/data/published/cwe_v3.2.pdf/",
-      "downloadUri": "https://cwe.mitre.org/data/xml/cwec_v3.2.xml.zip",
-      "organization": "MITRE",
-      "shortDescription": {
-        "text": "The MITRE Common Weakness Enumeration"
-      },
-
-      "contents": [
-
-        "localizedData",
-
-        "nonLocalizedData"
-
-      ],
-
-      "isComprehensive": true,
-      "minimumRequiredLocalizedDataSemanticVersion": "3.2",
-      "taxa": [
-
-        {
-
-          "id": "327",
-          "guid": "33333333-0000-1111-8888-111111111111",
-          "name": "BrokenOrRiskyCryptographicAlgorithm",
-          "shortDescription": {
-            "text": "Use of a Broken or Risky Cryptographic Algorithm."
-          },
-
-          "defaultConfiguration": {
-            "level": "warning"
-          }
-        },
-
-        {
-          "id": "924",
-          "guid": "33333333-0000-1111-8888-222222222222",
-          "name": "TransmittedMessageIntegrity",
-          "shortDescription": {
-            "text": "Improper Enforcement of Message Integrity ..."
-          },
-          "defaultConfiguration": {
-            "level": "warning"
-          }
-        }
-
-      ]
-
-    }
-
-  ],
-}
-,
-
-{
-	"@version": [[${zapVersion}]],
-	"@generated": [[${generatedString}]],
-	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
-		{
-			"@name": "[(${helper.legacyEscapeText(site, true)})]",
-			"@host": "[(${helper.legacyEscapeText(helper.getHostForSite(site), true)})]",
-			"@port": "[(${helper.getPortForSite(site)})]",
-			"@ssl": "[(${helper.isSslSite(site)})]",
-			"alerts": [ [#th:block th:each="alert, alertState: ${helper.getAlertsForSite(alertTree, site)}" th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.name, alert.risk)}"]
-				{
-					"pluginid": "[(${alert.pluginId})]",
-					"alertRef": "[(${alert.alertRef})]",
-					"alert": "[(${helper.legacyEscapeText(alert.name, true)})]",
-					"name": "[(${helper.legacyEscapeText(alert.name, true)})]",
-					"riskcode": "[(${alert.risk})]",
-					"confidence": "[(${alert.confidence})]",
-					"riskdesc": "[(${helper.legacyEscapeText(helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.confidence) + ')', true)})]",
-					"desc": "[(${helper.legacyEscapeParagraph(alert.description, true)})]",
-					"instances":[ [#th:block th:each="instance, instState: ${instances}"][#th:block th:if="${! instState.first}"],[/th:block]
-						{
-							"uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
-							"method": "[(${helper.legacyEscapeText(instance.method, true)})]",
-							"param": "[(${helper.legacyEscapeText(instance.param, true)})]",
-							"attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
-							"evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]"
-						}[/th:block]
-					],
-					"count": "[(${instances.size})]",
-					"solution": "[(${helper.legacyEscapeParagraph(alert.solution, true)})]",
-					"otherinfo": "[(${helper.legacyEscapeParagraph(alert.otherinfo, true)})]",
-					"reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",
-					"cweid": "[(${alert.cweid})]",
-					"wascid": "[(${alert.wascid})]",
-					"sourceid": "[(${alert.sourceHistoryId})]"
-				}[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
-			]
-		}[/th:block]
-	]
-}
+{[#th:block th:with="sarifSupport=${helper.createSupport('sarif',reportData)}"]
+   "runs": [
+      {
+         "results": [ [#th:block th:each="sarifResult, sarifResultState: ${sarifSupport.results}"]
+            {
+               "level": "[(${sarifResult.level.value})]",
+               "locations": [[#th:block th:each="sarifLocation, sarifLocationState: ${sarifResult.locations}"]
+                  {
+                     "physicalLocation": {
+                        "artifactLocation": {
+                           "uri": "[(${sarifLocation.physicalLocation.artifactLocation.uri})]"
+                        },
+                        "region": {
+                           "startLine": [(${sarifLocation.physicalLocation.region.startLine})], 
+                           "snippet": {
+                               "text": [[${sarifLocation.physicalLocation.region.snippet.text}]]
+                           }
+                        }
+                     },
+                     "properties": {
+                         "attack": [[${sarifLocation.properties.attack}]],
+                         "evidence": [[${sarifLocation.properties.evidence}]]
+                     }
+                  }[#th:block th:if="${! sarifLocationState.last}"],[/th:block]
+               [/th:block]],
+               "message": {
+                  "text": [[${sarifResult.message.text}]]
+               },
+               "ruleId": [[${sarifResult.ruleId}]],
+               "webRequest": {[#th:block th:with="webRequest=${sarifResult.webRequest}"]
+                   "protocol": [[${webRequest.protocol}]],
+                   "version": [[${webRequest.version}]],
+                   "target": "[(${webRequest.target})]",
+                   "method": [[${webRequest.method}]],
+                   "headers": {[#th:block th:each="header, headerState: ${webRequest.headers}"]
+                       [[${header.key}]] : [[${header.value}]][#th:block th:if="${! headerState.last}"],[/th:block]
+                   [/th:block]},
+                   "body": {
+                       [#th:block th:if="${webRequest.body.containingText}"]"text": [[${webRequest.body.text}]][/th:block][#th:block th:if="${webRequest.body.containingBinary}"]"binary": [[${webRequest.body.binary}]][/th:block]
+                   }
+               }[/th:block],
+               "webResponse": {[#th:block th:with="webResponse=${sarifResult.webResponse}"]
+                   "statusCode": [[${webResponse.statusCode}]],
+                   "reasonPhrase": [[${webResponse.reasonPhrase}]],
+                   "protocol": [[${webResponse.protocol}]],
+                   "version": [[${webResponse.version}]],
+                   "headers": {[#th:block th:each="header, headerState: ${webResponse.headers}"]
+                       [[${header.key}]] : [[${header.value}]][#th:block th:if="${! headerState.last}"],[/th:block]
+                   [/th:block]},
+                   "body": {
+                       [#th:block th:if="${webResponse.body.containingText}"]"text": [[${webResponse.body.text}]][/th:block][#th:block th:if="${webResponse.body.containingBinary}"]"binary": [[${webResponse.body.binary}]][/th:block]
+                   },
+                   "noResponseReceived": [[${webResponse.noResponseReceived}]]
+               }[/th:block]
+            }[#th:block th:if="${! sarifResultState.last}"],[/th:block]
+         [/th:block]],
+         "taxonomies": [[#th:block th:each="sarifTaxonomy, sarifTaxonomyState: ${sarifSupport.taxonomies}"]
+            {
+               "downloadUri": "[(${sarifTaxonomy.downloadUri})]",
+               "guid":  "[(${sarifTaxonomy.guid})]",
+               "informationUri": "[(${sarifTaxonomy.informationUri})]",
+               "isComprehensive": [(${sarifTaxonomy.comprehensive})],
+               "language": "en",
+               "minimumRequiredLocalizedDataSemanticVersion": "[(${sarifTaxonomy.taxonomyVersion})]",
+               "name":  "[(${sarifTaxonomy.name})]",
+               "organization": "[(${sarifTaxonomy.organization})]",
+               "releaseDateUtc": "[(${sarifTaxonomy.releaseDateUtc})]",
+               "shortDescription": {
+                  "text": "[(${sarifTaxonomy.shortDescription.text})]"
+               },
+               "taxa": [[#th:block th:each="sarifTaxa, sarifTaxaState: ${sarifTaxonomy.taxa}"]
+                  {
+                     "guid": "[(${sarifTaxa.guid})]",
+                     "helpUri": "[(${sarifTaxa.helpUri})]",
+                     "id": "[(${sarifTaxa.id})]"
+                  }[#th:block th:if="${! sarifTaxaState.last}"],[/th:block]
+               [/th:block]],
+               "version": "4.4"
+            }[#th:block th:if="${! sarifTaxonomyState.last}"],[/th:block]
+         [/th:block]],
+         "tool": {
+            "driver": {
+               "guid": "[(${sarifSupport.components.owaspZap.guid})]",
+               "informationUri": "[(${sarifSupport.components.owaspZap.informationUri})]",
+               "name": "[(${sarifSupport.components.owaspZap.name})]",
+               "rules": [ [#th:block th:each="sarifRule, sarifRuleState: ${sarifSupport.rules}"]
+                  {
+                     "id": "[(${sarifRule.id})]",
+                     "defaultConfiguration": {
+                        "level": "[(${sarifRule.defaultLevel.value})]"
+                     },
+                     "fullDescription": {
+                        "text": [[(${sarifRule.fullDescription})]]
+                     },
+                     "name": "[(${sarifRule.name})]",
+                     "properties": {
+                            "references": [[#th:block th:each="sarifReference, sarifReferenceState: ${sarifRule.properties.references}"]
+                                "[(${sarifReference})]"[#th:block th:if="${! sarifReferenceState.last}"],[/th:block]
+                            [/th:block]],
+                            "solution": {
+                                "text": [[(${sarifRule.properties.solution.text})]]
+                            },
+                            "confidence": "[(${sarifRule.properties.confidence})]"
+                     },
+                     "relationships": [ [#th:block th:each="relationShip, relationShipState: ${sarifRule.relationShips}"]
+                        {
+                           "kinds": [
+                              "superset"
+                           ],
+                           "target": {
+                              "guid":"[(${relationShip.target.guid})]",
+                              "id": "[(${relationShip.target.id})]",
+                              "toolComponent": {
+                                 "guid": "[(${relationShip.target.toolComponent.guid})]",
+                                 "name": "[(${relationShip.target.toolComponent.name})]"
+                              }
+                           }
+                        }[#th:block th:if="${! relationShipState.last}"],[/th:block]
+                        [/th:block]
+                     ],
+                     "shortDescription": {
+                        "text": "[(${sarifRule.shortDescription})]"
+                     }
+                  }[#th:block th:if="${! sarifRuleState.last}"],[/th:block]
+                  [/th:block]
+               ],
+               "semanticVersion": [[${zapVersion}]],
+               "supportedTaxonomies": [ [#th:block th:each="sarifTaxonomy, sarifTaxonomyState: ${sarifSupport.taxonomies}"][#th:block th:if="${! sarifTaxonomyState.first}"],[/th:block]
+                  {
+                     "guid": "[(${sarifTaxonomy.guid})]",
+                     "name": "[(${sarifTaxonomy.name})]"
+                  }
+               ],[/th:block]
+               "version": [[${zapVersion}]]
+            }
+         }
+      }
+   ],
+   "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+   "version": "2.1.0"
+}[/th:block]
