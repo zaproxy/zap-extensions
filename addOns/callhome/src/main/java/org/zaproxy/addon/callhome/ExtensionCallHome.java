@@ -142,7 +142,7 @@ public class ExtensionCallHome extends ExtensionAdaptor {
                 System.getProperty("os.name") + " : " + System.getProperty("os.version"));
         json.put("javaVersion", System.getProperty("java.version"));
         json.put("zapType", ZAP.getProcessType().name());
-        json.put("container", Constant.isInContainer() ? containerName : "");
+        json.put("container", isInContainer() ? containerName : "");
         return json;
     }
 
@@ -267,8 +267,6 @@ public class ExtensionCallHome extends ExtensionAdaptor {
             } else if (snapFile.exists()) {
                 inContainer = true;
                 containerName = SNAP_NAME;
-            } else if (Constant.isKali()) {
-                containerName = KALI_NAME;
             } else {
                 inContainer = false;
             }
