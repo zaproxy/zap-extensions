@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.function.Supplier;
@@ -58,6 +59,14 @@ public class ExtensionCallHome extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionCallHome.class);
 
+    private static final String ZAP_CONTAINER_FILE = "/zap/container";
+    private static final String FLATPAK_FILE = "/.flatpak-info";
+    public static final String FLATPAK_NAME = "flatpak";
+    private static final String SNAP_FILE = "meta/snap.yaml";
+    public static final String SNAP_NAME = "snapcraft";
+    private static final String HOME_ENVVAR = "HOME";
+    public static final String WEBSWING_NAME = "webswing";
+    public static final String KALI_NAME = "kali";
     private static final String BACK_BOX_ID = "BackBox";
 
     public enum OS {
@@ -84,6 +93,8 @@ public class ExtensionCallHome extends ExtensionAdaptor {
 
     private static OS os;
     private static Boolean onBackBox = null;
+    private static Boolean inContainer = null;
+    private static String containerName;
 
     public ExtensionCallHome() {
         super(NAME);
@@ -131,7 +142,7 @@ public class ExtensionCallHome extends ExtensionAdaptor {
                 System.getProperty("os.name") + " : " + System.getProperty("os.version"));
         json.put("javaVersion", System.getProperty("java.version"));
         json.put("zapType", ZAP.getProcessType().name());
-        json.put("container", Constant.isInContainer() ? Constant.getContainerName() : "");
+        json.put("container", Constant.isInContainer() ? containerName : "");
         return json;
     }
 
@@ -223,6 +234,46 @@ public class ExtensionCallHome extends ExtensionAdaptor {
             }
         }
         return onBackBox;
+    }
+
+    /** Copied from core Constant to fix a bug in the webswing & kali detection logic in 2.11.0 */
+    // XXX Change back to using the core after 2.12.0
+    public static boolean isInContainer() {
+        if (inContainer == null) {
+            // This is created by the Docker files from 2.11
+            File containerFile = new File(ZAP_CONTAINER_FILE);
+            File flatpakFile = new File(FLATPAK_FILE);
+            File snapFile = new File(SNAP_FILE);
+            if (Constant.isLinux() && containerFile.exists()) {
+                inContainer = true;
+                String home = System.getenv(HOME_ENVVAR);
+                boolean inWebSwing = home != null && home.contains(WEBSWING_NAME);
+                try {
+                    containerName =
+                            new String(
+                                            Files.readAllBytes(containerFile.toPath()),
+                                            StandardCharsets.UTF_8)
+                                    .trim();
+                    if (inWebSwing) {
+                        // Append the webswing name so we don't loose the docker image name
+                        containerName += "." + WEBSWING_NAME;
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                }
+            } else if (flatpakFile.exists()) {
+                inContainer = true;
+                containerName = FLATPAK_NAME;
+            } else if (snapFile.exists()) {
+                inContainer = true;
+                containerName = SNAP_NAME;
+            } else if (Constant.isKali()) {
+                containerName = KALI_NAME;
+            } else {
+                inContainer = false;
+            }
+        }
+        return inContainer;
     }
 
     private HttpSender getHttpSender() {
