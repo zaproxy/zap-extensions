@@ -67,7 +67,8 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_SESS_04_SESS_EXPOSED);
 
     private static final int SESSION_TOKEN_MIN_LENGTH = 8;
 

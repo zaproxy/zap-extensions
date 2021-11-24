@@ -59,7 +59,9 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
     private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN);
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                    CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC);
 
     private static List<Pattern> defaultPatterns = null;
     private static List<Pattern> patterns = null;

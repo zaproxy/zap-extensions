@@ -42,7 +42,8 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                    CommonAlertTag.WSTG_V42_CLNT_09_CLICKJACK);
 
     private static final int PLUGIN_ID = 10020;
     boolean includedInCsp;

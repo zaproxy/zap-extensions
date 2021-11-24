@@ -64,7 +64,7 @@ class InsecureAuthenticationScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(326)));
         assertThat(wasc, is(equalTo(4)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -78,6 +78,9 @@ class InsecureAuthenticationScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
         assertThat(
@@ -89,6 +92,9 @@ class InsecureAuthenticationScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO.getValue())));
     }
 
     @Test

@@ -21,12 +21,15 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFromCacheScanRule> {
 
@@ -56,6 +59,19 @@ class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFro
         RetrievedFromCacheScanRule thisScanner = createScanner();
         // Then
         assertThat(thisScanner.getName(), equalTo("Retrieved from Cache"));
+    }
+
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
     }
 
     @Test

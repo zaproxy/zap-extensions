@@ -223,13 +223,16 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
         assertThat(
-                tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
-                is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
+                tags.containsKey(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getValue())));
     }
 
     private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)

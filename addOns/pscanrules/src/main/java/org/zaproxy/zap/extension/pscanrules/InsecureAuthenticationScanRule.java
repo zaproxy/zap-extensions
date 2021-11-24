@@ -46,7 +46,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                     CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
                     CommonAlertTag.OWASP_2017_A02_BROKEN_AUTH,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO);
 
     /** for logging. */
     private static Logger log = LogManager.getLogger(InsecureAuthenticationScanRule.class);
