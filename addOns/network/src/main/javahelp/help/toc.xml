@@ -6,7 +6,9 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Network" image="addon.network.icon" target="addon.network" />
+            <tocitem text="Network" image="addon.network.icon" target="addon.network">
+                <tocitem text="API" target="addon.network.api" />
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

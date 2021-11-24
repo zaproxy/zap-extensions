@@ -16,6 +16,11 @@ zapAddOn {
             localeToken.set("%LC%")
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.network.NetworkApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/network/resources/Messages.properties"))
+    }
 }
 
 crowdin {

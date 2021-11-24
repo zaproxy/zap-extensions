@@ -25,7 +25,8 @@ plugins {
 description = "Common configuration of the add-ons."
 
 val mandatoryAddOns = listOf(
-    "callhome"
+    "callhome",
+    "network"
 )
 
 val parentProjects = listOf(

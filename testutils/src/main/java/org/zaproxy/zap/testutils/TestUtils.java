@@ -531,6 +531,17 @@ public abstract class TestUtils {
                             // Return an empty string for non extension's messages.
                             return "";
                         });
+
+        when(i18n.containsKey(anyString()))
+                .thenAnswer(
+                        invocation -> {
+                            String key = (String) invocation.getArguments()[0];
+                            if (key.startsWith(prefix)) {
+                                return extensionResourceBundle.containsKey(key);
+                            }
+                            // Return true for non extension's messages.
+                            return true;
+                        });
     }
 
     private static ResourceBundle getExtensionResourceBundle(String baseName) {

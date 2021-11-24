@@ -26,15 +26,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
+import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 
 public class ExtensionNetwork extends ExtensionAdaptor {
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
 
     private static final String I18N_PREFIX = "network";
 
@@ -55,6 +62,11 @@ public class ExtensionNetwork extends ExtensionAdaptor {
     }
 
     @Override
+    public void hook(ExtensionHook extensionHook) {
+        extensionHook.addApiImplementor(new NetworkApi(this));
+    }
+
+    @Override
     public boolean canUnload() {
         return true;
     }
@@ -72,8 +84,7 @@ public class ExtensionNetwork extends ExtensionAdaptor {
      * @throws IOException if an error occurred while writing the certificate.
      */
     public void writeRootCaCertAsPem(Path path) throws IOException {
-        DynSSLParam param = Model.getSingleton().getOptionsParam().getParamSet(DynSSLParam.class);
-        KeyStore ks = param.getRootca();
+        KeyStore ks = getRootCaKeyStore();
         if (ks == null) {
             return;
         }
@@ -88,5 +99,36 @@ public class ExtensionNetwork extends ExtensionAdaptor {
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    KeyStore getRootCaKeyStore() {
+        DynSSLParam param = Model.getSingleton().getOptionsParam().getParamSet(DynSSLParam.class);
+        if (param == null) {
+            return null;
+        }
+        return param.getRootca();
+    }
+
+    boolean generateRootCaCert() {
+        ExtensionDynSSL extDyn =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
+        if (extDyn != null) {
+            try {
+                extDyn.createNewRootCa();
+                return true;
+            } catch (Exception e) {
+                LOGGER.error("Failed to create the new Root CA cert:", e);
+            }
+        }
+        return false;
+    }
+
+    String importRootCaCert(Path pemFile) {
+        ExtensionDynSSL extDyn =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
+        if (extDyn != null) {
+            return extDyn.importRootCaCertificate(pemFile.toFile());
+        }
+        return "";
     }
 }

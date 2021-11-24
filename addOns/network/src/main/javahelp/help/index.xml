@@ -5,4 +5,5 @@
 
 <index version="2.0">
     <indexitem text="Network" target="addon.network" />
+    <indexitem text="Network API" target="addon.network.api" />
 </index>
