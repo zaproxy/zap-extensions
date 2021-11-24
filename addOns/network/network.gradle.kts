@@ -5,7 +5,7 @@ description = "Provides core networking capabilities."
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.12.0")
+    zapVersion.set("2.11.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -24,27 +24,20 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.cert.Certificate;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
-import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -160,16 +153,10 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     }
 
     private void writePubCertificateToFile(File f) throws IOException, KeyStoreException {
-        OptionsParam options = Model.getSingleton().getOptionsParam();
-        DynSSLParam param = options.getParamSet(DynSSLParam.class);
-        KeyStore ks = param.getRootca();
-        if (ks != null) {
-            final Certificate cert = ks.getCertificate(SslCertificateService.ZAPROXY_JKS_ALIAS);
-            try (final Writer w = Files.newBufferedWriter(f.toPath(), StandardCharsets.US_ASCII);
-                    final PemWriter pw = new PemWriter(w)) {
-                pw.writeObject(new JcaMiscPEMGenerator(cert));
-                pw.flush();
-            }
+        ExtensionNetwork extensionNetwork =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
+        if (extensionNetwork != null) {
+            extensionNetwork.writeRootCaCertAsPem(f.toPath());
         }
     }
 
