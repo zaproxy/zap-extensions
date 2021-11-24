@@ -60,6 +60,9 @@ zapAddOn {
                 register("callhome") {
                     version.set(">= 0.0.1")
                 }
+                register("network") {
+                    version.set(">= 0.0.1")
+                }
             }
         }
     }
@@ -67,6 +70,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("callhome")!!)
+    compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)

@@ -19,8 +19,20 @@
  */
 package org.zaproxy.addon.network;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 
 public class ExtensionNetwork extends ExtensionAdaptor {
 
@@ -50,5 +62,31 @@ public class ExtensionNetwork extends ExtensionAdaptor {
     @Override
     public boolean supportsDb(String type) {
         return true;
+    }
+
+    /**
+     * Writes the Root CA certificate to the specified file in PEM format, suitable for importing
+     * into browsers.
+     *
+     * @param path the path the Root CA certificate will be written to.
+     * @throws IOException if an error occurred while writing the certificate.
+     */
+    public void writeRootCaCertAsPem(Path path) throws IOException {
+        DynSSLParam param = Model.getSingleton().getOptionsParam().getParamSet(DynSSLParam.class);
+        KeyStore ks = param.getRootca();
+        if (ks == null) {
+            return;
+        }
+
+        try {
+            Certificate cert = ks.getCertificate(SslCertificateService.ZAPROXY_JKS_ALIAS);
+            try (Writer w = Files.newBufferedWriter(path, StandardCharsets.US_ASCII);
+                    PemWriter pw = new PemWriter(w)) {
+                pw.writeObject(new JcaMiscPEMGenerator(cert));
+                pw.flush();
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 }
