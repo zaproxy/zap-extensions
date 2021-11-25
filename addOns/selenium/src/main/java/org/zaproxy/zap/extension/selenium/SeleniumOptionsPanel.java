@@ -30,14 +30,17 @@ import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
 /**
  * The GUI Selenium options panel.
@@ -66,6 +69,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
     private final JTextField firefoxBinaryTextField;
     private final JTextField phantomJsBinaryTextField;
+    private final OptionsBrowserExtensionsTableModel browserExtModel;
+    private static String directory;
 
     public SeleniumOptionsPanel(ResourceBundle resourceBundle) {
         setName(resourceBundle.getString("selenium.options.title"));
@@ -276,6 +281,31 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                         .addComponent(phantomJsBinaryTextField)
                                         .addComponent(phantomJsBinaryButton)));
 
+        JPanel browserExtPanel = new JPanel();
+        GroupLayout browserExtLayout = new GroupLayout(browserExtPanel);
+        browserExtPanel.setLayout(browserExtLayout);
+
+        browserExtLayout.setAutoCreateGaps(true);
+        browserExtLayout.setAutoCreateContainerGaps(true);
+
+        browserExtModel = new OptionsBrowserExtensionsTableModel();
+
+        browserExtPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        null,
+                        resourceBundle.getString("selenium.options.extensions.title"),
+                        TitledBorder.DEFAULT_JUSTIFICATION,
+                        TitledBorder.DEFAULT_POSITION,
+                        FontUtils.getFont(FontUtils.Size.standard)));
+
+        BrowserExtMultipleOptionsPanel browserExtOptionsPanel =
+                new BrowserExtMultipleOptionsPanel(this.browserExtModel, resourceBundle);
+
+        browserExtLayout.setHorizontalGroup(
+                browserExtLayout.createSequentialGroup().addComponent(browserExtOptionsPanel));
+        browserExtLayout.setVerticalGroup(
+                browserExtLayout.createSequentialGroup().addComponent(browserExtOptionsPanel));
+
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
 
@@ -285,11 +315,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
                         .addComponent(driversPanel)
-                        .addComponent(binariesPanel));
+                        .addComponent(binariesPanel)
+                        .addComponent(browserExtPanel));
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addComponent(driversPanel)
-                        .addComponent(binariesPanel));
+                        .addComponent(binariesPanel)
+                        .addComponent(browserExtPanel));
     }
 
     private JButton createBundledWebDriverButton(
@@ -346,6 +378,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
         phantomJsBinaryTextField.setText(seleniumOptions.getPhantomJsBinaryPath());
+
+        browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
+        directory = seleniumOptions.getLastDirectory();
     }
 
     private static String getEffectiveDriverPath(
@@ -384,6 +419,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
         seleniumOptions.setPhantomJsBinaryPath(phantomJsBinaryTextField.getText());
+        seleniumOptions.setBrowserExtensions(browserExtModel.getElements());
+        seleniumOptions.setLastDirectory(directory);
     }
 
     @Override
@@ -466,6 +503,73 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         public void setDisabledToolTipText(String text) {
             disabledToolTipText = text;
             updateCurrentToolTipText();
+        }
+    }
+
+    private static class BrowserExtMultipleOptionsPanel
+            extends AbstractMultipleOptionsTablePanel<BrowserExtension> {
+        private static final long serialVersionUID = 1L;
+
+        private ResourceBundle resourceBundle;
+
+        public BrowserExtMultipleOptionsPanel(
+                AbstractMultipleOptionsTableModel<BrowserExtension> model,
+                ResourceBundle resourceBundle) {
+            super(model, false);
+            this.resourceBundle = resourceBundle;
+        }
+
+        @Override
+        public BrowserExtension showAddDialogue() {
+            JFileChooser fileChooser = new JFileChooser(directory);
+            fileChooser.setFileFilter(BrowserExtension.getFileNameExtensionFilter());
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                directory = file.getParent();
+                return new BrowserExtension(file.toPath());
+            }
+            return null;
+        }
+
+        @Override
+        public BrowserExtension showModifyDialogue(BrowserExtension e) {
+            // Not supported
+            return null;
+        }
+
+        @Override
+        public boolean showRemoveDialogue(BrowserExtension e) {
+            JCheckBox removeWithoutConfirmationCheckBox =
+                    new JCheckBox(
+                            resourceBundle.getString(
+                                    "selenium.options.dialog.remove.label.checkbox"));
+            Object[] messages = {
+                resourceBundle.getString("selenium.options.dialog.remove.text"),
+                removeWithoutConfirmationCheckBox
+            };
+            int option =
+                    JOptionPane.showOptionDialog(
+                            this.getParent(),
+                            messages,
+                            resourceBundle.getString("selenium.options.dialog.remove.title"),
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[] {
+                                resourceBundle.getString(
+                                        "selenium.options.dialog.remove.button.remove"),
+                                resourceBundle.getString(
+                                        "selenium.options.dialog.remove.button.cancel")
+                            },
+                            null);
+
+            if (option == JOptionPane.OK_OPTION) {
+                setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

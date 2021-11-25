@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.selenium;
 
 import java.lang.ref.WeakReference;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
@@ -44,6 +46,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -445,8 +448,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @see #getBrowserUIList()
      * @see #createBrowsersComboBoxModel()
      */
-    public String getName(Browser browser) {
-        return getMessages().getString("selenium.browser.name." + browser.getId());
+    public static String getName(Browser browser) {
+        return Constant.messages.getString("selenium.browser.name." + browser.getId());
     }
 
     /**
@@ -507,17 +510,28 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return optionsPanel;
     }
 
+    public WebDriver getWebDriver(int requester, String providedBrowserId) {
+        return getWebDriver(requester, providedBrowserId, true);
+    }
+
     /**
      * Gets a {@code WebDriver} to the provided browser for the given requester.
      *
      * @param requester the ID of the (ZAP) component that's requesting the {@code WebDriver}.
      * @param providedBrowserId the ID of the provided browser.
+     * @param enableExtensions if true then optional browser extensions will be enabled
      * @return the {@code WebDriver} to the provided browser.
      * @throws IllegalArgumentException if the provided browser was not found.
      * @since 1.1.0
      */
-    public WebDriver getWebDriver(int requester, String providedBrowserId) {
-        return getWebDriverImpl(requester, providedBrowserId, null, -1);
+    public WebDriver getWebDriver(
+            int requester, String providedBrowserId, boolean enableExtensions) {
+        return getWebDriverImpl(requester, providedBrowserId, null, -1, enableExtensions);
+    }
+
+    public WebDriver getWebDriver(
+            int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+        return this.getWebDriver(requester, providedBrowserId, proxyAddress, proxyPort, true);
     }
 
     /**
@@ -528,6 +542,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @param providedBrowserId the ID of the provided browser.
      * @param proxyAddress the address of the proxy.
      * @param proxyPort the port of the proxy.
+     * @param enableExtensions if true then optional browser extensions will be enabled
      * @return the {@code WebDriver} to the provided browser, proxying through the given address and
      *     port.
      * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
@@ -536,10 +551,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @since 1.1.0
      */
     public WebDriver getWebDriver(
-            int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+            int requester,
+            String providedBrowserId,
+            String proxyAddress,
+            int proxyPort,
+            boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(requester, providedBrowserId, proxyAddress, proxyPort);
+        return getWebDriverImpl(
+                requester, providedBrowserId, proxyAddress, proxyPort, enableExtensions);
+    }
+
+    public WebDriver getWebDriverProxyingViaZAP(int requester, String providedBrowserId) {
+        return this.getWebDriverProxyingViaZAP(requester, providedBrowserId, true);
     }
 
     /**
@@ -547,32 +571,48 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      *
      * @param requester the ZAP component that will use the browser
      * @param providedBrowserId the browser id
-     * @return
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
-    public WebDriver getWebDriverProxyingViaZAP(int requester, String providedBrowserId) {
+    public WebDriver getWebDriverProxyingViaZAP(
+            int requester, String providedBrowserId, boolean enableExtensions) {
         return this.getWebDriver(
                 requester,
                 providedBrowserId,
                 Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort(),
+                enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowser(String providedBrowserId) {
+        return this.getProxiedBrowser(providedBrowserId, true);
     }
 
     /**
      * Opens the identified browser for manual proxying through ZAP
      *
      * @param providedBrowserId the browser id
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
-    public WebDriver getProxiedBrowser(String providedBrowserId) {
-        return this.getProxiedBrowser(providedBrowserId, null);
+    public WebDriver getProxiedBrowser(String providedBrowserId, boolean enableExtensions) {
+        return this.getProxiedBrowser(providedBrowserId, null, enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowserByName(final String browserName) {
+        return this.getProxiedBrowserByName(browserName, true);
     }
 
     /**
      * Opens the identified browser for manual proxying through ZAP
      *
      * @param browserName the browser name
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
-    public WebDriver getProxiedBrowserByName(final String browserName) {
-        return this.getProxiedBrowserByName(browserName, null);
+    public WebDriver getProxiedBrowserByName(final String browserName, boolean enableExtensions) {
+        return this.getProxiedBrowserByName(browserName, null, enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowserByName(final String browserName, final String url) {
+        return this.getProxiedBrowserByName(browserName, url, true);
     }
 
     /**
@@ -580,9 +620,17 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      *
      * @param browserName the browser name
      * @param url the url to open
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
-    public WebDriver getProxiedBrowserByName(final String browserName, final String url) {
-        return this.getProxiedBrowserByName(HttpSender.PROXY_INITIATOR, browserName, url);
+    public WebDriver getProxiedBrowserByName(
+            final String browserName, final String url, boolean enableExtensions) {
+        return this.getProxiedBrowserByName(
+                HttpSender.PROXY_INITIATOR, browserName, url, enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowserByName(
+            final int requester, final String browserName, final String url) {
+        return this.getProxiedBrowserByName(requester, browserName, url, true);
     }
 
     /**
@@ -591,15 +639,24 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @param requester the ZAP component that will use the browser
      * @param browserName the browser name
      * @param url the url to open
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
     public WebDriver getProxiedBrowserByName(
-            final int requester, final String browserName, final String url) {
+            final int requester,
+            final String browserName,
+            final String url,
+            boolean enableExtensions) {
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
             if (provided.getName().equals(browserName)) {
-                return getProxiedBrowser(requester, provided.getBrowser().getId(), url);
+                return getProxiedBrowser(
+                        requester, provided.getBrowser().getId(), url, enableExtensions);
             }
         }
         return null;
+    }
+
+    public WebDriver getProxiedBrowser(final ProvidedBrowserUI provided, final String url) {
+        return this.getProxiedBrowser(provided, url, true);
     }
 
     /**
@@ -607,36 +664,55 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      *
      * @param provided the browser
      * @param url the URL to open
-     */
-    public WebDriver getProxiedBrowser(final ProvidedBrowserUI provided, final String url) {
-        return getProxiedBrowser(provided.getBrowser().getId(), url);
-    }
-
-    /**
-     * Opens the browser for manual proxying through ZAP
-     *
-     * @param providedBrowserId the browser id
-     * @param url the URL to open
-     */
-    public WebDriver getProxiedBrowser(final String providedBrowserId, final String url) {
-        return this.getProxiedBrowser(HttpSender.PROXY_INITIATOR, providedBrowserId, url);
-    }
-
-    /**
-     * Opens the browser for manual proxying through ZAP
-     *
-     * @param requester the ZAP componenet that will use this browser
-     * @param providedBrowserId the browser id
-     * @param url the URL to open
+     * @param enableExtensions if true then optional browser extensions will be enabled
      */
     public WebDriver getProxiedBrowser(
+            final ProvidedBrowserUI provided, final String url, boolean enableExtensions) {
+        return getProxiedBrowser(provided.getBrowser().getId(), url, enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowser(final String providedBrowserId, final String url) {
+        return this.getProxiedBrowser(providedBrowserId, url, true);
+    }
+
+    /**
+     * Opens the browser for manual proxying through ZAP
+     *
+     * @param providedBrowserId the browser id
+     * @param url the URL to open
+     * @param enableExtensions if true then optional browser extensions will be enabled
+     */
+    public WebDriver getProxiedBrowser(
+            final String providedBrowserId, final String url, boolean enableExtensions) {
+        return this.getProxiedBrowser(
+                HttpSender.PROXY_INITIATOR, providedBrowserId, url, enableExtensions);
+    }
+
+    public WebDriver getProxiedBrowser(
             final int requester, final String providedBrowserId, final String url) {
+        return this.getProxiedBrowser(requester, providedBrowserId, url, true);
+    }
+
+    /**
+     * Opens the browser for manual proxying through ZAP
+     *
+     * @param requester the ZAP component that will use this browser
+     * @param providedBrowserId the browser id
+     * @param url the URL to open
+     * @param enableExtensions if true then optional browser extensions will be enabled
+     */
+    public WebDriver getProxiedBrowser(
+            final int requester,
+            final String providedBrowserId,
+            final String url,
+            boolean enableExtensions) {
         WebDriver webDriver =
                 getWebDriver(
                         requester,
                         providedBrowserId,
                         Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort(),
+                        enableExtensions);
 
         if (webDriver != null) {
             proxiedWebDrivers
@@ -658,7 +734,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private WebDriver getWebDriverImpl(
-            int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+            int requester,
+            String providedBrowserId,
+            String proxyAddress,
+            int proxyPort,
+            boolean enableExtensions) {
         ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
         if (providedBrowser == null) {
             throw new IllegalArgumentException("Unknown browser: " + providedBrowserId);
@@ -671,7 +751,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             wd =
                     webDriverProviders
                             .get(providedBrowser.getProviderId())
-                            .getWebDriver(requester, proxyAddress, proxyPort);
+                            .getWebDriver(requester, proxyAddress, proxyPort, enableExtensions);
         }
         if (getExtScript() != null) {
             boolean synchronously = requester == HttpSender.AJAX_SPIDER_INITIATOR;
@@ -774,9 +854,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      */
     public static WebDriver getWebDriver(
             int requester, Browser browser, String proxyAddress, int proxyPort) {
+        return getWebDriver(requester, browser, proxyAddress, proxyPort, false);
+    }
+
+    public static WebDriver getWebDriver(
+            int requester,
+            Browser browser,
+            String proxyAddress,
+            int proxyPort,
+            boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(requester, browser, proxyAddress, proxyPort, c -> {});
+        return getWebDriverImpl(
+                requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
     }
 
     public static WebDriver getWebDriver(
@@ -786,7 +876,18 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             Consumer<MutableCapabilities> consumer) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer);
+        return getWebDriver(browser, proxyAddress, proxyPort, consumer, false);
+    }
+
+    public static WebDriver getWebDriver(
+            Browser browser,
+            String proxyAddress,
+            int proxyPort,
+            Consumer<MutableCapabilities> consumer,
+            boolean enableExtensions) {
+        validateProxyAddressPort(proxyAddress, proxyPort);
+
+        return getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
     }
 
     private static void setCommonOptions(
@@ -804,16 +905,44 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
+    private static SeleniumOptions getSeleniumOptions() {
+        return Model.getSingleton().getOptionsParam().getParamSet(SeleniumOptions.class);
+    }
+
+    private static void addFirefoxExtensions(FirefoxOptions options) {
+        List<Path> exts =
+                getSeleniumOptions().getEnabledBrowserExtensions(Browser.FIREFOX).stream()
+                        .map(BrowserExtension::getPath)
+                        .collect(Collectors.toList());
+        if (!exts.isEmpty()) {
+            FirefoxProfile profile = new FirefoxProfile();
+            exts.stream().map(Path::toFile).forEach(profile::addExtension);
+            options.setProfile(profile);
+        }
+    }
+
+    private static void addChromeExtensions(ChromeOptions options) {
+        options.addExtensions(
+                getSeleniumOptions().getEnabledBrowserExtensions(Browser.CHROME).stream()
+                        .map(BrowserExtension::getPath)
+                        .map(Path::toFile)
+                        .collect(Collectors.toList()));
+    }
+
     private static WebDriver getWebDriverImpl(
             int requester,
             Browser browser,
             String proxyAddress,
             int proxyPort,
-            Consumer<MutableCapabilities> consumer) {
+            Consumer<MutableCapabilities> consumer,
+            boolean enableExtensions) {
         switch (browser) {
             case CHROME:
             case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
+                if (enableExtensions) {
+                    addChromeExtensions(chromeOptions);
+                }
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
@@ -824,6 +953,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
+                if (enableExtensions) {
+                    addFirefoxExtensions(firefoxOptions);
+                }
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
                 String geckoDriver =

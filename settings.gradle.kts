@@ -31,6 +31,7 @@ var addOns = listOf(
     "directorylistv2_3_lc",
     "domxss",
     "encoder",
+    "evalvillain",
     "exim",
     "formhandler",
     "frontendscanner",

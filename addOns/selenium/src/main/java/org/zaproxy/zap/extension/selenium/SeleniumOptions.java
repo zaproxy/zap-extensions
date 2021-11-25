@@ -19,13 +19,22 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
@@ -55,6 +64,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY =
             PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+
+    private static final File EXTENSIONS_DIR =
+            new File(Constant.getZapHome() + "/selenium/extensions/");
+
+    private static final Logger LOGGER = LogManager.getLogger(SeleniumOptions.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -89,6 +103,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /** The configuration key to read/write the path PhantomJS binary. */
     private static final String PHANTOM_JS_BINARY_KEY = SELENIUM_BASE_KEY + ".phantomJsBinary";
 
+    private static final String DISABLED_EXTENSIONS_KEY = SELENIUM_BASE_KEY + ".disabledExts";
+
+    private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
+
     /** The path to ChromeDriver. */
     private String chromeDriverPath = "";
 
@@ -100,6 +118,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     /** The path to PhantomJS binary. */
     private String phantomJsBinaryPath = "";
+
+    private List<Object> disabledExtensions;
+
+    private String lastDirectory;
 
     @Override
     @ZapApiIgnore
@@ -127,6 +149,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
         phantomJsBinaryPath =
                 readSystemPropertyWithOptionFallback(
                         PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
+
+        disabledExtensions = getConfig().getList(DISABLED_EXTENSIONS_KEY);
+
+        lastDirectory = getConfig().getString(EXTENSIONS_LAST_DIR_KEY);
     }
 
     /**
@@ -333,5 +359,83 @@ public class SeleniumOptions extends VersionedAbstractParam {
             saveAndSetSystemProperty(
                     PHANTOM_JS_BINARY_KEY, PHANTOM_JS_BINARY_SYSTEM_PROPERTY, phantomJsBinaryPath);
         }
+    }
+
+    public List<BrowserExtension> getEnabledBrowserExtensions(Browser browser) {
+        return this.getBrowserExtensions().stream()
+                .filter(BrowserExtension::isEnabled)
+                .filter(be -> be.getBrowser() == browser)
+                .collect(Collectors.toList());
+    }
+
+    public List<BrowserExtension> getBrowserExtensions() {
+        List<BrowserExtension> list = new ArrayList<>();
+        if (EXTENSIONS_DIR.exists() && EXTENSIONS_DIR.isDirectory()) {
+            // Always read these from filestore so we always pickup new files
+            for (File file : EXTENSIONS_DIR.listFiles()) {
+                Path path = file.toPath();
+                if (BrowserExtension.isBrowserExtension(path)) {
+                    BrowserExtension ext = new BrowserExtension(path);
+                    ext.setEnabled(
+                            !this.disabledExtensions.contains(ext.getPath().toFile().getName()));
+                    list.add(ext);
+                }
+            }
+        }
+        return list;
+    }
+
+    public void setBrowserExtensions(List<BrowserExtension> exts) {
+        this.disabledExtensions.clear();
+        // Delete any that are not in the list
+        for (File file : EXTENSIONS_DIR.listFiles()) {
+            Path path = file.toPath();
+            if (BrowserExtension.isBrowserExtension(path)) {
+                boolean found = false;
+                for (BrowserExtension ext : exts) {
+                    if (ext.getPath().equals(path)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    try {
+                        Files.delete(file.toPath());
+                    } catch (IOException e) {
+                        LOGGER.error(
+                                "Failed to delete browser extension {}", file.getAbsoluteFile(), e);
+                    }
+                }
+            }
+        }
+        // Copy any newly added extensions
+        for (BrowserExtension ext : exts) {
+            File f = ext.getPath().toFile();
+            if (!f.getParentFile().equals(EXTENSIONS_DIR)) {
+                File target = new File(EXTENSIONS_DIR, f.getName());
+                try {
+                    FileUtils.copyFileToDirectory(f, EXTENSIONS_DIR, false);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Failed to copy browser extension {} to {} ",
+                            f.getAbsolutePath(),
+                            target.getAbsolutePath(),
+                            e);
+                }
+            }
+            if (!ext.isEnabled()) {
+                this.disabledExtensions.add(ext.getPath().toFile().getName());
+            }
+        }
+        this.getConfig().setProperty(DISABLED_EXTENSIONS_KEY, this.disabledExtensions);
+    }
+
+    public String getLastDirectory() {
+        return lastDirectory;
+    }
+
+    public void setLastDirectory(String lastDirectory) {
+        this.lastDirectory = lastDirectory;
+        this.getConfig().setProperty(EXTENSIONS_LAST_DIR_KEY, this.lastDirectory);
     }
 }
