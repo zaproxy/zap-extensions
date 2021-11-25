@@ -8,6 +8,12 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/oast-support/")
 
+        dependencies {
+            addOns {
+                register("network")
+            }
+        }
+
         extensions {
             register("org.zaproxy.addon.oast.scripts.ExtensionOastScripts") {
                 classnames {
@@ -39,6 +45,7 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects["graaljs"]!!)
+    compileOnly(parent!!.childProjects["network"]!!)
 
     testImplementation(project(":testutils"))
 }

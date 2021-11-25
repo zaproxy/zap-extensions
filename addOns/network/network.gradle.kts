@@ -2,6 +2,9 @@ import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Provides core networking capabilities."
 
+val bouncyCastle by configurations.creating
+configurations.api { extendsFrom(bouncyCastle) }
+
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.ALPHA)
@@ -14,6 +17,10 @@ zapAddOn {
         helpSet {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
+        }
+
+        bundledLibs {
+            libs.from(bouncyCastle)
         }
     }
 
@@ -35,6 +42,11 @@ dependencies {
 
     val nettyVersion = "4.1.70.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
+
+    val bcVersion = "1.69"
+    bouncyCastle("org.bouncycastle:bcmail-jdk15on:$bcVersion")
+    bouncyCastle("org.bouncycastle:bcprov-jdk15on:$bcVersion")
+    bouncyCastle("org.bouncycastle:bcpkix-jdk15on:$bcVersion")
 
     testImplementation(project(":testutils"))
 }
