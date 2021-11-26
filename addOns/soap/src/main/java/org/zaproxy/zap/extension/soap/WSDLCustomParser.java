@@ -178,7 +178,7 @@ public class WSDLCustomParser {
         } catch (ResourceDownloadException rde) {
             String exMsg =
                     Constant.messages.getString(
-                            "soap.topmenu.tools.importWSDL.fail", file.getAbsolutePath());
+                            "soap.topmenu.import.importWSDL.fail", file.getAbsolutePath());
             LOG.warn(exMsg);
             if (View.isInitialised()) {
                 View.getSingleton().showWarningDialog(exMsg);
