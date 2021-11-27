@@ -67,6 +67,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private static final File EXTENSIONS_DIR =
             new File(Constant.getZapHome() + "/selenium/extensions/");
+    private static final File[] NO_FILES = {};
 
     private static final Logger LOGGER = LogManager.getLogger(SeleniumOptions.class);
 
@@ -137,6 +138,12 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
+        try {
+            Files.createDirectories(EXTENSIONS_DIR.toPath());
+        } catch (IOException e) {
+            LOGGER.error("Failed to create the extensions directory:", e);
+        }
+
         chromeDriverPath =
                 getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath =
@@ -388,7 +395,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
     public void setBrowserExtensions(List<BrowserExtension> exts) {
         this.disabledExtensions.clear();
         // Delete any that are not in the list
-        for (File file : EXTENSIONS_DIR.listFiles()) {
+        for (File file : getFiles(EXTENSIONS_DIR)) {
             Path path = file.toPath();
             if (BrowserExtension.isBrowserExtension(path)) {
                 boolean found = false;
@@ -428,6 +435,14 @@ public class SeleniumOptions extends VersionedAbstractParam {
             }
         }
         this.getConfig().setProperty(DISABLED_EXTENSIONS_KEY, this.disabledExtensions);
+    }
+
+    private static File[] getFiles(File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            return files;
+        }
+        return NO_FILES;
     }
 
     public String getLastDirectory() {
