@@ -29,11 +29,13 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
     private static final long serialVersionUID = -7217818541206464572L;
     private static final Logger LOG = LogManager.getLogger(PopupMenuSaveRawMessage.class);
-
+    private static final String STATS_RAW_FILE_MSG = "save.raw.file.msg";
+    private static final String STATS_RAW_FILE_MSG_ERROR = "save.raw.file.msg.errors";
     private static final String MESSAGE_PREFIX = "exim.saveraw.";
     private static final String RAW_FILE_EXTENSION = ".raw";
 
@@ -76,18 +78,28 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
                 System.arraycopy(bytesBody, 0, bytes, bytesHeader.length, bytesBody.length);
                 break;
         }
-        writeToFile(file, bytes);
+        writeToFile(file, bytes, messageComponent);
     }
 
-    private static void writeToFile(File file, byte[] bytes) {
+    private static void writeToFile(File file, byte[] bytes, MessageComponent messageComponent) {
         try (OutputStream fw = new BufferedOutputStream(new FileOutputStream(file))) {
             fw.write(bytes);
+            Stats.incCounter(
+                    ExtensionExim.STATS_PREFIX
+                            + STATS_RAW_FILE_MSG
+                            + "."
+                            + messageComponent.name());
         } catch (IOException e) {
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
                                     "exim.file.save.error", file.getAbsolutePath()));
             LOG.error(e.getMessage(), e);
+            Stats.incCounter(
+                    ExtensionExim.STATS_PREFIX
+                            + STATS_RAW_FILE_MSG_ERROR
+                            + "."
+                            + messageComponent.name());
         }
     }
 }

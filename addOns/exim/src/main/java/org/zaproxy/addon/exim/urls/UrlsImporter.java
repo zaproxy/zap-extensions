@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -34,10 +35,16 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.utils.Stats;
 
 public final class UrlsImporter {
 
     private static final Logger LOG = LogManager.getLogger(UrlsImporter.class);
+    private static final String STATS_URL_FILE = "import.url.file";
+    private static final String STATS_URL_FILE_ERROR = "import.url.file.errors";
+    private static final String STATS_URL_FILE_URL = "import.url.file.url";
+    private static final String STATS_URL_FILE_URL_ERROR = "import.url.file.url.errors";
 
     private UrlsImporter() {}
 
@@ -46,9 +53,11 @@ public final class UrlsImporter {
             return false;
         }
         try (BufferedReader in = Files.newBufferedReader(file.toPath())) {
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE);
             if (View.isInitialised()) {
                 View.getSingleton().getOutputPanel().setTabFocus();
             }
+            updateOutput("exim.output.start", file.toPath().toString());
 
             HttpSender sender =
                     new HttpSender(
@@ -71,9 +80,11 @@ public final class UrlsImporter {
                         persistMessage(msg);
 
                         outputLine.append(msg.getResponseHeader().getStatusCode());
+                        Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL);
 
                     } catch (Exception e) {
                         outputLine.append(e.getMessage());
+                        Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL_ERROR);
                     }
                     outputLine.append('\n');
                     if (View.isInitialised()) {
@@ -87,8 +98,11 @@ public final class UrlsImporter {
                     }
                 }
             }
+            updateOutput("exim.output.end", file.toPath().toString());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_ERROR);
+            updateOutput("exim.output.error", file.toPath().toString());
             return false;
         }
         return true;
@@ -119,6 +133,14 @@ public final class UrlsImporter {
                                 .getSiteTree()
                                 .addPath(historyRef, message);
                     });
+        }
+    }
+
+    private static void updateOutput(String messageKey, String filePath) {
+        if (View.isInitialised()) {
+            StringBuilder sb = new StringBuilder(128);
+            sb.append(Constant.messages.getString(messageKey, filePath)).append('\n');
+            View.getSingleton().getOutputPanel().append(sb.toString());
         }
     }
 }

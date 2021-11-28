@@ -47,12 +47,23 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.utils.Stats;
 
 public final class LogsImporter {
 
     private static final Logger LOG = LogManager.getLogger(LogsImporter.class);
+    private static final String STATS_ZAP_FILE = "import.zap.file";
+    private static final String STATS_ZAP_FILE_ERROR = "import.zap.file.errors";
+    private static final String STATS_ZAP_FILE_MSG = "import.zap.file.message";
+    private static final String STATS_ZAP_FILE_MSG_ERROR = "import.zap.file.message.errors";
+    private static final String STATS_MODSEC2_FILE = "import.modsec2.file";
+    private static final String STATS_MODSEC2_FILE_ERROR = "import.modsec2.file.errors";
+    private static final String STATS_MODSEC2_FILE_MSG = "import.modsec2.file.message";
+    private static final String STATS_MODSEC2_FILE_MSG_ERROR = "import.modsec2.file.message.errors";
 
     /** Logging options for the import */
     public enum LogType {
@@ -97,7 +108,7 @@ public final class LogsImporter {
                                     new HttpResponseHeader(a.getResponseHeader()),
                                     new HttpResponseBody());
                     httpMessage.setResponseFromTargetHost(true);
-                    createHistoryReferenceAndAddToTree(httpMessage);
+                    createHistoryReferenceAndAddToTree(httpMessage, LogType.MOD_SECURITY_2);
                 }
                 break;
             } catch (Exception e) {
@@ -129,16 +140,26 @@ public final class LogsImporter {
         if (logChoice == LogType.ZAP) {
             List<String> parsedText = readFile(newFile);
             try {
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE);
+                updateOutput("exim.output.start", newFile.toPath().toString());
                 processZapLogs(parsedText);
+                updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (HttpMalformedHeaderException e) {
                 LOG.error(e.getMessage(), e);
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_ERROR);
+                updateOutput("exim.output.error", newFile.toPath().toString());
                 return false;
             }
         } else if (logChoice == LogType.MOD_SECURITY_2) {
             try {
+                updateOutput("exim.output.start", newFile.toPath().toString());
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE);
                 readModSecLogsFromFile(newFile);
+                updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_ERROR);
+                updateOutput("exim.output.error", newFile.toPath().toString());
                 return false;
             }
         }
@@ -226,20 +247,38 @@ public final class LogsImporter {
                                 tempResponseHeader,
                                 tempResponseBody);
                 httpMessage.setResponseFromTargetHost(true);
-                createHistoryReferenceAndAddToTree(httpMessage);
+                createHistoryReferenceAndAddToTree(httpMessage, LogType.ZAP);
             }
         }
     }
 
-    private static void createHistoryReferenceAndAddToTree(HttpMessage message) {
+    private static void createHistoryReferenceAndAddToTree(HttpMessage message, LogType logType) {
         Session currentSession = Model.getSingleton().getSession();
 
         try {
             HistoryReference historyRef =
                     new HistoryReference(currentSession, HistoryReference.TYPE_ZAP_USER, message);
             addToTree(historyRef);
+            if (LogType.ZAP.equals(logType)) {
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_MSG);
+            } else {
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG);
+            }
         } catch (DatabaseException | HttpMalformedHeaderException | NullPointerException e) {
             LOG.error(e.getMessage(), e);
+            if (LogType.ZAP.equals(logType)) {
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_MSG_ERROR);
+            } else {
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG_ERROR);
+            }
+        }
+    }
+
+    private static void updateOutput(String messageKey, String filePath) {
+        if (View.isInitialised()) {
+            StringBuilder sb = new StringBuilder(128);
+            sb.append(Constant.messages.getString(messageKey, filePath)).append('\n');
+            View.getSingleton().getOutputPanel().append(sb.toString());
         }
     }
 }

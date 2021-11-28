@@ -34,13 +34,15 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
 
     private static final long serialVersionUID = -7217818541206464572L;
     private static final Logger LOG = LogManager.getLogger(PopupMenuSaveXmlMessage.class);
-
+    private static final String STATS_XML_FILE_MSG = "save.xml.file.msg";
+    private static final String STATS_XML_FILE_MSG_ERROR = "save.xml.file.msg.errors";
     private static final String MESSAGE_PREFIX = "exim.savexml.";
     private static final String XML_FILE_EXTENSION = ".xml";
 
@@ -81,10 +83,14 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
                 break;
         }
 
-        writeToFile(file, bytesHeader, bytesBody);
+        writeToFile(file, bytesHeader, bytesBody, messageComponent);
     }
 
-    private static void writeToFile(File file, byte[] headersContent, byte[] bodyContent) {
+    private static void writeToFile(
+            File file,
+            byte[] headersContent,
+            byte[] bodyContent,
+            MessageComponent messageComponent) {
         try {
 
             DocumentBuilder docBuilder =
@@ -119,13 +125,22 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(file);
             transformer.transform(source, result);
-
+            Stats.incCounter(
+                    ExtensionExim.STATS_PREFIX
+                            + STATS_XML_FILE_MSG
+                            + "."
+                            + messageComponent.name());
         } catch (Exception e) {
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
                                     "exim.file.save.error", file.getAbsolutePath()));
             LOG.error(e.getMessage(), e);
+            Stats.incCounter(
+                    ExtensionExim.STATS_PREFIX
+                            + STATS_XML_FILE_MSG_ERROR
+                            + "."
+                            + messageComponent.name());
         }
     }
 }

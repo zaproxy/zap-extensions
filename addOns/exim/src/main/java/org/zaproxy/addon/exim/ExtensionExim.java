@@ -28,6 +28,7 @@ import org.zaproxy.addon.exim.urls.MenuItemImportUrls;
 
 public class ExtensionExim extends ExtensionAdaptor {
 
+    public static final String STATS_PREFIX = "stats.exim.";
     private static final String NAME = "ExtensionExim";
 
     public ExtensionExim() {
