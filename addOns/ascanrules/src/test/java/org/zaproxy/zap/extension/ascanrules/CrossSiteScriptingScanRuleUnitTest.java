@@ -107,9 +107,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("</p><script>alert(1);</script><p>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("</p><script>alert(1);</script><p>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -149,11 +153,19 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("</p>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><p>"));
+                equalTo(
+                        "</p>"
+                                + NULL_BYTE_CHARACTER
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<p>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("</p>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><p>"));
+                equalTo(
+                        "</p>"
+                                + NULL_BYTE_CHARACTER
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -222,9 +234,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("--><script>alert(1);</script><!--"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("-->" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<!--"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("--><script>alert(1);</script><!--"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("-->" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<!--"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -262,11 +278,21 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("-->" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><!--"));
+                equalTo(
+                        "-->"
+                                + NULL_BYTE_CHARACTER
+                                + ""
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<!--"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("-->" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><!--"));
+                equalTo(
+                        "-->"
+                                + NULL_BYTE_CHARACTER
+                                + ""
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<!--"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -302,11 +328,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("--><b onMouseOver=alert(1);>test</b><!--"));
+                equalTo("-->" + CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT + "<!--"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("--><b onMouseOver=alert(1);>test</b><!--"));
+                equalTo("-->" + CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT + "<!--"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -372,9 +398,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -410,11 +440,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo(NULL_BYTE_CHARACTER + "<script>alert(1);</script>"));
+                equalTo(NULL_BYTE_CHARACTER + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo(NULL_BYTE_CHARACTER + "<script>alert(1);</script>"));
+                equalTo(NULL_BYTE_CHARACTER + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -447,11 +477,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("</span><script>alert(1);</script><span>"));
+                equalTo("</span>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<span>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("</span><script>alert(1);</script><span>"));
+                equalTo("</span>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<span>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -486,11 +516,21 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("</span>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><span>"));
+                equalTo(
+                        "</span>"
+                                + NULL_BYTE_CHARACTER
+                                + ""
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<span>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("</span>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><span>"));
+                equalTo(
+                        "</span>"
+                                + NULL_BYTE_CHARACTER
+                                + ""
+                                + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT
+                                + "<span>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -521,9 +561,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -557,9 +601,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -597,9 +645,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -632,9 +684,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<b onMouseOver=alert(1);>test</b>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<b onMouseOver=alert(1);>test</b>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -901,9 +957,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("</p><script>alert(1);</script><p>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("query"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("</p><script>alert(1);</script><p>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -1020,13 +1080,58 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), containsString("JSON"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @Test
-    void shouldReportXssInsideDivWithFilteredScript() throws NullPointerException, IOException {
+    void shouldReportXssInsideDivWithFilteredSameCaseScript()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out 'script' ignoring the case
+                            name = name.replaceAll("script", "").replaceAll("SCRIPT", "");
+                            response =
+                                    getHtml("InputInsideDiv.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(httpMessagesSent, hasSize(equalTo(2)));
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</div>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<div>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</div>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<div>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInsideDivWithFilteredAnyCaseScript()
+            throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyWithFilteredScript/";
 
         this.nano.addHandler(
@@ -1055,9 +1160,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         assertThat(httpMessagesSent, hasSize(equalTo(4)));
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<img src=x onerror=alert(1);>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</div>" + CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT + "<div>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("<img src=x onerror=alert(1);>"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</div>" + CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT + "<div>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -1099,11 +1208,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         this.rule.scan();
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("%253Cscript%253Ealert%25281%2529%253B%253C%252Fscript%253E"));
+                equalTo("%253CscrIpt%253Ealert%25281%2529%253B%253C%252FscRipt%253E"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -1195,11 +1306,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         this.rule.scan();
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
                 alertsRaised.get(0).getAttack(),
-                equalTo("%253Cscript%253Ealert%25281%2529%253B%253C%252Fscript%253E"));
+                equalTo("%253CscrIpt%253Ealert%25281%2529%253B%253C%252FscRipt%253E"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }

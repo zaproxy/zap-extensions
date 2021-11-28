@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Command Injection scan rule will now initially attempt a simple injection without the original parameter value (Issue 6538).
+- Reflected XSS rule: added a generic 'onerror' attack and tweaked the case of the script attack
 
 ## [41] - 2021-10-06
 ### Changed

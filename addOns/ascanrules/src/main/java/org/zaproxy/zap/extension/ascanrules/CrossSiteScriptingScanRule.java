@@ -54,7 +54,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A07_XSS);
 
-    private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
+    protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
+    protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
 
     /**
      * Null byte injection payload. C/C++ languages treat Null byte or \0 as special character which
@@ -65,7 +66,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             NULL_BYTE_CHARACTER + GENERIC_SCRIPT_ALERT;
 
     private static final List<String> GENERIC_SCRIPT_ALERT_LIST =
-            Arrays.asList(GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT);
+            Arrays.asList(
+                    GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
