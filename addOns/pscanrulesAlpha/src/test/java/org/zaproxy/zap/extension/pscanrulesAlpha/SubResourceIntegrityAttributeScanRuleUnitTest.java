@@ -22,22 +22,70 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_MOCKS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class SubResourceIntegrityAttributeScanRuleUnitTest
         extends PassiveScannerTest<SubResourceIntegrityAttributeScanRule> {
+
+    private HttpMessage message;
 
     @Override
     protected SubResourceIntegrityAttributeScanRule createScanner() {
         SubResourceIntegrityAttributeScanRule rule = new SubResourceIntegrityAttributeScanRule();
         rule.setConfig(new ZapXmlConfiguration());
         return rule;
+    }
+
+    void setupMocks(boolean nodeFound) throws Exception {
+        setUpZap();
+
+        Model model = mock(Model.class, withSettings().lenient());
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().lenient());
+        given(model.getSession()).willReturn(session);
+
+        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        given(session.getSiteTree()).willReturn(siteMap);
+
+        SiteNode node = mock(SiteNode.class, withSettings().lenient());
+        if (nodeFound) {
+            given(siteMap.findNode(any(URI.class))).willReturn(node);
+        } else {
+            given(siteMap.findNode(any(URI.class))).willReturn(null);
+        }
+
+        if (nodeFound) {
+            HistoryReference historyRef = mock(HistoryReference.class);
+            given(node.getHistoryReference()).willReturn(historyRef);
+            message =
+                    mock(HttpMessage.class, withSettings().lenient().defaultAnswer(RETURNS_MOCKS));
+            given(message.isResponseFromTargetHost()).willReturn(true);
+            given(historyRef.getHttpMessage()).willReturn(message);
+            HttpResponseBody hrb = mock(HttpResponseBody.class, withSettings().lenient());
+            given(message.getResponseBody()).willReturn(hrb);
+            given(hrb.toString()).willReturn("foobar");
+            // "foobar" SHA-384:
+            // 3c9c30d9f665e74d515c842960d4a451c83a0125fd3de7392d7b37231af10c72ea58aedfcdf89a5765bf902af93ecf06
+        }
     }
 
     @Test
@@ -48,7 +96,7 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         HttpMessage msg =
                 buildMessage(
                         "<html><head><link href=\"https://site53.example.net/style.css\"\n"
-                                + "      integrity=\"sha384-+/M6kredJcxdsqkczBUjMLvqyHb1K/JThDXWsBVxMEeZHEaMKEOEct339VItX1zB\"\n"
+                                + "      integrity=\"sha384-c2hhMzg0LSsvTTZrcmVkSmN4ZHNxa2N6QlVqTUx2cXlIYjFLL0pUaERYV3NCVnhNRWVaSEVhTUtFT0VjdDMzOVZJdFgxekI=\"\n"
                                 + "      ></head><body></body></html>");
 
         // When
@@ -66,7 +114,7 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         HttpMessage msg =
                 buildMessage(
                         "<html><head><script src=\"https://analytics-r-us.example.com/v1.0/include.js\"\n"
-                                + "        integrity=\"sha384-MBO5IDfYaE6c6Aao94oZrIOiC6CGiSN2n4QUbHNPhzk5Xhm0djZLQqTpL0HzTUxk\"\n"
+                                + "        integrity=\"sha384-c2hhMzg0LU1CTzVJRGZZYUU2YzZBYW85NG9acklPaUM2Q0dpU04ybjRRVWJITlBoems1WGhtMGRqWkxRcVRwTDBIelRVeGs=\"\n"
                                 + "        ></script></head><body></body></html>");
 
         // When
@@ -77,9 +125,9 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
-            throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement() throws Exception {
         // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -91,11 +139,56 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The following hash was calculated (using base64 encoding of the output of the hash algorithm: SHA-384) for the script in question sha384-PJww2fZl501RXIQpYNSkUcg6ASX9Pec5LXs3IxrxDHLqWK7fzfiaV2W/kCr5Ps8G"));
     }
 
     @Test
-    void shouldIndicateElementWithoutIntegrityAttribute() throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElementScriptNodeNotFound()
+            throws Exception {
         // Given
+        setupMocks(false);
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
+        assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(""));
+    }
+
+    @Test
+    void
+            shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElementScriptResponseNotFromTarget()
+                    throws Exception {
+        // Given
+        setupMocks(true);
+        given(message.isResponseFromTargetHost()).willReturn(false);
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(""));
+    }
+
+    @Test
+    void shouldIndicateElementWithoutIntegrityAttribute() throws Exception {
+        // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -130,8 +223,9 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertGivenElementIsServedBySubDomain() throws HttpMalformedHeaderException {
+    void shouldRaiseAlertGivenElementIsServedBySubDomain() throws Exception {
         // Given
+        setupMocks(true);
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,14 +31,23 @@ import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner {
+
+    private static final Logger logger =
+            LogManager.getLogger(SubResourceIntegrityAttributeScanRule.class);
 
     private enum SupportedElements {
         // From
@@ -98,6 +108,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
+        SiteMap tree = Model.getSingleton().getSession().getSiteTree();
         List<Element> sourceElements = source.getAllElements();
         sourceElements.stream()
                 .filter(element -> SupportedElements.contains(element.getName()))
@@ -114,7 +125,43 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                                         .setCweId(345) // CWE-345: Insufficient Verification of Data
                                         // Authenticity
                                         .setWascId(15) // Application Misconfiguration
+                                        .setOtherInfo(getOtherInfo(msg, element, tree))
                                         .raise());
+    }
+
+    private String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
+        String src = element.getAttributeValue("src");
+        if (src == null) {
+            return "";
+        }
+        String integrityHash = "";
+        try {
+            URI newUri = new URI(msg.getRequestHeader().getURI().toString()).resolve(src);
+            SiteNode node =
+                    tree.findNode(new org.apache.commons.httpclient.URI(newUri.toString(), true));
+            HttpMessage scriptNodeMessage = node.getHistoryReference().getHttpMessage();
+            if (scriptNodeMessage.isResponseFromTargetHost()) {
+                integrityHash =
+                        "sha384-"
+                                + Base64.getEncoder()
+                                        .encodeToString(
+                                                DigestUtils.sha384(
+                                                        scriptNodeMessage
+                                                                .getResponseBody()
+                                                                .toString()));
+            }
+        } catch (Exception e) {
+            logger.debug("Error occured while calculating the hash. Error: {}", e.getMessage(), e);
+        }
+        return integrityHash;
+    }
+
+    private String getOtherInfo(HttpMessage msg, Element element, SiteMap tree) {
+        String integrityHash = calculateIntegrityHash(msg, element, tree);
+        if (integrityHash.isEmpty()) {
+            return "";
+        }
+        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", integrityHash);
     }
 
     private static Predicate<Element> unsafeSubResource(String origin) {
