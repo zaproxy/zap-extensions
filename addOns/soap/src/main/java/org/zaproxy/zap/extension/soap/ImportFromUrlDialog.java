@@ -31,15 +31,15 @@ import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.AbstractDialog;
 
-public class ImportFromUrlDialog extends JDialog implements ActionListener {
+public class ImportFromUrlDialog extends AbstractDialog implements ActionListener {
 
     private static final long serialVersionUID = -7074394202143400215L;
     private static final String MESSAGE_PREFIX = "soap.importfromurldialog.";
@@ -49,7 +49,8 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
     private JTextField fieldURL = new JTextField(30);
 
     public ImportFromUrlDialog(JFrame parent, ExtensionImportWSDL caller) {
-        super(parent, Constant.messages.getString(MESSAGE_PREFIX + "actionName"), true);
+        super(parent, true);
+        super.setTitle(Constant.messages.getString(MESSAGE_PREFIX + "actionName"));
         if (caller != null) {
             this.caller = caller;
         }
@@ -67,6 +68,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
         JButton buttonImport =
                 new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importButton"));
         buttonImport.addActionListener(this);
+        getRootPane().setDefaultButton(buttonImport);
 
         // add components to the frame
         constraints.gridx = 0;
