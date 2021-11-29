@@ -35,7 +35,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.exim.EximFileChooser;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.utils.HarUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContainer {
@@ -43,7 +45,9 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
     private static final long serialVersionUID = -7217818541206464572L;
 
     private static final Logger LOG = LogManager.getLogger(PopupMenuItemSaveHarMessage.class);
-
+    private static final String STATS_SAVE_HAR_FILE = "save.har.file";
+    private static final String STATS_SAVE_HAR_FILE_ERROR = "save.har.file.error";
+    private static final String STATS_SAVE_HAR_FILE_MSG = "save.har.file.message";
     private static final String POPUP_MENU_LABEL =
             Constant.messages.getString("exim.har.popup.option");
     private static final String HAR_FILE_EXTENSION = ".har";
@@ -74,10 +78,12 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
         }
         try (OutputStream os = new BufferedOutputStream(new FileOutputStream(file))) {
             os.write(packRequestInHarArchive(httpMessages));
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_SAVE_HAR_FILE);
         } catch (IOException e) {
             View.getSingleton()
                     .showWarningDialog(MessageFormat.format(ERROR_SAVE, file.getAbsolutePath()));
             LOG.error(e.getMessage(), e);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_SAVE_HAR_FILE_ERROR);
         }
     }
 
@@ -101,6 +107,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
                                         httpMessage.getHistoryRef().getHistoryType(),
                                         httpMessage));
                     }
+                    Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_SAVE_HAR_FILE_MSG);
                 });
         harLog.setEntries(entries);
         return HarUtils.harLogToByteArray(harLog);

@@ -39,13 +39,19 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.HarUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public final class HarImporter {
 
     private static final Logger LOG = LogManager.getLogger(HarImporter.class);
+    private static final String STATS_HAR_FILE = "import.har.file";
+    private static final String STATS_HAR_FILE_ERROR = "import.har.file.errors";
+    private static final String STATS_HAR_FILE_MSG = "import.har.file.message";
+    private static final String STATS_HAR_FILE_MSG_ERROR = "import.har.file.message.errors";
 
     private static ExtensionHistory extHistory;
 
@@ -104,9 +110,11 @@ public final class HarImporter {
     public static boolean importHarFile(File file) {
         try {
             processMessages(file);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
             return true;
         } catch (IOException e) {
             LOG.error(e);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
             return false;
         }
     }
@@ -126,8 +134,10 @@ public final class HarImporter {
                             Model.getSingleton().getSession(),
                             HistoryReference.TYPE_ZAP_USER,
                             message);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG_ERROR);
             return;
         }
 
