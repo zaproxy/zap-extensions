@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [42] - 2021-11-29
 ### Changed
 - Command Injection scan rule will now initially attempt a simple injection without the original parameter value (Issue 6538).
