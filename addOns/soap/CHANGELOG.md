@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [12] - 2021-11-29
 ### Changed
 - Maintenance changes.
 - WSDL File scan rule now includes identification of URLs in the form "example.com/service?wsdl", and specifically excludes 404s and 500s (including support for Custom Pages).
@@ -94,6 +94,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/soap-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/soap-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/soap-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/soap-v9
