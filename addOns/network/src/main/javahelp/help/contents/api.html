@@ -16,6 +16,22 @@
 				<li>filePath: The file system path to the PEM file, containing the certificate and private key.</li>
 			</ul>
 		</li>
+		<li>setRootCaCertValidity (validity*): Sets the Root CA certificate validity. Used when generating a new Root CA certificate.
+			<ul>
+				<li>validity: The number of days that the generated Root CA certificate will be valid for.</li>
+			</ul>
+		</li>
+		<li>setServerCertValidity (validity*): Sets the server certificate validity. Used when generating server certificates.
+			<ul>
+				<li>validity: The number of days that the generated server certificates will be valid for.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h3>Views</h3>
+	<ul>
+		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
+		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
 	</ul>
 
 	<h3>Other</h3>
