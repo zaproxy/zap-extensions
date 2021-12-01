@@ -19,20 +19,17 @@
  */
 package org.zaproxy.addon.network;
 
-import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
-import java.security.cert.Certificate;
+import java.time.Duration;
 import java.util.Arrays;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
-import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -40,6 +37,7 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiView;
 
 public class NetworkApi extends ApiImplementor {
 
@@ -49,10 +47,16 @@ public class NetworkApi extends ApiImplementor {
 
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
+    private static final String ACTION_SET_ROOT_CA_CERT_VALIDITY = "setRootCaCertValidity";
+    private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
+
+    private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
+    private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
 
     private static final String OTHER_ROOT_CA_CERT = "rootCaCert";
 
     private static final String PARAM_FILE_PATH = "filePath";
+    private static final String PARAM_VALIDITY = "validity";
 
     private final ExtensionNetwork extensionNetwork;
 
@@ -67,7 +71,21 @@ public class NetworkApi extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(ACTION_IMPORT_ROOT_CA_CERT, Arrays.asList(PARAM_FILE_PATH)));
 
+        if (isHandleServerCerts(extensionNetwork)) {
+            this.addApiAction(
+                    new ApiAction(ACTION_SET_ROOT_CA_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
+            this.addApiAction(
+                    new ApiAction(ACTION_SET_SERVER_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
+
+            this.addApiView(new ApiView(VIEW_GET_ROOT_CA_CERT_VALIDITY));
+            this.addApiView(new ApiView(VIEW_GET_SERVER_CERT_VALIDITY));
+        }
+
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
+    }
+
+    private static boolean isHandleServerCerts(ExtensionNetwork extensionNetwork) {
+        return extensionNetwork == null || extensionNetwork.isHandleServerCerts();
     }
 
     @Override
@@ -92,8 +110,68 @@ public class NetworkApi extends ApiImplementor {
                 }
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, errorMessage);
 
+            case ACTION_SET_ROOT_CA_CERT_VALIDITY:
+                if (!isHandleServerCerts(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_ACTION);
+                }
+
+                try {
+                    Duration validity = Duration.ofDays(params.getInt(PARAM_VALIDITY));
+                    extensionNetwork.getServerCertificatesOptions().setRootCaCertValidity(validity);
+                    return ApiResponseElement.OK;
+                } catch (Exception e) {
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_VALIDITY);
+                }
+
+            case ACTION_SET_SERVER_CERT_VALIDITY:
+                if (!isHandleServerCerts(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_ACTION);
+                }
+
+                try {
+                    Duration validity = Duration.ofDays(params.getInt(PARAM_VALIDITY));
+                    extensionNetwork.getServerCertificatesOptions().setServerCertValidity(validity);
+                    return ApiResponseElement.OK;
+                } catch (Exception e) {
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_VALIDITY);
+                }
+
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
+        }
+    }
+
+    @Override
+    public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
+        switch (name) {
+            case VIEW_GET_ROOT_CA_CERT_VALIDITY:
+                if (!isHandleServerCerts(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_VIEW);
+                }
+
+                return new ApiResponseElement(
+                        name,
+                        String.valueOf(
+                                extensionNetwork
+                                        .getServerCertificatesOptions()
+                                        .getRootCaCertValidity()
+                                        .toDays()));
+
+            case VIEW_GET_SERVER_CERT_VALIDITY:
+                if (!isHandleServerCerts(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_VIEW);
+                }
+
+                return new ApiResponseElement(
+                        name,
+                        String.valueOf(
+                                extensionNetwork
+                                        .getServerCertificatesOptions()
+                                        .getServerCertValidity()
+                                        .toDays()));
+
+            default:
+                throw new ApiException(ApiException.Type.BAD_VIEW);
         }
     }
 
@@ -107,7 +185,7 @@ public class NetworkApi extends ApiImplementor {
                     throw new ApiException(ApiException.Type.DOES_NOT_EXIST);
                 }
 
-                String pem = keyStoreToPublicPem(keyStore);
+                String pem = CertificateUtils.keyStoreToCertificatePem(keyStore);
                 if (pem.isEmpty()) {
                     throw new ApiException(ApiException.Type.INTERNAL_ERROR);
                 }
@@ -127,19 +205,5 @@ public class NetworkApi extends ApiImplementor {
             default:
                 throw new ApiException(ApiException.Type.BAD_OTHER);
         }
-    }
-
-    private static String keyStoreToPublicPem(KeyStore keyStore) {
-        StringWriter sw = new StringWriter();
-        try {
-            Certificate cert = keyStore.getCertificate(SslCertificateService.ZAPROXY_JKS_ALIAS);
-            try (PemWriter pw = new PemWriter(sw)) {
-                pw.writeObject(new JcaMiscPEMGenerator(cert));
-                pw.flush();
-            }
-        } catch (Exception e) {
-            LOGGER.error("An error occurred while converting KeyStore to public PEM:", e);
-        }
-        return sw.toString();
     }
 }

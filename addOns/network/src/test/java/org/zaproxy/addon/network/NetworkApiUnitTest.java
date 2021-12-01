@@ -25,17 +25,23 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONObject;
@@ -47,6 +53,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiElement;
@@ -55,19 +62,22 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link NetworkApi}. */
 class NetworkApiUnitTest extends TestUtils {
 
     private NetworkApi networkApi;
+    private ServerCertificatesOptions serverCertificatesOptions;
     private ExtensionNetwork extensionNetwork;
 
     @BeforeEach
     void setUp() {
         mockMessages(new ExtensionNetwork());
-        extensionNetwork = mock(ExtensionNetwork.class);
+        extensionNetwork = mock(ExtensionNetwork.class, withSettings().lenient());
+        serverCertificatesOptions = mock(ServerCertificatesOptions.class, withSettings().lenient());
+        given(extensionNetwork.getServerCertificatesOptions())
+                .willReturn(serverCertificatesOptions);
         networkApi = new NetworkApi(extensionNetwork);
     }
 
@@ -82,6 +92,30 @@ class NetworkApiUnitTest extends TestUtils {
         String prefix = networkApi.getPrefix();
         // Then
         assertThat(prefix, is(equalTo("network")));
+    }
+
+    @Test
+    void shouldAddApiElements() {
+        // Given
+        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
+        // When
+        networkApi = new NetworkApi(extensionNetwork);
+        // Then
+        assertThat(networkApi.getApiActions(), hasSize(2));
+        assertThat(networkApi.getApiViews(), hasSize(0));
+        assertThat(networkApi.getApiOthers(), hasSize(1));
+    }
+
+    @Test
+    void shouldAddAdditionalApiElementsWhenHandlingServerCerts() {
+        // Given
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        networkApi = new NetworkApi(extensionNetwork);
+        // Then
+        assertThat(networkApi.getApiActions(), hasSize(4));
+        assertThat(networkApi.getApiViews(), hasSize(2));
+        assertThat(networkApi.getApiOthers(), hasSize(1));
     }
 
     @ParameterizedTest
@@ -153,6 +187,98 @@ class NetworkApiUnitTest extends TestUtils {
         verify(extensionNetwork).importRootCaCert(file);
     }
 
+    @Test
+    void shouldSetRootCaCertValidityIfHandlingServerCerts() throws Exception {
+        // Given
+        String name = "setRootCaCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", 123);
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(serverCertificatesOptions).setRootCaCertValidity(Duration.ofDays(123));
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenSettingRootCaCertValidityIfNotHandlingServerCerts()
+            throws Exception {
+        // Given
+        String name = "setRootCaCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", 123);
+        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
+    }
+
+    @Test
+    void shouldThrowApiExceptionForInvalidRootCaCertValidity() {
+        // Given
+        String name = "setRootCaCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", "not valid value");
+        willThrow(IllegalArgumentException.class)
+                .given(serverCertificatesOptions)
+                .setRootCaCertValidity(any());
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+    }
+
+    @Test
+    void shouldSetServerCertValidityIfHandlingServerCerts() throws Exception {
+        // Given
+        String name = "setServerCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", 123);
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(serverCertificatesOptions).setServerCertValidity(Duration.ofDays(123));
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenSettingServerCertValidityIfNotHandlingServerCerts()
+            throws Exception {
+        // Given
+        String name = "setServerCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", 123);
+        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
+    }
+
+    @Test
+    void shouldThrowApiExceptionForInvalidServerCertValidity() {
+        // Given
+        String name = "setServerCertValidity";
+        JSONObject params = new JSONObject();
+        params.put("validity", "not valid value");
+        willThrow(IllegalArgumentException.class)
+                .given(serverCertificatesOptions)
+                .setServerCertValidity(any());
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+    }
+
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"unknown", "something"})
@@ -175,7 +301,7 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "rootCaCert";
         JSONObject params = new JSONObject();
         KeyStore keyStore =
-                SslCertificateUtils.string2Keystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
+                CertificateUtils.stringToKeystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
         given(extensionNetwork.getRootCaKeyStore()).willReturn(keyStore);
         // When
         HttpMessage apiMessage = networkApi.handleApiOther(message, name, params);
@@ -190,11 +316,11 @@ class NetworkApiUnitTest extends TestUtils {
         assertThat(
                 apiMessage.getResponseBody().toString(),
                 allOf(
-                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN),
                         containsString(
                                 "MIIC9TCCAl6gAwIBAgIJANL8E4epRNznMA0GCSqGSIb3DQEBBQUAMFsxGDAWBgNV\n"),
-                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
-                        not(containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
+                        containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
+                        not(containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
         assertThat(apiMessage, is(sameInstance(message)));
     }
 
@@ -227,6 +353,79 @@ class NetworkApiUnitTest extends TestUtils {
                         ApiException.class, () -> networkApi.handleApiOther(message, name, params));
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.INTERNAL_ERROR)));
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"unknown", "something"})
+    void shouldThrowApiExceptionForUnknownView(String name) throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
+    }
+
+    @Test
+    void shouldReturnRootCaCertValidityIfHandlingServerCerts() throws Exception {
+        // Given
+        String name = "getRootCaCertValidity";
+        JSONObject params = new JSONObject();
+        given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(response, is(instanceOf(ApiResponseElement.class)));
+        assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenGettingRootCaCertValidityIfNotHandlingServerCerts()
+            throws Exception {
+        // Given
+        String name = "getRootCaCertValidity";
+        JSONObject params = new JSONObject();
+        given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
+        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
+    }
+
+    @Test
+    void shouldReturnServerCertValidityIfHandlingServerCerts() throws Exception {
+        // Given
+        String name = "getServerCertValidity";
+        JSONObject params = new JSONObject();
+        given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(response, is(instanceOf(ApiResponseElement.class)));
+        assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenGettingServerCertValidityIfNotHandlingServerCerts()
+            throws Exception {
+        // Given
+        String name = "getServerCertValidity";
+        JSONObject params = new JSONObject();
+        given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
+        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
     }
 
     @Test
