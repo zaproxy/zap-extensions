@@ -44,7 +44,7 @@ public class SarifHtmlToStringListConverter {
      * All other content is just ignored!
      *
      * @param content
-     * @return plain text
+     * @return list containing plain text elements
      */
     public List<String> convertToList(String content) {
         if (content == null || content.trim().isEmpty()) {

@@ -30,7 +30,7 @@ public class SarifToolData {
                     . // we use 1.0 here - should normally not change
                     setTaxonomyVersion("1.0")
                     .setTaxonomyComprehensive(true)
-                    .setShortDescription("OWASP ZED Attack proxy")
+                    .setShortDescription("OWASP ZED Attack Proxy")
                     .setOrganization("OWASP")
                     .setTaxonomyInformationUri("https://www.zaproxy.org/")
                     .build();
