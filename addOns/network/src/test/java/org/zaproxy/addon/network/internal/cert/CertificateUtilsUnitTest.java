@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -500,6 +501,23 @@ class CertificateUtilsUnitTest {
         PrivateKey privateKey = CertificateUtils.getPrivateKey(keyStore);
         // Then
         assertThat(privateKey, is(nullValue()));
+    }
+
+    @Test
+    void shouldConvertKeyStoreToCertificateAndPrivateKeyPemFile() throws Exception {
+        // Given
+        KeyStore keyStore =
+                CertificateUtils.stringToKeystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
+        Path file = Files.createTempFile("cert", ".cer");
+        // When
+        CertificateUtils.keyStoreToCertificateAndPrivateKeyPem(keyStore, file);
+        // Then
+        String pem = new String(Files.readAllBytes(file), StandardCharsets.US_ASCII);
+        byte[] certificate = CertificateUtils.extractCertificate(pem);
+        assertThat(certificate.length, is(not(0)));
+        byte[] privateKey = CertificateUtils.extractPrivateKey(pem);
+        assertThat(privateKey.length, is(not(0)));
+        assertThat(CertificateUtils.pemToKeyStore(certificate, privateKey), is(notNullValue()));
     }
 
     private static String contents(Path file) throws IOException {

@@ -7,4 +7,5 @@
     <mapID target="addon.network.icon" url="contents/images/icon.png" />
     <mapID target="addon.network" url="contents/network.html" />
     <mapID target="addon.network.api" url="contents/api.html" />
+    <mapID target="addon.network.cmdline" url="contents/cmdline.html" />
 </map>

@@ -21,8 +21,10 @@ package org.zaproxy.addon.network;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -32,23 +34,33 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.KeyStore;
 import java.security.Security;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -61,8 +73,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -72,6 +86,7 @@ import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
@@ -82,6 +97,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link ExtensionNetwork}. */
 class ExtensionNetworkUnitTest extends TestUtils {
 
+    private MockedStatic<ZAP> zap;
     private Consumer<SslCertificateService> setSslCertificateService;
     private Model model;
     private OptionsParam optionsParam;
@@ -103,12 +119,22 @@ class ExtensionNetworkUnitTest extends TestUtils {
 
         extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         Control.initSingletonForTesting(model, extensionLoader);
+
+        zap = mockStatic(ZAP.class);
+        zap.when(ZAP::getProcessType).thenReturn(ZAP.ProcessType.daemon);
+    }
+
+    private void extensionStarted() {
+        extension.hook(mock(ExtensionHook.class));
+        extension.getServerCertificatesOptions().load(new ZapXmlConfiguration());
+        extension.start();
     }
 
     @AfterEach
     void cleanUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
+        zap.close();
     }
 
     @Test
@@ -164,6 +190,210 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(
                 extension.getServerCertificatesOptions(),
                 is(equalTo(argument.getAllValues().get(0))));
+    }
+
+    @Test
+    void shouldNotAddCommandLineArgsOnHookIfNotHandlingServerCerts() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        verify(extensionHook, times(0)).addCommandLine(any());
+        assertThat(extension.getServerCertificatesOptions(), is(nullValue()));
+    }
+
+    @Test
+    void shouldAddCommandLineArgsOnHookIfHandlingServerCerts() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<CommandLineArgument[]> argument =
+                ArgumentCaptor.forClass(CommandLineArgument[].class);
+        verify(extensionHook).addCommandLine(argument.capture());
+        CommandLineArgument[] args = argument.getAllValues().get(0);
+        assertThat(args, arrayWithSize(3));
+        assertThat(args[0].getName(), is(equalTo("-certload")));
+        assertThat(args[0].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[0].getHelpMessage(), is(not(emptyString())));
+        assertThat(args[1].getName(), is(equalTo("-certpubdump")));
+        assertThat(args[1].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[1].getHelpMessage(), is(not(emptyString())));
+        assertThat(args[2].getName(), is(equalTo("-certfulldump")));
+        assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[2].getHelpMessage(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldNotExecuteCommandLineArgsIfNotHandlingCerts() throws Exception {
+        // Given
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        Stream.of(args).forEach(arg -> given(arg.isEnabled()).willReturn(true));
+        extension.handleServerCerts = false;
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg, times(0)).isEnabled());
+    }
+
+    @Test
+    void shouldLoadCertCommandLineArgIfHandlingCerts() throws Exception {
+        // Given
+        Path file = Files.createTempFile("rootca", ".pem");
+        Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 0, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(
+                extension.getServerCertificatesOptions().getRootCaKeyStore(), is(notNullValue()));
+        ArgumentCaptor<SslCertificateService> argument =
+                ArgumentCaptor.forClass(SslCertificateService.class);
+        verify(extension.setSslCertificateService, times(1)).accept(argument.capture());
+        assertThat(argument.getAllValues(), contains(instanceOf(SslCertificateServiceImpl.class)));
+        SslCertificateService service = argument.getAllValues().get(0);
+        assertThat(service.createCertForHost(new CertData("example.org")), is(notNullValue()));
+        assertThat(logEvents, contains(startsWith("Root CA certificate loaded from")));
+    }
+
+    @Test
+    void shouldErrorIfLoadingUnreadableCertCommandLineArg() throws Exception {
+        // Given
+        Path file = Paths.get("/some/path/not/readable/rootca.pem");
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 0, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(logEvents, contains(startsWith("Cannot read file")));
+    }
+
+    @Test
+    void shouldErrorIfLoadingInvalidCertCommandLineArg() throws Exception {
+        // Given
+        Path file = Files.createTempDirectory("not-cert");
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 0, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(logEvents, contains(startsWith("Failed to read the selected .pem file:")));
+    }
+
+    @Test
+    void shouldDumpCertCommandLineArgIfHandlingCerts() throws Exception {
+        // Given
+        Path file = Files.createTempFile("dump", ".pem");
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 1, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(
+                contents(file),
+                allOf(
+                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
+                        not(containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
+        assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
+    }
+
+    @Test
+    void shouldErrorWhenDumpingCertCommandLineArgIfNotWritable() throws Exception {
+        // Given
+        Path file = Files.createTempFile("dump", ".pem");
+        notWritable(file);
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 1, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(logEvents, contains(startsWith("Cannot write to file")));
+    }
+
+    @Test
+    void shouldDumpCertAndKeyCommandLineArgIfHandlingCerts() throws Exception {
+        // Given
+        Path file = Files.createTempFile("dump", ".pem");
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 2, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(
+                contents(file),
+                allOf(
+                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
+                        containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN),
+                        containsString(SslCertificateUtils.END_PRIVATE_KEY_TOKEN)));
+        assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
+    }
+
+    @Test
+    void shouldErrorWhenDumpingCertAndKeyCommandLineArgIfNotWritable() throws Exception {
+        // Given
+        Path file = Files.createTempFile("dump", ".pem");
+        notWritable(file);
+        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        cmdLineArgEnabledWithFile(args, 2, file);
+        extension.handleServerCerts = true;
+        extensionStarted();
+        List<String> logEvents = registerLogEvents();
+        // When
+        extension.execute(args);
+        // Then
+        Stream.of(args).forEach(arg -> verify(arg).isEnabled());
+        assertThat(logEvents, contains(startsWith("Cannot write to file")));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"/path/a/", "/path/b"})
+    void shouldNoHandleFiles(String path) throws Exception {
+        // Given
+        File file = path != null ? Paths.get(path).toFile() : null;
+        // When
+        boolean handleFile = extension.handleFile(file);
+        // Then
+        assertThat(handleFile, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNoHandleExtensions() throws Exception {
+        // Given / When
+        List<String> handledExtensions = extension.getHandledExtensions();
+        // Then
+        assertThat(handledExtensions, is(empty()));
     }
 
     @Test
@@ -239,14 +469,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 "network.serverCertificates.rootCa.ks",
                 CertificateUtils.keyStoreToString(expiredRootCaKeyStore));
         extension.getServerCertificatesOptions().load(config);
-        List<String> logEvents = new ArrayList<>();
-        TestLogAppender logAppender = new TestLogAppender(logEvents::add);
-        LoggerContext context = LoggerContext.getContext();
-        LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
-        rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
-        rootLoggerconfig.addAppender(logAppender, null, null);
-        rootLoggerconfig.setLevel(Level.ALL);
-        context.updateLoggers();
+        List<String> logEvents = registerLogEvents();
         // When
         extension.start();
         // Then
@@ -296,9 +519,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.writeRootCaCertAsPem(file);
         // Then
-        String contents = new String(Files.readAllBytes(file), StandardCharsets.US_ASCII);
         assertThat(
-                contents,
+                contents(file),
                 allOf(
                         containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
                         containsString(
@@ -314,8 +536,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.writeRootCaCertAsPem(file);
         // Then
-        String contents = new String(Files.readAllBytes(file), StandardCharsets.US_ASCII);
-        assertThat(contents, not(containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN)));
+        assertThat(
+                contents(file), not(containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN)));
     }
 
     @Test
@@ -388,9 +610,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
-        extension.hook(mock(ExtensionHook.class));
-        extension.getServerCertificatesOptions().load(new ZapXmlConfiguration());
-        extension.start();
+        extensionStarted();
         // When
         String result = extension.importRootCaCert(file);
         // Then
@@ -508,5 +728,47 @@ class ExtensionNetworkUnitTest extends TestUtils {
         DynSSLParam dynSslParam = mock(DynSSLParam.class);
         given(optionsParam.getParamSet(DynSSLParam.class)).willReturn(dynSslParam);
         given(dynSslParam.getRootca()).willReturn(keyStore);
+    }
+
+    private static List<String> registerLogEvents() {
+        List<String> logEvents = new ArrayList<>();
+        TestLogAppender logAppender = new TestLogAppender(logEvents::add);
+        LoggerContext context = LoggerContext.getContext();
+        LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
+        rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
+        rootLoggerconfig.addAppender(logAppender, null, null);
+        rootLoggerconfig.setLevel(Level.ALL);
+        context.updateLoggers();
+        return logEvents;
+    }
+
+    private static CommandLineArgument[] mockedCmdLineArgs(int size) {
+        CommandLineArgument[] args = new CommandLineArgument[size];
+        for (int i = 0; i < size; i++) {
+            args[i] = mock(CommandLineArgument.class, withSettings().lenient());
+        }
+        return args;
+    }
+
+    private static void cmdLineArgEnabledWithFile(
+            CommandLineArgument[] args, int index, Path file) {
+        given(args[index].isEnabled()).willReturn(true);
+        Vector<String> values = new Vector<>();
+        values.add(file.toString());
+        given(args[index].getArguments()).willReturn(values);
+    }
+
+    private static String contents(Path file) throws IOException {
+        return new String(Files.readAllBytes(file), StandardCharsets.US_ASCII);
+    }
+
+    private static void notWritable(Path file) throws IOException {
+        assumeTrue(
+                Files.getFileStore(file).supportsFileAttributeView(PosixFileAttributeView.class),
+                "Test requires support for POSIX file attributes.");
+        Set<PosixFilePermission> perms =
+                Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        perms.remove(PosixFilePermission.OWNER_WRITE);
+        Files.setPosixFilePermissions(file, perms);
     }
 }
