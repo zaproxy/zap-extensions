@@ -23,7 +23,7 @@ public class SarifMessage {
     private String text;
 
     public static class SarifMessageBuilder {
-        private SarifHTMLtoPlainTextConverter converter = SarifHTMLtoPlainTextConverter.DEFAULT;
+        private SarifHtmlToPlainTextConverter converter = SarifHtmlToPlainTextConverter.DEFAULT;
         private String plainText;
 
         public SarifMessageBuilder setContentAsHTML(String html) {
@@ -36,7 +36,7 @@ public class SarifMessage {
             return this;
         }
 
-        SarifMessageBuilder setConverter(SarifHTMLtoPlainTextConverter converter) {
+        SarifMessageBuilder setConverter(SarifHtmlToPlainTextConverter converter) {
             this.converter = converter;
             return this;
         }

@@ -21,14 +21,14 @@ package org.zaproxy.addon.reports.sarif;
 
 import java.util.regex.Pattern;
 
-public class SarifHTMLtoPlainTextConverter {
+public class SarifHtmlToPlainTextConverter {
 
     private static final Pattern PATTERN_XML_START_OR_END_TAG = Pattern.compile("<[a-zA-Z-/]*>");
     private static final Pattern PATTERN_HTML_P_END = Pattern.compile("</p>");
     private static final Pattern PATTERN_HTML_BR = Pattern.compile("<br>|<br/>");
 
     /** Shared default instance */
-    public static final SarifHTMLtoPlainTextConverter DEFAULT = new SarifHTMLtoPlainTextConverter();
+    public static final SarifHtmlToPlainTextConverter DEFAULT = new SarifHtmlToPlainTextConverter();
 
     /**
      * Converts given HTML content to plain text. HTML Tags "br" and "p" will be changed to new

@@ -27,13 +27,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SarifHTMLToStringListConverterTest {
+class SarifHtmlToStringListConverterTest {
 
-    private SarifHTMLToStringListConverter toTest;
+    private SarifHtmlToStringListConverter toTest;
 
     @BeforeEach
     void beforeEach() {
-        toTest = new SarifHTMLToStringListConverter();
+        toTest = new SarifHtmlToStringListConverter();
     }
 
     @Test

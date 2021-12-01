@@ -41,7 +41,7 @@ public class SarifRule implements Comparable<SarifRule> {
         ruleProperties = new SarifRuleProperties();
         ruleProperties.solution = solution;
         ruleProperties.references =
-                SarifHTMLToStringListConverter.DEFAULT.convertToList(alert.getReference());
+                SarifHtmlToStringListConverter.DEFAULT.convertToList(alert.getReference());
     }
 
     public SarifLevel getDefaultLevel() {

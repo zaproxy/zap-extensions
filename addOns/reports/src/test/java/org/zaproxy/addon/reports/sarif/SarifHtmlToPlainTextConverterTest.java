@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SarifHTMLtoPlainTextConverterTest {
+class SarifHtmlToPlainTextConverterTest {
 
-    private SarifHTMLtoPlainTextConverter toTest;
+    private SarifHtmlToPlainTextConverter toTest;
 
     @BeforeEach
     void beforeEach() {
-        toTest = new SarifHTMLtoPlainTextConverter();
+        toTest = new SarifHtmlToPlainTextConverter();
     }
 
     @Test

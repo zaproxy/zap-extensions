@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SarifHTMLToStringListConverter {
+public class SarifHtmlToStringListConverter {
 
     /** Shared default instance */
-    public static final SarifHTMLToStringListConverter DEFAULT =
-            new SarifHTMLToStringListConverter();
+    public static final SarifHtmlToStringListConverter DEFAULT =
+            new SarifHtmlToStringListConverter();
 
     private static final Pattern PATTERN_HTML_P_CONTENT = Pattern.compile("<p>([^<]+)<\\/p>");
 
