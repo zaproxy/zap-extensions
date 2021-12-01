@@ -34,7 +34,7 @@ public class SarifBinaryContentDetector {
      * for a list of mime types.
      *
      * @param header
-     * @return
+     * @return <code>true</code> when binary content otherwise <code>false</code>
      */
     public boolean isBinaryContent(HttpHeader header) {
         requireNonNull(header, "Header parameter may not be null!");
@@ -46,8 +46,8 @@ public class SarifBinaryContentDetector {
         }
 
         boolean isText = contentTypeLowerCased.startsWith("text");
-        isText = isText || contentTypeLowerCased.indexOf("/json") != -1;
-        isText = isText || contentTypeLowerCased.indexOf("/xml") != -1;
+        isText = isText || contentTypeLowerCased.contains("/json");
+        isText = isText || contentTypeLowerCased.contains("/xml");
 
         return !isText;
     }

@@ -54,7 +54,7 @@ public class TestAlertNodeBuilder {
         private String otherInfo;
 
         /**
-         * Zap plugins can set other info with details - so we can simulate this here (other info
+         * ZAP extensions can set other info with details - so we can simulate this here (other info
          * shall differ to origin one)
          *
          * @param otherInfo

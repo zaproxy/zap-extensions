@@ -37,7 +37,7 @@ public class ReportHelper {
 
     /**
      * For some reports there is additional tooling necessary - e.g. for SARIF: Because the data
-     * structure is completely different to standard OWASP Zap model and would lead to unreadable
+     * structure is completely different to standard OWASP ZAP model and would lead to unreadable
      * and nearly unmaintainable report templates.<br>
      * <br>
      * The benefit here is, that the support objects are only created when wanted by the dedicated
@@ -46,11 +46,11 @@ public class ReportHelper {
      * Supported IDs:
      *
      * <ul>
-     *   <li>sarif creates a {@link SarifReportDataSupport} object for SARIF.
+     *   <li>sarif</li> creates a {@link SarifReportDataSupport} object for SARIF.
      * </ul>
      *
-     * @param id
-     * @param reportData
+     * @param id identifier for the support object to create
+     * @param reportData ZAP report data object
      * @return support object
      * @throws IllegalArgumentException when support with given id is not available
      */
