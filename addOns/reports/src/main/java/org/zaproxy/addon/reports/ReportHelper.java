@@ -46,7 +46,7 @@ public class ReportHelper {
      * Supported IDs:
      *
      * <ul>
-     *   <li>sarif</li> creates a {@link SarifReportDataSupport} object for SARIF.
+     *   <li>sarif creates a {@link SarifReportDataSupport} object for SARIF.
      * </ul>
      *
      * @param id identifier for the support object to create

@@ -72,23 +72,22 @@ public class SarifGuid {
     }
 
     @Override
-	public int hashCode() {
-		return Objects.hash(guid);
-	}
+    public int hashCode() {
+        return Objects.hash(guid);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		SarifGuid other = (SarifGuid) obj;
-		return Objects.equals(guid, other.guid);
-	}
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SarifGuid other = (SarifGuid) obj;
+        return Objects.equals(guid, other.guid);
+    }
 }
