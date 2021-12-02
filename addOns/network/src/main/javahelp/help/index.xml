@@ -7,4 +7,5 @@
     <indexitem text="Network" target="addon.network" />
     <indexitem text="Network API" target="addon.network.api" />
     <indexitem text="Network Command Line" target="addon.network.cmdline" />
+    <indexitem text="Network Options" target="addon.network.options" />
 </index>

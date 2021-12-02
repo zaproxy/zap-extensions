@@ -49,6 +49,8 @@ import org.parosproxy.paros.network.SSLConnector;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.parosproxy.paros.security.SslCertificateService;
+import org.parosproxy.paros.view.OptionsDialog;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
@@ -69,6 +71,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     boolean handleServerCerts;
 
     private ServerCertificatesOptions serverCertificatesOptions;
+    private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
 
     private SslCertificateServiceImpl sslCertificateService;
 
@@ -132,6 +135,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
+
+        if (hasView()) {
+            OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
+            String[] networkNode = {Constant.messages.getString("network.ui.options.name")};
+            serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
+            optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
+        }
     }
 
     private static CommandLineArgument[] createCommandLineArgs() {
@@ -306,6 +316,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     getView()
                             .showWarningDialog(
                                     Constant.messages.getString("network.warn.cert.failed"));
+                } else {
+                    Control.getSingleton()
+                            .getMenuToolsControl()
+                            .options(
+                                    Constant.messages.getString(
+                                            "network.ui.options.servercertificates.name"));
                 }
                 return true;
             }
@@ -314,7 +330,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return true;
     }
 
-    private boolean applyRootCaCert() {
+    boolean applyRootCaCert() {
         try {
             sslCertificateService.initializeRootCA(getRootCaKeyStore());
             return true;
@@ -337,6 +353,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         setSslCertificateService(null);
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+
+        if (hasView()) {
+            OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
+            optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
+        }
     }
 
     @Override
@@ -365,7 +386,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      *
      * @param path the path the Root CA certificate and private key will be written to.
      */
-    private void writeRootCaCertAndPrivateKeyAsPem(Path path) {
+    void writeRootCaCertAndPrivateKeyAsPem(Path path) {
         CertificateUtils.keyStoreToCertificateAndPrivateKeyPem(getRootCaKeyStore(), path);
     }
 
