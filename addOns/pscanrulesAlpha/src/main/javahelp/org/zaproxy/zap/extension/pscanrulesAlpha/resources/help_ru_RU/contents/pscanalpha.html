@@ -116,6 +116,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <h2>Sub Resource Integrity Attribute Missing</h2>
 This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
 It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 
