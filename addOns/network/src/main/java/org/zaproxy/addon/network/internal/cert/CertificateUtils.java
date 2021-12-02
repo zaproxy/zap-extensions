@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -69,10 +70,12 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.MiscPEMGenerator;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.security.CertData;
 
@@ -516,6 +519,28 @@ public final class CertificateUtils {
             writeCertAsPem(keyStore, writer);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the writer:", e);
+        }
+    }
+
+    /**
+     * Writes the certificate and private key contained in the given {@code KeyStore} into a file in
+     * pem format.
+     *
+     * @param keyStore the {@code KeyStore}.
+     * @param file the file to write to.
+     */
+    public static void keyStoreToCertificateAndPrivateKeyPem(KeyStore keyStore, Path file) {
+        keyStoreToCertificatePem(keyStore, file);
+
+        try (Writer writer =
+                        Files.newBufferedWriter(
+                                file, StandardCharsets.US_ASCII, StandardOpenOption.APPEND);
+                PemWriter pw = new PemWriter(writer)) {
+            byte[] privateKeyEncoded = getPrivateKey(keyStore).getEncoded();
+            pw.writeObject(new MiscPEMGenerator(new PemObject("PRIVATE KEY", privateKeyEncoded)));
+            pw.flush();
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while writing the private key:", e);
         }
     }
 

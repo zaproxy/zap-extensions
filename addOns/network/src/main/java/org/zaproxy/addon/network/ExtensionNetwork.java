@@ -19,22 +19,29 @@
  */
 package org.zaproxy.addon.network;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.CommandLineArgument;
+import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
@@ -48,11 +55,15 @@ import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 
-public class ExtensionNetwork extends ExtensionAdaptor {
+public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
 
     private static final String I18N_PREFIX = "network";
+
+    private static final int ARG_CERT_LOAD = 0;
+    private static final int ARG_CERT_PUB_DUMP = 1;
+    private static final int ARG_CERT_FULL_DUMP = 2;
 
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
@@ -115,10 +126,111 @@ public class ExtensionNetwork extends ExtensionAdaptor {
             return;
         }
 
+        extensionHook.addCommandLine(createCommandLineArgs());
+
         sslCertificateService = new SslCertificateServiceImpl();
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
+    }
+
+    private static CommandLineArgument[] createCommandLineArgs() {
+        CommandLineArgument[] arguments = new CommandLineArgument[3];
+        arguments[ARG_CERT_LOAD] =
+                new CommandLineArgument(
+                        "-certload",
+                        1,
+                        null,
+                        "",
+                        "-certload <path>         "
+                                + Constant.messages.getString("network.cmdline.certload"));
+        arguments[ARG_CERT_PUB_DUMP] =
+                new CommandLineArgument(
+                        "-certpubdump",
+                        1,
+                        null,
+                        "",
+                        "-certpubdump <path>      "
+                                + Constant.messages.getString("network.cmdline.certpubdump"));
+        arguments[ARG_CERT_FULL_DUMP] =
+                new CommandLineArgument(
+                        "-certfulldump",
+                        1,
+                        null,
+                        "",
+                        "-certfulldump <path>     "
+                                + Constant.messages.getString("network.cmdline.certfulldump"));
+        return arguments;
+    }
+
+    @Override
+    public void execute(CommandLineArgument[] arguments) {
+        if (!handleServerCerts) {
+            return;
+        }
+
+        if (arguments[ARG_CERT_LOAD].isEnabled()) {
+            Path file = Paths.get(arguments[ARG_CERT_LOAD].getArguments().firstElement());
+            if (!Files.isReadable(file)) {
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "network.cmdline.error.noread", file.toAbsolutePath()));
+            } else {
+                String error = importRootCaCert(file);
+                if (error == null) {
+                    CommandLine.info(
+                            Constant.messages.getString(
+                                    "network.cmdline.certload.done", file.toAbsolutePath()));
+                } else {
+                    CommandLine.error(error);
+                }
+            }
+        }
+        if (arguments[ARG_CERT_PUB_DUMP].isEnabled()) {
+            writeCert(
+                    arguments[ARG_CERT_PUB_DUMP].getArguments().firstElement(),
+                    this::writeRootCaCertAsPem);
+        }
+        if (arguments[ARG_CERT_FULL_DUMP].isEnabled()) {
+            writeCert(
+                    arguments[ARG_CERT_FULL_DUMP].getArguments().firstElement(),
+                    this::writeRootCaCertAndPrivateKeyAsPem);
+        }
+    }
+
+    private static void writeCert(String path, CertWriter writer) {
+        Path file = Paths.get(path);
+        if (Files.exists(file) && !Files.isWritable(file)) {
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "network.cmdline.error.nowrite", file.toAbsolutePath()));
+        } else {
+            try {
+                writer.write(file);
+                CommandLine.info(
+                        Constant.messages.getString(
+                                "network.cmdline.certdump.done", file.toAbsolutePath()));
+            } catch (Exception e) {
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "network.cmdline.error.write", file.toAbsolutePath()),
+                        e);
+            }
+        }
+    }
+
+    private interface CertWriter {
+        void write(Path path) throws Exception;
+    }
+
+    @Override
+    public boolean handleFile(File file) {
+        return false;
+    }
+
+    @Override
+    public List<String> getHandledExtensions() {
+        return Collections.emptyList();
     }
 
     ServerCertificatesOptions getServerCertificatesOptions() {
@@ -245,6 +357,16 @@ public class ExtensionNetwork extends ExtensionAdaptor {
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Writes the Root CA certificate and the private key to the specified file in PEM format,
+     * suitable for importing into ZAP.
+     *
+     * @param path the path the Root CA certificate and private key will be written to.
+     */
+    private void writeRootCaCertAndPrivateKeyAsPem(Path path) {
+        CertificateUtils.keyStoreToCertificateAndPrivateKeyPem(getRootCaKeyStore(), path);
     }
 
     KeyStore getRootCaKeyStore() {

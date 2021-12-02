@@ -8,6 +8,7 @@
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="Network" image="addon.network.icon" target="addon.network">
                 <tocitem text="API" target="addon.network.api" />
+                <tocitem text="Command Line"  target="addon.network.cmdline" />
             </tocitem>
         </tocitem>
     </tocitem>
