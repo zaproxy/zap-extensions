@@ -34,9 +34,9 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
-class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOptionScanRule> {
+class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjackingScanRule> {
 
-    private static final String BASE_RESOURCE_KEY = "pscanrules.xframeoptions.";
+    private static final String BASE_RESOURCE_KEY = "pscanrules.anticlickjacking.";
     private static final String NAME_HEADER_NOT_SET = BASE_RESOURCE_KEY + "missing.name";
     private static final String NAME_MULTIPLE_HEADERS = BASE_RESOURCE_KEY + "multiple.header.name";
     private static final String NAME_DEFINED_IN_META = BASE_RESOURCE_KEY + "compliance.meta.name";
@@ -44,8 +44,8 @@ class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOptionScanR
             BASE_RESOURCE_KEY + "compliance.malformed.setting.name";
 
     @Override
-    protected XFrameOptionScanRule createScanner() {
-        return new XFrameOptionScanRule();
+    protected AntiClickjackingScanRule createScanner() {
+        return new AntiClickjackingScanRule();
     }
 
     @Test
