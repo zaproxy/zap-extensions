@@ -63,6 +63,23 @@
     ],
     "website": "https://truendo.com"
   },
+  "TVSquared": {
+    "cats": [
+      36
+    ],
+    "description": "TVSquared is a cross-platform TV ad measurement, analytics and optimisation platform.",
+    "dom": "link[href*='.tvsquared.com']",
+    "icon": "TVSquared.png",
+    "js": {
+      "TV2Track": "",
+      "_tvq": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.tvsquared.com"
+  },
   "TWiki": {
     "cats": [
       8
@@ -96,24 +113,6 @@
     "scriptSrc": "^/?typo3(?:conf|temp)/",
     "url": "/typo3/",
     "website": "https://typo3.org/"
-  },
-  "Typof": {
-    "cats": [
-      6
-    ],
-    "description": "Typof is an ecommerce platform for artisans that allows to create a premium website and sell items directly to the consumer.",
-    "icon": "Typof.png",
-    "cookies": {
-      "typof_session": "\\;confidence:50"
-    },
-    "saas": true,
-    "pricing": [
-      "freemium",
-      "recurring",
-      "low"
-    ],
-    "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
-    "website": "https://typof.com"
   },
   "Tabby": {
     "cats": [
@@ -172,12 +171,12 @@
       87
     ],
     "description": "TablePress is a free and open source plugin for the WordPress publishing platform. It enables you to create and manage tables on your website, without any coding knowledge.",
-    "icon": "TablePress.png",
     "dom": "link[href*='/wp-content/plugins/tablepress/']",
+    "icon": "TablePress.png",
+    "oss": true,
     "pricing": [
       "freemium"
     ],
-    "oss": true,
     "requires": "WordPress",
     "website": "https://tablepress.org"
   },
@@ -347,17 +346,17 @@
       19
     ],
     "description": "Tapcart is a mobile commerce SaaS platform that integrates directly with Shopify.",
-    "icon": "Tapcart.svg",
-    "requires": "Shopify",
     "dom": "a[href*='tapcart.app'][target='_blank']",
+    "icon": "Tapcart.svg",
     "js": {
       "tapcartwebBanner": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "requires": "Shopify",
+    "saas": true,
     "scriptSrc": "cdn\\.tapcart\\.com/",
     "website": "https://tapcart.com"
   },
@@ -530,6 +529,31 @@
     "scriptSrc": "tajs\\.qq\\.com/stats",
     "website": "https://ta.qq.com/"
   },
+  "Tencent Cloud": {
+    "cats": [
+      31,
+      62
+    ],
+    "description": "Tencent Cloud is China's leading public cloud service provider.",
+    "icon": "Tencent Cloud.svg",
+    "meta": {
+      "copyright": "^.+Tencent\\sCloud\\.$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "scriptSrc": "\\.tencent-cloud\\.(?:cn|com)/",
+    "website": "https://intl.cloud.tencent.com"
+  },
+  "Tencent QQ": {
+    "cats": [
+      52
+    ],
+    "description": "Tencent QQ also known as QQ, is an instant messaging software service and web portal developed by the Chinese tech giant Tencent.",
+    "dom": "a[href*='tencent://message/']",
+    "icon": "Tencent QQ.svg",
+    "website": "https://im.qq.com"
+  },
   "Tencent Waterproof Wall": {
     "cats": [
       9,
@@ -625,6 +649,34 @@
     },
     "website": "http://textpattern.com"
   },
+  "The Arena Group": {
+    "cats": [
+      36
+    ],
+    "description": "The Arena Group is a media coalition of professional content destinations. It operates on a shared digital publishing, advertising, and distribution platform, providing a major media-scale alternative to news and information distributed on social platforms.",
+    "icon": "The Arena Group.svg",
+    "meta": {
+      "generator": "^Tempest\\s-\\smaven\\.io$"
+    },
+    "saas": true,
+    "website": "https://thearenagroup.net"
+  },
+  "The Events Calendar": {
+    "cats": [
+      87
+    ],
+    "description": "The Events Calendar is a free event management plugin for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
+    "icon": "The Events Calendar.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
+    "website": "https://theeventscalendar.com"
+  },
   "The Hut Group": {
     "cats": [
       6
@@ -654,22 +706,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thethemefoundry.com/wordpress-themes/make"
-  },
-  "The Events Calendar": {
-    "cats": [
-      87
-    ],
-    "description": "The Events Calendar is a free event management plugin for WordPress.",
-    "icon": "The Events Calendar.png",
-    "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
-    "website": "https://theeventscalendar.com"
   },
   "Thefork": {
     "cats": [
@@ -709,6 +745,38 @@
       "Symfony"
     ],
     "website": "http://thelia.net"
+  },
+  "Theme Freesia ShoppingCart": {
+    "cats": [
+      80
+    ],
+    "description": "ShoppingCart is a WordPress theme especially build for store and ecommerce by Theme Freesia.",
+    "icon": "Theme Freesia.png",
+    "js": {
+      "shoppingcart_slider_value": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/shoppingcart(?:-plus)?/",
+    "website": "https://themefreesia.com/themes/shoppingcart"
+  },
+  "Theme Horse NewsCard": {
+    "cats": [
+      80
+    ],
+    "description": "NewsCard is a multi-purpose magazine/news WordPress theme by Theme Horse.",
+    "dom": "link[href*='/wp-content/themes/newscard-pro/']",
+    "icon": "Theme Horse.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/newscard(?:-pro)?/",
+    "website": "https://www.themehorse.com/themes/newscard"
   },
   "Theme4Press Evolve": {
     "cats": [
@@ -855,21 +923,6 @@
     "scriptSrc": "/wp-content/themes/e(?:s|S)tore(?:-pro)?/",
     "website": "https://themegrill.com/themes/estore"
   },
-  "Theme Horse NewsCard": {
-    "cats": [
-      80
-    ],
-    "description": "NewsCard is a multi-purpose magazine/news WordPress theme by Theme Horse.",
-    "icon": "Theme Horse.png",
-    "dom": "link[href*='/wp-content/themes/newscard-pro/']",
-    "pricing": [
-      "freemium",
-      "onetime"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/newscard(?:-pro)?/",
-    "website": "https://www.themehorse.com/themes/newscard"
-  },
   "ThemeZee Donovan": {
     "cats": [
       80
@@ -953,23 +1006,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/graphy(?:-pro)?/",
     "website": "https://themegraphy.com/wordpress-themes/graphy"
-  },
-  "Theme Freesia ShoppingCart": {
-    "cats": [
-      80
-    ],
-    "description": "ShoppingCart is a WordPress theme especially build for store and ecommerce by Theme Freesia.",
-    "icon": "Theme Freesia.png",
-    "js": {
-      "shoppingcart_slider_value": ""
-    },
-    "pricing": [
-      "freemium",
-      "onetime"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/shoppingcart(?:-plus)?/",
-    "website": "https://themefreesia.com/themes/shoppingcart"
   },
   "Themes4Wp Bulk": {
     "cats": [
@@ -1296,6 +1332,23 @@
     ],
     "website": "https://www.tip-sa.com"
   },
+  "Tiqets": {
+    "cats": [
+      5,
+      71
+    ],
+    "description": "Tiqets provides a complete overview of a city - museums, attractions, zoos, canal cruises, concerts. Publishers joined to the Tiqets affiliate program can receive 6% commission during our 30-day cookie window from completed total bookings resulting from featuring links to Tiqets products and content across their brand: blog/website, social media, newsletters, etc.",
+    "dom": "a[href*='.tiqets.com/'][target='_blank'], iframe[src*='.tiqets.com/']",
+    "icon": "Tiqets.svg",
+    "js": {
+      "__TIQETS_LOADER_REINIT": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.tiqets.com/affiliate"
+  },
   "Titan": {
     "cats": [
       36
@@ -1444,6 +1497,20 @@
     "scriptSrc": "swrap\\.tradedoubler\\.com",
     "website": "https://www.tradedoubler.com/"
   },
+  "TrafficStars": {
+    "cats": [
+      36
+    ],
+    "description": "TrafficStars is a self-served ad network and ad exchange that operates mainly in adult-related verticals.",
+    "dom": "img[src*='tsyndicate.com/'], a[href*='trafficstars.com']",
+    "icon": "TrafficStars.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.tsyndicate\\.com/",
+    "website": "https://trafficstars.com"
+  },
   "Transifex": {
     "cats": [
       12
@@ -1519,8 +1586,8 @@
       97
     ],
     "description": "Treasure Data is the only enterprise customer data platform.",
-    "icon": "Treasure Data.svg",
     "dom": "link[href*='.treasuredata.com']",
+    "icon": "Treasure Data.svg",
     "js": {
       "Treasure.version": "(.+)\\;version:\\1"
     },
@@ -1739,22 +1806,21 @@
     "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
     "website": "https://turfjs.org/"
   },
-  "TVSquared": {
+  "TurnTo": {
     "cats": [
-      36
+      90
     ],
-    "description": "TVSquared is a cross-platform TV ad measurement, analytics and optimisation platform.",
-    "icon": "TVSquared.png",
-    "dom": "link[href*='.tvsquared.com']",
+    "description": "TurnTo Networks Inc provides customer-generated content solutions platform for large retailers and the global brands that sell through them.",
+    "icon": "TurnTo.svg",
     "js": {
-      "TV2Track": "",
-      "_tvq": ""
+      "TurnTo": "",
+      "turnToConfig": ""
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
-    "website": "https://www.tvsquared.com"
+    "saas": true,
+    "website": "https://www.turntonetworks.com"
   },
   "Twenty Eleven": {
     "cats": [
@@ -2004,6 +2070,18 @@
     "icon": "TwistedWeb.png",
     "website": "http://twistedmatrix.com/trac/wiki/TwistedWeb"
   },
+  "Twitch Player": {
+    "cats": [
+      14
+    ],
+    "description": "Twitch is an American video live streaming service that focuses on video game live streaming, including broadcasts of esports competitions.",
+    "dom": "iframe[src*='player\\.twitch\\.tv']",
+    "icon": "Twitch.svg",
+    "js": {
+      "Twitch.Player": ""
+    },
+    "website": "https://dev.twitch.tv/docs/embed/video-and-clips/"
+  },
   "Twitter": {
     "cats": [
       5
@@ -2140,6 +2218,24 @@
     ],
     "scriptSrc": "use\\.typekit\\.com",
     "website": "http://typekit.com"
+  },
+  "Typof": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "typof_session": "\\;confidence:50"
+    },
+    "description": "Typof is an ecommerce platform for artisans that allows to create a premium website and sell items directly to the consumer.",
+    "icon": "Typof.png",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
+    "website": "https://typof.com"
   },
   "theTradeDesk": {
     "cats": [

@@ -467,16 +467,16 @@
     ],
     "description": "JuicyAds is a legitimate advertising network that specializes in adult content.",
     "icon": "JuicyAds.png",
-    "meta": {
-      "juicyads-site-verification": ""
-    },
     "js": {
       "adsbyjuicy": ""
     },
-    "saas": true,
+    "meta": {
+      "juicyads-site-verification": ""
+    },
     "pricing": [
       "payg"
     ],
+    "saas": true,
     "website": "https://www.juicyads.com"
   },
   "Jumbo": {
@@ -584,6 +584,16 @@
       "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-][^u]\\;version:\\1"
     ],
     "website": "https://jquery.com"
+  },
+  "jQuery CDN": {
+    "cats": [
+      31
+    ],
+    "description": "jQuery CDN is a way to include jQuery in your website without actually downloading and keeping it your website's folder.",
+    "icon": "jQuery.svg",
+    "implies": "jQuery",
+    "scriptSrc": "code\\.jquery\\.com/",
+    "website": "https://code.jquery.com/"
   },
   "jQuery DevBridge Autocomplete": {
     "cats": [

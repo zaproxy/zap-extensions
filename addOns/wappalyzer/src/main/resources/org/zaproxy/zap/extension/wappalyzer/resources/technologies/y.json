@@ -1,18 +1,4 @@
 {
-  "yellow.ai": {
-    "cats": [
-      52
-    ],
-    "description": "yellow.ai provides chatbot and automation services.",
-    "icon": "yellow.ai.svg",
-    "js": {
-      "ymConfig": ""
-    },
-    "saas": true,
-    "pricing": [ "poa" ],
-    "scriptSrc": "cdn\\.yellowmessenger\\.com",
-    "website": "https://yellow.ai/"
-  },
   "YUI": {
     "cats": [
       59
@@ -91,6 +77,28 @@
     },
     "scriptSrc": "d\\.yimg\\.com/mi/ywa\\.js",
     "website": "http://web.analytics.yahoo.com"
+  },
+  "Yandex.Cloud": {
+    "cats": [
+      62
+    ],
+    "description": "Yandex.Cloud is a public cloud platform where companies can create and develop projects using Yandex's scalable computing power, advanced technologies, and infrastructure.",
+    "icon": "Yandex.Cloud.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": false,
+    "website": "https://cloud.yandex.com/en/"
+  },
+  "Yandex.Cloud CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Yandex.Cloud CDN helps you streamline static content delivery for your web service.",
+    "dom": "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']",
+    "icon": "Yandex.Cloud.svg",
+    "implies": "Yandex.Cloud",
+    "website": "https://cloud.yandex.com/en/services/cdn"
   },
   "Yandex.Direct": {
     "cats": [
@@ -189,6 +197,19 @@
     },
     "website": "https://www.yepcomm.com.br"
   },
+  "Yett": {
+    "cats": [
+      67
+    ],
+    "description": "Yett is a small webpage library to control the execution of (third party) scripts like analytics.",
+    "icon": "Yett.png",
+    "js": {
+      "YETT_BLACKLIST": ""
+    },
+    "oss": true,
+    "scriptSrc": "/yett@([\\d\\.]+)/dist/yett\\.min\\.js\\;version:\\1",
+    "website": "https://github.com/elbywan/yett"
+  },
   "Yieldify": {
     "cats": [
       76
@@ -240,9 +261,9 @@
       87
     ],
     "description": "Yoast Duplicate Post is a WordPress plugin which allows users to clone posts of any type, or copy them to new drafts for further editing.",
+    "dom": "link[href*='/wp-content/plugins/duplicate-post/']",
     "icon": "Yoast SEO.png",
     "requires": "WordPress",
-    "dom": "link[href*='/wp-content/plugins/duplicate-post/']",
     "website": "https://wordpress.org/plugins/duplicate-post"
   },
   "Yoast SEO": {
@@ -282,9 +303,9 @@
     "description": "Yotpo is a user-generated content marketing platform.",
     "icon": "Yotpo.svg",
     "js": {
-      "yotpo": "",
       "SwellConfig": "",
-      "swellAPI": ""
+      "swellAPI": "",
+      "yotpo": ""
     },
     "pricing": [
       "freemium",
@@ -334,5 +355,21 @@
     "html": "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)",
     "icon": "YouTube.png",
     "website": "http://www.youtube.com"
+  },
+  "yellow.ai": {
+    "cats": [
+      52
+    ],
+    "description": "yellow.ai provides chatbot and automation services.",
+    "icon": "yellow.ai.svg",
+    "js": {
+      "ymConfig": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.yellowmessenger\\.com",
+    "website": "https://yellow.ai/"
   }
 }

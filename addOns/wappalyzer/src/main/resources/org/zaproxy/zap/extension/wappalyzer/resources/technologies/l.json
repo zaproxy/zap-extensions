@@ -11,6 +11,18 @@
     },
     "website": "http://www.lepton-cms.org"
   },
+  "LINE Login": {
+    "cats": [
+      69
+    ],
+    "description": "LINE Login is an API that allows you to implement a login function into your services, regardless of whether they are web apps or native apps.",
+    "dom": "a[href*='access.line.me/']",
+    "icon": "LINE.svg",
+    "js": {
+      "Constants.authorization_request_url": "access\\.line\\.me/oauth2/v([\\d\\.]+)/\\;version:\\1"
+    },
+    "website": "https://developers.line.biz/en/services/line-login/"
+  },
   "LKQD": {
     "cats": [
       36
@@ -185,6 +197,19 @@
     "scriptSrc": "/__layer0__/cache-manifest\\.js",
     "website": "https://www.layer0.co"
   },
+  "LazySizes": {
+    "cats": [
+      59
+    ],
+    "description": "LazySizes is a JavaScript library used to delay the loading of images (iframes, scripts, etc) until they come into view.",
+    "icon": "default.svg",
+    "js": {
+      "lazySizes": "",
+      "lazySizesConfig": ""
+    },
+    "oss": true,
+    "website": "https://github.com/aFarkas/lazysizes"
+  },
   "Leadinfo": {
     "cats": [
       10
@@ -233,6 +258,22 @@
     "saas": true,
     "scriptSrc": "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1",
     "website": "https://www.leanplum.com"
+  },
+  "Leaseweb": {
+    "cats": [
+      63,
+      88
+    ],
+    "description": "Leaseweb is an Infrastructure-as-a-Service (IaaS) provider offering dedicated servers, CDN, cloud hosting and hybrid cloud on a global network.",
+    "dns": {
+      "SOA": "\\.leaseweb\\.nl"
+    },
+    "icon": "Leaseweb.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.leaseweb.com"
   },
   "Lede": {
     "cats": [
@@ -291,6 +332,22 @@
     "description": "Let's Encrypt is a free, automated, and open certificate authority.",
     "icon": "Lets Encrypt.svg",
     "website": "https://letsencrypt.org/"
+  },
+  "Level 5": {
+    "cats": [
+      51
+    ],
+    "description": "Level 5 is a page builder constructed with WordPress and powered with WP Engine hosting featuring advanced caching and performance optimisation.",
+    "icon": "Level 5.png",
+    "js": {
+      "l5_inventory_url": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "website": "https://level5advertising.com/websites/"
   },
   "Liferay": {
     "cats": [
@@ -400,8 +457,8 @@
       16
     ],
     "description": "Limit Login Attempts Reloaded stops brute-force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.",
-    "icon": "Limit Login Attempts Reloaded.png",
     "dom": "link#llar-login-page-styles-css",
+    "icon": "Limit Login Attempts Reloaded.png",
     "pricing": [
       "freemium",
       "low",
@@ -450,12 +507,21 @@
   },
   "Liquid Web": {
     "cats": [
-      62
+      62,
+      88
     ],
+    "description": "Liquid Web is a US-based host offering premium managed web hosting solutions.",
+    "dns": {
+      "SOA": "\\.liquidweb\\.com"
+    },
     "headers": {
       "x-lw-cache": ""
     },
-    "icon": "liquidweb.svg",
+    "icon": "Liquid Web.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
     "website": "https://www.liquidweb.com"
   },
   "List.js": {
@@ -621,12 +687,29 @@
     ],
     "description": "LivePerson is a tool for conversational chatbots and messaging.",
     "icon": "LivePerson.png",
+    "js": {
+      "lpTag.Chronos": ""
+    },
     "pricing": [
-      "poa"
+      "mid",
+      "recurring",
+      "payg"
     ],
     "saas": true,
-    "scriptSrc": "^https?://lptag\\.liveperson\\.net/tag/tag\\.js",
-    "website": "https://www.liveperson.com/"
+    "scriptSrc": "\\.(?:liveperson|contactatonce)?\\.(?:com|net|co\\.uk)/",
+    "website": "https://www.liveperson.com"
+  },
+  "LiveRamp DPM": {
+    "cats": [
+      36
+    ],
+    "description": "LiveRamp DPM is a TV advertising metrics and analytics platform.",
+    "icon": "LiveRamp.svg",
+    "js": {
+      "dpmComscoreVars": ""
+    },
+    "scriptSrc": "c\\.tvpixel\\.com/js/current/dpm_pixel_min\\.js",
+    "website": "https://liveramp.com/data-plus-math"
   },
   "LiveRamp PCM": {
     "cats": [
@@ -640,18 +723,6 @@
     },
     "scriptSrc": "gdpr\\.privacymanager\\.io",
     "website": "https://liveramp.com/our-platform/preference-consent-management"
-  },
-  "LiveRamp DPM": {
-    "cats": [
-      36
-    ],
-    "description": "LiveRamp DPM is a TV advertising metrics and analytics platform.",
-    "icon": "LiveRamp.svg",
-    "js": {
-      "dpmComscoreVars": ""
-    },
-    "scriptSrc": "c\\.tvpixel\\.com/js/current/dpm_pixel_min\\.js",
-    "website": "https://liveramp.com/data-plus-math"
   },
   "LiveStreet CMS": {
     "cats": [
@@ -1078,6 +1149,25 @@
     "icon": "Lucene.png",
     "implies": "Java",
     "website": "http://lucene.apache.org/core/"
+  },
+  "Lucky Orange": {
+    "cats": [
+      10
+    ],
+    "description": "Lucky Orange is a conversion optimisation tool with features including heatmaps, session recording, conversion funnels, form analytics, and chat.",
+    "dom": "link[href*='.luckyorange.com']",
+    "icon": "Lucky Orange.svg",
+    "js": {
+      "__wtw_lucky_site_id": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.luckyorange\\.com/",
+    "website": "https://www.luckyorange.com"
   },
   "Luigi’s Box": {
     "cats": [

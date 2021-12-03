@@ -113,6 +113,26 @@
     "scriptSrc": "static\\.narrativ\\.com/",
     "website": "https://narrativ.com/"
   },
+  "Nativo": {
+    "cats": [
+      36
+    ],
+    "description": "Nativo is an advertising technology provider.",
+    "dom": "link[href*='.postrelease.com/'], img[src*='.postrelease.com/']",
+    "icon": "Nativo.png",
+    "js": {
+      "ntvConfig": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ntv\\.io/",
+      "\\.postrelease\\.com/"
+    ],
+    "website": "https://www.nativo.com"
+  },
   "Navegg": {
     "cats": [
       10
@@ -155,6 +175,21 @@
     },
     "icon": "nepso.svg",
     "website": "https://www.nepso.com"
+  },
+  "Nestify": {
+    "cats": [
+      88
+    ],
+    "description": "Nestify is a fully managed WordPress hosting platform that runs on AWS graviton processors.",
+    "headers": {
+      "x-nestify-cache": ""
+    },
+    "icon": "Nestify.png",
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "website": "https://nestify.io"
   },
   "NetSuite": {
     "cats": [
@@ -372,7 +407,7 @@
     "headers": {
       "x-powered-by": "Niagahoster"
     },
-    "icon": "niagahoster.png",
+    "icon": "Niagahoster.svg",
     "implies": "Niagahoster",
     "pricing": [
       "low",
@@ -385,8 +420,8 @@
       87
     ],
     "description": "Ninja Forms is the WordPress form builder.",
-    "icon": "Ninja Forms.svg",
     "dom": "link[href*='/wp-content/plugins/ninja-forms/']",
+    "icon": "Ninja Forms.svg",
     "js": {
       "nfForms": ""
     },
@@ -409,6 +444,20 @@
       "generator": "NitroPack"
     },
     "website": "https://nitropack.io/"
+  },
+  "NoFraud": {
+    "cats": [
+      16
+    ],
+    "description": "NoFraud is a fraud prevention solution for ecommerce businesses.",
+    "icon": "NoFraud.svg",
+    "pricing": [
+      "poa"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "scriptSrc": "services\\.nofraud\\.com/",
+    "website": "https://www.nofraud.com"
   },
   "Noddus": {
     "cats": [

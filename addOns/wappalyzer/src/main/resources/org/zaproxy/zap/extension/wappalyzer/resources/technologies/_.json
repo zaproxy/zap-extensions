@@ -43,11 +43,33 @@
       36
     ],
     "description": "33Across is a technology company focused on solving the challenge of consumer attention for automated advertising.",
-    "dom": "iframe[src*='.33across.com'], link[href*='.33across.com']",
+    "dom": "iframe[src*='.33across.com'], link[href*='.33across.com'], link[href*='.tynt.com']",
     "icon": "33Across.png",
+    "js": {
+      "Tynt": ""
+    },
     "saas": true,
+    "scriptSrc": [
+      "\\.33across\\.com/",
+      "\\.tynt\\.com/"
+    ],
     "website": "https://www.33across.com",
     "xhr": "\\.33across\\.com"
+  },
+  "34SP.com": {
+    "cats": [
+      88
+    ],
+    "description": "34SP.com specialises in website hosting, discount domain names, low cost VPS servers and dedicated servers.",
+    "dns": {
+      "SOA": "ns(?:\\d+)?\\.34sp\\.com"
+    },
+    "icon": "34SP.com.svg",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://www.34sp.com"
   },
   "3dCart": {
     "cats": [

@@ -80,15 +80,6 @@
     ],
     "website": "http://www.whmcs.com"
   },
-  "WorldShopping": {
-    "cats": [
-      6
-    ],
-    "description": "WorldShopping makes online purchases in Japan easier for international visitors.",
-    "icon": "worldshopping.png",
-    "scriptSrc": "checkout-api\\.worldshopping\\.jp/(v\\d+)?\\;version:\\1",
-    "website": "https://www.worldshopping.global/"
-  },
   "WP Engine": {
     "cats": [
       62,
@@ -105,59 +96,14 @@
     "implies": "WordPress",
     "website": "https://wpengine.com"
   },
-  "WPMU DEV Smush": {
-    "cats": [
-      87
-    ],
-    "description": "WPMU DEV Smush is a WordPress plugin that allows you to optimise images without losing quality.",
-    "icon": "WPMU DEV.png",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",   
-    "scriptSrc": "/wp-content/plugins/wp-smushit(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://wpmudev.com/project/wp-smush-pro"    
-  },
-  "WP-Optimize": {
-    "cats": [
-      87,
-      92
-    ],
-    "description": "WP-Optimize is an all-in-one WordPress plugin that cleans your database, compresses your large images and caches your site.",
-    "icon": "WP-Optimize.png",
-    "html": "<!--[^>]+Cached by WP-Optimize",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",    
-    "website": "https://getwpo.com"
-  },
-  "WP-PageNavi": {
-    "cats": [
-      87
-    ],
-    "description": "WP-PageNavi is a WordPress plugin which adds a more advanced paging navigation interface to your WordPress blog.",
-    "icon": "WP-PageNavi.svg",
-    "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
-    "oss": true,
-    "pricing": [
-      "freemium"
-    ],
-    "requires": "WordPress",
-    "website": "https://github.com/lesterchan/wp-pagenavi"
-  },
   "WP Fastest Cache": {
     "cats": [
       87,
       92
     ],
     "description": "WP Fastest Cache is one of a number of plugins for WordPress designed to accelerate the performance of your website.",
-    "icon": "WP Fastest Cache.png",
     "dom": "link[href*='/wp-content/cache/wpfc-minified/']",
+    "icon": "WP Fastest Cache.png",
     "js": {
       "Wpfcll": ""
     },
@@ -169,36 +115,17 @@
     "scriptSrc": "/wp-content/cache/wpfc-minified/",
     "website": "https://www.wpfastestcache.com"
   },
-  "WPForms": {
-    "cats": [
-      87
-    ],
-    "description": "WPForms is a drag and drop WordPress form builder.",
-    "icon": "WPForms.svg",
-    "js": {
-      "wpforms": "",
-      "wpforms_settings": ""
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/wpforms(?:-lite)?/.+(?:frontend\\.min|wpforms)\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://wpforms.com"
-  },
   "WP Maintenance Mode": {
     "cats": [
       87
     ],
     "description": "WP Maintenance Mode is a WordPress plugin which add a maintenance page to your blog.",
     "icon": "WP Maintenance Mode.png",
-    "js":{
+    "js": {
       "wpmm_vars": ""
     },
-    "requires": "WordPress",
     "oss": true,
+    "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/wp-maintenance-mode/.+wpmm\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/andrianvaleanu/WP-Maintenance-Mode"
   },
@@ -230,6 +157,36 @@
     "icon": "WP Rocket.png",
     "requires": "WordPress",
     "website": "http://wp-rocket.me"
+  },
+  "WP-Optimize": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "WP-Optimize is an all-in-one WordPress plugin that cleans your database, compresses your large images and caches your site.",
+    "html": "<!--[^>]+Cached by WP-Optimize",
+    "icon": "WP-Optimize.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://getwpo.com"
+  },
+  "WP-PageNavi": {
+    "cats": [
+      87
+    ],
+    "description": "WP-PageNavi is a WordPress plugin which adds a more advanced paging navigation interface to your WordPress blog.",
+    "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
+    "icon": "WP-PageNavi.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://github.com/lesterchan/wp-pagenavi"
   },
   "WP-Royal Ashe": {
     "cats": [
@@ -271,18 +228,18 @@
       87
     ],
     "description": "WP-Statistics is a WordPress plugin which allows you to know your website statistics.",
-    "icon": "WP-Statistics.svg",
     "dom": "link[href*='/wp-content/plugins/wp-statistics/']",
+    "icon": "WP-Statistics.svg",
     "js": {
       "WP_Statistics_http": "",
       "wps_statistics_object": ""
     },
+    "oss": true,
     "pricing": [
       "freemium",
       "onetime"
     ],
     "requires": "WordPress",
-    "oss": true,
     "website": "https://wp-statistics.com"
   },
   "WPCacheOn": {
@@ -299,6 +256,40 @@
       "WordPress"
     ],
     "website": "https://wpcacheon.io"
+  },
+  "WPForms": {
+    "cats": [
+      87
+    ],
+    "description": "WPForms is a drag and drop WordPress form builder.",
+    "icon": "WPForms.svg",
+    "js": {
+      "wpforms": "",
+      "wpforms_settings": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wpforms(?:-lite)?/.+(?:frontend\\.min|wpforms)\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpforms.com"
+  },
+  "WPMU DEV Smush": {
+    "cats": [
+      87
+    ],
+    "description": "WPMU DEV Smush is a WordPress plugin that allows you to optimise images without losing quality.",
+    "icon": "WPMU DEV.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wp-smushit(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpmudev.com/project/wp-smush-pro"
   },
   "Wagtail": {
     "cats": [
@@ -357,6 +348,24 @@
     "scriptSrc": "getwair\\.com",
     "website": "https://getwair.com"
   },
+  "WalkMe": {
+    "cats": [
+      58
+    ],
+    "description": "WalkMe is a cloud-based interactive guidance and engagement platform.",
+    "dom": "link[href*='.walkme.com']",
+    "icon": "WalkMe.svg",
+    "js": {
+      "WalkMeAPI": "",
+      "_walkmeConfig": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.walkme.com"
+  },
   "Wangsu": {
     "cats": [
       31
@@ -385,12 +394,12 @@
       80
     ],
     "description": "Weaver Xtreme is the orginal options-based WordPress theme.",
-    "icon": "Weaver Xtreme.png",
     "dom": "link#weaverx-style-sheet-css",
+    "icon": "Weaver Xtreme.png",
     "js": {
       "weaverxBottomFooter": "",
-      "weaverxOnResize": "",
-      "weaverxMonitorContent": ""
+      "weaverxMonitorContent": "",
+      "weaverxOnResize": ""
     },
     "pricing": [
       "freemium",
@@ -458,36 +467,36 @@
     "scriptSrc": "\\.webengage\\.co(?:m)?/",
     "website": "https://webengage.com"
   },
-  "WebFactory Under Construction": {
-    "cats": [
-      87
-    ],
-    "description": "WebFactory Under Construction is a WordPress plugin which allows you to create an under construction page.",
-    "icon": "WebFactory.png",
-    "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
-    "pricing": [
-      "freemium"
-    ],
-    "requires": "WordPress",
-    "oss": true,
-    "website": "https://wordpress.org/plugins/under-construction-page"
-  },  
   "WebFactory Maintenance": {
     "cats": [
       87
     ],
     "description": "WebFactory Maintenance is a WordPress plugin which allows you to create an maintenance page.",
-    "icon": "WebFactory.png",
     "dom": "link[href*='/wp-content/plugins/maintenance/']",
+    "icon": "WebFactory.png",
     "js": {
       "mtnc_front_options": ""
     },
+    "oss": true,
     "pricing": [
       "freemium"
     ],
     "requires": "WordPress",
-    "oss": true,
     "website": "https://wordpress.org/plugins/maintenance"
+  },
+  "WebFactory Under Construction": {
+    "cats": [
+      87
+    ],
+    "description": "WebFactory Under Construction is a WordPress plugin which allows you to create an under construction page.",
+    "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
+    "icon": "WebFactory.png",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/under-construction-page"
   },
   "WebGUI": {
     "cats": [
@@ -550,6 +559,24 @@
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
     "website": "http://websitex5.com"
+  },
+  "WebToffee GDPR Cookie Consent": {
+    "cats": [
+      87,
+      67
+    ],
+    "description": "WebToffee GDPR Cookie Consent is a cookie consent and compliance notice WordPress plugin which will assist you in making your website GDPR (RGPD, DSVGO) compliant.",
+    "dom": "link[href*='/wp-content/plugins/cookie-law-info/']",
+    "icon": "WebToffee.svg",
+    "implies": "CookieYes",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/cookie-law-info/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.webtoffee.com/product/gdpr-cookie-consent/"
   },
   "Webflow": {
     "cats": [
@@ -672,24 +699,6 @@
     ],
     "icon": "websocket.png",
     "website": "https://en.wikipedia.org/wiki/WebSocket"
-  },
-  "WebToffee GDPR Cookie Consent": {
-    "cats": [
-      87,
-      67
-    ],
-    "description": "WebToffee GDPR Cookie Consent is a cookie consent and compliance notice WordPress plugin which will assist you in making your website GDPR (RGPD, DSVGO) compliant.",
-    "icon": "WebToffee.svg",
-    "dom": "link[href*='/wp-content/plugins/cookie-law-info/']",
-    "implies": "CookieYes",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/cookie-law-info/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.webtoffee.com/product/gdpr-cookie-consent/"
   },
   "Webtrekk": {
     "cats": [
@@ -944,7 +953,7 @@
     "headers": {
       "Server": "\\bWinCE\\b"
     },
-    "icon": "Microsoft.png",
+    "icon": "Microsoft.svg",
     "website": "http://microsoft.com"
   },
   "Windows Server": {
@@ -1154,47 +1163,46 @@
     ],
     "website": "https://woocommerce.com"
   },
-
-  "WooCommerce PayPal Payments": {
-    "cats": [
-      87
-    ],
-    "description": "WooCommerce PayPal Payments is a latest WordPress plugin with most complete payment processing solution. Accept PayPal exclusives, credit/debit cards and local payment methods.",
-    "icon": "WooCommerce PayPal.png",
-    "implies": "PayPal",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']",
-    "pricing": [
-      "freemium"
-    ],
-    "oss": true,
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/woocommerce-paypal-payments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://github.com/woocommerce/woocommerce-paypal-payments"
-  },
   "WooCommerce PayPal Checkout Payment Gateway": {
     "cats": [
       87
     ],
     "description": "WooCommerce PayPal Checkout Payment Gateway is a WordPress plugin which allows you to securely sell your products and subscriptions online using in-context checkout.",
+    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']",
     "icon": "WooCommerce PayPal.png",
     "implies": "PayPal",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']",
+    "oss": true,
     "pricing": [
       "freemium"
     ],
-    "oss": true,
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/woocommerce/woocommerce-gateway-paypal-express-checkout"
+  },
+  "WooCommerce PayPal Payments": {
+    "cats": [
+      87
+    ],
+    "description": "WooCommerce PayPal Payments is a latest WordPress plugin with most complete payment processing solution. Accept PayPal exclusives, credit/debit cards and local payment methods.",
+    "dom": "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']",
+    "icon": "WooCommerce PayPal.png",
+    "implies": "PayPal",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/woocommerce-paypal-payments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://github.com/woocommerce/woocommerce-paypal-payments"
   },
   "WooCommerce Stripe Payment Gateway": {
     "cats": [
       87
     ],
     "description": "WooCommerce Stripe Payment Gateway plugin extends WooCommerce allowing you to take payments directly on your store via Stripe’s API.",
+    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']",
     "icon": "WooCommerce Stripe Payment Gateway.png",
     "implies": "Stripe",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']",
     "pricing": [
       "freemium"
     ],
@@ -1216,6 +1224,7 @@
     ],
     "description": "Woostify is fast, lightweight, responsive and flexible WooCommerce theme built with SEO, speed, and usability in mind.",
     "icon": "Woostify.png",
+    "implies": "WooCommerce",
     "js": {
       "woostifyConditionScrolling": "",
       "woostify_woocommerce_general": ""
@@ -1226,7 +1235,6 @@
       "recurring"
     ],
     "requires": "WordPress",
-    "implies": "WooCommerce",
     "scriptSrc": "/wp-content/themes/woostify/",
     "website": "https://woostify.com"
   },
@@ -1246,40 +1254,20 @@
     "scriptSrc": "assets-cdn\\.woowup\\.com/",
     "website": "https://www.woowup.com"
   },
-  "Wordfence": {
+  "WordAds": {
     "cats": [
-      87,
-      16
+      36
     ],
-    "description": "Wordfence is a security plugin for sites that use WordPress. Wordfence includes an endpoint firewall and malware scanner.",
-    "icon": "Wordfence.svg",
-    "js": {
-      "wordfenceAJAXWatcher": ""
-    },
+    "description": "WordAds is an advertising platform run by Automatic that allows bloggers and website owners to place advertisements on their blogs and websites.",
+    "dom": "link[href*='.pubmine.com']",
+    "icon": "WordAds.png",
     "pricing": [
       "freemium",
-      "low",
-      "recurring"
+      "payg"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/wordfence/.+admin\\.ajaxWatcher\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.wordfence.com"
-  },
-  "Wordfence Login Security": {
-    "cats": [
-      87,
-      16
-    ],
-    "description": "Wordfence Login Security contains a subset of the functionality found in the full Wordfence plugin: Two-factor Authentication, XML-RPC Protection and Login Page CAPTCHA.",
-    "icon": "Wordfence.svg",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/wordfence/.+login\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.wordfence.com"
+    "saas": true,
+    "scriptSrc": "\\.pubmine\\.com/",
+    "website": "https://wordads.co"
   },
   "WordPress": {
     "cats": [
@@ -1376,6 +1364,41 @@
     ],
     "website": "https://wordpress.com"
   },
+  "Wordfence": {
+    "cats": [
+      87,
+      16
+    ],
+    "description": "Wordfence is a security plugin for sites that use WordPress. Wordfence includes an endpoint firewall and malware scanner.",
+    "icon": "Wordfence.svg",
+    "js": {
+      "wordfenceAJAXWatcher": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wordfence/.+admin\\.ajaxWatcher\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.wordfence.com"
+  },
+  "Wordfence Login Security": {
+    "cats": [
+      87,
+      16
+    ],
+    "description": "Wordfence Login Security contains a subset of the functionality found in the full Wordfence plugin: Two-factor Authentication, XML-RPC Protection and Login Page CAPTCHA.",
+    "icon": "Wordfence.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wordfence/.+login\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.wordfence.com"
+  },
   "Workarea": {
     "cats": [
       6
@@ -1386,6 +1409,21 @@
       "workarea": ""
     },
     "website": "https://www.workarea.com/"
+  },
+  "World4You": {
+    "cats": [
+      88
+    ],
+    "description": "World4You operates homepage and domain solutions. World4Youu operates data centers in Austria and provides data protection.",
+    "dns": {
+      "SOA": "ns\\d+\\.world4you\\.at"
+    },
+    "icon": "World4You.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.world4you.com"
   },
   "WorldPay": {
     "cats": [
@@ -1399,6 +1437,15 @@
     ],
     "saas": true,
     "website": "https://online.worldpay.com"
+  },
+  "WorldShopping": {
+    "cats": [
+      6
+    ],
+    "description": "WorldShopping makes online purchases in Japan easier for international visitors.",
+    "icon": "worldshopping.png",
+    "scriptSrc": "checkout-api\\.worldshopping\\.jp/(v\\d+)?\\;version:\\1",
+    "website": "https://www.worldshopping.global/"
   },
   "Wufoo": {
     "cats": [

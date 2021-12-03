@@ -3,13 +3,7 @@
     "cats": [
       6
     ],
-    "cookies": {
-      "xid": "[a-z\\d]{32}(?:;|$)"
-    },
-    "html": [
-      "Powered by X-Cart(?: (\\d+))? <a[^>]+href=\"http://www\\.x-cart\\.com/\"[^>]*>\\;version:\\1",
-      "<a[^>]+href=\"[^\"]*(?:\\?|&)xcart_form_id=[a-z\\d]{32}(?:&|$)"
-    ],
+    "description": " X-Cart is an open source PHP shopping cart ecommerce software platform.",
     "icon": "X-Cart.png",
     "implies": "PHP",
     "js": {
@@ -19,8 +13,8 @@
     "meta": {
       "generator": "X-Cart(?: (\\d+))?\\;version:\\1"
     },
-    "scriptSrc": "/skin/common_files/modules/Product_Options/func\\.js",
-    "website": "http://x-cart.com"
+    "oss": true,
+    "website": "https://kb.x-cart.com"
   },
   "X.ai": {
     "cats": [
@@ -227,6 +221,21 @@
     "saas": true,
     "scriptSrc": "apps\\.xpresslane\\.in/",
     "website": "https://www.xpresslane.in"
+  },
+  "Xserver": {
+    "cats": [
+      88
+    ],
+    "description": "Xserver engages in web hosting, web application and internet-related services.",
+    "dns": {
+      "SOA": "\\.xserver\\.jp"
+    },
+    "icon": "Xserver.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.xserver.ne.jp"
   },
   "Xtremepush": {
     "cats": [

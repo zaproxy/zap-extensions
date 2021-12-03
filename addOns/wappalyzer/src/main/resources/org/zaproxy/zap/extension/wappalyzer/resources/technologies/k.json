@@ -105,8 +105,8 @@
       80
     ],
     "description": "Vogue is a very easy to use multipurpose WordPress theme created by Kaira.",
-    "icon": "Kaira.png",
     "dom": "link#vogue-style-css",
+    "icon": "Kaira.png",
     "pricing": [
       "freemium",
       "onetime"
@@ -131,6 +131,19 @@
     ],
     "saas": true,
     "website": "https://kajabi.com"
+  },
+  "Kakao": {
+    "cats": [
+      19
+    ],
+    "description": "Kakao platform provides various services such as Kakao Talk, Kakao Talk Channel, Kakao Story as well as Kakao Pay, Kakao Commerce, Kakao Page provided by the subsidiaries. Users can use all Kakao platform services with a united account called Kakao Account.",
+    "dom": "a[href*='.kakao.com/'][target='_blank']",
+    "icon": "Kakao.svg",
+    "js": {
+      "Kakao.VERSION": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "scriptSrc": "\\.kakao\\.com/",
+    "website": "https://developers.kakao.com/product"
   },
   "Kameleoon": {
     "cats": [
@@ -413,8 +426,8 @@
       87
     ],
     "description": "Kirki Customizer Framework is a toolkit allowing WordPress developers to use the Customizer and take advantage of its advanced features and flexibility by abstracting the code.",
-    "icon": "Kirki Customizer Framework.png",
     "dom": "link[href*='/wp-content/plugins/kirki/']",
+    "icon": "Kirki Customizer Framework.png",
     "pricing": [
       "freemium",
       "poa"
@@ -492,16 +505,16 @@
     "description": "Klaro is a simple consent management platform and privacy tool.",
     "icon": "Klaro.png",
     "js": {
-      "klaroConfig": "",
-      "klaro": ""
+      "klaro": "",
+      "klaroConfig": ""
     },
-    "saas": true,
     "oss": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://heyklaro.com"
   },
   "Klasha": {
