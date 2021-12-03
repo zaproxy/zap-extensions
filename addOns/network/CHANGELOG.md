@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Server certificates management on newer ZAP versions.
-- Handle command line arguments `-certload`, `-certpubdump`, and `-certfulldump` on newer ZAP versions.
-- Options panel to manage the root CA certificate and issued certificates on newer ZAP versions.
-- API endpoints to generate, import, obtain, and to configure the validity of the root CA
-certificate and issued certificates (Issue 4673).
+- API endpoints to generate, import ([Issue 2280](https://github.com/zaproxy/zaproxy/issues/2280)), and obtain the root CA certificate.
+- On weekly releases and versions after 2.11:
+  - Server certificates management.
+  - Handle command line arguments `-certload`, `-certpubdump`, and `-certfulldump`.
+  - Options panel to manage the root CA certificate and issued certificates.
+  - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
