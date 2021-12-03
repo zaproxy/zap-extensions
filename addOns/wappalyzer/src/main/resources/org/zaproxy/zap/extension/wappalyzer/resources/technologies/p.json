@@ -1,4 +1,16 @@
 {
+  "PayWhirl": {
+    "cats": [
+      41
+    ],
+    "description": "PayWhirl provides widgets and tools to handle recurring payments.",
+    "icon": "paywhirl.png",
+    "js": {
+      "paywhirlForShopifySettings": ""
+    },
+    "pricing": ["payg", "recurring"],
+    "website": "https://app.paywhirl.com/"
+  },
   "PDF.js": {
     "cats": [
       19
@@ -250,6 +262,23 @@
     },
     "website": "https://www.pagevamp.com"
   },
+  "Paidy": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Paidy is basically a two-sided payments service, acting as a middleman between consumers and merchants in Japan.",
+    "icon": "Paidy.png",
+    "js": {
+      "Constants.paidy": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "apps\\.paidy\\.com",
+    "website": "https://paidy.com"
+  },
   "Pantheon": {
     "cats": [
       62
@@ -305,6 +334,18 @@
       "piTracker": ""
     },
     "website": "https://www.pardot.com"
+  },
+  "ParkingCrew": {
+    "cats": [
+      19
+    ],
+    "description": "ParkingCrew is a direct navigation monetisation provider.",
+    "icon": "ParkingCrew.png",
+    "js": {
+      "pcrewAdloaded": ""
+    },
+    "scripts": "var\\slink\\s=\\s'www\\.parkingcrew\\.net'",
+    "website": "https://www.parkingcrew.com"
   },
   "Pars Elecom Portal": {
     "cats": [
@@ -1064,6 +1105,17 @@
     "scriptSrc": "assets\\.pixlee\\.com",
     "website": "https://pixlee.com"
   },
+  "Pixnet": {
+    "cats": [
+      1
+    ],
+    "description": "Pixnet is an Taiwanese mobile photo sharing, blogging, and social networking service.",
+    "icon": "Pixnet.svg",
+    "js": {
+      "pix.MIB": ""
+    },
+    "website": "https://www.pixnet.net"
+  },
   "Planet": {
     "cats": [
       49
@@ -1279,8 +1331,8 @@
     ],
     "description": "Polyfill is a service which accepts a request for a set of browser features and returns only the polyfills that are needed by the requesting browser.",
     "icon": "polyfill.svg",
-    "scriptSrc": "polyfill\\.io/v([\\d\\.]+)\\;version:\\1",
     "oss": true,
+    "scriptSrc": "polyfill\\.io/v([\\d\\.]+)\\;version:\\1",
     "website": "https://polyfill.io"
   },
   "Polylang": {
@@ -1289,12 +1341,12 @@
       89
     ],
     "description": "Polylang is a WordPress plugin which allows you to create a bilingual or multilingual WordPress site.",
-    "icon": "Polylang.svg",
     "dom": "img[src*='/wp-content/plugins/polylang/']",
+    "icon": "Polylang.svg",
+    "oss": true,
     "pricing": [
       "freemium"
     ],
-    "oss": true,
     "requires": "WordPress",
     "website": "https://github.com/polylang/polylang"
   },
@@ -1606,7 +1658,7 @@
       80
     ],
     "description": "Press Hueman is a mobile friendly WordPress theme for blogs, magazines and business websites.",
-    "dom": "link[*='/wp-content/themes/hueman/']",
+    "dom": "link[href*='/wp-content/themes/hueman/']",
     "icon": "Press.svg",
     "js": {
       "HUParams": ""
@@ -1999,6 +2051,22 @@
     "scriptSrc": "app\\.purechat\\.com",
     "website": "https://www.purechat.com"
   },
+  "PureCars": {
+    "cats": [
+      6
+    ],
+    "description": "PureCars is an automotive software and managed services company serving dealerships, advertising associations, and OEMs across the North American retail automotive industry.",
+    "dom": "a[href*='app.purecars.com/']",
+    "icon": "PureCars.png",
+    "js": {
+      "_pureCars": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.purecars.com"
+  },
   "PushEngage": {
     "cats": [
       32
@@ -2034,8 +2102,8 @@
       32
     ],
     "description": "PushPushGo is a GDPR-ready platform which enables startups, SMBs and corporations to create and send automatic web push notification campaigns on desktop and via mobile to manage various scenarios including abandoned carts, segmentation, cross-selling, customer engagement, and return rates.",
-    "icon": "PushPushGo.svg",
     "dom": "link[href*='.pushpushgo.com/']",
+    "icon": "PushPushGo.svg",
     "pricing": [
       "mid",
       "recurring"

@@ -83,6 +83,24 @@
     },
     "website": "http://www.eprints.org"
   },
+  "EWWW Image Optimizer": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "EWWW Image Optimizer is an image optimisation WordPress plugin designed to improve the performance of your website.",
+    "icon": "EWWW Image Optimizer.png",
+    "js": {
+      "ewww_webp_supported": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ewww-image-optimizer/",
+    "website": "https://github.com/nosilver4u/ewww-image-optimizer"
+  },
   "EX.CO": {
     "cats": [
       5
@@ -103,26 +121,6 @@
     ],
     "website": "https://ex.co",
     "xhr": "prd-collector-anon\\.ex\\.co"
-  },
-  "ExactMetrics": {
-    "cats": [
-      87,
-      10
-    ],
-    "description": "ExactMetrics (formerly Google Analytics Dashboard for WP) plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.",
-    "icon": "ExactMetrics.svg",
-    "js": {
-      "ExactMetrics": "",
-      "exactmetrics_frontend": ""
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/google-analytics-dashboard-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.exactmetrics.com"
   },
   "EasyDigitalDownloads": {
     "cats": [
@@ -347,9 +345,9 @@
       87
     ],
     "description": "Elementor Header & Footer Builder is a simple yet powerful WordPress plugin that allows you to create a layout with Elementor and set it as.",
+    "dom": "link[href*='/wp-content/plugins/header-footer-elementor/']",
     "icon": "Elementor Header & Footer Builder.svg",
     "implies": "Elementor",
-    "dom": "link[href*='/wp-content/plugins/header-footer-elementor/']",
     "pricing": [
       "freemium"
     ],
@@ -465,6 +463,23 @@
     "icon": "Embedthis.png",
     "website": "http://embedthis.com/appweb"
   },
+  "Embedly": {
+    "cats": [
+      5
+    ],
+    "description": "Embedly is a service that allows developers to convert URLs into rich previews and embeddable content.",
+    "icon": "Embedly.svg",
+    "js": {
+      "embedly": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.embedly\\.com/",
+    "website": "https://embed.ly"
+  },
   "Ember.js": {
     "cats": [
       12
@@ -488,6 +503,24 @@
     "dom": "style[data-emotion], style[data-emotion-css]",
     "icon": "Emotion.png",
     "website": "http://emotion.sh"
+  },
+  "Enable": {
+    "cats": [
+      68,
+      87
+    ],
+    "description": "Enable is a web accessibility plugin by uPress.",
+    "icon": "Enable.png",
+    "js": {
+      "enable_toolbar.is_premium": ""
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "cdn\\.enable\\.co\\.il/.+\\.js\\?ver=(\\d+(?:\\.\\d+)+)\\;version:\\1",
+    "website": "https://www.enable-accessibility.com"
   },
   "Engagio": {
     "cats": [
@@ -531,6 +564,21 @@
     "saas": true,
     "scriptSrc": "\\.enjin\\.com/",
     "website": "https://www.enjin.com"
+  },
+  "Ensi": {
+    "cats": [
+      6
+    ],
+    "description": "Ensi is an open source ecommerce platform based on service oriented architecture.",
+    "headers": {
+      "X-Ensi-Platform": ""
+    },
+    "icon": "Ensi.png",
+    "meta": {
+      "generator": "Ensi Platform"
+    },
+    "oss": true,
+    "website": "https://ensi.tech"
   },
   "Ensighten": {
     "cats": [
@@ -581,6 +629,24 @@
     },
     "icon": "Envoy.png",
     "website": "https://www.envoyproxy.io/"
+  },
+  "Envybox": {
+    "cats": [
+      5,
+      52
+    ],
+    "description": "Envybox is a multiservice for increasing sales.",
+    "icon": "Envybox.svg",
+    "js": {
+      "EnvyWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "static\\.saas-support\\.com/",
+    "website": "https://envybox.io"
   },
   "Enyo": {
     "cats": [
@@ -670,22 +736,13 @@
     "saas": true,
     "website": "https://www.essent.com/SiteBuilderPro.html"
   },
-  "Essential JS 2": {
-    "cats": [
-      12,
-      59
-    ],
-    "html": "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b",
-    "icon": "syncfusion.svg",
-    "website": "https://www.syncfusion.com/javascript-ui-controls"
-  },
   "Essential Addons for Elementor": {
     "cats": [
       87
     ],
     "description": "Essential Addons for Elementor gives you 70+ creative elements and extensions to help you extend the stock features of Elementor page builder.",
-    "icon": "Essential Addons for Elementor.svg",
     "dom": "link[href*='/wp-content/uploads/essential-addons-elementor/']",
+    "icon": "Essential Addons for Elementor.svg",
     "pricing": [
       "freemium",
       "low",
@@ -694,6 +751,15 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/uploads/essential-addons-elementor/",
     "website": "https://essential-addons.com/elementor/"
+  },
+  "Essential JS 2": {
+    "cats": [
+      12,
+      59
+    ],
+    "html": "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b",
+    "icon": "syncfusion.svg",
+    "website": "https://www.syncfusion.com/javascript-ui-controls"
   },
   "Estore Compare": {
     "cats": [
@@ -738,6 +804,18 @@
     ],
     "website": "https://etherpad.org"
   },
+  "EthicalAds": {
+    "cats": [
+      36
+    ],
+    "description": "EthicalAds is a privacy-preserving ad network targeting developers.",
+    "icon": "EthicalAds.svg",
+    "saas": true,
+    "scriptSrc": [
+      "media\\.ethicalads\\.io"
+    ],
+    "website": "https://www.ethicalads.io/"
+  },
   "Etracker": {
     "cats": [
       10,
@@ -772,6 +850,44 @@
     "saas": true,
     "website": "https://www.eveve.com"
   },
+  "Evidon": {
+    "cats": [
+      67
+    ],
+    "description": "Evidon is a transparency company that helps organizations educate consumers on how and why data is collected, as well as provide consumers with the ability to give and withdraw consent to their data being used.",
+    "dom": "a[href*='info.evidon.com/pub_info/']",
+    "icon": "Evidon.png",
+    "js": {
+      "EB.EvidonConsent": "",
+      "evidon": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.evidon\\.com/",
+    "website": "https://www.evidon.com"
+  },
+  "ExactMetrics": {
+    "cats": [
+      87,
+      10
+    ],
+    "description": "ExactMetrics (formerly Google Analytics Dashboard for WP) plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.",
+    "icon": "ExactMetrics.svg",
+    "js": {
+      "ExactMetrics": "",
+      "exactmetrics_frontend": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/google-analytics-dashboard-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.exactmetrics.com"
+  },
   "Exhibit": {
     "cats": [
       25
@@ -783,22 +899,6 @@
     },
     "scriptSrc": "exhibit.*\\.js",
     "website": "http://simile-widgets.org/exhibit/"
-  },
-  "ExoClick": {
-    "cats": [
-      36
-    ],
-    "description": "ExoClick is a Barcelona-based online advertising company, which provides online advertising services to both advertisers and publishers.",
-    "icon": "ExoClick.png",
-    "meta": {
-      "exoclick-site-verification": ""
-    },
-    "scriptSrc": "\\.exoclick\\.com/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://www.exoclick.com"
   },
   "ExitIntel": {
     "cats": [
@@ -819,6 +919,22 @@
     "saas": true,
     "scriptSrc": "(?:get.)?exitintel\\.com",
     "website": "https://exitintelligence.com"
+  },
+  "ExoClick": {
+    "cats": [
+      36
+    ],
+    "description": "ExoClick is a Barcelona-based online advertising company, which provides online advertising services to both advertisers and publishers.",
+    "icon": "ExoClick.png",
+    "meta": {
+      "exoclick-site-verification": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.exoclick\\.com/",
+    "website": "https://www.exoclick.com"
   },
   "ExpertRec": {
     "cats": [
@@ -896,23 +1012,6 @@
     },
     "scriptSrc": "ext-base\\.js",
     "website": "https://www.sencha.com"
-  },
-  "Extendify": {
-    "cats": [
-      87
-    ],
-    "description": "Extendify (formerly Redux framework) is one of the most popular, advanced, and free to use option panel frameworks for WordPress themes and plugins.",
-    "icon": "Extendify.svg",
-    "meta": {
-      "framework": "^Redux ([\\d\\.]+)\\;version:\\1"
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "website": "https://extendify.com"
   },
   "ExtendThemes Calliope": {
     "cats": [
@@ -1005,6 +1104,23 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/mesmerize(?:-pro)?/",
     "website": "https://extendthemes.com/mesmerize"
+  },
+  "Extendify": {
+    "cats": [
+      87
+    ],
+    "description": "Extendify (formerly Redux framework) is one of the most popular, advanced, and free to use option panel frameworks for WordPress themes and plugins.",
+    "icon": "Extendify.svg",
+    "meta": {
+      "framework": "^Redux ([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://extendify.com"
   },
   "Extole": {
     "cats": [
@@ -1196,24 +1312,6 @@
     "icon": "eway.png",
     "scriptSrc": "secure\\.ewaypayments\\.com",
     "website": "https://www.eway.com.au/"
-  },
-  "EWWW Image Optimizer": {
-    "cats": [
-      87,
-      92
-    ],
-    "description": "EWWW Image Optimizer is an image optimisation WordPress plugin designed to improve the performance of your website.",
-    "icon": "EWWW Image Optimizer.png",
-    "js": {
-      "ewww_webp_supported": ""
-    },
-    "pricing": [
-      "freemium"
-    ],
-    "oss": true,
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/ewww-image-optimizer/",
-    "website": "https://github.com/nosilver4u/ewww-image-optimizer"
   },
   "eZ Platform": {
     "cats": [

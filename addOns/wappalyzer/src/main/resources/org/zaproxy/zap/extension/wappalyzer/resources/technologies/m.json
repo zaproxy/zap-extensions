@@ -14,17 +14,6 @@
     "saas": true,
     "website": "https://maak-code.ir"
   },
-  "MainAd": {
-    "cats": [
-      36
-    ],
-    "description": "MainAd is an international advertising technology company specialising in real-time bidding and programmatic ad retargeting.",
-    "icon": "MainAd.svg",
-    "dom": "iframe[src*='.mainadv.com/']",
-    "saas": true,
-    "scriptSrc": "\\.mainadv\\.com/",
-    "website": "https://www.mainad.com"
-  },
   "MAJIN": {
     "cats": [
       32
@@ -155,19 +144,19 @@
     },
     "cpe": "cpe:/a:magento:magento",
     "description": "Magento is an open-source ecommerce platform written in PHP.",
+    "dom": {
+      "script[data-requiremodule*='mage'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
+        "exists": "\\;version:2"
+      },
+      "script[type='text/x-magento-init']": {
+        "exists": ""
+      }
+    },
     "icon": "Magento.svg",
     "implies": [
       "PHP",
       "MySQL"
     ],
-    "dom": {
-      "script[type='text/x-magento-init']": {
-        "exists": ""
-      },
-      "script[data-requiremodule*='mage'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
-        "exists": "\\;version:2"
-      }
-    },
     "js": {
       "Mage": "",
       "VarienForm": ""
@@ -214,27 +203,6 @@
     ],
     "website": "http://mailchimp.com"
   },
-  "MailChimp for WordPress": {
-    "cats": [
-      87,
-      32
-    ],
-    "description": "MailChimp for WordPress is an email marketing plugin that enables you to build subscriber lists.",
-    "icon": "MailChimp for WordPress.png",
-    "implies": "MailChimp",
-    "dom": "link[href*='/wp-content/plugins/mailchimp-for-wp/']",
-    "js": {
-      "mc4wp": ""
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.mc4wp.com"
-  },
   "MailChimp for WooCommerce": {
     "cats": [
       87
@@ -248,6 +216,27 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/mailchimp-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://mailchimp.com/integrations/woocommerce"
+  },
+  "MailChimp for WordPress": {
+    "cats": [
+      87,
+      32
+    ],
+    "description": "MailChimp for WordPress is an email marketing plugin that enables you to build subscriber lists.",
+    "dom": "link[href*='/wp-content/plugins/mailchimp-for-wp/']",
+    "icon": "MailChimp for WordPress.png",
+    "implies": "MailChimp",
+    "js": {
+      "mc4wp": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.mc4wp.com"
   },
   "Mailgun": {
     "cats": [
@@ -283,16 +272,27 @@
     "description": "Mailmunch is a lead generation tool that combines landing pages, forms, and email marketing.",
     "icon": "Mailmunch.svg",
     "js": {
-      "mailmunch": "",
-      "MailMunchWidgets": ""
+      "MailMunchWidgets": "",
+      "mailmunch": ""
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring",
       "freemium"
     ],
+    "saas": true,
     "website": "https://www.mailmunch.com"
+  },
+  "MainAd": {
+    "cats": [
+      36
+    ],
+    "description": "MainAd is an international advertising technology company specialising in real-time bidding and programmatic ad retargeting.",
+    "dom": "iframe[src*='.mainadv.com/']",
+    "icon": "MainAd.svg",
+    "saas": true,
+    "scriptSrc": "\\.mainadv\\.com/",
+    "website": "https://www.mainad.com"
   },
   "Make-Sense": {
     "cats": [
@@ -404,6 +404,21 @@
       "/include/mapplic/mapplic\\.js"
     ],
     "website": "https://mapplic.com"
+  },
+  "Marchex": {
+    "cats": [
+      10
+    ],
+    "description": "Marchex is a B2B call and conversational analytics company.",
+    "dom": "link[href*='.marchex.io']",
+    "icon": "Marchex.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.marchex\\.io/",
+    "website": "https://www.marchex.com"
   },
   "MariaDB": {
     "cats": [
@@ -695,10 +710,10 @@
       36
     ],
     "description": "Media.net is an advertising company focused on providing monetization products to digital publishers.",
-    "icon": "Media.net.svg",
     "dom": "link[href*='.media.net']",
-    "scriptSrc": "\\.media\\.net/",
+    "icon": "Media.net.svg",
     "saas": true,
+    "scriptSrc": "\\.media\\.net/",
     "website": "https://www.media.net"
   },
   "MediaElement.js": {
@@ -783,6 +798,22 @@
     "icon": "Meeting Scheduler.png",
     "scriptSrc": "bookmenow\\.info/(?:runtime|main).+\\.js",
     "website": "https://bookmenow.info"
+  },
+  "Megagroup CMS.S3": {
+    "cats": [
+      1
+    ],
+    "description": "Megagroup CMS.S3 management system is provided not as a “boxed product”, but as a separate service, that is, it works using SaaS technology. This means that you manage your site directly through your browser using an intuitive interface.",
+    "icon": "Megagroup.svg",
+    "js": {
+      "megacounter_key": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://megagroup.ru/cms"
   },
   "Melis Platform": {
     "cats": [
@@ -910,8 +941,8 @@
       87
     ],
     "description": "MetaSlider is a WordPress plugin for adding responsive sliders and carousels to websites.",
-    "icon": "MetaSlider.svg",
     "dom": "link[href*='/wp-content/plugins/ml-slider/'], link#metaslider-pro-public-css",
+    "icon": "MetaSlider.svg",
     "pricing": [
       "freemium",
       "low",
@@ -1044,8 +1075,8 @@
       "_uetvid": "\\w+"
     },
     "description": "Microsoft Advertising is an online advertising platform developed by Microsoft.",
-    "icon": "Microsoft.png",
     "dom": "link[href*='.bing.com']",
+    "icon": "Microsoft.svg",
     "js": {
       "UET": "",
       "uetq": ""
@@ -1057,12 +1088,21 @@
     "scriptSrc": "bat\\.bing\\.com/bat\\.js",
     "website": "https://ads.microsoft.com"
   },
+  "Microsoft Ajax Content Delivery Network": {
+    "cats": [
+      31
+    ],
+    "description": "Microsoft Ajax Content Delivery Network hosts popular third party JavaScript libraries such as jQuery and enables you to easily add them to your web applications.",
+    "icon": "Microsoft.svg",
+    "scriptSrc": "ajax\\.aspnetcdn\\.com/ajax/",
+    "website": "https://docs.microsoft.com/en-us/aspnet/ajax/cdn/overview"
+  },
   "Microsoft Clarity": {
     "cats": [
       10
     ],
     "description": "Microsoft's Clarity is a analytics tool which provides website usage statistics, session recording, and heatmaps.",
-    "icon": "Microsoft.png",
+    "icon": "Microsoft.svg",
     "js": {
       "clarity": ""
     },
@@ -1094,7 +1134,7 @@
     "headers": {
       "Server": "Microsoft-HTTPAPI(?:/([\\d.]+))?\\;version:\\1"
     },
-    "icon": "Microsoft.png",
+    "icon": "Microsoft.svg",
     "website": "http://microsoft.com"
   },
   "Microsoft PowerPoint": {
@@ -1242,6 +1282,21 @@
       "application-name": "Misskey"
     },
     "website": "https://join.misskey.page/"
+  },
+  "Mittwald": {
+    "cats": [
+      88
+    ],
+    "description": "Mittwald is a web hosting agency, established in 2003 in Espelkamp, Germany",
+    "dns": {
+      "SOA": "ns\\d+\\.agenturserver\\.(?:de|co|it)"
+    },
+    "icon": "Mittwald.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.mittwald.de"
   },
   "Miva": {
     "cats": [
@@ -1673,11 +1728,11 @@
     "js": {
       "Pastease": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
     "scriptSrc": "deploy\\.mopinion\\.com/",
     "website": "https://mopinion.com"
   },

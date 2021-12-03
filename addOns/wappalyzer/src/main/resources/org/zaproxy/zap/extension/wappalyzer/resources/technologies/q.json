@@ -4,11 +4,19 @@
       73
     ],
     "description": "Qualaroo provides surveys on websites and apps to get user feedback.",
-    "icon": "qualaroo.png",
+    "dom": "link[href*='.qualaroo.com']",
+    "icon": "Qualaroo.svg",
+    "js": {
+      "QUALAROO_DNT": ""
+    },
+    "pricing": [
+      "recurring",
+      "mid",
+      "payg"
+    ],
     "saas": true,
-    "pricing": [ "recurring", "mid" ],
-    "scriptSrc": "cl\\.qualaroo\\.com",
-    "website": "https://qualaroo.com/"
+    "scriptSrc": "\\.qualaroo\\.com",
+    "website": "https://qualaroo.com"
   },
   "Qualtrics": {
     "cats": [
@@ -46,8 +54,8 @@
       10
     ],
     "description": "Quantcast Measure is an audience insights and analytics tool.",
-    "icon": "Quantcast.png",
     "dom": "link[href*='.quantserve.com']",
+    "icon": "Quantcast.png",
     "js": {
       "quantserve": ""
     },

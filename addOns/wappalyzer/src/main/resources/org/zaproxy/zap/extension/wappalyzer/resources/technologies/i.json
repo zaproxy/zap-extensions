@@ -1,20 +1,4 @@
 {
-  "Iamport": {
-    "cats": [
-      41
-    ],
-    "description": "Iamport is an information technology company based in South Korea.",
-    "icon": "Iamport.png",
-    "js": {
-      "IMP.request_pay": ""
-    },
-    "scriptSrc": "cdn\\.iamport\\.kr/js/iamport\\.payment-([\\d\\.]+)\\.js\\;version:\\1",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://www.iamport.kr"
-  },
   "IBM Coremetrics": {
     "cats": [
       10
@@ -72,6 +56,21 @@
     "scriptSrc": "^https?://(?:[^/]+\\.)?i(?:oam|v)wbox\\.de/",
     "website": "https://www.infonline.de"
   },
+  "IONOS": {
+    "cats": [
+      88
+    ],
+    "description": "IONOS is the web hosting and cloud partner for small and medium-sized businesses.",
+    "dns": {
+      "SOA": "ns1\\d+\\.ui-dns\\.(?:de|org|biz|com)"
+    },
+    "icon": "IONOS.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.ionos.com"
+  },
   "IPB": {
     "cats": [
       2
@@ -103,6 +102,22 @@
     "saas": true,
     "website": "https://www.ipinfodb.com/",
     "xhr": "api\\.ipinfodb\\.com"
+  },
+  "Iamport": {
+    "cats": [
+      41
+    ],
+    "description": "Iamport is an information technology company based in South Korea.",
+    "icon": "Iamport.png",
+    "js": {
+      "IMP.request_pay": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.iamport\\.kr/js/iamport\\.payment-([\\d\\.]+)\\.js\\;version:\\1",
+    "website": "https://www.iamport.kr"
   },
   "Ideasoft": {
     "cats": [
@@ -158,24 +173,6 @@
     "scriptSrc": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
   },
-  "Imagely NextGEN Gallery": {
-    "cats": [
-      87,
-      7
-    ],
-    "description": "NextGEN Gallery is a WordPress gallery plugin maintained by Imagely.",
-    "icon": "Imagely.png",
-    "dom": "link[href*='/wp-content/plugins/nextgen-gallery/']",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring",
-      "onetime"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/nextgen-gallery(?:-pro|-plus)?/",
-    "website": "https://www.imagely.com/wordpress-gallery-plugin"
-  },
   "Image Relay": {
     "cats": [
       95
@@ -193,6 +190,24 @@
     "scriptSrc": "static\\.imagerelay\\.com/",
     "website": "https://www.imagerelay.com"
   },
+  "Imagely NextGEN Gallery": {
+    "cats": [
+      87,
+      7
+    ],
+    "description": "NextGEN Gallery is a WordPress gallery plugin maintained by Imagely.",
+    "dom": "link[href*='/wp-content/plugins/nextgen-gallery/']",
+    "icon": "Imagely.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/nextgen-gallery(?:-pro|-plus)?/",
+    "website": "https://www.imagely.com/wordpress-gallery-plugin"
+  },
   "Immutable.js": {
     "cats": [
       59
@@ -204,20 +219,6 @@
     },
     "scriptSrc": "^immutable\\.(?:min\\.)?js$",
     "website": "https://facebook.github.io/immutable-js/"
-  },
-  "i-mobile": {
-    "cats": [
-      36
-    ],
-    "description": "i-mobile is a advertising platform for clients to advertise their product and for publishers to monetize their cyberspace.",
-    "icon": "i-mobile.png",
-    "dom": "img[src*='.i-mobile.co.jp/']",
-    "scriptSrc": "\\.i-mobile\\.co\\.jp/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "http://www2.i-mobile.co.jp"
   },
   "Impact": {
     "cats": [
@@ -399,12 +400,27 @@
       "infolinks_pid": "",
       "infolinks_wsid": ""
     },
-    "saas": true,
     "pricing": [
       "payg",
       "freemium"
     ],
+    "saas": true,
     "website": "https://www.infolinks.com"
+  },
+  "Infomaniak": {
+    "cats": [
+      88
+    ],
+    "description": "Infomaniak is a hosting company based in Geneva, Switzerland.",
+    "dns": {
+      "SOA": "\\.infomaniak\\.ch"
+    },
+    "icon": "Infomaniak.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.infomaniak.com"
   },
   "Insider": {
     "cats": [
@@ -546,13 +562,13 @@
       36
     ],
     "description": "Integral Ad Science is an American publicly owned technology company that analyses the value of digital advertising placements.",
-    "icon": "Integral Ad Science.svg",
     "dom": "link[href*='.adsafeprotected.com']",
-    "scriptSrc": "\\.adsafeprotected\\.com/",
-    "saas": true,
+    "icon": "Integral Ad Science.svg",
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "\\.adsafeprotected\\.com/",
     "website": "https://integralads.com"
   },
   "Intel Active Management Technology": {
@@ -644,6 +660,23 @@
     "icon": "Invenio.png",
     "website": "http://invenio-software.org"
   },
+  "Inventrue": {
+    "cats": [
+      6
+    ],
+    "description": "Inventrue creates websites for RV, Motorsports and Trailer Dealerships.",
+    "icon": "Inventrue.svg",
+    "meta": {
+      "author": "^Inventrue, LLC.$"
+    },
+    "pricing": [
+      "onetime",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.inventrue.com"
+  },
   "Inveon": {
     "cats": [
       6
@@ -707,6 +740,27 @@
     ],
     "website": "https://isotope.metafizzy.co"
   },
+  "Issuu": {
+    "cats": [
+      19,
+      5
+    ],
+    "description": "Issuu is a digital discovery and publishing platform.",
+    "dom": "a[href*='issuu.com/'][target='_blank']",
+    "icon": "Issuu.svg",
+    "js": {
+      "IssuuReaders": "",
+      "issuuPanel": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.issuu\\.com/",
+    "website": "https://issuu.com"
+  },
   "Iterable": {
     "cats": [
       32
@@ -741,6 +795,32 @@
     "scriptSrc": "cdn\\.izooto\\.\\w+",
     "website": "https://www.izooto.com"
   },
+  "i-MSCP": {
+    "cats": [
+      9
+    ],
+    "description": "i-MSCP (internet Multi Server Control Panel) is a software for shared hosting environments management on Linux servers.",
+    "icon": "i-MSCP.png",
+    "meta": {
+      "application-name": "^i-MSCP$"
+    },
+    "oss": true,
+    "website": "https://github.com/i-MSCP/imscp"
+  },
+  "i-mobile": {
+    "cats": [
+      36
+    ],
+    "description": "i-mobile is a advertising platform for clients to advertise their product and for publishers to monetize their cyberspace.",
+    "dom": "img[src*='.i-mobile.co.jp/']",
+    "icon": "i-mobile.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.i-mobile\\.co\\.jp/",
+    "website": "http://www2.i-mobile.co.jp"
+  },
   "iEXExchanger": {
     "cats": [
       1
@@ -772,6 +852,23 @@
       "designer": "iPresta"
     },
     "website": "http://ipresta.ir"
+  },
+  "iThemes Security": {
+    "cats": [
+      87,
+      16
+    ],
+    "description": " iThemes Security(formerly known as Better WP Security) plugin enhances the security and protection of your WordPress website.",
+    "dom": "link[href*='/wp-content/plugins/better-wp-security/']",
+    "icon": "iThemes Security.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/better-wp-security/",
+    "website": "https://ithemes.com/security"
   },
   "iWeb": {
     "cats": [
@@ -928,23 +1025,6 @@
     "saas": true,
     "website": "https://ipstack.com",
     "xhr": "api\\.ipstack\\.com"
-  },
-  "iThemes Security": {
-    "cats": [
-      87,
-      16
-    ],
-    "description": " iThemes Security(formerly known as Better WP Security) plugin enhances the security and protection of your WordPress website.",
-    "icon": "iThemes Security.svg",
-    "dom": "link[href*='/wp-content/plugins/better-wp-security/']",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/better-wp-security/",
-    "website": "https://ithemes.com/security"
   },
   "iubenda": {
     "cats": [

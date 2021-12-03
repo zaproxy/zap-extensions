@@ -1,4 +1,21 @@
 {
+  "VDX.tv": {
+    "cats": [
+      36
+    ],
+    "description": "VDX.tv (formerly Exponential) is a global advertising technology company that is transforming the way brands connect with relevant audiences in today's converging video landscape.",
+    "dom": "link[href*='.tribalfusion.com'], link[href*='.exponential.com']",
+    "icon": "VDX.tv.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.tribalfusion\\.com/",
+      "\\.exponential\\.com"
+    ],
+    "website": "https://vdx.tv"
+  },
   "VIVVO": {
     "cats": [
       1
@@ -181,6 +198,22 @@
     "icon": "Venmo.svg",
     "website": "https://venmo.com"
   },
+  "VentraIP": {
+    "cats": [
+      88
+    ],
+    "description": "VentraIP is the largest privately owned web host and domain name registrar in Australia.",
+    "dns": {
+      "NS": "\\.(?:nameserver|hostingplatform)\\.net\\.au",
+      "SOA": "\\.(?:nameserver|hostingplatform)\\.net\\.au"
+    },
+    "icon": "VentraIP.svg",
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "website": "https://ventraip.com.au"
+  },
   "Veoxa": {
     "cats": [
       36
@@ -242,7 +275,10 @@
       }
     },
     "icon": "Verizon Media.svg",
-    "scriptSrc": "\\.advertising\\.com",
+    "scriptSrc": [
+      "\\.advertising\\.com",
+      "\\.vidible\\.tv/"
+    ],
     "website": "https://www.verizonmedia.com"
   },
   "Verloop": {

@@ -52,6 +52,21 @@
     },
     "website": "https://github.com/ruby/rdoc"
   },
+  "REG.RU": {
+    "cats": [
+      88
+    ],
+    "description": "REG.RU is a web hosting provider and internet domain registrar.",
+    "dns": {
+      "SOA": "(?:\\.hosting)?\\.reg\\.ru"
+    },
+    "icon": "REG.RU.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.reg.ru"
+  },
   "RTB House": {
     "cats": [
       77
@@ -158,8 +173,8 @@
       54
     ],
     "description": "RankMath SEO is a search engine optimization plugin for WordPress.",
-    "icon": "RankMath SEO.svg",
     "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/']",
+    "icon": "RankMath SEO.svg",
     "pricing": [
       "freemium",
       "low",
@@ -315,20 +330,6 @@
     "scriptSrc": "checkout\\.razorpay\\.com",
     "website": "https://razorpay.com/"
   },
-  "Really Simple CAPTCHA": {
-    "cats": [
-      87
-    ],
-    "description": "Really Simple CAPTCHA does not work alone and is intended to work with other plugins. It is originally created for Contact Form 7, however, you can use it with your own plugin.",
-    "icon": "Really Simple CAPTCHA.png",
-    "dom": "img[src*='/wp-content/plugins/really-simple-captcha/']",
-    "pricing": [
-      "freemium"
-    ],
-    "oss": true,
-    "requires": "WordPress",
-    "website": "https://wordpress.org/plugins/really-simple-captcha"
-  },
   "Re:amaze": {
     "cats": [
       52
@@ -414,6 +415,20 @@
     ],
     "website": "https://reactrouter.com/"
   },
+  "Really Simple CAPTCHA": {
+    "cats": [
+      87
+    ],
+    "description": "Really Simple CAPTCHA does not work alone and is intended to work with other plugins. It is originally created for Contact Form 7, however, you can use it with your own plugin.",
+    "dom": "img[src*='/wp-content/plugins/really-simple-captcha/']",
+    "icon": "Really Simple CAPTCHA.png",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/really-simple-captcha"
+  },
   "RebelMouse": {
     "cats": [
       1
@@ -477,10 +492,13 @@
       41
     ],
     "description": "Recharge is the a subscription payments platform designed for merchants to set up and manage dynamic recurring billing across web and mobile.",
-    "icon": "Recharge.png",
+    "icon": "Recharge.svg",
     "implies": [
       "Cart Functionality"
     ],
+    "js": {
+      "ReChargeWidget": ""
+    },
     "pricing": [
       "recurring",
       "payg",
@@ -754,6 +772,22 @@
     ],
     "website": "https://www.relaiscolis.com"
   },
+  "Remix": {
+    "cats": [
+      18,
+      22
+    ],
+    "description": "Remix is a full stack web framework focused on web fundamentals and modern UX.",
+    "icon": "Remix.svg",
+    "implies": [
+      "Node.js"
+    ],
+    "js": {
+      "__remixContext": ""
+    },
+    "oss": true,
+    "website": "https://remix.run/"
+  },
   "RequireJS": {
     "cats": [
       12
@@ -858,6 +892,23 @@
     "scriptSrc": "static\\.resmio\\.\\w+/static/",
     "website": "https://www.resmio.com"
   },
+  "ResponsiveVoice": {
+    "cats": [
+      19
+    ],
+    "description": "ResponsiveVoice is a Text-To-Speech API supported in 51 languages.",
+    "icon": "ResponsiveVoice.png",
+    "js": {
+      "responsiveVoice.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://responsivevoice.org"
+  },
   "Resy": {
     "cats": [
       93
@@ -899,6 +950,19 @@
     "scriptSrc": "cdn\\.retailrocket\\.net",
     "website": "https://retailrocket.net"
   },
+  "RevJet": {
+    "cats": [
+      36
+    ],
+    "description": "RevJet is the first comprehensive Ad Experience Platform, for every audience, channel, format, inventory, and device.",
+    "dom": "link[href*='.revjet.com']",
+    "icon": "RevJet.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.revjet.com"
+  },
   "RevLifter": {
     "cats": [
       76
@@ -918,19 +982,6 @@
     "saas": true,
     "scriptSrc": "assets\\.revlifter\\.io",
     "website": "https://www.revlifter.com"
-  },
-  "RevJet": {
-    "cats": [
-      36
-    ],
-    "description": "RevJet is the first comprehensive Ad Experience Platform, for every audience, channel, format, inventory, and device.",
-    "icon": "RevJet.png",
-    "dom": "link[href*='.revjet.com']",
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.revjet.com"
   },
   "Reveal.js": {
     "cats": [
@@ -1113,16 +1164,16 @@
     ],
     "description": "Rise.ai is a strategic re-engagement solution that provides brands and retailers with a unique currency of their own.",
     "icon": "Rise.ai.svg",
-    "requires": "Shopify",
     "js": {
       "Rise.shop": "",
       "RiseStoreFront": ""
     },
-    "saas": true,
     "pricing": [
       "payg",
       "recurring"
     ],
+    "requires": "Shopify",
+    "saas": true,
     "scriptSrc": "strn\\.rise-ai\\.com/",
     "website": "https://rise.ai"
   },
@@ -1194,22 +1245,6 @@
     },
     "website": "http://www.robinhq.com"
   },
-  "Rockerbox": {
-    "cats": [
-      32
-    ],
-    "description": "Rockerbox is a provider of multi-touch attribution software.",
-    "icon": "Rockerbox.png",
-    "js": {
-      "RB.source": "\\;confidence:50"
-    },
-    "scriptSrc": "wxyz\\.rb\\.js",
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.rockerbox.com"
-  },
   "RockRMS": {
     "cats": [
       1,
@@ -1227,6 +1262,39 @@
       "generator": "^Rock v([0-9.]+)\\;version:\\1"
     },
     "website": "http://www.rockrms.com"
+  },
+  "Rockerbox": {
+    "cats": [
+      32
+    ],
+    "description": "Rockerbox is a provider of multi-touch attribution software.",
+    "icon": "Rockerbox.png",
+    "js": {
+      "RB.source": "\\;confidence:50"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "wxyz\\.rb\\.js",
+    "website": "https://www.rockerbox.com"
+  },
+  "Rocket.Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Rocket.Chat is a communication hub that facilitates team collaboration and organizes conversations.",
+    "icon": "Rocket.Chat.svg",
+    "js": {
+      "RocketChat.livechat": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://rocket.chat"
   },
   "Rollbar": {
     "cats": [

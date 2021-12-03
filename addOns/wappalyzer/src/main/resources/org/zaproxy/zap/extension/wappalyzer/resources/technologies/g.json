@@ -294,13 +294,13 @@
       36
     ],
     "description": "Geniee is an ad technology company.",
-    "icon": "Geniee.png",
     "dom": "img[src*='.gssprt.jp/'], link[href*='.gssprt.jp']",
-    "scriptSrc": "\\.gsspcln\\.jp/",  
-    "saas": true,
+    "icon": "Geniee.png",
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "\\.gsspcln\\.jp/",
     "website": "https://geniee.co.jp"
   },
   "Gentoo": {
@@ -396,19 +396,19 @@
       75
     ],
     "description": "GetResponse is an email marketing app that allows you to create a mailing list and capture data onto it.",
-    "icon": "GetResponse.svg",
     "dom": "form[action*='.getresponse.com/']",
+    "icon": "GetResponse.svg",
     "js": {
       "GRAPP": "",
       "GRWF2": ""
     },
-    "scriptSrc": "\\.getresponse\\.com/",
-    "saas": true,
     "pricing": [
       "freemium",
       "recurring",
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "\\.getresponse\\.com/",
     "website": "https://www.getresponse.com"
   },
   "GetSimple CMS": {
@@ -631,6 +631,20 @@
     "implies": "Java",
     "website": "http://glassfish.java.net"
   },
+  "Glitch": {
+    "cats": [
+      62
+    ],
+    "description": "Glitch is a collaborative programming environment that lives in your browser and deploys code as you type.",
+    "icon": "Glitch.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "url": "https://[^.]+\\.glitch\\.me",
+    "website": "https://glitch.com"
+  },
   "Global-e": {
     "cats": [
       6
@@ -670,6 +684,23 @@
     "icon": "Go.svg",
     "website": "https://golang.org"
   },
+  "GoAffPro": {
+    "cats": [
+      71
+    ],
+    "description": "Goaffpro is an affiliate marketing solution for ecommerce stores.",
+    "icon": "goaffpro.svg",
+    "js": {
+      "gfp_api_server": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "api\\.goaffpro\\.com/loader\\.js",
+    "website": "https://goaffpro.com/"
+  },
   "GoAhead": {
     "cats": [
       22
@@ -707,19 +738,35 @@
     "icon": "GoCache.png",
     "website": "https://www.gocache.com.br/"
   },
+  "GoDaddy": {
+    "cats": [
+      88
+    ],
+    "description": "GoDaddy is used as a web host and domain registrar.",
+    "dns": {
+      "NS": "\\.domaincontrol\\.com",
+      "SOA": "\\.domaincontrol\\.com"
+    },
+    "icon": "GoDaddy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.godaddy.com"
+  },
   "GoDaddy CoBlocks": {
     "cats": [
       87,
       51
     ],
     "description": "GoDaddy CoBlocks is a suite of professional page building content blocks for the WordPress Gutenberg block editor.",
-    "icon": "GoDaddy.svg",
     "dom": "link[href*='/wp-content/plugins/coblocks/']",
+    "icon": "GoDaddy.svg",
+    "oss": true,
     "pricing": [
       "freemium"
     ],
     "requires": "WordPress",
-    "oss": true,
     "scriptSrc": "/wp-content/plugins/coblocks/",
     "website": "https://github.com/godaddy-wordpress/coblocks"
   },
@@ -1018,6 +1065,16 @@
     "scriptSrc": "googleapis\\.com/.+webfont",
     "website": "http://google.com/fonts"
   },
+  "Google Hosted Libraries": {
+    "cats": [
+      31
+    ],
+    "description": "Google Hosted Libraries is a stable, reliable, high-speed, globally available content distribution network for the most popular, open-source JavaScript libraries.",
+    "dom": "link[href*='ajax.googleapis.com/ajax/libs']",
+    "icon": "Google Developers.svg",
+    "scriptSrc": "ajax\\.googleapis\\.com/ajax/libs/",
+    "website": "https://developers.google.com/speed/libraries"
+  },
   "Google Maps": {
     "cats": [
       35
@@ -1081,7 +1138,7 @@
       36
     ],
     "description": "Google Publisher Tag (GPT) is an ad tagging library for Google Ad Manager which is used to dynamically build ad requests.",
-    "icon": "Google Publisher Tag.svg",
+    "icon": "Google Developers.svg",
     "scriptSrc": [
       "googletagservices\\.com/tag/js/gpt\\.js",
       "securepubads\\.g\\.doubleclick\\.net/gpt"
@@ -1118,6 +1175,7 @@
     "cats": [
       1
     ],
+    "dom": "[data-abuse-proto*='https://sites.google.com/']",
     "icon": "Google Sites.png",
     "url": "^https?://sites\\.google\\.com",
     "website": "http://sites.google.com"
@@ -1145,9 +1203,9 @@
       87
     ],
     "description": "Google Tag Manager for WordPress plugin places the GTM container code snippets onto your wordpress website so that you do not need to add this manually.",
+    "dom": "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']",
     "icon": "Google Tag Manager for WordPress.png",
     "implies": "Google Tag Manager",
-    "dom": "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']",
     "oss": true,
     "pricing": [
       "freemium"
@@ -1481,6 +1539,22 @@
     "saas": true,
     "scriptSrc": "cdn\\.groupbycloud\\.com",
     "website": "https://groupbyinc.com/"
+  },
+  "Growave": {
+    "cats": [
+      32,
+      69
+    ],
+    "description": "Growave is the all-in-one app: social login and sharing, reviews, wishlists, instagram feed, automated emails and more.",
+    "icon": "Growave.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.socialshopwave\\.com/",
+    "website": "https://growave.io"
   },
   "GrowingIO": {
     "cats": [
