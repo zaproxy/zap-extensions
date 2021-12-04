@@ -23,9 +23,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -33,26 +37,34 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
 import org.zaproxy.addon.oast.services.boast.BoastService;
 import org.zaproxy.addon.oast.services.callback.CallbackOptionsPanelTab;
 import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.addon.oast.services.interactsh.InteractshOptionsPanelTab;
 import org.zaproxy.addon.oast.services.interactsh.InteractshService;
+import org.zaproxy.addon.oast.ui.GeneralOastOptionsPanelTab;
 import org.zaproxy.addon.oast.ui.OastOptionsPanel;
 import org.zaproxy.addon.oast.ui.OastPanel;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionOast extends ExtensionAdaptor {
+
+    public static final String OAST_ALERT_TAG = "OUT_OF_BAND";
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
     static final int HISTORY_TYPE_OAST = HistoryReference.TYPE_OAST;
 
     private final Map<String, OastService> services = new HashMap<>();
+    private final ReferenceMap alertCache =
+            new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT);
     private OastOptionsPanel oastOptionsPanel;
     private OastPanel oastPanel;
+    private OastParam oastParam;
     private BoastService boastService;
     private CallbackService callbackService;
     private InteractshService interactshService;
@@ -79,6 +91,8 @@ public class ExtensionOast extends ExtensionAdaptor {
         extensionHook.addApiImplementor(new OastApi());
         extensionHook.addSessionListener(new OastSessionChangedListener());
 
+        oastParam = new OastParam();
+        extensionHook.addOptionsParamSet(oastParam);
         extensionHook.addOptionsParamSet(boastService.getParam());
         extensionHook.addOptionsParamSet(callbackService.getParam());
         extensionHook.addOptionsParamSet(interactshService.getParam());
@@ -89,6 +103,7 @@ public class ExtensionOast extends ExtensionAdaptor {
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
+            getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab());
             getOastOptionsPanel().addServicePanel(new BoastOptionsPanelTab(boastService));
             getOastOptionsPanel().addServicePanel(new CallbackOptionsPanelTab(callbackService));
             getOastOptionsPanel().addServicePanel(new InteractshOptionsPanelTab(interactshService));
@@ -134,6 +149,7 @@ public class ExtensionOast extends ExtensionAdaptor {
         if (hasView()) {
             service.addOastRequestHandler(o -> getOastPanel().addOastRequest(o));
         }
+        service.addOastRequestHandler(this::activeScanAlertOastRequestHandler);
         services.put(service.getName(), service);
     }
 
@@ -175,6 +191,81 @@ public class ExtensionOast extends ExtensionAdaptor {
         return oastPanel;
     }
 
+    /**
+     * @return the selected external OAST service (i.e. excluding Callbacks) for usage in active
+     *     scan rules, or {@code null} if no service is selected.
+     */
+    public OastService getActiveScanOastService() {
+        if (OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION.equals(
+                oastParam.getActiveScanServiceName())) {
+            return null;
+        }
+        return getOastServices().get(oastParam.getActiveScanServiceName());
+    }
+
+    public String registerAlertAndGetPayload(Alert alert) throws Exception {
+        if (getActiveScanOastService() != null) {
+            String payload = getActiveScanOastService().getNewPayload();
+            alertCache.put(payload, alert);
+            return payload;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void activeScanAlertOastRequestHandler(OastRequest request) {
+        try {
+            HttpMessage oastReceivedMsg = request.getHistoryReference().getHttpMessage();
+            String uri = oastReceivedMsg.getRequestHeader().getURI().toString();
+            if (alertCache.keySet().stream().noneMatch(k -> uri.contains(k.toString()))) {
+                return;
+            }
+            Alert alert = null;
+            for (Object k : alertCache.keySet()) {
+                String key = k.toString();
+                if (uri.contains(key)) {
+                    alert = (Alert) alertCache.get(key);
+                }
+            }
+            if (alert == null) {
+                LOGGER.warn(
+                        "Soft reference to alert object for interaction at {} expired. Not raising alert.",
+                        uri);
+                return;
+            }
+            alert.setOtherInfo(
+                    alert.getOtherInfo()
+                            + '\n'
+                            + Constant.messages.getString("oast.alert.otherinfo.request")
+                            + '\n'
+                            + oastReceivedMsg.getRequestHeader()
+                            + oastReceivedMsg.getRequestBody()
+                            + '\n'
+                            + Constant.messages.getString("oast.alert.otherinfo.response")
+                            + '\n'
+                            + oastReceivedMsg.getResponseHeader()
+                            + oastReceivedMsg.getResponseBody()
+                            + "\n--------------------------------");
+            if (alert.getAlertId() == -1) {
+                Map<String, String> alertTags = new HashMap<>(alert.getTags());
+                alertTags.putIfAbsent(OAST_ALERT_TAG, "");
+                alert.setTags(alertTags);
+                alert.setEvidence(oastReceivedMsg.getRequestHeader().getPrimeHeader());
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAlert.class)
+                        .alertFound(alert, null);
+            } else {
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAlert.class)
+                        .updateAlert(alert);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Could not handle OAST request.", e);
+        }
+    }
+
     @Override
     public boolean supportsDb(String type) {
         return true;
@@ -205,13 +296,12 @@ public class ExtensionOast extends ExtensionAdaptor {
                     });
             getOastServices().values().forEach(OastService::sessionChanged);
             getOastServices().values().forEach(OastService::clearOastRequestHandlers);
-            if (hasView()) {
-                getOastServices()
-                        .values()
-                        .forEach(
-                                s ->
-                                        s.addOastRequestHandler(
-                                                o -> getOastPanel().addOastRequest(o)));
+            alertCache.clear();
+            for (OastService s : getOastServices().values()) {
+                if (hasView()) {
+                    s.addOastRequestHandler(o -> getOastPanel().addOastRequest(o));
+                }
+                s.addOastRequestHandler(ExtensionOast.this::activeScanAlertOastRequestHandler);
             }
         }
 

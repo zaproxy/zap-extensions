@@ -6,6 +6,7 @@
 <index version="2.0">
     <indexitem text="oast" target="oast"/>
     <indexitem text="oast tab" target="oast.tab"/>
+    <indexitem text="oast options" target="oast.options"/>
     <indexitem text="oast services" target="oast.services"/>
     <indexitem text="oast boast" target="oast.boast"/>
     <indexitem text="oast boast options" target="oast.boast.options"/>

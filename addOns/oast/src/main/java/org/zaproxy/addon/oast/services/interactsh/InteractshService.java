@@ -179,9 +179,10 @@ public class InteractshService extends OastService implements OptionsChangedList
                 throw new InteractshException(
                         Constant.messages.getString(
                                 "oast.interactsh.error.register",
-                                Constant.messages.getString("oast.interactsh.error.httpCode")));
+                                Constant.messages.getString("oast.interactsh.error.badHttpCode")));
             }
             isRegistered = true;
+            schedulePoller(0);
         } catch (IOException | CloneNotSupportedException | NoSuchAlgorithmException e) {
             throw new InteractshException(
                     Constant.messages.getString(
@@ -212,6 +213,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             deregistrationUri.setPath("/deregister");
             JSONObject reqBodyJson = new JSONObject();
             reqBodyJson.put("correlation-id", correlationId);
+            reqBodyJson.put("secret-key", secretKey.toString());
             HttpRequestBody reqBody = new HttpRequestBody(reqBodyJson.toString());
             HttpRequestHeader reqHeader =
                     createRequestHeader(deregistrationUri, reqBody.getBytes().length);
@@ -244,7 +246,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         return reqHeader;
     }
 
-    /** @return a new URL that can be used for external interaction requests. */
+    @Override
     public String getNewPayload() throws URIException, InteractshException {
         if (!isRegistered) {
             register();
@@ -365,6 +367,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         return param;
     }
 
+    @Override
     public boolean isRegistered() {
         return isRegistered;
     }

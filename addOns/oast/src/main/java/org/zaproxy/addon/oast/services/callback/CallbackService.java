@@ -122,6 +122,16 @@ public class CallbackService extends OastService implements OptionsChangedListen
                 this.getParam().getRemoteAddress(), actualPort, this.getParam().isSecure());
     }
 
+    @Override
+    public boolean isRegistered() {
+        return true;
+    }
+
+    @Override
+    public String getNewPayload() {
+        return getCallbackAddress();
+    }
+
     public String getAddress(String address, int port, boolean isSecure) {
         boolean ipv6 = address.contains(":");
         String hostname = ipv6 ? "[" + address + "]" : address;
