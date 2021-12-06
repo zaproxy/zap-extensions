@@ -52,7 +52,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A07_XSS);
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A07_XSS,
+                    CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS);
 
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";

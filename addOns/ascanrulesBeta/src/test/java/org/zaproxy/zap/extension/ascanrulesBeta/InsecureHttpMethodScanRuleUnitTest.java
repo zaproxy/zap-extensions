@@ -43,7 +43,7 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         // Then
         assertThat(cwe, is(equalTo(200)));
         assertThat(wasc, is(equalTo(45)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -51,10 +51,16 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getValue())));
     }
 }

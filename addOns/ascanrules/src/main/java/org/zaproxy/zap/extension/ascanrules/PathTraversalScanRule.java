@@ -56,7 +56,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
+                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                    CommonAlertTag.WSTG_V42_ATHZ_01_DIR_TRAVERSAL);
 
     private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
 

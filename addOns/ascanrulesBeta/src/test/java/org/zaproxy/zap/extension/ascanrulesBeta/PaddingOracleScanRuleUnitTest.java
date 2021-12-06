@@ -43,7 +43,7 @@ class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanR
         // Then
         assertThat(cwe, is(equalTo(209)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
                 is(equalTo(true)));
@@ -51,10 +51,16 @@ class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanR
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getValue())));
     }
 }

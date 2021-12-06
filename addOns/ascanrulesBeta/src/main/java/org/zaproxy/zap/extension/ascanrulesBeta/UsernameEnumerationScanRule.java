@@ -68,7 +68,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                    CommonAlertTag.WSTG_V42_IDNT_04_ACCOUNT_ENUMERATION);
 
     private static ExtensionAuthentication extAuth =
             (ExtensionAuthentication)

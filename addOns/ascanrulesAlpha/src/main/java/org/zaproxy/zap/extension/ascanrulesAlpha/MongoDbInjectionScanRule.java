@@ -138,7 +138,8 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+                    CommonAlertTag.OWASP_2017_A01_INJECTION,
+                    CommonAlertTag.WSTG_V42_INPV_05_SQLI);
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(

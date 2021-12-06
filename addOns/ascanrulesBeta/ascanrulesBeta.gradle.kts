@@ -14,7 +14,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.5.0 & < 2.0.0")
+                    version.set(">= 1.6.0 & < 2.0.0")
                 }
                 register("oast") {
                     version.set(">= 0.6.0")

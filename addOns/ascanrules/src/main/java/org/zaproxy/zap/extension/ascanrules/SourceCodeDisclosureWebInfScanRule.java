@@ -56,7 +56,8 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                    CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
 
     // TODO: for imported classes that we do not find in the classes folder, map to jar file names,
     // which we might find in WEB-INF/lib/ ?

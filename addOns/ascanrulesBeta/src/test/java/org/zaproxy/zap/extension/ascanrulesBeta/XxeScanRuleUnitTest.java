@@ -337,17 +337,22 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         // Then
         assertThat(cwe, is(equalTo(611)));
         assertThat(wasc, is(equalTo(43)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A04_XXE.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A04_XXE.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A04_XXE.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_07_XMLI.getValue())));
     }
 
     private static class ValidatedResponse extends NanoServerHandler {

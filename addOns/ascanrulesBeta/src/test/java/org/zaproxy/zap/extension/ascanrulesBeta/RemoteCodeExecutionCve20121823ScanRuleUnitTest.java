@@ -259,7 +259,7 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(20)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -267,11 +267,17 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getValue())));
     }
 
     private abstract static class RceResponse extends NanoServerHandler {

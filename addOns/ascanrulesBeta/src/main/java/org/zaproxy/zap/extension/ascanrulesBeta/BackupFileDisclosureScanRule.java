@@ -49,7 +49,8 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES);
 
     int numExtensionsToTry = 0;
     int numSuffixesToTry = 0;
