@@ -7,6 +7,7 @@
     <mapID target="oast-icon" url="contents/images/oast.png"/>
     <mapID target="oast" url="contents/oast.html"/>
     <mapID target="oast.tab" url="contents/tab.html"/>
+    <mapID target="oast.options" url="contents/options.html"/>
     <mapID target="oast.services" url="contents/services/services.html"/>
     <mapID target="oast.boast" url="contents/services/boast/boast.html"/>
     <mapID target="oast.boast.options" url="contents/services/boast/options.html"/>

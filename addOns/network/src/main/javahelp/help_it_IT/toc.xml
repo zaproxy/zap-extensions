@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+    <tocitem text="ZAP User Guide" tocid="toplevelitem">
+        <tocitem text="Add Ons" tocid="addons">
+            <tocitem text="Network" image="addon.network.icon" target="addon.network">
+                <tocitem text="API" target="addon.network.api"/>
+                <tocitem text="Command Line" target="addon.network.cmdline"/>
+                <tocitem text="Options" target="addon.network.options">
+                    <tocitem text="Server Certificates" target="addon.network.options.servercertificates"/>
+                </tocitem>
+            </tocitem>
+        </tocitem>
+    </tocitem>
+</toc>
