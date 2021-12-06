@@ -321,7 +321,7 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         // Then
         assertThat(cwe, is(equalTo(215)));
         assertThat(wasc, is(equalTo(13)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -329,10 +329,16 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
                 tags.containsKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getValue())));
     }
 }

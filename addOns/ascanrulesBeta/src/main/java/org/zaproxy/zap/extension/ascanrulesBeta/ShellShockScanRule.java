@@ -42,7 +42,8 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
     /** the logger object */
     private static final Logger log = LogManager.getLogger(ShellShockScanRule.class);
 

@@ -55,7 +55,9 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     private static final int CHALLENGE_LENGTH = 16;
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A04_XXE);
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A04_XXE,
+                    CommonAlertTag.WSTG_V42_INPV_07_XMLI);
 
     // Payload built on examples retrieved in:
     // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing

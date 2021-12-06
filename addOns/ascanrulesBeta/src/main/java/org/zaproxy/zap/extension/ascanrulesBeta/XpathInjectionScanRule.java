@@ -86,7 +86,8 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+                    CommonAlertTag.OWASP_2017_A01_INJECTION,
+                    CommonAlertTag.WSTG_V42_INPV_09_XPATH);
 
     // Get WASC Vulnerability description
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_39");

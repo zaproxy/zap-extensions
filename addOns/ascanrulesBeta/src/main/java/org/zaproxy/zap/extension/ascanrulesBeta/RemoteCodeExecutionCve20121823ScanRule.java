@@ -71,7 +71,8 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
+                    CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
 
     @Override
     public int getId() {

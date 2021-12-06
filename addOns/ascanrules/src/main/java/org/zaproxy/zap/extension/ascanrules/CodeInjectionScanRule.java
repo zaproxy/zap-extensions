@@ -48,7 +48,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+                    CommonAlertTag.OWASP_2017_A01_INJECTION,
+                    CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ);
 
     // PHP control Token used to verify the vulnerability
     private static final String PHP_CONTROL_TOKEN = "zap_token";

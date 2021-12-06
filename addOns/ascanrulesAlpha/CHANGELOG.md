@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Fixed typo in payload in Forbidden (403) Bypass scan rule.
 
+### Added
+- OWASP Web Security Testing Guide v4.2 mappings where applicable.
+
 ## [32] - 2021-10-07
 ### Added
 - Spring Boot Actuator Scan Rule.
