@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Renamed 'X-Frame-Options Header Not Set' alert to 'Missing Anti-clickjacking Header', and associated scan rule 'X-Frame-Options Header' to 'Anti-clickjacking Header'. The rule already considered Content-Security-Policy 'frame-ancestors' which is a more modern solution to the same concern. Updated associated solution text. (Issue 6937)
 
 ## [37] - 2021-12-01
 ### Added

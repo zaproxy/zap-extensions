@@ -34,10 +34,10 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XFrameOptionScanRule extends PluginPassiveScanner {
+public class AntiClickjackingScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanrules.xframeoptions.";
+    private static final String MESSAGE_PREFIX = "pscanrules.anticlickjacking.";
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
