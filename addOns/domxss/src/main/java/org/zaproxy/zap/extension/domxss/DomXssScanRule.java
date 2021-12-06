@@ -116,7 +116,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION, CommonAlertTag.OWASP_2017_A07_XSS);
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A07_XSS,
+                    CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS);
     private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers = new HashMap<>();
     private static List<WebDriverWrapper> takenDrivers = new ArrayList<>();
 
