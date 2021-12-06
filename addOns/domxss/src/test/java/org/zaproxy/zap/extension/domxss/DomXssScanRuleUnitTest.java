@@ -394,17 +394,23 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         Map<String, String> tags = rule.getAlertTags();
         // Then
         assertThat(cwe, is(equalTo(79)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A07_XSS.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS.getTag()),
+                is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A07_XSS.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A07_XSS.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS.getValue())));
     }
 
     private class TestNanoServerHandler extends NanoServerHandler {
