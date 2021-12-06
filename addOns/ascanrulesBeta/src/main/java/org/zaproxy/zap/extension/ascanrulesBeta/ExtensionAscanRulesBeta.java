@@ -48,9 +48,4 @@ public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
     public boolean canUnload() {
         return true;
     }
-
-    @Override
-    public void unload() {
-        XxeScanRule.unload();
-    }
 }
