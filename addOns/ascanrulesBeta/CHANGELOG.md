@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [38] - 2021-12-06
 ### Changed
 - Dependency updates.
 - XxeScanRule: Use Out-of-band payloads in addition to existing attacks.
@@ -325,6 +325,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v35

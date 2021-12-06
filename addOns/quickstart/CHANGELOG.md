@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [32] - 2021-12-06
 ### Changed
 - Use the Network add-on to export the Root CA certificate.
 
@@ -157,6 +157,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v29

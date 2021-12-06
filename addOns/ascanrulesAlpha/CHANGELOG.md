@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [33] - 2021-12-06
 ### Changed
 - Fixed typo in payload in Forbidden (403) Bypass scan rule.
 
@@ -254,6 +254,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[33]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v30

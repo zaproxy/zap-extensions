@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [43] - 2021-12-06
 ### Added
 - OWASP Web Security Testing Guide v4.2 mappings where applicable.
 
@@ -281,6 +281,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v40
