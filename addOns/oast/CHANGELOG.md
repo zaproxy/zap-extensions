@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Maintenance changes.
+- Add a link to the OAST help in the alert tag value.
 
 ## [0.6.0] - 2021-12-06
 ### Added

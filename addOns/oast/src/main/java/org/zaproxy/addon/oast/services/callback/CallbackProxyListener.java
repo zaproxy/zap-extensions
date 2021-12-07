@@ -20,7 +20,6 @@
 package org.zaproxy.addon.oast.services.callback;
 
 import java.util.Date;
-import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +30,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -66,45 +64,15 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
                     url,
                     path,
                     msg.getRequestHeader().getSenderAddress());
-
             msg.setResponseHeader(HttpHeader.HTTP11 + " " + HttpStatusCode.OK);
-
-            if (path.startsWith("/" + CallbackService.TEST_PREFIX)) {
-                String str =
-                        Constant.messages.getString(
-                                "oast.callback.test.msg",
-                                url,
-                                msg.getRequestHeader().getSenderAddress().toString());
-                if (View.isInitialised()) {
-                    View.getSingleton().getOutputPanel().appendAsync(str + "\n");
-                }
-                LOGGER.info(str);
+            String uuid = path.substring(1);
+            String handler = callbackService.getHandlers().get(uuid);
+            if (handler != null) {
+                callbackReceived(handler, msg);
+            } else {
                 callbackReceived(
-                        Constant.messages.getString("oast.callback.handler.test.name"), msg);
-                return true;
-            } else if (path.startsWith("/favicon.ico")) {
-                // Just ignore - it's automatically requested by browsers
-                // e.g. when trying the test URL
-                return true;
+                        Constant.messages.getString("oast.callback.handler.none.name"), msg);
             }
-
-            for (Map.Entry<String, CallbackImplementor> callback :
-                    callbackService.getCallbacks().entrySet()) {
-                if (path.startsWith(callback.getKey())) {
-                    // Copy the message so that CallbackImplementors can't
-                    // return anything to the sender
-                    CallbackImplementor implementor = callback.getValue();
-                    implementor.handleCallBack(msg.cloneAll());
-                    callbackReceived(implementor.getClass().getSimpleName(), msg);
-                    return true;
-                }
-            }
-
-            callbackReceived(Constant.messages.getString("oast.callback.handler.none.name"), msg);
-            LOGGER.error(
-                    "No callback handler for URL : {} from {}",
-                    url,
-                    msg.getRequestHeader().getSenderAddress());
         } catch (URIException | HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }

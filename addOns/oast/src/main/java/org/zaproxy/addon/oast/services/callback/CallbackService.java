@@ -21,8 +21,10 @@ package org.zaproxy.addon.oast.services.callback;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.Model;
@@ -31,12 +33,10 @@ import org.zaproxy.addon.oast.OastService;
 
 public class CallbackService extends OastService implements OptionsChangedListener {
 
-    static final String TEST_PREFIX = "ZapTest";
-
     private final ProxyServer proxyServer;
     private org.zaproxy.addon.oast.services.callback.CallbackParam callbackParam;
 
-    private final Map<String, CallbackImplementor> callbacks = new HashMap<>();
+    private final Map<String, String> handlers = new HashMap<>();
     private int actualPort;
     private String currentConfigLocalAddress;
     private int currentConfigPort;
@@ -93,30 +93,6 @@ public class CallbackService extends OastService implements OptionsChangedListen
                 "Started callback service on {}:{}", this.getParam().getLocalAddress(), actualPort);
     }
 
-    public void registerCallbackImplementor(CallbackImplementor impl) {
-        for (String prefix : impl.getCallbackPrefixes()) {
-            LOGGER.debug("Registering callback prefix: {}", prefix);
-            if (this.callbacks.containsKey(prefix)) {
-                LOGGER.error("Duplicate callback prefix: {}", prefix);
-            }
-            this.callbacks.put("/" + prefix, impl);
-        }
-    }
-
-    public void removeCallbackImplementor(CallbackImplementor impl) {
-        for (String shortcut : impl.getCallbackPrefixes()) {
-            String key = "/" + shortcut;
-            if (this.callbacks.containsKey(key)) {
-                LOGGER.debug("Removing registered callback prefix: {}", shortcut);
-                this.callbacks.remove(key);
-            }
-        }
-    }
-
-    public String getTestUrl() {
-        return getCallbackAddress() + TEST_PREFIX;
-    }
-
     public String getCallbackAddress() {
         return getAddress(
                 this.getParam().getRemoteAddress(), actualPort, this.getParam().isSecure());
@@ -129,7 +105,16 @@ public class CallbackService extends OastService implements OptionsChangedListen
 
     @Override
     public String getNewPayload() {
-        return getCallbackAddress();
+        return getNewPayload(null);
+    }
+
+    public String getNewPayload(String handler) {
+        if (handler == null || handler.isEmpty()) {
+            handler = Constant.messages.getString("oast.callback.handler.none.name");
+        }
+        String uuid = UUID.randomUUID().toString();
+        handlers.put(uuid, handler);
+        return getCallbackAddress() + uuid;
     }
 
     public String getAddress(String address, int port, boolean isSecure) {
@@ -150,7 +135,7 @@ public class CallbackService extends OastService implements OptionsChangedListen
         return this.callbackParam;
     }
 
-    Map<String, CallbackImplementor> getCallbacks() {
-        return callbacks;
+    Map<String, String> getHandlers() {
+        return handlers;
     }
 }

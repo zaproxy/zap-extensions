@@ -23,8 +23,6 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -48,16 +46,12 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
 
     @BeforeAll
     static void setUpCallbacks() {
-        CallbackService callbackService = spy(new CallbackService());
-        ChallengeCallbackImplementor.setCallbackService(callbackService);
-        doReturn("http://192.0.2.0:12345/").when(callbackService).getCallbackAddress();
         HistoryReference.setTableHistory(new ParosTableHistory());
     }
 

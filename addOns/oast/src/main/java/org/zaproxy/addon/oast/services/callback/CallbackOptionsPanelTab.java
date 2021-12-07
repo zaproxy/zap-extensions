@@ -37,6 +37,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class CallbackOptionsPanelTab extends OastOptionsPanelTab {
 
     private static final long serialVersionUID = 1L;
+    private static final String TEST_URL_PATH = "ZapTest";
 
     private final CallbackService callbackService;
     private JComboBox<String> localAddress = null;
@@ -174,7 +175,7 @@ public class CallbackOptionsPanelTab extends OastOptionsPanelTab {
         String testUrl =
                 callbackService.getAddress(
                                 address, getSpinnerPort().getValue(), getSecure().isSelected())
-                        + CallbackService.TEST_PREFIX;
+                        + TEST_URL_PATH;
         getTestURL().setText(testUrl);
     }
 
@@ -207,7 +208,7 @@ public class CallbackOptionsPanelTab extends OastOptionsPanelTab {
             getSpinnerPort().setValue(proxyParam.getPort());
         }
 
-        getTestURL().setText(callbackService.getTestUrl());
+        getTestURL().setText(callbackService.getCallbackAddress() + TEST_URL_PATH);
     }
 
     @Override

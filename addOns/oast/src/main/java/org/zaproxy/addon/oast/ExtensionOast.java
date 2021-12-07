@@ -53,7 +53,9 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionOast extends ExtensionAdaptor {
 
-    public static final String OAST_ALERT_TAG = "OUT_OF_BAND";
+    public static final String OAST_ALERT_TAG_KEY = "OUT_OF_BAND";
+    public static final String OAST_ALERT_TAG_VALUE =
+            "https://www.zaproxy.org/docs/desktop/addons/oast-support/";
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
@@ -203,6 +205,12 @@ public class ExtensionOast extends ExtensionAdaptor {
         return getOastServices().get(oastParam.getActiveScanServiceName());
     }
 
+    public String registerAlertAndGetPayloadForCallbackService(Alert alert, String handler) {
+        String payload = callbackService.getNewPayload(handler);
+        alertCache.put(payload, alert);
+        return payload;
+    }
+
     public String registerAlertAndGetPayload(Alert alert) throws Exception {
         if (getActiveScanOastService() != null) {
             String payload = getActiveScanOastService().getNewPayload();
@@ -248,7 +256,7 @@ public class ExtensionOast extends ExtensionAdaptor {
                             + "\n--------------------------------");
             if (alert.getAlertId() == -1) {
                 Map<String, String> alertTags = new HashMap<>(alert.getTags());
-                alertTags.putIfAbsent(OAST_ALERT_TAG, "");
+                alertTags.putIfAbsent(OAST_ALERT_TAG_KEY, OAST_ALERT_TAG_VALUE);
                 alert.setTags(alertTags);
                 alert.setEvidence(oastReceivedMsg.getRequestHeader().getPrimeHeader());
                 Control.getSingleton()
