@@ -15,5 +15,11 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        dependencies {
+            addOns {
+                register("exim")
+            }
+        }
     }
 }

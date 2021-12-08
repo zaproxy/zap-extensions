@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.exim;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.exim.har.MenuImportHar;
@@ -49,6 +50,16 @@ public class ExtensionExim extends ExtensionAdaptor {
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportLogs());
         }
         extensionHook.addApiImplementor(new ImportExportApi());
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("exim.description");
+    }
+
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("exim.ui.name");
     }
 
     @Override

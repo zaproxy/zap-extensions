@@ -19,12 +19,15 @@
  */
 package org.zaproxy.zap.extension.saverawmessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
-import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
 
 public class ExtensionSaveRawHttpMessage extends ExtensionAdaptor {
 
     private static final String NAME = "ExtensionSaveRawHttpMessage";
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionSaveRawHttpMessage.class);
 
     public ExtensionSaveRawHttpMessage() {
         super(NAME);
@@ -32,11 +35,12 @@ public class ExtensionSaveRawHttpMessage extends ExtensionAdaptor {
     }
 
     @Override
-    public void hook(ExtensionHook extensionHook) {
-        super.hook(extensionHook);
-
-        if (getView() != null) {
-            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
+    public void postInstall() {
+        String message =
+                "The Save Raw HTTP Message add-on has been retired. This functionality is now provided by the Import/Export add-on.";
+        LOGGER.warn(message);
+        if (View.isInitialised()) {
+            View.getSingleton().showWarningDialog(message);
         }
     }
 
