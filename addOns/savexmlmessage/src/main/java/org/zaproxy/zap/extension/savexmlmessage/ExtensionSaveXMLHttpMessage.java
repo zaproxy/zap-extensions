@@ -19,12 +19,15 @@
  */
 package org.zaproxy.zap.extension.savexmlmessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
-import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
 
 public class ExtensionSaveXMLHttpMessage extends ExtensionAdaptor {
 
     private static final String NAME = "ExtensionSaveXMLHttpMessage";
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionSaveXMLHttpMessage.class);
 
     public ExtensionSaveXMLHttpMessage() {
         super(NAME);
@@ -32,11 +35,12 @@ public class ExtensionSaveXMLHttpMessage extends ExtensionAdaptor {
     }
 
     @Override
-    public void hook(ExtensionHook extensionHook) {
-        super.hook(extensionHook);
-
-        if (getView() != null) {
-            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXMLMessage());
+    public void postInstall() {
+        String message =
+                "The Save HTTP Message as XML add-on has been retired. This functionality is now provided by the Import/Export add-on.";
+        LOGGER.warn(message);
+        if (View.isInitialised()) {
+            View.getSingleton().showWarningDialog(message);
         }
     }
 
