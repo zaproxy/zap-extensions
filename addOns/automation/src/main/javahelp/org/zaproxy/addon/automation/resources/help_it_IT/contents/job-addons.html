@@ -11,14 +11,14 @@ Automation Framework - addOns Job
 This job allows you to manage the ZAP add-ons.
 <p>
 The add-on identifiers to use in the 'install' and 'uninstall' lists are shown in the ZAP Desktop 'Manage Add-ons' dialog or 
-can be found in the <a href="https://www.zaproxy.org/download/#latest-versions">XML files</a> which define the ZAP releases.
+can be found on the <a href="https://www.zaproxy.org/addons/">ZAP Marketplace</a> page.
 
 <H2>YAML</H2>
 
 <pre>
   - type: addOns                       # Add-on management
     parameters:
-      updateAddOns: true               # Update any add-ons that have new versions
+      updateAddOns: false              # Currently disabled due to problems updating the framework and jobs while they are running
     install:                           # A list of non standard add-ons to install from the ZAP Marketplace
     uninstall:                         # A list of standard add-ons to uninstall
 </pre>
