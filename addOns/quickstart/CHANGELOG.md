@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- Browser Launch/Manual Explore will now display a warning dialog if the selected browser executable cannot be found (Issue 6963).
 
 ## [32] - 2021-12-06
 ### Changed

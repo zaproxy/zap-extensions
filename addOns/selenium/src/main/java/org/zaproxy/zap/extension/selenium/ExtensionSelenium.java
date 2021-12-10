@@ -1070,6 +1070,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public String getWarnMessageFailedToStart(String providedBrowserId, Throwable e) {
         ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
         if (providedBrowser == null) {
+            if (e.getMessage().contains("cannot find")) {
+                return Constant.messages.getString(
+                        "selenium.warn.message.browser.not.found", providedBrowserId);
+            }
             return getMessages().getString("selenium.warn.message.failed.start.browser.notfound");
         }
 
