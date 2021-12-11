@@ -13,6 +13,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.6.0 & < 2.0.0")
                 }
+                register("oast") {
+                    version.set(">= 0.7.0")
+                }
             }
         }
     }
@@ -20,7 +23,9 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+    compileOnly(parent!!.childProjects.get("oast")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))
 }
