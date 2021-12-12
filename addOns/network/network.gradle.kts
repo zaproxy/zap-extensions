@@ -8,7 +8,7 @@ configurations.api { extendsFrom(bouncyCastle) }
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -38,8 +38,6 @@ crowdin {
 }
 
 dependencies {
-    zap("org.zaproxy:zap:2.11.0")
-
     val nettyVersion = "4.1.70.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
 
@@ -49,5 +47,5 @@ dependencies {
     bouncyCastle("org.bouncycastle:bcpkix-jdk15on:$bcVersion")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.15.0")
 }

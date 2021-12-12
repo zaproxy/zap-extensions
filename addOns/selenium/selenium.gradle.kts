@@ -5,7 +5,7 @@ description = "WebDriver provider and includes HtmlUnit browser"
 zapAddOn {
     addOnName.set("Selenium")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -5,7 +5,7 @@ description = "Allows Kotlin to be used for ZAP scripting"
 zapAddOn {
     addOnName.set("Kotlin Support")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("StackHawk Engineering")

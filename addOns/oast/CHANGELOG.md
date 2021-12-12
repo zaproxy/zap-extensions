@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
 - Add a link to the OAST help in the alert tag value.
 

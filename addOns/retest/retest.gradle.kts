@@ -2,7 +2,7 @@ description = "An add-on to retest for presence/absence of previously generated 
 
 zapAddOn {
     addOnName.set("Retest")
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

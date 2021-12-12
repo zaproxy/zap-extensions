@@ -2,7 +2,7 @@ description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
     addOnName.set("GraphQL Support")
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")
