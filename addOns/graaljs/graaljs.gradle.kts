@@ -5,7 +5,7 @@ description = "Provides the GraalVM JavaScript engine for ZAP scripting."
 zapAddOn {
     addOnName.set("GraalVM JavaScript")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -2,7 +2,7 @@ description = "ASP/JSF ViewState Decoder and Editor"
 
 zapAddOn {
     addOnName.set("ViewState")
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("Calum Hutton")

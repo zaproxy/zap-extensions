@@ -5,7 +5,7 @@ description = "Easy way to replace strings in requests and responses."
 zapAddOn {
     addOnName.set("Replacer")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

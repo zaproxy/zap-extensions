@@ -5,7 +5,7 @@ description = "Allows Ruby to be used for ZAP scripting - templates included"
 zapAddOn {
     addOnName.set("Ruby Scripting")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -6,7 +6,7 @@ repositories {
 
 zapAddOn {
     addOnName.set("AMF Support")
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

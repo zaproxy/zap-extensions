@@ -5,7 +5,7 @@ description = "This Form Handler Add-on allows a user to define field names and 
 zapAddOn {
     addOnName.set("Form Handler")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

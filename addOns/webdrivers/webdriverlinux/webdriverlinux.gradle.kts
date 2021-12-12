@@ -8,7 +8,7 @@ extra["targetOs"] = DownloadWebDriver.OS.LINUX
 zapAddOn {
     addOnName.set("Linux WebDrivers")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

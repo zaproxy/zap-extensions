@@ -5,7 +5,7 @@ description = "Lists of lower case directory names to be used with Forced Browse
 zapAddOn {
     addOnName.set("Directory List v2.3 LC")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team")

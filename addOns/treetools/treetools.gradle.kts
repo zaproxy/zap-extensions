@@ -5,7 +5,7 @@ description = "Tools to add functionality to the tree view."
 zapAddOn {
     addOnName.set("TreeTools")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("Carl Sampson")

@@ -5,7 +5,7 @@ description = "Imports and spiders OpenAPI definitions."
 zapAddOn {
     addOnName.set("OpenAPI Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
@@ -48,12 +48,12 @@ dependencies {
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.15.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
 
-    testImplementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.15.0")
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }

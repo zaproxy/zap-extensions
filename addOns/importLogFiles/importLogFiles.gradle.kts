@@ -2,7 +2,7 @@ description = "Allows you to import log files from ModSecurity and files previou
 
 zapAddOn {
     addOnName.set("Log File Importer")
-    zapVersion.set("2.11.0")
+    zapVersion.set("2.11.1")
 
     manifest {
         author.set("Joseph Kirwin, ZAP Dev Team")
