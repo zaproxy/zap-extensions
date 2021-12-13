@@ -233,6 +233,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
                                     params.getConfig().save();
                                 }
                             } catch (Exception e1) {
+                                ExtensionSelenium extSel = getExtSelenium();
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                extSel.getWarnMessageFailedToStart(
+                                                        browserName, e1));
                                 LOGGER.error(e1.getMessage(), e1);
                             }
                         },

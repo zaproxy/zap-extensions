@@ -19,7 +19,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("selenium") {
-                            version.set("15.*")
+                            version.set(">= 15.6.0")
                         }
                         register("spiderAjax") {
                             version.set("23.*")

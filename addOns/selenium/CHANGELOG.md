@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- Maintenance changes (Issue 6963).
 
 ## [15.5.1] - 2021-11-28
 ### Fixed
