@@ -20,6 +20,8 @@
 package org.zaproxy.addon.automation.jobs;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
@@ -50,6 +52,20 @@ public class DelayJob extends AutomationJob {
         } catch (Exception e) {
             progress.error(Constant.messages.getString("automation.error.delay.badtime", timeStr));
         }
+    }
+
+    @Override
+    public void applyParameters(AutomationProgress progress) {
+        Map<?, ?> jobData = this.getJobData();
+        if (jobData == null) {
+            return;
+        }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.parameters,
+                this.getName(),
+                null,
+                progress);
     }
 
     @Override
