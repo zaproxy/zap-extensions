@@ -51,5 +51,12 @@ This rule attempts to identify if the Spring Actuators are enabled. Tests for th
 
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 
+<h2>Log4Shell (CVE-2021-44228)</h2>
+This rule attempts to discover the Log4Shell (<a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a>) vulnerability.
+It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
+We recommend that this scan rule is used with header injection enabled for maximum coverage.
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
+
 </body>
 </html>
