@@ -47,5 +47,5 @@ dependencies {
     bouncyCastle("org.bouncycastle:bcpkix-jdk15on:$bcVersion")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.logging.log4j:log4j-core:2.15.0")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.16.0")
 }
