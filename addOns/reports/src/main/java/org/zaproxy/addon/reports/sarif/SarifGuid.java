@@ -48,20 +48,29 @@ public class SarifGuid {
 
     private static SarifGuid createByIdentifier(String identifier) {
         SarifGuid sarifGuid = new SarifGuid();
+
         UUID nameBasedUUID = UUID.nameUUIDFromBytes(identifier.getBytes());
         sarifGuid.guid = nameBasedUUID.toString();
+
         return sarifGuid;
     }
 
     /**
-     * Creates a SARFI guid - by using data from provider (name, taxonomy version) and the given id.
+     * Creates a SARFI guid object by using data from taxonomy provider and the given taxonomy id.
+     * If your are calling this method twice for the same given id and same provider the created
+     * objects will be equal. Otherwise the created objects are NOT equal.
      *
-     * @param id
-     * @param provider
-     * @return guid
+     * @param id represents the identifier inside the taxonomy
+     * @param provider provides taxonomy details
+     * @return created guid object
      */
     private static SarifGuid createByProvider(String id, SarifTaxonomyDataProvider provider) {
-        // e.g. name:CWE:4.4:79
+        // e.g. when we use 79 as (CWE) id and the provider is our CWE 4.4 provider we
+        // will have
+        // internal identifier "name:CWE:4.4:79" - if we change to CWE 4.5 (in future),
+        // the same CWE 79
+        // would have a different guid because the taxonomy version differs and we will
+        // have the internal identifier "name:CWE:4.5:79"
         String identifier =
                 "name:" + provider.getName() + ":" + provider.getTaxonomyVersion() + ":" + id;
         return createByIdentifier(identifier);
@@ -69,6 +78,11 @@ public class SarifGuid {
 
     public String getGuid() {
         return guid;
+    }
+
+    @Override
+    public String toString() {
+        return getGuid();
     }
 
     @Override

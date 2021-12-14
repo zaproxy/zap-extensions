@@ -41,9 +41,12 @@ public class SarifHtmlToStringListConverter {
      *       list element
      * </ul>
      *
-     * All other content is just ignored!
+     * If supported HTML elements are detected, those element content will be added to resulting
+     * list and all other content will be just ignored! If not at least one HTML element was
+     * detected, the given content will be treated as plain text and just splitted to dedicated
+     * lines. Each line will be added as list element then.
      *
-     * @param content
+     * @param content can be either HTML or plain text
      * @return list containing plain text elements
      */
     public List<String> convertToList(String content) {

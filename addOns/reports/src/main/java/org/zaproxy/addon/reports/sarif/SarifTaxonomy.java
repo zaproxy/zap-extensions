@@ -62,11 +62,12 @@ public class SarifTaxonomy implements SarifTaxonomyDataProvider {
     }
 
     /**
-     * Creates a taxa entry with dediced SARIF guid, add it to this taxonomy and return the created
-     * object
+     * Creates a taxa entry with dedicated SARIF guid, add it to this taxonomy and return the
+     * created object
      *
-     * @param taxonomyId
-     * @return taxa
+     * @param taxonomyId the id for this taxonomy. E.g. for a CWE taxonomy we could use "79" to
+     *     identify a cross site scripting.
+     * @return created taxa object
      */
     public SarifTaxa addTaxa(String taxonomyId) {
         SarifGuid taxaGUID = SarifGuid.createForTaxa(taxonomyId, this);

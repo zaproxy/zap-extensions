@@ -31,7 +31,7 @@ public interface SarifToolComponent {
     /**
      * Return the (short) name for the component
      *
-     * @return name
+     * @return (short) component name
      */
     String getName();
 }

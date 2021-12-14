@@ -71,7 +71,7 @@ public enum SarifLevel {
     /**
      * Converts to level value inside Sarif JSON reports
      *
-     * @return level value (e.g. "error")
+     * @return level value (e.g. "error") - always lower cased (as defined by SARIF spec)
      */
     public String getValue() {
         return name().toLowerCase();

@@ -28,10 +28,10 @@ public class SarifBodyStartLineFinder {
     /**
      * SARIF supports a region information with a start line. (see
      * https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html#_Toc34317682 ) This
-     * class does find the startline for text body content of given parameter
+     * class does find the start line for text body content of given parameter
      *
-     * @param body
-     * @param toSearch
+     * @param body the body to inspect
+     * @param toSearch search string which will identify the line
      * @return 0 - when toSearch is not found inside text body, otherwise line number
      */
     public long findStartLine(SarifBody body, String toSearch) {

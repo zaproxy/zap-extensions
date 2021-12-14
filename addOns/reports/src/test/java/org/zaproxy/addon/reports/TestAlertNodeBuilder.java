@@ -53,13 +53,6 @@ public class TestAlertNodeBuilder {
         private String responseHeader;
         private String otherInfo;
 
-        /**
-         * ZAP extensions can set other info with details - so we can simulate this here (other info
-         * shall differ to origin one)
-         *
-         * @param otherInfo
-         * @return
-         */
         public TestNewInstanceBuilder setOtherInfo(String otherInfo) {
             this.otherInfo = otherInfo;
             return this;

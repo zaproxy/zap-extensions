@@ -34,7 +34,7 @@ public class SarifHtmlToPlainTextConverter {
      * Converts given HTML content to plain text. HTML Tags "br" and "p" will be changed to new
      * lines, all other tags are just removed.
      *
-     * @param html
+     * @param html is the given HTML content which shall be converted to plain text
      * @return plain text
      */
     public String convertToPlainText(String html) {

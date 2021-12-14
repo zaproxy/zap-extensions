@@ -224,13 +224,14 @@ class SarifResultTest {
     void sortingDoneByLevelAndPluginId(
             String creationOrderString, String expectedSortedOrderString) {
         /* prepare */
-        OrderData[] creationOrder = extractOrderAndAlertRiskFromString(creationOrderString);
-        OrderData[] expectedSortedOrder =
+        OrderedCSVTestData[] creationOrder =
+                extractOrderAndAlertRiskFromString(creationOrderString);
+        OrderedCSVTestData[] expectedSortedOrder =
                 extractOrderAndAlertRiskFromString(expectedSortedOrderString);
 
         // add in wanted, initial ordering
         List<SarifResult> arrayList = new ArrayList<>();
-        for (OrderData creationOrderData : creationOrder) {
+        for (OrderedCSVTestData creationOrderData : creationOrder) {
             Alert alert = createAlertWithPluginId(creationOrderData);
             SarifResult sarifResult = SarifResult.builder().setAlert(alert).build();
             arrayList.add(sarifResult);
@@ -241,13 +242,13 @@ class SarifResultTest {
 
         /* test */
         Iterator<SarifResult> it = arrayList.iterator();
-        for (OrderData expectedOrderData : expectedSortedOrder) {
+        for (OrderedCSVTestData expectedOrderData : expectedSortedOrder) {
             SarifResult found = it.next();
             assertEquals("" + expectedOrderData.pluginId, found.getRuleId());
         }
     }
 
-    private Alert createAlertWithPluginId(OrderData creationOrderData) {
+    private Alert createAlertWithPluginId(OrderedCSVTestData creationOrderData) {
         Alert alert = mock(Alert.class);
         when(alert.getPluginId()).thenReturn(creationOrderData.pluginId);
         when(alert.getRisk()).thenReturn(creationOrderData.level.getAlertRisk());
@@ -256,18 +257,18 @@ class SarifResultTest {
         return alert;
     }
 
-    private class OrderData {
+    private class OrderedCSVTestData {
         int pluginId;
         SarifLevel level;
     }
 
-    private OrderData[] extractOrderAndAlertRiskFromString(String order) {
+    private OrderedCSVTestData[] extractOrderAndAlertRiskFromString(String order) {
         String[] splitted = order.split("-");
-        OrderData[] result = new OrderData[splitted.length];
+        OrderedCSVTestData[] result = new OrderedCSVTestData[splitted.length];
         for (int i = 0; i < result.length; i++) {
             String split = splitted[i];
             String[] pair = split.split(":");
-            result[i] = new OrderData();
+            result[i] = new OrderedCSVTestData();
             result[i].pluginId = Integer.parseInt(pair[0]);
 
             if (pair.length > 1) {

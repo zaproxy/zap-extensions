@@ -25,27 +25,27 @@ import org.parosproxy.paros.network.HttpHeader;
 
 public class SarifBinaryContentDetector {
 
-	public static final SarifBinaryContentDetector DEFAULT = new SarifBinaryContentDetector();
+    public static final SarifBinaryContentDetector DEFAULT = new SarifBinaryContentDetector();
 
-	/**
-	 * Detect binary content by inspecting the given HTTP header and the returned
-	 * normalized (lowercased) content type. see
-	 * <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">IANA
-	 * Mime type list</a> for a list of mime types.
-	 *
-	 * @param header
-	 * @return <code>true</code> when binary content otherwise <code>false</code>
-	 */
-	public boolean isBinaryContent(HttpHeader header) {
-		requireNonNull(header, "Header parameter may not be null!");
+    /**
+     * Detect binary content by inspecting the given HTTP header and the returned normalized
+     * (lowercased) content type. see <a
+     * href="https://www.iana.org/assignments/media-types/media-types.xhtml">IANA Mime type list</a>
+     * for a list of mime types.
+     *
+     * @param header the HTTP header to inspect
+     * @return <code>true</code> when binary content otherwise <code>false</code>
+     */
+    public boolean isBinaryContent(HttpHeader header) {
+        requireNonNull(header, "Header parameter may not be null!");
 
-		String contentTypeLowerCased = header.getNormalisedContentTypeValue();
-		if (contentTypeLowerCased == null) {
-			// if not set, we assume it is binary
-			return true;
-		}
-		return !(contentTypeLowerCased.startsWith("text") || contentTypeLowerCased.contains("/json")
-				|| contentTypeLowerCased.contains("/xml"));
-	}
-
+        String contentTypeLowerCased = header.getNormalisedContentTypeValue();
+        if (contentTypeLowerCased == null) {
+            // if not set, we assume it is binary
+            return true;
+        }
+        return !(contentTypeLowerCased.startsWith("text")
+                || contentTypeLowerCased.contains("/json")
+                || contentTypeLowerCased.contains("/xml"));
+    }
 }
