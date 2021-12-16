@@ -22,11 +22,20 @@ package org.zaproxy.addon.callhome;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
@@ -34,18 +43,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.CommandLineArgument;
+import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ExtensionCallHome extends ExtensionAdaptor {
+public class ExtensionCallHome extends ExtensionAdaptor
+        implements SessionChangedListener, CommandLineListener {
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionCallHome";
@@ -54,8 +73,11 @@ public class ExtensionCallHome extends ExtensionAdaptor {
 
     private static final String ZAP_CFU_SERVICE = "https://cfu.zaproxy.org/ZAPcfu";
     private static final String ZAP_NEWS_SERVICE = "https://news.zaproxy.org/ZAPnews";
+    private static final String ZAP_TEL_SERVICE = "https://tel.zaproxy.org/ZAPtel";
 
     private static final String ISSUE_FILE = "/etc/issue";
+
+    private static final Pattern PSCAN_PATTERN = Pattern.compile("stats\\.pscan\\..\\d+\\..*");
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionCallHome.class);
 
@@ -90,15 +112,38 @@ public class ExtensionCallHome extends ExtensionAdaptor {
     }
 
     private HttpSender httpSender = null;
+    private CallHomeParam param;
 
     private static OS os;
     private static Boolean onBackBox = null;
     private static Boolean inContainer = null;
     private static String containerName;
 
+    private int telIndex = 0;
+
+    private JSONObject lastTelemetryData;
+
+    private LocalDateTime lastSessionCreated;
+
+    private CommandLineArgument[] arguments = new CommandLineArgument[1];
+    private static final int ARG_NO_TEL_IDX = 0;
+
+    private OptionsCallHomePanel optionsPanel = null;
+
     public ExtensionCallHome() {
         super(NAME);
         setI18nPrefix(PREFIX);
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+        extensionHook.addCommandLine(getCommandLineArguments());
+        extensionHook.addOptionsParamSet(getParam());
+        extensionHook.addSessionListener(this);
+        if (getView() != null) {
+            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+        }
     }
 
     @Override
@@ -109,6 +154,13 @@ public class ExtensionCallHome extends ExtensionAdaptor {
     @Override
     public void unload() {
         this.setAutoUpdateSupplier(null);
+    }
+
+    private OptionsCallHomePanel getOptionsPanel() {
+        if (optionsPanel == null) {
+            optionsPanel = new OptionsCallHomePanel(this);
+        }
+        return optionsPanel;
     }
 
     private void setAutoUpdateSupplier(Supplier<ZapXmlConfiguration> supplier) {
@@ -146,14 +198,22 @@ public class ExtensionCallHome extends ExtensionAdaptor {
         return json;
     }
 
-    private ZapXmlConfiguration getServiceData(String url)
-            throws IOException, ConfigurationException, InvalidServiceUrlException {
-        LOGGER.debug("Getting ZAP service data from {}", url);
+    private void addExtendedData(JSONObject data) {
+        data.put("telIndex", ++telIndex);
+        data.put("telUuid", this.getParam().getTelemetryUuid());
+        data.put("mode", Control.getSingleton().getMode().name());
+        data.put("locale", Constant.getLocale().toString());
+        data.put("memory", Runtime.getRuntime().freeMemory());
+        data.put("uptime", ManagementFactory.getRuntimeMXBean().getUptime());
+    }
 
+    private HttpMessage sendServiceRequest(String url, JSONObject data)
+            throws IOException, InvalidServiceUrlException {
+        LOGGER.debug("Sending request to ZAP service {}", url);
         HttpMessage msg = new HttpMessage(new URI(url, true));
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
-        msg.getRequestBody().setBody(getMandatoryRequestData().toString());
+        msg.getRequestBody().setBody(data.toString());
         msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 
         getHttpSender().sendAndReceive(msg, true);
@@ -169,11 +229,16 @@ public class ExtensionCallHome extends ExtensionAdaptor {
             // Only access the ZAP services over https
             throw new InvalidServiceUrlException(msg.getRequestHeader().getURI().toString());
         }
+        return msg;
+    }
 
+    private ZapXmlConfiguration getServiceData(String url)
+            throws IOException, ConfigurationException, InvalidServiceUrlException {
+        LOGGER.debug("Getting ZAP service data from {}", url);
+        HttpMessage msg = sendServiceRequest(url, getMandatoryRequestData());
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         config.setDelimiterParsingDisabled(true);
         config.load(new StringReader(msg.getResponseBody().toString()));
-
         return config;
     }
 
@@ -194,6 +259,105 @@ public class ExtensionCallHome extends ExtensionAdaptor {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    private InMemoryStats getInMemoryStats() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionStats.class)
+                .getInMemoryStats();
+    }
+
+    protected void addStatistics(JSONObject data, InMemoryStats inMemoryStats) {
+        if (inMemoryStats != null) {
+            inMemoryStats.getStats("").entrySet().stream()
+                    .filter(new StatsPredicate<>())
+                    .forEach(entry -> data.put(entry.getKey(), entry.getValue()));
+
+            // Sum the filtered site stats
+            Map<String, Long> siteStats = new HashMap<>();
+            inMemoryStats.getAllSiteStats("").values().stream()
+                    .forEach(
+                            entry ->
+                                    entry.entrySet().stream()
+                                            .filter(new StatsPredicate<>())
+                                            .forEach(
+                                                    e2 ->
+                                                            siteStats.merge(
+                                                                    e2.getKey(),
+                                                                    e2.getValue(),
+                                                                    Long::sum)));
+
+            // Add them all to the data
+            siteStats.entrySet().forEach(entry -> data.put(entry.getKey(), entry.getValue()));
+        }
+    }
+
+    private class StatsPredicate<E> implements Predicate<Entry<String, Long>> {
+        @Override
+        public boolean test(Entry<String, Long> t) {
+            String key = t.getKey();
+            return key.startsWith("openapi.")
+                    || key.startsWith("soap.")
+                    || key.startsWith("spiderAjax.")
+                    || key.startsWith("stats.alertFilter")
+                    || key.startsWith("stats.ascan.")
+                    || key.startsWith("stats.auth.")
+                    || key.startsWith("stats.break.")
+                    || key.startsWith("stats.code.")
+                    || key.startsWith("stats.script.")
+                    || key.startsWith("stats.spider.")
+                    || key.startsWith("stats.websockets.")
+                    || PSCAN_PATTERN.matcher(key).matches();
+        }
+    }
+
+    private void uploadTelemetryStartData() {
+        new Thread(
+                        () -> {
+                            JSONObject data = getMandatoryRequestData();
+                            data.put("teltype", "add-ons");
+                            addExtendedData(data);
+                            // Add the add-on summary details
+                            ExtensionFactory.getAddOnLoader().getAddOnCollection()
+                                    .getInstalledAddOns().stream()
+                                    .forEach(
+                                            oe -> data.put(oe.getId(), oe.getVersion().toString()));
+
+                            lastTelemetryData = data;
+
+                            try {
+                                this.sendServiceRequest(ZAP_TEL_SERVICE, data);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        },
+                        "ZAP-telemetry-start")
+                .start();
+    }
+
+    private void uploadTelemetrySessionData() {
+        new Thread(
+                        () -> {
+                            JSONObject data = getMandatoryRequestData();
+                            data.put("teltype", "stats");
+                            addExtendedData(data);
+                            addStatistics(data, getInMemoryStats());
+
+                            lastTelemetryData = data;
+
+                            try {
+                                this.sendServiceRequest(ZAP_TEL_SERVICE, data);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        },
+                        "ZAP-telemetry-stats")
+                .start();
+    }
+
+    protected JSONObject getLastTelemetryData() {
+        return this.lastTelemetryData;
     }
 
     public static OS getOS() {
@@ -288,5 +452,84 @@ public class ExtensionCallHome extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
+    }
+
+    public CallHomeParam getParam() {
+        if (param == null) {
+            param = new CallHomeParam();
+        }
+        return param;
+    }
+
+    @Override
+    public void sessionAboutToChange(Session session) {
+        if (Constant.isSilent() || !getParam().isTelemetryEnabled()) {
+            LOGGER.info("Shh! Silent mode or telemetry turned off");
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        if (this.lastSessionCreated == null) {
+            // Can't upload start data here as the cmdline options will not have been checked
+            lastSessionCreated = now;
+        } else {
+            Duration duration = Duration.between(this.lastSessionCreated, now);
+            if (duration.getSeconds() > 2) {
+                // When a session changes there are 2 of these events in quick succession, just
+                // upload on the first one
+                this.uploadTelemetrySessionData();
+                lastSessionCreated = now;
+            }
+        }
+    }
+
+    @Override
+    public void sessionChanged(Session session) {
+        // Nothing to do
+    }
+
+    @Override
+    public void sessionScopeChanged(Session session) {
+        // Nothing to do
+    }
+
+    @Override
+    public void sessionModeChanged(Mode mode) {
+        // Nothing to do
+    }
+
+    protected CommandLineArgument[] getCommandLineArguments() {
+        arguments[ARG_NO_TEL_IDX] =
+                new CommandLineArgument(
+                        "-notel",
+                        0,
+                        null,
+                        "",
+                        "-notel                   "
+                                + Constant.messages.getString(PREFIX + ".cmdline.notel.help"));
+        return arguments;
+    }
+
+    @Override
+    public void execute(CommandLineArgument[] args) {
+        if (arguments[ARG_NO_TEL_IDX].isEnabled()) {
+            this.getParam().setTelemetryEnabled(false);
+        }
+        if (Constant.isSilent() || !getParam().isTelemetryEnabled()) {
+            LOGGER.info("Shh! Silent mode or telemetry turned off");
+        } else {
+            this.uploadTelemetryStartData();
+        }
+    }
+
+    @Override
+    public boolean handleFile(File file) {
+        // Not supported
+        return false;
+    }
+
+    @Override
+    public List<String> getHandledExtensions() {
+        // Not supported
+        return null;
     }
 }

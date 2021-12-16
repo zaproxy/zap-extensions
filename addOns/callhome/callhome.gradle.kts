@@ -10,6 +10,10 @@ zapAddOn {
     }
 }
 
+dependencies {
+    testImplementation(project(":testutils"))
+}
+
 crowdin {
     configuration {
         val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"
