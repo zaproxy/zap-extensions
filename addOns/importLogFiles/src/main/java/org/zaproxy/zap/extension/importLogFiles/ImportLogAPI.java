@@ -183,6 +183,8 @@ public class ImportLogAPI extends ApiImplementor {
 
     @Override
     public HttpMessage handleApiOther(HttpMessage msg, String name, JSONObject params) {
+        log.warn(ExtensionImportLogFiles.RETIRE_MESSAGE);
+
         ExtensionImportLogFiles importer = new ExtensionImportLogFiles();
         if (OtherPOST_ModSec_AuditEvent.equals(name)) {
             String trimmed =
@@ -203,6 +205,8 @@ public class ImportLogAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+        log.warn(ExtensionImportLogFiles.RETIRE_MESSAGE);
+
         ExtensionImportLogFiles importer = new ExtensionImportLogFiles();
         if (Import_Zap_Log_From_File.equals(name))
             return processLogsFromFile(params.getString(PARAM_FILE), importer, LogType.ZAP);

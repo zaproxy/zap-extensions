@@ -63,12 +63,13 @@ public class ImportUrlsAPI extends ApiImplementor {
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         LOG.debug("handleApiAction {} {}", name, params.toString());
+        LOG.warn(ExtensionImportUrls.RETIRE_MESSAGE);
 
         switch (name) {
             case ACTION_IMPORTURLS:
                 extension.importUrlFile(
                         new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH)));
-                return ApiResponseElement.OK;
+                return new ApiResponseElement("Retired", ExtensionImportUrls.RETIRE_MESSAGE);
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }

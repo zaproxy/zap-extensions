@@ -34,11 +34,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jwall.web.audit.AuditEvent;
@@ -58,7 +53,6 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportLogFiles extends ExtensionAdaptor {
 
@@ -79,7 +73,10 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         }
     }
 
-    private ZapMenuItem menuExample = null;
+    public static final String RETIRE_MESSAGE =
+            "The Import Log Files add-on has been retired. This functionality is now provided by the Import/Export add-on.\n\n"
+                    + "NOTE: The Web API for this functionality has been simplified in the Import/Export add-on, you will likely "
+                    + "have to update your usage to adapt the new endpoints.";
 
     private static Logger log = LogManager.getLogger(ExtensionImportLogFiles.class);
 
@@ -95,55 +92,11 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         super.hook(extensionHook);
         importLogAPI = new ImportLogAPI(null);
         extensionHook.addApiImplementor(importLogAPI);
-        if (getView() != null) {
-            extensionHook.getHookMenu().addImportMenuItem(getImportOption());
-        }
     }
 
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    private ZapMenuItem getImportOption() {
-        if (menuExample == null) {
-            menuExample = new ZapMenuItem("importLogFiles.import.importLOG");
-
-            menuExample.addActionListener(
-                    e -> {
-                        View view = View.getSingleton();
-                        JFrame main = view.getMainFrame();
-                        JFileChooser fc = new JFileChooser();
-                        fc.setAcceptAllFileFilterUsed(false);
-                        FileFilter filter =
-                                new FileNameExtensionFilter(
-                                        getMessageString(
-                                                "importLogFiles.choosefile.filter.description"),
-                                        "txt");
-                        fc.addChoosableFileFilter(filter);
-
-                        LogType logChoice =
-                                (LogType)
-                                        JOptionPane.showInputDialog(
-                                                main,
-                                                getMessageString(
-                                                        "importLogFiles.choosefile.message"),
-                                                getMessageString("importLogFiles.choosefile.title"),
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                null,
-                                                LogType.values(),
-                                                LogType.ZAP);
-
-                        if (logChoice != null) {
-                            int openChoice = fc.showOpenDialog(main);
-                            if (openChoice == JFileChooser.APPROVE_OPTION) {
-                                File newFile = fc.getSelectedFile();
-                                processInput(newFile, logChoice);
-                            }
-                        }
-                    });
-        }
-        return menuExample;
     }
 
     public List<HttpMessage> ReadModSecAuditEvent(InputStream stream) {
@@ -413,6 +366,14 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
                     "https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs");
         } catch (MalformedURLException e) {
             return null;
+        }
+    }
+
+    @Override
+    public void postInstall() {
+        log.warn(RETIRE_MESSAGE);
+        if (View.isInitialised()) {
+            View.getSingleton().showWarningDialog(RETIRE_MESSAGE);
         }
     }
 }

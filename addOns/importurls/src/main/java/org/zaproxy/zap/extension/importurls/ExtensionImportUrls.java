@@ -20,12 +20,10 @@
 package org.zaproxy.zap.extension.importurls;
 
 import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.JFileChooser;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,16 +37,12 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportUrls extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionImportUrls";
-
-    private static final String THREAD_PREFIX = "ZAP-Import-Urls-";
-
-    private ZapMenuItem menuImportUrls;
-    private int threadId = 1;
+    public static final String RETIRE_MESSAGE =
+            "The Import URLs add-on has been retired. This functionality is now provided by the Import/Export add-on.";
 
     private ImportUrlsAPI api;
 
@@ -63,45 +57,8 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrls());
-        }
-
         this.api = new ImportUrlsAPI(this);
         extensionHook.addApiImplementor(api);
-    }
-
-    private ZapMenuItem getMenuImportUrls() {
-        if (menuImportUrls == null) {
-            menuImportUrls =
-                    new ZapMenuItem(
-                            "importurls.topmenu.import.importurls",
-                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_I, 0, false));
-            menuImportUrls.setToolTipText(
-                    Constant.messages.getString("importurls.topmenu.import.importurls.tooltip"));
-
-            menuImportUrls.addActionListener(
-                    e -> {
-                        // Prompt for a file
-                        final JFileChooser chooser =
-                                new JFileChooser(
-                                        Model.getSingleton().getOptionsParam().getUserDirectory());
-                        int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                        if (rc == JFileChooser.APPROVE_OPTION) {
-
-                            Thread t =
-                                    new Thread() {
-                                        @Override
-                                        public void run() {
-                                            this.setName(THREAD_PREFIX + threadId++);
-                                            importUrlFile(chooser.getSelectedFile());
-                                        }
-                                    };
-                            t.start();
-                        }
-                    });
-        }
-        return menuImportUrls;
     }
 
     public String importUrlFile(File file) {
@@ -123,7 +80,6 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
                             HttpSender.MANUAL_REQUEST_INITIATOR);
 
             String line;
-            StringBuilder outputLine;
             while ((line = in.readLine()) != null) {
                 if (!line.startsWith("#") && line.trim().length() > 0) {
                     if (!line.startsWith("http")) {
@@ -136,23 +92,18 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
                             line = line.substring(line.indexOf("\t")).trim();
                         }
                     }
-                    outputLine = new StringBuilder();
                     try {
-                        outputLine.append("GET").append("\t").append(line).append("\t");
                         HttpMessage msg = new HttpMessage(new URI(line, false));
                         sender.sendAndReceive(msg, true);
                         persistMessage(msg);
-
-                        outputLine.append(msg.getResponseHeader().getStatusCode());
-
                     } catch (Exception e) {
-                        outputLine.append(e.getMessage());
-                    }
-                    outputLine.append("\n");
-                    if (View.isInitialised()) {
-                        final String str = outputLine.toString();
-                        EventQueue.invokeLater(
-                                () -> View.getSingleton().getOutputPanel().append(str));
+                        if (View.isInitialised()) {
+                            EventQueue.invokeLater(
+                                    () ->
+                                            View.getSingleton()
+                                                    .getOutputPanel()
+                                                    .append(e.getMessage() + '\n'));
+                        }
                     }
                 }
             }
@@ -210,5 +161,13 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("importurls.desc");
+    }
+
+    @Override
+    public void postInstall() {
+        log.warn(RETIRE_MESSAGE);
+        if (View.isInitialised()) {
+            View.getSingleton().showWarningDialog(RETIRE_MESSAGE);
+        }
     }
 }
