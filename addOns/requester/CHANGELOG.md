@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- The Request/Response view option will now be saved each time it is changed (Issue 6985).
 - Update minimum ZAP version to 2.11.1.
 
 ## [5] - 2021-10-07

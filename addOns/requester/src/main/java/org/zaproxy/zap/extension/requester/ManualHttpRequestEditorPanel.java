@@ -553,6 +553,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 
                 this.validate();
                 this.repaint();
+                this.saveConfig();
             }
         }
 
