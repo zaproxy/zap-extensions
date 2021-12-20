@@ -483,6 +483,19 @@ public class ExtensionCallHome extends ExtensionAdaptor
     }
 
     @Override
+    public void destroy() {
+        LocalDateTime now = LocalDateTime.now();
+        if (this.lastSessionCreated != null) {
+            Duration duration = Duration.between(this.lastSessionCreated, now);
+            if (duration.getSeconds() <= 2) {
+                return;
+            }
+        }
+        this.uploadTelemetrySessionData();
+        lastSessionCreated = now;
+    }
+
+    @Override
     public void sessionChanged(Session session) {
         // Nothing to do
     }
