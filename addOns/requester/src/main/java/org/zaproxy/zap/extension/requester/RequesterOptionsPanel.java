@@ -73,7 +73,9 @@ public class RequesterOptionsPanel extends AbstractParamPanel {
     }
 
     @Override
-    public void validateParam(Object obj) throws Exception {}
+    public void validateParam(Object obj) throws Exception {
+        // Currently nothing to validate
+    }
 
     @Override
     public void saveParam(Object obj) throws Exception {

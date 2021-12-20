@@ -65,8 +65,6 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
 
         this.isSendEnabled = isSendEnabled;
         this.configurationKey = OptionsParamView.BASE_VIEW_KEY + "." + configurationKey + ".";
-
-        // this.setPreferredSize(new Dimension(700, 800));
     }
 
     protected void initialize() {
@@ -161,16 +159,14 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
                                             Constant.messages.getString("manReq.safe.warning"));
                             btnSend.setEnabled(true);
                             return;
-                        } else if (mode.equals(Mode.protect)) {
-                            if (!getMessage().isInScope()) {
-                                // In protected mode and not in scope, so fail
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "manReq.outofscope.warning"));
-                                btnSend.setEnabled(true);
-                                return;
-                            }
+                        } else if (mode.equals(Mode.protect) && !getMessage().isInScope()) {
+                            // In protected mode and not in scope, so fail
+                            View.getSingleton()
+                                    .showWarningDialog(
+                                            Constant.messages.getString(
+                                                    "manReq.outofscope.warning"));
+                            btnSend.setEnabled(true);
+                            return;
                         }
 
                         btnSendAction();

@@ -29,8 +29,7 @@ public class RequesterNumberedTabbedPane extends NumberedTabbedPane {
 
     @Override
     public void addDefaultTab() {
-        ManualHttpRequestEditorPanel requestPane =
-                new ManualHttpRequestEditorPanel(true, "requesterpanel");
+        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
         requestPane.setDefaultMessage();
         addTab(requestPane);
     }
