@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [9] - 2021-12-22
 ### Retired
 - This add-on has been retired, and its functionality has been replaced by the Import/Export Add-on.
 
@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[9]: https://github.com/zaproxy/zap-extensions/releases/importurls-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/importurls-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/importurls-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/importurls-v6
