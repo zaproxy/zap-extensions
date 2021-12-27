@@ -4,12 +4,12 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Alert Filters" target="addon.alertFilter" image="flags-icon">
-				<tocitem text="Context Alert Filters" target="addon.contextAlertFilter"/>
-				<tocitem text="Global Alert Filters" target="addon.globalAlertFilter"/>
-				<tocitem text="Automation" target="addon.automation"/>
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Фильтры оповещений" target="addon.alertFilter" image="flags-icon">
+				<tocitem text="Фильтры контекстных предупреждений " target="addon.contextAlertFilter"/>
+				<tocitem text="Глобальные Фильтры Предупреждений " target="addon.globalAlertFilter"/>
+				<tocitem text="Автоматизация " target="addon.automation"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

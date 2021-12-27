@@ -5,8 +5,8 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="Alert Filters" target="addon.alertFilter" />
-	<indexitem text="Context alert Filters" target="addon.contextAlertFilter" />
-	<indexitem text="Global Alert Filters" target="addon.globalAlertFilter" />
-	<indexitem text="Automation" target="addon.automation" />
+	<indexitem text="Фильтры оповещений" target="addon.alertFilter" />
+	<indexitem text="Фильтры контекстных предупреждений " target="addon.contextAlertFilter" />
+	<indexitem text="Глобальные Фильтры Предупреждений " target="addon.globalAlertFilter" />
+	<indexitem text="Автоматизация " target="addon.automation" />
 </index>

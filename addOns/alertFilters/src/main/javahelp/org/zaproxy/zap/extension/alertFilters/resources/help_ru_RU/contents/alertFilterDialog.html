@@ -6,67 +6,67 @@ Alert Filter Dialog
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Alert Filter Dialog</H1>
+<H1>Диалог фильтра предупреждений </H1>
 <p>
-This dialog is shown when you add or modify a 
-<a href="contextAlertFilter.html">Context Alert Filter</a> 
-or a <a href="globalAlertFilter.html">Global Alert Filter</a>
+Этот диалог отображается, когда вы добавляете или изменяете
+<a href="contextAlertFilter.html"> Фильтр контекстных предупреждений </a>
+или <a href="globalAlertFilter.html"> Глобальный фильтр предупреждений </a> 
 <p>
-It has the following fields: 
+В нем есть следующие поля:  
 
-<H3>Scope</H3>
-This can either be 'Global' for a Global Alert Filter or the name of an existing context.
-It is only editable when you create an Alert Filter from an existing Alert.
+<H3>Область</H3>
+Это может быть либо «Глобальный» для глобального фильтра предупреждений, либо имя существующего контекста. 
+Его можно редактировать только при создании фильтра предупреждений из существующего предупреждения. 
 
-<H3>Alert Type</H3>
-A pull down containing all of the active and passive alert rules currently installed.
+<H3>Тип оповещения </H3>
+Раскрывающийся список, содержащий все установленные в настоящее время активные и пассивные правила предупреждений. 
 
-<H3>New Risk Level</H3>
-The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
+<H3>Новый уровень риска </H3>
+Новый уровень риска, присваиваемый всем предупреждениям, которые соответствуют критериям, определенным правилом. 
  
-<H3>URL</H3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+<H3>URL-адрес</H3>
+Необязательный URL. <br>
+Если указано, то это правило будет применяться, если URL-адрес совпадает с URL-адресом поднятого предупреждения. <br>
 
-<H3>URL is Regex?</H3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
+<H3>URL - это регулярное выражение? </H3>
+Если установлено и указан URL-адрес, то URL-адрес будет рассматриваться как выражение регулярного выражения при сравнении с URL-адресом предупреждения. <br>
+Если он не установлен, любой указанный URL-адрес должен точно соответствовать URL-адресу предупреждения. 
 
-<H3>Parameter</H3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
+<H3>Параметр </H3>
+Необязательный параметр. <br>
+Если указано, то это правило будет применяться, если параметр точно соответствует параметру поднятого предупреждения. <br>
 
-<H3>Parameter is Regex?</H3>
-If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
-If it is not set then any specified parameter must exactly match the parameter of the alert.
+<H3>Параметр является регулярным выражением?</H3>
+Если установлено и указан параметр, то параметр будет рассматриваться как выражение регулярного выражения при сравнении с параметром предупреждения. <br>
+Если он не установлен, любой указанный параметр должен точно соответствовать параметру предупреждения. 
 
-<H3>Attack</H3>
-An optional attack.<br>
-If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+<H3>Атака</H3>
+Необязательная атака. <br>
+Если указано, то это правило будет применяться, если атака точно соответствует атаке с поднятым предупреждением. <br>
 
-<H3>Attack is Regex?</H3>
-If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
-If it is not set then any specified attack must exactly match the attack of the alert.
+<H3>Аттака - регулярное выражение?</H3>
+Если установлено и указана атака, то атака будет рассматриваться как выражение регулярного выражения по сравнению с атакой предупреждения. <br>
+Если он не установлен, то любая указанная атака должна точно соответствовать атаке предупреждения. 
 
-<H3>Evidence</H3>
-An optional evidence.<br>
-If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+<H3>Свидетельство </H3>
+Необязательное доказательство. <br>
+Если указано, то это правило будет применяться, если свидетельство точно совпадает с свидетельством поднятого предупреждения. <br>
 
-<H3>Evidence is Regex?</H3>
-If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
-If it is not set then any specified evidence must exactly match the evidence of the alert.
+<H3>Свидетельство - регулярное выражение?</H3>
+Если установлено и указано свидетельство, то свидетельство будет рассматриваться как выражение регулярного выражения при сравнении с свидетельством предупреждения. <br>
+Если он не установлен, то любое указанное свидетельство должно точно соответствовать свидетельству предупреждения. 
 
-<H3>Enabled</H3>
-If set then this rule will be applied to all alerts raise against the given context.
+<H3>Включено</H3>
+Если установлено, то это правило будет применяться ко всем предупреждениям, возникающим в данном контексте. 
 
-<H3>Test Filter</H3>
-The 'Test' button will show a count of how many existing alerts the filter will apply to. 
-It is disabled if the filter is disabled.
+<H3>Тест Фильтр: </H3>
+Кнопка «Проверить» покажет количество существующих предупреждений, к которым будет применяться фильтр.  
+Он отключен, если фильтр отключен. 
 
-<H3>Apply Filter</H3>
-The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
-It will then show a count of the number of alerts iit changed. 
-It is disabled if the filter is disabled.
+<H3>Применить фильтр</H3>
+Кнопка «Применить» фактически применит фильтр ко всем существующим предупреждениям, к которым он применяется.  
+Затем он покажет количество измененных предупреждений.  
+Он отключен, если фильтр отключен. 
 
 </BODY>
 </HTML>
