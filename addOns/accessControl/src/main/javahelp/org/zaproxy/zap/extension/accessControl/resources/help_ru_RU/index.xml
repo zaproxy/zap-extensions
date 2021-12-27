@@ -7,5 +7,5 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="контроль доступа" target="accessControl.concepts" />
 	<indexitem text="вкладка контроля доступа" target="accessControl.tab" />
-	<indexitem text="контекстные параметры контроля доступа" target="accessControl.contextOptions" />
+	<indexitem text="параметры контекста управления доступом " target="accessControl.contextOptions" />
 </index>
