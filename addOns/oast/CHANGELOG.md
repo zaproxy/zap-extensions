@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Fixed
+- OAST Interactsh Options Dialog: If host or token config changed the 'New Payload' Button generates the Payload still with the old config. 
+Button is disabled in that case.
 
 ## [0.7.0] - 2021-12-12
 ### Changed
