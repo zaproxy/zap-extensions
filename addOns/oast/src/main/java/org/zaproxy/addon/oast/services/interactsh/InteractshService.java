@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -85,6 +86,7 @@ public class InteractshService extends OastService implements OptionsChangedList
     private PublicKey publicKey;
     private HttpMessage pollMsg;
     private boolean isRegistered;
+    private String currentServerUrl;
     private int currentPollingFrequency;
     private ScheduledFuture<?> pollingSchedule;
 
@@ -125,24 +127,50 @@ public class InteractshService extends OastService implements OptionsChangedList
     @Override
     public void sessionChanged() {
         if (isRegistered) {
-            stopPoller();
             deregister();
         }
     }
 
     public void optionsLoaded() {
+        currentServerUrl = param.getServerUrl();
         currentPollingFrequency = param.getPollingFrequency();
     }
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        if (currentPollingFrequency != param.getPollingFrequency()) {
-            stopPoller();
-            startService();
-            currentPollingFrequency = param.getPollingFrequency();
-            LOGGER.debug(
-                    "Updated Interactsh Polling frequency to {} seconds.", currentPollingFrequency);
+        if (!Objects.equals(currentServerUrl, param.getServerUrl())) {
+            try {
+                deregister();
+                register();
+                LOGGER.debug(
+                        "Updated Interactsh params - server URL: {} and polling frequency: {} seconds.",
+                        param.getServerUrl(),
+                        param.getPollingFrequency());
+            } catch (Exception e) {
+                LOGGER.error(
+                        "Error during applying Interactsh config changes - server URL: {} and polling frequency: {} seconds. {}",
+                        param.getServerUrl(),
+                        param.getPollingFrequency(),
+                        e.getMessage(),
+                        e);
+            }
+        } else if (currentPollingFrequency != param.getPollingFrequency()) {
+            try {
+                stopPoller();
+                startService();
+                LOGGER.debug(
+                        "Updated Interactsh polling frequency: {} seconds.",
+                        param.getPollingFrequency());
+            } catch (Exception e) {
+                LOGGER.error(
+                        "Error during applying Interactsh polling frequency: {} seconds. {}",
+                        param.getPollingFrequency(),
+                        e.getMessage(),
+                        e);
+            }
         }
+
+        optionsLoaded();
     }
 
     public void register() throws InteractshException {
@@ -209,6 +237,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             if (!isRegistered) {
                 return;
             }
+            stopPoller();
             URI deregistrationUri = (URI) serverUrl.clone();
             deregistrationUri.setPath("/deregister");
             JSONObject reqBodyJson = new JSONObject();

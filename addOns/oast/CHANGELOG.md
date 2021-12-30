@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Fixed
+- Interactsh: server URL change in Options deregisters old server URL and registers new server URL
 - OAST Interactsh Options Dialog: If host or token config changed the 'New Payload' Button generates the Payload still with the old config. 
 Button is disabled in that case.
 
