@@ -3,89 +3,89 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+Правила активного сканирования - бета 
 </title>
 </head>
 <body>
-<h1>Active Scan Rules - Beta</h1>
-The following beta quality active scan rules are included in this add-on:
+<h1>Правила активного сканирования - бета </h1>
+В это дополнение включены следующие правила активного сканирования с бета-качеством: 
 
-<h2>Backup File Disclosure</h2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
+<h2>Раскрытие файла резервной копии </h2>
+Сканирует на веб-сервере резервные копии файлов с обычными именами, которые могут раскрыть конфиденциальную информацию. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java">BackupFileDisclosureScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java"> BackupFileDisclosureScanRule.java </a>
 
-<h2>Cloud Metadata Attack</h2>
-Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP and Azure.<br>
-All of these providers provide metadata via an internal unroutable IP address '169.254.169.254' - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
+<h2> Атака облачных метаданных </h2>
+Попытки использовать неправильно настроенный сервер NGINX для доступа к метаданным экземпляра, поддерживаемым поставщиками облачных услуг, такими как AWS, GCP и Azure. <br>
+Все эти поставщики предоставляют метаданные через внутренний немаршрутизируемый IP-адрес «169.254.169.254» - он может быть обнаружен неправильно настроенными серверами NGINX и доступен с помощью этого IP-адреса в поле заголовка Host. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CloudMetadataScanRule.java">CloudMetadataScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CloudMetadataScanRule.java"> CloudMetadataScanRule.java </a>
 
-<h2>Cookie Slack Detector</h2>
-Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid".
+<h2> Детектор отсутствия файлов cookie </h2>
+Проверяет файлы cookie, чтобы определить, не влияют ли некоторые из них на размер ответа, когда они опущены, особенно файлы cookie, содержащие имя «сеанс» или «userid». 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SlackerCookieDetector.java">SlackerCookieDetector.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SlackerCookieDetector.java"> SlackerCookieDetector.java </a>
 
-<h2>Cross-Domain Misconfiguration</h2>
-Checks if the web server is configured to allow Cross Domain access, from a malicious
-third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in
-SilverLight's clientaccesspolicy.xml. 
+<h2> Неправильная конфигурация нескольких доменов </h2>
+Проверяет, настроен ли веб-сервер для разрешения междоменного доступа от злонамеренного
+например, сторонний сервис.  В настоящее время проверяет наличие подстановочных знаков в Adobe crossdomain.xml и в
+Clientaccesspolicy.xml SilverLight.  
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CrossDomainScanRule.java">CrossDomainScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CrossDomainScanRule.java"> CrossDomainScanRule.java </a>
 
-<h2>CSRF Token</h2>
-Scans HTML based messages for the existence of Anti-CSRF tokens. <br>
-Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
-At HIGH alert threshold only scans messages which are in scope.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
-<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
-Only use this feature to ignore FORMs that you know are safe, for example search forms.
+<h2> Токен CSRF </h2>
+Сканирует сообщения на основе HTML на предмет наличия токенов Anti-CSRF.  <br>
+Оповещения о запросах, которые не содержат токенов Anti-CSRF. <br>
+При ВЫСОКОМ пороге оповещения сканируются только сообщения, попадающие в область действия. <br>
+В Post 2.5.0 вы можете указать список идентификаторов, разделенных запятыми, в
+Параметр <code> rules.csrf.ignorelist </code> через панель параметров «Конфигурация правила». 
+Любые FORM с именем или идентификатором, соответствующим одному из этих идентификаторов, будут игнорироваться при сканировании на предмет отсутствия токенов Anti-CSRF. 
+Используйте эту функцию только для игнорирования тех ФОРМ, которые, как вы знаете, безопасны, например, форм поиска. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java">CsrfTokenScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java"> CsrfTokenScanRule.java </a>
 
-<h2>.env Information Leak</h2>
-Checks for web accessible .env files which may leak sensitive information 
-(such as usernames, passwords, API or APP keys, etc.).
-Environment files come in many flavors but mostly they are KEY=VALUE formatted. <br>
-This rule checks for how servers deliver them by default;
-NGINX returns them as binary/octet-stream content-type Apache just returns the text
-with no content-type. This rule also check for content length over 500 characters to try and exclude
-larger, possibly intentional, files.
+<h2> Утечка информации .env </h2>
+Проверяет наличие файлов .env, доступных в Интернете, которые могут привести к утечке конфиденциальной информации.
+(например, имена пользователей, пароли, ключи API или приложений и т. д.). 
+Файлы окружения бывают разных видов, но в основном они имеют формат KEY = VALUE.  <br>
+Это правило проверяет, как серверы доставляют их по умолчанию;
+NGINX возвращает их как двоичный / октетный поток типа содержимого. Apache просто возвращает текст.
+без типа содержимого.  Это правило также проверяет длину содержимого более 500 символов, чтобы попытаться исключить
+файлы большего размера, возможно, преднамеренные. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/EnvFileScanRule.java">EnvFileScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/EnvFileScanRule.java"> EnvFileScanRule.java </a>
 
-<h2>Expression Language Injection</h2>
-Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
-when an application fails to sufficiently neutralize special elements that could modify the intended EL 
-statement before it is executed.
+<h2> Внедрение языка выражений </h2>
+Проверяет, подвержено ли веб-приложение атакам внедрения языка выражений (EL), которые происходят
+когда приложение не может в достаточной степени нейтрализовать специальные элементы, которые могут изменить предполагаемый EL
+оператор перед его выполнением. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExpressionLanguageInjectionScanRule.java">ExpressionLanguageInjectionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExpressionLanguageInjectionScanRule.java"> ExpressionLanguageInjectionScanRule.java </a>
 
-<h2>GET for POST</h2>
-This scan rule takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
-If the GET response is the same as the original POST response then an alert is raised. While this does not necessarily
-represent a security weakness unto itself it may indicate that other attacks or weaknesses can be expanded or simplified.
-(Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
+<h2> ПОЛУЧИТЬ для POST </h2>
+Это правило сканирования принимает запросы POST <code> application / x-www-form-urlencoded </code>, изменяет параметры с POST на GET и повторно отправляет запрос.  
+Если ответ GET совпадает с исходным ответом POST, возникает предупреждение.  Хотя это не обязательно
+представляет собой слабое место в системе безопасности, это может указывать на то, что другие атаки или уязвимости могут быть расширены или упрощены. 
+(Например, атака с использованием межсайтовых сценариев (XSS) на основе POST заменена на GET.) 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/GetForPostScanRule.java">GetForPostScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/GetForPostScanRule.java"> GetForPostScanRule.java </a>
 
-<h2>Heartbleed OpenSSL Vulnerability</h2>
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
-For further details refer to CVE-2014-0160.
+<h2> Уязвимость OpenSSL Heartbleed </h2>
+Определяет уязвимость веб-сервера для уязвимости Heartbleed OpenSSL, используя ее. 
+Дополнительные сведения см. В CVE-2014-0160. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HeartBleedActiveScanRule.java">HeartBleedActiveScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HeartBleedActiveScanRule.java"> HeartBleedActiveScanRule.java </a>
 
-<h2>Hidden File Finder</h2>
-This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
-The original included set of payloads were based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
-Such payloads are verified by checking response code, and content. If the response code is 200 (Ok) then additional content checks are performed to increase alert confidence.
-If the response code is 401 (Unauthorized) or 403 (Forbidden) or the content checks are un-successful then an alert is raised with lower confidence (at HIGH Threshold).
-<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
-For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
-the <code>json/hidden_files.json</code> file in ZAP's user directory (in which case they will be treated as included payloads).
+<h2> Поиск скрытых файлов </h2>
+Это правило сканирования проверяет различные файлы, доступные в Интернете, которые могут привести к утечке административной информации, информации о конфигурации или учетных данных. 
+Первоначальный включенный набор полезных данных был основан на <a href="https://github.com/hannob/snallygaster"> Snallygaster </a> Ханно Бёка. 
+Такие полезные данные проверяются путем проверки кода ответа и содержимого.  Если код ответа - 200 (ОК), то для повышения достоверности предупреждений выполняются дополнительные проверки содержимого. 
+Если код ответа - 401 (Неавторизованный) или 403 (Запрещенный) или проверки содержимого не увенчались успехом, то возникает предупреждение с более низкой достоверностью (при ВЫСОКОМ пороге). 
+<strong> Примечание. </strong> Если установлен дополнительный модуль Custom Payloads, вы можете добавить свои собственные скрытые пути к файлам (полезные данные) на панели параметров Custom Payloads.  
+Для пользовательских полезных данных проверяется только код состояния ответа.  Если есть требование включить проверку содержимого, то также можно добавить полезные данные в
+файл <code> json / hidden_files.json </code> в пользовательском каталоге ZAP (в этом случае они будут рассматриваться как включенные полезные данные). 
 <p>
-The following describes the fields of the JSON entries.
+Ниже описаны поля записей JSON. 
 <pre><code>
 {
   "path":"some/path/without/leading/slash.ext",
@@ -98,14 +98,14 @@ The following describes the fields of the JSON entries.
 }
 </code></pre>
 <p>
-Details worth noting:
+Стоит отметить детали: 
 <ul>
-  <li>The only field that is required is path.</li>
-  <li>The fields content, not_content, and links can have multiple quoted, comma separated values (arrays of strings).</li>
-  <li>Checks of binary content are based on starting position 0 (ex: startsWith not contains).</li>
+  <li>Единственное обязательное поле - это путь. </li>
+  <li>Поля content, not_content и ссылки могут иметь несколько значений в кавычках, разделенных запятыми (массивы строк). </li>
+  <li>Проверки двоичного содержимого основаны на начальной позиции 0 (например: startWith не содержит). </li>
 </ul>
 <p>
-The following is an example JSON entry:
+Ниже приведен пример записи JSON: 
 <pre><code>
 {
   "path":"CVS/root",
@@ -116,237 +116,235 @@ The following is an example JSON entry:
 }
 </code></pre>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HiddenFilesScanRule.java"> HiddenFilesScanRule.java </a>
 
 
-<h2>HTTP Only Site</h2>
-This active scan rule checks whether an HTTP site is served under HTTPS.
+<h2> Сайт только HTTP </h2>
+Это активное правило сканирования проверяет, обслуживается ли сайт HTTP по протоколу HTTPS. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpOnlySiteScanRule.java"> HttpOnlySiteScanRule.java </a>
 
-<h2>HttPoxy - Proxy Header Misuse</h2>
-This active scan rule checks whether a site is using the HTTP Proxy header specified in the request.<br>
-It sets up an HTTP proxy which listens to all interfaces on a randomly assigned free port.
-It then sends a series of requests to the target server with the HTTP Proxy header set to each of the available
-IP addresses and the port that it is listening on.
-If a request is received on the new port then the server is very likely to be vulnerable.<br>
-<b>IMPORTANT</b> - the computer that ZAP is running on must accept incoming requests on arbitrary ports -
-if a firewall prevents incoming connections then this rule will not work. 
+<h2> HttPoxy - неправильное использование заголовка прокси </h2>
+Это активное правило сканирования проверяет, использует ли сайт заголовок прокси-сервера HTTP, указанный в запросе. <br>
+Он устанавливает прокси-сервер HTTP, который прослушивает все интерфейсы на произвольно назначенном свободном порте. 
+Затем он отправляет серию запросов на целевой сервер с заголовком HTTP Proxy, установленным для каждого из доступных
+IP-адреса и порт, который он прослушивает. 
+Если запрос получен через новый порт, то сервер, скорее всего, будет уязвим. <br>
+<b> ВАЖНО </b> - компьютер, на котором запущен ZAP, должен принимать входящие запросы на произвольных портах -
+если брандмауэр предотвращает входящие соединения, это правило не будет работать.  
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java"> HttPoxyScanRule.java </a>
 
-<h2>HTTPS Content Available via HTTP</h2>
-This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<h2> Контент HTTPS, доступный через HTTP </h2>
+Это активное правило сканирования пытается получить доступ к контенту, который изначально был доступен через HTTPS (SSL / TLS) через HTTP. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpsAsHttpScanRule.java"> HttpsAsHttpScanRule.java </a>
 
-<h2>HTTP Parameter Pollution (HPP)</h2>
-Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
-to interpret values in unintended ways. By leveraging these effects, a malicious individual
-may be able to bypass input validation, trigger errors or modify internal variable values. 
-There are difference in treatment of duplicate parameters impacting both clients (browsers) and servers.
+<h2> Загрязнение параметров HTTP (HPP) </h2>
+Подача повторяющихся или многочисленных параметров HTTP с одним и тем же именем может привести к тому, что приложение или веб-сайт
+интерпретировать значения непреднамеренным образом.  Используя эти эффекты, злоумышленник
+может обойти проверку ввода, вызвать ошибки или изменить значения внутренних переменных.  
+Существует разница в обработке повторяющихся параметров, влияющих как на клиентов (браузеры), так и на серверы. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpParameterPollutionScanRule.java">HttpParameterPollutionScanRule.java</a> 
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpParameterPollutionScanRule.java"> HttpParameterPollutionScanRule.java </a>
 
-<h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+<h2> Небезопасный метод HTTP </h2>
+Обнаруживает (и использует, в зависимости от настроек сканирования) известные небезопасные методы HTTP, включенные для URL-адреса. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/InsecureHttpMethodScanRule.java">InsecureHttpMethodScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/InsecureHttpMethodScanRule.java"> InsecureHttpMethodScanRule.java </a>
 
-<h2>Integer Overflow Error</h2>
-Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
-this by putting out multiple strings of integers designed to try and stimulate bad responses.
+<h2> Ошибка переполнения целого числа </h2>
+Ищет индикаторы целочисленных переполнений в скомпилированном коде, которые вызывают сбой веб-сервера.   Оно делает
+для этого нужно выдать несколько строк целых чисел, чтобы попытаться стимулировать плохие ответы. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java"> IntegerOverflowScanRule.java </a>
 
-<h2>Padding Oracle</h2>
-This rule attempts to manipulate the padding of encrypted strings to trigger an error response 
-indicating a likely padding oracle vulnerability. 
-Such a vulnerability can affect any application or framework that uses encryption improperly, such as 
-some versions of ASP.net, Java Server Faces, and Mono.
+<h2> Заполнение Oracle </h2>
+Это правило пытается манипулировать заполнением зашифрованных строк, чтобы вызвать ответ об ошибке.
+указывает на вероятную уязвимость дополнения oracle.  
+Такая уязвимость может повлиять на любое приложение или платформу, которые неправильно используют шифрование, например
+некоторые версии ASP.net, Java Server Faces и Mono. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/PaddingOracleScanRule.java">PaddingOracleScanRule.java</a>
+Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/PaddingOracleScanRule.java">PaddingOracleScanRule.java</a>
 
-<h2>Proxy Disclosure</h2>
-Attempts to detect and fingerprint proxy server(s). This information helps a potential attacker to determine:
+<h2>Раскрытие информации по доверенности </h2>
+Попытки обнаружить прокси-сервер (-ы) и отпечаток пальца. Эта информация помогает потенциальному злоумышленнику определить: 
 <ul>
-<li>A list of targets for an attack against the application.</li>
-<li>Potential vulnerabilities on the proxy servers that service the application.</li>
-<li>The presence or absence of any proxy-based components that might cause attacks against the application to be detected, prevented, or mitigated.</li>
+<li>Список целей для атаки на приложение. </li>
+<li>Возможные уязвимости на прокси-серверах, обслуживающих приложение. </li>
+<li>Наличие или отсутствие каких-либо прокси-компонентов, которые могут вызвать обнаружение, предотвращение или смягчение атак на приложение. </li>
 </ul>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ProxyDisclosureScanRule.java">ProxyDisclosureScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ProxyDisclosureScanRule.java"> ProxyDisclosureScanRule.java </a>
 
-<h2>Relative Path Confusion</h2>
-Tests if the web server is configured to serve responses to ambiguous URLs in a manner that is likely to lead to confusion about the correct "relative path" for the URL. 
-If resources (CSS, images, etc.) are references in the response using relative, rather than absolute URLs. In an attack, if the web browser parses the "cross-content" response in a permissive manner, or can be tricked into 
-permissively parsing the "cross-content" response, using techniques such as framing, then the web browser may be fooled into interpreting HTML as CSS (or other content types), leading to an XSS vulnerability.
+<h2> Путаница относительно относительного пути </h2>
+Проверяет, настроен ли веб-сервер для обслуживания ответов на неоднозначные URL-адреса таким образом, который может привести к путанице в отношении правильного «относительного пути» для URL-адреса.  
+Если ресурсы (CSS, изображения и т. д.) Являются ссылками в ответе с использованием относительных, а не абсолютных URL-адресов.  При атаке, если веб-браузер разрешает разбор ответа с «перекрестным содержанием» или его можно обмануть,
+разрешающий синтаксический анализ ответа «кросс-контент» с использованием таких методов, как кадрирование, затем может обмануть веб-браузер, интерпретируя HTML как CSS (или другие типы контента), что приведет к уязвимости XSS. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RelativePathConfusionScanRule.java">RelativePathConfusionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RelativePathConfusionScanRule.java"> RelativePathConfusionScanRule.java </a>
 
-<h2>Remote Code Execution - CVE-2012-1823</h2>
-Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
+<h2> Удаленное выполнение кода - CVE-2012-1823 </h2>
+Обнаружение CVE-2012-1823 для выполнения удаленного выполнения кода на веб-сервере на основе PHP-CGI. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RemoteCodeExecutionCve20121823ScanRule.java">RemoteCodeExecutionCve20121823ScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RemoteCodeExecutionCve20121823ScanRule.java"> RemoteCodeExecutionCve20121823ScanRule.java </a>
 
-<h2>Session Fixation</h2>
-Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
+<h2> Фиксация сеанса </h2>
+Возможна фиксация сеанса.  Если эта проблема возникает с URL-адресом входа (где пользователь аутентифицируется в приложении), тогда URL-адрес может быть предоставлен злоумышленником вместе с фиксированным идентификатором сеанса жертве, чтобы позже предположить личность жертвы. используя данный идентификатор сеанса.  Если проблема возникает на странице, не входящей в систему, URL-адрес и фиксированный идентификатор сеанса может использоваться злоумышленником только для отслеживания действий неаутентифицированного пользователя.  Если уязвимость возникает в поле cookie или поле формы (параметр POST), а не в параметре URL (GET), тогда также может потребоваться некоторая другая уязвимость, чтобы установить поле cookie в браузере жертвы, чтобы разрешить уязвимость. быть эксплуатируемым. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java">SessionFixationScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java"> SessionFixationScanRule.java </a>
 
-<h2>ShellShock - CVE-2014-6271</h2>
+<h2> ShellShock - CVE-2014-6271 </h2>
 
-This rule perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.<br>
+Это правило выполняет две атаки для обнаружения серверов, уязвимых для CVE-2014-6271, также известного как ShellShock. <br>
+Первая - это простая отраженная атака, а вторая - временная атака. <br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+В версии 2.5.0 вы можете изменить продолжительность атаки, изменив параметр <code> rules.common.sleep </code> через панель «Настройки правила» в настройках. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ShellShockScanRule.java">ShellShockScanRule.java</a>
-
-<h2>Source Code Disclosure - CVE-2012-1823</h2>
-Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>
-Only analyzes responses that are text based (HTML, JSON, XML, etc.), in order to avoid false positives which may occur with image or other binary content.<br>
-JavaScript responses are only anaylzed when a LOW alert threshold is set.
+<h2> Раскрытие исходного кода - CVE-2012-1823 </h2>
+Используйте CVE-2012-1823 для раскрытия серверного исходного кода PHP на веб-сервере на основе PHP-CGI. <br>
+Анализирует только ответы, основанные на тексте (HTML, JSON, XML и т. Д.), Чтобы избежать ложных срабатываний, которые могут возникнуть с изображением или другим двоичным содержимым. <br>
+Ответы JavaScript анализируются только тогда, когда установлен НИЗКИЙ порог оповещения. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureCve20121823ScanRule.java">SourceCodeDisclosureCve20121823ScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureCve20121823ScanRule.java"> SourceCodeDisclosureCve20121823ScanRule.java </a>
 
-<h2>Source Code Disclosure - SVN</h2>
-Uses Subversion source code repository metadata to scan for files containing source code on the web server.<br>
-At LOW alert threshold the rule will require less evidence to identify potential code, which could result in more false positives.<br>
+<h2> Раскрытие исходного кода - SVN </h2>
+Использует метаданные репозитория исходного кода Subversion для поиска файлов, содержащих исходный код, на веб-сервере. <br>
+При НИЗКОМ пороге оповещения правилу потребуется меньше свидетельств для идентификации потенциального кода, что может привести к большему количеству ложных срабатываний. <br>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureSvnScanRule.java">SourceCodeDisclosureSvnScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureSvnScanRule.java"> SourceCodeDisclosureSvnScanRule.java </a>
 
-<h2>Source Code Disclosure - File Inclusion</h2>
-Uses local file inclusion techniques to scan for files containing source code on the web server.
+<h2> Раскрытие исходного кода - включение файлов </h2>
+Использует методы включения локальных файлов для поиска файлов, содержащих исходный код, на веб-сервере. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java"> SourceCodeDisclosureFileInclusionScanRule.java </a>
 
-<h2>Source Code Disclosure - Git</h2>
-Uses Git source code repository metadata to scan for files containing source code on the web server.
+<h2> Раскрытие исходного кода - Git </h2>
+Использует метаданные репозитория исходного кода Git для поиска файлов, содержащих исходный код, на веб-сервере. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureGitScanRule.java">SourceCodeDisclosureGitScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureGitScanRule.java"> SourceCodeDisclosureGitScanRule.java </a>
 
-<h2>SQL Injection - Hypersonic (Time Based)</h2>
+<h2> SQL-инъекция - гиперзвуковая (по времени) </h2>
 
-This rule uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
-This rule is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Hypersonic database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scan rule, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The rule tests only for time-based SQL injection vulnerabilities.<br>
+Это правило использует специфичный для Hypersonic синтаксис SQL, чтобы попытаться вызвать задержки по времени в операторе SQL, вызываемом страницей. <br>
+Если на неизмененный запрос не влияет временная задержка, и задержку измененного запроса можно контролировать,
+это указывает на уязвимость, основанную на временном внедрении SQL-кода в базе данных Hypersonic SQL.  <br>
+Это правило чувствительно ко времени, и его следует использовать только при попытке найти упорный и неочевидный SQL.
+инъекции уязвимостей в подозрительной базе данных Hypersonic.  <br>
+По этой причине количество активных потоков сканирования должно быть установлено минимальным при использовании этого правила сканирования,
+чтобы минимизировать нагрузку на веб-сервер, сервер приложений и базу данных, чтобы избежать ложных срабатываний, вызванных
+задержки загрузки, а не задержки SQL-инъекций.  <br>
+Правило проверяет только уязвимости, связанные с внедрением SQL-кода на временной основе. <br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+В версии 2.5.0 вы можете изменить продолжительность атаки, изменив параметр <code> rules.common.sleep </code> через панель «Настройки правила» в настройках. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionHypersonicScanRule.java">SqlInjectionHypersonicScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionHypersonicScanRule.java"> SqlInjectionHypersonicScanRule.java </a>
 
-<h2>SQL Injection - MsSQL</h2>
-This active scan rule attempts to inject MsSQL specific sleep commands into parameter values and analyzes the server's response time to see if the sleep is effectively executed on the server (indicating a successful SQL injection attack).
+<h2> SQL-инъекция - MsSQL </h2>
+Это активное правило сканирования пытается ввести специфические для MsSQL команды сна в значения параметров и анализирует время ответа сервера, чтобы увидеть, эффективно ли выполняется спящий режим на сервере (что указывает на успешную атаку с использованием SQL-инъекции). 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMsSqlScanRule.java">SqlInjectionMsSqlScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMsSqlScanRule.java"> SqlInjectionMsSqlScanRule.java </a>
 
-<h2>SQL Injection - MySQL (Time Based)</h2>
+<h2> SQL-инъекция - MySQL (по времени) </h2>
 
-This rule uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
-This rule is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected MySQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scan rule, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The rule tests only for time-based SQL injection vulnerabilities.<br>
+Это правило использует специфичный для MySQL синтаксис SQL, чтобы попытаться вызвать задержки по времени в операторе SQL, вызываемом страницей. <br>
+Если на неизмененный запрос не влияет временная задержка, и задержку измененного запроса можно контролировать,
+это указывает на уязвимость SQL Injection в базе данных MySQL, основанную на времени.  <br>
+Это правило чувствительно ко времени, и его следует использовать только при попытке найти упорный и неочевидный SQL.
+инъекции уязвимостей в подозрительную базу данных MySQL.  <br>
+По этой причине количество активных потоков сканирования должно быть установлено минимальным при использовании этого правила сканирования,
+чтобы минимизировать нагрузку на веб-сервер, сервер приложений и базу данных, чтобы избежать ложных срабатываний, вызванных
+задержки загрузки, а не задержки SQL-инъекций.  <br>
+Правило проверяет только уязвимости, связанные с внедрением SQL-кода на временной основе. <br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+В версии 2.5.0 вы можете изменить продолжительность атаки, изменив параметр <code> rules.common.sleep </code> через панель «Настройки правила» в настройках. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMySqlScanRule.java">SqlInjectionMySqlScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionMySqlScanRule.java"> SqlInjectionMySqlScanRule.java </a>
 
-<h2>SQL Injection - Oracle (Time Based)</h2>
+<h2> SQL-инъекция - Oracle (по времени) </h2>
 
-This scan rule uses Oracle-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
-This rule is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Oracle database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this rule, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scan rule tests only for time-based SQL injection vulnerabilities.<br>
+Это правило сканирования использует специфичный для Oracle синтаксис SQL, чтобы попытаться вызвать задержки по времени в операторе SQL, вызываемом страницей. <br>
+Если на неизмененный запрос не влияет временная задержка, и задержку измененного запроса можно контролировать,
+это указывает на уязвимость, основанную на временном внедрении SQL-кода в базе данных Oracle SQL.  <br>
+Это правило чувствительно ко времени, и его следует использовать только при попытке найти упорный и неочевидный SQL.
+инъекции уязвимостей в подозрительную базу данных Oracle.  <br>
+По этой причине количество активных потоков сканирования должно быть установлено минимальным при использовании этого правила,
+чтобы минимизировать нагрузку на веб-сервер, сервер приложений и базу данных, чтобы избежать ложных срабатываний, вызванных
+задержки загрузки, а не задержки SQL-инъекций.  <br>
+Правило сканирования проверяет только уязвимости, связанные с внедрением SQL-кода по времени. <br>
 <br>
-Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
+Обратите внимание, что это правило в настоящее время не позволяет вам изменять продолжительность времени, используемого для временных атак, из-за способа, которым вызвана задержка.  
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionOracleScanRule.java">SqlInjectionOracleScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionOracleScanRule.java"> SqlInjectionOracleScanRule.java </a>
 
-<h2>SQL Injection - PostgreSQL (Time Based)</h2>
+<h2> SQL-инъекция - PostgreSQL (по времени) </h2>
 
-This rule uses PostgreSQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a PostgreSQL database. <br>
-This scan rule is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected PostgreSQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scan rule, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The rule tests only for time-based SQL injection vulnerabilities.<br>
+Это правило использует специфичный для PostgreSQL синтаксис SQL, чтобы попытаться вызвать задержки по времени в операторе SQL, вызываемом страницей. <br>
+Если на неизмененный запрос не влияет временная задержка, и задержку измененного запроса можно контролировать,
+это указывает на уязвимость SQL-инъекций в базе данных PostgreSQL, основанную на времени.  <br>
+Это правило сканирования чувствительно ко времени, и его следует использовать только при попытке найти упорный и неочевидный SQL.
+инъекции уязвимостей в подозрительную базу данных PostgreSQL.  <br>
+По этой причине количество активных потоков сканирования должно быть установлено минимальным при использовании этого правила сканирования,
+чтобы минимизировать нагрузку на веб-сервер, сервер приложений и базу данных, чтобы избежать ложных срабатываний, вызванных
+задержки загрузки, а не задержки SQL-инъекций.  <br>
+Правило проверяет только уязвимости, связанные с внедрением SQL-кода на временной основе. <br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+В версии 2.5.0 вы можете изменить продолжительность атаки, изменив параметр <code> rules.common.sleep </code> через панель «Настройки правила» в настройках. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionPostgreScanRule.java">SqlInjectionPostgreScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionPostgreScanRule.java"> SqlInjectionPostgreScanRule.java </a>
 
-<h2>SQL Injection - SQLite</h2>
-This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the server's responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
+<h2> SQL-инъекция - SQLite </h2>
+Это активное правило сканирования пытается ввести определенные команды SQLite в значения параметров и анализирует ответы сервера, чтобы увидеть, были ли команды эффективно выполнены на сервере (что указывает на успешную атаку с использованием SQL-инъекции). 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionSqLiteScanRule.java">SqlInjectionSqLiteScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SqlInjectionSqLiteScanRule.java"> SqlInjectionSqLiteScanRule.java </a>
 
-<h2>Trace.axd Information Leak</h2>
-Tests to see if Trace Viewer (trace.axd) is available. Although this component is convenient for developers and 
-other stakeholders it can leak a significant amount of information which a security analyst or malicious individual
-may be interested in.<br><br>
-The trace.axd scan rule targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+<h2> Утечка информации Trace.axd </h2>
+Проверяет, доступен ли Trace Viewer (trace.axd).  Хотя этот компонент удобен для разработчиков и
+другим заинтересованным сторонам это может привести к утечке значительного объема информации, которую аналитик безопасности или злоумышленник
+может быть интересно. <br> <br>
+Правило сканирования trace.axd нацелено на технологии Microsoft: IIS, Windows, ASP и MSSQL. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/TraceAxdScanRule.java">TraceAxdScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/TraceAxdScanRule.java"> TraceAxdScanRule.java </a>
 
-<h2>User Agent Fuzzer</h2>
-This active scan rule checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The rule compares the response statuscode and the hashcode of the response body with the original response.<br>
-<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own User Agent strings (payloads) in the Custom Payloads options panel.
+<h2> Пользовательский агент Fuzzer </h2>
+Это активное правило сканирования проверяет различия в ответах на основе нечеткого пользовательского агента (например,  мобильные сайты, доступ в качестве поискового робота).  Правило сравнивает код состояния ответа и хэш-код тела ответа с исходным ответом. <br>
+<strong> Примечание: </strong> Если установлен надстройка Custom Payloads, вы можете добавить свои собственные строки User Agent (полезные данные) на панели опций Custom Payloads. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UserAgentScanRule.java">UserAgentScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UserAgentScanRule.java"> UserAgentScanRule.java </a>
 
-<h2>Username Enumeration</h2>
-It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
-This rule is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
+<h2> Список имен пользователей </h2>
+Может быть возможно перечислить имена пользователей на основе различных HTTP-ответов, когда указаны действительные и недопустимые имена пользователей.  Это значительно увеличило бы вероятность успеха атак на систему с помощью подбора пароля.  Обратите внимание, что количество ложных срабатываний иногда можно минимизировать, увеличив параметр «Сила атаки» в ZAP.   Пожалуйста, проверьте вручную поле «Другая информация», чтобы подтвердить, действительно ли это проблема. 
+Это правило пропускается, если не определены контексты, использующие проверку подлинности на основе форм, и выполняется только для URL-адреса, определенного как URL-адрес для входа в контекст. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java">UsernameEnumerationScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java"> UsernameEnumerationScanRule.java </a>
 
-<h2>XPath Injection</h2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. By sending intentionally malformed information into the web site, 
-an attacker can find out how the XML data is structured, or access data that he may not normally have access 
-to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
-authentication (such as an XML based user file) or authorization." This rule attempts to identify such 
-weaknesses.
+<h2> Внедрение XPath </h2>
+Как описано в OWASP: «Атаки XPath Injection происходят, когда веб-сайт использует предоставленную пользователем информацию для
+создать запрос XPath для данных XML.  Отправляя преднамеренно искаженную информацию на веб-сайт,
+злоумышленник может узнать, как структурированы данные XML, или получить доступ к данным, к которым у него обычно нет доступа
+к.  Он может даже повысить свои привилегии на веб-сайте, если XML-данные используются для
+аутентификации (например, файл пользователя на основе XML) или авторизации. "Это правило пытается идентифицировать такие
+слабые стороны. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XpathInjectionScanRule.java"> XpathInjectionScanRule.java </a>
 
-<h2>XSLT Injection</h2>
-This scan rule checks for certain responses induced by injecting XSL transformations. <br/>
-It attempts to obtain those responses with payloads which may induce: error responses, disclosure of library/framework vendor name, remote port scanning, or command execution.
+<h2> Внедрение XSLT </h2>
+Это правило сканирования проверяет определенные ответы, вызванные внедрением преобразований XSL.  <0 />
+Он пытается получить эти ответы с полезными данными, которые могут вызвать: ответы об ошибках, раскрытие имени поставщика библиотеки / платформы, удаленное сканирование портов или выполнение команд. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XsltInjectionScanRule.java">XsltInjectionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XsltInjectionScanRule.java"> XsltInjectionScanRule.java </a>
 
-<h2>XXE</h2>
-This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
-Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc. The number of tags which are tested individually depends on the strength of the rule.<br>
+<h2> XXE </h2>
+Этот компонент пытается идентифицировать приложения, которые подвергаются атакам XML eXternal Entity (XXE). 
+Приложения, которые анализируют ввод XML, могут подвергаться XXE, если парсеры настроены слабо или плохо.
+обрабатывать ввод XML, содержащий ссылку на внешний объект, такой как локальный файл, HTTP-запросы к
+внутренние или третичные системы и т. д.  Количество тегов, которые проверяются индивидуально, зависит от силы правила. <br>
 <br>
-This scan rule will only run if the OAST add-on is installed and available.
-It is also recommended that you test that the Callbacks service in the OAST add-on is correctly configured for your target site.
-If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
+Это правило сканирования будет работать, только если надстройка OAST установлена и доступна. 
+Также рекомендуется проверить правильность настройки службы обратных вызовов в надстройке PAST для вашего целевого сайта. 
+Если целевая система не может подключиться к адресу обратного вызова, некоторые уязвимости XXE не будут обнаружены. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XxeScanRule.java">XxeScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XxeScanRule.java"> XxeScanRule.java </a> 
 
 </body>
 </html>

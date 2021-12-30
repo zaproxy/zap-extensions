@@ -2,61 +2,59 @@
 <html>
 <head>
 <title>
-Active Scan Rules - Alpha
+Правила Активного Сканирования - альфа
 </title>
 </head>
 <body>
-<h1>Active Scan Rules - Alpha</h1>
-The following alpha quality active scan rules are included in this add-on:
+<h1>Правила активного сканирования - Альфа </h1>
+В это дополнение включены следующие правила активного сканирования с альфа-качеством: 
 
-<h2>An example active scan rule which loads data from a file</h2>
-This implements an example active scan rule that loads strings from a file that the user can edit.<br>
-For more details see: 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<h2>Пример активного правила сканирования, которое загружает данные из файла </h2>
+Это реализует пример активного правила сканирования, которое загружает строки из файла, который пользователь может редактировать. <br>
+Подробнее см .:  
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Взлом ZAP, часть 4: правила активного сканирования </a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java"> ExampleFileActiveScanRule.java </a>
 
-<h2>Example Active Scan Rule: Denial of Service</h2>
-This implements a very simple example active scan rule.<br>
-For more details see: 
-<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
+<h2> Пример правила активного сканирования: отказ в обслуживании </h2>
+Это реализует очень простой пример правила активного сканирования. <br>
+Подробнее см .:
+<a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/"> Взлом ZAP, часть 4: правила активного сканирования </a> .
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java"> ExampleSimpleActiveScanRule.java </a>
 
-<h2>LDAP Injection</h2>
-LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<h2> Внедрение LDAP </h2>
+Возможно внедрение LDAP.  Злоумышленник может обойти элементы управления аутентификацией, а также просмотреть и изменить произвольные данные в каталоге LDAP. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java"> LdapInjectionScanRule.java </a>
 
-<h2>NoSQL Injection - MongoDB</h2>
-This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
-It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
+<h2> Внедрение NoSQL - MongoDB </h2>
+Это правило пытается идентифицировать уязвимости, связанные с внедрением NoSQL в MongoDB.  Он пытается предпринять различные типы атак, в том числе: логические, основанные на ошибках, основанные на времени и обход аутентификации.  
+Он также будет пытаться использовать полезные данные, специфичные для параметра JSON, если сканирование настроено на включение вариантов параметров JSON. 
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java"> MongoDbInjectionScanRule.java </a>
 
-<h2>CORS Header</h2>
-This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
+<h2> Заголовок CORS </h2>
+Это правило пытается идентифицировать заголовки CORS, а также неправильную конфигурацию CORS.  CORS считается неправильно настроенным, если он разрешает все источники, источники с более слабыми протоколами и нулевое происхождение. <br>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
+Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
 
-<h2>Web Cache Deception</h2>
-This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<h2>Обман веб-кеша </h2>
+Это правило пытается идентифицировать уязвимости Web Cache Deception. Он проверяет, можно ли использовать статический путь, добавленный к исходным URI, для утечки конфиденциальной информации пользователя. 
 <ul>
-    <li>User must be authenticated before using this rule</li>
+    <li>Пользователь должен пройти аутентификацию перед использованием этого правила </li>
 </ul>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
+Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 
-<h2>Java Spring Actuators</h2>
-This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
-
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
+<h2>Актуаторы Java Spring </h2>
+Это правило пытается определить, включены ли пружинные приводы. Тесты для маршрута по умолчанию / исполнительный механизм / работоспособность в приложении.  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 
 <h2>Log4Shell (CVE-2021-44228)</h2>
-This rule attempts to discover the Log4Shell (<a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a>) vulnerability.
-It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
-We recommend that this scan rule is used with header injection enabled for maximum coverage.
+Это правило пытается обнаружить Log4Shell ( <a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a>) уязвимость. 
+Он полагается на надстройку OAST для генерации внеполосных данных и проверки взаимодействия с DNS. 
+Мы рекомендуем использовать это правило сканирования с включенной инъекцией заголовка для максимального охвата. 
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
+Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
 
 </body>
 </html>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="OpenAPI Support" image="openapi-icon" target="openapi">
-				<tocitem text="Automation" target="openapi.automation"/>
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Поддержка OpenAPI " image="openapi-icon" target="openapi">
+				<tocitem text="Автоматизация " target="openapi.automation"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

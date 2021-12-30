@@ -6,49 +6,49 @@ Automation Framework - authentication
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - authentication</H1>
-The Automation Framework supports a subset of the authentication mechanisms supported by ZAP.
+<H1>Automation Framework - аутентификация </H1>
+Платформа автоматизации поддерживает подмножество механизмов аутентификации, поддерживаемых ZAP. 
 
-<H2>Environmental Variables</H2>
+<H2>Переменные среды </H2>
 
-ZAP supports a set of Authentication Header Environmental Variables - these will be applied by ZAP if they are defined
-however ZAP is run, including via the Automation Framework.
+ZAP поддерживает набор переменных среды заголовка аутентификации - они будут применяться ZAP, если они определены.
+однако ZAP запускается, в том числе через Automation Framework. 
 <p>
-These environmental variables must be defined at the system level - if they are defined in the <a href="environment.html">environment</a> 
-env section then they will be ignored.
+Эти переменные среды должны быть определены на системном уровне - если они определены в <a href="environment.html"> среде </a>
+env, то они будут проигнорированы. 
 
-<H2>Context Based Authentication</H2>
+<H2>Проверка подлинности на основе контекста </H2>
 
-The Automation Framework supports the following methods of authentication supported by ZAP:
+Платформа автоматизации поддерживает следующие методы аутентификации, поддерживаемые ZAP: 
 
 <ul>
-<li>Manual (use this if you are using the Authentication Header Environmental Variable)</li>
+<li>Вручную (используйте это, если вы используете переменную среды заголовка аутентификации) </li>
 <li>HTTP / NTLM</li>
 </ul>
 
-The remaining mechanisms will be supported soon.
+Остальные механизмы будут поддерживаться в ближайшее время. 
 
-<H2>Authentication Statistics</H2>
+<H2>Статистика аутентификации </H2>
 
-ZAP maintains authentication statistics - search for 'auth' in the key field on the 
-<a href="https://www.zaproxy.org/docs/internal-statistics/">ZAP Internal Statistics</a> website page.
-These are ideal to use in <a href="tests.html">tests</a> to make sure the authentication is working as you expect. 
+ZAP ведет статистику аутентификации - ищите "auth" в ключевом поле на
+Страница веб-сайта <a href="https://www.zaproxy.org/docs/internal-statistics/"> Внутренняя статистика ZAP </a>. 
+Они идеально подходят для использования в <a href="tests.html"> тестах </a>, чтобы убедиться, что аутентификация работает так, как вы ожидаете.  
 <p>
-The authentication statistics are maintained for all supported authentication methods (including 'manual')
-but only if you have configured all of the authentication elements correctly.<br>
-You are strongly advised to test this via the ZAP desktop GUI.
+Статистика аутентификации ведется для всех поддерживаемых методов аутентификации (включая «ручную»).
+но только если вы правильно настроили все элементы аутентификации. <br>
+Настоятельно рекомендуется проверить это через графический интерфейс рабочего стола ZAP. 
 
-<H2>Configuring Authentication</H2>
+<H2>Настройка аутентификации </H2>
 
-The recommended way to configure authentication is to do so via the ZAP desktop GUI - 
-this gives you complete control over all aspects and allows you to test it in place.<br>
-Then you can create a new Authentication Framework job using the context(s) you have tested - 
-the authentication elements will be correctly initialised for all aspects supported.
+Рекомендуемый способ настройки аутентификации - сделать это через графический интерфейс рабочего стола ZAP -
+это дает вам полный контроль над всеми аспектами и позволяет протестировать его на месте. <br>
+Затем вы можете создать новое задание Authentication Framework, используя контекст (ы), которые вы протестировали -
+элементы аутентификации будут правильно инициализированы для всех поддерживаемых аспектов. 
 <p>
-It is worth noting that the authentication elements cannot be edited via the Automation Framework <a href="gui.html">GUI</a>,
-but they will not get lost if you use the GUI as long as you do not use it to delete the contexts.
+Стоит отметить, что элементы аутентификации нельзя редактировать через Automation Framework <a href="gui.html"> GUI </a>,
+но они не потеряются, если вы используете графический интерфейс, пока вы не используете его для удаления контекстов. 
 <p>
-The GUI will be updated to support all of the authentication elements in due course.
+Со временем графический интерфейс будет обновлен для поддержки всех элементов аутентификации. 
 
 </BODY>
 </HTML>

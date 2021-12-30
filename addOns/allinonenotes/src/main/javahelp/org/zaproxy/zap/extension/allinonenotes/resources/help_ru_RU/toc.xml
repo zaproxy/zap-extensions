@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="All In One Notes" image="allinonenotes-icon" target="allinonenotes">
-				<tocitem text="About" target="allinonenotes.about"/>
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Все в одном примечание" image="allinonenotes-icon" target="allinonenotes">
+				<tocitem text="О программе" target="allinonenotes.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
