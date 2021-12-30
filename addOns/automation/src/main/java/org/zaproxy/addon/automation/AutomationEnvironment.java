@@ -144,8 +144,8 @@ public class AutomationEnvironment {
             return null;
         }
         if (this.combinedVars == null) {
-            this.combinedVars = new HashMap<>(System.getenv());
-            this.combinedVars.putAll(this.getData().getVars());
+            this.combinedVars = new HashMap<>(this.getData().getVars());
+            this.combinedVars.putAll(System.getenv());
         }
         String text = value.toString();
         Matcher matcher = varPattern.matcher(text);

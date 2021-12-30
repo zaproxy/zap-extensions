@@ -797,6 +797,37 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldUseSystemEnvVarsOverConfigVars() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.${myEnvVar}.example.com\n"
+                        + "  vars:\n"
+                        + "    myEnvVar: configVar\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+        List<Context> contexts = env.getContexts();
+
+        // Then
+        assertThat(env.getData().getVars().get("myEnvVar"), is(equalTo("configVar")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertThat(contexts.size(), is(equalTo(1)));
+        verify(contexts.get(0)).addIncludeInContextRegex("https://www.envVarValue.example.com.*");
+    }
+
+    @Test
     void shouldReplaceEnvVarsInJobs() {
         // Given
         String contextStr =
