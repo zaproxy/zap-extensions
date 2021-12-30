@@ -176,14 +176,26 @@ public class InteractshService extends OastService implements OptionsChangedList
             HttpMessage reqMsg = new HttpMessage(reqHeader, reqBody);
             httpSender.sendAndReceive(reqMsg);
             if (reqMsg.getResponseHeader().getStatusCode() != 200) {
+                LOGGER.warn(
+                        "Error during interactsh register, due to bad HTTP code {}. Content: {}",
+                        reqMsg.getResponseHeader().getStatusCode(),
+                        reqMsg.getResponseBody());
+
                 throw new InteractshException(
                         Constant.messages.getString(
                                 "oast.interactsh.error.register",
                                 Constant.messages.getString("oast.interactsh.error.badHttpCode")));
             }
+
+            LOGGER.debug(
+                    "Registered correlationId {}. StatusCode: {}, Content {}",
+                    correlationId,
+                    reqMsg.getResponseHeader().getStatusCode(),
+                    reqMsg.getResponseBody());
             isRegistered = true;
             schedulePoller(0);
         } catch (IOException | CloneNotSupportedException | NoSuchAlgorithmException e) {
+            LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
             throw new InteractshException(
                     Constant.messages.getString(
                             "oast.interactsh.error.register", e.getLocalizedMessage()));
@@ -195,7 +207,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         generator.initialize(2048);
 
         KeyPair keyPair = generator.generateKeyPair();
-        LOGGER.info("OAST Interactsh: RSA key pair generated.");
+        LOGGER.debug("OAST Interactsh: RSA key pair generated.");
         return keyPair;
     }
 
@@ -220,17 +232,16 @@ public class InteractshService extends OastService implements OptionsChangedList
             HttpMessage deregisterMsg = new HttpMessage(reqHeader, reqBody);
             httpSender.sendAndReceive(deregisterMsg);
             if (deregisterMsg.getResponseHeader().getStatusCode() != 200) {
-                LOGGER.info(
-                        Constant.messages.getString(
-                                "oast.interactsh.error.deregister",
-                                Constant.messages.getString("oast.interactsh.error.badHttpCode")));
+                LOGGER.warn(
+                        "Error during interactsh deregister, due to bad HTTP code {}. Content: {}",
+                        deregisterMsg.getResponseHeader().getStatusCode(),
+                        deregisterMsg.getResponseBody());
                 return;
             }
+            LOGGER.debug("Deregistered correlationId: {}", correlationId);
             isRegistered = false;
         } catch (Exception e) {
-            LOGGER.info(
-                    Constant.messages.getString(
-                            "oast.interactsh.error.deregister", e.getLocalizedMessage()));
+            LOGGER.error("Error during interactsh deregister: {}", e.getMessage(), e);
         }
     }
 
@@ -273,6 +284,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         if (!isRegistered) {
             return;
         }
+        LOGGER.debug("Start Polling the Interactsh Server ...");
         pollingSchedule =
                 executorService.scheduleAtFixedRate(
                         new InteractshPoller(this),
@@ -302,17 +314,27 @@ public class InteractshService extends OastService implements OptionsChangedList
             httpSender.sendAndReceive(pollMsg);
             if (pollMsg.getResponseHeader().getStatusCode() != 200) {
                 LOGGER.warn(
-                        Constant.messages.getString(
-                                "oast.interactsh.error.poll",
-                                Constant.messages.getString("oast.interactsh.error.badHttpCode")));
+                        "Error during interactsh poll, due to bad HTTP code {}. Content: {}",
+                        pollMsg.getResponseHeader().getStatusCode(),
+                        pollMsg.getResponseBody());
                 return new ArrayList<>();
             }
+
             JSONObject response = JSONObject.fromObject(pollMsg.getResponseBody().toString());
             if (!response.containsKey("data") || !response.containsKey("aes_key")) {
-                LOGGER.warn(Constant.messages.getString("oast.interactsh.error.poll.badResponse"));
+                LOGGER.warn(
+                        "Bad polling response received from interactsh server. Missing data or aes_key element. HTTP code {}. Content: {}",
+                        pollMsg.getResponseHeader().getStatusCode(),
+                        pollMsg.getResponseBody());
+                return new ArrayList<>();
             }
             String aesKey = response.getString("aes_key");
             JSONArray interactions = response.getJSONArray("data");
+            LOGGER.debug(
+                    "Polled {} interactions for correlationId: {}",
+                    interactions.size(),
+                    correlationId);
+
             List<InteractshEvent> result = new ArrayList<>();
             for (int i = 0; i < interactions.size(); ++i) {
                 String interaction = interactions.getString(i);
@@ -321,11 +343,20 @@ public class InteractshService extends OastService implements OptionsChangedList
                                 JSONObject.fromObject(
                                         new String(decryptMessage(aesKey, interaction)))));
             }
+            if (LOGGER.isDebugEnabled()) {
+                for (InteractshEvent event : result) {
+                    LOGGER.debug(
+                            "Returned interaction for correlationId: {}. Time: {}, Protocol:{}, UniqueId:{}, RemoteAddress:{}",
+                            correlationId,
+                            event.getTimestamp(),
+                            event.getProtocol(),
+                            event.getUniqueId(),
+                            event.getRemoteAddress());
+                }
+            }
             return result;
         } catch (Exception e) {
-            LOGGER.warn(
-                    Constant.messages.getString(
-                            "oast.interactsh.error.poll", e.getLocalizedMessage()));
+            LOGGER.error("Error during interactsh poll: {}", e.getMessage(), e);
             return new ArrayList<>();
         }
     }
