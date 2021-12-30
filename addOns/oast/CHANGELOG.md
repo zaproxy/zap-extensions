@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Fixed
+- Fixed Interactsh multi threading issue during register and deregister (Issue 6997) 
 - Interactsh: server URL change in Options deregisters old server URL and registers new server URL
 - OAST Interactsh Options Dialog: If host or token config changed the 'New Payload' Button generates the Payload still with the old config. 
 Button is disabled in that case.

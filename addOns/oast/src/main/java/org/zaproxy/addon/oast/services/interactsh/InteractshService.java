@@ -173,7 +173,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         optionsLoaded();
     }
 
-    public void register() throws InteractshException {
+    public synchronized void register() throws InteractshException {
         try {
             if (isRegistered) {
                 return;
@@ -244,7 +244,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         return publicKey;
     }
 
-    public void deregister() {
+    public synchronized void deregister() {
         try {
             if (!isRegistered) {
                 return;
@@ -303,13 +303,13 @@ public class InteractshService extends OastService implements OptionsChangedList
         schedulePoller(0);
     }
 
-    private void stopPoller() {
+    private synchronized void stopPoller() {
         if (pollingSchedule != null) {
             pollingSchedule.cancel(false);
         }
     }
 
-    private void schedulePoller(int initialDelay) {
+    private synchronized void schedulePoller(int initialDelay) {
         if (!isRegistered) {
             return;
         }
@@ -323,7 +323,7 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     /** @return new interactions from the server. */
-    public List<InteractshEvent> getInteractions() {
+    public synchronized List<InteractshEvent> getInteractions() {
         try {
             if (!isRegistered) {
                 LOGGER.warn(Constant.messages.getString("oast.interactsh.error.poll.unregistered"));
