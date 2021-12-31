@@ -31,8 +31,6 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.oast.ExtensionOast;
-import org.zaproxy.zap.model.Tech;
-import org.zaproxy.zap.model.TechSet;
 
 public class Log4ShellScanRule extends AbstractAppParamPlugin {
 
@@ -59,11 +57,6 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString(PREFIX + "name");
-    }
-
-    @Override
-    public boolean targets(TechSet technologies) {
-        return technologies.includesAny(Tech.JAVA);
     }
 
     @Override
