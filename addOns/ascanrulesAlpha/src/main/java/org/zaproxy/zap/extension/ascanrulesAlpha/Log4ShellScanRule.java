@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
         "${jndi:dns://{0}/abc}",
         "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/abc}"
     };
+    protected static final int ATTACK_PATTERN_COUNT = ATTACK_PATTERNS.length;
 
     @Override
     public int getId() {
@@ -128,18 +130,22 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
             for (String attackPattern : ATTACK_PATTERNS) {
-                HttpMessage testMsg = getNewMsg();
-                Alert alert =
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setParam(param)
-                                .setMessage(testMsg)
-                                .build();
-                String payload = extOast.registerAlertAndGetPayload(alert);
-                String attack = attackPattern.replace("{0}", payload);
-                alert.setAttack(attack);
-                setParameter(testMsg, param, attack);
-                sendAndReceive(testMsg);
+                try {
+                    HttpMessage testMsg = getNewMsg();
+                    Alert alert =
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setMessage(testMsg)
+                                    .build();
+                    String payload = extOast.registerAlertAndGetPayload(alert);
+                    String attack = attackPattern.replace("{0}", payload);
+                    alert.setAttack(attack);
+                    setParameter(testMsg, param, attack);
+                    sendAndReceive(testMsg);
+                } catch (IOException e) {
+                    LOGGER.warn(e.getMessage(), e);
+                }
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
