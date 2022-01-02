@@ -72,6 +72,22 @@ public class InteractshEvent {
         this.smtpFrom = smtpFrom;
     }
 
+    public String getTimestamp() {
+        return timestamp.toString();
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
     public InteractshEvent(JSONObject event) {
         this(
                 event.getString("protocol"),

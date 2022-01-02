@@ -45,7 +45,7 @@ public class InteractshPoller implements Runnable {
             OastRequest oastRequest = event.toOastRequest();
             interactshService.handleOastRequest(oastRequest);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            LOGGER.warn("Failed to persist interaction.");
+            LOGGER.warn("Failed to persist interaction.", e);
         }
     }
 }
