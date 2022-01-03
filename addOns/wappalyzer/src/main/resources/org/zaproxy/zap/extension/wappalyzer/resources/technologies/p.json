@@ -1,16 +1,4 @@
 {
-  "PayWhirl": {
-    "cats": [
-      41
-    ],
-    "description": "PayWhirl provides widgets and tools to handle recurring payments.",
-    "icon": "paywhirl.png",
-    "js": {
-      "paywhirlForShopifySettings": ""
-    },
-    "pricing": ["payg", "recurring"],
-    "website": "https://app.paywhirl.com/"
-  },
   "PDF.js": {
     "cats": [
       19
@@ -389,6 +377,21 @@
     "scriptSrc": "partial\\.ly",
     "website": "https://partial.ly/"
   },
+  "Partytown": {
+    "cats": [
+      92
+    ],
+    "description": "Partytown is a lazy-loaded library to help relocate resource intensive scripts into a web worker, and off of the main thread.",
+    "icon": "Partytown.png",
+    "js": {
+      "partytown.lib": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://github.com/BuilderIO/partytown"
+  },
   "Paths.js": {
     "cats": [
       25
@@ -511,7 +514,7 @@
       "button": {
         "text": "PayPal"
       },
-      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true']": {
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true'], img[alt*='PayPal' i]": {
         "exists": ""
       }
     },
@@ -552,6 +555,21 @@
       "\\.paypal\\.com/tagmanager/pptm\\.js"
     ],
     "website": "https://developer.paypal.com/docs/marketing-solutions"
+  },
+  "PayWhirl": {
+    "cats": [
+      41
+    ],
+    "description": "PayWhirl provides widgets and tools to handle recurring payments.",
+    "icon": "paywhirl.png",
+    "js": {
+      "paywhirlForShopifySettings": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://app.paywhirl.com/"
   },
   "Payflex": {
     "cats": [
@@ -852,6 +870,22 @@
     },
     "website": "https://github.com/Sazito/phoenix/"
   },
+  "Photo Gallery": {
+    "cats": [
+      87,
+      7
+    ],
+    "description": "Photo Gallery plugin is a feature-rich, yet easy-to-use WordPress tool, which lets you add mobile-friendly image galleries and gallery groups to your website by 10Web.",
+    "dom": "link[href*='/wp-content/plugins/photo-gallery/']",
+    "icon": "Photo Gallery.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/photo-gallery/.+scripts\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://10web.io/plugins/wordpress-photo-gallery"
+  },
   "PhotoShelter": {
     "cats": [
       1,
@@ -968,6 +1002,22 @@
     "saas": true,
     "scriptSrc": "\\.picreel\\.com",
     "website": "https://www.picreel.com"
+  },
+  "Picturepark": {
+    "cats": [
+      95
+    ],
+    "description": "Picturepark is designed to facilitate your DAM policies by storing, tagging, searching and delivering files in an automated and controlled way.",
+    "dom": "img[data-name*='Picturepark'], img[data-srcset*='picturepark'], div[style*='picturepark'], source[srcset*='picturepark']",
+    "icon": "Picturepark.svg",
+    "js": {
+      "pictureparkConfiguration": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://picturepark.com"
   },
   "Pimcore": {
     "cats": [
@@ -1087,6 +1137,26 @@
     ],
     "website": "https://pixelfed.org"
   },
+  "PixelYourSite": {
+    "cats": [
+      87,
+      10
+    ],
+    "description": "PixelyourSite is now probably the most complex tracking tool for WordPress, managing the Facebook Pixel, Google Analytics, Google Ads Remarketing, Pinterest Tag, Bing Tag, and virtually any other script.",
+    "icon": "PixelYourSite.png",
+    "js": {
+      "pys.Facebook": "",
+      "pysOptions": "",
+      "pys_generate_token": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/pixelyoursite/",
+    "website": "https://www.pixelyoursite.com"
+  },
   "Pixlee": {
     "cats": [
       96
@@ -1115,6 +1185,20 @@
       "pix.MIB": ""
     },
     "website": "https://www.pixnet.net"
+  },
+  "PizzaNetz": {
+    "cats": [
+      1,
+      93
+    ],
+    "description": "PizzaNetz is an ordering system and shop system for pizzerias, Chinese restaurant and kebabs.",
+    "icon": "PizzaNetz.png",
+    "dom": "form[name*='pizzanetz']",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.pizzanetz.de"
   },
   "Planet": {
     "cats": [
@@ -1468,6 +1552,7 @@
     "description": "PostNL (formerly TNT) is a mail, parcel and ecommerce corporation with operations in the Netherlands, Germany, Italy, Belgium, and the United Kingdom.",
     "icon": "PostNL.svg",
     "requiresCategory": 6,
+    "dom": "img[alt*='postnl' i], img[src*='postnl' i]",
     "text": [
       "\\bPostNL\\b"
     ],
@@ -1742,6 +1827,22 @@
     ],
     "website": "http://www.prestashop.com"
   },
+  "Pretty Links": {
+    "cats": [
+      87,
+      71
+    ],
+    "description": "Pretty Links is a WordPress plugin URL shortener, link cloaker, branded link, and QR code generator.",
+    "dom": "link[href*='/wp-content/plugins/pretty-link/']",
+    "icon": "Pretty Links.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://prettylinks.com"
+  },
   "PriceSpider": {
     "cats": [
       97
@@ -1846,6 +1947,21 @@
     "saas": true,
     "scriptSrc": "\\.privy\\.com/",
     "website": "https://www.privy.com"
+  },
+  "ProfilePress": {
+    "cats": [
+      87
+    ],
+    "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
+    "dom": "link[href*='/wp-content/plugins/wp-user-avatar/']",
+    "icon": "ProfilePress.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wp-user-avatar(?:-pro)?/.+frontend\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://profilepress.net"
   },
   "Profitwell": {
     "cats": [

@@ -116,6 +116,22 @@
     "scriptSrc": "TweenMax(?:\\.min)?\\.js",
     "website": "https://greensock.com/gsap"
   },
+  "GTranslate": {
+    "cats": [
+      87,
+      89
+    ],
+    "description": "GTranslate is a website translator which can translate any website to any language automatically.",
+    "dom": "link[href*='/wp-content/plugins/gtranslate/'], img[src*='/wp-content/plugins/gtranslate/']",
+    "icon": "GTranslate.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://gtranslate.io"
+  },
   "GX WebManager": {
     "cats": [
       1
@@ -592,6 +608,7 @@
     "meta": {
       "keywords": "^go,git,self-hosted,gitea$"
     },
+    "implies" : "Go",
     "website": "https://gitea.io"
   },
   "Gitiles": {
@@ -872,6 +889,16 @@
     },
     "website": "http://gostats.com/"
   },
+  "GoatCounter": {
+    "cats": [
+      10
+    ],
+    "description": "GoatCounter is an open source web analytics platform available as a hosted service (free for non-commercial use) or self-hosted app. It aims to offer easy to use and meaningful privacy-friendly web analytics as an alternative to Google Analytics or Matomo.",
+    "icon": "goatcounter.svg",
+    "oss": true,
+    "scriptSrc": "gc\\.zgo\\.at/count\\.js",
+    "website": "https://www.goatcounter.com/"
+  },
   "Gogs": {
     "cats": [
       47
@@ -889,6 +916,11 @@
     "meta": {
       "keywords": "go, git, self-hosted, gogs"
     },
+    "implies": [
+      "Go",
+      "Macaron"
+    ],
+    "oss": true,
     "scriptSrc": "js/gogs\\.js",
     "website": "http://gogs.io"
   },
@@ -1051,6 +1083,18 @@
       "prettyPrint": ""
     },
     "website": "http://code.google.com/p/google-code-prettify"
+  },
+  "Google Customer Reviews": {
+    "cats": [
+      90
+    ],
+    "description": "Google Customer Reviews is a badge on your site that can help users identify your site with the Google brand and can be placed on any page of your site.",
+    "icon": "Google.svg",
+    "dom": "iframe[src*='.google.com/shopping/customerreviews/'], a[href*='.google.com/shopping/customerreviews/'][target='_blank']",
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://support.google.com/merchants/answer/7105655?hl=en"
   },
   "Google Font API": {
     "cats": [
@@ -1310,6 +1354,10 @@
       "__grafana_public_path__": "",
       "grafanaBootData.settings.buildInfo['version']": "([\\d.]+)\\;version:\\1"
     },
+    "implies": [
+      "Go",
+      "Macaron"
+    ],
     "oss": true,
     "scriptSrc": "grafana\\..+\\.com/public/build/",
     "website": "https://grafana.com"
@@ -1624,6 +1672,39 @@
     "scriptSrc": "w\\.gumstack\\.com",
     "website": "https://gumstack.com/"
   },
+  "Gutenberg": {
+    "cats": [
+      87,
+      20
+    ],
+    "description": "Gutenberg is the code name for the new block based editor introduced in WordPress 5.",
+    "dom": {
+      "link[href*='/wp-content/plugins/gutenberg/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/gutenberg/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Gutenberg.png",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/gutenberg/",
+    "website": "https://github.com/WordPress/gutenberg"
+  },
+  "Gutenberg Blocks": {
+    "cats": [
+      87
+    ],
+    "description": "Gutenberg Blocks are the editor blocks that are used to create content layouts in the new WordPress block editor aka Gutenberg by Brainstorm Force.",
+    "dom": "link[href*='/wp-content/plugins/ultimate-addons-for-gutenberg/']",
+    "icon": "Gutenberg Blocks.png",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ultimate-addons-for-gutenberg/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://ultimategutenberg.com"
+  },
   "git": {
     "cats": [
       47
@@ -1681,6 +1762,7 @@
     "headers": {
       "Server": "gunicorn(?:/([\\d.]+))?\\;version:\\1"
     },
+    "implies": "Python",
     "icon": "gunicorn.png",
     "website": "http://gunicorn.org"
   }

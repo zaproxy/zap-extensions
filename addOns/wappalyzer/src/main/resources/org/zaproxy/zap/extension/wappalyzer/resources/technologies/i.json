@@ -907,6 +907,22 @@
     "url": "imperia/md/",
     "website": "https://www.pirobase-imperia.com/de/produkte/produktuebersicht/imperia-cms"
   },
+  "inSided": {
+    "cats": [
+      97
+    ],
+    "description": "inSided is the only Customer Success Community Platform built to help SaaS companies improve customer success and retention.",
+    "icon": "inSided.svg",
+    "js": {
+      "inSidedData": "",
+      "insided": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.insided.com"
+  },
   "ip-api": {
     "cats": [
       79

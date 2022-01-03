@@ -64,6 +64,22 @@
     "scriptSrc": "/wp-content/themes/education-hub(?:-pro)?/",
     "website": "https://wenthemes.com/item/wordpress-themes/education-hub"
   },
+  "WEN Themes Signify Dark": {
+    "cats": [
+      80
+    ],
+    "description": "Signify Dark is a free dark blog and corporate WordPress theme that is trendy, responsive, and dynamic by WEN Themes.",
+    "icon": "WEN Themes.png",
+    "js": {
+      "signifyOptions": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://wenthemes.com/item/wordpress-themes/signify-dark"
+  },
   "WHMCS": {
     "cats": [
       1
@@ -114,6 +130,24 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/cache/wpfc-minified/",
     "website": "https://www.wpfastestcache.com"
+  },
+  "WP Google Map Plugin": {
+    "cats": [
+      87,
+      35
+    ],
+    "description": "WP Google Map Plugin allows you to create google maps shortcodes to display responsive google maps on pages, widgets and custom templates.",
+    "icon": "WP Google Map Plugin.png",
+    "js": {
+      "wpgmp_local": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.wpmapspro.com"
   },
   "WP Maintenance Mode": {
     "cats": [
@@ -327,7 +361,11 @@
       }
     },
     "icon": "Wagtail.svg",
-    "implies": "Django",
+    "implies": [
+      "Django",
+      "Python"
+    ],
+    "oss": true,
     "website": "https://wagtail.io/"
   },
   "Wair": {
@@ -639,6 +677,20 @@
     "url": "\\.weblium\\.site",
     "website": "https://weblium.com"
   },
+  "Webriti Busiprof": {
+    "cats": [
+      80
+    ],
+    "description": "Busiprof is a fully responsive and translation-ready WordPress theme by Webriti.",
+    "icon": "Webriti.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/busiprof(?:-pro)?/",
+    "website": "https://webriti.com/busiprof-premium-wordpress-theme-1"
+  },
   "WebsPlanet": {
     "cats": [
       1
@@ -822,7 +874,7 @@
       52
     ],
     "description": "WhatsApp Business is a free to download app available on Android and iPhone using which businesses can connect with their customers.",
-    "dom": "link[href*='api.whatsapp.com/send'], link[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
+    "dom": "a[href*='api.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
     "icon": "WhatsApp.svg",
     "website": "https://www.whatsapp.com/business"
   },
@@ -1162,6 +1214,43 @@
       "/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
     ],
     "website": "https://woocommerce.com"
+  },
+  "WooCommerce Blocks": {
+    "cats": [
+      87
+    ],
+    "description": "WooCommerce Blocks offers a range of Gutenberg blocks you can use to build and customise your site.",
+    "dom": {
+      "link[href*='/wp-content/plugins/woo-gutenberg-products-block/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/woo-gutenberg-products-block/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "WooCommerce Blocks.png",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "website": "https://github.com/woocommerce/woocommerce-gutenberg-products-block"
+  },
+  "WooCommerce Multilingual": {
+    "cats": [
+      87,
+      89
+    ],
+    "description": "WooCommerce Multilingual plugin makes it possible to run fully multilingual ecommerce sites using WooCommerce and WPML.",
+    "icon": "WooCommerce Multilingual.png",
+    "requires": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "scriptSrc": "/wp-content/plugins/woocommerce-multilingual/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/woocommerce-multilingual"
   },
   "WooCommerce PayPal Checkout Payment Gateway": {
     "cats": [
