@@ -35,6 +35,13 @@
       99
     ],
     "description": "DHL is an international courier, package delivery and express mail service, which is a division of the German logistics firm Deutsche Post.",
+    "dom": {
+      "img[alt*='dhl' i]": {
+        "attributes": {
+          "alt": "\\bDHL\\b"
+        }
+      }
+    },
     "icon": "DHL.svg",
     "requiresCategory": 6,
     "text": "\\bDHL\\b",
@@ -220,6 +227,22 @@
       "generator": "Danneo CMS ([\\d.]+)\\;version:\\1"
     },
     "website": "http://danneo.com"
+  },
+  "Daphne": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "Daphne"
+    },
+    "implies":[
+      "TwistedWeb",
+      "Python",
+      "Zope"
+    ],
+    "oss": true,
+    "icon": "daphne.svg",
+    "website": "https://github.com/django/daphne"
   },
   "Dart": {
     "cats": [
@@ -717,6 +740,7 @@
       "__admin_media_prefix__": "",
       "django": ""
     },
+    "oss": true,
     "website": "https://djangoproject.com"
   },
   "Django CMS": {
@@ -880,6 +904,23 @@
     ],
     "website": "https://www.df.eu"
   },
+  "Dominate WooCommerce": {
+    "cats": [
+      87
+    ],
+    "description": "Dominate WooCommerce is a cloud-based checkout-page which supports PayPal Smart buttons for Venmo, PayPal Credit, and other payment methods.",
+    "icon": "Dominate.png",
+    "requires": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "scriptSrc": "/wp-content/plugins/iwd-checkout-connector/",
+    "saas": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://www.dominate.co/woocommerce"
+  },
   "Doofinder": {
     "cats": [
       29
@@ -1008,6 +1049,21 @@
     "scriptSrc": "draft-js(@|/)([\\d.]+)\\;version:\\2",
     "website": "https://draftjs.org/"
   },
+  "Draftpress HFCM": {
+    "cats": [
+      87
+    ],
+    "description": "Header Footer Code Manager by Draftpress is a easy interface to add snippets to the header or footer or above or below the content of your page.",
+    "html": "<!--[^>]*HFCM\\sby\\s99\\sRobots",
+    "icon": "Draftpress.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://draftpress.com/products/header-footer-code-manager-pro/"
+  },
   "DreamHost": {
     "cats": [
       88
@@ -1075,6 +1131,16 @@
     ],
     "saas": true,
     "website": "https://www.drift.com/"
+  },
+  "Dropbox": {
+    "cats": [
+      95
+    ],
+    "dns": {
+      "TXT": "dropbox-domain-verification"
+    },
+    "icon": "Dropbox.svg",
+    "website": "https://www.dropbox.com"
   },
   "Drupal": {
     "cats": [

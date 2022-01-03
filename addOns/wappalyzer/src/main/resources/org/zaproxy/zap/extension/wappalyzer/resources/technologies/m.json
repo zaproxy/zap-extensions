@@ -30,6 +30,15 @@
     "saas": true,
     "website": "https://ma-jin.jp"
   },
+  "Macaron":{
+    "cats": [
+      18
+    ],
+    "description":"Macaron is a high productive and modular web framework in Go.",
+    "implies": "Go",
+    "icon": "Macaron.png",
+    "website": "https://go-macaron.com"
+  },
   "MGID": {
     "cats": [
       36
@@ -45,6 +54,21 @@
     "saas": true,
     "scriptSrc": "\\.mgid\\.com/",
     "website": "https://www.mgid.com"
+  },
+  "MGPanel": {
+    "cats": [
+      1
+    ],
+    "description": "MGPanel has it all, a content management system that gives programmers the freedom to create professional web pages from scratch, also providing their clients with a self-managing platform.",
+    "icon": "MGPanel.png",
+    "implies": "MySQL",
+    "pricing": [
+      "poa"
+    ],
+    "requires": "PHP",
+    "saas": true,
+    "scriptSrc": "\\.mgpanel\\.org/",
+    "website": "https://mgpanel.org"
   },
   "MODX": {
     "cats": [
@@ -1356,6 +1380,20 @@
     ],
     "website": "https://mixpanel.com"
   },
+  "MizbanCloud": {
+    "cats": [
+      31
+    ],
+    "description": "MizbanCloud is a total cloud infrastructure solutions, CDN service provider and Cloud Computing Services, Cloud DNS, Cloud Security, VoD Streaming Service, Live Streaming, Cloud Object Storage.",
+    "headers": {
+      "server": "^MizbanCloud$"
+    },
+    "icon": "MizbanCloud.svg",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://mizbancloud.com"
+  },
   "MkDocs": {
     "cats": [
       4
@@ -1858,12 +1896,32 @@
     "cats": [
       6
     ],
-    "html": [
-      "<div class='mfl-made-by-myfoodlink'>",
-      "<a href=\"https://www.myfoodlink.com.au"
+    "description": "My Food Link provides a fully hosted specialist online supermarket ecommerce platform to supermarkets and grocers.",
+    "icon": "My Food Link.svg",
+    "js": {
+      "myfoodlink": "",
+      "Myfoodlink": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
     ],
-    "icon": "myfoodlink.png",
-    "website": "https://www.myfoodlink.com.au/"
+    "website": "https://www.myfoodlink.com.au"
+  },
+  "Muuri": {
+    "cats": [
+      59
+    ],
+    "description": "Muuri is a JavaScript layout engine that allows you to build all kinds of layouts and make them responsive, sortable, filterable, draggable and/or animated.",
+    "icon": "Muuri.svg",
+    "js": {
+      "Muuri": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://muuri.dev"
   },
   "MyBB": {
     "cats": [
@@ -1871,15 +1929,23 @@
     ],
     "cpe": "cpe:/a:mybb:mybb",
     "description": "MyBB is a free and open-source forum software written in PHP.",
-    "html": "(?:<script [^>]+\\s+<!--\\s+lang\\.no_new_posts|<a[^>]* title=\"Powered By MyBB)",
     "icon": "MyBB.png",
     "implies": [
       "PHP",
       "MySQL"
     ],
     "js": {
-      "MyBB": ""
+      "MyBB": "",
+      "MyBBEditor": ""
     },
+    "cookies": {
+      "mybb[lastvisit]": "",
+      "mybb[lastactive]": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "website": "https://mybb.com"
   },
   "MyBlogLog": {

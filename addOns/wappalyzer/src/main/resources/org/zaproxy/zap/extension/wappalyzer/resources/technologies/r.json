@@ -347,6 +347,20 @@
     "scriptSrc": "\\.reamaze\\.com/",
     "website": "https://www.reamaze.com"
   },
+  "ReCaptcha v2 for Contact Form 7": {
+    "cats": [
+      87
+    ],
+    "description": "Contact Form 7 v5.1 dropped support for reCaptcha v2 along with the [recaptcha] tag December 2018. This plugin brings that functionality back from Contact Form 7 5.0.5 and re-adds the [recaptcha] tag.",
+    "icon": "ReCaptcha v2 for Contact Form 7.svg",
+    "implies": "Contact Form 7",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wpcf7-recaptcha/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/wpcf7-recaptcha/"
+  },
   "ReDoc": {
     "cats": [
       4
@@ -486,6 +500,25 @@
     },
     "scriptSrc": "api\\.recart\\.com",
     "website": "https://recart.com/"
+  },
+  "Recent Posts Widget With Thumbnails": {
+    "cats": [
+      87
+    ],
+    "description": "Recent Posts Widget With Thumbnails is based on the well-known WordPress default widget 'Recent Posts' and extended to display more informations about the posts.",
+    "dom": {
+      "link[href*='/wp-content/plugins/recent-posts-widget-with-thumbnails/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/recent-posts-widget-with-thumbnails/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Recent Posts Widget With Thumbnails.png",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/recent-posts-widget-with-thumbnails/"
   },
   "Recharge": {
     "cats": [
@@ -891,6 +924,26 @@
     "saas": true,
     "scriptSrc": "static\\.resmio\\.\\w+/static/",
     "website": "https://www.resmio.com"
+  },
+  "Responsive Lightbox & Gallery": {
+    "cats": [
+      87,
+      7
+    ],
+    "description": "Responsive Lightbox & Gallery plugin is a lightweight WordPress gallery plugin by Digital Factory.",
+    "icon": "Digital Factory.png",
+    "js": {
+      "rlArgs.activeGalleries": "",
+      "rl_hide_image": "",
+      "rl_view_image": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/responsive-lightbox/.+front\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://dfactory.eu/products/responsive-lightbox-gallery-extensions/"
   },
   "ResponsiveVoice": {
     "cats": [

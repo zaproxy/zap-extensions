@@ -279,10 +279,30 @@
         }
       }
     },
-    "html": "<!-- This site is optimized with the Yoast (?:WordPress )?SEO plugin v([\\d.]+) -\\;version:\\1",
+    "html": [
+      "<!-- This site is optimized with the Yoast (?:WordPress )?SEO plugin v([^\\s]+) -\\;version:\\1",
+      "<!-- This site is optimized with the Yoast SEO Premium plugin v(?:[^\\s]+) \\(Yoast SEO v([^\\s]+)\\) -\\;version:\\1"
+    ],
     "icon": "Yoast SEO.png",
+    "oss": true,
     "requires": "WordPress",
-    "website": "https://yoast.com"
+    "website": "https://yoast.com/wordpress/plugins/seo/"
+  },
+  "Yoast SEO Premium": {
+    "cats": [
+      54
+    ],
+    "description": "Yoast SEO Premium is a search engine optimisation plugin for WordPress and other platforms.",
+    "html": "<!-- This site is optimized with the Yoast SEO Premium plugin v([^\\s]+) \\;version:\\1",
+    "icon": "Yoast SEO.png",
+    "oss": true,
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://yoast.com/wordpress/plugins/seo/"
   },
   "Yodel": {
     "cats": [

@@ -858,5 +858,20 @@
     ],
     "saas": true,
     "website": "https://www.k-ecommerce.com"
+  },
+  "keep. archeevo": {
+    "cats": [
+      95
+    ],
+    "description": "keep. archeevo is an archival management software that aims to support all the functional areas of an archival institution, covering activities ranging from archival description to employee performance assessment.",
+    "icon": "keep. archeevo.png",
+    "js": {
+      "ArcheevoSnippets.mostviewedDocumentsURL": "",
+      "embedArcheevoBasicSearch": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.keep.pt/en/produts/archeevo-archival-management-software"
   }
 }

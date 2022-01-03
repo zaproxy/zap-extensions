@@ -99,6 +99,17 @@
     },
     "website": "http://www.whorl.co.uk"
   },
+  "JSS":{
+    "cats": [
+      12,
+      47
+    ],
+    "description": "JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way.",
+    "dom": "style[data-jss]",
+    "icon": "JSS.png",
+    "oss": true,
+    "website": "https://cssinjs.org/"
+  },
   "JTL Shop": {
     "cats": [
       6
@@ -488,6 +499,21 @@
     "implies": "Shopify",
     "scriptSrc": "mt\\.tryjumbo\\.com",
     "website": "https://www.tryjumbo.com/"
+  },
+  "Jumio": {
+    "cats": [
+      16
+    ],
+    "description": "Jumio is an online mobile payments and identity verification company that provides card and ID scanning and validation products for mobile and web transactions.",
+    "dom": "iframe[src*='.netverify.com/']",
+    "icon": "Jumio.svg",
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.jumio.com"
   },
   "Jumpseller": {
     "cats": [

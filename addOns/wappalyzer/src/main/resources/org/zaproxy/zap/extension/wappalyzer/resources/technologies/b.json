@@ -171,6 +171,25 @@
     },
     "website": "https://tools.ietf.org/html/rfc7617"
   },
+  "Batflat": {
+    "cats": [
+      1
+    ],
+    "description": "Batflat is a lightweight CMS for free.",
+    "icon": "Batflat.svg",
+    "implies": [
+      "PHP",
+      "SQLite"
+    ],
+    "meta": {
+      "generator": "^Batflat$"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://batflat.org"
+  },
   "Bazaarvoice": {
     "cats": [
       90,
@@ -586,6 +605,24 @@
     ],
     "website": "https://developers.bloomreach.com/products/personalization/dev-studio"
   },
+  "Blossom Travel": {
+    "cats": [
+      80
+    ],
+    "description": "Blossom Travel is a free WordPress theme which allows you to create various types of feminine blogs such as travel blog, personal blog, fashion blog, beauty blog, and many more.",
+    "icon": "Blossom.png",
+    "js": {
+      "blossom_travel_data": "",
+      "blossom_travel_pro_data": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/blossom-travel(?:-pro)?/.+custom\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://blossomthemes.com/wordpress-themes/blossom-travel"
+  },
   "Blue": {
     "cats": [
       77
@@ -750,6 +787,26 @@
     "scriptSrc": "bokeh.*\\.js",
     "website": "https://bokeh.org"
   },
+  "Bokun": {
+    "cats": [
+      5,
+      72
+    ],
+    "description": "Bokun is a cloud-based booking management solution which enables small to large travel and tourism businesses manage reservations, products content, images, categorisation, pricing, inventory, and payments.",
+    "icon": "Bokun.svg",
+    "js": {
+      "BokunWidgetEmbedder": "",
+      "__bokunWidgets": "",
+      "bokunBookingChannelUUID": "",
+      "bokunSessionId": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.bokun.io"
+  },
   "Bol.com": {
     "cats": [
       99
@@ -758,7 +815,7 @@
     "icon": "Bol.com.svg",
     "requiresCategory": 6,
     "text": [
-      "\\bBOL\\b",
+      "\\b(?<!-)BOL\\b",
       "\\bbol\\.com\\b"
     ],
     "website": "https://www.bol.com"
@@ -969,14 +1026,14 @@
       17
     ],
     "description": "Bootstrap Icons is a growing library of SVG icons that are designed by @mdo and maintained by the Bootstrap Team.",
-    "icon": "Bootstrap Icons.svg",
-    "dom": { 
+    "dom": {
       "link[href*='bootstrap-icons']": {
         "attributes": {
           "href": "bootstrap-icons(?:@|/)?([\\d\\.]+)?\\;version:\\1"
         }
       }
     },
+    "icon": "Bootstrap Icons.svg",
     "oss": true,
     "pricing": [
       "freemium"
@@ -1460,6 +1517,16 @@
       "\\bBudbee\\b"
     ],
     "website": "https://app.budbee.com/"
+  },
+  "BuddyPress": {
+    "cats": [
+      87
+    ],
+    "description": "BuddyPress is designed to allow schools, companies, sports teams, or any other niche community to start their own social network or communication tool.",
+    "icon": "BuddyPress.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/buddypress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://buddypress.org"
   },
   "BugHerd": {
     "cats": [

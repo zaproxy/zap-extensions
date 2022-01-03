@@ -161,6 +161,17 @@
     "scriptSrc": "/wp-content/themes/(?:t|T)otal(?:-plus)?/",
     "website": "https://hashthemes.com/wordpress-theme/total"
   },
+  "Hashnode": {
+    "cats": [
+      11
+    ],
+    "description": "Hashnode is a free developer blogging platform that allows you to publish articles on your own domain and helps you stay connected with a global developer community.",
+    "dom": "div.css-zigog8",
+    "icon": "hashnode.png",
+    "scriptSrc": "hashnode\\.com",
+    "url": "^https?://[^/]+\\.(?:hashnode)\\.dev",
+    "website": "https://hashnode.com/"
+  },
   "Haskell": {
     "cats": [
       27
@@ -372,7 +383,7 @@
         }
       }
     },
-    "icon": "themeisle.png",
+    "icon": "ThemeIsle.png",
     "requires": "WordPress",
     "scriptSrc": "themes/hestia.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/hestia/"
@@ -438,6 +449,22 @@
     },
     "icon": "Hiawatha.png",
     "website": "http://hiawatha-webserver.org"
+  },
+  "HighStore": {
+    "cats": [
+      6
+    ],
+    "description": "HighStore is an ecommerce platform from Iran.",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "^HighStore\\.IR$",
+      "hs:version": "^([\\d\\.]+)$\\;version:\\1\\;confidence:50"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://digitalserver.ir"
   },
   "Highcharts": {
     "cats": [
@@ -1029,6 +1056,18 @@
     "saas": true,
     "scriptSrc": "\\.hushly\\.com/",
     "website": "https://www.hushly.com"
+  },
+  "Hypercorn": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "hypercorn"
+    },
+    "icon": "hypercorn.png",
+    "oss": true,
+    "implies": "Python",
+    "website": "https://pgjones.gitlab.io/hypercorn/"
   },
   "Hyperspeed": {
     "cats": [

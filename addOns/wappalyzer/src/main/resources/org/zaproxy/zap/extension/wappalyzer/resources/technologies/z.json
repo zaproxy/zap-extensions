@@ -73,6 +73,22 @@
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "http://zanox.com"
   },
+  "Zaraz": {
+    "cats": [
+      92
+    ],
+    "description": "Zaraz allows most tools to send their information through the Zaraz backend, replacing multiple network requests with a single request. Zaraz replaces heavy third-party widgets with a lighter-weight version that loads first so that the full-featured tool loads only when the browser reaches interactivity or upon user interaction.",
+    "icon": "Zaraz.svg",
+    "js": {
+      "zarazData": "",
+      "zaraz": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://zaraz.com"
+  },
   "Zeleris": {
     "cats": [
       99

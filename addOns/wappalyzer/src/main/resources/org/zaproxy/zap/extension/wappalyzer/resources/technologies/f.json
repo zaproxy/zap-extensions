@@ -682,6 +682,7 @@
     },
     "icon": "Flask.png",
     "implies": "Python",
+    "oss": true,
     "website": "http://flask.pocoo.org"
   },
   "Flat UI": {
@@ -863,6 +864,31 @@
     ],
     "website": "https://fontawesome.com/"
   },
+  "FooPlugins FooGallery": {
+    "cats": [
+      87,
+      7
+    ],
+    "description": "FooPlugins FooGallery is a great image gallery plugin for WordPress.",
+    "dom": {
+      "link[href*='/wp-content/plugins/foogallery/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/foogallery/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "FooPlugins.svg",
+    "js": {
+      "FooGallery": ""
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "requires": "WordPress",
+    "website": "https://fooplugins.com/foogallery-wordpress-gallery-plugin"
+  },
   "Fork Awesome": {
     "cats": [
       17
@@ -895,6 +921,22 @@
       "generator": "^Fork CMS$"
     },
     "website": "http://www.fork-cms.com/"
+  },
+  "Formidable Form": {
+    "cats": [
+      87,
+      73
+    ],
+    "description": "Formidable Forms is a WordPress plugin that enables you to create quizzes, surveys, calculators, timesheets, multi-page application forms.",
+    "dom": "link[href*='/wp-content/plugins/formidable/']",
+    "icon": "Formidable Form.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://formidableforms.com"
   },
   "Formitable": {
     "cats": [
@@ -1118,6 +1160,21 @@
     ],
     "website": "https://www.laposte.fr/entreprise/produit-entreprise/frequenceo"
   },
+  "Fresco": {
+    "cats": [
+      59
+    ],
+    "description": "Fresco is a responsive lightbox. Fresco comes with thumbnail support, fullscreen zoom, Youtube and Vimeo integration for HTML5 video and a powerful Javascript API.",
+    "icon": "default.svg",
+    "js": {
+      "Fresco.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://github.com/staaky/fresco"
+  },
   "Freshchat": {
     "cats": [
       52
@@ -1339,5 +1396,23 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/futurio/.+customscript\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://futuriowp.com"
+  },
+  "Fynd Platform": {
+    "cats": [
+      6
+    ],
+    "description": "Fynd Platform is a subscription based software as a service where brands can mange their catalog, send marketing sms/emailers and sell their products.",
+    "icon": "Fynd Platform.png",
+    "implies": "Vue.js",
+    "js": {
+      "__fyndAction": ""
+    },
+    "saas": true,
+    "pricing": [
+      "high",
+      "recurring",
+      "payg"
+    ],
+    "website": "https://platform.fynd.com"
   }
 }

@@ -11,6 +11,16 @@
     },
     "website": "http://www.lepton-cms.org"
   },
+  "Libravatar": {
+    "cats": [
+      19
+    ],
+    "description": "Libravatar is a service for fetching avatar images for e-mail addresses and OpenIDs in a privacy respecting way.",
+    "dom": "img[src*='.libravatar.org/avatar/']",
+    "oss": true,
+    "icon": "libravatar.png",
+    "website": "https://www.libravatar.org/"
+  },
   "LINE Login": {
     "cats": [
       69
@@ -348,6 +358,21 @@
     "requires": "WordPress",
     "saas": true,
     "website": "https://level5advertising.com/websites/"
+  },
+  "Lieferando": {
+    "cats": [
+      1,
+      93
+    ],
+    "description": "Lieferando is an online portal for food orders.",
+    "icon": "Lieferando.svg",
+    "js": {
+      "Tealium.pagedata.country": "lieferando\\.de"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.lieferando.de"
   },
   "Liferay": {
     "cats": [
@@ -1099,6 +1124,23 @@
     "saas": true,
     "website": "https://www.loqate.com"
   },
+  "LottieFiles": {
+    "cats": [
+      19
+    ],
+    "description": "LottieFiles is an open-source animation file format that's tiny, high quality, interactive, and can be manipulated at runtime.",
+    "dom": "lottie-player, div[data-animation-type='lottie'], div[data-testid='lottie-player'], clipPath[id*='__lottie_element_']",
+    "icon": "LottieFiles.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "scriptSrc": [
+      "/dist/lottie-player\\.js",
+      "/dist/tgs-player\\.js"
+    ],
+    "website": "https://lottiefiles.com"
+  },
   "Lotus Domino": {
     "cats": [
       22
@@ -1230,10 +1272,15 @@
     "cats": [
       22
     ],
+    "description": "Lighttpd is an open-source web server optimised for speed-critical environment.",
     "headers": {
-      "Server": "lighttpd(?:/([\\d.]+))?\\;version:\\1"
+      "Server": "(?:L|l)ight(?:y)?(?:tpd)?(?:/([\\d\\.]+))?\\;version:\\1"
     },
-    "icon": "lighttpd.png",
+    "icon": "lighttpd.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "website": "http://www.lighttpd.net"
   }
 }

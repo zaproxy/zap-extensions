@@ -1,4 +1,12 @@
 {
+  "C":{
+    "cats": [
+      27
+    ],
+    "description":"C is a general-purpose, procedural computer programming language supporting structured programming, lexical variable scope, and recursion, with a static type system.",
+    "icon": "C.png",
+    "website": "http://www.open-std.org/jtc1/sc22/wg14/"
+  },
   "CCV Shop": {
     "cats": [
       6
@@ -120,6 +128,22 @@
     ],
     "website": "http://www.cs-cart.com"
   },
+  "CSSIgniter Olsen Light": {
+    "cats": [
+      80
+    ],
+    "description": "CSSIgniter Olsen Light is a clean, minimal, stylish and elegant WordPress blog theme, perfect for lifestyle, food, cooking, fashion, travel, wedding, health & fitness, photography and beauty blogging.",
+    "icon": "CSSIgniter.svg",
+    "pricing": [
+      "freemium",
+      "onetime",
+      "recurring",
+      "low"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/olsen-light/.+scripts(?:\\.min)?\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.cssigniter.com/themes/olsen-light"
+  },
   "CTT": {
     "cats": [
       99
@@ -178,8 +202,8 @@
     "cats": [
       6
     ],
-    "description": "Cafe24 is a ecommerce hosting platform that provides everything you need to build an online DTC store in one-stop.",
-    "icon": "Cafe24.png",
+    "description": "Cafe24 is a global ecommerce platform that provides everything people need to build an online DTC store in one stop.",
+    "icon": "Cafe24.svg",
     "js": {
       "EC_GLOBAL_DATETIME": "",
       "EC_GLOBAL_INFO": "",
@@ -189,7 +213,7 @@
       "low"
     ],
     "saas": true,
-    "website": "https://ec.cafe24.com/"
+    "website": "https://www.cafe24.com/en/"
   },
   "CakePHP": {
     "cats": [
@@ -205,6 +229,30 @@
       "application-name": "CakePHP"
     },
     "website": "http://cakephp.org"
+  },
+  "Caldera Forms": {
+    "cats": [
+      87
+    ],
+    "description": "Caldera Forms is the free WordPress form builder plugin.",
+    "dom": {
+      "link[href*='/wp-content/plugins/caldera-forms/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/caldera-forms/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Caldera Forms.png",
+    "js": {
+      "calderaForms": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/caldera-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://calderaforms.com"
   },
   "CalendarHero": {
     "cats": [
@@ -292,6 +340,20 @@
     "saas": true,
     "scriptSrc": "\\.createsend1\\.com/",
     "website": "https://www.campaignmonitor.com"
+  },
+  "Candid Themes Fairy": {
+    "cats": [
+      80
+    ],
+    "description": "Fairy is a free and minimal WordPress blog theme by Candid Themes.",
+    "icon": "Candid Themes.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/fairy(?:-premium)?/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.candidthemes.com/themes/fairy"
   },
   "Canto": {
     "cats": [
@@ -385,10 +447,12 @@
       "a[href*='/bag']",
       "a[href*='/shoppingbag']",
       "a[href*='/checkout']",
+      "a[href*='/winkelwagen']",
       "[aria-controls='cart']",
       "[class*='shopping-bag']",
       "[class*='shopping-cart']",
-      "[class*='checkout']"
+      "[class*='checkout']",
+      "[class*='winkelwagen']"
     ],
     "icon": "Cart-generic.svg",
     "js": {
@@ -463,6 +527,21 @@
     "scriptSrc": "/wp-content/themes/catch-box(?:-pro)?/",
     "website": "https://catchthemes.com/themes/catch-box"
   },
+  "Catch Themes Fotografie": {
+    "cats": [
+      80
+    ],
+    "description": "Fotografie is a modern photography WordPress theme that comes with high-quality features and minimal design by Catch Themes.",
+    "dom": "link[href*='/wp-content/themes/fotografie/']",
+    "icon": "Catch Themes.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/fotografie(?:-pro)?/",
+    "website": "https://catchthemes.com/themes/fotografie"
+  },
   "Cecil": {
     "cats": [
       57
@@ -485,6 +564,20 @@
       "\\bCeleritas\\b"
     ],
     "website": "https://celeritastransporte.com"
+  },
+  "Censhare": {
+    "cats": [
+      95
+    ],
+    "description": "Censhare is a commercial digital experience platform in the form of an enterprise content management system.",
+    "dom": "img[data-src*='CENSHARE'], img[src*='CENSHARE']",
+    "icon": "Censhare.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.censhare.com"
   },
   "CentOS": {
     "cats": [
@@ -1205,11 +1298,11 @@
       95
     ],
     "description": "Cloudinary is an end-to-end image- and video-management solution for websites and mobile apps, covering everything from image and video uploads, storage, manipulations, optimisations to delivery.",
-    "icon": "Cloudinary.svg",
     "dom": "img[src*='.cloudinary.com/'], img[data-src*='.cloudinary.com/']",
     "headers": {
       "Content-Security-Policy": "player\\.cloudinary\\.com"
     },
+    "icon": "Cloudinary.svg",
     "js": {
       "_cloudinary": ""
     },
@@ -1696,6 +1789,20 @@
     "website": "https://commerce7.com",
     "xhr": "api\\.commerce7\\.com"
   },
+  "commercetools": {
+    "cats": [
+      6
+    ],
+    "description": "commercetools is a headless commerce platform.",
+    "icon": "commercetools.svg",
+    "dom": "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://commercetools.com"
+  },
   "Complianz": {
     "cats": [
       74,
@@ -2067,6 +2174,23 @@
     ],
     "saas": true,
     "website": "https://cookieinformation.com"
+  },
+  "Cookie Information plugin": {
+    "cats": [
+      87,
+      67
+    ],
+    "description": "Cookie Information plugin helps your website stay compliant with GDPR using a free cookie pop-up, consent log, and more.",
+    "icon": "Cookie Information.svg",
+    "implies": "Cookie Information",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wp-gdpr-compliance/",
+    "website": "https://wordpress.org/plugins/wp-gdpr-compliance"
   },
   "Cookie Notice": {
     "cats": [
@@ -2657,6 +2781,21 @@
     "scriptSrc": "cufon-yui\\.js",
     "website": "http://cufon.shoqolate.com"
   },
+  "Custom Fonts": {
+    "cats": [
+      87,
+      17
+    ],
+    "description": "Custom Fonts plugin helps you easily embed custom fonts files (woff2, woff, ttf, svg, eot, otf) easily in your WordPress website.",
+    "icon": "Custom Fonts.png",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/custom-fonts/",
+    "website": "https://github.com/brainstormforce/custom-fonts"
+  },
   "Customer.io": {
     "cats": [
       32
@@ -2787,7 +2926,10 @@
       "generated by <a href='http://git\\.zx2c4\\.com/cgit/about/'>cgit v([\\d.a-z-]+)</a>\\;version:\\1"
     ],
     "icon": "cgit.png",
-    "implies": "git",
+    "implies": [
+      "git",
+      "C"
+    ],
     "meta": {
       "generator": "^cgit v([\\d.a-z-]+)$\\;version:\\1"
     },
@@ -2832,8 +2974,8 @@
     "cats": [
       59
     ],
-    "icon": "core-js.png",
     "description": "core-js is a modular standard library for JavaScript, with polyfills for cutting-edge ECMAScript features.",
+    "icon": "core-js.png",
     "js": {
       "__core-js_shared__": "",
       "__core-js_shared__.versions.0.version": "^(.+)$\\;version:\\1",

@@ -266,7 +266,7 @@
         }
       }
     },
-    "icon": "themeisle.png",
+    "icon": "ThemeIsle.png",
     "requires": "WordPress",
     "scriptSrc": "themes/neve\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/neve/"

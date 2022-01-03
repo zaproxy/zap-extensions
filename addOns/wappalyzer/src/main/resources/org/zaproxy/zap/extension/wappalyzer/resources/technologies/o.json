@@ -255,10 +255,12 @@
     "description": "Olapic is a content marketing tool specifically focused on visual marketing content.",
     "icon": "Olapic.svg",
     "js": {
-      "olapic.version": "^v([\\d\\.]+)$\\;version:\\1"
+      "olapic.version": "^v([\\d\\.]+)$\\;version:\\1",
+      "olapic": ""
     },
     "pricing": [
-      "poa"
+      "poa",
+      "high"
     ],
     "saas": true,
     "website": "https://www.olapic.com"
@@ -481,6 +483,25 @@
       "optanon\\.blob\\.core\\.windows\\.net"
     ],
     "website": "http://www.onetrust.com"
+  },
+  "Onfido": {
+    "cats": [
+      16,
+      69
+    ],
+    "description": "Onfido is a technology company that helps businesses verify people's identities using a photo-based identity document, a selfie and artificial intelligence algorithms.",
+    "dom": "link[href*='.onfido.com'], iframe[src*='onfido.com']",
+    "headers": {
+      "content-security-policy": "(?:api|sync)\\.onfido\\.com"
+    },
+    "icon": "Onfido.svg",
+    "pricing": [
+      "payg",
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://onfido.com"
   },
   "Onshop": {
     "cats": [
@@ -1023,6 +1044,17 @@
     "saas": true,
     "scriptSrc": "www\\.orankl\\.com/",
     "website": "https://www.orankl.com"
+  },
+  "OrbitFox": {
+    "cats": [
+      87,
+      5
+    ],
+    "description": "OrbitFox is a multi-featured WordPress plugin that works with the Elementor, Beaver Builder and Gutenberg site-building utilities by Themeisle.",
+    "dom": "link[href*='/wp-content/plugins/themeisle-companion/']",
+    "icon": "OrbitFox.svg",
+    "requires": "WordPress",
+    "website": "https://themeisle.com/plugins/orbit-fox-companion"
   },
   "Orchard CMS": {
     "cats": [

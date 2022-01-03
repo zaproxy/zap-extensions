@@ -1,4 +1,21 @@
 {
+  "U-KOMI": {
+    "cats": [
+      90
+    ],
+    "description": "U-KOMI is a user generated content review marketing tool.",
+    "icon": "U-KOMI.svg",
+    "js": {
+      "GetUkomiSliderItemInfo": "",
+      "ukomiInstaLikeStep01": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://u-komi.com/en/"
+  },
   "UIKit": {
     "cats": [
       66
@@ -67,7 +84,7 @@
     "icon": "UPS.svg",
     "requiresCategory": 6,
     "text": [
-      "\\bUPS\\b"
+      "\\b(?<!-)UPS\\b"
     ],
     "website": "https://www.ups.com"
   },
@@ -137,6 +154,20 @@
     "requires": "WordPress",
     "website": "https://www.createit.com/gdpr"
   },
+  "UltimatelySocial": {
+    "cats": [
+      87
+    ],
+    "description": "Ultimately Social (Share Buttons & Sharing Icons) is a plugin that allows you to place fancy social media icons and buttons on your WordPress website.",
+    "icon": "UltimatelySocial.png",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ultimate-social-media-icons/",
+    "website": "https://www.ultimatelysocial.com"
+  },
   "UltraCart": {
     "cats": [
       6
@@ -149,6 +180,16 @@
     "scriptSrc": "cgi-bin\\/UCJavaScript\\?",
     "url": "/cgi-bin/UCEditor\\?",
     "website": "http://ultracart.com"
+  },
+  "Umami": {
+    "cats": [
+      10
+    ],
+    "description": "Umami is a self-hosted web analytics solution. It's goal is to provide a friendlier, privacy-focused alternative to Google Analytics and a free, open-sourced alternative to paid solutions.",
+    "icon": "umami.svg",
+    "oss": true,
+    "scriptSrc": "umami\\.js",
+    "website": "https://umami.is/"
   },
   "Umbraco": {
     "cats": [
@@ -529,6 +570,18 @@
     "saas": true,
     "scriptSrc": "static\\.usizy\\.es/",
     "website": "https://usizy.com"
+  },
+  "Uvicorn":{
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "uvicorn"
+    },
+    "implies": "Python",
+    "icon": "uvicorn.png",
+    "oss": true,
+    "website": "https://www.uvicorn.org/"
   },
   "uKnowva": {
     "cats": [
