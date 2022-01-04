@@ -48,13 +48,11 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         NumberedTabbedPane ntp = (NumberedTabbedPane) e.getSource();
-                        if (!adding) {
-                            if (ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
-                                // Clicked on plus tab or changed to it
-                                adding = true;
-                                ntp.addDefaultTab();
-                                adding = false;
-                            }
+                        if (!adding && ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
+                            // Clicked on plus tab or changed to it
+                            adding = true;
+                            ntp.addDefaultTab();
+                            adding = false;
                         }
                     }
                 });

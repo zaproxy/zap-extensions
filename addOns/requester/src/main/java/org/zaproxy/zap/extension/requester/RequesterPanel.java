@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.GridLayout;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -30,8 +31,6 @@ import org.parosproxy.paros.network.HttpMessage;
 public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String PANEL_NAME = "requesterpanel";
 
     private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null;
 
@@ -44,7 +43,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
         this.setDefaultAccelerator(
                 extension
                         .getView()
-                        .getMenuShortcutKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false));
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
         this.setShowByDefault(true);
         requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();
@@ -56,8 +55,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
     }
 
     public void newRequester(HttpMessage msg) {
-        ManualHttpRequestEditorPanel requestPane =
-                new ManualHttpRequestEditorPanel(true, "requesterpanel");
+        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
         requestPane.setMessage(msg);
         getRequesterNumberedTabbedPane().addTab(requestPane);
     }

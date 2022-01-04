@@ -128,7 +128,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
     public void newRequesterPane(HttpMessage msg) {
         getRequesterPanel().newRequester(msg);
-        if (getOptionsParam().isAutoFocus() == true) {
+        if (getOptionsParam().isAutoFocus()) {
             getRequesterPanel().setTabFocus();
         }
     }
