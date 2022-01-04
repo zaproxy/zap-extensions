@@ -20,16 +20,16 @@ env:                                   # The environment, mandatory
           pollUrl:                     # String, the URL to poll, only for 'poll' verification
           pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
           pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
-          - header:                    # The header name
-            value:                     # The header value
+            - header:                    # The header name
+              value:                     # The header value
       sessionManagement:
         method:                        # String, one of 'cookie', 'http', 'script'
         script:                        # String, path to script, only for 'script' session management
         scriptEngine:                  # String, the name of the script engine to use, only for 'script' session management
       users:                           # List of one or more users to use for authentication
-      - name:                          # String, the name to be used by the jobs
-        username:                      # String, the username to use when authenticating, vars supported
-        password:                      # String, the password to use when authenticating, vars supported
+        - name:                          # String, the name to be used by the jobs
+          username:                      # String, the username to use when authenticating, vars supported
+          password:                      # String, the password to use when authenticating, vars supported
   vars:                                # List of 0 or more variables, can be used in urls and selected other parameters
   parameters:
     failOnError: true                  # If set exit on an error         
@@ -43,6 +43,10 @@ jobs:
       updateAddOns: true
     install:                           # A list of non standard add-ons to install from the ZAP Marketplace
     uninstall:                         # A list of standard add-ons to uninstall
+
+  - type: api
+    name: api
+    parameters:
 
   - type: passiveScan-config
     name: passiveScan-config
@@ -58,8 +62,8 @@ jobs:
   - type: spider
     name: spider
     parameters:
-      context: 
-      url: 
+      context:
+      url:
 
   - type: delay
     name: delay

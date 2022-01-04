@@ -108,7 +108,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(8)));
+        assertThat(jobs.size(), is(equalTo(9)));
         assertThat(jobs.containsKey(AddOnJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
@@ -143,7 +143,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(9)));
+        assertThat(jobs.size(), is(equalTo(10)));
         assertThat(jobs.containsKey(jobName), is(equalTo(true)));
     }
 
