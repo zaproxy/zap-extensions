@@ -21,17 +21,28 @@ package org.zaproxy.addon.oast.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastRequest;
+import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 
@@ -39,12 +50,37 @@ public class OastPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final DateTimeFormatter ISO_HH_MM_SS =
+            new DateTimeFormatterBuilder()
+                    .appendValue(ChronoField.HOUR_OF_DAY, 2)
+                    .appendLiteral(':')
+                    .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+                    .optionalStart()
+                    .appendLiteral(':')
+                    .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+                    .toFormatter();
+
     private JToolBar mainToolBar;
     private JPanel mainPanel = null;
     private JScrollPane scrollPane = null;
+    private Map<String, JLabel> serviceStateLabels = null;
     private OastTable resultsTable = null;
     private OastTableModel model = null;
     private final ExtensionOast extensionOast;
+
+    private static final ImageIcon REGISTERED_ICON = getImageIcon("/resource/icon/16/152.png");
+    private static final ImageIcon UNREGISTERED_ICON =
+            DisplayUtils.isDarkLookAndFeel()
+                    ? getImageIcon("/resource/icon/16/158.png")
+                    : getImageIcon("/resource/icon/16/159.png");
+    private static final ImageIcon REGISTERED_ACTIVE_ICON =
+            getImageIcon("/org/zaproxy/addon/oast/resources/icons/oast_active_registered.png");
+    private static final ImageIcon UNREGISTERED_ACTIVE_ICON =
+            DisplayUtils.isDarkLookAndFeel()
+                    ? getImageIcon(
+                            "/org/zaproxy/addon/oast/resources/icons/oast_active_unregistered_dark.png")
+                    : getImageIcon(
+                            "/org/zaproxy/addon/oast/resources/icons/oast_active_unregistered.png");
 
     public OastPanel(ExtensionOast extensionOast) {
         super();
@@ -52,7 +88,7 @@ public class OastPanel extends AbstractPanel {
 
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("oast.panel.name"));
-        this.setIcon(new ImageIcon(OastPanel.class.getResource("/resource/icon/16/callbacks.png")));
+        this.setIcon(getImageIcon("/resource/icon/16/callbacks.png"));
         this.add(getMainPanel(), getMainPanel().getName());
     }
 
@@ -78,19 +114,62 @@ public class OastPanel extends AbstractPanel {
             mainToolBar.add(getClearButton());
             mainToolBar.add(getPollNowButton());
             mainToolBar.add(Box.createHorizontalGlue());
+            getServiceStateLabels().forEach((k, v) -> mainToolBar.add(v));
             mainToolBar.add(getOptionsButton());
         }
         return mainToolBar;
+    }
+
+    private Map<String, JLabel> getServiceStateLabels() {
+        if (serviceStateLabels == null) {
+            serviceStateLabels = new HashMap<>();
+            for (Map.Entry<String, OastService> e : extensionOast.getOastServices().entrySet()) {
+                if (e.getKey().equals(extensionOast.getCallbackService().getName())) {
+                    continue;
+                }
+
+                JLabel serviceStateLabel =
+                        new JLabel(
+                                e.getKey(), getStatusIcon(e.getKey(), false), SwingConstants.RIGHT);
+                serviceStateLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+                serviceStateLabels.put(e.getKey(), serviceStateLabel);
+                OastService service = e.getValue();
+                service.addOastStateChangedListener(this::oastStateChangedListener);
+            }
+        }
+        return serviceStateLabels;
+    }
+
+    private void oastStateChangedListener(OastState state) {
+        SwingUtilities.invokeLater(
+                () -> {
+                    JLabel serviceStateLabel = serviceStateLabels.get(state.getServiceName());
+                    if (!state.isRegistered()) {
+                        serviceStateLabel.setIcon(getStatusIcon(state.getServiceName(), false));
+                        serviceStateLabel.setText(state.getServiceName());
+                        return;
+                    }
+                    serviceStateLabel.setIcon(getStatusIcon(state.getServiceName(), true));
+                    if (state.getLastPollTime() != null) {
+                        String lastPoll = state.getLastPollTime().format(ISO_HH_MM_SS);
+                        serviceStateLabel.setText(
+                                Constant.messages.getString(
+                                        "oast.panel.currentState.lastPoll",
+                                        state.getServiceName(),
+                                        lastPoll));
+                        serviceStateLabel.setToolTipText(
+                                Constant.messages.getString(
+                                        "oast.panel.currentState.tooltip.lastPolled",
+                                        state.getServiceName()));
+                    }
+                });
     }
 
     private JButton getClearButton() {
         JButton clearButton =
                 new JButton(Constant.messages.getString("oast.panel.clear.button.label"));
         clearButton.setToolTipText(Constant.messages.getString("oast.panel.clear.button.toolTip"));
-        clearButton.setIcon(
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(
-                                OastPanel.class.getResource("/resource/icon/fugue/broom.png"))));
+        clearButton.setIcon(getImageIcon("/resource/icon/fugue/broom.png"));
         clearButton.addActionListener(e -> extensionOast.deleteAllCallbacks());
         return clearButton;
     }
@@ -100,9 +179,7 @@ public class OastPanel extends AbstractPanel {
                 new JButton(Constant.messages.getString("oast.panel.pollNow.button.label"));
         pollNowButton.setToolTipText(
                 Constant.messages.getString("oast.panel.pollNow.button.toolTip"));
-        pollNowButton.setIcon(
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(OastPanel.class.getResource("/resource/icon/16/124.png"))));
+        pollNowButton.setIcon(getImageIcon("/resource/icon/16/124.png"));
         pollNowButton.addActionListener(e -> extensionOast.pollAllServices());
         return pollNowButton;
     }
@@ -111,9 +188,7 @@ public class OastPanel extends AbstractPanel {
         JButton optionsButton = new JButton();
         optionsButton.setToolTipText(
                 Constant.messages.getString("oast.panel.options.button.label"));
-        optionsButton.setIcon(
-                DisplayUtils.getScaledIcon(
-                        new ImageIcon(OastPanel.class.getResource("/resource/icon/16/041.png"))));
+        optionsButton.setIcon(getImageIcon("/resource/icon/16/041.png"));
         optionsButton.addActionListener(
                 e ->
                         Control.getSingleton()
@@ -147,5 +222,18 @@ public class OastPanel extends AbstractPanel {
 
     public void clearOastRequests() {
         model.clear();
+    }
+
+    private static ImageIcon getImageIcon(String resourceName) {
+        return DisplayUtils.getScaledIcon(new ImageIcon(OastPanel.class.getResource(resourceName)));
+    }
+
+    private ImageIcon getStatusIcon(String serviceName, boolean registered) {
+        OastService activeScanService = extensionOast.getActiveScanOastService();
+        if (activeScanService != null && activeScanService.getName().equals(serviceName)) {
+            return registered ? REGISTERED_ACTIVE_ICON : UNREGISTERED_ACTIVE_ICON;
+        } else {
+            return registered ? REGISTERED_ICON : UNREGISTERED_ICON;
+        }
     }
 }

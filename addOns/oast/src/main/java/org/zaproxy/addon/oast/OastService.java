@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class OastService {
 
     private final List<OastRequestHandler> oastRequestHandlerList = new ArrayList<>();
+    private final List<OastStateChangedListener> oastStateChangedListenerList = new ArrayList<>();
 
     public abstract String getName();
 
@@ -61,6 +62,24 @@ public abstract class OastService {
 
     public void clearOastRequestHandlers() {
         oastRequestHandlerList.clear();
+    }
+
+    public void addOastStateChangedListener(OastStateChangedListener oastStateChangedListener) {
+        oastStateChangedListenerList.add(oastStateChangedListener);
+    }
+
+    public void fireOastStateChanged() {
+        fireOastStateChanged(new OastState(getName(), isRegistered(), null));
+    }
+
+    public void fireOastStateChanged(OastState oastState) {
+        for (OastStateChangedListener handler : oastStateChangedListenerList) {
+            handler.stateChanged(oastState);
+        }
+    }
+
+    public void clearOastStateChangedListeners() {
+        oastStateChangedListenerList.clear();
     }
 
     protected static class OastThreadFactory implements ThreadFactory {
