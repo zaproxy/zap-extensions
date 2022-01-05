@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 - Close callback connections gracefully.
 - Maintenance changes.
+- Make Interactsh payloads more robust by adding a further char with a dot before the actual correlationId (Issue 7003)
 
 ## [0.8.0] - 2022-01-10
 ### Changed
