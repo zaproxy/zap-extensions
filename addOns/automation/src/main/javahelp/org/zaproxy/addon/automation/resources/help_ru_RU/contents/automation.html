@@ -6,72 +6,73 @@ Automation Framework
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework</H1>
-This add-on provides a framework that allows ZAP to be automated in an easy and flexible way.
+<H1>Автоматизация Фреймворк </H1>
+Это дополнение обеспечивает структуру, которая позволяет автоматизировать ZAP простым и гибким способом. 
 <p>
-It provides the following command line options:
+Он предоставляет следующие параметры командной строки: 
 <ul>
-<li>-autorun &lt;filename&gt;		Run the automation jobs specified in the file.
-<li>-autogenmin &lt;filename&gt;	Generate template automation file with the key parameters.
-<li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
-<li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
+<li>-autorun &lt;filename&gt; Запустить задания автоматизации, указанные в файле. 
+<li>-autogenmin &lt;filename&gt; Сгенерировать файл автоматизации шаблона с ключевыми параметрами. 
+<li>-autogenmax &lt;filename&gt; Сгенерировать файл автоматизации шаблона со всеми параметрами. 
+<li>-autogenconf &lt;filename&gt; Сгенерировать файл автоматизации шаблона с использованием текущей конфигурации. 
 </ul>
 
-If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> option then the ZAP exit value will be set as follows: 
+Если параметр <code> -autorun </code> используется с параметром ZAP <code> -cmd </code>, тогда значение выхода ZAP будет установлено следующим образом:  
 <ul>
-<li>0 - The plan completed successfully with no errors or warnings
-<li>1 - The plan reported one or more errors
-<li>2 - The plan reported no errors but one or more warnings
+<li>0 - план выполнен успешно, ошибок и предупреждений нет. 
+<li>1 - План сообщил об одной или нескольких ошибках 
+<li>2 - План не сообщил об ошибках, кроме одного или нескольких предупреждений. 
 </ul>
-Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
+Завершится ли план после обнаружения ошибок или предупреждений, будет зависеть от настроек, используемых в <a href="environment.html"> среде </a>. 
 <p>
-To use the automation framework:
+Чтобы использовать среду автоматизации: 
 <ol>
-<li>Generate a template automation file using one of the <code>-autogen*</code> command line options
-<li>Edit the file to match your requirements
-<li>Run the file using the <code>-autorun</code> commandline option e.g. <code>./zap.sh -cmd -autorun config.yaml</code>
+<li>Создайте файл автоматизации шаблона, используя один из параметров командной строки <code> -autogen * </code> 
+<li>Отредактируйте файл в соответствии с вашими требованиями 
+<li>Запустите файл с помощью параметра командной строки <code> -autorun </code>, например. <code> ./zap.sh -cmd -autorun config.yaml </code> 
 </ol>
 
-In most cases it is recommended to also use the <code>-cmd</code> command line option so that the ZAP desktop is not displayed 
-and ZAP exits as soon as it has finished generating or running the jobs defined in the file.
-However you can choose to run Automation Framework jobs using the ZAP desktop to help you debug issues.
+В большинстве случаев рекомендуется также использовать параметр командной строки <code> -cmd </code>, чтобы рабочий стол ZAP не отображался.
+и ZAP завершает работу, как только завершит создание или выполнение заданий, определенных в файле. 
+Однако вы можете запускать задания Automation Framework с помощью рабочего стола ZAP, чтобы помочь вам отладить проблемы. 
 
-<H2>Authentication</H2>
-The Automation Framework supports a subset of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+<H2>Аутентификация</H2>
+Платформа автоматизации поддерживает подмножество механизмов <a href="authentication.html"> аутентификации </a>, поддерживаемых ZAP. 
 
-<H2>GUI</H2>
-A <a href="gui.html">GUI</a> is under development and provides an ever increasing set of features.
+<H2>GUI  (Графический Интерфейс)</H2>
+<a href="gui.html"> GUI </a> находится в стадии разработки и предоставляет постоянно расширяющийся набор функций. 
 
 <H2>API</H2>
-The following API endpoints are provided by this add-on:
+Это дополнение предоставляет следующие конечные точки API: 
 <ul>
-<li>Action: runPlan(filePath) - loads and asynchronously runs the plan in the specified file, returning a planId</li>
-<li>View: planProgress(planId) - returns the progress details for the specified planId</li>
+<li>Действие: runPlan (filePath) - загружает и асинхронно запускает план в указанном файле, возвращая planId </li>
+<li>Вид:
+planProgress (planId) - возвращает сведения о прогрессе для указанного planId </li>
 </ul>
-If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
+Если используется рабочий стол ZAP, план также будет отображаться в графическом интерфейсе, чтобы упростить диагностику любых проблем. 
 
-<H2>Environment</H2>
-The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
+<H2>окружающая среда</H2>
+Раздел файла <a href="environment.html"> environment </a> определяет приложения, с которыми могут работать остальные задания. 
 
-<H2>Jobs</H2>
-The following automation jobs are supported by this add-on:
+<H2>Задачи</H2>
+Это дополнение поддерживает следующие задачи автоматизации: 
 <ul>
-<li><a href="job-addons.html">addOns</a> - add-on management</li>
-<li><a href="job-delay.html">delay</a> - pauses the plan for a specified period of time or a specific condition is met</li>
-<li><a href="job-pscanconf.html">passiveScan-config</a> - passive scan configuration</li>
-<li><a href="job-pscanwait.html">passiveScan-wait</a> - waits for the passive scanner to finish processing the current queue</li>
-<li><a href="job-requestor.html">requestor</a> - crafts specific requests to send to the corresponding targets</li>
-<li><a href="job-spider.html">spider</a> - runs the traditional spider</li>
-<li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
+<li><a href="job-addons.html"> addOns </a> - управление дополнениями </li>
+<li><a href="job-delay.html"> delay </a> - приостанавливает выполнение плана на указанный период времени или выполняется определенное условие </li>
+<li><a href="job-pscanconf.html"> passiveScan-config </a> - конфигурация пассивного сканирования </li>
+<li><a href="job-pscanwait.html"> passiveScan-wait </a> - ожидает, пока пассивный сканер завершит обработку текущей очереди </li>
+<li><a href="job-requestor.html">requestor</a> - crafts specific requests to send отправить по соответствующим целям</li>
+<li><a href="job-spider.html"> паук </a> - запускает традиционный паук </li>
+<li><a href="job-ascan.html"> activeScan </a> - запускает активный сканер </li>
 </ul>
 <p>
-<a href="tests.html">Job tests</a> can be added to jobs to check that the jobs have performed as expected.
+<a href="tests.html"> Рабочие тесты </a> могут быть добавлены к заданиям, чтобы проверить, что задания выполняются должным образом. 
 <p>
 
-This framework is plugable and so other add-ons may add support for other jobs, see the 
-<a href="https://www.zaproxy.org/docs/automate/automation-framework/">Automation Framework</a> website pages for a more complete list.
+Эта структура является подключаемой, поэтому другие надстройки могут добавлять поддержку для других заданий, см.
+<a href="https://www.zaproxy.org/docs/automate/automation-framework/"> Automation Framework </a> для получения более полного списка. 
 <p>
-The 'min' and 'max' templates include comments giving more information about the fields.
+Шаблоны «min» и «max» включают комментарии, дающие дополнительную информацию о полях. 
 </BODY>
 </HTML>
 
