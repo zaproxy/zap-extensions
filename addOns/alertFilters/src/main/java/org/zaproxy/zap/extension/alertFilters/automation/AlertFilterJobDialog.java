@@ -84,7 +84,7 @@ public class AlertFilterJobDialog extends StandardFieldsDialog {
                 .getParameters()
                 .setDeleteGlobalAlerts(this.getBoolValue(DELETE_GLOBAL_PARAM));
         this.job.getData().setAlertFilters(this.getAlertFilterModel().getAlertFilters());
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

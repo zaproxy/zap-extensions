@@ -53,7 +53,7 @@ public class DelayJobDialog extends StandardFieldsDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setTime(this.getStringValue(TIME_PARAM));
         this.job.getParameters().setFileName(this.getStringValue(FILENAME_PARAM));
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

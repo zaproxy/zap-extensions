@@ -23,18 +23,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.utils.I18N;
@@ -43,7 +45,7 @@ class DelayJobUnitTest {
 
     @BeforeAll
     static void setUp() {
-        Constant.messages = mock(I18N.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @Test
@@ -60,6 +62,26 @@ class DelayJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"-", "1.1", " ", "test", "1:2:3:4"})
+    void shouldFailOnInvalidYamlTimeProperty(String hHmMsS) {
+        // Given
+        DelayJob job = new DelayJob();
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = String.join("\n", "parameters:", "  time: \"" + hHmMsS + "\"");
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+        job.setJobData((LinkedHashMap<?, ?>) data);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(1));
+        assertThat(progress.getErrors().get(0), is("!automation.error.delay.badtime!"));
     }
 
     @ParameterizedTest

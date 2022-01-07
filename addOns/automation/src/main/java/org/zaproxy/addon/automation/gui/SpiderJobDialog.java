@@ -303,7 +303,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setUserAgent(null);
             this.job.getParameters().setHandleParameters(null);
         }
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

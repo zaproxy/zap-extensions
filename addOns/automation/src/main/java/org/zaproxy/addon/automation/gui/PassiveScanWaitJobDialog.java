@@ -52,7 +52,7 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

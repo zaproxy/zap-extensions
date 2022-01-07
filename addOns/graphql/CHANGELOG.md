@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Reduce printed errors messages in the script Input Vector.
+- When the automation Job is edited via UI Dialog then the status will be set to Not started
 
 ## [0.7.0] - 2021-11-01
 ### Fixed

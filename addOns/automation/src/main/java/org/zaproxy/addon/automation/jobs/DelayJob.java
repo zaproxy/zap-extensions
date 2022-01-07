@@ -46,6 +46,16 @@ public class DelayJob extends AutomationJob {
 
     @Override
     public void verifyParameters(AutomationProgress progress) {
+        Map<?, ?> jobData = this.getJobData();
+        if (jobData != null) {
+            JobUtils.applyParamsToObject(
+                    (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                    this.parameters,
+                    this.getName(),
+                    null,
+                    progress);
+        }
+
         String timeStr = this.getParameters().getTime();
         try {
             new HhMmSs(timeStr);
@@ -55,18 +65,7 @@ public class DelayJob extends AutomationJob {
     }
 
     @Override
-    public void applyParameters(AutomationProgress progress) {
-        Map<?, ?> jobData = this.getJobData();
-        if (jobData == null) {
-            return;
-        }
-        JobUtils.applyParamsToObject(
-                (LinkedHashMap<?, ?>) jobData.get("parameters"),
-                this.parameters,
-                this.getName(),
-                null,
-                progress);
-    }
+    public void applyParameters(AutomationProgress progress) {}
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {

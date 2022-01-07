@@ -63,7 +63,7 @@ public class SoapJobDialog extends StandardFieldsDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setWsdlFile(this.getStringValue(WSDL_FILE_PARAM));
         this.job.getParameters().setWsdlUrl(this.getStringValue(WSDL_URL_PARAM));
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

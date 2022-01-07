@@ -187,6 +187,11 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return plan;
     }
 
+    public void resetAndSetChanged() {
+        reset();
+        setChanged();
+    }
+
     public void setChanged() {
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_CHANGED, this, null);
         this.plan.setChanged();

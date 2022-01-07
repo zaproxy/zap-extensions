@@ -594,6 +594,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                                 if (userObj instanceof AutomationEnvironment) {
                                     ((AutomationEnvironment) userObj).showDialog();
                                 } else if (userObj instanceof AutomationJob) {
+                                    ((AutomationJob) userObj).setJobData(null);
                                     ((AutomationJob) userObj).showDialog();
                                 } else if (userObj instanceof AbstractAutomationTest) {
                                     ((AbstractAutomationTest) userObj).showDialog();
