@@ -81,6 +81,11 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     "plugin-types",
                     "report-uri",
                     "sandbox");
+    private static final List<String> ALLOWED_DIRECTIVES =
+            Arrays.asList(
+                    // TODO: Remove once https://github.com/shapesecurity/salvation/issues/232 is
+                    // addressed
+                    "require-trusted-types-for", "trusted-types");
 
     private static final String RAND_FQDN = "7963124546083337415.owasp.org";
     private static final Optional<URLWithScheme> HTTP_URI =
@@ -138,9 +143,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
             List<PolicyError> observedErrors = new ArrayList<>();
             PolicyErrorConsumer consumer =
-                    (severity, message, directiveIndex, valueIndex) ->
+                    (severity, message, directiveIndex, valueIndex) -> {
+                        // Skip notices for directives that Salvation doesn't handle
+                        if (ALLOWED_DIRECTIVES.stream().noneMatch(message::contains)) {
                             observedErrors.add(
                                     new PolicyError(severity, message, directiveIndex, valueIndex));
+                        }
+                    };
 
             for (String csp : cspOptions) {
                 Policy policy = Policy.parseSerializedCSP(csp, consumer);
