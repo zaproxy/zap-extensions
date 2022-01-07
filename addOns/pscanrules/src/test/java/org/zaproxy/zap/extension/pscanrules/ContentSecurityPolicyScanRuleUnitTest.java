@@ -192,6 +192,36 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"; require-trusted-types-for 'script'", "; trusted-types 'none'"})
+    void shouldNotAlertOnReasonableCspWithTrustedTypes(String policyAddition) {
+        // Given
+        HttpMessage msg = createHttpMessage("", REASONABLE_POLICY + policyAddition);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertWithCspWarningNoticesWhenApplicableAndIgnoreTrustedTypes() {
+        // Given
+        String policy = "default-src none; report-to csp-endpoint; require-trusted-types 'script'";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(2));
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                equalTo(
+                        "Warnings:\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.\n"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"X-Content-Security-Policy", "X-WebKit-CSP"})
     void shouldRaiseAlertOnLegacyCspHeader(String input) {
         // Given
