@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [35] - 2022-01-07
 ### Fixed
 - Log4Shell: Fixed the RMI Payloads (Issue 7002).
