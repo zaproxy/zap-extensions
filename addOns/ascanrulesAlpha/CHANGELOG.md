@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Log4Shell: Fixed the RMI Payloads (Issue 7002).
 - Log4Shell: Continue with further payloads if one payload throws an error
 
+### Changed
+- Log4Shell: Added detection for CVE-2021-45046
+
 ## [34] - 2021-12-12
 ### Added
 - Log4Shell (CVE-2021-44228) Scan Rule.
