@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [38] - 2022-01-07
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Renamed 'X-Frame-Options Header Not Set' alert to 'Missing Anti-clickjacking Header', and associated scan rule 'X-Frame-Options Header' to 'Anti-clickjacking Header'. The rule already considered Content-Security-Policy 'frame-ancestors' which is a more modern solution to the same concern. Updated associated solution text. (Issue 6937)
@@ -277,6 +277,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v35
