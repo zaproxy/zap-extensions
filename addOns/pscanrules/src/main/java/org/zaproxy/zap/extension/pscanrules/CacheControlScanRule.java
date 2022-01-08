@@ -107,7 +107,7 @@ public class CacheControlScanRule extends PluginPassiveScanner {
     }
 
     public int getRisk() {
-        return Alert.RISK_LOW;
+        return Alert.RISK_INFO;
     }
 
     public String getDescription() {
