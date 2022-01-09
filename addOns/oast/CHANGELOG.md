@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Set HttpSender's initiator to `OAST_INITIATOR`, value 16.
+
 ### Fixed
 - Fixed Interactsh multi threading issue during register and deregister (Issue 6997) 
 - Interactsh: server URL change in Options deregisters old server URL and registers new server URL

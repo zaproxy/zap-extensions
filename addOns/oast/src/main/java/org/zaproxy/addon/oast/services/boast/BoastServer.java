@@ -37,6 +37,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.oast.ExtensionOast;
 
 public class BoastServer {
 
@@ -54,7 +55,8 @@ public class BoastServer {
                 new HttpSender(
                         Model.getSingleton().getOptionsParam().getConnectionParam(),
                         true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
+                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
 
         uri = new URI(uriString, true);
         boastMsg = new HttpMessage(uri);

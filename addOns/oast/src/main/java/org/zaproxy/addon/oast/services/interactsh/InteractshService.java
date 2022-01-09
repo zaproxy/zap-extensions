@@ -63,6 +63,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.zap.network.HttpRequestBody;
 
@@ -99,7 +100,8 @@ public class InteractshService extends OastService implements OptionsChangedList
                 new HttpSender(
                         Model.getSingleton().getOptionsParam().getConnectionParam(),
                         true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
+                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
         secretKey = UUID.randomUUID();
         correlationId = RandomStringUtils.randomAlphanumeric(20).toLowerCase(Locale.ROOT);
         this.param = param;
