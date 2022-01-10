@@ -18,7 +18,7 @@ The add-ons are built with [Gradle], each add-on has its own project which is lo
 
 To build all add-ons, simply run:
 
-    ./gradlew -Dorg.gradle.jvmargs=-Xmx2g
+    ./gradlew -Dorg.gradle.jvmargs=-Xmx2g build
 
 in the main directory of the project, the add-ons will be placed in the directory `build/zapAddOn/bin/` of each project.
 
