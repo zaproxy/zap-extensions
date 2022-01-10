@@ -53,6 +53,9 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ExtensionOast extends ExtensionAdaptor {
 
+    // TODO: Remove on next ZAP release
+    public static final int HTTP_SENDER_OAST_INITIATOR = 16;
+
     public static final String OAST_ALERT_TAG_KEY = "OUT_OF_BAND";
     public static final String OAST_ALERT_TAG_VALUE =
             "https://www.zaproxy.org/docs/desktop/addons/oast-support/";
