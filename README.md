@@ -16,16 +16,8 @@ Please see the [wiki](https://github.com/zaproxy/zap-extensions/wiki) for more d
 
 The add-ons are built with [Gradle], each add-on has its own project which is located under the `addOns` project/directory.
 
-To build all add-ons, simply run:
+To build zap-extensions follow the instructions on:
 
-    ./gradlew -Dorg.gradle.jvmargs=-Xmx2g build
-
-in the main directory of the project, the add-ons will be placed in the directory `build/zapAddOn/bin/` of each project.
-
-To build an add-on individually run:
-
-    ./gradlew :addOns:<name>:build
-
-replacing `<name>` with the name of the add-on (e.g. `reveal`).
+https://www.zaproxy.org/docs/developer/quick-start-build/
 
 [Gradle]: https://gradle.org/
