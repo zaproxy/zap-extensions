@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update Cache-control scan rule name, description, and solution to make it more clear that there are cases in which caching is reasonable. Reduced risk to Info. (Issue 6462)
 
 ## [38] - 2022-01-07
 ### Changed
