@@ -58,6 +58,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
 
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
+    protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
+    protected static final String SVG_ONLOAD_ALERT = "<svg onload=alert(1)>";
+    protected static final String B_MOUSE_ALERT = "<b onMouseOver=alert(1);>test</b>";
 
     /**
      * Null byte injection payload. C/C++ languages treat Null byte or \0 as special character which
@@ -72,6 +75,16 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
+
+    private static final List<String> OUTSIDE_OF_TAGS_PAYLOADS =
+            Arrays.asList(
+                    GENERIC_SCRIPT_ALERT,
+                    GENERIC_NULL_BYTE_SCRIPT_ALERT,
+                    GENERIC_ONERROR_ALERT,
+                    IMG_ONERROR_LOG,
+                    B_MOUSE_ALERT,
+                    SVG_ONLOAD_ALERT,
+                    getURLEncode(GENERIC_SCRIPT_ALERT));
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
@@ -476,7 +489,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             performAttack(
                                     msg,
                                     param,
-                                    "--><b onMouseOver=alert(1);>test</b><!--",
+                                    "-->" + B_MOUSE_ALERT + "<!--",
                                     context,
                                     HtmlContext.IGNORE_HTML_COMMENT);
                     if (contexts2 == null) {
@@ -530,7 +543,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                 performAttack(
                                         msg,
                                         param,
-                                        "<b onMouseOver=alert(1);>test</b>",
+                                        B_MOUSE_ALERT,
                                         context,
                                         HtmlContext.IGNORE_PARENT);
                         if (contexts2 != null) {
@@ -647,7 +660,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                     performAttack(
                                             msg,
                                             param,
-                                            "<img src=x onerror=alert(1);>",
+                                            GENERIC_ONERROR_ALERT,
                                             context,
                                             HtmlContext.IGNORE_IN_SCRIPT);
                             if (contextsA != null && contextsA.size() > 0) {
@@ -665,7 +678,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     } else {
                         // Last chance - is the payload reflected outside of any
                         // tags
-                        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                        for (String scriptAlert : OUTSIDE_OF_TAGS_PAYLOADS) {
                             if (context.getMsg()
                                     .getResponseBody()
                                     .toString()
@@ -706,7 +719,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                                                         MESSAGE_PREFIX
                                                                                 + "json.desc"))
                                                         .setParam(param)
-                                                        .setAttack(GENERIC_SCRIPT_ALERT)
+                                                        .setAttack(scriptAlert)
                                                         .setOtherInfo(
                                                                 Constant.messages.getString(
                                                                         MESSAGE_PREFIX

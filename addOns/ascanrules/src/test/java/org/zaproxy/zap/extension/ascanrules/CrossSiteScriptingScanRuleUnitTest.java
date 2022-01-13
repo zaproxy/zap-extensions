@@ -1356,6 +1356,44 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldReportXssWeaknessInJsonResponseWithFilteredScript()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssWeaknessInJsonResponseWithFilteredScript/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out 'script' ignoring the case
+                            name = name.replaceAll("(?i)script", "");
+                            response = getHtml("example.json", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.json");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("application/json");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        // When
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getName(), containsString("JSON"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<img src=x onerror=prompt()>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+    }
+
+    @Test
     void shouldAlertOnceWithMultipleContexts() throws HttpMalformedHeaderException {
         // Given
         String path = "/api/search";
