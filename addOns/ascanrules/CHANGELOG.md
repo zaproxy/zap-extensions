@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [44] - 2022-01-13
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - The XSS scan rule will try several different payloads if the payload is being reflected outside of any HTML tags (for example in a JSON response body).
@@ -286,6 +286,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v41
