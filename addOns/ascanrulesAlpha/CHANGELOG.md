@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Add Out-of-band XSS Scan Rule.
+- Out-of-band XSS Scan Rule.
+- Exponential Entity Expansion (Billion Laughs Attack) Scan Rule.
 
 ## [35] - 2022-01-07
 ### Fixed
