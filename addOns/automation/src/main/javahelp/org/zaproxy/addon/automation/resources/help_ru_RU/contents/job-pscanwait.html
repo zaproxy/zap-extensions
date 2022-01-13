@@ -6,27 +6,27 @@ Automation Framework - passiveScan-wait Job
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - passiveScan-wait Job</H1>
+<H1>Платформа автоматизации — задание пассивного сканирования с ожиданием </H1>
 
-This job waits for the passive scanner to finishing scanning the requests and responses in the current queue.
-You should typically run this job after the jobs that explore you application, such as the spider jobs or those that import API definitions.
-If any more requests are sent by ZAP or proxied through ZAP after this job has run then they will be processed by the passive scanner.
-You can run this job as many times as you need to.
+Это задание ожидает, пока пассивный сканер завершит сканирование запросов и ответов в текущей очереди. 
+Обычно это задание следует запускать после заданий, которые исследуют ваше приложение, таких как задания паука или те, которые импортируют определения API. 
+Если какие-либо другие запросы отправляются ZAP или проксируются через ZAP после выполнения этого задания, они будут обработаны пассивным сканером. 
+Вы можете запускать эту работу столько раз, сколько вам нужно. 
 
 <H2>YAML</H2>
 
 <pre>
-  - type: passiveScan-wait             # Passive scan wait for the passive scanner to finish
+  - type: passiveScan-wait             # Пассивный сканер дождитесь завершения пассивного сканера 
     parameters:
-      maxDuration: 5                   # Int: The max time to wait for the passive scanner, default: 0 unlimited
+      maxDuration: 5                   # Int: Максимальное время ожидания пассивного сканера, по умолчанию: 0 неограниченно 
 </pre>
 
-<H2>Job Data</H2>
-The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
-Note that in this case the data is from the currently enabled Passive Scan rules, regardless of whether they have been used as a result of the Automation Framework, the UI, or the API.
+<H2>Данные задания </H2>
+Следующий класс будет доступен для надстроек, предоставляющих доступ к данным задания, таких как надстройка Reporting. 
+Обратите внимание, что в этом случае данные взяты из включенных в данный момент правил пассивного сканирования, независимо от того, использовались ли они в результате Automation Framework, пользовательского интерфейса или API. 
 <ul>
-<li>Key: <code>passiveScanData</code>
-<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/PassiveScanJobResultData.java">PassiveScanJobResultData</a>
+<li>Ключ: <code>passiveScanData</code> 
+<li>Класс: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/PassiveScanJobResultData.java">PassiveScanJobResultData</a> 
 </ul>
 
 </BODY>

@@ -6,28 +6,28 @@ Automation Framework - delay Job
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - delay Job</H1>
+<H1>Платформа автоматизации — задержка задания </H1>
 
-This job waits for a specified time unless one of a specific set of conditions are met.<br>
-It can be used to wait for regression tests being proxied through ZAP in order to explore your application more thoroughly.
+Это задание ожидает определенное время, если не выполняется одно из определенных условий.<br>
+Его можно использовать для ожидания прохождения регрессионных тестов через ZAP, чтобы более тщательно изучить ваше приложение. 
 <p>
-The time parameter supports the formats <code>hh:mm:ss</code>, <code>mm:ss</code> and <code>ss</code>, so "5" is 5 seconds, 
-"1:30" is one minute and 30 seconds and "2:20:30" is 2 hours, 20 minutes and 30 seconds.
+Параметр времени поддерживает форматы <code>чч:мм:сс</code>, <code>мм:сс</code> и <code>сс</code>, поэтому «5» — это 5 секунд,
+«1:30» — это одна минута и 30 секунд, а «2:20:30» — это 2 часа, 20 минут и 30 секунд. 
 <p>
-The conditions supported are:
+Поддерживаемые условия: 
 <ul>
-<li>The creation of the file given by the optional fileName parameter
-<li>Calling the static method: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code>
-<li>Calling the API end point: <code>authentication / action / endDelayJob</code>
+<li>Создание файла, заданного необязательным параметром fileName. 
+<li>Вызов статического метода: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code> 
+<li>Вызов конечной точки API: <code>authentication/action/endDelayJob</code> 
 </ul>
 
 <H2>YAML</H2>
 
 <pre>
-  - type: delay                        # Pause the plan for a set period of time or event (file created, static method called, API end point called)
+  - type: delay                        # Приостановить выполнение плана на определенный период времени или событие (создание файла, вызов статического метода, вызов конечной точки API) 
     parameters:
-      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
-      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
+      time:                            # String: Время ожидания, формат любой из ['чч:мм:сс', 'мм:сс', 'сс'], по умолчанию: 0 
+      fileName:                        # String: Имя файла, создание которого приведет к досрочному завершению задания, по умолчанию: пусто 
 </pre>
 
 </BODY>

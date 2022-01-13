@@ -6,32 +6,32 @@ Call Home
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Call Home</H1>
-This add-on will be used for all "calls home". 
+<H1>Позвони домой</H1>
+Это дополнение будет использоваться для всех «звонков домой».  
 <p>
-It currently supports:
+В настоящее время поддерживает: 
 
-<H2>Check For Updates</H2>
-The Check for Updates call is used to find out the latest information about ZAP and the published add-ons. 
-It is a mandatory add-on from ZAP 2.12.0 as this feature is used by the ZAP core.
+<H2>Проверить наличие обновлений </H2>
+Вызов «Проверить наличие обновлений» используется для получения последней информации о ZAP и опубликованных надстройках.  
+Это обязательное дополнение ZAP 2.12.0, так как эта функция используется ядром ZAP. 
 
-<H2>News</H2>
-The News call is used to find out the latest news item about ZAP - this is displayed in the ZAP desktop Quick Start panel. 
+<H2>Новости </H2>
+Вызов новостей используется для получения последних новостей о ZAP — они отображаются на панели быстрого запуска ZAP на рабочем столе.  
 
-<H2>Telemetry</H2>
-The Telemetry call reports the add-ons being used and some of the ZAP internal statistics.
-It will never collect details of the sites ZAP is being used on, details of the vulnerabilities or any personal identifiable information (PII).
+<H2>Телеметрия</H2>
+Вызов телеметрии сообщает об используемых надстройках и некоторой внутренней статистике ZAP. 
+Он никогда не будет собирать информацию о сайтах, на которых используется ZAP, сведения об уязвимостях или любую личную информацию (PII). 
 <p>
-For more background see the blog post <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">ZAP Telemetry Plans</a>.
+Дополнительную информацию см. в записи блога <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">Планы телеметрии ZAP</a>. 
 
-<H2>Command Line option: -notel</H2>
-If <code>-notel</code> is specified on the command line then no telemetry calls will be made. The other calls will not be affected.
-Telemetry calls will also not be made if the standard <code>-silent</code> ZAP command line option is used.
+<H2>Параметр командной строки: -notel </H2>
+Если в командной строке указано <code>-notel</code>, вызовы телеметрии выполняться не будут.  Другие вызовы не будут затронуты. 
+Вызовы телеметрии также не будут выполняться, если используется стандартный параметр командной строки ZAP <code>-silent</code>. 
 
-<H2>Call Home Options Panel</H2>
-This panel allows you to turn telemetry support on and off.
+<H2>Панель опций звонка домой </H2>
+Эта панель позволяет включать и выключать поддержку телеметрии. 
 <p>
-It also displays the last set of telemetry data transmitted. 
-The telemetry data is also logged at DEBUG level in the ZAP log file.
+Он также отображает последний набор переданных данных телеметрии.  
+Данные телеметрии также регистрируются на уровне DEBUG в файле журнала ZAP. 
 </BODY>
 </HTML>
