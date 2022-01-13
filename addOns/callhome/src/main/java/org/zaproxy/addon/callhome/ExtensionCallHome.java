@@ -303,6 +303,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.alertFilter")
                     || key.startsWith("stats.ascan.")
                     || key.startsWith("stats.auth.")
+                    || key.startsWith("stats.auto.")
                     || key.startsWith("stats.break.")
                     || key.startsWith("stats.code.")
                     || key.startsWith("stats.script.")

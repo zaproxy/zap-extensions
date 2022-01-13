@@ -59,8 +59,10 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtentionAutomationUnitTest extends TestUtils {
@@ -275,6 +277,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     }
                 };
         Path filePath = getResourcePath("resources/testplan-failonerror.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
 
         // When
         extAuto.registerAutomationJob(job1);
@@ -294,6 +298,29 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
         assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
         assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
+
+        assertThat(stats.getStat(ExtensionAutomation.WARNING_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(equalTo(3L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job1"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job2"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job3"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
     }
 
     @Test
@@ -443,6 +470,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     }
                 };
         Path filePath = getResourcePath("resources/testplan-failonerror.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
 
         // When
         extAuto.registerAutomationJob(job1);
@@ -455,6 +484,11 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(job1.wasRun(), is(equalTo(false)));
         assertThat(job3.wasRun(), is(equalTo(false)));
+
+        assertThat(stats.getStat(ExtensionAutomation.WARNING_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(nullValue()));
     }
 
     @Test
@@ -477,6 +511,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     }
                 };
         Path filePath = getResourcePath("resources/testplan-sametype.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
 
         // When
         extAuto.registerAutomationJob(job);
@@ -494,6 +530,17 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(((AutomationJobImpl) runJobs.get(2)).getOptional(), is(nullValue()));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+
+        assertThat(stats.getStat(ExtensionAutomation.WARNING_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(equalTo(3L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job1"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(3L)));
     }
 
     @Test
@@ -561,6 +608,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
                     }
                 };
         Path filePath = getResourcePath("resources/testplan-withwarnings.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
 
         // When
         extAuto.registerAutomationJob(job1);
@@ -583,6 +632,29 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(((AutomationJobImpl) runJobs.get(1)).wasRun(), is(equalTo(true)));
         assertThat(runJobs.get(2).getName(), is(equalTo("job3")));
         assertThat(((AutomationJobImpl) runJobs.get(2)).wasRun(), is(equalTo(true)));
+
+        assertThat(stats.getStat(ExtensionAutomation.WARNING_COUNT_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(0L)));
+        assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(equalTo(3L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job1"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job2"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
+        assertThat(
+                stats.getStat(
+                        ExtensionAutomation.JOBS_RUN_STATS_PREFIX
+                                + "job3"
+                                + ExtensionAutomation.JOBS_RUN_STATS_POSTFIX),
+                is(equalTo(1L)));
     }
 
     @Test
