@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- The XSS scan rule will try several different payloads if the payload is being reflected outside of any HTML tags (for example in a JSON response body).
 
 ## [43] - 2021-12-06
 ### Added
