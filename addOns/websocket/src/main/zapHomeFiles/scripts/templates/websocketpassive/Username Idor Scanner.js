@@ -56,8 +56,8 @@ function createAlertBuilder(helper, evidence, username, contextname, hashType){
         .setSolution("Use per user or session indirect object references (create a temporary mapping at time of use)."
                      + " Or, ensure that each use of a direct object reference is tied to an authorization check to ensure the"
                      + " user is authorized for the requested object.")
-        .setReference("https://www.owasp.org/index.php/Top_10_2013-A4-Insecure_Direct_Object_References\n"
-                      + "https://www.owasp.org/index.php/Testing_for_Insecure_Direct_Object_References_(OTG-AUTHZ-004)")
+        .setReference("https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html\n"
+                      + "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References")
         .setEvidence(evidence)
         .setCweId(284) // CWE-284: Improper Access Control
         .setWascId(2); // WASC-2: Insufficient Authorization
