@@ -45,6 +45,7 @@ import org.zaproxy.zap.utils.ExecutorTerminatedListener;
 import org.zaproxy.zap.utils.PausableExecutorService;
 import org.zaproxy.zap.utils.PausableScheduledThreadPoolExecutor;
 import org.zaproxy.zap.utils.PausableThreadPoolExecutor;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * An abstract {@code Fuzzer} that allows to fuzz a message.
@@ -165,6 +166,10 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
                 logger.info("Fuzzer started...");
                 state = State.RUNNING;
+                Stats.incCounter(
+                        ExtensionFuzz.FUZZER_PREFIX
+                                + message.getType()
+                                + ExtensionFuzz.STARTED_POSTFIX);
 
                 fuzzerTaskExecutor = createFuzzerTaskExecutor();
                 fuzzerTaskExecutor.addExecutorTerminatedListener(executorTerminatedListener);
@@ -419,6 +424,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     protected void postTaskExecution(long taskId, boolean normalTermination) {
         long done = tasksDoneCount.incrementAndGet();
+        Stats.incCounter(ExtensionFuzz.MESSAGES_SENT_STATS);
         notifyListenersFuzzerProgress(done, tasksTotalCount);
 
         if (!normalTermination) {

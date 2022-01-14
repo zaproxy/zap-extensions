@@ -20,11 +20,13 @@
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
 import java.util.List;
+import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingException;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.utils.EmptyResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
+import org.zaproxy.zap.utils.Stats;
 
 public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGenerator<T> {
 
@@ -86,7 +88,9 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
             for (PayloadProcessor<E> processor : processors) {
                 try {
                     value = processor.process(value);
+                    Stats.incCounter(ExtensionFuzz.PAYLOAD_PROCESSOR_RUN_STATS);
                 } catch (PayloadProcessingException e) {
+                    Stats.incCounter(ExtensionFuzz.PAYLOAD_PROCESSOR_ERROR_STATS);
                     throw new PayloadGenerationException(
                             "An error occurred while processing the payload: " + e.toString(), e);
                 }

@@ -113,6 +113,19 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 
 public class ExtensionFuzz extends ExtensionAdaptor {
 
+    public static final String FUZZER_PREFIX = "stats.fuzz.";
+    public static final String STARTED_POSTFIX = ".started";
+    public static final String PAYLOAD_PROCESSOR_RUN_STATS =
+            FUZZER_PREFIX + "payload.processors.run";
+    public static final String PAYLOAD_PROCESSOR_ERROR_STATS =
+            FUZZER_PREFIX + "payload.processors.error";
+    public static final String HTTP_MSG_PROCESSOR_RUN_STATS =
+            FUZZER_PREFIX + "HTTP.message.processors.run";
+    public static final String HTTP_MSG_PROCESSOR_ERROR_STATS =
+            FUZZER_PREFIX + "HTTP.message.processors.error";
+    public static final String MESSAGES_SENT_STATS = FUZZER_PREFIX + "messages.sent";
+    public static final String MESSAGES_EDITED_STATS = FUZZER_PREFIX + "messages.edited";
+
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFuzz.class);
 
     private static final ImageIcon SCRIPT_PAYLOAD_GENERATOR_ICON =

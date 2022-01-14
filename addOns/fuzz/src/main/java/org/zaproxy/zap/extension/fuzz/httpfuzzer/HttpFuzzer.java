@@ -35,12 +35,14 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.fuzz.AbstractFuzzer;
+import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerErrorsTableModel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultsTableModel;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacementGenerator;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsReplacer;
 import org.zaproxy.zap.extension.search.SearchResult;
+import org.zaproxy.zap.utils.Stats;
 
 public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
 
@@ -193,7 +195,9 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 try {
                     utils.setCurrentProcessorName(messageProcessor.getName());
                     messageProcessor.processMessage(utils, message);
+                    Stats.incCounter(ExtensionFuzz.HTTP_MSG_PROCESSOR_RUN_STATS);
                 } catch (ProcessingException e) {
+                    Stats.incCounter(ExtensionFuzz.HTTP_MSG_PROCESSOR_ERROR_STATS);
                     errorsModel.addFuzzerError(
                             taskId,
                             Constant.messages.getString(

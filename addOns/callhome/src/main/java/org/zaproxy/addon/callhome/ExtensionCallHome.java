@@ -306,6 +306,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.auto.")
                     || key.startsWith("stats.break.")
                     || key.startsWith("stats.code.")
+                    || key.startsWith("stats.fuzz.")
                     || key.startsWith("stats.script.")
                     || key.startsWith("stats.spider.")
                     || key.startsWith("stats.websockets.")

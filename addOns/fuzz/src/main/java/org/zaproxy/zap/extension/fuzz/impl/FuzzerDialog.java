@@ -44,6 +44,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -148,6 +149,7 @@ public class FuzzerDialog<
                 fuzzLocationsPanel.reset();
             } else {
                 fuzzMessagePanel.saveData();
+                Stats.incCounter(ExtensionFuzz.MESSAGES_EDITED_STATS);
             }
             this.fuzzMessagePanel.setEditable(editable);
 
