@@ -128,7 +128,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         fuzzDialogue.dispose();
 
         return createFuzzer(
-                message,
+                (HttpMessage) fuzzDialogue.getMessage(),
                 fuzzDialogue.getFuzzLocations(),
                 fuzzDialogue.getFuzzerOptions(),
                 fuzzDialogue.getFuzzerMessageProcessors());

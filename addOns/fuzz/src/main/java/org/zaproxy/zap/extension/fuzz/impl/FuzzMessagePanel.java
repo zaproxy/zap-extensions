@@ -19,13 +19,64 @@
  */
 package org.zaproxy.zap.extension.fuzz.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.view.messagelocation.MessageLocationProducerFocusListener;
 import org.zaproxy.zap.view.messagelocation.SelectMessageLocationsPanel;
 
 public class FuzzMessagePanel extends SelectMessageLocationsPanel {
 
     private static final long serialVersionUID = -1511437565770653938L;
 
-    public FuzzMessagePanel() {
+    // Maintain a local copy of these so we can remove them when editing - this will prevent users
+    // from adding more fuzzer locations
+    private List<MessageLocationProducerFocusListener> focusListeners = new ArrayList<>();
+
+    public FuzzMessagePanel(FuzzerDialog<?, ?, ?> fuzzerDialog) {
         super();
+
+        JButton editButton =
+                new JButton(Constant.messages.getString("fuzz.fuzzer.dialog.button.edit"));
+        editButton.setToolTipText(
+                Constant.messages.getString("fuzz.fuzzer.dialog.button.edit.tooltip"));
+
+        editButton.addActionListener(
+                e -> {
+                    fuzzerDialog.setMessageEditable(!fuzzerDialog.isEditable());
+                    if (fuzzerDialog.isEditable()) {
+                        editButton.setText(
+                                Constant.messages.getString("fuzz.fuzzer.dialog.button.save"));
+                        editButton.setToolTipText(
+                                Constant.messages.getString(
+                                        "fuzz.fuzzer.dialog.button.save.tooltip"));
+                        for (MessageLocationProducerFocusListener fl : focusListeners) {
+                            super.removeFocusListener(fl);
+                        }
+                    } else {
+                        editButton.setText(
+                                Constant.messages.getString("fuzz.fuzzer.dialog.button.edit"));
+                        editButton.setToolTipText(
+                                Constant.messages.getString(
+                                        "fuzz.fuzzer.dialog.button.edit.tooltip"));
+                        for (MessageLocationProducerFocusListener fl : focusListeners) {
+                            super.addFocusListener(fl);
+                        }
+                    }
+                });
+        this.addOptions(editButton, OptionsLocation.END);
+    }
+
+    @Override
+    public void addFocusListener(MessageLocationProducerFocusListener fl) {
+        focusListeners.add(fl);
+        super.addFocusListener(fl);
+    }
+
+    @Override
+    public void removeFocusListener(MessageLocationProducerFocusListener fl) {
+        focusListeners.remove(fl);
+        super.removeFocusListener(fl);
     }
 }
