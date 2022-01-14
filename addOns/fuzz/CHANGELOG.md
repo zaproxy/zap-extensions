@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13.6.0] - 2022-01-14
 ### Added
 - An option to edit the selected message - note this will clear any defined fuzz locations
 - Fuzzer statistics
@@ -169,6 +169,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.6.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.6.0
 [13.5.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.5.0
 [13.4.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.4.0
 [13.3.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.3.0
