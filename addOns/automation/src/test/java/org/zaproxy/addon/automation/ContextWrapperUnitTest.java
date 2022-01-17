@@ -602,6 +602,136 @@ class ContextWrapperUnitTest {
     }
 
     @Test
+    void shouldLoadFormAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'form'\n"
+                        + "        parameters:\n"
+                        + "          loginPageUrl: https://www.example.com/login1\n"
+                        + "          loginRequestUrl: https://www.example.com/login1\n"
+                        + "          loginRequestBody: 'username={%username%}&password={%password%}'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_FORM));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .size(),
+                is(3));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_PAGE_URL),
+                is("https://www.example.com/login1"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_REQUEST_URL),
+                is("https://www.example.com/login1"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY),
+                is("username={%username%}&password={%password%}"));
+    }
+
+    @Test
+    void shouldLoadJsonAuth() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        method: 'json'\n"
+                        + "        parameters:\n"
+                        + "          loginPageUrl: https://www.example.com/login1\n"
+                        + "          loginRequestUrl: https://www.example.com/login1\n"
+                        + "          loginRequestBody: '{\"email\":\"{%username%}\",\"password\":\"{%password%}\"}'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
+                is(AuthenticationData.METHOD_JSON));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .size(),
+                is(3));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_PAGE_URL),
+                is("https://www.example.com/login1"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_REQUEST_URL),
+                is("https://www.example.com/login1"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getParameters()
+                        .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY),
+                is("{\"email\":\"{%username%}\",\"password\":\"{%password%}\"}"));
+    }
+
+    @Test
     void shouldLoadVerificationData() {
         // Given
         String contextStr =

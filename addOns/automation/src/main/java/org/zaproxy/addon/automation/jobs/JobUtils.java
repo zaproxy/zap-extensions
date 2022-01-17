@@ -384,7 +384,6 @@ public class JobUtils {
             progress.error(
                     Constant.messages.getString(
                             "automation.error.options.methods", objectName, e1.getMessage()));
-            return;
         }
     }
 
@@ -467,16 +466,23 @@ public class JobUtils {
     }
 
     public static void addPrivateField(Map<String, Object> list, String fieldName, Object obj) {
-        Object val = getPrivateField(obj, fieldName);
+        addPrivateField(list, fieldName, fieldName, obj);
+    }
+
+    public static void addPrivateField(
+            Map<String, Object> list, String mapFieldName, String objectFieldName, Object obj) {
+        Object val = getPrivateField(obj, objectFieldName);
         if (val != null) {
-            list.put(fieldName, val);
+            list.put(mapFieldName, val);
         }
     }
 
     public static Object getPrivateField(Object obj, String fieldName) {
         try {
-            Field field = obj.getClass().getDeclaredField(fieldName);
-            return FieldUtils.readField(field, obj, true);
+            Field field = getClassField(obj, obj.getClass(), fieldName);
+            if (field != null) {
+                return FieldUtils.readField(field, obj, true);
+            }
         } catch (Exception e) {
             LOG.error(
                     "Failed get {} private field: {}",
@@ -490,14 +496,32 @@ public class JobUtils {
     public static void setPrivateField(Object obj, String fieldName, Object value) {
         try {
             // Have to use reflection on private field :(
-            Field field = obj.getClass().getDeclaredField(fieldName);
-            FieldUtils.writeField(field, obj, value, true);
+            Field field = getClassField(obj, obj.getClass(), fieldName);
+            if (field != null) {
+                FieldUtils.writeField(field, obj, value, true);
+            }
         } catch (Exception e) {
             LOG.error(
                     "Failed set {} private field: {}",
                     obj.getClass().getCanonicalName(),
                     fieldName,
                     e);
+        }
+    }
+
+    private static Field getClassField(Object obj, Class<?> c, String fieldName) {
+        if (c == null) {
+            // We've walked all the way up the hierarchy
+            LOG.error(
+                    "Failed get {} private field: {}",
+                    obj.getClass().getCanonicalName(),
+                    fieldName);
+            return null;
+        }
+        try {
+            return c.getDeclaredField(fieldName);
+        } catch (Exception e) {
+            return getClassField(obj, c.getSuperclass(), fieldName);
         }
     }
 }

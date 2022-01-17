@@ -29,20 +29,35 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
+import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
 import org.zaproxy.zap.model.Context;
 
 public class AuthenticationData extends AutomationData {
     public static final String METHOD_HTTP = "http";
+    public static final String METHOD_FORM = "form";
+    public static final String METHOD_JSON = "json";
     public static final String METHOD_MANUAL = "manual";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
     public static final String PARAM_PORT = "port";
+    public static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
+    public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
+    public static final String PARAM_LOGIN_REQUEST_BODY = "loginRequestBody";
+
+    /** Field name in the underlying PostBasedAuthenticationMethod class * */
+    protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
+
+    private static final String BAD_FIELD_ERROR_MSG = "automation.error.env.auth.field.bad";
 
     public static final String VERIFICATION_ELEMENT = "verification";
 
-    private static List<String> validMethods = Arrays.asList(METHOD_MANUAL, METHOD_HTTP);
+    private static List<String> validMethods =
+            Arrays.asList(METHOD_MANUAL, METHOD_HTTP, METHOD_FORM, METHOD_JSON);
 
     private String method;
     private String script;
@@ -60,6 +75,22 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_REALM, httpAuthMethod);
             JobUtils.addPrivateField(parameters, PARAM_HOSTNAME, httpAuthMethod);
             JobUtils.addPrivateField(parameters, PARAM_PORT, httpAuthMethod);
+        } else if (authMethod instanceof FormBasedAuthenticationMethod) {
+            FormBasedAuthenticationMethod formAuthMethod =
+                    (FormBasedAuthenticationMethod) authMethod;
+            setMethod(AuthenticationData.METHOD_FORM);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, formAuthMethod);
+            JobUtils.addPrivateField(
+                    parameters, PARAM_LOGIN_REQUEST_URL, FIELD_LOGIN_REQUEST_URL, formAuthMethod);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_REQUEST_BODY, formAuthMethod);
+        } else if (authMethod instanceof JsonBasedAuthenticationMethod) {
+            JsonBasedAuthenticationMethod jsonAuthMethod =
+                    (JsonBasedAuthenticationMethod) authMethod;
+            setMethod(AuthenticationData.METHOD_JSON);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, jsonAuthMethod);
+            JobUtils.addPrivateField(
+                    parameters, PARAM_LOGIN_REQUEST_URL, FIELD_LOGIN_REQUEST_URL, jsonAuthMethod);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_REQUEST_BODY, jsonAuthMethod);
         }
         if (authMethod != null) {
             setVerification(new VerificationData(context));
@@ -82,17 +113,14 @@ public class AuthenticationData extends AutomationData {
             for (Entry<String, Object> entry : parameters.entrySet()) {
                 switch (entry.getKey()) {
                     case PARAM_REALM:
-                        if (!(entry.getValue() instanceof String)) {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.env.auth.realm.bad", data));
-                        }
-                        break;
                     case PARAM_HOSTNAME:
+                    case PARAM_LOGIN_PAGE_URL:
+                    case PARAM_LOGIN_REQUEST_URL:
+                    case PARAM_LOGIN_REQUEST_BODY:
                         if (!(entry.getValue() instanceof String)) {
                             progress.error(
                                     Constant.messages.getString(
-                                            "automation.error.env.auth.hostname.bad", data));
+                                            BAD_FIELD_ERROR_MSG, entry.getKey(), data));
                         }
                         break;
                     case PARAM_PORT:
@@ -101,7 +129,7 @@ public class AuthenticationData extends AutomationData {
                         } catch (NumberFormatException e) {
                             progress.error(
                                     Constant.messages.getString(
-                                            "automation.error.env.auth.port.bad", data));
+                                            BAD_FIELD_ERROR_MSG, PARAM_PORT, data));
                         }
                         break;
                     default:
@@ -117,7 +145,8 @@ public class AuthenticationData extends AutomationData {
         }
     }
 
-    public void initContextAuthentication(Context context, AutomationProgress progress) {
+    public void initContextAuthentication(
+            Context context, AutomationProgress progress, AutomationEnvironment env) {
         if (getMethod() != null) {
             switch (getMethod().toLowerCase(Locale.ROOT)) {
                 case AuthenticationData.METHOD_MANUAL:
@@ -126,9 +155,10 @@ public class AuthenticationData extends AutomationData {
                 case AuthenticationData.METHOD_HTTP:
                     HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
                     httpAuthMethod.setHostname(
-                            getParameters().get(AuthenticationData.PARAM_HOSTNAME).toString());
+                            env.replaceVars(
+                                    getParameters().get(AuthenticationData.PARAM_HOSTNAME)));
                     httpAuthMethod.setRealm(
-                            getParameters().get(AuthenticationData.PARAM_REALM).toString());
+                            env.replaceVars(getParameters().get(AuthenticationData.PARAM_REALM)));
                     try {
                         httpAuthMethod.setPort(
                                 Integer.parseInt(
@@ -139,6 +169,57 @@ public class AuthenticationData extends AutomationData {
                         // Ignore - will have been already reported
                     }
                     context.setAuthenticationMethod(httpAuthMethod);
+                    break;
+                case AuthenticationData.METHOD_FORM:
+                    FormBasedAuthenticationMethodType formType =
+                            new FormBasedAuthenticationMethodType();
+                    FormBasedAuthenticationMethod formAuthMethod =
+                            formType.createAuthenticationMethod(context.getId());
+                    JobUtils.setPrivateField(
+                            formAuthMethod,
+                            AuthenticationData.PARAM_LOGIN_PAGE_URL,
+                            env.replaceVars(
+                                    getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_URL)));
+                    // Note field name is different to param name
+                    JobUtils.setPrivateField(
+                            formAuthMethod,
+                            FIELD_LOGIN_REQUEST_URL,
+                            env.replaceVars(
+                                    getParameters()
+                                            .get(AuthenticationData.PARAM_LOGIN_REQUEST_URL)));
+                    JobUtils.setPrivateField(
+                            formAuthMethod,
+                            AuthenticationData.PARAM_LOGIN_REQUEST_BODY,
+                            env.replaceVars(
+                                    getParameters()
+                                            .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY)));
+                    context.setAuthenticationMethod(formAuthMethod);
+                    break;
+                case AuthenticationData.METHOD_JSON:
+                    JsonBasedAuthenticationMethodType jsonType =
+                            new JsonBasedAuthenticationMethodType();
+                    JsonBasedAuthenticationMethod jsonAuthMethod =
+                            jsonType.createAuthenticationMethod(context.getId());
+                    JobUtils.setPrivateField(
+                            jsonAuthMethod,
+                            AuthenticationData.PARAM_LOGIN_PAGE_URL,
+                            env.replaceVars(
+                                    getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_URL)));
+                    // Note field name is different to param name
+                    JobUtils.setPrivateField(
+                            jsonAuthMethod,
+                            FIELD_LOGIN_REQUEST_URL,
+                            env.replaceVars(
+                                    getParameters()
+                                            .get(AuthenticationData.PARAM_LOGIN_REQUEST_URL)));
+
+                    JobUtils.setPrivateField(
+                            jsonAuthMethod,
+                            AuthenticationData.PARAM_LOGIN_REQUEST_BODY,
+                            env.replaceVars(
+                                    getParameters()
+                                            .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY)));
+                    context.setAuthenticationMethod(jsonAuthMethod);
                     break;
                 default:
                     progress.error(
