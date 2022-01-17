@@ -81,7 +81,7 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public void init() {
         boastService = new BoastService();
-        callbackService = new CallbackService();
+        callbackService = new CallbackService(OastRequest::create);
         interactshService = new InteractshService();
     }
 

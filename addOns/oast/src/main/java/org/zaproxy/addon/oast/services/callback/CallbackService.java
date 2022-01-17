@@ -21,6 +21,7 @@ package org.zaproxy.addon.oast.services.callback;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,9 +44,12 @@ public class CallbackService extends OastService implements OptionsChangedListen
 
     private static final Logger LOGGER = LogManager.getLogger(CallbackService.class);
 
-    public CallbackService() {
+    public CallbackService(OastRequestFactory oastRequestFactory) {
+        Objects.requireNonNull(oastRequestFactory);
+
         proxyServer = new ProxyServer("ZAP-CallbackService");
-        proxyServer.addOverrideMessageProxyListener(new CallbackProxyListener(this));
+        proxyServer.addOverrideMessageProxyListener(
+                new CallbackProxyListener(this, oastRequestFactory));
     }
 
     @Override

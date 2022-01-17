@@ -20,6 +20,7 @@
 package org.zaproxy.addon.oast.services.callback;
 
 import java.util.Date;
+import java.util.Objects;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,9 +39,12 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
     private static final Logger LOGGER = LogManager.getLogger(CallbackProxyListener.class);
 
     private final CallbackService callbackService;
+    private final OastRequestFactory oastRequestFactory;
 
-    public CallbackProxyListener(CallbackService callbackService) {
-        this.callbackService = callbackService;
+    public CallbackProxyListener(
+            CallbackService callbackService, OastRequestFactory oastRequestFactory) {
+        this.callbackService = Objects.requireNonNull(callbackService);
+        this.oastRequestFactory = Objects.requireNonNull(oastRequestFactory);
     }
 
     @Override
@@ -86,7 +90,7 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
     private void callbackReceivedHandler(String handler, HttpMessage httpMessage) {
         try {
             OastRequest request =
-                    OastRequest.create(
+                    oastRequestFactory.create(
                             httpMessage,
                             httpMessage.getRequestHeader().getSenderAddress().getHostAddress(),
                             handler);
