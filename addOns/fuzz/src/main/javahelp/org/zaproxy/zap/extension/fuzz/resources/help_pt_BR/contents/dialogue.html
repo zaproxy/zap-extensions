@@ -21,14 +21,19 @@ Para configurar a difusão/fuzzing:<br/>
 <li>Os resultados serão listados em seguida na <a href="tab.html">aba difusor.</a> Selecione-os para ver as solicitações e respostas.</li>
 </ul>
 Você também pode pesquisar seqüências de caracteres nos resultados de difusão usando a guia' Pesquisar'.
+<p>
+Click on the 'Edit' button to edit the message you have selected for fuzzing.
+Note that this will remove all of the fuzz locations that you have defined.
+<p>
+You will need to 'Save' the message before you can define new fuzz locations.
 
-<h3>Aba de Opções</h3>
+<h3>Options tab</h3>
 This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
 
 <h4>Follow Redirects</h4>
 Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
-<h3>Aba de Processadores de mensagem</h3>
+<h3>Message Processors tab</h3>
 Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
 The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 

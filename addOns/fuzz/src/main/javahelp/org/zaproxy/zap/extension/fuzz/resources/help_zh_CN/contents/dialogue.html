@@ -21,6 +21,11 @@ Fuzzer对话框
 <li>结果将在<a href="tab.html">Fuzzer选项卡</a>中列出，选择它们以查看完整的请求和响应。</li>
 </ul>
 您还可以使用"搜索选项卡"在模糊结果中搜索字符串。
+<p>
+Click on the 'Edit' button to edit the message you have selected for fuzzing.
+Note that this will remove all of the fuzz locations that you have defined.
+<p>
+You will need to 'Save' the message before you can define new fuzz locations.
 
 <h3>Options tab</h3>
 This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
@@ -28,24 +33,24 @@ This tab allows you to configure the options to be used when fuzzing. See the ma
 <h4>Follow Redirects</h4>
 Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
-<h3>消息处理器选项卡</h3>
+<h3>Message Processors tab</h3>
 Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
 The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
 <p>
-附件还可以定义附加的有效负载生成器，
+Add-ons can also define additional payload generators.
 
 
-<h2>通过访问</h2>
+<h2>Accessed via</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>请求选项卡</td><td>"模糊..."右键单击菜单项</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>站点和历史记录选项卡</td><td>攻击>模糊... 菜单项</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>工具菜单 </td><td>攻击>模糊... 菜单项</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
 </table>
 
-<h2>另请参阅</h2>
+<h2>See also</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer概念</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
 </table>
 
 </body>

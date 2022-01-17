@@ -2,63 +2,63 @@
 <html>
 <head>
 <title>
-Code Dx
+Код Dx
 </title>
 </head>
 <body>
-<h1>Code Dx</h1>
-The Code Dx add-on allows you to generate compatible reports and upload them to a Code Dx server. There are two options under the Report menu.
+<h1>Код Dx </h1>
+Надстройка Code Dx позволяет создавать совместимые отчеты и загружать их на сервер Code Dx. В меню «Отчет» есть две опции. 
 <p>
-Contributed by <a href="https://www.codedx.com/">https://www.codedx.com/</a>
+Предоставлено  <a href="https://www.codedx.com/">https://www.codedx.com/</a>
 
-<h2>Code Dx: Upload Report</h2>
-This option will generate a report for you and upload it to a Code Dx server. Selecting it will prompt you for the Server URL and API Key. After populating the fields, click the refresh button to get a list of projects available to the API Key. Then click the Upload button to send results to the Code Dx server.
+<h2>Code Dx: отчет о загрузке </h2>
+Эта опция создаст для вас отчет и загрузит его на сервер Code Dx.  При его выборе вам будет предложено ввести URL-адрес сервера и ключ API.  После заполнения полей нажмите кнопку обновления, чтобы получить список проектов, доступных для ключа API.  Затем нажмите кнопку «Загрузить», чтобы отправить результаты на сервер Code Dx. 
 
-<h2>Code Dx: Generate XML Report</h2>
-This option will generate a standard XML report that includes the HTTP request and response data.
+<h2>Code Dx: создание XML-отчета </h2>
+При выборе этого параметра будет создан стандартный XML-отчет, включающий данные HTTP-запроса и ответа. 
 
 <h1>API</h1>
-<h2>Actions</h2>
+<h2>Действия</h2>
 
 <h3>uploadReport</h3>
-Uploads a report to Code Dx. Note that uploading an empty report with no alerts will cause an Exception to be thrown as Code Dx won't be able to read it and will return a non-200 response.
+Загружает отчет в Code Dx. Обратите внимание, что загрузка пустого отчета без предупреждений приведет к возникновению исключения, поскольку Code Dx не сможет его прочитать и вернет ответ, отличный от 200. 
 <br><br>
-<i>Parameters</i>
+<i>Параметры</i>
 <ul>
-    <li>filePath: Absolute path to the report file</li>
-    <li>serverUrl: Code Dx server URL</li>
-    <li>codeDxApiKey: Code Dx API Key</li>
-    <li>projectId: Code Dx Project ID</li>
-    <li>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</li>
-    <li>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</li>
+    <li>filePath: Абсолютный путь к файлу отчета. </li>
+    <li>serverUrl: URL-адрес сервера Code Dx. </li>
+    <li>codeDxApiKey: Ключ API Code Dx </li>
+    <li>projectId: идентификатор проекта Code Dx </li>
+    <li>отпечаток пальца: необязательный хэш SHA1 недействительного сертификата, чтобы сделать исключение для </li>
+    <li>acceptPermanently: необязательное логическое значение, указывающее, следует ли постоянно хранить исключение в файле хранилища доверенных сертификатов. </li>
 </ul>
-<i>Returns</i>
+<i>Возвраты</i>
 <br>
-"OK" if the report is uploaded successfully.
+«ОК», если отчет успешно загружен. 
 
 <h3>generateAndUpload</h3>
-Generates a Code Dx report, saves it to a temporary file, uploads to Code Dx, then deletes the file.
+Создает отчет Code Dx, сохраняет его во временном файле, загружает в Code Dx, а затем удаляет файл. 
 <br><br>
-<i>Parameters</i>
+<i>Параметры</i>
 <ul>
-    <li>serverUrl: Code Dx server URL</li>
-    <li>codeDxApiKey: Code Dx API Key</li>
-    <li>projectId: Code Dx Project ID</li>
-    <li>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</li>
-    <li>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</li>
+    <li>serverUrl: URL-адрес сервера Code Dx. </li>
+    <li>codeDxApiKey: Ключ API Code Dx</li>
+    <li>projectId: идентификатор проекта Code Dx </li>
+    <li>отпечаток пальца: необязательный хэш SHA1 недействительного сертификата, чтобы сделать исключение для </li>
+    <li>acceptPermanently: необязательное логическое значение, указывающее, следует ли постоянно хранить исключение в файле хранилища доверенных сертификатов. </li>
 </ul>
-<i>Returns</i>
+<i>Возвраты</i>
 <br>
-"OK" if the report is uploaded successfully.
+«ОК», если отчет успешно загружен. 
 <br>
-"EMPTY" if the generated report is empty. The report will not be uploaded to Code Dx.
+«ПУСТОЙ», если сгенерированный отчет пуст. Отчет не будет загружен в Code Dx. 
 
-<h2>Views</h2>
+<h2>Просмотры</h2>
 <h3>generateReport</h3>
-Generates an XML report with request and response data.
+Создает XML-отчет с данными запроса и ответа. 
 <br><br>
-<i>Returns</i>
+<i>Возвраты</i>
 <br>
-An XML report String.
+Строка XML-отчета. 
 </body>
 </html>

@@ -21,32 +21,36 @@ Para configurar el fuzzing:<br/>
 <li>Los resultados se mostrarán en la pestaña <a href="tab.html"> Fuzzer </> y los seleccionarán para ver las solicitudes y respuestas completas.</li>
 </ul>
 También puede buscar cadenas en los resultados de fuzz usando la 'pestaña Buscar'.
+<p>
+Click on the 'Edit' button to edit the message you have selected for fuzzing.
+Note that this will remove all of the fuzz locations that you have defined.
+<p>
+You will need to 'Save' the message before you can define new fuzz locations.
 
-<h3>Pestaña de opciones
-</h3>
+<h3>Options tab</h3>
 This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
 
 <h4>Follow Redirects</h4>
 Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
 
-<h3>Pestaña de Procesadores de mensajes</h3>
+<h3>Message Processors tab</h3>
 Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
 The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
 <p>
-Los complementos también pueden definir generadores de carga adicionales.
+Add-ons can also define additional payload generators.
 
 
-<h2>Acceso a través de</h2>
+<h2>Accessed via</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Pestaña de solicitud</td><td>'Fuzz...' haga clic en el elemento derecho del menú</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Pestaña de sitios e historial</td><td>Ataque> Fuzz... elementos del menú</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Menú de herramientas </td><td>Ataque> Fuzz... elemento del menú</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
 </table>
 
-<h2>Vease también</h2>
+<h2>See also</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
 </table>
 
 </body>
