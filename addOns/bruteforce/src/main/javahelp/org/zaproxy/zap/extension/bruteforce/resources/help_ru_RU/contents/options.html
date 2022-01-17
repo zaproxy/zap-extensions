@@ -2,60 +2,60 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Forced Browse screen</title>
+<title>Экран принудительного просмотра параметров </title>
 </head>
 <body>
-	<h1>Options Forced Browse screen</h1>
+	<h1>Экран принудительного просмотра параметров </h1>
 	<p>
-		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
-		options:
-	<h3>Concurrent scanning threads per host</h3>
-	The number of threads the scanner will use per host.
-	<br> Increasing the number of threads will speed up the scan but may put extra
-	strain on the computer ZAP is running on and the target host.
+		Этот экран позволяет настроить <a href="concepts.html">Принудительный просмотр</a>.
+опции:
+<h3>Потоки одновременного сканирования на хост</h3>
+Количество потоков, которые сканер будет использовать на хост. 
+	<br> Увеличение числа потоков ускорит сканирование, но может привести к дополнительным
+нагрузку на компьютер, на котором работает ZAP, и на целевой хост. 
 
-	<h3>Recursive</h3>
-	If checked then the scanner will recurse through all of the sub-directories found.
-	<br> This may take a long time.
+	<h3>Рекурсивный</h3>
+Если этот флажок установлен, сканер будет повторно просматривать все найденные подкаталоги. 
+	<br> Это может занять много времени. 
 
-	<h3>Default file</h3>
-	The default file selected when ZAP starts.
+	<h3>Файл по умолчанию</h3>
+Файл по умолчанию, выбранный при запуске ZAP. 
 
-	<h3>Add custom Forced Browse file</h3>
-	Allows you to add your own files to be used when brute forcing files and directories.
-	<br> These should be text files with one file or directory name per line.
-	<br> Files are added to the 'dirbuster' directory underneath the ZAP home directory.
+	<h3>Добавить пользовательский файл принудительного просмотра</h3>
+Позволяет вам добавлять свои собственные файлы, которые будут использоваться при переборе файлов и каталогов. 
+	<br> Это должны быть текстовые файлы с одним именем файла или каталога в строке. 
+	<br> Файлы добавляются в каталог 'dirbuster' под домашним каталогом ZAP. 
 
-    <h3>Force Browse files without extension</h3>
-    If selected then in addition to brute forcing directories, files without extension will also be brute forced.
-    <br> The URI of the file to be brute forced is derived by appending to the base path the entries of the selected forced browse text file.
-    <br> By default this option is unchecked.
-    <br> Enabling this will increase the scanning time.
+    <h3>Принудительно просматривать файлы без расширения</h3>
+     Если выбрано, то в дополнение к полному перебору каталогов будут также перебираться файлы без расширения. 
+    <br> URI файла для перебора получается путем добавления к базовому пути записей выбранного текстового файла принудительного просмотра. 
+    <br> По умолчанию этот флажок не установлен. 
+    <br> Включение этого параметра увеличит время сканирования. 
 
-	<h3>Force Browse files</h3>
-	If checked then in addition to brute forcing directories, the files will also be brute forced.
-    <br> The URI of the file to be brute forced is derived by appending given extensions to the entries of selected forced browse text file.
-    <br> Users do not need to worry whether the entry already ends with an extension or not. The conflict is handled internally.
-    <br> By default this option is unchecked.
-    <br> Enabling this will increase the scanning time.
+	<h3>Принудительный просмотр файлов</h3>
+Если флажок установлен, то в дополнение к полному перебору каталогов будут также перебраны и файлы. 
+    <br> URI файла для перебора получается путем добавления заданных расширений к записям выбранного текстового файла принудительного просмотра. 
+    <br> Пользователям не нужно беспокоиться о том, заканчивается ли запись уже расширением или нет.  Конфликт решается внутри. 
+    <br> По умолчанию этот флажок не установлен. 
+    <br> Включение этого параметра увеличит время сканирования. 
     
-    <h3>File extensions</h3>
-    If Force Browse files option is checked, then you can specify the file extensions that need to be brute forced.
-    <br> When specifying multiple extensions separate each extension with a comma(,).
-    <br> If no value is specified, "php" will be used as the default extension.
+    <h3>Расширения файлов</h3>
+     Если установлен флажок Force Browse files, вы можете указать расширения файлов, которые необходимо перебрать. 
+    <br> При указании нескольких расширений разделяйте каждое расширение запятой (,). 
+    <br> Если значение не указано, в качестве расширения по умолчанию будет использоваться "php". 
     
-    <h3>File extensions to ignore</h3>
-    The scanner parses the response body to filter existing links.
-    <br> The extracted links are then used to make new requests.
-    <br> If file extensions to ignore is specified then links ending with those extensions are ignored from making requests.
-    <br> When specifying multiple extensions separate each extension with a comma(,).
-    <br> By default, this is set to "jpg, gif, jpeg, ico, tiff, png, bmp".
+    <h3>Расширения файлов, которые следует игнорировать</h3>
+     Сканер анализирует тело ответа, чтобы отфильтровать существующие ссылки. 
+    <br> Затем извлеченные ссылки используются для создания новых запросов. 
+    <br> Если указаны расширения файлов для игнорирования, то ссылки, заканчивающиеся этими расширениями, игнорируются при выполнении запросов. 
+    <br> При указании нескольких расширений разделяйте каждое расширение запятой (,). 
+    <br> По умолчанию установлено значение «jpg, gif, jpeg, ico, tiff, png, bmp». 
     
-    <h3>Fail Case String</h3>
-    The scanner will request for every file type in every directory that it finds with the given fail case string appended.
-    <br> The response from this page is used to determine whether or not a guessed file/directory is there.
-    <br> By default, this is set to "thereIsNoWayThat-You-CanBeThere".
-    <br> If you’re getting strange results, consider changing this.
+    <h3>Строка с ошибкой</h3>
+     Сканер будет запрашивать каждый тип файла в каждом каталоге, который он находит, с добавлением заданной строки случая сбоя. 
+    <br> Ответ с этой страницы используется для определения того, существует ли предполагаемый файл/каталог. 
+    <br> По умолчанию установлено значение «reIsNoWayThat-You-CanBeThere». 
+    <br> Если вы получаете странные результаты, попробуйте изменить это. 
   
 </body>
 </html>
