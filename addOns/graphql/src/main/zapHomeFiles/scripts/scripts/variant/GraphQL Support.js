@@ -11,13 +11,15 @@ function getQuery(msg){
 	
 	if (header.getMethod() == "POST") {
 		var contentTypeHeader = header.getHeader("Content-Type");
-		if (contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
+		if (!body.isEmpty() && contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
 			try{
 				var json = JSON.parse(body);
 				query = json.query;
 			}
 			catch(err){
-				print("Parsing message body failed: " + err.message);
+				if (contentTypeHeader != null) {
+					print("Parsing message body failed: " + err.message);
+				}
 				return null;
 			}
 		} else if (contentTypeHeader.contains("application/graphql")) {
@@ -39,7 +41,7 @@ function setQuery(msg, query){
 	
 	if (header.getMethod() == "POST") {
 		var contentTypeHeader = header.getHeader("Content-Type");
-		if (contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
+		if (!body.isEmpty() && contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
 			try{
 				var json = JSON.parse(body);
 				json.query = query;
@@ -47,7 +49,9 @@ function setQuery(msg, query){
 				msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 			}
 			catch(err){
-				print("Parsing message body failed: " + err.message);
+				if (contentTypeHeader != null) {
+					print("Parsing message body failed: " + err.message);
+				}
 			}
 		} else if (contentTypeHeader.contains("application/graphql")) {
 			msg.setRequestBody(query);
