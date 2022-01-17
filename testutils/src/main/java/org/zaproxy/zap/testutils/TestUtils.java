@@ -168,7 +168,7 @@ public abstract class TestUtils {
         nano.start();
     }
 
-    private static int getRandomPort() throws IOException {
+    protected static int getRandomPort() throws IOException {
         try (ServerSocket server = new ServerSocket(0)) {
             return server.getLocalPort();
         }
