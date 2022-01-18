@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.11.1.
 - Dependency updates.
 
+### Fixed
+- Parameter examples specified as part of the schema were not being used.
+
 ## [24] - 2021-12-06
 ### Changed
 - Use examples defined in parameters ([Issue #6870](https://github.com/zaproxy/zaproxy/issues/6870)).
