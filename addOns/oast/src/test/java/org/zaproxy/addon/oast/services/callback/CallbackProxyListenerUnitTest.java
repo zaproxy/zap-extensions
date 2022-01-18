@@ -48,7 +48,8 @@ import org.zaproxy.zap.testutils.TestUtils;
 /* Unit test for {@link CallbackProxyListener}. */
 class CallbackProxyListenerUnitTest extends TestUtils {
 
-    private static final String EXPECTED_RESPONSE_HEADER = "HTTP/1.1 200\r\n\r\n";
+    private static final String EXPECTED_RESPONSE_HEADER =
+            "HTTP/1.1 200\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
 
     private HttpMessage message;
     private InetAddress source;

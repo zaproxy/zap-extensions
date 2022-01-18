@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.oast.services.callback;
 
-import java.util.Date;
 import java.util.Objects;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +36,11 @@ import org.zaproxy.zap.utils.ThreadUtils;
 class CallbackProxyListener implements OverrideMessageProxyListener {
 
     private static final Logger LOGGER = LogManager.getLogger(CallbackProxyListener.class);
+    private static final String RESPONSE_HEADER =
+            HttpHeader.HTTP11
+                    + " "
+                    + HttpStatusCode.OK
+                    + "\r\nContent-Length: 0\r\nConnection: close";
 
     private final CallbackService callbackService;
     private final OastRequestFactory oastRequestFactory;
@@ -60,15 +64,14 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
         try {
-            msg.setTimeSentMillis(new Date().getTime());
-            String url = msg.getRequestHeader().getURI().toString();
+            msg.setTimeSentMillis(System.currentTimeMillis());
             String path = msg.getRequestHeader().getURI().getPath();
             LOGGER.debug(
                     "Callback received for URL : {} path : {} from {}",
-                    url,
+                    msg.getRequestHeader().getURI(),
                     path,
                     msg.getRequestHeader().getSenderAddress());
-            msg.setResponseHeader(HttpHeader.HTTP11 + " " + HttpStatusCode.OK);
+            msg.setResponseHeader(RESPONSE_HEADER);
             String uuid = path.substring(1);
             String handler = callbackService.getHandlers().get(uuid);
             if (handler != null) {
