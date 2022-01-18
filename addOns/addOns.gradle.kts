@@ -18,7 +18,7 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.zaproxy.add-on") version "0.7.0" apply false
+    id("org.zaproxy.add-on") version "0.8.0" apply false
     id("org.zaproxy.crowdin") version "0.2.1" apply false
 }
 
