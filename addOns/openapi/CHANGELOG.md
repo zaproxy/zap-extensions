@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [25] - 2022-01-18
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Dependency updates.
@@ -189,6 +189,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/openapi-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/openapi-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/openapi-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/openapi-v22
