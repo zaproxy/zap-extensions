@@ -41,6 +41,20 @@ paths:
       responses:
         '201':
           description: Created
+  /query-parameter-with-example-in-schema:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 42
+      responses:
+        '201':
+          description: Created
   # Using Example defined in a references schema
   /pets-with-example:
     post:

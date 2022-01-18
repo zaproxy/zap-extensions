@@ -92,6 +92,24 @@ class PathGeneratorUnitTest extends TestUtils {
         assertEquals("/query-parameter-with-examples?petId=42", request);
     }
 
+    @Test
+    void shouldUseSchemaExampleInQueryParameters() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/query-parameter-with-example-in-schema",
+                                        openAPI.getPaths()
+                                                .get("/query-parameter-with-example-in-schema")
+                                                .getGet(),
+                                        null),
+                                generators)
+                        .getUrl();
+
+        assertEquals("/query-parameter-with-example-in-schema?petId=42", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

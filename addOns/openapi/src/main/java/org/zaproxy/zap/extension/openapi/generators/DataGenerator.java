@@ -96,7 +96,10 @@ public class DataGenerator {
                 .map(stream -> stream.map(Example::getValue).filter(Objects::nonNull).findFirst())
                 .orElse(Optional.ofNullable(parameter.getExample()))
                 .map(Object::toString)
-                .orElse(null);
+                .orElse(
+                        Optional.ofNullable(parameter.getSchema().getExample())
+                                .map(Object::toString)
+                                .orElse(null));
     }
 
     private static String getDefaultValue(Schema<?> schema) {
