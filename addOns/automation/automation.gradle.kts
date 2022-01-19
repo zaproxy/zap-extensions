@@ -1,7 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Automation Framework."
 
 zapAddOn {
     addOnName.set("Automation Framework")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.11.1")
 
     manifest {
