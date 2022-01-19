@@ -37,7 +37,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
+import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -298,7 +300,7 @@ public class ContextWrapper {
             getData().getSessionManagement().initContextSessionManagement(context, progress);
         }
         if (getData().getAuthentication() != null) {
-            getData().getAuthentication().initContextAuthentication(context, progress);
+            getData().getAuthentication().initContextAuthentication(context, progress, env);
         }
         if (getData().getUsers() != null) {
             initContextUsers(context, env);
@@ -310,7 +312,9 @@ public class ContextWrapper {
             for (UserData ud : getData().getUsers()) {
                 User user = new User(context.getId(), env.replaceVars(ud.getName()));
                 AuthenticationMethod authMethod = context.getAuthenticationMethod();
-                if (authMethod instanceof HttpAuthenticationMethod) {
+                if (authMethod instanceof HttpAuthenticationMethod
+                        || authMethod instanceof FormBasedAuthenticationMethod
+                        || authMethod instanceof JsonBasedAuthenticationMethod) {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             new UsernamePasswordAuthenticationCredentials(
                                     env.replaceVars(ud.getUsername()),
