@@ -35,6 +35,14 @@
     },
     {
       "path":".svn/entries",
+      "content":["FILE","DIR"],
+      "links":["https://www.oreilly.com/library/view/version-control-with/9780596510336/ch08s02s01.html"],
+      "type":"svn_dir",
+      "source":"snallygaster"
+    },
+    {
+      "path":".svn/wc.db",
+      "content":["SQLite"],
       "links":["https://www.oreilly.com/library/view/version-control-with/9780596510336/ch08s02s01.html"],
       "type":"svn_dir",
       "source":"snallygaster"

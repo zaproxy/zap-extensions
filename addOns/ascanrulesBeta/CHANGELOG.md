@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Hidden File Finder scan rule, content checking has been added for .svn/entries as well as detection for wc.db.
 
 ## [39] - 2021-12-13
 ### Changed
