@@ -3,54 +3,56 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Fuzzer dialog
+Диалог фаззера
 </title>
 </head>
 <body>
-<h1>Fuzzer dialog</h1>
-This allows you to select the fuzzers to use when <a href="concepts.html">fuzzing </a> a request. 
+<h1>Диалог фаззера</h1>
+Это позволяет вам выбрать фаззеры для использования, когда  <a href="concepts.html">фаззинг </a> запрос. 
 
-<h3>Fuzz Locations tab</h3>
-To configure the fuzzing:<br/>
+<h3>Местоположение FUZZ
+вкладка </h3>
+Чтобы настроить фаззинг: <br/>
 <ul>
-<li>Highlight a string you wish to fuzz in the Fuzz Locations tab</li>
-<li>Click the 'Add...' button to launch the <a href="payloads.html">Payloads dialog</a></li>
-<li>Add the payloads you want to use</li>
-<li>Click on the 'Processors...' button to launch the <a href="locations.html">Location Processors dialog</a> (if required)</li>
-<li>Click on the 'Start Fuzzer' button to start the fuzzing</li>
-<li>The results will then be listed in the <a href="tab.html">Fuzzer tab</a> select them to see the full requests and responses.</li>
+<li>Выделите строку, которую вы хотите FUZZ
+в Tab Puzz Locations </li>
+<li>Нажмите кнопку «Добавить ...», чтобы запустить диалог полезных нагрузок <a href="payloads.html"> </> </li>
+<li>Добавьте полезные нагрузки, которые вы хотите использовать </li>
+<li>Нажмите кнопку «Процессоры ...», чтобы запустить диалоговое окно процессоров <a href="locations.html"> location </> (если требуется) </li>
+<li>Нажмите на кнопку «Пуск», чтобы начать попадание </li>
+<li>Результаты будут затем перечислены в<a href="tab.html">Фаззер вкладка</a> выберите их, чтобы увидеть полные запросы и ответы. </li>
 </ul>
-You can also search for strings in the fuzz results using the 'Search tab'.
+Вы также можете искать строки в результатах FUZZ, используя вкладку «Поиск». 
 <p>
-Click on the 'Edit' button to edit the message you have selected for fuzzing.
-Note that this will remove all of the fuzz locations that you have defined.
+Нажмите на кнопку «Редактировать», чтобы редактировать сообщение, которое вы выбрали для незма.
+Обратите внимание, что это удалит все определенные вами местоположения FUZZ. 
 <p>
-You will need to 'Save' the message before you can define new fuzz locations.
+Вам нужно будет «сохранить» сообщение, прежде чем вы сможете определить новые местоположения FUZZ. 
 
-<h3>Options tab</h3>
-This tab allows you to configure the options to be used when fuzzing. See the main <a href="options.html">options help</a> for more details.
+<h3> Вкладка Опции </>
+Эта вкладка позволяет настроить параметры, которые будут использоваться при фаззинге.  См. Основные <a href="options.html"> Параметры помощи </> для более подробной информации. 
 
-<h4>Follow Redirects</h4>
-Indicates whether or not the Fuzzer should follow redirect responses (only visible for HTTP messages).
+<h4>Следуйте перенаправленным </h4>
+Указывает, следует ли нет Фаззеру следовать перенаправленным ответами (видимым только для HTTP-сообщений). 
 
-<h3>Message Processors tab</h3>
-Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
-The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+<h3>Вкладка процессоров сообщений </h3>
+Процессоры сообщений могут получить доступ и изменять разпущенные сообщения, контролировать процесс напыления и взаимодействовать с zap ui. <br>
+Доступные процессоры сообщений зависят от типов путаного сообщения, это дополнение включает в себя процессоры HTTP-сообщений <a href="httpmessageprocessors.html"> по умолчанию </a>.
 
 <p>
-Add-ons can also define additional payload generators.
+Add-ons также может определить дополнительные генераторы полезных нагрузок. 
 
 
-<h2>Accessed via</h2>
+<h2>Доступ через </h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Вкладка запроса </td><td>«FUZZ ...» щелкните правой кнопкой мыши Пункт меню </td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Сайты и вкладка истории </td><td>Атака> Фазз ... пункты меню </td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Меню инструментов </td><td>Атака> Фазз ... пункты меню </td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Смотрите также</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
 </table>
 
 </body>

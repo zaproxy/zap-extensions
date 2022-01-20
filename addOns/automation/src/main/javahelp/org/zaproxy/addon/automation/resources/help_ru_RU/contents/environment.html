@@ -10,48 +10,51 @@ Automation Framework - Environment
 
 Этот раздел файла конфигурации YAML определяет приложения, с которыми могут работать остальные задания. 
 <p>
-Платформа автоматизации поддерживает подмножество механизмов <a href="authentication.html"> аутентификации </a>, поддерживаемых ZAP. 
+Фреймворк автоматизации поддерживает все <a href="authentication.html">аутентификация </ 0> механизмы, поддерживаемые ZAP
+за исключением скриптов, которые скоро будут приходить. 
 
 <pre>
-env:                                   # Среда, обязательно 
-  contexts :                           # Список из 1 или более контекстов, обязательно 
-    - name: context 1                  # Имя, которое будет использоваться для ссылки на этот контекст в других вакансиях, обязательно 
-      urls:                            # Обязательный список URL-адресов верхнего уровня, все, что находится под каждым URL-адресом, будет включено 
-      includePaths:                    # Необязательный список включаемых регулярных выражений 
-      excludePaths:                    # Необязательный список исключенных регулярных выражений 
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
       authentication:
-        method:                        # Строка, одна из 'manual', 'http' - со временем будет охватывать все методы, поддерживаемые ZAP 
-        parameters:
-          hostname:                    # Строка, только для метода http 
-          port:                        # Int, только для метода http 
-          realm:                       # Строка, только для метода http 
+        method:                        # String, one of 'manual', 'http', 'form' or 'json' - script support is planned as well
+        parameters:                    # All of the parameters support vars except for the port 
+          hostname:                    # String, only for 'http' method
+          port:                        # Int, only for 'http' method
+          realm:                       # String, only for 'http' method
+          loginPageUrl:                # String, the login page URL to read prior to making the request, only for 'form' or 'json' methods
+          loginRequestUrl:             # String, the login URL to request, only for 'form' or 'json' methods
+          loginRequestBody:            # String, the login request body - if not supplied a GET request will be used, only for 'form' or 'json' methods
         verification:
-          method:                      # Строка, одно из «ответ», «запрос», «оба», «опрос» 
-          loggedInRegex:               # Строка, шаблон регулярного выражения для определения входа в систему 
-          loggedOutRegex:              # Строка, шаблон регулярного выражения для определения выхода из системы 
-          pollFrequency:               # Int, частота опроса, только для проверки 'опроса' 
-          pollUnits:                   # Строка, единицы опроса, один из «запросов», «секунд», только для проверки «опроса» 
-          pollUrl:                     # Строка, URL для опроса, только для проверки 'опроса' 
-pollPostData:                # Строка, данные публикации для включения в пул, только для проверки "опроса" 
-          pollAdditionalHeaders:       # Список дополнительных заголовков для запроса на опрос, только для проверки 'опроса' 
-          - header:                    # Название заголовка 
-            value:                     # Значение заголовка 
+          method:                      # String, one of 'response', 'request', 'both', 'poll'
+          loggedInRegex:               # String, regex pattern for determining if logged in
+          loggedOutRegex:              # String, regex pattern for determining if logged out
+          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
+          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollUrl:                     # String, the URL to poll, only for 'poll' verification
+          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
+          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
+          - header:                    # The header name
+            value:                     # The header value
       sessionManagement:
-        method:                        # Строка, одно из 'cookie', 'http', 'script' 
-        script:                        # Строка, путь к скрипту, только для управления сеансом «скрипт» 
-        scriptEngine:                  # Строка, имя используемого скриптового движка, только для управления сеансом «скрипт». 
-      users:                           # Список одного или нескольких пользователей для аутентификации 
-      - name:                          # Строка, имя, которое будет использоваться заданиями 
-        username:                      # Строка, имя пользователя для использования при аутентификации, поддерживаются vars ( переменные среды)
-        password:                      # Строка, пароль для использования при аутентификации, поддерживаются переменные 
-  vars:                                # Список из 0 или более пользовательских переменных, которые будут использоваться в файле конфигурации 
-    myVarOne: CustomConfigVarOne       # Может использоваться как $ {myVarOne} в любом месте конфигурации 
-    myVarTwo: ${myVarOne}.VarTwo       # Может ссылаться на другие переменные ( среды)   
+        method:                        # String, one of 'cookie', 'http', 'script'
+        script:                        # String, path to script, only for 'script' session management
+        scriptEngine:                  # String, the name of the script engine to use, only for 'script' session management
+      users:                           # List of one or more users to use for authentication
+      - name:                          # String, the name to be used by the jobs
+        username:                      # String, the username to use when authenticating, vars supported
+        password:                      # String, the password to use when authenticating, vars supported
+  vars:                                # List of 0 or more custom variables to be used throughout the config file
+    myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
+    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars    
   parameters:
-    failOnError: true                  # Если установлен выход при ошибке       
-    failOnWarning: false               # Если установлен выход по предупреждению 
-    progressToStdout: true             # Если установлено, прогресс выполнения задания будет записываться в стандартный вывод. 
-         
+    failOnError: true                  # If set exit on an error         
+    failOnWarning: false               # If set exit on a warning
+    progressToStdout: true             # If set will write job progress to stdout
 </pre>
 
 Переменные системной среды также можно использовать в конфигурации таким же образом, как указано выше.  Если есть две переменные
