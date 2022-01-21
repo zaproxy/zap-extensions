@@ -196,13 +196,17 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
      * @param msg Contains request & response headers.
      * @param remoteReader Content arrives continuously and is forwarded to local client.
      * @param localWriter Received content is written here.
+     * @param method the method used to establish the connection.
      */
     public void addEventStream(
-            HttpMessage msg, final InputStream remoteReader, final OutputStream localWriter) {
+            HttpMessage msg,
+            final InputStream remoteReader,
+            final OutputStream localWriter,
+            ZapGetMethod method) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(remoteReader, charset));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(localWriter, charset));
 
-        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer);
+        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer, method);
         synchronized (observers) {
             for (EventStreamObserver observer : observers) {
                 proxy.addObserver(observer);
@@ -237,7 +241,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
                     inSocket.setTcpNoDelay(true);
                     inSocket.setKeepAlive(true);
 
-                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream());
+                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream(), method);
                 } catch (IOException e) {
                     logger.warn(e.getMessage(), e);
                     keepSocketOpen = false;
