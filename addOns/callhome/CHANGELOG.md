@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- More stats, in preparation for them being added to the respective add-ons
 ### Fixed
 - Bugs sending telemetry on shutdown
 
