@@ -33,7 +33,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
@@ -262,7 +261,9 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
                     return payloads.get(rowIndex);
                 case 1:
                     String payload = payloads.get(rowIndex);
-                    return StringUtils.reverse(payload.substring(0, payload.indexOf('.')));
+                    int firstDot = payload.indexOf('.');
+                    int secondDot = payload.indexOf('.', firstDot + 1);
+                    return payload.substring(firstDot + 1, secondDot);
                 default:
                     return "";
             }

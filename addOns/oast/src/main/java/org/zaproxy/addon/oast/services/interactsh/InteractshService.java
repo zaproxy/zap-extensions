@@ -293,7 +293,9 @@ public class InteractshService extends OastService implements OptionsChangedList
         if (!isRegistered) {
             register();
         }
-        return correlationId
+        return RandomStringUtils.randomAlphanumeric(1).toLowerCase(Locale.ROOT)
+                + '.'
+                + correlationId
                 + RandomStringUtils.randomAlphanumeric(13).toLowerCase(Locale.ROOT)
                 + '.'
                 + serverUrl.getHost();
