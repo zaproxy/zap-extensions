@@ -89,6 +89,8 @@ public class WebSocketListener implements Runnable {
 
             // close the other listener too
             wsProxy.shutdown();
+
+            Thread.currentThread().setName("ZAP-WS-Listener (pool)");
         }
     }
 
