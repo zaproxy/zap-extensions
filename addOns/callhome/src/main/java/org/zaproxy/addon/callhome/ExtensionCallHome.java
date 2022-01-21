@@ -338,24 +338,22 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 .start();
     }
 
-    private void uploadTelemetrySessionData() {
-        new Thread(
-                        () -> {
-                            JSONObject data = getMandatoryRequestData();
-                            data.put("teltype", "stats");
-                            addExtendedData(data);
-                            addStatistics(data, getInMemoryStats());
+    private JSONObject getTelemetryData() {
+        JSONObject data = getMandatoryRequestData();
+        data.put("teltype", "stats");
+        addExtendedData(data);
+        addStatistics(data, getInMemoryStats());
+        return data;
+    }
 
-                            lastTelemetryData = data;
+    private void uploadTelemetrySessionData(JSONObject data) {
+        lastTelemetryData = data;
 
-                            try {
-                                this.sendServiceRequest(ZAP_TEL_SERVICE, data);
-                            } catch (Exception e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
-                        },
-                        "ZAP-telemetry-stats")
-                .start();
+        try {
+            this.sendServiceRequest(ZAP_TEL_SERVICE, data);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     protected JSONObject getLastTelemetryData() {
@@ -478,14 +476,25 @@ public class ExtensionCallHome extends ExtensionAdaptor
             if (duration.getSeconds() > 2) {
                 // When a session changes there are 2 of these events in quick succession, just
                 // upload on the first one
-                this.uploadTelemetrySessionData();
-                lastSessionCreated = now;
+
+                JSONObject data = this.getTelemetryData();
+
+                new Thread(
+                                () -> {
+                                    this.uploadTelemetrySessionData(data);
+                                    lastSessionCreated = now;
+                                },
+                                "ZAP-telemetry-stats")
+                        .start();
             }
         }
     }
 
     @Override
     public void destroy() {
+        if (Constant.isSilent() || !getParam().isTelemetryEnabled()) {
+            return;
+        }
         LocalDateTime now = LocalDateTime.now();
         if (this.lastSessionCreated != null) {
             Duration duration = Duration.between(this.lastSessionCreated, now);
@@ -493,7 +502,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 return;
             }
         }
-        this.uploadTelemetrySessionData();
+        this.uploadTelemetrySessionData(this.getTelemetryData());
         lastSessionCreated = now;
     }
 
