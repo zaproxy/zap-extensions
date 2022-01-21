@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed 
+- Path Traversal scan rule, updated the regex for case 5 to be case-insensitive when searching for Error or Exception in content body.
 
 
 ## [44] - 2022-01-13

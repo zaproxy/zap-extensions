@@ -473,7 +473,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                 }
 
                 // do some pattern matching on the results.
-                Pattern errorPattern = Pattern.compile("Exception|Error");
+                Pattern errorPattern = Pattern.compile("Exception|Error", Pattern.CASE_INSENSITIVE);
                 Matcher errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
 
                 String urlfilename = msg.getRequestHeader().getURI().getName();
