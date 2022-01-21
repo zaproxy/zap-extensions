@@ -71,7 +71,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setApiFile(this.getStringValue(API_FILE_PARAM));
         this.job.getParameters().setApiUrl(this.getStringValue(API_URL_PARAM));
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

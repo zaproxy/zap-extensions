@@ -253,7 +253,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setScanHeadersAllRequests(null);
         }
         this.job.getData().getPolicyDefinition().setRules(this.getRulesModel().getRules());
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

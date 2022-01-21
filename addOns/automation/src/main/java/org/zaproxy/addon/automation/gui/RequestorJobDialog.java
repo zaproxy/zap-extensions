@@ -83,7 +83,7 @@ public class RequestorJobDialog extends StandardFieldsDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getData().getParameters().setUser(this.getStringValue(USER_PARAM));
         job.getData().setRequests(this.getRulesModel().getRules());
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

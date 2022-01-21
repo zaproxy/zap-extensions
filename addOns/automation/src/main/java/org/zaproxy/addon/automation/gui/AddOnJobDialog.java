@@ -205,7 +205,7 @@ public class AddOnJobDialog extends StandardFieldsDialog {
         } else {
             this.job.getData().setUninstall(addOns);
         }
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

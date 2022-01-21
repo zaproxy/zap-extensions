@@ -331,7 +331,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setQuerySplitType(null);
             this.job.getParameters().setRequestMethod(null);
         }
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

@@ -104,7 +104,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setMaxBodySizeInBytesToScan(this.getIntValue(MAX_BODY_SIZE_PARAM));
         this.job.getParameters().setEnableTags(this.getBoolValue(ENABLE_TAGS_PARAM));
         this.job.getData().setRules(this.getRulesModel().getRules());
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     @Override

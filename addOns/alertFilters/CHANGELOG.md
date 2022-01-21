@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- When the automation Job is edited via UI Dialog then the status will be set to Not started
 
 ## [13] - 2021-10-06
 ### Added

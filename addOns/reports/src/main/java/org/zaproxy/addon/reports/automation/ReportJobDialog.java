@@ -305,7 +305,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
         } else {
             job.getData().setConfidences(confs);
         }
-        this.job.setChanged();
+        this.job.resetAndSetChanged();
     }
 
     private File getReportFile() {
