@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public class EventStreamProxy {
@@ -69,11 +70,15 @@ public class EventStreamProxy {
 
     private ServerSentEventStream dataStreamObject;
 
-    public EventStreamProxy(HttpMessage message, BufferedReader reader, BufferedWriter writer) {
+    public EventStreamProxy(
+            HttpMessage message,
+            BufferedReader reader,
+            BufferedWriter writer,
+            ZapGetMethod method) {
         //		this.message = message;
         this.writer = writer;
 
-        listener = new EventStreamListener(this, reader);
+        listener = new EventStreamListener(this, reader, method);
 
         HttpRequestHeader reqHeader = message.getRequestHeader();
 
@@ -97,7 +102,7 @@ public class EventStreamProxy {
 
     public void start() {
         // TODO use thread pool
-        (new Thread(listener)).start();
+        (new Thread(listener, "ZAP-SSE-Listener")).start();
         notifyStateObservers(State.OPEN);
     }
 

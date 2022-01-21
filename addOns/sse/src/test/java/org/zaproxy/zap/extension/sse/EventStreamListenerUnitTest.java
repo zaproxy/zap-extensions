@@ -38,6 +38,7 @@ import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.zaproxy.zap.ZapGetMethod;
 
 /** Unit test for {@link EventStreamListener}. */
 @ExtendWith(MockitoExtension.class)
@@ -51,8 +52,9 @@ class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
         EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
         listener.run();
 
         // Then
@@ -71,8 +73,9 @@ class EventStreamListenerUnitTest {
         BufferedReader readerMock =
                 getReaderMockForStream(prepareEventStreamLines(event1, event2, event3, event4));
         EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
         listener.run();
 
         // Then
@@ -91,8 +94,9 @@ class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
         EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
         listener.run();
 
         // Then
@@ -109,8 +113,9 @@ class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
         EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
         listener.run();
 
         // Then
@@ -126,12 +131,26 @@ class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
         EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
 
-        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
         listener.run();
 
         // Then
         verify(proxyMock, times(1)).processEvent("");
+    }
+
+    @Test
+    void shouldAbortMethodWhenClosing() throws IOException {
+        // Given
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
+        BufferedReader readerMock = mock(BufferedReader.class);
+        ZapGetMethod method = mock(ZapGetMethod.class);
+        EventStreamListener listener = new EventStreamListener(proxyMock, readerMock, method);
+        // When
+        listener.close();
+        // Then
+        verify(method).abort();
     }
 
     /**

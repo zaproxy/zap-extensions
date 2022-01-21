@@ -54,7 +54,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
     void shouldForwardEventWhenAllObserversReturnTrue() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // create mock observer
         EventStreamObserver mockObserver = mock(EventStreamObserver.class);
@@ -72,7 +72,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
     void shouldNotForwardEventWhenAtLeastOneObserverReturnsFalse() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // create mock observer
         EventStreamObserver mockObserver = mock(EventStreamObserver.class);
@@ -90,7 +90,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
     void shouldForwardEventWithoutObservers() throws IOException {
         // Given
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         proxy.processEvent("data:blub");
@@ -105,7 +105,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         final String data = "blub";
         final String eventStream = "data:" + data;
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -122,7 +122,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data: YHOO\ndata: +2\ndata: 10";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -136,7 +136,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = ": test stream";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -150,7 +150,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data: first event\nid: 2";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -166,7 +166,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data:second event\nid";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -181,7 +181,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data:  third event";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -195,7 +195,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -210,7 +210,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "data\ndata";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -225,7 +225,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "event: server-time\ndata: 1357651178";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
@@ -240,7 +240,7 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
         // Given
         final String eventStream = "retry: 10000";
         BufferedWriter writer = mock(BufferedWriter.class);
-        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
 
         // When
         ServerSentEvent event = proxy.processEvent(eventStream);
