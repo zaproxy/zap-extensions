@@ -40,7 +40,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpMethodHelper;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.users.User;
@@ -119,8 +118,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
         try {
             newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
             this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
-            if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())
-                    && newRequest.getResponseBody().length() > 0) {
+            if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
                 this.raiseAlert(newRequest);
             }
         } catch (Exception e) {
