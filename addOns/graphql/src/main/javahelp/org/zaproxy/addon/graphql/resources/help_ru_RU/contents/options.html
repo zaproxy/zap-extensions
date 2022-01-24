@@ -5,77 +5,77 @@
 <TITLE>GraphQL Options</TITLE>
 </HEAD>
 <BODY>
-	<H1>GraphQL Options</H1>
+	<H1>Параметры GraphQL </H1>
 
-	In this document, a 'Query' may refer to a GraphQL query, subscription or mutation.
+	В этом документе «запрос» может относиться к запросу GraphQL, подписке или мутации. 
 
-	<h2>Maximum Query Depth</h2>
+	<h2>Максимальная глубина запроса </h2>
 	
-	The maximum depth of a generated query.
+	Максимальная глубина генерируемого запроса. 
 
-	<h2> Lenient Maximum Query Depth </h2>
+	<h2> Мягкая максимальная глубина запроса  </h2>
 
-	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
-	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
+	Если этот параметр включен, он предотвращает неверные запросы, разрешая дополнительную глубину для полей без конечных типов. 
+	Если этот параметр отключен, максимальная глубина запроса применяется строго, даже если это означает создание недопустимого запроса. 
 
-	<h2> Additional Query Depth </h2>
+	<h2> Дополнительная глубина запроса  </h2>
 
-	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
-	The maximum additional depth used to search for leaf-type fields.
-	If a leaf type is not found, the generated query may be invalid and a message is logged.
+	Значение этого параметра используется, только если включен параметр «Максимальная глубина запроса». 
+	Максимальная дополнительная глубина, используемая для поиска полей листового типа. 
+	Если конечный тип не найден, сгенерированный запрос может быть недопустимым, и в журнал записывается сообщение. 
 
-	<h2>Maximum Arguments Depth</h2>
+	<h2>Максимальная глубина аргументов </h2>
 	
-	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
+	Максимальная глубина указанных аргументов.  Это полезно, когда поле имеет входной объект в качестве аргумента. 
 
-	<h2>Specify Optional Arguments</h2>
+	<h2>Укажите необязательные аргументы </h2>
 	
-	If this option is selected then optional (nullable) arguments will be specified too.
+	Если выбран этот параметр, то также будут указаны необязательные (обнуляемые) аргументы. 
 
-	<h2>Specify Arguments</h2>
+	<h2>Укажите аргументы </h2>
 
-	Choose how the field arguments should be added in the generated query,
+	Выберите, как аргументы поля должны быть добавлены в сгенерированный запрос, 
 	<ul>
-		<li>Inline</li>
-		<li>Using Variables</li>
-		<li>Both - each query will be sent twice, once with inline arguments and once with variables</li>
+		<li>В линию</li>
+		<li>Использование переменных </li>
+		<li>Оба (Both) — каждый запрос будет отправлен дважды, один раз со встроенными аргументами и один раз с переменными. </li>
 	</ul>
 
-	<h2>Generate Query For</h2>
+	<h2>Создать запрос для </h2>
 	
-	A separate query may be generated for either of the following in the provided schema, 
+	Отдельный запрос может быть сгенерирован для любого из следующего в предоставленной схеме:  
 	<ul>
-		<li>each Leaf, that is, each scalar or enum;</li>
-		<li>each field under a root operation type (Query, Mutation or Subscription); or</li>
-		<li>each root operation type.</li>
+		<li>каждый лист, то есть каждый скаляр или перечисление; </li>
+		<li>каждое поле под корневым типом операции (запрос, мутация или подписка); или </li>
+		<li>каждый тип корневой операции. </li>
 	</ul>
 
-	<h2>Request Method</h2>
+	<h2>Метод запроса </h2>
 	
-	The requests made to the endpoint can be of the following types:
+	Запросы к конечной точке могут быть следующих типов: 
 
 	<ul>
-		<li>A POST request with a JSON body (Content-Type: application/json)</li>
-		<li>A POST request with a GraphQL query in the body (Content-Type: application/graphql)</li>
-		<li>A GET request with the query appended to it in a query string</li>
+		<li>Запрос POST с телом JSON (тип содержимого: application/json) </li>
+		<li>Запрос POST с запросом GraphQL в теле (Content-Type: application/graphql) </li>
+		<li>Запрос GET с добавленным к нему запросом в строке запроса </li>
 	</ul>
 
-	<h2>See also</h2>
+	<h2>Смотрите также </h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="graphql.html">GraphQL</a></td>
-			<td>for an overview of the GraphQL add-on.</td>
+			<td>для обзора надстройки GraphQL. </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="script.html">GraphQL Script</a></td>
-			<td>for information about the bundled script.</td>
+			<td><a href="script.html">GraphQL-скрипт </a></td>
+			<td>для получения информации о связанном скрипте. </td>
 		</tr>
         <tr>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td><a href="automation.html">GraphQL Automation</a></td>
-            <td>for information about the automation framework support.</td>
+            <td><a href="automation.html">GraphQL автоматизация </a></td>
+            <td>для получения информации о поддержке платформы автоматизации. </td>
         </tr>
 	</table>
 
