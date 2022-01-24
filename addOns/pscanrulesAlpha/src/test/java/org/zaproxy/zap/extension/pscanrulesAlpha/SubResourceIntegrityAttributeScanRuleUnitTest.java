@@ -107,6 +107,22 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
+    void shouldNotRaiseAlertGivenCanonicalAttributeIsPresentInLinkElement()
+            throws HttpMalformedHeaderException {
+        // Given
+        // From https://www.w3.org/TR/SRI/#use-casesexamples
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link href=\"https://dev.example.net/style.css\"\n"
+                                + "rel=\"canonical\"\n"
+                                + "      ></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
             throws HttpMalformedHeaderException {
         // Given

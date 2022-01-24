@@ -168,6 +168,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
         return element -> {
             Optional<String> maybeHostname = SupportedElements.getHost(element, origin);
             return element.getAttributeValue("integrity") == null
+                    && !"canonical".equalsIgnoreCase(element.getAttributeValue("rel"))
                     && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
         };
     }
