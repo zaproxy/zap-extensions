@@ -3,42 +3,42 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Payloads dialog
+Диалог полезных нагрузок 
 </title>
 </head>
 <body>
-<h1>Payloads dialog</h1>
-This allows you to select the payload generators to use when <a href="concepts.html">fuzzing</a> a request.
+<h1>Диалог полезных нагрузок </h1>
+Это позволяет вам выбрать генераторы полезной нагрузки для использования, когда  <a href="concepts.html">фаззинг</a> запрос.
 <br><br>
-Payload generators generate the raw attacks that the fuzzer submits to the target application.
+Генераторы полезной нагрузки генерируют необработанные атаки, которые фаззер передает целевому приложению. 
 <br><br>
-The following types of generators are provided by default:
+По умолчанию предоставляются следующие типы генераторов: 
 <ul>
-<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. This payload generator is useful to send multiple messages that are later processed, for example, with a <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>.</li>
-<li>File - select any local file for one off attacks</li>
-<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, e.g. via add-ons like fuzzdb</li>
-<li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
-<li>Regex - generate attacks based on regex patterns</li>
-<li>Strings - raw strings, which can be entered manually or pasted in</li>
-<li>Script - custom scripts that can generate any payloads required</li>
-<li>Json - generate attacks by fuzzing the provided json</li>
+<li>Empty/Null — несколько раз генерирует выбранную полезную нагрузку, оставляя сообщение без изменений.  Этот генератор полезной нагрузки полезен для отправки нескольких сообщений, которые впоследствии обрабатываются, например, с помощью <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>. .</li>
+<li>Файл - выберите любой локальный файл для одноразовых атак </li>
+<li>File Fuzzers — выберите любую комбинацию файлов фаззинга, зарегистрированных в ZAP, например. через надстройки, такие как fuzzdb </li>
+<li>Numberzz — позволяет легко генерировать последовательность чисел с настраиваемым шагом. </li>
+<li>Regex — генерировать атаки на основе шаблонов регулярных выражений </li>
+<li>Строки - необработанные строки, которые можно ввести вручную или вставить в </li>
+<li>Скрипт — пользовательские скрипты, которые могут генерировать любые необходимые полезные данные. </li>
+<li>Json — генерировать атаки путем фаззинга предоставленного json </li>
 </ul>
-You can write custom payload generator scripts - these can supply any payloads that you need.
+Вы можете написать собственные сценарии генератора полезной нагрузки — они могут предоставлять любые полезные данные, которые вам нужны. 
 <br><br>
-Add-ons can also define additional payload generators.
+Надстройки также могут определять дополнительные генераторы полезной нагрузки. 
 <br><br>
-The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
-configure payload processors that just apply to the palyload generator you have selected.
+Кнопка «Процессоры...» запускает  <a href="processors.html">Диалоговое окно процессоров полезной нагрузки </a> что позволяет вам
+настройте процессоры полезной нагрузки, которые применяются только к выбранному вами генератору полезной нагрузки. 
 <br>
 
-<h2>Accessed via</h2>
+<h2>Доступ через </h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Диалоговое окно фаззера</a> Кнопка "Добавить..." </td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Смотрите также </h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
 </table>
 
 </body>

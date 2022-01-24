@@ -8,45 +8,47 @@
 </HEAD>
 
 <BODY>
-<H1>GraphQL Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>Поддержка инфраструктуры автоматизации GraphQL </H1>
+Это дополнение поддерживает Automation Framework. 
 <br><br>
-The add-on will import GraphQL schemas using introspection if endpoints are found while spidering. However, specifying an endpoint and (optionally) a schema file or URL is recommended if they are available.
+Надстройка будет импортировать схемы GraphQL с помощью самоанализа, если во время поиска будут найдены конечные точки.  Однако рекомендуется указать конечную точку и (необязательно) файл схемы или URL-адрес, если они доступны. 
 
-<H2>Job: graphql</H2>
-The <i>graphql</i> job allows you to import GraphQL schemas locally or from a URL. It supports the following parameters:
+<H2>Задание: graphql</H2>
+Задание <i>graphql</i> позволяет импортировать схемы GraphQL локально или по URL-адресу.  Он поддерживает следующие параметры: 
 <pre>
-  - type: graphql                      # GraphQL definition import
+  - type: graphql                      # Импорт определения GraphQL 
     parameters:
-      endpoint:                        # String: the endpoint URL, default: null, no schema is imported
-      schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
-      schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
-      maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
-      lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
-      maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5
-      maxArgsDepth:                    # Int: The maximum arguments generation depth, default: 5
-      optionalArgsEnabled:             # Bool: Whether or not Optional Arguments should be specified, default: true
-      argsType:                        # Enum [inline, variables, both]: How arguments are specified, default: both 
-      querySplitType:                  # Enum [leaf, root_field, operation]: The level for which a single query is generated, default: leaf
-      requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
+      endpoint:                        # String: URL-адрес конечной точки, по умолчанию: null, схема не импортируется. 
+      schemaUrl:                       # String: URL-адрес, указывающий на схему GraphQL, по умолчанию: null, импорт с использованием самоанализа на конечной точке 
+      schemaFile:                      # String: Путь к локальному файлу схемы GraphQL, по умолчанию: null, импорт с использованием schemaUrl 
+      maxQueryDepth:                   # Int: Максимальная глубина генерации запроса, по умолчанию: 5 
+      lenientMaxQueryDepthEnabled:     # Bool: Независимо от того, применяется ли максимальная глубина запроса снисходительно, по умолчанию: true 
+      maxAdditionalQueryDepth:         # Int: Максимальная дополнительная глубина генерации запроса (используется, если применяется снисходительно), по умолчанию: 5 
+      maxArgsDepth:                    # Int: Максимальная глубина генерации аргументов, по умолчанию: 5 
+      optionalArgsEnabled:             # Bool: Должны ли быть указаны необязательные аргументы, по умолчанию: true 
+      argsType:                        # Enum [inline, variables, both]: Как указываются аргументы, по умолчанию: оба 
+      querySplitType:                  # Enum [leaf, root_field, operation]: Уровень, для которого генерируется один запрос, по умолчанию: leaf 
+      requestMethod:                   # Enum [post_json, post_graphql, get]: Метод запроса по умолчанию: post_json 
+ 
+Текст 
 </pre>
 
-<H2>See also</H2>
+<H2>Смотрите также </H2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td><a href="graphql.html">GraphQL</a></td>
-        <td>for an overview of the GraphQL add-on.</td>
+        <td>для обзора надстройки GraphQL. </td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="options.html">GraphQL Options</a></td>
-        <td>for information about the optional parameters.</td>
+        <td><a href="options.html">Параметры GraphQL </a></td>
+        <td>для получения информации о дополнительных параметрах. </td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="script.html">GraphQL Script</a></td>
-        <td>for information about the bundled script.</td>
+        <td><a href="script.html">GraphQL-скрипт </a></td>
+        <td>для получения информации о связанном скрипте. </td>
     </tr>
 </table>
 

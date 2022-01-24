@@ -3,46 +3,46 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Options Fuzz screen
+Экран опций фаззера 
 </title>
 </head>
 <body>
-<h1>Options Fuzzer screen</h1>
+<h1>Экран опций фаззера </h1>
 <p>
-This screen allows you to configure the <a href="concepts.html">fuzzing</a> options:
+Этот экран позволяет настроить  <a href="concepts.html">фаззинг</a> опции
 
-<h3>Default Category</h3>
-The category that will initially be selected when the <a href="dialogue.html">Fuzz dialog</a> is displayed.
+<h3>Категория по умолчанию</h3>
+Категория, которая будет изначально выбрана при  <a href="dialogue.html">Диалог фаззера</a> отображается. 
 
-<h3>Add Custom Fuzz File</h3>
-Allows you to add your own files to be used when fuzzing.<br>
-These should be text files with one payload per line.<br>
-Files are added to the 'fuzzers' directory underneath the ZAP home directory.
+<h3>Добавить пользовательский файл Fuzz </h3>
+Позволяет добавлять собственные файлы для использования при фаззинге. <br>
+Это должны быть текстовые файлы с одной полезной нагрузкой на строку. <br>
+Файлы добавляются в каталог «фаззеров» в домашнем каталоге ZAP. 
 
-<h3>Finished Fuzzers in UI</h3>
-It defines the numbers of fuzzers (that have completed their execution)
-visible in the fuzzer tab.
+<h3>Готовые фаззеры в пользовательском интерфейсе </h3>
+Он определяет количество фаззеров (которые завершили свое выполнение)
+видны на вкладке фаззера. 
 
-<h3>Retries on IO Error</h3>
-The number of retries when an input/output error occurs sending a request to the target.
+<h3>Повторные попытки при ошибке ввода-вывода </h3>
+Повторные вероятные поступления 
 
-<h3>Max. Errors Allowed</h3>
-If the number of errors exceed this limit, fuzzer will stop its execution.
+<h3>Максимум. Допускаются ошибки </h3>
+Если количество ошибок превысит этот предел, фаззер остановит свое выполнение. 
 
-<h3>Payload Replacement Strategy</h3>
-Rules defined to control the order that multiple payload lists are iterated.
+<h3>Стратегия замены полезной нагрузки </h3>
+Правила, определенные для управления порядком повторения нескольких списков полезной нагрузки. 
 
-<h3>Concurrent Scanning Threads per Scan</h3>
-The number of threads the fuzzer will use per scan.<br>
-Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on as well as the target.
+<h3>Параллельное сканирование потоков на сканирование </h3>
+Количество потоков, которые фаззер будет использовать за сканирование. <br>
+Количество потоков, которые фазер будет использовать для сканирования. 
 
-<h3>Delay when Fuzzing (in milliseconds)</h3>
-The number of milliseconds between requests by the fuzzer to the target host, usually done to
-avoid getting blocked by the target or if the target implements some sort of throttling requirement.
+<h3>Задержка при фаззинге (в миллисекундах) </h3>
+Количество миллисекунд между запросами фаззера к целевому хосту, обычно
+избегайте блокировки целью или если цель реализует какое-то требование регулирования. 
 
-<h2>See also</h2>
+<h2>Смотрите также </h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
 </table>
 
 

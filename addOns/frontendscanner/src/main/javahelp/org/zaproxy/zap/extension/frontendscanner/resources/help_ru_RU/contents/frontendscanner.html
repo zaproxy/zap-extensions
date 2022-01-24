@@ -7,49 +7,50 @@ Front-End Scanner
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Front-End Scanner</H1>
+<H1>Внешний интерфейс
+Сканер </H1>
 
-When installed and enabled, the Front-End Scanner add-on tampers with all HTTP responses passing through ZAP to inject a piece of JavaScript code containing custom logic, utility functions and scripts that ZAP users wish to run in the browser to help them audit front-end applications.
+При установке и включении надстройка Front-End Scanner вмешивается во все HTTP-ответы, проходящие через ZAP, чтобы внедрить фрагмент кода JavaScript, содержащий пользовательскую логику, служебные функции и сценарии, которые пользователи ZAP хотят запускать в браузере, чтобы помочь им проверить фронт. -конечные приложения. 
 
-<STRONG>Note:</STRONG> to be able to fully work, the add-on automatically removes CSP headers from webpages.
+<STRONG>Примечание:</STRONG> для полноценной работы надстройка автоматически удаляет заголовки CSP с веб-страниц. 
 
 
-<H2>Add a script to be run in the browser</H2>
+<H2>Добавьте скрипт для запуска в браузере </H2>
 
-<STRONG>Note:</STRONG> as for now, only "Client-Side Passive" scripts are injected in web pages.
+<STRONG>Примечание.</STRONG> на данный момент в веб-страницы внедряются только "пассивные клиентские" сценарии. 
 
 <P>
-To add a passive script, go to the "Scripts" pane and right click on "Client-side Passive Rules", then "New Script...".
-Give your script a meaningful name, make sure that you use the template "scan.js" and save.
+Чтобы добавить пассивный сценарий, перейдите на панель «Сценарии» и щелкните правой кнопкой мыши «Пассивные правила на стороне клиента», затем «Новый сценарий...». 
+Дайте вашему сценарию осмысленное имя, убедитесь, что вы используете шаблон «scan.js», и сохраните его. 
 </P>
 <P>
-As they will be executed in a web browser, scripts need to be written in Javascript.
-For the same reason, they can make use of the <a href="https://developer.mozilla.org/en-US/docs/Web/API">Web APIs</a> exposed by the browser that you use.
+Поскольку они будут выполняться в веб-браузере, сценарии необходимо писать на Javascript. 
+По той же причине они могут использовать <a href="https://developer.mozilla.org/en-US/docs/Web/API">веб-API</a>, предоставляемые используемым вами браузером. 
 </P>
 <P>
-Each user script, written via ZAP's interface, ends up wrapped in a function in the front-end, receiving a Javascript object (FrontEndScanner) as a parameter. Thus, scripts have access to what this object exposes:
+Каждый пользовательский скрипт, написанный через интерфейс ZAP, завершается в функции внешнего интерфейса, получая объект Javascript (FrontEndScanner) в качестве параметра.  Таким образом, скрипты имеют доступ к тому, что выставляет этот объект: 
 <UL>
-  <LI>ZAP constants to help scripts create alerts,</LI>
-  <LI>the “mailbox”: a “publish-subscribe” mechanism to help scripts react to events happening in the browser (such as user interactions, Storage accesses, etc.),</LI>
-  <LI>a helper function to report findings back to ZAP.</LI>
+  <LI>константы ZAP, помогающие сценариям создавать оповещения, </LI>
+  <LI>«почтовый ящик»: механизм «публикация-подписка», помогающий сценариям реагировать на события, происходящие в браузере (такие как взаимодействие с пользователем, доступ к хранилищу и т. д.), </LI>
+  <LI>вспомогательная функция для сообщения о результатах обратно в ZAP. </LI>
 </UL>
-All the functions containing user (passive) scripts will be executed automatically in the browser.
+Все функции, содержащие пользовательские (пассивные) скрипты, будут автоматически выполняться в браузере. 
 </P>
 
 
-<H2>Enabling - Disabling</H2>
+<H2>Включение — выключение </H2>
 
-To toggle the add-on, go to "Tools" then "Toggle Front-End Scanner" (note that the add-on is turned off by default).
+Чтобы переключить надстройку, перейдите в «Инструменты», затем «Переключить внешний сканер» (обратите внимание, что по умолчанию надстройка отключена). 
 
 <P>
-<STRONG>Note:</STRONG> Only enabled scripts will be injected in the targeted web pages.
-To enable (or disable) particular scripts, right click on them in the "Scripts" pane, then "Enable Script(s)" (or respectively "Disable Script(s)").
+<STRONG>Примечание.</STRONG> На целевые веб-страницы будут внедряться только разрешенные скрипты. 
+Чтобы включить (или отключить) определенные сценарии, щелкните их правой кнопкой мыши на панели «Сценарии», затем выберите «Включить сценарии» (или, соответственно, «Отключить сценарии»). 
 </P>
 
 
-<H2>Getting Involved</H2>
+<H2>Принять участие</H2>
 
-ZAP is a community project and so we are always very keen to hear from anyone who'd like to contribute, have a look at the <a href="https://github.com/zaproxy/zaproxy/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%5BFrontEndScanner%5D">known issues on Github</a>, or just post to the <a href="https://groups.google.com/group/zaproxy-develop">ZAP Dev Group</a>.
+ZAP — это проект сообщества, поэтому мы всегда рады услышать от всех, кто хотел бы внести свой вклад, взглянуть на <a href="https://github.com/zaproxy/zaproxy/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%5BFrontEndScanner%5D">известные проблемы на Github</a> или просто опубликовать сообщение в <a href="https://groups.google.com/group/zaproxy-develop">ZAP Dev. Группа</a>. 
 
 </BODY>
 </HTML>
