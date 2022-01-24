@@ -20,12 +20,20 @@
 package org.zaproxy.addon.network.internal.codec;
 
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 
 /** Decodes HTTP response into a {@link HttpMessage}. */
 public class HttpResponseDecoder extends HttpMessageDecoder {
 
     /** Constructs a {@code HttpResponseDecoder}. */
     public HttpResponseDecoder() {
-        super(false, HttpMessage::getResponseHeader, HttpMessage::getResponseBody);
+        super(
+                false,
+                (ctx, msg, content) -> {
+                    HttpResponseHeader header = msg.getResponseHeader();
+                    header.setMessage(content);
+                    return header;
+                },
+                HttpMessage::getResponseBody);
     }
 }
