@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Hidden File Finder scan rule, content checking has been added for .svn/entries as well as detection for wc.db.
 
+### Fixed
+- Adapted Cloud Metadata Attack scan rule to use Custom Pages and active scan analyzer to help reduce false positives in certain cases (Issue 7033).
+
 ## [39] - 2021-12-13
 ### Changed
 - Update minimum ZAP version to 2.11.1.
