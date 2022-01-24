@@ -58,7 +58,7 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
     private final HeaderParser headerParser;
     private final LineParser lineParser;
     private final boolean decodingRequest;
-    private final Function<HttpMessage, HttpHeader> headerProvider;
+    private final HeaderProvider headerProvider;
     private final Function<HttpMessage, HttpBody> bodyProvider;
 
     private HttpMessage message;
@@ -85,7 +85,7 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
 
     protected HttpMessageDecoder(
             boolean decodingRequest,
-            Function<HttpMessage, HttpHeader> headerProvider,
+            HeaderProvider headerProvider,
             Function<HttpMessage, HttpBody> bodyProvider) {
         AppendableCharSequence seq = new AppendableCharSequence(DEFAULT_INITIAL_BUFFER_SIZE);
         headerParser = new HeaderParser(seq);
@@ -112,8 +112,7 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
                 headerParser.reset();
                 try {
                     message = new HttpMessage();
-                    header = headerProvider.apply(message);
-                    header.setMessage(headerContent.toString());
+                    header = headerProvider.get(ctx, message, headerContent.toString());
                     body = bodyProvider.apply(message);
                     body.setLength(0);
 
@@ -489,5 +488,11 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
             seq.append(nextByte);
             return true;
         }
+    }
+
+    protected interface HeaderProvider {
+
+        HttpHeader get(ChannelHandlerContext ctx, HttpMessage msg, String content)
+                throws HttpMalformedHeaderException;
     }
 }

@@ -19,13 +19,27 @@
  */
 package org.zaproxy.addon.network.internal.codec;
 
+import java.net.InetSocketAddress;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.network.internal.ChannelAttributes;
 
 /** Decodes HTTP request into a {@link HttpMessage}. */
 public class HttpRequestDecoder extends HttpMessageDecoder {
 
     /** Constructs a {@code HttpRequestDecoder}. */
     public HttpRequestDecoder() {
-        super(true, HttpMessage::getRequestHeader, HttpMessage::getRequestBody);
+        super(
+                true,
+                (ctx, msg, content) -> {
+                    HttpRequestHeader header = msg.getRequestHeader();
+                    boolean secure = ctx.channel().attr(ChannelAttributes.TLS_UPGRADED).get();
+                    header.setMessage(content, secure);
+                    InetSocketAddress remoteAddress =
+                            ctx.channel().attr(ChannelAttributes.REMOTE_ADDRESS).get();
+                    header.setSenderAddress(remoteAddress.getAddress());
+                    return header;
+                },
+                HttpMessage::getRequestBody);
     }
 }
