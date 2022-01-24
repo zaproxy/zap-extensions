@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,49 +131,78 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
     }
 
     @Override
+    public void init() {
+        ExtensionOast extOast =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+        if (extOast == null
+                || (extOast.getCallbackService() == null
+                        && extOast.getActiveScanOastService() == null)) {
+            getParent()
+                    .pluginSkipped(this, Constant.messages.getString("ascanalpha.oobxss.skipped"));
+        }
+    }
+
+    @Override
     public void scan(HttpMessage httpMessage, String param, String value) {
         try {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
-            if (extOast == null) {
-                return;
-            }
             if (extOast.getCallbackService() != null) {
-                for (String attackStringPattern : XSS_ATTACK_PATTERNS) {
-                    HttpMessage msg = getNewMsg();
-                    Alert alert =
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setMessage(msg)
-                                    .setSource(Alert.Source.ACTIVE)
-                                    .build();
-                    String payload =
-                            extOast.registerAlertAndGetPayloadForCallbackService(
-                                    alert, OutOfBandXssScanRule.class.getSimpleName());
-                    String attackString = MessageFormat.format(attackStringPattern, payload);
-                    alert.setAttack(attackString);
-                    setParameter(msg, param, attackString);
-                    sendAndReceive(msg);
-                }
+                scanWithCallbackService(param);
             }
             if (extOast.getActiveScanOastService() != null) {
-                for (String attackStringPattern : XSS_ATTACK_PATTERNS) {
-                    HttpMessage msg = getNewMsg();
-                    Alert alert =
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setMessage(msg)
-                                    .setSource(Alert.Source.ACTIVE)
-                                    .build();
-                    String payload = "https://" + extOast.registerAlertAndGetPayload(alert);
-                    String attackString = MessageFormat.format(attackStringPattern, payload);
-                    alert.setAttack(attackString);
-                    setParameter(msg, param, attackString);
-                    sendAndReceive(msg);
-                }
+                scanWithExternalOastService(param);
             }
         } catch (Exception e) {
             LOG.warn("Could not perform Out of Band XSS Attack.");
+        }
+    }
+
+    private void scanWithCallbackService(String param) {
+        ExtensionOast extOast =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+        for (String attackStringPattern : XSS_ATTACK_PATTERNS) {
+            try {
+                HttpMessage msg = getNewMsg();
+                Alert alert =
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setMessage(msg)
+                                .setSource(Alert.Source.ACTIVE)
+                                .build();
+                String payload =
+                        extOast.registerAlertAndGetPayloadForCallbackService(
+                                alert, OutOfBandXssScanRule.class.getSimpleName());
+                String attackString = MessageFormat.format(attackStringPattern, payload);
+                alert.setAttack(attackString);
+                setParameter(msg, param, attackString);
+                sendAndReceive(msg);
+            } catch (IOException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void scanWithExternalOastService(String param) throws Exception {
+        ExtensionOast extOast =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+        for (String attackStringPattern : XSS_ATTACK_PATTERNS) {
+            try {
+                HttpMessage msg = getNewMsg();
+                Alert alert =
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setMessage(msg)
+                                .setSource(Alert.Source.ACTIVE)
+                                .build();
+                String payload = "https://" + extOast.registerAlertAndGetPayload(alert);
+                String attackString = MessageFormat.format(attackStringPattern, payload);
+                alert.setAttack(attackString);
+                setParameter(msg, param, attackString);
+                sendAndReceive(msg);
+            } catch (IOException e) {
+                LOG.warn(e.getMessage(), e);
+            }
         }
     }
 }
