@@ -27,6 +27,10 @@ public final class ChannelAttributes {
 
     private ChannelAttributes() {}
 
+    /** The attribute that contains the local address. */
+    public static final AttributeKey<InetSocketAddress> LOCAL_ADDRESS =
+            AttributeKey.newInstance("zap.local-address");
+
     /** The attribute that contains the remote address. */
     public static final AttributeKey<InetSocketAddress> REMOTE_ADDRESS =
             AttributeKey.newInstance("zap.remote-address");
