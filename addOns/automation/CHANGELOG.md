@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Script authentication support
+
 ### Fixed
 - When a Job is loaded via yaml and edited via UI Dialog then the saved changes will be applied on the next job run
 - DelayJob will be verified on yaml load
