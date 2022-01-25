@@ -34,14 +34,18 @@ public class TestLogAppender extends AbstractAppender {
 
     private final Consumer<String> logConsumer;
 
-    TestLogAppender(Consumer<String> logConsumer) {
+    public TestLogAppender(Consumer<String> logConsumer) {
+        this("%m%n", logConsumer);
+    }
+
+    public TestLogAppender(String pattern, Consumer<String> logConsumer) {
         super(
                 "TestLogAppender",
                 null,
                 PatternLayout.newBuilder()
                         .withDisableAnsi(true)
                         .withCharset(StandardCharsets.UTF_8)
-                        .withPattern("%m%n")
+                        .withPattern(pattern)
                         .build(),
                 true,
                 NO_PROPERTIES);

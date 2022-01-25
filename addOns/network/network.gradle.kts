@@ -38,8 +38,9 @@ crowdin {
 }
 
 dependencies {
-    val nettyVersion = "4.1.70.Final"
+    val nettyVersion = "4.1.73.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
+    implementation("io.netty:netty-handler:$nettyVersion")
 
     val bcVersion = "1.69"
     bouncyCastle("org.bouncycastle:bcmail-jdk15on:$bcVersion")
