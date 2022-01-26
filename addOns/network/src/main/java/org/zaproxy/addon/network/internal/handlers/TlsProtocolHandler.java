@@ -63,6 +63,15 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
         this.authority = authority;
     }
 
+    /**
+     * Gets the authority that was provided when creating this {@code TlsProtocolHandler}.
+     *
+     * @return the authority, might be {@code null}.
+     */
+    String getAuthority() {
+        return authority;
+    }
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out)
             throws Exception {
