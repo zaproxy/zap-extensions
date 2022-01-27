@@ -29,6 +29,7 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.AttributeKey;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,9 @@ import org.apache.logging.log4j.Logger;
 
 /** A client that allows to send and receive text messages, to help with the tests. */
 public class TextTestClient extends TestClient {
+
+    private static final AttributeKey<CompletableFuture<Object>> RESPONSE_ATTRIBUTE =
+            AttributeKey.newInstance("zap.client.response");
 
     /**
      * Constructs a {@code TextTestClient} with the given address.
@@ -60,6 +64,7 @@ public class TextTestClient extends TestClient {
 
     private static void initChannel(
             SocketChannel channel, Consumer<SocketChannel> channelDecorator) {
+        channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
         channel.pipeline()
                 .addLast(new DelimiterBasedFrameDecoder(1024, Delimiters.lineDelimiter()))
                 .addLast(new StringDecoder(StandardCharsets.UTF_8))
@@ -85,37 +90,40 @@ public class TextTestClient extends TestClient {
      * Waits for a response in the given channel.
      *
      * @param channel the channel where it's expected a response.
+     * @return the response.
      * @throws Exception if an error occurred while waiting for the response.
      */
-    public static void waitForResponse(Channel channel) throws Exception {
-        channel.pipeline().get(ResponseHandler.class).getResponse();
+    public static Object waitForResponse(Channel channel) throws Exception {
+        Object response = getCompletableFuture(channel).get(5, TimeUnit.SECONDS);
+        channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
+        return response;
+    }
+
+    private static CompletableFuture<Object> getCompletableFuture(Channel channel) {
+        return channel.attr(RESPONSE_ATTRIBUTE).get();
     }
 
     private static class ResponseHandler extends SimpleChannelInboundHandler<Object> {
 
-        private CompletableFuture<Object> response = new CompletableFuture<>();
-
-        public Object getResponse() throws Exception {
-            Object message = response.get(5, TimeUnit.SECONDS);
-            response = new CompletableFuture<>();
-            return message;
+        private static CompletableFuture<Object> getCompletableFuture(ChannelHandlerContext ctx) {
+            return TextTestClient.getCompletableFuture(ctx.channel());
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             super.channelInactive(ctx);
-            response.complete(null);
+            getCompletableFuture(ctx).complete(null);
             ctx.close();
         }
 
         @Override
         public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-            response.complete(msg);
+            getCompletableFuture(ctx).complete(msg);
         }
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            response.completeExceptionally(cause);
+            getCompletableFuture(ctx).completeExceptionally(cause);
             ctx.close();
         }
     }

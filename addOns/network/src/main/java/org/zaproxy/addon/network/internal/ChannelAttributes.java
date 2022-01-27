@@ -48,4 +48,8 @@ public final class ChannelAttributes {
     /** The attribute that indicates if a channel was upgraded to use the SSL/TLS protocol. */
     public static final AttributeKey<Boolean> TLS_UPGRADED =
             AttributeKey.newInstance("zap.tls-upgraded");
+
+    /** The attribute that indicates if a channel is set to passthrough the data. */
+    public static final AttributeKey<Boolean> PASSTHROUGH =
+            AttributeKey.newInstance("zap.passthrough");
 }
