@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update the reference links used in the Username IDOR passive scan script.
 - Reset the name of the connection threads when not actively used.
 
+### Fixed
+- Fix exception when manually reconnecting to the server.
+
 ## [24] - 2021-10-06
 ### Changed
 - Now using 2.10 logging infrastructure (Log4j 2.x).
