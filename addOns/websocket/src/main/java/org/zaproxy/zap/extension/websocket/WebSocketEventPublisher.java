@@ -77,7 +77,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
     @Override
     public void onMessageFrame(int channelId, WebSocketMessage message, Initiator initiator) {
         WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
-        if (proxy.isAllowAPI()) {
+        if (proxy != null && proxy.isAllowAPI()) {
             // Sending an event on an API message will cause an infinite loop
             return;
         }
