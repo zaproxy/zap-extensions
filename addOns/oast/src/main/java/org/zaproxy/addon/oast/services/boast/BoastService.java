@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.addon.oast.OastState;
 
 public class BoastService extends OastService implements OptionsChangedListener {
 
@@ -116,6 +117,7 @@ public class BoastService extends OastService implements OptionsChangedListener 
         LOGGER.debug("Registering BOAST Server.");
         BoastServer boastServer = new BoastServer(getParam().getBoastUri());
         registeredServers.add(boastServer);
+        fireOastStateChanged(new OastState(getName(), true, null));
         return boastServer;
     }
 

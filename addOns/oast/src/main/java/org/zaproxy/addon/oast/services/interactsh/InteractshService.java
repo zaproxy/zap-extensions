@@ -65,6 +65,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.zap.network.HttpRequestBody;
 
 public class InteractshService extends OastService implements OptionsChangedListener {
@@ -271,6 +272,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             }
             LOGGER.debug("Deregistered correlationId: {}", correlationId);
             isRegistered = false;
+            fireOastStateChanged(new OastState(getName(), false, null));
         } catch (Exception e) {
             LOGGER.error("Error during interactsh deregister: {}", e.getMessage(), e);
         }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.oast.services.boast;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.oast.OastRequest;
+import org.zaproxy.addon.oast.OastState;
 
 public class BoastPoller implements Runnable {
 
@@ -46,6 +48,8 @@ public class BoastPoller implements Runnable {
                 .map(BoastServer::poll)
                 .flatMap(Collection::stream)
                 .forEach(this::handleBoastEvent);
+        this.boastService.fireOastStateChanged(
+                new OastState(boastService.getName(), true, LocalDateTime.now()));
     }
 
     private void handleBoastEvent(BoastEvent boastEvent) {

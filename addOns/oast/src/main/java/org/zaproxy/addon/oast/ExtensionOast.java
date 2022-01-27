@@ -35,6 +35,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -102,6 +103,7 @@ public class ExtensionOast extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(callbackService.getParam());
         extensionHook.addOptionsParamSet(interactshService.getParam());
 
+        extensionHook.addOptionsChangedListener(this::optionsChanged);
         extensionHook.addOptionsChangedListener(boastService);
         extensionHook.addOptionsChangedListener(callbackService);
         extensionHook.addOptionsChangedListener(interactshService);
@@ -129,6 +131,10 @@ public class ExtensionOast extends ExtensionAdaptor {
         boastService.startService();
         callbackService.startService();
         interactshService.startService();
+    }
+
+    private void optionsChanged(OptionsParam optionsParam) {
+        getOastServices().values().forEach(OastService::fireOastStateChanged);
     }
 
     public void deleteAllCallbacks() {
