@@ -3,54 +3,54 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-OpenAPI Support
+Поддержка OpenAPI 
 </title>
 </head>
 <body>
-<h1>OpenAPI Support</h1>
-This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, and 3.0.
+<h1>Поддержка OpenAPI </h1>
+Это дополнение позволяет просматривать и импортировать определения OpenAPI (Swagger) версий 1.2, 2.0 и 3.0. 
 <br>
-<strong>Note:</strong> Generation of XML content is currently not supported.
+<strong>Примечание: </strong> Генерация содержимого XML в настоящее время не поддерживается. 
 <br><br>
-The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
+Надстройка автоматически обнаружит любые определения OpenAPI и просканирует их, пока они находятся в области действия. 
 <br><br>
-It also supports the <a href="automation.html">Automation Framework</a>.
+Он также поддерживает  <a href="automation.html">Платформа автоматизации </a>.
 
-<h2>UI</h2>
-2 menu items are added to the Import menu:
+<h2>Интерфейс</h2>
+В меню Импорт добавлены 2 пункта меню: 
 <ul>
-<li>Import an OpenAPI definition from the local file system</li>
-<li>Import an OpenAPI definition from a URL</li>
+<li>Импорт определения OpenAPI из локальной файловой системы </li>
+<li>Импорт определения OpenAPI из URL-адреса </li>
 </ul>
-Both dialogues allow to override the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
+Оба диалога позволяют переопределить URL-адрес сервера, присутствующий в определении OpenAPI (или указать его, если он отсутствует) в поле «Целевой URL-адрес». 
 
-<h3>Target URL Format</h3>
-The Target URL has the following format:<br>
+<h3>Формат целевого URL </h3>
+Целевой URL имеет следующий формат: <br>
 <code>scheme://authority/path</code><br>
-with all URI components optional. Note: while all URI components are optional the scheme and authority become mandatory when not importing from URL and the definition does not specify them (for example, it has no servers or schemes).<br>
-Following some examples, overriding:
+со всеми необязательными компонентами URI.  Примечание. Хотя все компоненты URI являются необязательными, схема и полномочия становятся обязательными, если они не импортируются из URL-адреса и в определении они не указаны (например, в нем нет серверов или схем). <br>
+Следуя некоторым примерам, переопределение: 
 <ul>
-<li>The authority and path: <code>localhost/api/</code></li>
-<li>Just the scheme: <code>https://</code></li>
-<li>Just the authority: <code>qa.example.com:9090</code></li>
-<li>Just the path: <code>/dev/v3/</code></li>
+<li>Полномочия и путь: <code>localhost/api/</code> </li>
+<li>Просто схема: <code>https://</code> </li>
+<li>Просто полномочия: <code>qa.example.com:9090</code> </li>
+<li>Просто путь: <code>/dev/v3/</code> </li>
 </ul>
 
 <h2>API</h2>
-The following operations are added to the API:
+В API добавлены следующие операции: 
 <ul>
-<li>ACTION importFile (file, target)</li>
-<li>ACTION importUrl (url, hostOverride)</li>
+<li>ДЕЙСТВИЕ importFile (файл, цель) </li>
+<li>ДЕЙСТВИЕ import Url (url, host Override) </li>
 </ul>
-Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
+Оба <code>Цель</code> и <code>hostOverride</code> поддержать  <code>Целевой URL </code> формат, описанный ранее.
 
-The definitions will be imported synchronously and any warnings will be returned.
+Определения будут импортированы синхронно, и будут возвращены все предупреждения. 
 
-<h3>Data Driven Nodes</h3>
+<h3>Узлы, управляемые данными </h3>
 <span style="white-space: pre;">
-When the OpenAPI schema contains path params the plugin will automatically generate data driven nodes in either the default context or for the context from the provided <code>contextId</code>.
+Когда схема OpenAPI содержит параметры пути, подключаемый модуль автоматически создает управляемые данными узлы либо в контексте по умолчанию, либо для контекста из предоставленного <code>contextId</code>. 
 
-For example, the following OpenAPI definition will result in at least one data driven node.
+Например, следующее определение OpenAPI приведет как минимум к одному узлу, управляемому данными. 
 
 <strong>openapi.yml</strong>
 <code >
@@ -73,26 +73,26 @@ For example, the following OpenAPI definition will result in at least one data d
     DDN1: (/users/v1/)(.+?)(/.*)
 </code>
 </span>
-<h2>Command Line</h2>
-The following Command Line options are added:
+<h2>командная строка</h2>
+Добавлены следующие параметры командной строки: 
 <ul>
-<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
-<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
-<li>-openapitargeturl &lt;url&gt;  : The Target URL, to override the server URL present in the OpenAPI definition</li>
+<li>-openapifile &lt;filename&gt;: импортирует определение OpenAPI из файла с указанным именем. </li>
+<li>-openapiurl &lt;url&gt;: импортирует определение OpenAPI с указанного URL-адреса. </li>
+<li>-openapitargeturl &lt;url&gt; : целевой URL-адрес для переопределения URL-адреса сервера, присутствующего в определении OpenAPI. </li>
 </ul>
 
-The definitions will be imported synchronously and any warnings will be displayed on the command line.
+Определения будут импортированы синхронно, а все предупреждения будут отображаться в командной строке. 
 
-<h2>User Specified Values</h2>
-Default values are used when importing OpenAPI definitions.<br>
-These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
-In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
-e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
+<h2>Определения будут импортированы синхронно, а все исключены в командной строке. </h2>
+Значения по умолчанию используются при импорте определений OpenAPI. <br>
+Их можно переопределить с помощью надстройки Form Handler, которая позволяет вам указывать свои собственные значения. <br>
+В большинстве случаев это будут простые значения (например, строки и целые числа), но в некоторых случаях вам может потребоваться указать структурированные значения,
+например  <pre>{ "id": 0, "name": "Freda" }</pre>
 
-<h2>Statistics</h2>
-The add-on maintains the following statistics:
+<h2>Статистика</h2>
+Надстройка ведет следующую статистику: 
 <ul>
-    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+    <li>openapi.urls.added : общее количество URL-адресов, добавленных при импорте определений OpenAPI. </li>
 </ul>
 
 </body>

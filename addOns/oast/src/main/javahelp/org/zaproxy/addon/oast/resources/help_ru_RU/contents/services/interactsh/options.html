@@ -2,58 +2,59 @@
 <html>
 <head>
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <title>Interactsh Options</title>
+    <title>Параметры Interactsh</title>
 </head>
 <body>
-<h1>Interactsh Options</h1>
+<h1>Параметры Interactsh</h1>
 <p>
-    The Interactsh Options screen allows you to configure the settings that affect how ZAP interacts with Interactsh.
+    Экран параметров Interactsh позволяет настроить параметры, влияющие на взаимодействие ZAP с Interactsh. 
 </p>
 
-<h3>Server URL</h3>
+<h3>URL-адрес сервера </h3>
 
-<p>This address should point to the URL that will be used for registrations and polling.</p>
-<p>A valid URI will include at least the scheme and the host. The host must be running a working instance of
-    Interactsh.</p>
-<p>An example of a valid URI is: <code>https://interact.sh</code>.</p>
+<p>Этот адрес должен указывать на URL-адрес, который будет использоваться для регистрации и опроса. </p>
+<p>Действительный URI будет включать как минимум схему и хост.  Хост должен быть запущен
+рабочий экземпляр Interactsh. </p>
+<p>Пример допустимого URI: <code>https://interact.sh</code>. </p>
 
-<h3>Authorization Token</h3>
+<h3>Токен авторизации: </h3>
 
-<p>A value for this token must be specified if the Interactsh server at the specified Server URL requires
-    authentication. This token is added as the Authorization header value to all requests made to the server.</p>
+<p>Значение для этого маркера должно быть указано, если серверу Interactsh по указанному URL-адресу сервера требуется
+     аутентификация.  Этот токен добавляется в качестве значения заголовка Authorization ко всем запросам, отправляемым на сервер. </p>
 
-<h3>Polling Frequency</h3>
+<h3>Частота опроса </h3>
 
-<p>This option allows you to change the frequency of polling Interactsh. It takes values in seconds. The minimum allowed
-    value is 10 seconds and the maximum is 21600 seconds (6 hours). The default value is 60 seconds.</p>
+<p>Эта опция позволяет изменить частоту опроса Interactsh.  Принимает значения в секундах.  Минимум разрешенный
+     значение равно 10 секундам, а максимальное значение равно 21600 секундам (6 часов).  Значение по умолчанию — 60 секунд. </p>
 
-<h3>Active Payloads</h3>
+<h3>Активные полезные нагрузки </h3>
 
-<p>This table lists all the generated Payloads and corresponding Canary values. An entry is added each time you create a
-    new payload. The 'New Payload' Button is disabled if you change the Server URL and/or the Authorization Token.
-    To create new payloads in that case either revert the changes or save the settings and reopen the options screen.</p>
+<p>В этой таблице перечислены все сгенерированные полезные нагрузки и соответствующие значения Canary.  Запись добавляется каждый раз, когда вы создаете
+     новую полезную нагрузку.  Кнопка «Новая полезная нагрузка» будет отключена, если вы измените URL-адрес сервера и/или токен авторизации. 
+    Чтобы создать новые полезные нагрузки в этом случае, либо отмените изменения, либо сохраните настройки и снова откройте экран параметров. </p>
 
-<h4>Payload</h4>
+<h4>Полезная нагрузка</h4>
 
-<p>The Payload is the address that can be used in out-of-band attacks.</p>
+<p>Полезная нагрузка — это адрес, который можно использовать для внеполосных атак. </p>
 
 <h4>Canary</h4>
 
-<p>The Canary value is a string that is returned to the target web application when it makes a request to the
-    corresponding Payload address. It is obtained by reversing the subdomain in the Payload.</p>
-<p>A web application that ends up using the canary value somewhere may be susceptible to injection attacks. </p>
+<p>Canary значение — это строка, которая возвращается целевому веб-приложению, когда оно делает запрос к
+     соответствующему адресу полезной нагрузки.  Он получается путем реверса
+субдомена в полезной нагрузке. </p>
+<p>Веб-приложение, которое где-то использует Canary значение, может быть подвержено атакам путем внедрения.  </p>
 
-<H2>See also</H2>
+<H2>Смотрите также </H2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;</td>
         <td>
-            <a href="interactsh.html">Interactsh Help</a></td>
+            <a href="interactsh.html">Interactsh Справка</a></td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;</td>
-        <td><a href="https://github.com/projectdiscovery/interactsh">Interactsh on GitHub</a></td>
+        <td><a href="https://github.com/projectdiscovery/interactsh">Interactsh на GitHub</a></td>
         <td>&nbsp;</td>
     </tr>
 </table>
