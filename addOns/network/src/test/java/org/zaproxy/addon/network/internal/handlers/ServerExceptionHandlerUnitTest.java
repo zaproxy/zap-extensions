@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.SSLHandshakeException;
@@ -171,6 +172,18 @@ class ServerExceptionHandlerUnitTest {
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
         assertThat(logEvents, contains(startsWith("WARN Received malformed header: Missing xyz")));
+    }
+
+    @Test
+    void shouldLogIoExceptionAsDebug() throws Exception {
+        // Given
+        Exception exception = new IOException("Connection reset by peer");
+        // When
+        serverExceptionHandler.exceptionCaught(ctx, exception);
+        // Then
+        assertThat(
+                logEvents,
+                contains(startsWith("DEBUG java.io.IOException: Connection reset by peer")));
     }
 
     @Test
