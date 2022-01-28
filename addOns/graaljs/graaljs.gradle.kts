@@ -28,7 +28,7 @@ crowdin {
 }
 
 dependencies {
-    val graalJsVersion = "20.2.0"
+    val graalJsVersion = "22.0.0.2"
     implementation("org.graalvm.js:js:$graalJsVersion")
     implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")
     implementation("org.javadelight:delight-graaljs-sandbox:0.1.2")

@@ -58,7 +58,7 @@ dependencies {
     implementation("commons-math:commons-math:1.2")
     implementation("com.codahale.metrics:metrics-core:3.0.2")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-    implementation("com.google.inject.extensions:guice-assistedinject:5.0.1") {
+    implementation("com.google.inject.extensions:guice-assistedinject:5.1.0") {
         // Not needed.
         exclude(group = "org.sonatype.sisu.inject", module = "cglib")
     }
@@ -67,9 +67,9 @@ dependencies {
         // Not needed.
         exclude(group = "xerces", module = "xercesImpl")
     }
-    implementation("org.slf4j:jcl-over-slf4j:1.7.32")
-    implementation("org.slf4j:jul-to-slf4j:1.7.32")
-    implementation("org.slf4j:slf4j-log4j12:1.7.32") {
+    implementation("org.slf4j:jcl-over-slf4j:1.7.35")
+    implementation("org.slf4j:jul-to-slf4j:1.7.35")
+    implementation("org.slf4j:slf4j-log4j12:1.7.35") {
         // Provided by ZAP.
         exclude(group = "log4j", module = "log4j")
     }

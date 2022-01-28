@@ -39,7 +39,7 @@ crowdin {
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
 
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.8.9")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))

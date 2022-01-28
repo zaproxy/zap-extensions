@@ -25,7 +25,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
 
     implementation("com.adobe.xmp:xmpcore:6.0.6")
-    implementation("com.drewnoakes:metadata-extractor:2.13.0")
+    implementation("com.drewnoakes:metadata-extractor:2.16.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))

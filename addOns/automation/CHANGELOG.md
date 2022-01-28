@@ -5,11 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
-- When a Job is loaded via yaml and edited via UI Dialog then the saved changes will be applied on the next job run
-- DelayJob will be verified on yaml load
+- When a Job is loaded via yaml and edited via UI Dialog then the saved changes will be applied on the next job run.
+- DelayJob will be verified on yaml load.
 
 ### Changed
-- When a Job is edited via UI Dialog then the status will be set to Not started
+- When a Job is edited via UI Dialog then the status will be set to Not started.
+- Dependency updates.
 
 ## [0.11.0] - 2022-01-19
 ### Added

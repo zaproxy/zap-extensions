@@ -22,5 +22,5 @@ crowdin {
 }
 
 dependencies {
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
+    implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
 }

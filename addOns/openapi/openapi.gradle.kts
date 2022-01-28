@@ -42,7 +42,7 @@ configurations {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
-    implementation("io.swagger.parser.v3:swagger-parser:2.0.28")
+    implementation("io.swagger.parser.v3:swagger-parser:2.0.29")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.56") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")

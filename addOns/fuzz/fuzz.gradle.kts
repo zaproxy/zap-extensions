@@ -25,7 +25,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.natpryce:snodge:2.1.2.2")
+    implementation("com.natpryce:snodge:3.7.0.0")
     implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
