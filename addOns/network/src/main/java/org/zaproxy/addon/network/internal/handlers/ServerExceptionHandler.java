@@ -24,6 +24,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
+import java.io.IOException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,14 +75,19 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        if (cause instanceof IOException) {
+            LOGGER.debug(cause, cause);
+            return;
+        }
+
         if (!(cause instanceof DecoderException)) {
-            LOGGER.error(cause);
+            LOGGER.error(cause, cause);
             return;
         }
 
         Throwable nestedCause = cause.getCause();
         if (nestedCause == null) {
-            LOGGER.error(cause);
+            LOGGER.error(cause, cause);
             return;
         }
 
@@ -98,6 +104,6 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        LOGGER.error(nestedCause);
+        LOGGER.error(nestedCause, nestedCause);
     }
 }
