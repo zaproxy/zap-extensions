@@ -101,5 +101,8 @@ class ServerUnitTest {
         public boolean isStarted() {
             return started;
         }
+
+        @Override
+        public void close() {}
     }
 }
