@@ -294,6 +294,34 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldStopServerOnClose() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        String message = "Message 1";
+        client.send(port, message);
+        // When
+        server.close();
+        // Then
+        assertThrows(IOException.class, () -> client.send(port, "Message 2"));
+        assertThat(messagesReceived, contains(message));
+    }
+
+    @Test
+    void shouldBeAutoCloseable() throws Exception {
+        // Given
+        int port;
+        String message = "Message 1";
+        try (BaseServer server = new BaseServer(eventLoopGroup, this::initDefaultChannel)) {
+            port = server.start(Server.ANY_PORT);
+            client.send(port, message);
+            // When auto closed
+        }
+        // Then
+        assertThrows(IOException.class, () -> client.send(port, "Message 2"));
+        assertThat(messagesReceived, contains(message));
+    }
+
+    @Test
     void shouldStopBeforeStartServer() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -321,6 +349,7 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message A"));
         assertThat(messagesReceived, contains(message1, message2, message3));
+        client.waitChannelsInactive();
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
     }
 

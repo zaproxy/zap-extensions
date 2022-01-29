@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.network.server;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -26,7 +27,7 @@ import java.io.IOException;
  *
  * @since 0.1.0
  */
-public interface Server {
+public interface Server extends Closeable {
 
     /** The default address the server will bind to. */
     static final String DEFAULT_ADDRESS = "127.0.0.1";

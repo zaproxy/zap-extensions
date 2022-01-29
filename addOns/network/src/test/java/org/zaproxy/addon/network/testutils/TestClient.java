@@ -123,6 +123,17 @@ public class TestClient implements Closeable {
         allChannels.close().sync();
     }
 
+    /**
+     * Waits until all channels are inactive.
+     *
+     * @throws InterruptedException if interrupted while waiting for the channels to be inactive.
+     */
+    public void waitChannelsInactive() throws InterruptedException {
+        while (allChannels.stream().anyMatch(Channel::isActive)) {
+            Thread.sleep(150);
+        }
+    }
+
     @Override
     public void close() throws IOException {
         try {

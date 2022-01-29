@@ -128,6 +128,11 @@ public class BaseServer implements Server {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        stop();
+    }
+
     private class ChannelInitializerImpl extends ChannelInitializer<SocketChannel> {
 
         @Override
