@@ -145,6 +145,35 @@ class BaseServerUnitTest extends TestUtils {
         server = new BaseServer(eventLoopGroup, channelInitialiser);
     }
 
+    @Test
+    void shouldThrowIfNoChannelInitialiserProvided() throws Exception {
+        // Given
+        Consumer<SocketChannel> channelInitialiser = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> server = new BaseServer(eventLoopGroup, channelInitialiser));
+    }
+
+    @Test
+    void shouldThrowIfSettingNullChannelInitialiser() throws Exception {
+        // Given
+        server = new BaseServer(eventLoopGroup);
+        Consumer<SocketChannel> channelInitialiser = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class, () -> server.setChannelInitialiser(channelInitialiser));
+    }
+
+    @Test
+    void shouldFailToStartWithNoChannelInitialiser() throws Exception {
+        // Given
+        server = new BaseServer(eventLoopGroup);
+        int port = getRandomPort();
+        // When / Then
+        assertThrows(IOException.class, () -> server.start(port));
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {-1, Server.MAX_PORT + 1})
     void shouldThrowWhenStartingWithInvalidPort(int port) throws Exception {
