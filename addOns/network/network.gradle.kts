@@ -47,6 +47,11 @@ dependencies {
     bouncyCastle("org.bouncycastle:bcprov-jdk15on:$bcVersion")
     bouncyCastle("org.bouncycastle:bcpkix-jdk15on:$bcVersion")
 
+    implementation("org.jitsi:ice4j:3.0-24-g34c2ce5") {
+        // Don't need its dependencies, for now.
+        setTransitive(false)
+    }
+
     testImplementation(project(":testutils"))
     testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
 }
