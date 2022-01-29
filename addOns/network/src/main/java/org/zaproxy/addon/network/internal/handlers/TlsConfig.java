@@ -21,6 +21,7 @@ package org.zaproxy.addon.network.internal.handlers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.zaproxy.addon.network.internal.TlsUtils;
 
 /** The configuration for {@link TlsProtocolHandler}. */
@@ -59,5 +60,22 @@ public class TlsConfig {
      */
     public List<String> getEnabledProtocols() {
         return enabledProtocols;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enabledProtocols);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof TlsConfig)) {
+            return false;
+        }
+        TlsConfig other = (TlsConfig) object;
+        return Objects.equals(enabledProtocols, other.enabledProtocols);
     }
 }
