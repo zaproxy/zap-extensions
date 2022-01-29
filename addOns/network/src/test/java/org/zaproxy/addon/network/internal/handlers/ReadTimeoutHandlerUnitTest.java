@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import io.netty.channel.ChannelInboundHandler;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.network.internal.ChannelAttributes;
 
 /** Unit test for {@link ReadTimeoutHandler}. */
 class ReadTimeoutHandlerUnitTest {
@@ -64,10 +66,27 @@ class ReadTimeoutHandlerUnitTest {
         ChannelInboundHandler nextHandler = mock(ChannelInboundHandler.class);
         // When
         EmbeddedChannel channel = new EmbeddedChannel(readTimeoutHandler, nextHandler);
+        channel.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
         Thread.sleep(millis * 2);
         channel.runPendingTasks();
         // Then
         verify(nextHandler).exceptionCaught(any(), eq(ReadTimeoutException.INSTANCE));
+    }
+
+    @Test
+    void shouldNotTimeoutIfProcessingMessage() throws Exception {
+        // Given
+        int millis = 250;
+        ReadTimeoutHandler readTimeoutHandler =
+                new ReadTimeoutHandler(millis, TimeUnit.MILLISECONDS);
+        ChannelInboundHandler nextHandler = mock(ChannelInboundHandler.class);
+        // When
+        EmbeddedChannel channel = new EmbeddedChannel(readTimeoutHandler, nextHandler);
+        channel.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.TRUE);
+        Thread.sleep(millis * 2);
+        channel.runPendingTasks();
+        // Then
+        verify(nextHandler, times(0)).exceptionCaught(any(), eq(ReadTimeoutException.INSTANCE));
     }
 
     @Test

@@ -25,11 +25,13 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import org.zaproxy.addon.network.internal.ChannelAttributes;
 
 /**
  * Handles read timeouts.
  *
- * <p>Fires a {@link ReadTimeoutException} when a timeout occurs.
+ * <p>Fires a {@link ReadTimeoutException} when a timeout occurs and if no message is being
+ * processed, as indicated by {@link ChannelAttributes#PROCESSING_MESSAGE}.
  */
 public class ReadTimeoutHandler extends IdleStateHandler {
 
@@ -55,6 +57,8 @@ public class ReadTimeoutHandler extends IdleStateHandler {
     @Override
     protected final void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt)
             throws Exception {
-        ctx.fireExceptionCaught(ReadTimeoutException.INSTANCE);
+        if (!ctx.channel().attr(ChannelAttributes.PROCESSING_MESSAGE).get()) {
+            ctx.fireExceptionCaught(ReadTimeoutException.INSTANCE);
+        }
     }
 }

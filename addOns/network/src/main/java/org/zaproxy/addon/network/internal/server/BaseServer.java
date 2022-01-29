@@ -43,9 +43,16 @@ import org.zaproxy.addon.network.server.Server;
  * The base server.
  *
  * <p>Provides basic functionality, allows to be started and stopped, and initialise the child
- * channels. It also adds the following channel attributes: {@link ChannelAttributes#LOCAL_ADDRESS},
- * {@link ChannelAttributes#REMOTE_ADDRESS}, and {@link ChannelAttributes#TLS_UPGRADED} (always
- * {@code false}).
+ * channels.
+ *
+ * <p>It also adds the following channel attributes:
+ *
+ * <ul>
+ *   <li>{@link ChannelAttributes#LOCAL_ADDRESS};
+ *   <li>{@link ChannelAttributes#REMOTE_ADDRESS};
+ *   <li>{@link ChannelAttributes#TLS_UPGRADED} (always {@code false});
+ *   <li>{@link ChannelAttributes#PROCESSING_MESSAGE} (always {@code false}).
+ * </ul>
  */
 public class BaseServer implements Server {
 
@@ -140,6 +147,7 @@ public class BaseServer implements Server {
             ch.attr(ChannelAttributes.LOCAL_ADDRESS).set(ch.localAddress());
             ch.attr(ChannelAttributes.REMOTE_ADDRESS).set(ch.remoteAddress());
             ch.attr(ChannelAttributes.TLS_UPGRADED).set(Boolean.FALSE);
+            ch.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
 
             ch.pipeline().addLast(new ChannelGroupHandler(allChannels));
 

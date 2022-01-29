@@ -247,6 +247,20 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddProcessingMessageAttributeToChannel() throws Exception {
+        // Given
+        createServer(
+                ch -> {
+                    assertChannelAttribute(ch, ChannelAttributes.PROCESSING_MESSAGE, Boolean.FALSE);
+                    initDefaultChannel(ch);
+                });
+        int port = getRandomPort();
+        server.start(port);
+        // When / Then
+        client.send(port, "Message");
+    }
+
+    @Test
     void shouldStartServerOnSpecifiedPort() throws Exception {
         // Given
         int port = getRandomPort();
