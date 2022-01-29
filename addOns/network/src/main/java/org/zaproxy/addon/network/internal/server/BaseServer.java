@@ -59,19 +59,21 @@ public class BaseServer implements Server {
     private static final Logger LOGGER = LogManager.getLogger(BaseServer.class);
 
     private final ServerBootstrap bootstrap;
-    private final Consumer<SocketChannel> channelInitialiser;
+    private Consumer<SocketChannel> channelInitialiser;
     private ChannelGroup allChannels;
     private Channel serverChannel;
 
     /**
-     * Constructs a {@code BaseServer} with the given event loop group and channel initialiser.
+     * Constructs a {@code BaseServer} with the given event loop group and no channel initialiser.
+     *
+     * <p>The channel initialiser is expected to be set before starting the server, failing to do so
+     * will result in an exception.
      *
      * @param group the event loop group.
-     * @param channelInitialiser the channel initialiser.
+     * @see #setChannelInitialiser(Consumer)
      */
-    public BaseServer(NioEventLoopGroup group, Consumer<SocketChannel> channelInitialiser) {
+    protected BaseServer(NioEventLoopGroup group) {
         Objects.requireNonNull(group);
-        this.channelInitialiser = Objects.requireNonNull(channelInitialiser);
 
         this.bootstrap =
                 new ServerBootstrap()
@@ -80,9 +82,36 @@ public class BaseServer implements Server {
                         .childHandler(new ChannelInitializerImpl());
     }
 
+    /**
+     * Constructs a {@code BaseServer} with the given event loop group and channel initialiser.
+     *
+     * @param group the event loop group.
+     * @param channelInitialiser the channel initialiser.
+     * @throws NullPointerException if the given channel initialiser is {@code null}.
+     */
+    public BaseServer(NioEventLoopGroup group, Consumer<SocketChannel> channelInitialiser) {
+        this(group);
+
+        setChannelInitialiser(channelInitialiser);
+    }
+
+    /**
+     * Sets the channel initialiser.
+     *
+     * @param channelInitialiser the channel initialiser.
+     * @throws NullPointerException if the given channel initialiser is {@code null}.
+     */
+    protected void setChannelInitialiser(Consumer<SocketChannel> channelInitialiser) {
+        this.channelInitialiser = Objects.requireNonNull(channelInitialiser);
+    }
+
     @Override
     public int start(String address, int port) throws IOException {
         Server.validatePort(port);
+
+        if (channelInitialiser == null) {
+            throw new IOException("No channel initialiser set.");
+        }
 
         stop();
 
