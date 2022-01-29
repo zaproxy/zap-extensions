@@ -52,4 +52,8 @@ public final class ChannelAttributes {
     /** The attribute that indicates if a channel is set to passthrough the data. */
     public static final AttributeKey<Boolean> PASSTHROUGH =
             AttributeKey.newInstance("zap.passthrough");
+
+    /** The attribute that indicates if a message is still being processed. */
+    public static final AttributeKey<Boolean> PROCESSING_MESSAGE =
+            AttributeKey.newInstance("zap.processing-message");
 }
