@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- Maintenance changes.
 
 ### Fixed
 - False positive condition from Sub Resource Integrity Attribute Missing scan rule when rel=canonical is used (Issue 7040).

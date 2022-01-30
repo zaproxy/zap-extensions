@@ -24,6 +24,13 @@ zapAddOn {
                 }
             }
         }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.7.0 & < 2.0.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -34,6 +41,8 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
     implementation("com.google.re2j:re2j:1.6")
 
     val batikVersion = "1.14"
@@ -45,5 +54,6 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.14.3")
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

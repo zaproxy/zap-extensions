@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScanner {
@@ -59,7 +60,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         // At medium or high exclude javascript responses
         if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
-                && msg.getResponseHeader().isJavaScript()) {
+                && ResourceIdentificationUtils.isJavaScript(msg)) {
             return;
         }
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {

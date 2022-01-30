@@ -32,6 +32,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.retire.model.Repo;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -63,9 +64,7 @@ public class RetireScanRule extends PluginPassiveScanner {
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
-        if (!msg.getResponseHeader().isImage()
-                && !msg.getRequestHeader().isCss()
-                && !msg.getResponseHeader().isCss()) {
+        if (!msg.getResponseHeader().isImage() && !ResourceIdentificationUtils.isCss(msg)) {
             Repo scanRepo = getRepo();
             if (scanRepo == null) {
                 LOGGER.error("\tThe Retire.js repository was null.");

@@ -29,6 +29,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class CacheControlScanRule extends PluginPassiveScanner {
@@ -50,9 +51,8 @@ public class CacheControlScanRule extends PluginPassiveScanner {
                             || getHelper().isClientError(msg)
                             || getHelper().isServerError(msg)
                             || !msg.getResponseHeader().isText()
-                            || msg.getResponseHeader().isJavaScript()
-                            || msg.getResponseHeader().isCss()
-                            || msg.getRequestHeader().isCss())) {
+                            || ResourceIdentificationUtils.isJavaScript(msg)
+                            || ResourceIdentificationUtils.isCss(msg))) {
                 // Covers HTML, XML, JSON and TEXT while excluding JS & CSS
                 return;
             }

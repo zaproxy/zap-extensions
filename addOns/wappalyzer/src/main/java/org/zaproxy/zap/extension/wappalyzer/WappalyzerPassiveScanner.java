@@ -37,6 +37,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -127,7 +128,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
     private void checkCssElementsMatches(HttpMessage msg, Source source) {
         for (AppPattern appPattern : currentApp.getCss()) {
-            if (msg.getRequestHeader().isCss() || msg.getResponseHeader().isCss()) {
+            if (ResourceIdentificationUtils.isCss(msg)) {
                 addIfMatches(appPattern, msg.getResponseBody().toString());
             } else {
                 for (Element styleElement : source.getAllElements(HTMLElementName.STYLE)) {

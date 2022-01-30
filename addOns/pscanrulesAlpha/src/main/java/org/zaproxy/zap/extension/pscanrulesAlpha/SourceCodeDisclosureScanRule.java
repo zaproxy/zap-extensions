@@ -31,6 +31,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -627,9 +628,6 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         // patterns are tried before more general patterns
     }
 
-    static final Pattern PATTERN_FONT_EXTENSIONS =
-            Pattern.compile("(?:\\.ttf|\\.woff|\\.woff2|\\.otf)\\z", Pattern.CASE_INSENSITIVE);
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sourcecodedisclosure.";
 
@@ -652,13 +650,11 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().isCss()
-                || msg.getResponseHeader().isJavaScript()
-                || msg.getRequestHeader().isCss()
+        if (ResourceIdentificationUtils.isCss(msg)
+                || ResourceIdentificationUtils.isJavaScript(msg)
                 || msg.getRequestHeader().isImage()
                 || msg.getResponseHeader().isImage()
-                || msg.getResponseHeader().hasContentType("font")
-                || isFontRequest(msg)) {
+                || ResourceIdentificationUtils.isFont(msg)) {
             return;
         }
 
@@ -698,14 +694,6 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
                     .setWascId(13) // WASC-13: Information Leakage
                     .raise();
         }
-    }
-
-    private static boolean isFontRequest(HttpMessage msg) {
-        String path = msg.getRequestHeader().getURI().getEscapedPath();
-        if (path != null) {
-            return PATTERN_FONT_EXTENSIONS.matcher(path).find();
-        }
-        return false;
     }
 
     @Override

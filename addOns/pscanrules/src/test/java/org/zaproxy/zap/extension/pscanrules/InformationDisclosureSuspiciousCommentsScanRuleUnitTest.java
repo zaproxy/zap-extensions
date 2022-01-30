@@ -40,6 +40,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 
 class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         extends PassiveScannerTest<InformationDisclosureSuspiciousCommentsScanRule> {
@@ -120,7 +121,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertTrue(msg.getResponseHeader().isJavaScript());
+        assertTrue(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -143,7 +144,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertTrue(msg.getResponseHeader().isJavaScript());
+        assertTrue(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -163,7 +164,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertTrue(msg.getResponseHeader().isJavaScript());
+        assertTrue(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -186,7 +187,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertTrue(msg.getResponseHeader().isJavaScript());
+        assertTrue(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -205,7 +206,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -228,7 +229,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -248,7 +249,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
@@ -268,7 +269,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
 
         // When
         scanHttpResponseReceive(msg);
