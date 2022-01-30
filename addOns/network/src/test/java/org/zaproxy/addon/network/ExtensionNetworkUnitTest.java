@@ -76,6 +76,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -86,6 +87,7 @@ import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
@@ -226,6 +228,36 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(args[2].getName(), is(equalTo("-certfulldump")));
         assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[2].getHelpMessage(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldNotAddLegacyProxyListenerHandlerOnHookIfNotHandlingLocalServers() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        verify(extensionLoader, times(0)).addProxyServer(any());
+        assertThat(extension.getLegacyProxyListenerHandler(), is(nullValue()));
+    }
+
+    @Test
+    void shouldAddLegacyProxyListenerHandlerOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<ProxyServer> argument = ArgumentCaptor.forClass(ProxyServer.class);
+        verify(extensionLoader).addProxyServer(argument.capture());
+        assertThat(argument.getAllValues(), contains(instanceOf(LegacyProxyListenerHandler.class)));
+        assertThat(
+                extension.getLegacyProxyListenerHandler(),
+                is(equalTo(argument.getAllValues().get(0))));
     }
 
     @Test
@@ -491,6 +523,18 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Then
         verify(extension.setSslCertificateService, times(0)).accept(any());
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(notNullValue()));
+        verify(extensionLoader, times(0)).removeProxyServer(any());
+    }
+
+    @Test
+    void shouldNotUnloadProxyListenerHandlerIfNotHandlingLocalServers() {
+        // Given
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.unload();
+        // Then
+        verify(extensionLoader, times(0)).removeProxyServer(any());
     }
 
     @Test
@@ -502,6 +546,20 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Then
         verify(extension.setSslCertificateService, times(1)).accept(null);
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(nullValue()));
+    }
+
+    @Test
+    void shouldUnloadLegacyProxyListenerHandlerIfHandlingLocalServers() {
+        // Given
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(mock(ExtensionHook.class));
+        LegacyProxyListenerHandler handler = extension.getLegacyProxyListenerHandler();
+        // When
+        extension.unload();
+        // Then
+        verify(extensionLoader).removeProxyServer(handler);
+        assertThat(extension.getLegacyProxyListenerHandler(), is(nullValue()));
     }
 
     @ParameterizedTest
