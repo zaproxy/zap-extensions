@@ -40,6 +40,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -54,6 +55,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 
@@ -69,6 +71,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
+    boolean handleLocalServers;
+    private LegacyProxyListenerHandler legacyProxyListenerHandler;
 
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
@@ -109,6 +113,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         }
                     }
                 };
+        handleLocalServers = ProxyServer.class.getAnnotation(Deprecated.class) != null;
     }
 
     @Override
@@ -136,12 +141,21 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
 
+        if (handleLocalServers) {
+            legacyProxyListenerHandler = new LegacyProxyListenerHandler();
+            Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
+        }
+
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             String[] networkNode = {Constant.messages.getString("network.ui.options.name")};
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
             optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
         }
+    }
+
+    LegacyProxyListenerHandler getLegacyProxyListenerHandler() {
+        return legacyProxyListenerHandler;
     }
 
     private static CommandLineArgument[] createCommandLineArgs() {
@@ -357,6 +371,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
+        }
+
+        if (handleLocalServers) {
+            Control.getSingleton()
+                    .getExtensionLoader()
+                    .removeProxyServer(legacyProxyListenerHandler);
+            legacyProxyListenerHandler = null;
         }
     }
 
