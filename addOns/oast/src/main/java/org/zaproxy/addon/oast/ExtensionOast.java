@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.oast;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -39,6 +41,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
 import org.zaproxy.addon.oast.services.boast.BoastService;
 import org.zaproxy.addon.oast.services.callback.CallbackOptionsPanelTab;
@@ -65,6 +68,9 @@ public class ExtensionOast extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
     static final int HISTORY_TYPE_OAST = HistoryReference.TYPE_OAST;
 
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
+
     private final Map<String, OastService> services = new HashMap<>();
     private final ReferenceMap alertCache =
             new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT);
@@ -80,9 +86,19 @@ public class ExtensionOast extends ExtensionAdaptor {
     }
 
     @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
+    @Override
     public void init() {
         boastService = new BoastService();
-        callbackService = new CallbackService(OastRequest::create);
+        callbackService =
+                new CallbackService(
+                        OastRequest::create,
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionNetwork.class));
         interactshService = new InteractshService();
     }
 

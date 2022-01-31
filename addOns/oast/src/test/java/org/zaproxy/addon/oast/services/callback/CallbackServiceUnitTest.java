@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.addon.oast.OastRequestHandler;
@@ -46,6 +48,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link CallbackService}. */
 class CallbackServiceUnitTest extends TestUtils {
 
+    private static ExtensionNetwork extensionNetwork;
     private int serverPort;
     private OastRequestHandler oastRequestHandler;
     private OastRequest oastRequest;
@@ -55,6 +58,13 @@ class CallbackServiceUnitTest extends TestUtils {
     @BeforeAll
     static void setupAll() {
         mockMessages(new ExtensionOast());
+        extensionNetwork = new ExtensionNetwork();
+        extensionNetwork.init();
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        extensionNetwork.stop();
     }
 
     @BeforeEach
@@ -67,7 +77,7 @@ class CallbackServiceUnitTest extends TestUtils {
         given(oastRequestFactory.create(any(), anyString(), anyString())).willReturn(oastRequest);
         oastRequestHandler = mock(OastRequestHandler.class);
 
-        callbackService = new CallbackService(oastRequestFactory);
+        callbackService = new CallbackService(oastRequestFactory, extensionNetwork);
         callbackService.getParam().load(new ZapXmlConfiguration());
         serverPort = getRandomPort();
         callbackService.getParam().setPort(serverPort);
@@ -84,7 +94,20 @@ class CallbackServiceUnitTest extends TestUtils {
         // Given
         OastRequestFactory oastRequestFactory = null;
         // When / Then
-        assertThrows(NullPointerException.class, () -> new CallbackService(oastRequestFactory));
+        assertThrows(
+                NullPointerException.class,
+                () -> new CallbackService(oastRequestFactory, extensionNetwork));
+    }
+
+    @Test
+    void shouldThrowForNullExtensionNetwork() throws Exception {
+        // Given
+        OastRequestFactory oastRequestFactory = mock(OastRequestFactory.class);
+        ExtensionNetwork extensionNetwork = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> new CallbackService(oastRequestFactory, extensionNetwork));
     }
 
     @Test
