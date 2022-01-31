@@ -246,6 +246,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addApiImplementor(new NetworkApi(this));
 
+        legacyProxyListenerHandler = new LegacyProxyListenerHandler();
+        Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
+
         if (!handleServerCerts) {
             return;
         }
@@ -256,11 +259,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
-
-        if (handleLocalServers) {
-            legacyProxyListenerHandler = new LegacyProxyListenerHandler();
-            Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
-        }
 
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
@@ -509,6 +507,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void unload() {
+        Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
+        legacyProxyListenerHandler = null;
+
         if (!handleServerCerts) {
             return;
         }
@@ -519,13 +520,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
-        }
-
-        if (handleLocalServers) {
-            Control.getSingleton()
-                    .getExtensionLoader()
-                    .removeProxyServer(legacyProxyListenerHandler);
-            legacyProxyListenerHandler = null;
         }
     }
 
