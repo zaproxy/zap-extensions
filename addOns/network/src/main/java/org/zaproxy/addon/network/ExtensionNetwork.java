@@ -54,6 +54,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.SSLConnector;
+import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.parosproxy.paros.security.SslCertificateService;
@@ -94,7 +95,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
 
-    private SslCertificateServiceImpl sslCertificateService;
+    private SslCertificateService sslCertificateService;
 
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
@@ -134,6 +135,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     }
                 };
         handleLocalServers = ProxyServer.class.getAnnotation(Deprecated.class) != null;
+
+        if (!handleServerCerts) {
+            sslCertificateService = new LegacySslCertificateServiceImpl();
+        }
     }
 
     private NioEventLoopGroup getMainEventLoopGroup() {
@@ -368,6 +373,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return Collections.emptyList();
     }
 
+    SslCertificateService getSslCertificateService() {
+        return sslCertificateService;
+    }
+
     ServerCertificatesOptions getServerCertificatesOptions() {
         return serverCertificatesOptions;
     }
@@ -415,6 +424,29 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             try {
                 return generator.generate(certData);
             } catch (GenerationException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+
+    private static class LegacySslCertificateServiceImpl implements SslCertificateService {
+
+        @Override
+        public void initializeRootCA(KeyStore keyStore) {
+            // Nothing to do, not called.
+        }
+
+        @Override
+        public KeyStore createCertForHost(String hostname) {
+            // Nothing to do, no longer used by core.
+            return null;
+        }
+
+        @Override
+        public KeyStore createCertForHost(CertData certData) throws IOException {
+            try {
+                return CachedSslCertifificateServiceImpl.getService().createCertForHost(certData);
+            } catch (Exception e) {
                 throw new IOException(e);
             }
         }

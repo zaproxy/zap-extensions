@@ -166,6 +166,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCreateLegacyCertServiceOnInit() {
+        // Given / When
+        extension.init();
+        // Then
+        assertThat(extension.getSslCertificateService(), is(notNullValue()));
+    }
+
+    @Test
     void shouldAddNetworkApiOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
