@@ -5,51 +5,51 @@
 <TITLE>Report Generation API</TITLE>
 </HEAD>
 <BODY>
-	<H1>Report Generation API</H1>
-	The following operations are added to the API:
+	<H1>API генерации отчетов</H1>
+	В API добавлены следующие операции:
 
-	<h3>Views</h3>
+	<h3>Просмотры</h3>
 	<ul>
-		<li>templates: View available templates.</li>
-		<li>templateDetails (template*): View details of the specified
-			template.</li>
+		<li>шаблоны: просмотр доступных шаблонов.</li>
+		<li>templateDetails (шаблон*): просмотр сведений об указанном
+			шаблон.</li>
 	</ul>
 
-	<h3>Actions</h3>
+	<h3>Действия</h3>
 	<ul>
-		<li>generate (title* template* theme description contexts sites
-			sections includedConfidences includedRisks reportFileName
-			reportFileNamePattern reportDir display): Generate a report with the
-			supplied parameters.
+		<li>генерировать (название* шаблон* тема описание контексты сайты
+			включены разделыКонфиденциальность включенаОтчет о рискахИмя файла
+			reportFileNamePattern reportDir display): создание отчета с
+			поставляемые параметры.
 			<ul>
-				<li>title: Report Title</li>
-				<li>template: Report Template</li>
-				<li>theme: Report Theme</li>
-				<li>description: Report Description</li>
-				<li>contexts: The name of the contexts to be included in the
-					report, separated by '|'. For example, "Default Context|My
-					Context".</li>
-				<li>sites: The site URLs that should be included in the report,
-					separated by '|'.</li>
-				<li>sections: The report sections that should be included,
-					separated by '|'. View section names via API view <code>templateDetails
-						(template*)</code>
+				<li>заглавие: Название отчета</li>
+				<li>шаблон: Шаблон отчета</li>
+				<li>тема: Тема доклада</li>
+				<li>описание: Описание отчета</li>
+				<li>contexts: имя контекстов, которые будут включены в отчет,
+					разделенный '|'. Например, «Контекст по умолчанию|Мой Контекст».</li>
+				<li>сайты: URL-адреса сайтов, которые должны быть включены в
+					отчет, разделены символом '|'.</li>
+				<li>разделы: разделы отчета, которые должны быть включены,
+					разделены символом '|'. Просмотр названий разделов через
+					представление API <code>templateDetails (шаблон*)</code>
 				</li>
-				<li>includedConfidences: Confidences that should be included in
-					the report, separated by '|'. Accepted values are "False Positive",
-					"Low", "Medium", "High", and "Confirmed".</li>
-				<li>includedRisks: Risks that should be included in the report,
-					separated by '|'. Accepted values are "Informational", "Low",
-					"Medium", and "High".</li>
-				<li>reportFileName: The file name of the generated report. This
-					value overrides the reportFileNamePattern parameter.</li>
-				<li>reportFileNamePattern: Report File Name Pattern. For
-					example, <code>{{yyyy-MM-dd}}-ZAP-Report-[[site]]</code>.
+				<li>includeConfidences: Доверительные отношения, которые должны
+					быть включены в отчет, разделенный '|'. Допустимые значения:
+					«Ложноположительные», «Низкий», «Средний», «Высокий» и
+					«Подтвержденный».</li>
+				<li>включенные риски: риски, которые должны быть включены в
+					отчет, разделены символом '|'. Допустимые значения:
+					«Информационное», «Низкое», «Средний» и «Высокий».</li>
+				<li>reportFileName: имя файла сгенерированного отчета. Это
+					значение переопределяет параметр reportFileNamePattern.</li>
+				<li>reportFileNamePattern: шаблон имени файла отчета. например,
+					<code>{{гггг-мм-дд}}-ZAP-отчет-[[сайт]]</code>.
 				</li>
-				<li>reportDir: Path to directory in which the generated report
-					should be placed.</li>
-				<li>display: Display the generated report. Either "true" or
-					"false".</li>
+				<li>reportDir: Путь к каталогу, в котором находится
+					сгенерированный отчет должны быть размещены.</li>
+				<li>display: отображение сгенерированного отчета. Либо
+					"правда", либо "ложный".</li>
 			</ul>
 		</li>
 	</ul>

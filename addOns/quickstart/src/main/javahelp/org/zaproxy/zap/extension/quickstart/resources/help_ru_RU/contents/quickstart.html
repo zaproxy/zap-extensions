@@ -10,79 +10,79 @@
 <h1>Быстрый старт</h1>
 
 <p>
-	The Quick Start tab provides you with an easy way to quickly test a web application.<br>
-	The top screen shows 3 buttons that take you to the following screens.
+	Вкладка "Быстрый старт" предоставляет простой способ быстро протестировать веб-приложение.<br>
+Верхний экран содержит 3 кнопки, с помощью которых можно перейти к следующим экранам. 
 </p>
 
-<h2>Automated Scan</h2>
+<h2>Автоматическое сканирование </h2>
 
-The Automated Scan screen allows you to launch an automated scan against an application - just enter its URL below and press 'Attack'.
+Экран «Автоматическое сканирование» позволяет запускать автоматическое сканирование приложения — просто введите его URL-адрес ниже и нажмите «Атака». 
 <br>
-Please be aware that you should only attack applications that you have been specifically been given permission to test.
+Имейте в виду, что вам следует атаковать только те приложения, на тестирование которых вам было специально дано разрешение. 
 
-<h3>URL to attack</h3>
+<h3>URL для атаки </h3>
 
-This is the URL of the application you wish to attack, starting with 'http://' or 'https://'.<br>
-ZAP must be able to access this URL for the attack to proceed.
+Это URL-адрес приложения, которое вы хотите атаковать, начиная с «http://» или «https://». <br>
+ZAP должен иметь доступ к этому URL-адресу для продолжения атаки. 
 
-<h3>Use traditional spider</h3>
+<h3>Используйте традиционного паука</h3>
 
-The traditional spider explores the application by finding links in HTML pages. 
-It is very fast but cannot handle applications which make heavy use of JavaScript. 
+Традиционный паук исследует приложение, находя ссылки на HTML-страницах.
+Он очень быстрый, но не может работать с приложениями, интенсивно использующими JavaScript.  
 
-<h3>Use ajax spider</h3>
+<h3>Используйте паука ajax </h3>
 
-The ajax spider explores the application by launching the browser you have chosen and clicking on the links it finds. 
-Is is slower than the traditional spider but handles JavaScript well.<br>
-This option is only shown if the ajax spider add-on is installed. 
-If it is not available then you can download and install it for free from the ZAP Marketplace.
+Паук ajax исследует приложение, запуская выбранный вами браузер и нажимая на найденные ссылки.
+Is медленнее, чем традиционный паук, но хорошо обрабатывает JavaScript. <br>
+Этот параметр отображается только в том случае, если установлено дополнение ajax Spider.
+Если он недоступен, вы можете загрузить и установить его бесплатно с ZAP Marketplace. 
 
-<h2>Manual Explore</h2>
+<h2>Ручное исследование </h2>
 
-The Manual Explore screen allows you to launch the browser of your choice so that you can explore your application while proxying through ZAP.
-Select the browser you want from the pull-down and press the 'Launch Browser' button.<br>
-Browsers launched this way will be configured to proxy via ZAP and will ignore certificate errors,
-so you will not need to import the ZAP Root CA Certificate.<br>
-ZAP will remember the last browser you chose when you restart it.<br><br>
-A button will also be added to the toolbar which will launch the latest browser chosen. 
-The icon will change to represent the relevant browser <br><br> 
-Note that launched browsers will stop working if you change the address or port that ZAP is listening on.
+Экран Manual Explore позволяет вам запустить браузер по вашему выбору, чтобы вы могли исследовать свое приложение во время проксирования через ZAP. 
+Выберите нужный браузер из раскрывающегося списка и нажмите кнопку «Запустить браузер». <br>
+Браузеры, запущенные таким образом, будут настроены на проксирование через ZAP и будут игнорировать ошибки сертификата,
+поэтому вам не нужно будет импортировать сертификат ZAP Root CA. <br>
+ZAP запомнит последний выбранный вами браузер при перезапуске. <br><br>
+На панель инструментов также будет добавлена кнопка, которая запускает последний выбранный браузер.
+Значок изменится, чтобы представить соответствующий браузер  <br><br> 
+Обратите внимание, что запущенные браузеры перестанут работать, если вы измените адрес или порт, которые прослушивает ZAP. 
 <p>
-If you do not have selenium add-on installed then you will see instructions for configuring your browser 
-to proxy via ZAP manually.
+Если у вас не установлено дополнение selenium, вы увидите инструкции по настройке браузера.
+проксировать через ZAP вручную. 
 
-<h3>URL to explore</h3>
+<h3>URL для изучения </h3>
 
-This is the URL of the application you wish to explore, starting with 'http://' or 'https://'.<br>
-ZAP must be able to access this URL.
+Это URL-адрес приложения, которое вы хотите изучить, начиная с «http://» или «https://». <br>
+ZAP должен иметь доступ к этому URL-адресу. 
 
-<h3>Enable HUD</h3>
+<h3>Включить HUD </h3>
 
-The ZAP Heads Up Display (HUD) brings all of the essential ZAP functionality into your browser. 
-It is ideal for people new to web security and also allows experienced penetration testers to focus on an application's 
-features while providing key security information and functionality. <br>
-This option is enabled if the HUD add-on is installed. 
-If it is not available then you can download and install it for free from the ZAP Marketplace.
+Проекционный дисплей ZAP (HUD) переносит все основные функции ZAP в ваш браузер.  
+Он идеально подходит для людей, плохо знакомых с веб-безопасностью, а также позволяет опытным пентестерам сосредоточиться на безопасности приложения.
+функции, предоставляя ключевую информацию о безопасности и функциональность.  <br>
+Эта опция включена, если надстройка HUD установлена.
+Если он недоступен, вы можете загрузить и установить его бесплатно с ZAP Marketplace. 
 
-<h2>Learn More</h2>
+<h2>Узнать больше</h2>
 
-The Learn More screen provides links to local and online resources for you to learn more about ZAP.
+Экран «Узнать больше» содержит ссылки на местные и онлайн-ресурсы, с помощью которых вы можете узнать больше о ZAP. 
 
-<h2>News</h2>
+<h2>Новости </h2>
 
-Occasional news items will be displayed underneath the 3 buttons. Clicking on the red 'x' will hide the current news item.
+Случайные новости будут отображаться под 3 кнопками. Щелчок по красному крестику скроет текущую новость. 
 
-<h2>See also</h2>
+<h2>Смотрите также</h2>
 <table>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="cmdline.html">Command Line</a></td>
-		<td>description of command line arguments</td>
+		<td><a href="cmdline.html">Командная строка </a></td>
+		<td>описание аргументов командной строки </td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		<td><a href="launchoptions.html">Launch Options</a></td>
-		<td>the Quick Start Launch Options</td>
+		<td><a href="launchoptions.html">Параметры запуска </a></td>
+		<td>параметры быстрого запуска </td>
 	</tr>
 </table>
 
