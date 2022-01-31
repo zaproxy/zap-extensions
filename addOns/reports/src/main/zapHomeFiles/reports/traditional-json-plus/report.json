@@ -1,0 +1,45 @@
+{
+    "@version": [[${zapVersion}]],
+    "@generated": [[${generatedString}]],
+    "site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
+        {
+            "@name": "[(${helper.legacyEscapeText(site, true)})]",
+            "@host": "[(${helper.legacyEscapeText(helper.getHostForSite(site), true)})]",
+            "@port": "[(${helper.getPortForSite(site)})]",
+            "@ssl": "[(${helper.isSslSite(site)})]",
+            "alerts": [ [#th:block th:each="alert, alertState: ${helper.getAlertsForSite(alertTree, site)}" th:with="instances=${helper.getAlertInstancesForSite(alertTree, site, alert.pluginId)}"]
+                {
+                    "pluginid": "[(${alert.pluginId})]",
+                    "alertRef": "[(${alert.alertRef})]",
+                    "alert": "[(${helper.legacyEscapeText(alert.name, true)})]",
+                    "name": "[(${helper.legacyEscapeText(alert.name, true)})]",
+                    "riskcode": "[(${alert.risk})]",
+                    "confidence": "[(${alert.confidence})]",
+                    "riskdesc": "[(${helper.legacyEscapeText(helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.confidence) + ')', true)})]",
+                    "desc": "[(${helper.legacyEscapeParagraph(alert.description, true)})]",
+                    "instances":[ [#th:block th:each="instance, instState: ${instances}"][#th:block th:if="${! instState.first}"],[/th:block]
+                        {
+                            "uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
+                            "method": "[(${helper.legacyEscapeText(instance.method, true)})]",
+                            "param": "[(${helper.legacyEscapeText(instance.param, true)})]",
+                            "attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
+                            "evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]",
+                            "request-header": "[(${helper.legacyEscapeText(instance.message.requestHeader, true)})]",
+                            "request-body": "[(${helper.legacyEscapeText(instance.message.requestBody, true)})]",
+                            "response-header": "[(${helper.legacyEscapeText(instance.message.responseHeader, true)})]",
+                            "response-body": "[(${helper.legacyEscapeText(instance.message.responseBody, true)})]"
+                        }[/th:block]
+                    ],
+                    "count": "[(${instances.size})]",
+                    "solution": "[(${helper.legacyEscapeParagraph(alert.solution, true)})]",
+                    "otherinfo": "[(${helper.legacyEscapeParagraph(alert.otherinfo, true)})]",
+                    "reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",
+                    "cweid": "[(${alert.cweid})]",
+                    "wascid": "[(${alert.wascid})]",
+                    "sourceid": "[(${alert.sourceHistoryId})]"
+                }[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
+            ]
+        }[/th:block]
+    ]
+}
+
