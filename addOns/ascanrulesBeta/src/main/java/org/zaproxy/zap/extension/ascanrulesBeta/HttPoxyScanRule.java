@@ -26,13 +26,16 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.Server;
 
 public class HttPoxyScanRule extends AbstractAppPlugin {
 
@@ -98,15 +101,25 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
     }
 
     @Override
+    public void init() {
+        ExtensionNetwork ext =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
+        if (ext == null) {
+            getParent()
+                    .pluginSkipped(this, Constant.messages.getString(MESSAGE_PREFIX + "skipped"));
+        }
+    }
+
+    @Override
     public void scan() {
         // Set up a listener using all interfaces on another port
-        ProxyServer proxy;
-        proxy = new ProxyServer();
         HttpoxyListener listener = new HttpoxyListener();
-        proxy.addOverrideMessageProxyListener(listener);
-        int proxyPort = proxy.startServer(null, 0, true);
-
-        try {
+        try (Server server =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionNetwork.class)
+                        .createHttpServer(listener)) {
+            int proxyPort = server.start("0.0.0.0");
             Enumeration<NetworkInterface> allInterfaces = NetworkInterface.getNetworkInterfaces();
 
             // Try all of the available interfaces as we dont know which one(s)
@@ -145,32 +158,21 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
             }
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
-        } finally {
-            proxy.stopServer();
         }
     }
 
-    private class HttpoxyListener implements OverrideMessageProxyListener {
+    private class HttpoxyListener implements HttpMessageHandler {
 
         private boolean msgReceived;
         private String msgUrl;
 
         @Override
-        public int getArrangeableListenerOrder() {
-            return 0;
-        }
+        public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+            ctx.close();
 
-        @Override
-        public boolean onHttpRequestSend(HttpMessage msg) {
             this.msgReceived = true;
             this.msgUrl = msg.getRequestHeader().getURI().toString();
             log.debug("Received request {}", msgUrl);
-            return true;
-        }
-
-        @Override
-        public boolean onHttpResponseReceived(HttpMessage msg) {
-            return true;
         }
 
         public boolean isMsgReceived() {
