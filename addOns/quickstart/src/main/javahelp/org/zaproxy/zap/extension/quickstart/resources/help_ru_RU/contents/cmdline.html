@@ -2,43 +2,43 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Command Line</title>
+<title>Командная строка </title>
 </head>
 <body>
-	<h1>Command Line</h1>
-	Quick Start add-on supports the following command line options:
+	<h1>командная строка</h1>
+	Надстройка Quick Start поддерживает следующие параметры командной строки: 
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickurl</td>
-			<td>Specifies the URL of the target application that will be attacked.</td>
+			<td>Указывает URL-адрес целевого приложения, которое будет атаковано. </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickout</td>
-			<td>Specifies the file to write the report to. The report format will depend on the file extension - supported file extensions are 
-			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. If none of these extensions are used then the format will be XML. 
-			If not set in 'inline' and daemon modes the report is written to default output stream.</td>
+			<td>Указывает файл для записи отчета. Формат отчета будет зависеть от расширения файла. Поддерживаемые расширения файлов:  
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. Если ни одно из этих расширений не используется, формат будет XML.
+Если не установлено в режимах «встроенный» и демона, отчет записывается в выходной поток по умолчанию. </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickprogress</td>
-			<td>Show ascii progress bars, if started with the -cmd flag.</td>
+			<td>Показывать индикаторы выполнения ascii, если запущен с флагом -cmd. </td>
 		</tr>
 	</table>
 
 	<br>
-	<p>Examples:
+	<p>Примеры:
 	<ul>
-		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
-			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		<li>Запустите ZAP во встроенном режиме с индикаторами выполнения ascii, атакуйте целевое приложение http://example.com/
+и напишите отчет в выходной поток по умолчанию:  <pre>cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
-		<li>Start ZAP with UI, attack the target application http://example.com/ and save
-			the report to a file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		<li>Запустите ZAP с пользовательским интерфейсом, атакуйте целевое приложение http://example.com/ и сохраните
+отчет в файл:  <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>
 	</ul>
 
-	<h2>See also</h2>
+	<h2>Смотрите также </h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

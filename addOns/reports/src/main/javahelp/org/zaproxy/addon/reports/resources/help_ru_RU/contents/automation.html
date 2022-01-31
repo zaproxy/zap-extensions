@@ -5,32 +5,32 @@
 <TITLE>Report Generation Automation Framework Support</TITLE>
 </HEAD>
 <BODY>
-	<H1>Report Generation Automation Framework Support</H1>
-	This add-on supports the Automation Framework.
+	<H1>Поддержка инфраструктуры автоматизации генерации отчетов</H1>
+	Это дополнение поддерживает Automation Framework.
 
-	<H2>Job: report</H2>
-	The report job allows you to generate reports using any of the
-	installed report templates.
+	<H2>Задание: отчет</H2>
+	Задание отчета позволяет создавать отчеты с использованием любого
+	установленного шаблона отчетов.
 	<pre>
-  - type: report                       # Report generation
+  - type: report                       # Генерация отчета 
     parameters:
-      template:                        # String: The template id, default : traditional-html
-      reportDir:                       # String: The directory into which the report will be written
-      reportFile:                      # String: The report file name pattern, default: {{yyyy-MM-dd}}-ZAP-Report-[[site]]
-      reportTitle:                     # String: The report title
-      reportDescription:               # String: The report description
-      displayReport:                   # Boolean: Display the report when generated, default: false
-    risks:                             # List: The risks to include in this report, default all
+      template:                        # Строка: идентификатор шаблона, по умолчанию: традиционный-html 
+      reportDir:                       # Строка: каталог, в который будет записан отчет. 
+      reportFile:                      # Строка: Шаблон имени файла отчета, по умолчанию: {{гггг-ММ-дд}}-ZAP-Report-[[сайт]] 
+      reportTitle:                     # Строка: название отчета 
+      reportDescription:               # Строка: описание отчета 
+      displayReport:                   # Boolean: отображать отчет при создании, по умолчанию: false 
+    risks:                             # Список: риски для включения в этот отчет, по умолчанию все 
       - high
       - medium
       - low
       - info
-    confidences:                       # List: The confidences to include in this report, default all
+    confidences:                       # Список: конфиденциальные данные для включения в этот отчет, по умолчанию все 
       - high
       - medium
       - low
       - falsepositive
-    sections:                          # List: The template sections to include in this report - see the relevant template, default all
+    sections:                          # Список: разделы шаблона для включения в этот отчет — см. соответствующий шаблон, по умолчанию все 
 </pre>
 
 </BODY>
