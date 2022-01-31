@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.oast.services.callback;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,15 +27,17 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.oast.OastService;
 
 public class CallbackService extends OastService implements OptionsChangedListener {
 
-    private final ProxyServer proxyServer;
+    private final ExtensionNetwork extensionNetwork;
+    private final OastRequestFactory oastRequestFactory;
+    private Server server;
     private org.zaproxy.addon.oast.services.callback.CallbackParam callbackParam;
 
     private final Map<String, String> handlers = new HashMap<>();
@@ -44,12 +47,19 @@ public class CallbackService extends OastService implements OptionsChangedListen
 
     private static final Logger LOGGER = LogManager.getLogger(CallbackService.class);
 
-    public CallbackService(OastRequestFactory oastRequestFactory) {
-        Objects.requireNonNull(oastRequestFactory);
+    public CallbackService(
+            OastRequestFactory oastRequestFactory, ExtensionNetwork extensionNetwork) {
+        this.oastRequestFactory = Objects.requireNonNull(oastRequestFactory);
+        this.extensionNetwork = Objects.requireNonNull(extensionNetwork);
+    }
 
-        proxyServer = new ProxyServer("ZAP-CallbackService");
-        proxyServer.addOverrideMessageProxyListener(
-                new CallbackProxyListener(this, oastRequestFactory));
+    private Server getServer() {
+        if (server == null) {
+            server =
+                    extensionNetwork.createHttpServer(
+                            new CallbackProxyListener(this, oastRequestFactory));
+        }
+        return server;
     }
 
     @Override
@@ -64,11 +74,14 @@ public class CallbackService extends OastService implements OptionsChangedListen
 
     @Override
     public void stopService() {
-        this.proxyServer.stopServer();
+        try {
+            getServer().stop();
+        } catch (IOException e) {
+            LOGGER.debug("An error occurred while stopping the callback service.", e);
+        }
     }
 
     public void optionsLoaded() {
-        proxyServer.setConnectionParam(Model.getSingleton().getOptionsParam().getConnectionParam());
         currentConfigLocalAddress = this.getParam().getLocalAddress();
         currentConfigPort = this.getParam().getPort();
     }
@@ -91,10 +104,15 @@ public class CallbackService extends OastService implements OptionsChangedListen
     }
 
     private void restartServer(int port) {
-        // this will close the previous listener (if there was one)
-        actualPort = proxyServer.startServer(this.getParam().getLocalAddress(), port, true);
-        LOGGER.info(
-                "Started callback service on {}:{}", this.getParam().getLocalAddress(), actualPort);
+        try {
+            actualPort = getServer().start(this.getParam().getLocalAddress(), port);
+            LOGGER.info(
+                    "Started callback service on {}:{}",
+                    this.getParam().getLocalAddress(),
+                    actualPort);
+        } catch (IOException e) {
+            LOGGER.warn("An error occurred while starting the callback service.", e);
+        }
     }
 
     public String getCallbackAddress() {

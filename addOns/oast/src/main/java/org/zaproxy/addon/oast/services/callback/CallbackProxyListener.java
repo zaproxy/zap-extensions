@@ -24,16 +24,17 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.zap.utils.ThreadUtils;
 
-class CallbackProxyListener implements OverrideMessageProxyListener {
+class CallbackProxyListener implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(CallbackProxyListener.class);
     private static final String RESPONSE_HEADER =
@@ -52,17 +53,12 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
     }
 
     @Override
-    public int getArrangeableListenerOrder() {
-        return 0;
-    }
+    public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        if (!ctx.isFromClient()) {
+            return;
+        }
+        ctx.overridden();
 
-    @Override
-    public boolean onHttpResponseReceived(HttpMessage msg) {
-        return true;
-    }
-
-    @Override
-    public boolean onHttpRequestSend(HttpMessage msg) {
         try {
             msg.setTimeSentMillis(System.currentTimeMillis());
             String path = msg.getRequestHeader().getURI().getPath();
@@ -83,7 +79,6 @@ class CallbackProxyListener implements OverrideMessageProxyListener {
         } catch (URIException | HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return true;
     }
 
     private void callbackReceived(String handler, HttpMessage httpMessage) {

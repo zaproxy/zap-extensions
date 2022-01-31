@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -56,6 +58,7 @@ class CallbackProxyListenerUnitTest extends TestUtils {
     private OastRequest oastRequest;
     private OastRequestFactory oastRequestFactory;
     private CallbackService callbackService;
+    private HttpMessageHandlerContext ctx;
     private CallbackProxyListener listener;
 
     @BeforeAll
@@ -72,6 +75,7 @@ class CallbackProxyListenerUnitTest extends TestUtils {
         oastRequestFactory = mock(OastRequestFactory.class, withSettings().lenient());
         given(oastRequestFactory.create(any(), anyString(), anyString())).willReturn(oastRequest);
         callbackService = mock(CallbackService.class);
+        ctx = mock(HttpMessageHandlerContext.class);
         listener = new CallbackProxyListener(callbackService, oastRequestFactory);
     }
 
@@ -99,10 +103,11 @@ class CallbackProxyListenerUnitTest extends TestUtils {
     void shouldNotifyOfRequestReceivedForUnknownCallbackHandler() throws Exception {
         // Given
         long now = System.currentTimeMillis();
+        given(ctx.isFromClient()).willReturn(true);
         // When
-        boolean override = listener.onHttpRequestSend(message);
+        listener.handleMessage(ctx, message);
         // Then
-        assertThat(override, is(equalTo(true)));
+        verify(ctx).overridden();
         assertMessage(now);
         verifyServiceAndFactory("No callback handler");
     }
@@ -115,12 +120,24 @@ class CallbackProxyListenerUnitTest extends TestUtils {
         Map<String, String> handlers = new HashMap<>();
         handlers.put("uuid", handler);
         given(callbackService.getHandlers()).willReturn(handlers);
+        given(ctx.isFromClient()).willReturn(true);
         // When
-        boolean override = listener.onHttpRequestSend(message);
+        listener.handleMessage(ctx, message);
         // Then
-        assertThat(override, is(equalTo(true)));
+        verify(ctx).overridden();
         assertMessage(now);
         verifyServiceAndFactory(handler);
+    }
+
+    @Test
+    void shouldNotNotifyOfResponse() throws Exception {
+        // Given
+        given(ctx.isFromClient()).willReturn(false);
+        // When
+        listener.handleMessage(ctx, message);
+        // Then
+        verify(ctx, times(0)).overridden();
+        verify(callbackService, times(0)).handleOastRequest(oastRequest);
     }
 
     private void verifyServiceAndFactory(String handler) throws Exception {
