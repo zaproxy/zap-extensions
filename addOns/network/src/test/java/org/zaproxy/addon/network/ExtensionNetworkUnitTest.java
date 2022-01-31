@@ -250,24 +250,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddLegacyProxyListenerHandlerOnHookIfNotHandlingLocalServers() throws Exception {
+    void shouldAddLegacyProxyListenerHandlerOnHookAlways() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
-        extension.handleLocalServers = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        verify(extensionLoader, times(0)).addProxyServer(any());
-        assertThat(extension.getLegacyProxyListenerHandler(), is(nullValue()));
-    }
-
-    @Test
-    void shouldAddLegacyProxyListenerHandlerOnHookIfHandlingLocalServers() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
-        extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -542,18 +527,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Then
         verify(extension.setSslCertificateService, times(0)).accept(any());
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(notNullValue()));
-        verify(extensionLoader, times(0)).removeProxyServer(any());
-    }
-
-    @Test
-    void shouldNotUnloadProxyListenerHandlerIfNotHandlingLocalServers() {
-        // Given
-        extension.handleServerCerts = true;
-        extension.handleLocalServers = false;
-        // When
-        extension.unload();
-        // Then
-        verify(extensionLoader, times(0)).removeProxyServer(any());
     }
 
     @Test
@@ -568,10 +541,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldUnloadLegacyProxyListenerHandlerIfHandlingLocalServers() {
+    void shouldUnloadLegacyProxyListenerHandlerAlways() {
         // Given
-        extension.handleServerCerts = true;
-        extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         LegacyProxyListenerHandler handler = extension.getLegacyProxyListenerHandler();
         // When
