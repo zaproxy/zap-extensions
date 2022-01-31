@@ -359,7 +359,7 @@ class LegacyProxyListenerHandlerUnitTest {
     }
 
     @Test
-    void shouldOverrideResponseIfNotEmptyAfterOverrideMessageProxyListeners() {
+    void shouldNotOverrideNorCloseIfResponseNotEmptyAfterOverrideMessageProxyListeners() {
         // Given
         OverrideMessageProxyListener listener1 = mock(OverrideMessageProxyListener.class);
         given(listener1.getArrangeableListenerOrder()).willReturn(1);
@@ -374,7 +374,7 @@ class LegacyProxyListenerHandlerUnitTest {
         InOrder inOrder = inOrder(listener1, listener2);
         inOrder.verify(listener1).onHttpRequestSend(message);
         inOrder.verify(listener2).onHttpRequestSend(message);
-        assertContext(1, 0);
+        assertContext(0, 0);
     }
 
     @Test
@@ -566,7 +566,7 @@ class LegacyProxyListenerHandlerUnitTest {
     }
 
     @Test
-    void shouldOverrideResponseIfNotEmptyAfterProxyListeners() {
+    void shouldNotOverrideNorCloseIfResponseNotEmptyAfterProxyListeners() {
         // Given
         ProxyListener listener1 = mock(ProxyListener.class);
         given(listener1.getArrangeableListenerOrder()).willReturn(1);
@@ -583,7 +583,7 @@ class LegacyProxyListenerHandlerUnitTest {
         InOrder inOrder = inOrder(listener1, listener2);
         inOrder.verify(listener1).onHttpRequestSend(message);
         inOrder.verify(listener2).onHttpRequestSend(message);
-        assertContext(1, 0);
+        assertContext(0, 0);
     }
 
     @Test

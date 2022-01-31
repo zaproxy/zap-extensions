@@ -177,12 +177,6 @@ public class LegacyProxyListenerHandler extends ProxyServer implements HttpMessa
                 }
             }
         }
-
-        if (request) {
-            if (!message.getResponseHeader().isEmpty()) {
-                ctx.overridden();
-            }
-        }
     }
 
     private static <T> T handleErrors(Callable<T> runnable, T fallbackValue) {
