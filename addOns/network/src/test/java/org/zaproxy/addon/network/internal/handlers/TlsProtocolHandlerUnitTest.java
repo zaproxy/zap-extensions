@@ -54,7 +54,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,17 +66,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.parosproxy.paros.security.SslCertificateService;
-import org.zaproxy.addon.network.ServerCertificatesOptions;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
-import org.zaproxy.addon.network.internal.cert.CertificateUtils;
-import org.zaproxy.addon.network.internal.cert.GenerationException;
-import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.testutils.TestSslCertificateService;
 import org.zaproxy.addon.network.testutils.TextTestClient;
 
 /** Unit test for {@link TlsProtocolHandler}. */
@@ -426,49 +420,5 @@ class TlsProtocolHandlerUnitTest {
     private void waitForServerChannel() throws InterruptedException {
         serverChannelReady.await(5, TimeUnit.SECONDS);
         assertThat(serverChannel, is(notNullValue()));
-    }
-
-    private static class TestSslCertificateService implements SslCertificateService {
-
-        private final ServerCertificatesOptions serverCertificatesOptions;
-        private ServerCertificateGenerator generator;
-
-        static TestSslCertificateService createInstance() {
-            ServerCertificatesOptions serverCertificatesOptions = new ServerCertificatesOptions();
-            KeyStore rootCa =
-                    CertificateUtils.createRootCaKeyStore(
-                            serverCertificatesOptions.getRootCaCertConfig());
-            TestSslCertificateService sslCertificateService =
-                    new TestSslCertificateService(serverCertificatesOptions);
-            sslCertificateService.initializeRootCA(rootCa);
-            return sslCertificateService;
-        }
-
-        TestSslCertificateService(ServerCertificatesOptions serverCertificatesOptions) {
-            this.serverCertificatesOptions = serverCertificatesOptions;
-        }
-
-        @Override
-        public void initializeRootCA(KeyStore keyStore) {
-            generator = new ServerCertificateGenerator(keyStore, serverCertificatesOptions);
-        }
-
-        @Override
-        public KeyStore createCertForHost(String hostname) {
-            return null;
-        }
-
-        @Override
-        public KeyStore createCertForHost(CertData certData) throws IOException {
-            if (generator == null) {
-                throw new MissingRootCertificateException("The root CA certificate was not set.");
-            }
-
-            try {
-                return generator.generate(certData);
-            } catch (GenerationException e) {
-                throw new IOException(e);
-            }
-        }
     }
 }
