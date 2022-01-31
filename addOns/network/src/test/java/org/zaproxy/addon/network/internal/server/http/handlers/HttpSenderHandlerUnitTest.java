@@ -235,7 +235,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         handler.handleMessage(ctx, message);
         // Then
         assertThat(messagesReceived, hasSize(1));
-        verify(ctx).overridden();
+        verify(ctx, times(0)).overridden();
+        verify(ctx, times(0)).close();
         assertThat(
                 message.getResponseHeader().toString(), startsWith("HTTP/1.1 504 Gateway Timeout"));
         assertThat(
@@ -255,7 +256,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         handler.handleMessage(ctx, message);
         // Then
         assertThat(messagesReceived, hasSize(1));
-        verify(ctx).overridden();
+        verify(ctx, times(0)).overridden();
+        verify(ctx, times(0)).close();
         assertThat(
                 message.getResponseHeader().toString(), startsWith("HTTP/1.1 504 Gateway Timeout"));
         assertThat(message.getResponseBody().toString(), is(equalTo("")));
@@ -271,7 +273,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         handler.handleMessage(ctx, message);
         // Then
         assertThat(messagesReceived, hasSize(greaterThan(1)));
-        verify(ctx).overridden();
+        verify(ctx, times(0)).overridden();
+        verify(ctx, times(0)).close();
         assertThat(message.getResponseHeader().toString(), startsWith("HTTP/1.1 502 Bad Gateway"));
         assertThat(
                 message.getResponseBody().toString(),

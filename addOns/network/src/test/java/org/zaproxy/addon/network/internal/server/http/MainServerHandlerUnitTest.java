@@ -65,9 +65,7 @@ class MainServerHandlerUnitTest {
     void setUp() {
         exceptionsThrown = new ArrayList<>();
 
-        ;
         handler1 = new TestHttpMessageHandler();
-        ;
         handler2 = new TestHttpMessageHandler();
         channel =
                 new EmbeddedChannel(
@@ -175,7 +173,7 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
-    void shouldNotNotifyFollowingHandlerOfRequestIfOverridden() {
+    void shouldNotNotifyFollowingHandlersOfRequestIfOverridden() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";
         handler1.addAction(0, (ctx, msg) -> ctx.overridden());
@@ -183,13 +181,12 @@ class MainServerHandlerUnitTest {
         written(request);
         // Then
         assertThat(exceptionsThrown, hasSize(0));
-        handler1.assertCalled(2);
-        handler2.assertCalled(1);
-        handler2.assertFromClient(0, false);
+        handler1.assertCalled(1);
+        handler2.assertCalled(0);
     }
 
     @Test
-    void shouldNotNotifyFollowingHandlerOfResponseIfOverridden() {
+    void shouldNotNotifyFollowingHandlersOfResponseIfOverridden() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";
         handler1.addAction(1, (ctx, msg) -> ctx.overridden());
@@ -203,7 +200,7 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
-    void shouldNotNotifyFollowingHandlerIfClose() {
+    void shouldNotNotifyFollowingHandlersOfRequestIfClose() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";
         handler1.addAction(0, (ctx, msg) -> ctx.close());
@@ -217,10 +214,9 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
-    void shouldNotNotifyFollowingHandlerIfOverriddenAndClose() {
+    void shouldNotNotifyFollowingHandlersOfResponseIfClose() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";
-        handler1.addAction(0, (ctx, msg) -> ctx.overridden());
         handler1.addAction(1, (ctx, msg) -> ctx.close());
         // When
         written(request);
@@ -228,7 +224,8 @@ class MainServerHandlerUnitTest {
         assertThat(exceptionsThrown, hasSize(0));
         assertChannelActive(false);
         handler1.assertCalled(2);
-        handler2.assertCalled(0);
+        handler2.assertCalled(1);
+        handler2.assertFromClient(0, true);
     }
 
     @Test
@@ -262,8 +259,8 @@ class MainServerHandlerUnitTest {
         written(request);
         // Then
         assertThat(exceptionsThrown, hasSize(0));
-        handler1.assertCalled(2);
-        handler2.assertCalled(1);
+        handler1.assertCalled(1);
+        handler2.assertCalled(0);
     }
 
     @Test

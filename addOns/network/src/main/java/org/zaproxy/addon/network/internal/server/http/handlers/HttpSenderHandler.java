@@ -77,7 +77,7 @@ public class HttpSenderHandler implements HttpMessageHandler {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        if (!ctx.isFromClient()) {
+        if (!ctx.isFromClient() || !msg.getResponseHeader().isEmpty()) {
             return;
         }
 
@@ -174,8 +174,6 @@ public class HttpSenderHandler implements HttpMessageHandler {
             int statusCode,
             String reasonPhrase,
             String message) {
-        ctx.overridden();
-
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setVersion(HttpHeader.HTTP11);
         responseHeader.setStatusCode(statusCode);

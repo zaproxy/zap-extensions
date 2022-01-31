@@ -52,9 +52,17 @@ public interface HttpMessageHandlerContext {
      */
     boolean isFromClient();
 
-    /** Indicates that the message contents were overridden and should be forwarded as is. */
+    /**
+     * Indicates that the message contents were overridden and should be forwarded as is.
+     *
+     * <p>No other handlers will be notified.
+     */
     void overridden();
 
-    /** Indicates that the connection should be closed without forwarding the message. */
+    /**
+     * Indicates that the connection should be closed without forwarding the message.
+     *
+     * <p>No other handlers will be notified.
+     */
     void close();
 }

@@ -33,6 +33,12 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 /** The main handler of a HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly. */
 public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
+    protected enum HandlerResult {
+        CONTINUE,
+        OVERRIDDEN,
+        CLOSE,
+    }
+
     private static final Logger LOGGER = LogManager.getLogger(MainServerHandler.class);
 
     protected final List<HttpMessageHandler> pipeline;
@@ -68,7 +74,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         Channel channel = ctx.channel();
         handlerContext.setRecursive(channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).get());
 
-        if (!processMessage(msg)) {
+        if (processMessage(msg) == HandlerResult.CLOSE) {
             close(ctx);
             return;
         }
@@ -84,21 +90,23 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         }
     }
 
-    protected boolean processMessage(HttpMessage msg) {
-        if (notifyMessageHandlers(msg)) {
-            return false;
+    protected HandlerResult processMessage(HttpMessage msg) {
+        HandlerResult result = notifyMessageHandlers(msg);
+        if (result != HandlerResult.CONTINUE) {
+            return result;
         }
 
         handlerContext.handlingResponse();
 
-        if (notifyMessageHandlers(msg)) {
-            return false;
+        result = notifyMessageHandlers(msg);
+        if (result != HandlerResult.CONTINUE) {
+            return result;
         }
 
-        return true;
+        return HandlerResult.CONTINUE;
     }
 
-    private boolean notifyMessageHandlers(HttpMessage msg) {
+    private HandlerResult notifyMessageHandlers(HttpMessage msg) {
         for (HttpMessageHandler handler : pipeline) {
             try {
                 handler.handleMessage(handlerContext, msg);
@@ -107,15 +115,15 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
             }
 
             if (handlerContext.isClose()) {
-                return true;
+                return HandlerResult.CLOSE;
             }
 
             if (handlerContext.isOverridden()) {
-                return false;
+                return HandlerResult.OVERRIDDEN;
             }
         }
 
-        return false;
+        return HandlerResult.CONTINUE;
     }
 
     protected boolean postWriteResponse(ChannelHandlerContext ctx, HttpMessage msg) {
