@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +54,7 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.SSLConnector;
 import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
 import org.parosproxy.paros.security.CertData;
@@ -65,9 +67,14 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
+import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
@@ -220,16 +227,43 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      */
     public Server createHttpServer(HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        return createHttpServer(
-                Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler));
+        List<HttpMessageHandler> handlers =
+                Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler);
+        return createHttpServer(() -> new MainServerHandler(handlers));
     }
 
-    private Server createHttpServer(List<HttpMessageHandler> handlers) {
+    private Server createHttpServer(Supplier<MainServerHandler> handler) {
         return new HttpServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
                 sslCertificateService,
-                () -> new MainServerHandler(handlers));
+                handler);
+    }
+
+    /**
+     * Creates a HTTP proxy.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
+     * connection is automatically closed on recursive requests.
+     *
+     * @param initiator the initiator used for the {@code HttpSender}.
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the given handler is {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        ConnectionParam connectionParam = getModel().getOptionsParam().getConnectionParam();
+        List<HttpMessageHandler> handlers =
+                Arrays.asList(
+                        ConnectReceivedHandler.getSetAndOverrideInstance(),
+                        CloseOnRecursiveRequestHandler.getInstance(),
+                        RemoveAcceptEncodingHandler.getEnabledInstance(),
+                        DecodeResponseHandler.getEnabledInstance(),
+                        handler,
+                        new HttpSenderHandler(connectionParam, initiator));
+        return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
     }
 
     @Override
