@@ -123,6 +123,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         checkMetaElementsMatches(source);
         checkScriptElementsMatches(source);
         checkCssElementsMatches(msg, source);
+        checkSimpleDomMatches(msg);
         checkDomElementMatches(msg);
     }
 
@@ -197,6 +198,13 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         }
     }
 
+    private void checkSimpleDomMatches(HttpMessage msg) {
+        String body = msg.getResponseBody().toString();
+        for (String selector : currentApp.getSimpleDom()) {
+            addIfDomMatches(selector, body);
+        }
+    }
+
     private void checkBodyMatches(HttpMessage msg) {
         String body = msg.getResponseBody().toString();
         for (AppPattern p : currentApp.getHtml()) {
@@ -233,6 +241,14 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         String url = msg.getRequestHeader().getURI().toString();
         for (AppPattern p : currentApp.getUrl()) {
             addIfMatches(p, url);
+        }
+    }
+
+    private void addIfDomMatches(String selector, String content) {
+        Document doc = Jsoup.parse(content);
+        Elements elements = doc.select(selector);
+        if (!elements.isEmpty()) {
+            this.appMatch = getAppMatch();
         }
     }
 

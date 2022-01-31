@@ -173,6 +173,18 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
     }
 
     @Test
+    void shouldMatchSimpleDomPattern() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody("<html><body><script src=\"sites/g/files\"></script></body></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry2");
+    }
+
+    @Test
     void shouldNotMatchDomElementIfNoContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
