@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.network;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.NettyRuntime;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -29,9 +34,11 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
@@ -52,10 +59,16 @@ import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.server.http.HttpServer;
+import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 
@@ -73,6 +86,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     boolean handleServerCerts;
     boolean handleLocalServers;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
+    private Object syncGroups = new Object();
+    private boolean groupsInitiated;
+    private NioEventLoopGroup mainEventLoopGroup;
+    private EventExecutorGroup mainEventExecutorGroup;
 
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
@@ -83,6 +100,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         super(ExtensionNetwork.class.getSimpleName());
 
         setI18nPrefix(I18N_PREFIX);
+
+        // Force initialisation.
+        TlsUtils.getSupportedProtocols();
     }
 
     boolean isHandleServerCerts() {
@@ -114,6 +134,97 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     }
                 };
         handleLocalServers = ProxyServer.class.getAnnotation(Deprecated.class) != null;
+    }
+
+    private NioEventLoopGroup getMainEventLoopGroup() {
+        if (!groupsInitiated) {
+            initEventGroups();
+        }
+        return mainEventLoopGroup;
+    }
+
+    private EventExecutorGroup getMainEventExecutorGroup() {
+        if (!groupsInitiated) {
+            initEventGroups();
+        }
+        return mainEventExecutorGroup;
+    }
+
+    private void initEventGroups() {
+        synchronized (syncGroups) {
+            if (groupsInitiated) {
+                return;
+            }
+
+            if (mainEventLoopGroup == null) {
+                mainEventLoopGroup =
+                        new NioEventLoopGroup(
+                                NettyRuntime.availableProcessors(),
+                                new DefaultThreadFactory("ZAP-IO", Thread.MAX_PRIORITY));
+            }
+
+            if (mainEventExecutorGroup == null) {
+                mainEventExecutorGroup =
+                        new DefaultEventExecutorGroup(
+                                NettyRuntime.availableProcessors(),
+                                new DefaultThreadFactory(
+                                        "ZAP-IO-EventExecutor", Thread.MAX_PRIORITY));
+            }
+
+            groupsInitiated = true;
+        }
+    }
+
+    private void shutdownEventGroups() {
+        synchronized (syncGroups) {
+            if (mainEventLoopGroup != null) {
+                try {
+                    mainEventLoopGroup.shutdownGracefully().sync();
+                } catch (InterruptedException e) {
+                    LOGGER.warn(
+                            "Interrupted while waiting for the main event loop group to shutdown.");
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                mainEventLoopGroup = null;
+            }
+
+            if (mainEventExecutorGroup != null) {
+                try {
+                    mainEventExecutorGroup.shutdownGracefully().sync();
+                } catch (InterruptedException e) {
+                    LOGGER.warn(
+                            "Interrupted while waiting for the main event executor group to shutdown.");
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            groupsInitiated = false;
+        }
+    }
+
+    /**
+     * Creates a HTTP server.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade.
+     *
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the given handler is {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpServer(HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        return createHttpServer(
+                Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler));
+    }
+
+    private Server createHttpServer(List<HttpMessageHandler> handlers) {
+        return new HttpServer(
+                getMainEventLoopGroup(),
+                getMainEventExecutorGroup(),
+                sslCertificateService,
+                () -> new MainServerHandler(handlers));
     }
 
     @Override
@@ -270,6 +381,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (loadRootCaCert()) {
             setSslCertificateService(sslCertificateService);
         }
+    }
+
+    @Override
+    public void stop() {
+        shutdownEventGroups();
     }
 
     private void setSslCertificateService(SslCertificateService sslCertificateService) {

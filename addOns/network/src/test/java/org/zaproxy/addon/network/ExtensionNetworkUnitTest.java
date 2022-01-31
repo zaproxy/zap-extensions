@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import io.netty.channel.Channel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -82,12 +84,20 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.testutils.TestClient;
+import org.zaproxy.addon.network.testutils.TextTestClient;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
@@ -137,6 +147,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Security.addProvider(new BouncyCastleProvider());
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
         zap.close();
+        extension.stop();
     }
 
     @Test
@@ -778,6 +789,52 @@ class ExtensionNetworkUnitTest extends TestUtils {
         String result = extension.importRootCaCert(file);
         // Then
         assertThat(result, is(startsWith("The private key is not properly base64 encoded.")));
+    }
+
+    @Test
+    void shouldCreateHttpServerWithProvidedHandler() throws Exception {
+        // Given
+        HttpMessageHandler handler =
+                (ctx, msg) -> {
+                    if (!ctx.isFromClient()) {
+                        return;
+                    }
+                    try {
+                        msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                    } catch (HttpMalformedHeaderException ignore) {
+                        // Valid header.
+                    }
+                };
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        // When
+        try (Server server = extension.createHttpServer(handler)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            msg = (HttpMessage) TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(
+                    msg.getResponseHeader().toString(),
+                    is(equalTo("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldThrowIfCreatingHttpServerWithNullHandler() throws Exception {
+        // Given
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessageHandler handler = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> extension.createHttpServer(handler));
     }
 
     private void mockRootCaKeyStore() throws Exception {
