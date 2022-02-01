@@ -81,6 +81,11 @@ public class SoapJob extends AutomationJob {
     }
 
     @Override
+    public void applyParameters(AutomationProgress progress) {
+        // Nothing to do
+    }
+
+    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_WSDL_FILE, "");
