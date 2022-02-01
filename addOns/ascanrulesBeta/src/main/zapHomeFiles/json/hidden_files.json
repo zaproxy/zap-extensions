@@ -45,7 +45,7 @@
       "content":["SQLite"],
       "links":["https://www.oreilly.com/library/view/version-control-with/9780596510336/ch08s02s01.html"],
       "type":"svn_dir",
-      "source":"snallygaster"
+      "source":"ZAP Dev Team"
     },
     {
       "path":"CVS/root",
@@ -235,7 +235,7 @@
       "content":["component name=\"VimSettings\""],
       "links":["https://blog.jetbrains.com/blog/2019/09/26/jetbrains-security-bulletin-q2-2019/","https://nvd.nist.gov/vuln/detail/CVE-2019-14957"],
       "type":"jetbrains_vim_settings",
-      "source":"misc"
+      "source":"ZAP Dev Team"
     },
     {
       "path":"server-info",
