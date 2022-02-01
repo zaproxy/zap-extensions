@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [26] - 2022-02-01
 
 ### Fixed
 - Do not report "Unrecognised parameter" for valid parameters.
@@ -195,6 +195,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/openapi-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/openapi-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/openapi-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/openapi-v23
