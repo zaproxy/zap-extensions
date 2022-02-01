@@ -105,10 +105,13 @@ class SoapJobUnitTest {
 
         // When
         job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(job.getParameters().getWsdlFile(), is(equalTo(wsdlFile)));
         assertThat(job.getParameters().getWsdlUrl(), is(equalTo(wsdlUrl)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
     @Test

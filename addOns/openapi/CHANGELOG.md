@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Do not report "Unrecognised parameter" for valid parameters.
 
 ## [25] - 2022-01-18
 ### Changed

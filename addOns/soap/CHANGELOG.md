@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dependency updates.
 - When the automation Job is edited via UI Dialog then the status will be set to Not started
 
+### Fixed
+- Do not report "Unrecognised parameter" for valid parameters.
+
 ## [12] - 2021-11-29
 ### Changed
 - Maintenance changes.

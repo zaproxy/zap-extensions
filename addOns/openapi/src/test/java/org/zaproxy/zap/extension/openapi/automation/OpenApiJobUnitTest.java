@@ -114,11 +114,14 @@ class OpenApiJobUnitTest {
 
         // When
         job.verifyParameters(progress);
+        job.applyParameters(progress);
 
         // Then
         assertThat(job.getParameters().getApiFile(), is(equalTo(apiFile)));
         assertThat(job.getParameters().getApiUrl(), is(equalTo(apiUrl)));
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
