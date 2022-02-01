@@ -19,14 +19,20 @@
  */
 package org.zaproxy.zap.extension.domxss;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
@@ -36,10 +42,13 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
  */
 public class ExtensionDomXSS extends ExtensionAdaptor {
 
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionDomXSS.class);
+
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
+        dependencies.add(ExtensionNetwork.class);
         dependencies.add(ExtensionSelenium.class);
 
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -64,6 +73,8 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        DomXssScanRule.extensionNetwork =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
         PluginFactory.loadedPlugin(scanner);
     }
 
@@ -72,6 +83,15 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
         super.unload();
 
         PluginFactory.unloadedPlugin(scanner);
+
+        Server proxy = DomXssScanRule.proxy;
+        if (proxy != null) {
+            try {
+                proxy.stop();
+            } catch (IOException e) {
+                LOGGER.debug("An error occurred while stopping the proxy.", e);
+            }
+        }
     }
 
     @Override

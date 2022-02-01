@@ -46,17 +46,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -125,7 +126,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private static Thread reaperThread = null;
     private static Object reaperThreadSync = new Object();
 
-    private static ProxyServer proxy = null;
+    static ExtensionNetwork extensionNetwork;
+
+    static Server proxy = null;
     private static int proxyPort = -1;
 
     private WebDriverWrapper driver;
@@ -222,37 +225,33 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
      * We use a separate port so that we dont polute the sites tree
      * and show the requests in the Active Scan tab
      */
-    private ProxyServer getProxy() {
+    private Server getProxy() {
         if (proxy == null) {
-            proxy = new ProxyServer();
-            proxy.setConnectionParam(Model.getSingleton().getOptionsParam().getConnectionParam());
-            proxy.addOverrideMessageProxyListener(
-                    new OverrideMessageProxyListener() {
+            proxy =
+                    extensionNetwork.createHttpProxy(
+                            -1,
+                            new HttpMessageHandler() {
 
-                        @Override
-                        public int getArrangeableListenerOrder() {
-                            return 0;
-                        }
+                                @Override
+                                public void handleMessage(
+                                        HttpMessageHandlerContext ctx, HttpMessage msg) {
+                                    ctx.overridden();
 
-                        @Override
-                        public boolean onHttpRequestSend(HttpMessage msg) {
-                            try {
-                                // Ideally it should check that the message belongs to the scanned
-                                // target before sending
-                                sendAndReceive(msg);
-                            } catch (IOException e) {
-                                log.debug(e);
-                            }
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onHttpResponseReceived(HttpMessage arg0) {
-                            // Shouldn't be called, since the messages are being overridden
-                            return true;
-                        }
-                    });
-            proxyPort = proxy.startServer("127.0.0.1", 0, true);
+                                    try {
+                                        // Ideally it should check that the message belongs
+                                        // to the scanned
+                                        // target before sending
+                                        sendAndReceive(msg);
+                                    } catch (IOException e) {
+                                        log.debug(e);
+                                    }
+                                }
+                            });
+            try {
+                proxyPort = proxy.start(Server.ANY_PORT);
+            } catch (IOException e) {
+                log.warn("An error occurred while starting the proxy.", e);
+            }
         }
         return proxy;
     }
