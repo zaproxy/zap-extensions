@@ -25,48 +25,30 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.NettyRuntime;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.net.SocketTimeoutException;
 import java.util.Locale;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.commons.httpclient.HttpException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.security.SslCertificateService;
-import org.zaproxy.addon.network.internal.server.http.HttpServer;
-import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
-import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.addon.network.testutils.TestSslCertificateService;
-import org.zaproxy.zap.network.HttpSenderListener;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -74,83 +56,20 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link HttpSenderHandler}. */
 class HttpSenderHandlerUnitTest extends TestUtils {
 
-    private static NioEventLoopGroup eventLoopGroup;
-    private static EventExecutorGroup eventExecutorGroup;
-    private static SslCertificateService sslCertificateService;
-
-    private ServerAction serverAction;
-    private List<HttpMessage> messagesReceived;
-    private HttpServer server;
-    private int serverPort;
     private HttpMessageHandlerContext ctx;
     private ConnectionParam connectionParam;
-    private int initiator = 6;
+    private HttpSender httpSender;
     private HttpSenderHandler handler;
-
-    @BeforeAll
-    static void setupAll() throws Exception {
-        sslCertificateService = TestSslCertificateService.createInstance();
-        eventLoopGroup =
-                new NioEventLoopGroup(
-                        NettyRuntime.availableProcessors(),
-                        new DefaultThreadFactory("ZAP-IO-HttpSenderHandlerUnitTest"));
-        eventExecutorGroup =
-                new DefaultEventExecutorGroup(
-                        NettyRuntime.availableProcessors(),
-                        new DefaultThreadFactory(
-                                "ZAP-EventExecutor-HttpSenderHandlerUnitTest",
-                                Thread.MAX_PRIORITY));
-    }
-
-    @AfterAll
-    static void tearDownAll() throws Exception {
-        if (eventLoopGroup != null) {
-            eventLoopGroup.shutdownGracefully().sync();
-            eventLoopGroup = null;
-        }
-        if (eventExecutorGroup != null) {
-            eventExecutorGroup.shutdownGracefully().sync();
-            eventExecutorGroup = null;
-        }
-    }
 
     @BeforeEach
     void setUp() throws IOException {
         Constant.messages = new I18N(Locale.ENGLISH);
 
-        serverAction =
-                (ctx, msg) -> {
-                    msg.getResponseHeader().setMessage("HTTP/1.1 200 OK");
-                    ctx.writeAndFlush(msg).addListener(ChannelFutureListener.CLOSE);
-                };
-        messagesReceived = new ArrayList<>();
-
-        server =
-                new HttpServer(
-                        eventLoopGroup,
-                        eventExecutorGroup,
-                        sslCertificateService,
-                        () ->
-                                new MainServerHandler(Collections.emptyList()) {
-                                    @Override
-                                    public void channelRead0(
-                                            ChannelHandlerContext ctx, HttpMessage msg)
-                                            throws Exception {
-                                        messagesReceived.add(msg);
-                                        serverAction.accept(ctx, msg);
-                                    };
-                                });
-        serverPort = server.start(Server.ANY_PORT);
-
         ctx = mock(HttpMessageHandlerContext.class);
+        httpSender = mock(HttpSender.class);
         connectionParam = new ConnectionParam();
         connectionParam.load(new ZapXmlConfiguration());
-        handler = new HttpSenderHandler(connectionParam, initiator);
-    }
-
-    @AfterEach
-    void teardown() throws IOException {
-        server.stop();
+        handler = new HttpSenderHandler(connectionParam, httpSender);
     }
 
     @Test
@@ -158,83 +77,61 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         // Given
         ConnectionParam connectionParam = null;
         // When / Then
-        assertThrows(NullPointerException.class, () -> new HttpSenderHandler(connectionParam, 1));
+        assertThrows(
+                NullPointerException.class,
+                () -> new HttpSenderHandler(connectionParam, httpSender));
     }
 
     @Test
-    void shouldNotHandleResponse() {
+    void shouldNotHandleResponse() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(false);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
         // When
         handler.handleMessage(ctx, message);
         // Then
-        assertThat(messagesReceived, hasSize(0));
+        verify(httpSender, times(0)).sendAndReceive(any());
+        verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
+        verify(httpSender, times(0)).sendAndReceive(any(), any());
     }
 
     @Test
-    void shouldSendAndReceiveMessage() {
+    void shouldSendAndReceiveMessage() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
         // When
         handler.handleMessage(ctx, message);
-        // Then
-        assertThat(messagesReceived, hasSize(1));
-        assertThat(message.getResponseHeader().toString(), startsWith("HTTP/1.1 200 OK\r\n\r\n"));
-        assertThat(message.getResponseBody().toString(), is(equalTo("")));
+        verifyMessageSent(message);
     }
 
     @Test
-    void shouldSendMessageWithProvidedInitiator() {
-        HttpSenderListener listener = mock(HttpSenderListener.class);
-        try {
-            // Given
-            given(ctx.isFromClient()).willReturn(true);
-            HttpSender.addListener(listener);
-            HttpMessage message = createServerRequest("GET / HTTP/1.1");
-            // When
-            handler.handleMessage(ctx, message);
-            // Then
-            verify(listener).onHttpRequestSend(eq(message), eq(initiator), any());
-            verify(listener).onHttpResponseReceive(eq(message), eq(initiator), any());
-        } finally {
-            HttpSender.removeListener(listener);
-        }
-    }
-
-    @Test
-    void shouldSendMessageWithoutNotifyingListenersIfExcluded() {
-        HttpSenderListener listener = mock(HttpSenderListener.class);
-        try {
-            // Given
-            given(ctx.isFromClient()).willReturn(true);
-            given(ctx.isExcluded()).willReturn(true);
-            HttpSender.addListener(listener);
-            HttpMessage message = createServerRequest("GET / HTTP/1.1");
-            // When
-            handler.handleMessage(ctx, message);
-            // Then
-            verify(listener, times(0)).onHttpRequestSend(any(), anyInt(), any());
-            verify(listener, times(0)).onHttpResponseReceive(any(), anyInt(), any());
-            verify(ctx).overridden();
-        } finally {
-            HttpSender.removeListener(listener);
-        }
-    }
-
-    @Test
-    void shouldReturnGatewayTimeoutForTimeout() {
+    void shouldSendMessageWithoutNotifyingListenersIfExcluded() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
+        given(ctx.isExcluded()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
-        int timeout = 1;
-        connectionParam.setTimeoutInSecs(timeout);
-        serverAction = (ctx, msg) -> Thread.sleep(timeout * 2);
         // When
         handler.handleMessage(ctx, message);
         // Then
-        assertThat(messagesReceived, hasSize(1));
+        verify(httpSender, times(0)).sendAndReceive(any());
+        verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
+        ArgumentCaptor<HttpRequestConfig> argument =
+                ArgumentCaptor.forClass(HttpRequestConfig.class);
+        verify(httpSender, times(1)).sendAndReceive(eq(message), argument.capture());
+        assertThat(argument.getAllValues().get(0).isNotifyListeners(), is(equalTo(false)));
+        verify(ctx).overridden();
+    }
+
+    @Test
+    void shouldReturnGatewayTimeoutForTimeout() throws Exception {
+        // Given
+        given(ctx.isFromClient()).willReturn(true);
+        HttpMessage message = createServerRequest("GET / HTTP/1.1");
+        doThrow(SocketTimeoutException.class).when(httpSender).sendAndReceive(message);
+        // When
+        handler.handleMessage(ctx, message);
+        verifyMessageSent(message);
         verify(ctx, times(0)).overridden();
         verify(ctx, times(0)).close();
         assertThat(
@@ -245,17 +142,14 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotIncludeErrorBodyIfHeadRequest() {
+    void shouldNotIncludeErrorBodyIfHeadRequest() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("HEAD / HTTP/1.1");
-        int timeout = 1;
-        connectionParam.setTimeoutInSecs(timeout);
-        serverAction = (ctx, msg) -> Thread.sleep(timeout * 2);
+        doThrow(SocketTimeoutException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
-        // Then
-        assertThat(messagesReceived, hasSize(1));
+        verifyMessageSent(message);
         verify(ctx, times(0)).overridden();
         verify(ctx, times(0)).close();
         assertThat(
@@ -264,15 +158,15 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnBadGatewayForIoException() {
+    void shouldReturnBadGatewayForIoException() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
-        serverAction = (ctx, msg) -> ctx.close();
+        doThrow(IOException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
         // Then
-        assertThat(messagesReceived, hasSize(greaterThan(1)));
+        verifyMessageSent(message);
         verify(ctx, times(0)).overridden();
         verify(ctx, times(0)).close();
         assertThat(message.getResponseHeader().toString(), startsWith("HTTP/1.1 502 Bad Gateway"));
@@ -282,37 +176,30 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldCloseWithoutSettingResponseOnHttpProtocolError() {
+    void shouldCloseWithoutSettingResponseOnHttpProtocolError() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
-        serverAction =
-                (ctx, msg) ->
-                        ctx.writeAndFlush(
-                                        Unpooled.copiedBuffer(
-                                                "Invalid HTTP Response\r\n\r\n",
-                                                StandardCharsets.US_ASCII))
-                                .addListener(ChannelFutureListener.CLOSE);
+        doThrow(HttpException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
-        // Then
-        assertThat(messagesReceived, hasSize(1));
+        verifyMessageSent(message);
         verify(ctx).close();
         assertThat(message.getResponseHeader().toString(), startsWith("HTTP/1.0 0\r\n\r\n"));
         assertThat(message.getResponseBody().toString(), is(equalTo("")));
     }
 
-    private HttpMessage createServerRequest(String request) {
+    private void verifyMessageSent(HttpMessage message) throws IOException {
+        verify(httpSender, times(1)).sendAndReceive(message);
+        verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
+        verify(httpSender, times(0)).sendAndReceive(any(), any());
+    }
+
+    private static HttpMessage createServerRequest(String request) {
         try {
-            return new HttpMessage(
-                    new HttpRequestHeader(
-                            request + "\r\nHost: 127.0.0.1:" + serverPort + "\r\n\r\n"));
+            return new HttpMessage(new HttpRequestHeader(request + "\r\nHost: 127.0.0.1\r\n\r\n"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private interface ServerAction {
-        void accept(ChannelHandlerContext ctx, HttpMessage msg) throws Exception;
     }
 }

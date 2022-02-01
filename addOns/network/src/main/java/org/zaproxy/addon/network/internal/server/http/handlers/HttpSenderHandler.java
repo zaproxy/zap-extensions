@@ -53,26 +53,20 @@ public class HttpSenderHandler implements HttpMessageHandler {
     private static final HttpRequestConfig EXCLUDED_REQ_CONFIG =
             HttpRequestConfig.builder().setNotifyListeners(false).build();
 
-    private int initiator;
     private ConnectionParam connectionParam;
     private HttpSender httpSender;
 
     /**
-     * Constructs a {@code HttpSenderHandler} with the given connection configuration and initiator.
+     * Constructs a {@code HttpSenderHandler} with the given connection configuration and HTTP
+     * sender.
      *
      * @param connectionParam the connection configuration.
-     * @param initiator the ID of the initiator.
+     * @param httpSender the HTTP sender.
+     * @throws NullPointerException if the HTTP sender and given handler are {@code null}.
      */
-    public HttpSenderHandler(ConnectionParam connectionParam, int initiator) {
+    public HttpSenderHandler(ConnectionParam connectionParam, HttpSender httpSender) {
         this.connectionParam = Objects.requireNonNull(connectionParam);
-        this.initiator = initiator;
-    }
-
-    private HttpSender getHttpSender() {
-        if (httpSender == null) {
-            httpSender = new HttpSender(connectionParam, true, initiator);
-        }
-        return httpSender;
+        this.httpSender = Objects.requireNonNull(httpSender);
     }
 
     @Override
@@ -83,10 +77,10 @@ public class HttpSenderHandler implements HttpMessageHandler {
 
         try {
             if (ctx.isExcluded()) {
-                getHttpSender().sendAndReceive(msg, EXCLUDED_REQ_CONFIG);
+                httpSender.sendAndReceive(msg, EXCLUDED_REQ_CONFIG);
                 ctx.overridden();
             } else {
-                getHttpSender().sendAndReceive(msg);
+                httpSender.sendAndReceive(msg);
             }
 
         } catch (HttpException e) {
