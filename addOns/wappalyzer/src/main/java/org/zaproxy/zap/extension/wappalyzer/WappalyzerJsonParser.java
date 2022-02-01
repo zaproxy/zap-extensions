@@ -143,6 +143,7 @@ public class WappalyzerJsonParser {
                     app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                     app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
                     app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));
+                    app.setSimpleDom(this.jsonToDomStringList(appData.get("dom")));
                     app.setImplies(this.jsonToStringList(appData.get("implies")));
                     app.setCpe(appData.optString("cpe"));
 
@@ -227,6 +228,26 @@ public class WappalyzerJsonParser {
         svgIcon.paint(g2d);
         g2d.dispose();
         return new ImageIcon(image);
+    }
+
+    private List<String> jsonToDomStringList(Object json) {
+        if (json instanceof JSONObject) {
+            // Objects are handled elsewhere
+            return Collections.emptyList();
+        }
+        List<String> list = new ArrayList<>();
+        if (json instanceof JSONArray) {
+            for (Object obj : (JSONArray) json) {
+                if (isValidQuery(obj.toString())) {
+                    list.add(obj.toString());
+                }
+            }
+        } else if (json != null) {
+            if (isValidQuery(json.toString())) {
+                list.add(json.toString());
+            }
+        }
+        return list;
     }
 
     private List<String> jsonToStringList(Object json) {
