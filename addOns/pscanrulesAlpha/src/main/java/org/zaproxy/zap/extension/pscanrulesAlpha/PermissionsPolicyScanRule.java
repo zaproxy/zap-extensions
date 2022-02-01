@@ -30,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -58,7 +59,7 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
         long start = System.currentTimeMillis();
 
         if (!httpMessage.getResponseHeader().isHtml()
-                && !httpMessage.getResponseHeader().isJavaScript()) {
+                && !ResourceIdentificationUtils.isJavaScript(httpMessage)) {
             return;
         }
         if (HttpStatusCode.isRedirection(httpMessage.getResponseHeader().getStatusCode())

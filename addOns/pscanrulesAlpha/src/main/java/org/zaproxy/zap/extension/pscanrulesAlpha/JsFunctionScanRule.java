@@ -39,6 +39,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Passive Scan Rule for Dangerous JS Functions https://github.com/zaproxy/zaproxy/issues/5673 */
@@ -69,7 +70,8 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() <= 0
-                || (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript())) {
+                || (!msg.getResponseHeader().isHtml()
+                        && !ResourceIdentificationUtils.isJavaScript(msg))) {
             return;
         }
         if (defaultPatterns == null) {
@@ -89,7 +91,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
                 }
                 offset = el.getEnd();
             }
-        } else if (msg.getResponseHeader().isJavaScript()) {
+        } else if (ResourceIdentificationUtils.isJavaScript(msg)) {
             // Raw search on response body
             String content = msg.getResponseBody().toString();
             searchPatterns(evidence, content);
