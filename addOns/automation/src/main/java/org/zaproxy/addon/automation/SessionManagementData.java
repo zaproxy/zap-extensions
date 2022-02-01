@@ -20,8 +20,6 @@
 package org.zaproxy.addon.automation;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,9 +33,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
-import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.model.Context;
@@ -55,6 +50,9 @@ public class SessionManagementData extends AutomationData {
     public static final String METHOD_HTTP = "http";
     public static final String METHOD_SCRIPT = "script";
 
+    public static final String PARAM_SCRIPT = "script";
+    public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
+
     private static List<String> validMethods =
             Arrays.asList(METHOD_COOKIE, METHOD_HTTP, METHOD_SCRIPT);
 
@@ -62,8 +60,6 @@ public class SessionManagementData extends AutomationData {
     private static final String SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD = "paramValues";
 
     private String method;
-    private String script;
-    private String scriptEngine;
     private Map<String, String> parameters = new LinkedHashMap<>();
 
     private static final Logger LOG = LogManager.getLogger(SessionManagementData.class);
@@ -116,7 +112,8 @@ public class SessionManagementData extends AutomationData {
     }
 
     @SuppressWarnings("unchecked")
-    public void initContextSessionManagement(Context context, AutomationProgress progress) {
+    public void initContextSessionManagement(
+            Context context, AutomationProgress progress, AutomationEnvironment env) {
         switch (getMethod().toLowerCase(Locale.ROOT)) {
             case SessionManagementData.METHOD_COOKIE:
                 context.setSessionManagementMethod(
@@ -126,14 +123,19 @@ public class SessionManagementData extends AutomationData {
                 context.setSessionManagementMethod(new HttpAuthSessionManagementMethod());
                 break;
             case SessionManagementData.METHOD_SCRIPT:
-                File f = new File(getScript());
+                File f = new File(getParameters().get(PARAM_SCRIPT));
                 if (!f.exists() || !f.canRead()) {
                     progress.error(
                             Constant.messages.getString(
                                     "automation.error.env.sessionmgmt.script.bad",
                                     f.getAbsolutePath()));
                 } else {
-                    ScriptWrapper sw = getScriptWrapper(f, getScriptEngine(), progress);
+                    ScriptWrapper sw =
+                            JobUtils.getScriptWrapper(
+                                    f,
+                                    ScriptBasedSessionManagementMethodType.SCRIPT_TYPE_SESSION,
+                                    getParameters().get(PARAM_SCRIPT_ENGINE),
+                                    progress);
 
                     ScriptBasedSessionManagementMethod smm =
                             getScriptBasedSessionManagementMethod(context.getId());
@@ -160,7 +162,8 @@ public class SessionManagementData extends AutomationData {
                                 JobUtils.getPrivateField(
                                         smm, SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD);
                         if (paramValues instanceof Map<?, ?>) {
-                            ((Map<String, String>) paramValues).putAll(getParameters());
+                            ((Map<String, String>) paramValues)
+                                    .putAll(env.replaceMapVars(getParameters()));
                         }
                         JobUtils.setPrivateField(
                                 smm, SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD, paramValues);
@@ -199,20 +202,14 @@ public class SessionManagementData extends AutomationData {
         this.method = method;
     }
 
-    public String getScript() {
-        return script;
-    }
-
     public void setScript(String script) {
-        this.script = script;
-    }
-
-    public String getScriptEngine() {
-        return scriptEngine;
+        // Required for backwards compatibility
+        this.parameters.put(PARAM_SCRIPT, script);
     }
 
     public void setScriptEngine(String scriptEngine) {
-        this.scriptEngine = scriptEngine;
+        // Required for backwards compatibility
+        this.parameters.put(PARAM_SCRIPT_ENGINE, scriptEngine);
     }
 
     public Map<String, String> getParameters() {
@@ -221,61 +218,6 @@ public class SessionManagementData extends AutomationData {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
-    }
-
-    private ScriptWrapper getScriptWrapper(
-            File file, String engineName, AutomationProgress progress) {
-        ExtensionScript extScript =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        ScriptWrapper wrapper = null;
-        if (extScript != null) {
-            // Use existing script if its already loaded
-            for (ScriptWrapper sw :
-                    extScript.getScripts(
-                            ScriptBasedSessionManagementMethodType.SCRIPT_TYPE_SESSION)) {
-                try {
-                    if (Files.isSameFile(sw.getFile().toPath(), file.toPath())
-                            && sw.getEngineName().equals(engineName)) {
-                        wrapper = sw;
-                        break;
-                    }
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-            if (wrapper == null) {
-                // Register the script
-                ScriptEngineWrapper engineWrapper = extScript.getEngineWrapper(engineName);
-                if (engineWrapper == null) {
-                    progress.error(
-                            Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.engine.bad", engineName));
-                } else {
-                    ScriptType type =
-                            extScript.getScriptType(
-                                    ScriptBasedSessionManagementMethodType.SCRIPT_TYPE_SESSION);
-                    LOG.debug("Loading script {}", file.getAbsolutePath());
-                    try {
-                        wrapper =
-                                extScript.loadScript(
-                                        new ScriptWrapper(
-                                                file.getName(),
-                                                "",
-                                                engineWrapper,
-                                                type,
-                                                true,
-                                                file));
-                        extScript.addScript(wrapper, false);
-                    } catch (IOException e) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
-                                        file.getAbsolutePath()));
-                    }
-                }
-            }
-        }
-        return wrapper;
     }
 
     private ScriptBasedSessionManagementMethod getScriptBasedSessionManagementMethod(

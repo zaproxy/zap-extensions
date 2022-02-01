@@ -40,6 +40,7 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.addon.automation.ContextWrapper.UserData;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.session.HttpAuthSessionManagementMethodType.HttpAuthSessionManagementMethod;
 import org.zaproxy.zap.utils.I18N;
@@ -80,8 +81,18 @@ class ContextWrapperUnitTest {
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),
                 is(equalTo(SessionManagementData.METHOD_COOKIE)));
-        assertThat(cw.getData().getSessionManagement().getScriptEngine(), is(nullValue()));
-        assertThat(cw.getData().getSessionManagement().getScript(), is(nullValue()));
+        assertThat(
+                cw.getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
+                is(nullValue()));
+        assertThat(
+                cw.getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
+                is(nullValue()));
     }
 
     @Test
@@ -96,8 +107,18 @@ class ContextWrapperUnitTest {
         assertThat(
                 cw.getData().getSessionManagement().getMethod(),
                 is(equalTo(SessionManagementData.METHOD_HTTP)));
-        assertThat(cw.getData().getSessionManagement().getScriptEngine(), is(nullValue()));
-        assertThat(cw.getData().getSessionManagement().getScript(), is(nullValue()));
+        assertThat(
+                cw.getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
+                is(nullValue()));
+        assertThat(
+                cw.getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
+                is(nullValue()));
     }
 
     @Test
@@ -154,10 +175,20 @@ class ContextWrapperUnitTest {
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is(SessionManagementData.METHOD_COOKIE));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
                 is(nullValue()));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScriptEngine(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
                 is(nullValue()));
     }
 
@@ -189,15 +220,25 @@ class ContextWrapperUnitTest {
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is(SessionManagementData.METHOD_HTTP));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
                 is(nullValue()));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScriptEngine(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
                 is(nullValue()));
     }
 
     @Test
-    void shouldParseScriptSessionMgmt() {
+    void shouldParseScriptSessionMgmtInOldFormat() {
         // Given
         String contextStr =
                 "env:\n"
@@ -226,11 +267,78 @@ class ContextWrapperUnitTest {
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is(SessionManagementData.METHOD_SCRIPT));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScript(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
                 is("example_script"));
         assertThat(
-                env.getContextWrappers().get(0).getData().getSessionManagement().getScriptEngine(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
                 is("example_engine"));
+    }
+
+    @Test
+    void shouldParseScriptSessionMgmtInNewFormat() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      sessionManagement:\n"
+                        + "        method: script\n"
+                        + "        parameters:\n"
+                        + "          script: example_script\n"
+                        + "          scriptEngine: example_engine\n"
+                        + "          param: value\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getSessionManagement());
+        assertThat(
+                env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
+                is(SessionManagementData.METHOD_SCRIPT));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT),
+                is("example_script"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get(SessionManagementData.PARAM_SCRIPT_ENGINE),
+                is("example_engine"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getSessionManagement()
+                        .getParameters()
+                        .get("param"),
+                is("value"));
     }
 
     @Test
@@ -317,7 +425,7 @@ class ContextWrapperUnitTest {
     }
 
     @Test
-    void shouldLoadValidUsers() {
+    void shouldLoadValidUsersInOldFormat() {
         // Given
         String contextStr =
                 "env:\n"
@@ -349,19 +457,112 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getUsers().get(0).getName(), is("Freda"));
         assertThat(
-                env.getContextWrappers().get(0).getData().getUsers().get(0).getUsername(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
                 is("freda@example.com"));
         assertThat(
-                env.getContextWrappers().get(0).getData().getUsers().get(0).getPassword(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
                 is("freda123"));
         assertThat(
                 env.getContextWrappers().get(0).getData().getUsers().get(1).getName(), is("Fred"));
         assertThat(
-                env.getContextWrappers().get(0).getData().getUsers().get(1).getUsername(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
                 is("fred@example.com"));
         assertThat(
-                env.getContextWrappers().get(0).getData().getUsers().get(1).getPassword(),
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
                 is("fred456"));
+    }
+
+    @Test
+    void shouldLoadValidUsersInNewFormat() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      users:\n"
+                        + "      - name: 'Freda'\n"
+                        + "        username: 'freda@example.com'\n"
+                        + "        password: 'freda123'\n"
+                        + "      - name: 'Fred'\n"
+                        + "        credentials:\n"
+                        + "          username: 'fred@example.com'\n"
+                        + "          password: 'fred456'\n"
+                        + "          key: '123456'\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getUsers());
+        assertThat(env.getContextWrappers().get(0).getData().getUsers().size(), is(2));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(0).getName(), is("Freda"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("freda@example.com"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("freda123"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getName(), is("Fred"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("fred@example.com"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("fred456"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getCredential("key"),
+                is("123456"));
     }
 
     @Test
@@ -441,41 +642,6 @@ class ContextWrapperUnitTest {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo(("!automation.error.options.unknown!"))));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
-        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
-        assertThat(
-                env.getContextWrappers().get(0).getData().getAuthentication().getMethod(),
-                is(AuthenticationData.METHOD_MANUAL));
-    }
-
-    @Test
-    void shouldWarnOnBadAuthParam() {
-        // Given
-        String contextStr =
-                "env:\n"
-                        + "  contexts:\n"
-                        + "    - name: name1\n"
-                        + "      urls:\n"
-                        + "      - http://www.example.com\n"
-                        + "      authentication:\n"
-                        + "        method: 'manual'\n"
-                        + "        parameters:\n"
-                        + "          abc: xyz";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> data = yaml.load(contextStr);
-        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
-        AutomationProgress progress = new AutomationProgress();
-
-        // When
-        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-
-        // Then
-        assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings().size(), is(equalTo(1)));
-        assertThat(
-                progress.getWarnings().get(0),
-                is(equalTo(("!automation.error.env.auth.param.unknown!"))));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());

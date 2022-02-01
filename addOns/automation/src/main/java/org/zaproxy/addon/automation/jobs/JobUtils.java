@@ -19,8 +19,11 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,12 +37,17 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class JobUtils {
 
@@ -523,5 +531,56 @@ public class JobUtils {
         } catch (Exception e) {
             return getClassField(obj, c.getSuperclass(), fieldName);
         }
+    }
+
+    public static ScriptWrapper getScriptWrapper(
+            File file, String type, String engineName, AutomationProgress progress) {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ScriptWrapper wrapper = null;
+        if (extScript != null) {
+            // Use existing script if its already loaded
+            for (ScriptWrapper sw : extScript.getScripts(type)) {
+                try {
+                    if (Files.isSameFile(sw.getFile().toPath(), file.toPath())
+                            && sw.getEngineName().equals(engineName)) {
+                        wrapper = sw;
+                        break;
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+            if (wrapper == null) {
+                // Register the script
+                ScriptEngineWrapper engineWrapper = extScript.getEngineWrapper(engineName);
+                if (engineWrapper == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.sessionmgmt.engine.bad", engineName));
+                } else {
+                    ScriptType scriptType = extScript.getScriptType(type);
+                    LOG.debug("Loading script {}", file.getAbsolutePath());
+                    try {
+                        wrapper =
+                                extScript.loadScript(
+                                        new ScriptWrapper(
+                                                file.getName(),
+                                                "",
+                                                engineWrapper,
+                                                scriptType,
+                                                true,
+                                                file));
+                        extScript.addScript(wrapper, false);
+                    } catch (IOException e) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        file.getAbsolutePath()));
+                    }
+                }
+            }
+        }
+        return wrapper;
     }
 }

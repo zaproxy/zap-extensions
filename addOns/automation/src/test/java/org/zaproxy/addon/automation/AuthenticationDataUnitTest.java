@@ -27,6 +27,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +44,9 @@ import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBase
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
@@ -156,6 +162,40 @@ class AuthenticationDataUnitTest {
         assertThat(
                 params.get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY),
                 is(equalTo(TEST_FORM_DATA)));
+    }
+
+    @Test
+    void shouldCreateDataFromContextWithScriptAuth() throws IOException {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        ScriptBasedAuthenticationMethodType scriptType = new ScriptBasedAuthenticationMethodType();
+        ScriptBasedAuthenticationMethod scriptAuthMethod =
+                scriptType.createAuthenticationMethod(-1);
+
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        File scriptFile = File.createTempFile("scriptAuthTest", ".js");
+        given(scriptWrapper.getFile()).willReturn(scriptFile);
+
+        Map<String, String> paramValues = new HashMap<>();
+        paramValues.put("field1", "value1");
+        paramValues.put("field2", "value2");
+
+        JobUtils.setPrivateField(scriptAuthMethod, "script", scriptWrapper);
+        JobUtils.setPrivateField(scriptAuthMethod, "paramValues", paramValues);
+
+        Context context = mock(Context.class);
+        given(context.getAuthenticationMethod()).willReturn(scriptAuthMethod);
+
+        // When
+        AuthenticationData data = new AuthenticationData(context);
+        Map<String, Object> params = data.getParameters();
+
+        // Then
+        assertThat(data.getVerification(), is(notNullValue()));
+        assertThat(data.getMethod(), is(equalTo("script")));
+        // The script should be returned as well but mocking everything required is hard :/
+        assertThat(params.get("field1"), is(equalTo("value1")));
+        assertThat(params.get("field2"), is(equalTo("value2")));
     }
 
     @Test
@@ -284,26 +324,6 @@ class AuthenticationDataUnitTest {
         assertThat(progress.hasErrors(), is(true));
         assertThat(progress.getErrors().size(), is(1));
         assertThat(progress.getErrors().get(0), is("!automation.error.env.auth.type.bad!"));
-    }
-
-    @Test
-    void shouldWarnOnUnknownParam() {
-        // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
-        AutomationProgress progress = new AutomationProgress();
-        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
-        LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-        params.put("unknown", new LinkedHashMap<String, Object>());
-        data.put("parameters", params);
-
-        // When
-        new AuthenticationData(data, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(false));
-        assertThat(progress.hasWarnings(), is(true));
-        assertThat(progress.getWarnings().size(), is(1));
-        assertThat(progress.getWarnings().get(0), is("!automation.error.env.auth.param.unknown!"));
     }
 
     @ParameterizedTest

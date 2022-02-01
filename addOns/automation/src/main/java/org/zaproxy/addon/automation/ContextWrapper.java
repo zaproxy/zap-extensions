@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +39,11 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
+import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationMethod;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
@@ -95,6 +98,16 @@ public class ContextWrapper {
                     users.add(
                             new UserData(
                                     user.getName(), upCreds.getUsername(), upCreds.getPassword()));
+                } else if (user.getAuthenticationCredentials()
+                        instanceof GenericAuthenticationCredentials) {
+                    GenericAuthenticationCredentials genCreds =
+                            (GenericAuthenticationCredentials) user.getAuthenticationCredentials();
+                    @SuppressWarnings("unchecked")
+                    Map<String, String> paramValues =
+                            (Map<String, String>) JobUtils.getPrivateField(genCreds, "paramValues");
+                    UserData ud = new UserData(user.getName());
+                    ud.setCredentials(paramValues);
+                    users.add(ud);
                 } else if (MANUAL_AUTH_CREDS_CANONICAL_NAME.equals(
                         user.getAuthenticationCredentials().getClass().getCanonicalName())) {
                     // Cannot use instanceof as its a private class :/
@@ -180,7 +193,8 @@ public class ContextWrapper {
                                             Constant.messages.getString(
                                                     "automation.error.context.dupuser",
                                                     data.getName(),
-                                                    ud.getUsername()));
+                                                    ud.getCredential(
+                                                            UserData.USERNAME_CREDENTIAL)));
                                 } else {
                                     users.add(ud);
                                 }
@@ -297,7 +311,7 @@ public class ContextWrapper {
             }
         }
         if (getData().getSessionManagement() != null) {
-            getData().getSessionManagement().initContextSessionManagement(context, progress);
+            getData().getSessionManagement().initContextSessionManagement(context, progress, env);
         }
         if (getData().getAuthentication() != null) {
             getData().getAuthentication().initContextAuthentication(context, progress, env);
@@ -317,12 +331,25 @@ public class ContextWrapper {
                         || authMethod instanceof JsonBasedAuthenticationMethod) {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             new UsernamePasswordAuthenticationCredentials(
-                                    env.replaceVars(ud.getUsername()),
-                                    env.replaceVars(ud.getPassword()));
+                                    env.replaceVars(ud.getCredential(UserData.USERNAME_CREDENTIAL)),
+                                    env.replaceVars(
+                                            ud.getCredential(UserData.PASSWORD_CREDENTIAL)));
                     user.setAuthenticationCredentials(upCreds);
                 } else if (authMethod instanceof ManualAuthenticationMethod) {
                     user.setAuthenticationCredentials(
                             authMethod.getType().createAuthenticationCredentials());
+                } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
+                    ScriptBasedAuthenticationMethod scriptMethod =
+                            (ScriptBasedAuthenticationMethod) authMethod;
+                    String[] credName =
+                            (String[])
+                                    JobUtils.getPrivateField(scriptMethod, "credentialsParamNames");
+                    GenericAuthenticationCredentials genCreds =
+                            new GenericAuthenticationCredentials(credName);
+                    for (Entry<String, String> cred : ud.getCredentials().entrySet()) {
+                        genCreds.setParam(cred.getKey(), env.replaceVars(cred.getValue()));
+                    }
+                    user.setAuthenticationCredentials(genCreds);
                 } else {
                     LOG.error(
                             "Users not supported for {}", authMethod.getClass().getCanonicalName());
@@ -433,9 +460,12 @@ public class ContextWrapper {
     }
 
     public static class UserData extends AutomationData {
+
+        public static final String USERNAME_CREDENTIAL = "username";
+        public static final String PASSWORD_CREDENTIAL = "password";
+
         private String name;
-        private String username;
-        private String password;
+        private Map<String, String> credentials = new HashMap<>();
 
         public UserData() {}
 
@@ -445,8 +475,8 @@ public class ContextWrapper {
 
         public UserData(String name, String username, String password) {
             this.name = name;
-            this.username = username;
-            this.password = password;
+            this.credentials.put(USERNAME_CREDENTIAL, username);
+            this.credentials.put(PASSWORD_CREDENTIAL, password);
         }
 
         public String getName() {
@@ -457,20 +487,26 @@ public class ContextWrapper {
             this.name = name;
         }
 
-        public String getUsername() {
-            return username;
-        }
-
         public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
+            // Required for backwards compatibility
+            this.credentials.put(USERNAME_CREDENTIAL, username);
         }
 
         public void setPassword(String password) {
-            this.password = password;
+            // Required for backwards compatibility
+            this.credentials.put(PASSWORD_CREDENTIAL, password);
+        }
+
+        public Map<String, String> getCredentials() {
+            return credentials;
+        }
+
+        public String getCredential(String key) {
+            return this.credentials.get(key);
+        }
+
+        public void setCredentials(Map<String, String> credentials) {
+            this.credentials = credentials;
         }
     }
 }

@@ -166,6 +166,14 @@ public class AutomationEnvironment {
         return sb.toString();
     }
 
+    public Map<String, String> replaceMapVars(Map<String, String> map) {
+        Map<String, String> map2 = new HashMap<>();
+        for (Entry<String, String> entry : map.entrySet()) {
+            map2.put(entry.getKey(), replaceVars(entry.getValue()));
+        }
+        return map2;
+    }
+
     protected void setProgress(AutomationProgress progress) {
         this.progress = progress;
         this.progress.setOutputToStdout(this.getData().getParameters().getProgressToStdout());
