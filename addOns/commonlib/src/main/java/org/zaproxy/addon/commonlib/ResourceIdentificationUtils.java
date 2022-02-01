@@ -78,6 +78,18 @@ public final class ResourceIdentificationUtils {
     }
 
     /**
+     * Returns whether or not the given {@link HttpMessage} has an image content type in its
+     * response or request URL path.
+     *
+     * @param msg the {@link HttpMessage} to check
+     * @return {@code true} if the given {@link HttpMessage} has an image content type in its
+     *     response or request URL path, {@code false} otherwise.
+     */
+    public static boolean isImage(HttpMessage msg) {
+        return msg.getResponseHeader().isImage() || msg.getRequestHeader().isImage();
+    }
+
+    /**
      * Returns whether or not the given {@link HttpMessage} has a CSS content type in its response
      * or request URL path.
      *
