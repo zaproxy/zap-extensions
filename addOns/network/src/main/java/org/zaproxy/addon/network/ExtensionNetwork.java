@@ -54,7 +54,7 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.SSLConnector;
 import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
 import org.parosproxy.paros.security.CertData;
@@ -254,7 +254,26 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      */
     public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        ConnectionParam connectionParam = getModel().getOptionsParam().getConnectionParam();
+        HttpSender httpSender =
+                new HttpSender(getModel().getOptionsParam().getConnectionParam(), true, initiator);
+        return createHttpProxy(httpSender, handler);
+    }
+
+    /**
+     * Creates a HTTP proxy using an existing {@code HttpSender}.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
+     * connection is automatically closed on recursive requests.
+     *
+     * @param httpSender the HTTP sender.
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the HTTP sender and given handler are {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpProxy(HttpSender httpSender, HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        Objects.requireNonNull(httpSender);
         List<HttpMessageHandler> handlers =
                 Arrays.asList(
                         ConnectReceivedHandler.getSetAndOverrideInstance(),
@@ -262,7 +281,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         RemoveAcceptEncodingHandler.getEnabledInstance(),
                         DecodeResponseHandler.getEnabledInstance(),
                         handler,
-                        new HttpSenderHandler(connectionParam, initiator));
+                        new HttpSenderHandler(
+                                getModel().getOptionsParam().getConnectionParam(), httpSender));
         return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
     }
 

@@ -88,6 +88,7 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
@@ -808,7 +809,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldCreateHttpProxyWithProvidedHandler() throws Exception {
+    void shouldCreateHttpProxyWithProvidedInitiatorAndHandler() throws Exception {
         // Given
         HttpMessageHandler handler =
                 (ctx, msg) -> {
@@ -830,6 +831,44 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.initModel(model);
         // When
         try (Server server = extension.createHttpProxy(1, handler)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            msg = (HttpMessage) TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(
+                    msg.getResponseHeader().toString(),
+                    is(equalTo("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldCreateHttpProxyWithProvidedHttpSenderAndHandler() throws Exception {
+        // Given
+        HttpMessageHandler handler =
+                (ctx, msg) -> {
+                    ctx.overridden();
+                    try {
+                        msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                    } catch (HttpMalformedHeaderException ignore) {
+                        // Valid header.
+                    }
+                };
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        ConnectionParam connectionParam = new ConnectionParam();
+        given(optionsParam.getConnectionParam()).willReturn(connectionParam);
+        extension.initModel(model);
+        // When
+        try (Server server =
+                extension.createHttpProxy(new HttpSender(connectionParam, true, 1), handler)) {
             int port = server.start(Server.ANY_PORT);
             Channel channel = client.connect(port, null);
             channel.writeAndFlush(msg).sync();
