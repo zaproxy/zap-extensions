@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.8.0] - 2022-02-02
 ### Added
 - API help content.
 - Maintenance changes.
@@ -209,6 +209,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.8.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.8.0
 [21.7.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.7.0
 [21.6.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.6.0
 [21.5.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.5.0
