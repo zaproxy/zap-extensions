@@ -60,7 +60,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         // as well as all of the current Unix time value (beyond the range for a valid Unix time, in
         // fact)
         timestampPatterns.put(
-                Pattern.compile("\\b[0-9]{8,10}\\b", Pattern.CASE_INSENSITIVE), "Unix");
+                Pattern.compile("\\b[0-9]{8,10}\\b(?!%)", Pattern.CASE_INSENSITIVE), "Unix");
     }
 
     private static Logger log = LogManager.getLogger(TimestampDisclosureScanRule.class);
