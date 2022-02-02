@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.7.0] - 2022-02-02
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 
@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.7.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.7.0
 [1.6.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.6.0
 [1.5.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.5.0
 [1.4.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.4.0
