@@ -44,7 +44,7 @@ public class CacheControlScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getRequestHeader().isSecure()
                 && msg.getResponseBody().length() > 0
-                && !msg.getResponseHeader().isImage()) {
+                && !ResourceIdentificationUtils.isImage(msg)) {
 
             if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
                     && (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())
