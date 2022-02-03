@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
@@ -48,6 +49,7 @@ import org.zaproxy.addon.network.internal.ChannelAttributes;
 public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
     private static final Logger LOGGER = LogManager.getLogger(PassthroughHandler.class);
+    private static final String CONNECT_HTTP_200 = "HTTP/1.1 200 Connection established";
 
     private static final int CONNECT_TIMEOUT_MILLIS = (int) TimeUnit.SECONDS.toMillis(20);
     private static final int READ_TIMEOUT_MINUTES = 2;
@@ -70,6 +72,7 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
         }
 
         if (!isPassthrough(ctx, msg)) {
+            ctx.fireChannelRead(msg);
             return;
         }
 
@@ -78,16 +81,38 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
         int port = request.getHostPort();
         LOGGER.debug("Passing through connection to target: {}:{}", host, port);
 
-        ctx.channel().config().setAutoRead(false);
-        while (ctx.pipeline().last() != null) {
-            ctx.pipeline().remove(ctx.pipeline().last());
+        try {
+            msg.setResponseHeader(CONNECT_HTTP_200);
+        } catch (HttpMalformedHeaderException ignore) {
+            // Setting valid header.
         }
 
-        ctx.pipeline()
-                .addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT_MINUTES, TimeUnit.MINUTES));
-        ctx.pipeline().addLast("exception", ExceptionHandler.getInstance());
-        ctx.pipeline().addAfter("timeout", "passthrough", new ClientSideHandler(host, port));
-        ctx.fireChannelReadComplete();
+        ctx.channel().config().setAutoRead(false);
+        ctx.writeAndFlush(msg)
+                .addListener(
+                        e -> {
+                            if (!e.isSuccess()) {
+                                ctx.close();
+                                return;
+                            }
+
+                            while (ctx.pipeline().last() != null) {
+                                ctx.pipeline().remove(ctx.pipeline().last());
+                            }
+
+                            ctx.pipeline()
+                                    .addLast(
+                                            "timeout",
+                                            new ReadTimeoutHandler(
+                                                    READ_TIMEOUT_MINUTES, TimeUnit.MINUTES));
+                            ctx.pipeline().addLast("exception", ExceptionHandler.getInstance());
+                            ctx.pipeline()
+                                    .addAfter(
+                                            "timeout",
+                                            "passthrough",
+                                            new ClientSideHandler(host, port));
+                            ctx.fireChannelReadComplete();
+                        });
     }
 
     private boolean isPassthrough(ChannelHandlerContext ctx, HttpMessage msg) {
@@ -105,7 +130,6 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
             return false;
         } finally {
             ctx.channel().attr(ChannelAttributes.PASSTHROUGH).set(passthrough);
-            ctx.fireChannelRead(msg);
             ctx.pipeline().remove(this);
         }
     }
