@@ -684,5 +684,20 @@
     ],
     "name": "Shipping carriers",
     "priority": 9
+  },
+  "100": {
+    "groups": [
+      15
+    ],
+    "name": "Shopify apps",
+    "priority": 9
+  },
+  "101": {
+    "groups": [
+      6,
+      16
+    ],
+    "name": "Recruitment & staffing",
+    "priority": 9
   }
 }

@@ -87,6 +87,17 @@
     "scriptSrc": "^(?:https):?//load\\.jsecoin\\.com/load/",
     "website": "https://jsecoin.com/"
   },
+  "JSS": {
+    "cats": [
+      12,
+      47
+    ],
+    "description": "JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way.",
+    "dom": "style[data-jss]",
+    "icon": "JSS.png",
+    "oss": true,
+    "website": "https://cssinjs.org/"
+  },
   "JShop": {
     "cats": [
       6
@@ -98,17 +109,6 @@
       "jss_1stepFillShipping": ""
     },
     "website": "http://www.whorl.co.uk"
-  },
-  "JSS":{
-    "cats": [
-      12,
-      47
-    ],
-    "description": "JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way.",
-    "dom": "style[data-jss]",
-    "icon": "JSS.png",
-    "oss": true,
-    "website": "https://cssinjs.org/"
   },
   "JTL Shop": {
     "cats": [
@@ -400,10 +400,27 @@
     "scriptSrc": "\\.jivosite\\.com",
     "website": "https://www.jivosite.com"
   },
+  "JobAdder": {
+    "cats": [
+      101
+    ],
+    "description": "JobAdder is a cloud-based recruitment management platform for staffing agencies and in-house corporate hiring teams.",
+    "dom": "a[href*='clientapps.jobadder.com/'], link[href*='jobadder.com']",
+    "icon": "JobAdder.png",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.jobadder\\.com/",
+    "website": "https://jobadder.com"
+  },
   "JobberBase": {
     "cats": [
-      19
+      19,
+      101
     ],
+    "description": "Jobberbase is an open-source job board platform that enables the creation of job sites.",
     "icon": "JobberBase.png",
     "implies": "PHP",
     "js": {
@@ -412,6 +429,10 @@
     "meta": {
       "generator": "Jobberbase"
     },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "website": "http://www.jobberbase.com"
   },
   "JoomShopping": {

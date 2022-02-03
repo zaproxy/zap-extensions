@@ -77,6 +77,26 @@
     "scriptSrc": "\\.ebis\\.ne\\.jp/",
     "website": "http://www.ebis.ne.jp"
   },
+  "ADFOX": {
+    "cats": [
+      36
+    ],
+    "description": "ADFOX is an advertising management platform for media publishers.",
+    "icon": "ADFOX.svg",
+    "js": {
+      "AdFox_getCodeScript": "",
+      "Site.adFoxParams": "",
+      "adFoxParams": "",
+      "adfoxAsyncParams": "",
+      "adfoxBiddersMap": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://adfox.yandex.ru"
+  },
   "AFThemes CoverNews": {
     "cats": [
       80
@@ -610,12 +630,19 @@
     },
     "pricing": [
       "low",
-      "recurring"
+      "recurring",
+      "poa"
     ],
     "saas": true,
     "scriptSrc": [
       "plugins/activecampaign-subscription-forms/site_tracking\\.js",
-      "\\.activehosted\\.com/"
+      "\\.activehosted\\.com",
+      "\\.app-us1\\.com",
+      "\\.ac-page\\.com"
+    ],
+    "url": [
+      "\\.activehosted\\.com",
+      "\\.ac-page\\.com"
     ],
     "website": "https://www.activecampaign.com"
   },
@@ -713,12 +740,20 @@
     "cats": [
       36
     ],
-    "html": "(?:<embed[^>]+(?:src=\"https?://mh\\d?\\.adriver\\.ru/|flashvars=\"[^\"]*(?:http:%3A//(?:ad|mh\\d?)\\.adriver\\.ru/|adriver_banner))|<(?:(?:iframe|img)[^>]+src|a[^>]+href)=\"https?://ad\\.adriver\\.ru/)",
+    "description": "AdRiver is a company which provide internet advertising management and audit software.",
+    "dom": "link[href*='.adriver.ru'], img[src*='.adriver.ru'], iframe[src*='.adriver.ru']",
     "icon": "AdRiver.png",
     "js": {
+      "AdriverCounter": "",
+      "AdriverPrebid": "",
+      "adfoxBiddersMap.adriver": "",
       "adriver": ""
     },
-    "scriptSrc": "(?:adriver\\.core\\.\\d\\.js|https?://(?:content|ad|masterh\\d)\\.adriver\\.ru/)",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.adriver\\.ru/",
     "website": "http://adriver.ru"
   },
   "AdRoll": {
@@ -809,6 +844,22 @@
     "scriptSrc": "\\.ada\\.support",
     "website": "https://www.ada.cx"
   },
+  "AdaSiteCompliance": {
+    "cats": [
+      68
+    ],
+    "description": "AdaSiteCompliance is a web accessibility solution, making websites compliant and accessible to WCAG 2.1 and section 508 compliance standards.",
+    "icon": "AdaSiteCompliance.png",
+    "js": {
+      "ADASTOOLBOXAPPSTATE": "",
+      "adascHelper": ""
+    },
+    "pricing": [
+      "onetime",
+      "high"
+    ],
+    "website": "https://adasitecompliance.com"
+  },
   "Adabra": {
     "cats": [
       32
@@ -836,22 +887,6 @@
     "icon": "Adally.png",
     "scriptSrc": "cloudfront\\.net/.*/adally\\.js",
     "website": "https://adally.com/"
-  },
-  "AdaSiteCompliance": {
-    "cats": [
-      68
-    ],
-    "description": "AdaSiteCompliance is a web accessibility solution, making websites compliant and accessible to WCAG 2.1 and section 508 compliance standards.",
-    "icon": "AdaSiteCompliance.png",
-    "js": {
-      "adascHelper": "",
-      "ADASTOOLBOXAPPSTATE": ""
-    },
-    "pricing": [
-      "onetime",
-      "high"
-    ],
-    "website": "https://adasitecompliance.com"
   },
   "Adalyser": {
     "cats": [
@@ -1058,13 +1093,14 @@
     "cats": [
       36
     ],
+    "description": "Adnegah is a digital marketing and internet advertising agency.",
+    "dom": "iframe[scr*='adnegah.net']",
     "headers": {
       "X-Advertising-By": "adnegah\\.net"
     },
-    "html": "<iframe [^>]*src=\"[^\"]+adnegah\\.net",
-    "icon": "adnegah.png",
-    "scriptSrc": "[^a-z]adnegah.*\\.js$",
-    "website": "https://Adnegah.net"
+    "icon": "Adnegah.png",
+    "scriptSrc": "\\.adnegah\\.net/",
+    "website": "https://adnegah.net"
   },
   "Adobe Analytics": {
     "cats": [
@@ -1312,9 +1348,14 @@
     "cats": [
       36
     ],
-    "html": "<div (?:id=\"[a-zA-Z0-9_]*\" )?class=\"goAdverticum\"",
+    "description": "Adverticum is the developer and operator of Hungary's market leading online ad serving solution, the Adverticum AdServer.",
+    "dom": "a[href*='ad.adverticum.net'], div.goAdverticum",
     "icon": "Adverticum.svg",
-    "scriptSrc": "(?:ad\\.)?adverticum\\.net/g3\\.js",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.adverticum\\.net/",
     "website": "http://adverticum.net"
   },
   "Adyen": {
@@ -1327,19 +1368,6 @@
       "adyen.encrypt.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://www.adyen.com"
-  },
-  "Adzerk": {
-    "cats": [
-      36
-    ],
-    "html": "<iframe [^>]*src=\"[^\"]+adzerk\\.net",
-    "icon": "Adzerk.png",
-    "js": {
-      "ados": "",
-      "adosResults": ""
-    },
-    "scriptSrc": "adzerk\\.net/ados\\.js",
-    "website": "http://adzerk.com"
   },
   "Aegea": {
     "cats": [
@@ -1369,6 +1397,20 @@
     ],
     "saas": true,
     "website": "https://www.aerocommerce.com"
+  },
+  "Affilae": {
+    "cats": [
+      71
+    ],
+    "description": "Affilae is an affiliate marketing platform that enables brands to connect, collaborate with influencers and affiliates.",
+    "icon": "Affilae.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "static\\.affilae\\.com/(?:.+v([\\d\\.]+)|.+)?\\.js\\;version:\\1",
+    "website": "https://affilae.com"
   },
   "Affiliate B": {
     "cats": [
@@ -1435,11 +1477,19 @@
     "cats": [
       6
     ],
-    "html": [
-      "<dd>This OnlineStore is brought to you by ViA-Online GmbH Afterbuy\\. Information and contribution at https://www\\.afterbuy\\.de</dd>"
+    "description": "AfterBuy is a software company that specialises in ecommerce software for small to enterprise level businesses.",
+    "icon": "AfterBuy.png",
+    "js": {
+      "AfterbuyString": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
     ],
-    "icon": "after-buy.png",
-    "scriptSrc": "shop-static\\.afterbuy\\.de",
+    "saas": true,
+    "scriptSrc": "\\.afterbuy\\.de/",
     "website": "http://www.afterbuy.de"
   },
   "Afterpay": {
@@ -1454,9 +1504,12 @@
     "js": {
       "Afterpay": "",
       "AfterpayAttractWidget": "",
+      "AfterpayGenericErrorHtml": "",
+      "AfterpayWidgetHtml": "",
       "afterpay_product": "",
       "checkout.enabledpayments.afterpay": "^true$"
     },
+    "requiresCategory": 6,
     "saas": true,
     "scriptSrc": [
       "portal\\.afterpay\\.com",
@@ -1540,10 +1593,13 @@
     "cats": [
       19
     ],
-    "html": [
-      "<form[^>]+?action=\"[^\"]*airform\\.io[^>]+?>"
-    ],
+    "description": "Airform is a functional HTML forms for front-end developers.",
+    "dom": "form[action*='airform.io/']",
     "icon": "Airform.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "website": "https://airform.io"
   },
   "Airship": {
@@ -1794,7 +1850,8 @@
   },
   "Ali Reviews": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Ali reviews is a shopify app to collect reviews from customers.",
     "icon": "Alireviews.svg",
@@ -2406,18 +2463,6 @@
     ],
     "website": "https://angularjs.org"
   },
-  "anime.js":{
-    "cats": [
-      25
-    ],
-    "description":"Anime.js (/ˈæn.ə.meɪ/) is a lightweight JavaScript animation library with a simple, yet powerful API.It works with CSS properties, SVG, DOM attributes and JavaScript Objects.",
-    "oss": true,
-    "js": {
-      "anime.version": "^([\\d\\.]+)$\\;version:\\1"
-    },
-    "icon":"anime.js.png",
-    "website": "https://animejs.com/"
-  },
   "Ant Design": {
     "cats": [
       66
@@ -2616,10 +2661,20 @@
     "cats": [
       1
     ],
-    "html": "<[^>]+data-apos-refreshable[^>]",
+    "description": "ApostropheCMS is a powerful website builder platform built on an enterprise open source CMS.",
     "icon": "ApostropheCMS.svg",
     "implies": "Node.js",
-    "website": "http://apostrophecms.org"
+    "js": {
+      "APOS_DIALOGS.dialogAttributes": "",
+      "apos.csrfCookieName": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apostrophecms.com"
   },
   "AppDynamics": {
     "cats": [
@@ -2729,10 +2784,12 @@
         "text": "(Sign (in|up)|Log in|Continue) with Apple"
       }
     },
-    "html": "<meta[ˆ>]*appleid-signin-client-id",
     "icon": "Apple.svg",
     "js": {
       "AppleID": ""
+    },
+    "meta": {
+      "appleid-signin-client-id": ""
     },
     "scriptSrc": "appleid\\.auth\\.js",
     "website": "https://developer.apple.com/sign-in-with-apple/"
@@ -2741,8 +2798,8 @@
     "cats": [
       72
     ],
-    "description": "Appointy’s online scheduling software.",
-    "html": "<iframe[^>]+src=\"?https://[\\w\\d\\-]+\\.appointy\\.com",
+    "description": "Appointy is a cloud-based scheduling solution that helps professionals and businesses to manage their appointment scheduling activities and routines.",
+    "dom": "a[href*='.appointy.com/'][target='_blank'], iframe[src*='.appointy.com/']",
     "icon": "Appointy.png",
     "pricing": [
       "low",
@@ -2823,14 +2880,19 @@
       6
     ],
     "cpe": "cpe:/a:arastta:ecommerce",
+    "description": "Arastta is a free and open-source project with contributors from all over the world.",
     "excludes": "OpenCart",
     "headers": {
       "Arastta": "^(.+)$\\;version:\\1",
-      "X-Arastta": ""
+      "X-Arastta": "",
+      "x-arastta": ""
     },
-    "html": "Powered by <a [^>]*href=\"https?://(?:www\\.)?arastta\\.org[^>]+>Arastta",
     "icon": "Arastta.svg",
     "implies": "PHP",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "scriptSrc": "arastta\\.js",
     "website": "http://arastta.org"
   },
@@ -2854,16 +2916,24 @@
     "website": "https://arc.io",
     "xhr": "\\.arc\\.io"
   },
-  "Arc Publishing": {
+  "Arc XP": {
     "cats": [
-      1
+      1,
+      95
     ],
-    "html": "<div [^>]*id=\"pb-root\"",
-    "icon": "Arc-Publishing.svg",
+    "description": "Arc XP is a cloud-based digital experience platform that helps enterprise companies, retail brands and media and entertainment organization create and distribute content, drive digital commerce, and deliver powerful experiences.",
+    "dom": "#pb-root",
+    "icon": "Arc XP.svg",
     "js": {
       "Fusion.arcSite": ""
     },
-    "website": "https://www.arcpublishing.com/"
+    "pricing": [
+      "recurring",
+      "poa",
+      "high"
+    ],
+    "saas": true,
+    "website": "https://www.arcxp.com"
   },
   "ArcGIS API for JavaScript": {
     "cats": [
@@ -2938,6 +3008,16 @@
       "ArvanCloud": ""
     },
     "website": "http://www.arvancloud.com"
+  },
+  "Asana": {
+    "cats": [
+      13
+    ],
+    "description": "Asana is a web and mobile application designed to help teams organize, track, and manage their work.",
+    "dom": "a[href*='form.asana.com'], a[href*='app.asana.com']",
+    "icon": "Asana.svg",
+    "saas": true,
+    "website": "https://asana.com"
   },
   "AsciiDoc": {
     "cats": [
@@ -3024,6 +3104,26 @@
       "Astra"
     ],
     "website": "https://wpastra.com/did-you-know-astra-is-widget-ready"
+  },
+  "Astro": {
+    "cats": [
+      57,
+      12
+    ],
+    "description": "Astro is a new JavaScript-based static site builder.",
+    "dom": {
+      "link[href*='/_astro/']": {
+        "attributes": {
+          "href": "/_astro/(?:common|index)-[\\d\\w]+\\.css"
+        }
+      }
+    },
+    "icon": "Astro.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://astro.build"
   },
   "Astute Solutions": {
     "cats": [
@@ -3223,15 +3323,18 @@
     "cats": [
       12
     ],
-    "html": [
-      "<[^>]+aurelia-app=[^>]",
-      "<[^>]+data-main=[^>]aurelia-bootstrapper",
-      "<[^>]+au-target-id=[^>]\\d"
-    ],
+    "description": "Aurelia is an open-source UI JavaScript framework designed to create single page applications.",
+    "dom": "div[aurelia-app], body[aurelia-app], a[au-target-id]",
     "icon": "Aurelia.svg",
-    "scriptSrc": [
-      "aurelia(?:\\.min)?\\.js"
+    "js": {
+      "_aureliaConfigureModuleLoader": "",
+      "localAurelia": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
     ],
+    "scriptSrc": "/aurelia[\\d\\w\\-\\.]+\\.js",
     "website": "http://aurelia.io"
   },
   "Auryc": {
@@ -3322,14 +3425,16 @@
     "cats": [
       6
     ],
-    "html": "<link[^>]* href=\"https?://edge\\.avangate\\.net/",
+    "description": "Avangate (2Checkout) is a digital ecommerce platform for businesses that sell physical goods or digital products.",
     "icon": "Avangate.svg",
+    "implies": "Verifone 2Checkout",
     "js": {
-      "__avng8_": "",
-      "avng8_": ""
+      "AvaCart.version": "(.+)\\;version:\\1",
+      "__avng8_callbacks": "",
+      "avaSlugify": ""
     },
     "scriptSrc": "^https?://edge\\.avangate\\.net/",
-    "website": "http://avangate.com"
+    "website": "https://www.2checkout.com"
   },
   "Avasize": {
     "cats": [
@@ -3662,6 +3767,18 @@
       "<link [^>]+(?:/([\\d.]+)/)?animate\\.(?:min\\.)?css\\;version:\\1"
     ],
     "website": "https://daneden.github.io/animate.css/"
+  },
+  "anime.js": {
+    "cats": [
+      25
+    ],
+    "description": "Anime.js (/ˈæn.ə.meɪ/) is a lightweight JavaScript animation library with a simple, yet powerful API.It works with CSS properties, SVG, DOM attributes and JavaScript Objects.",
+    "icon": "anime.js.svg",
+    "js": {
+      "anime.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://animejs.com/"
   },
   "augmented-ui": {
     "cats": [

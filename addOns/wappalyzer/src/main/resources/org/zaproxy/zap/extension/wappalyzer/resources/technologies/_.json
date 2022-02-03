@@ -38,6 +38,15 @@
     "scriptSrc": "2badvice-cdn\\.azureedge\\.net",
     "website": "https://www.2b-advice.com/en/data-privacy-software/cookie-consent-plugin/"
   },
+  "30namaPlayer": {
+    "cats": [
+      14
+    ],
+    "description": "30namaPlayer is a modified version of Video.js to work with videos on HTML using javascript.",
+    "dom": "section[class*='player30nama']",
+    "icon": "30namaPlayer.png",
+    "website": "https://30nama.com/"
+  },
   "33Across": {
     "cats": [
       36
@@ -106,6 +115,25 @@
     "saas": true,
     "scriptSrc": "4tellcdn\\.azureedge\\.net",
     "website": "https://4-tell.com"
+  },
+  "8base": {
+    "cats": [
+      3,
+      62
+    ],
+    "description": "8base is a Backend-as-a-Service. It lets front-end developers focus more on what they love and backend developers expedite their workflow",
+    "icon": "8base-logo.png",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "requires": [
+      "GraphQL"
+    ],
+    "saas": true,
+    "website": "https://8base.com",
+    "xhr": "api\\.8base\\.com"
   },
   "@sulu/web": {
     "cats": [

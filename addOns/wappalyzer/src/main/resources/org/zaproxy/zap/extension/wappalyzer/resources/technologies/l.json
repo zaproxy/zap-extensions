@@ -11,16 +11,6 @@
     },
     "website": "http://www.lepton-cms.org"
   },
-  "Libravatar": {
-    "cats": [
-      19
-    ],
-    "description": "Libravatar is a service for fetching avatar images for e-mail addresses and OpenIDs in a privacy respecting way.",
-    "dom": "img[src*='.libravatar.org/avatar/']",
-    "oss": true,
-    "icon": "libravatar.png",
-    "website": "https://www.libravatar.org/"
-  },
   "LINE Login": {
     "cats": [
       69
@@ -166,7 +156,7 @@
       91
     ],
     "description": "Laybuy is a payment service that lets you receive your purchase now and spread the total cost over 6 weekly automatic payments interest free.",
-    "dom": "iframe[src='.laybuy.com/']",
+    "dom": "iframe[src='.laybuy.com/'], a[href*='.laybuy.com/what-is-laybuy']",
     "icon": "LayBuy.svg",
     "js": {
       "LaybuyHelper": "",
@@ -177,6 +167,7 @@
     "pricing": [
       "payg"
     ],
+    "requiresCategory": 6,
     "saas": true,
     "scriptSrc": [
       "\\.laybuy\\.com/",
@@ -358,6 +349,32 @@
     "requires": "WordPress",
     "saas": true,
     "website": "https://level5advertising.com/websites/"
+  },
+  "Lever": {
+    "cats": [
+      101
+    ],
+    "description": "Lever is a software company headquartered in San Francisco, California and Toronto, Canada that provides an applicant tracking system for hiring.",
+    "dom": "a[href*='jobs.lever.co/']",
+    "headers": {
+      "Content-Security-Policy": "\\.lever\\.co"
+    },
+    "icon": "Lever.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.lever.co"
+  },
+  "Libravatar": {
+    "cats": [
+      19
+    ],
+    "description": "Libravatar is a service for fetching avatar images for e-mail addresses and OpenIDs in a privacy respecting way.",
+    "dom": "img[src*='.libravatar.org/avatar/']",
+    "icon": "libravatar.png",
+    "oss": true,
+    "website": "https://www.libravatar.org/"
   },
   "Lieferando": {
     "cats": [
@@ -1074,7 +1091,7 @@
   "Lootly": {
     "cats": [
       84,
-      32
+      94
     ],
     "description": "Lootly is a loyalty and referral marketing automation software suite for ecommerce businesses.",
     "dom": "iframe[src*='lootly.io/']",
@@ -1093,7 +1110,8 @@
   },
   "Loox": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
     "icon": "Loox.svg",
@@ -1104,6 +1122,7 @@
       "low",
       "recurring"
     ],
+    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "loox\\.io/widget",
     "website": "https://loox.app"

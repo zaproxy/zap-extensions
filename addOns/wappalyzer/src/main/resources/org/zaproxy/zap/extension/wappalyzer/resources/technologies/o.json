@@ -255,8 +255,8 @@
     "description": "Olapic is a content marketing tool specifically focused on visual marketing content.",
     "icon": "Olapic.svg",
     "js": {
-      "olapic.version": "^v([\\d\\.]+)$\\;version:\\1",
-      "olapic": ""
+      "olapic": "",
+      "olapic.version": "^v([\\d\\.]+)$\\;version:\\1"
     },
     "pricing": [
       "poa",

@@ -40,6 +40,59 @@
     "url": "\\/zabbix\\/\\;confidence:30",
     "website": "http://zabbix.com"
   },
+  "Zakeke": {
+    "cats": [
+      76
+    ],
+    "description": "Zakeke is a product customisation tool compatible with services and apps mostly used to manage ecommerce store.",
+    "icon": "Zakeke.png",
+    "js": {
+      "zakekeBoot": "",
+      "zakekeCustomizeLabel": "",
+      "zakekeLoading": "",
+      "zakekeProductPage": ""
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://www.zakeke.com"
+  },
+  "Zakeke Interactive Product Designer": {
+    "cats": [
+      87,
+      76
+    ],
+    "description": "Zakeke Interactive Product Designer lets customers personalise any product and visualise how they’ll look before checking out.",
+    "icon": "Zakeke.png",
+    "implies": "Zakeke",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "requires": "WooCommerce",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/zakeke-interactive-product-designer/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.zakeke.com"
+  },
+  "Zakeke Visual Customizer": {
+    "cats": [
+      100,
+      76
+    ],
+    "description": "Zakeke Visual Customizer is a cloud-connected visual ecommerce tool that allows brands and retailers to offer live, personalised, 2D, 3D, and augmented reality (AR) functionality for their products.",
+    "icon": "Zakeke.png",
+    "implies": "Zakeke",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.zakeke\\.com/Scripts/integration/shopify/",
+    "website": "https://www.zakeke.com"
+  },
   "Zakra": {
     "cats": [
       80
@@ -80,13 +133,13 @@
     "description": "Zaraz allows most tools to send their information through the Zaraz backend, replacing multiple network requests with a single request. Zaraz replaces heavy third-party widgets with a lighter-weight version that loads first so that the full-featured tool loads only when the browser reaches interactivity or upon user interaction.",
     "icon": "Zaraz.svg",
     "js": {
-      "zarazData": "",
-      "zaraz": ""
+      "zaraz": "",
+      "zarazData": ""
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://zaraz.com"
   },
   "Zeleris": {
