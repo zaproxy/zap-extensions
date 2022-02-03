@@ -64,7 +64,7 @@ public class RetireScanRule extends PluginPassiveScanner {
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
-        if (!msg.getResponseHeader().isImage() && !ResourceIdentificationUtils.isCss(msg)) {
+        if (!ResourceIdentificationUtils.isImage(msg) && !ResourceIdentificationUtils.isCss(msg)) {
             Repo scanRepo = getRepo();
             if (scanRepo == null) {
                 LOGGER.error("\tThe Retire.js repository was null.");

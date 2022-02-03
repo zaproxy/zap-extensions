@@ -88,9 +88,7 @@ public class PiiScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (ResourceIdentificationUtils.isCss(msg)
-                || msg.getRequestHeader().isImage()
-                || msg.getResponseHeader().isImage()) {
+        if (ResourceIdentificationUtils.isCss(msg) || ResourceIdentificationUtils.isImage(msg)) {
             return;
         }
 
