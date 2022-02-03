@@ -134,7 +134,6 @@ class PassthroughHandlerUnitTest {
         ch.pipeline()
                 .addLast(new HttpRequestDecoder())
                 .addLast(HttpResponseEncoder.getInstance())
-                .addLast(new PassthroughHandler(passthroughCondition))
                 .addLast(
                         new SimpleChannelInboundHandler<HttpMessage>() {
 
@@ -142,7 +141,16 @@ class PassthroughHandlerUnitTest {
                             protected void channelRead0(ChannelHandlerContext ctx, HttpMessage msg)
                                     throws Exception {
                                 proxyChannel = ctx.channel();
+                                ctx.fireChannelRead(msg);
+                            }
+                        })
+                .addLast(new PassthroughHandler(passthroughCondition))
+                .addLast(
+                        new SimpleChannelInboundHandler<HttpMessage>() {
 
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, HttpMessage msg)
+                                    throws Exception {
                                 proxyMessagesProcessed.add(msg);
                                 msg.getResponseHeader()
                                         .setMessage("HTTP/1.1 200 OK\r\nServer: Proxy");
@@ -272,7 +280,7 @@ class PassthroughHandlerUnitTest {
         HttpMessage response = (HttpMessage) TextTestClient.waitForResponse(clientChannel);
         assertThat(
                 response.getResponseHeader().toString(),
-                is(equalTo("HTTP/1.1 200 OK\r\nServer: Proxy\r\n\r\n")));
+                is(equalTo("HTTP/1.1 200 Connection established\r\n\r\n")));
         clientChannel.pipeline().remove(CLIENT_CODEC_NAME);
         clientChannel.writeAndFlush("Message 1\n").sync();
         String passthroughResponse1 = (String) TextTestClient.waitForResponse(clientChannel);
@@ -280,7 +288,7 @@ class PassthroughHandlerUnitTest {
         String passthroughResponse2 = (String) TextTestClient.waitForResponse(clientChannel);
         // Then
         assertTrue(Boolean.TRUE.equals(proxyChannel.attr(ChannelAttributes.PASSTHROUGH).get()));
-        assertThat(proxyMessagesProcessed, hasSize(1));
+        assertThat(proxyMessagesProcessed, hasSize(0));
         assertThat(serverMessagesReceived, contains("Message 1", "Message 2"));
         assertThat(passthroughResponse1, is(equalTo("Received: Message 1")));
         assertThat(passthroughResponse2, is(equalTo("Received: Message 2")));
@@ -299,7 +307,7 @@ class PassthroughHandlerUnitTest {
         HttpMessage response = (HttpMessage) TextTestClient.waitForResponse(clientChannel);
         assertThat(
                 response.getResponseHeader().toString(),
-                is(equalTo("HTTP/1.1 200 OK\r\nServer: Proxy\r\n\r\n")));
+                is(equalTo("HTTP/1.1 200 Connection established\r\n\r\n")));
         assertThrows(
                 Exception.class,
                 () -> {
@@ -308,7 +316,7 @@ class PassthroughHandlerUnitTest {
                     clientChannel.writeAndFlush("Message 2\n").sync();
                     TextTestClient.waitForResponse(clientChannel);
                 });
-        assertThat(proxyMessagesProcessed, hasSize(1));
+        assertThat(proxyMessagesProcessed, hasSize(0));
         assertThat(serverMessagesReceived, hasSize(0));
     }
 
