@@ -2,81 +2,81 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Script Console</title>
+<title>Консоль запуска сценариев</title>
 </head>
 <body>
-<h1>Script Console</h1>
+<h1>Консоль скриптов </h1>
 <p>
-The Script Console add-on allows you to run scripts that can be embedded within ZAP and can access internal ZAP data structures.<br/>
-It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
+Надстройка Script Console позволяет запускать сценарии, которые могут быть встроены в ZAP, и могут получать доступ к внутренним структурам данных ZAP. <br/>
+Он поддерживает любой язык сценариев, поддерживающий JSR 223 (http://www.jcp.org/en/jsr/detail?id=223), в том числе: 
 <ul>
-<li>ECMAScript / JavaScript (using <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, included by default)</li>
-<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (included by default)</li>
+<li>ECMAScript/JavaScript (с использованием <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">движка Nashorn</a>, включенного по умолчанию) </li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (по умолчанию включено) </li>
 <li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
 <li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
 <li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
-<li>and many more...</li> 
+<li>и многое другое ... </li> 
 </ul>
 
-<strong>WARNING - scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!</strong>
+<strong>ВНИМАНИЕ - скрипты запускаются с теми же разрешениями, что и ZAP, поэтому не запускайте скрипты, которым вы не доверяете! </strong>
 
-<h2>Script Types</h2>
-Different types of scripts are supported:
+<h2>Тип сценария</h2>
+Поддерживаются различные типы скриптов: 
 <ul>
-<li>Stand Alone - scripts that are self contained and are only run when your start them manually</li>
-<li>Active Rules - these run as part of the Active Scanner and can be individually enabled</li>
-<li>Passive Rules - these run as part of the Passive Scanner and can be individually enabled</li> 
-<li>Proxy - these run 'inline', can change every request and response and can be individually enabled. They can also trigger break points</li> 
-<li>HTTP Sender - scripts that run against every request/response sent/received by ZAP. This includes the proxied messages, messages sent during active scanner, fuzzer, ...</li>
-<li>Targeted - scripts that are invoked with a target URL and are only run when your start them manually</li>
-<li>Authentication - scripts that are invoked when authentication is performed for a Context. To be used, they need to
-be selected when configuring the Script-Based Authentication Method for a Context. </li> 
-<li>Script Input Vector - scripts for defining exactly what ZAP should attack</li>
-<li>Extender - scripts which can add new functionality, including graphical elements and new API end points</li>
+<li>Автономные сценарии — автономные сценарии, которые запускаются только тогда, когда вы запускаете их вручную. </li>
+<li>Активные правила — они запускаются как часть Active Scanner и могут быть включены по отдельности. </li>
+<li>Пассивные правила — они запускаются как часть пассивного сканера и могут быть включены по отдельности.</li> 
+<li>Прокси - они работают «встроенно», могут изменять каждый запрос и ответ и могут быть включены индивидуально. Они также могут вызывать точки останова. </li> 
+<li>Отправитель (Sender) HTTP — сценарии, которые запускаются для каждого запроса/ответа, отправленного/полученного ZAP. Сюда входят проксированные сообщения, сообщения, отправленные во время активного сканирования, фаззера и т. д. </li>
+<li>Целевые — сценарии, которые вызываются с целевым URL-адресом и запускаются только тогда, когда вы запускаете их вручную. </li>
+<li>Аутентификация — сценарии, которые вызываются при выполнении аутентификации для Контекста. Для их использования необходимо
+следует выбирать при настройке метода аутентификации на основе сценариев для контекста.  </li> 
+<li>Script Input Vector — скрипты для точного определения того, что ZAP должен атаковать </li>
+<li>Расширитель (Extender) — скрипты, которые могут добавлять новые функции, включая графические элементы и новые конечные точки API. </li>
 </ul>
-<strong>Note:</strong> Add-ons can add additional types of scripts, which should be described in the help of the corresponding add-on.
+<strong>Примечание: </strong> Дополнения могут добавлять дополнительные типы скриптов, которые должны быть описаны в справке соответствующего дополнения. 
 <p>
-All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
-before they will run.<br/>
-If an error occurs when they run then they will be disabled.<br/>
-When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
-Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+Все скрипты, которые запускаются автоматически, изначально «отключены» — вы должны включить их через <a href="tree.html">вкладку «Дерево скриптов»</a>.
+прежде чем они побегут.<br/>
+Если при их запуске произойдет ошибка, они будут отключены.<br/>
+При выборе скрипта последняя ошибка будет показана на вкладке <a href="console.html">Консоль скриптов</a>.<br/>
+Целевые сценарии можно вызвать, щелкнув правой кнопкой мыши запись на вкладках «Сайты» или «История» и выбрав пункт меню «Вызвать с помощью сценария...». 
 </p>
 <p>
 
-All scripting languages can be used for all script types, but only those languages that have been downloaded from the ZAP Marketplace
-will typically have templates. However you may well be able to adapt a template for another language.<br/>
-If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
+Все языки сценариев можно использовать для всех типов сценариев, но только для тех языков, которые были загружены с ZAP Marketplace.
+обычно имеют шаблоны.  Однако вы вполне можете адаптировать шаблон для другого языка.<br/>
+Если ваш любимый язык недоступен в Marketplace, создайте новую проблему через пункт меню «В сети/Сообщить о проблеме». <br/>
 </p>
 
-<h2>Global Variables</h2>
-Variables can be shared between all scripts via the class org.zaproxy.zap.extension.script.ScriptVars.<br/>
-For example in JavaScript you can use this class as follows:<br/><br/>
+<h2>Глобальные  переменные: </h2>
+Переменные могут быть общими для всех скриптов через класс org.zaproxy.zap.extension.script.ScriptVars. <br/>
+Например, в JavaScript вы можете использовать этот класс следующим образом: <br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
-<h2>Script Variables</h2>
-Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
-For example in JavaScript you can use this class as follows:<br/><br/>
+<h2>Переменные скрипта </h2>
+Переменные могут совместно использоваться отдельными вызовами одного и того же скрипта через один и тот же класс org.zaproxy.zap.extension.script.ScriptVars. <br/>
+Например, в JavaScript вы можете использовать этот класс следующим образом: <br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
-org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name") <br/>
 </code>
 <br/>
-Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like JavaScript).
-For other scripting languages (in ZAP versions after 2.7.0) the variables can be accessed/set by manually specifying
-the name of the script:<br/><br/>
+Обратите внимание, что эти методы можно использовать только из языков сценариев, которые предоставляют доступ к ScriptContext (например, JavaScript). 
+Для других языков сценариев (в версиях ZAP после 2.7.0) к переменным можно получить доступ/установить, указав вручную
+название скрипта: <br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar("ScriptName", "var.name","value")<br/>
-org.zaproxy.zap.extension.script.ScriptVars.getScriptVar("ScriptName", "var.name")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar("ScriptName", "var.name") <br/>
 </code>
 
-<h2>Custom Global/Script Variables</h2>
-Newer versions of ZAP (after 2.8.0) allow to set custom global/script variables, which can be of any type not
-just strings, for example, lists, maps.<br/>
-In JavaScript they are accessed/set as follows:<br/><br/>
+<h2>Пользовательские глобальные/скриптовые переменные </h2>
+Более новые версии ZAP (после 2.8.0) позволяют устанавливать пользовательские глобальные/сценарные переменные, которые могут быть любого типа, кроме
+просто строки, например, списки, карты. <br/>
+В JavaScript к ним обращаются/устанавливают следующим образом: <br/><br/>
 <code>
 var ScriptVars = Java.type("org.zaproxy.zap.extension.script.ScriptVars")
 
@@ -87,33 +87,33 @@ ScriptVars.setGlobalCustomVar("var.name", ["A", "B", "C", "D"])
 print(ScriptVars.getGlobalCustomVar("var.name")[2]) // Prints C
 </code>
 
-<h2>See also</h2>
+<h2>Смотрите также </h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="console.html">The Script Console tab</a></td><td></td>
+	<td><a href="console.html">Вкладка «Консоль сценариев» </a></td><td></td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+	<td><a href="tree.html">Вкладка "Дерево скриптов" </a></td><td></td>
 </tr>
 </table>
 
-<h2>External links</h2>
+<h2>внешние ссылки</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
-	<td>ZAP internal objects</td></tr>
+	<td>Внутренние объекты ZAP </td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.zaproxy/zap</a></td>
-	<td>ZAP javadocs</td>
+	<td>ZAP javadocs </td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
-	<td>Rhino Migration Guide</td>
+	<td>Руководство по миграции Rhino </td>
 </tr>
 </table>
 

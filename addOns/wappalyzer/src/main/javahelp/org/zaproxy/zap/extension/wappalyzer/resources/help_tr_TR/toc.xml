@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanım Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Teknoloji Tespiti" image="addon.wappalyzer.icon" target="addon.wappalyzer.wappalyzer" />
+			<tocitem text="Teknoloji Tespiti" image="addon.wappalyzer.icon" target="addon.wappalyzer">
+				<tocitem text="API" target="addon.wappalyzer.api" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>
