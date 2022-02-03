@@ -4,5 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Zest" target="addon.wappalyzer.wappalyzer" />
+	<indexitem text="Wappalyzer" target="addon.wappalyzer" />
+	<indexitem text="Wappalyzer API" target="addon.wappalyzer.api" />
 </index>

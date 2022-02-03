@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
-			<tocitem text="Ang Pagtukoy ng Teknolohiya" image="addon.wappalyzer.icon" target="addon.wappalyzer.wappalyzer" />
+			<tocitem text="Ang Pagtukoy ng Teknolohiya" image="addon.wappalyzer.icon" target="addon.wappalyzer">
+				<tocitem text="API" target="addon.wappalyzer.api" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>
