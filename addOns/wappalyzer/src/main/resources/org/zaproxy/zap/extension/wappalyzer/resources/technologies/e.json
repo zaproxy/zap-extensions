@@ -229,6 +229,21 @@
     "url": "https?://(?:[^/]+\\.)?edgecastcdn\\.net/",
     "website": "http://www.edgecast.com"
   },
+  "Editor.js": {
+    "cats": [
+      24
+    ],
+    "description": "Editor.js is a Javascript library which allows developers to implement a block base text editor with plugins on their page.",
+    "icon": "Editor.js.png",
+    "js": {
+      "EditorJS": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://editorjs.io"
+  },
   "Elastic APM": {
     "cats": [
       10,
@@ -244,6 +259,26 @@
       "elasticApm": ""
     },
     "website": "https://www.elastic.co/apm"
+  },
+  "ElasticPress": {
+    "cats": [
+      87
+    ],
+    "description": "ElasticPress is a hosting service that connects your WordPress site to search hosting.",
+    "headers": {
+      "x-elasticpress-query": ""
+    },
+    "icon": "elasticpress.svg",
+    "implies": [
+      "Elasticsearch"
+    ],
+    "pricing": [
+      "recurring",
+      "freemium",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://www.elasticpress.io/"
   },
   "ElasticSuite": {
     "cats": [
@@ -1292,21 +1327,6 @@
       "fe_eclass_guest": "\\;confidence:50"
     },
     "website": "https://www.eclass.com.hk"
-  },
-  "Editor.js": {
-    "cats": [
-      24
-    ],
-    "description": "Editor.js is a Javascript library which allows developers to implement a block base text editor with plugins on their page.",
-    "icon": "Editor.js.png",
-    "js": {
-      "EditorJS": ""
-    },
-    "oss": true,
-    "pricing": [
-      "freemium"
-    ],
-    "website": "https://editorjs.io"
   },
   "eDokan": {
     "cats": [

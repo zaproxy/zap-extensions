@@ -331,6 +331,11 @@
     ],
     "description": "Wagtail is a Django content management system (CMS) focused on flexibility and user experience.",
     "dom": {
+      "[data-block-key]": {
+        "attributes": {
+          "data-block-key": "[a-z0-9]{5}"
+        }
+      },
       "[style*='images/']": {
         "attributes": {
           "style": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
@@ -874,7 +879,7 @@
       52
     ],
     "description": "WhatsApp Business is a free to download app available on Android and iPhone using which businesses can connect with their customers.",
-    "dom": "a[href*='api.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
+    "dom": "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
     "icon": "WhatsApp.svg",
     "website": "https://www.whatsapp.com/business"
   },
@@ -996,6 +1001,21 @@
       "generator": "WikkaWiki"
     },
     "website": "http://wikkawiki.org"
+  },
+  "WildJar": {
+    "cats": [
+      10
+    ],
+    "description": "WildJar is a call tracking and intelligence platform which helps you understand where your leads are coming from, who is calling you, what your conversations are about and connect that data into other platforms.",
+    "icon": "WildJar.png",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "trkcall\\.com/scripts",
+    "website": "https://www.wildjar.com"
   },
   "Windows CE": {
     "cats": [
@@ -1487,6 +1507,23 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/wordfence/.+login\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wordfence.com"
+  },
+  "Workable": {
+    "cats": [
+      101
+    ],
+    "description": "Workable is the all-in-one hiring solution.",
+    "dom": "a[href*='.workable.com/']",
+    "icon": "Workable.svg",
+    "js": {
+      "webpackChunk_workable_candidate": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.workable.com"
   },
   "Workarea": {
     "cats": [

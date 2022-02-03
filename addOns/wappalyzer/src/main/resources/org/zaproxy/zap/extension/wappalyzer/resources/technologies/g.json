@@ -605,10 +605,10 @@
       "<div class=\"ui left\">\\n\\s+© Gitea Version: ([\\d.]+)\\;version:\\1"
     ],
     "icon": "gitea.svg",
+    "implies": "Go",
     "meta": {
       "keywords": "^go,git,self-hosted,gitea$"
     },
-    "implies" : "Go",
     "website": "https://gitea.io"
   },
   "Gitiles": {
@@ -913,13 +913,13 @@
       "<button class=\"ui basic clone button\" id=\"repo-clone-ssh\" data-link=\"gogs@"
     ],
     "icon": "gogs.png",
-    "meta": {
-      "keywords": "go, git, self-hosted, gogs"
-    },
     "implies": [
       "Go",
       "Macaron"
     ],
+    "meta": {
+      "keywords": "go, git, self-hosted, gogs"
+    },
     "oss": true,
     "scriptSrc": "js/gogs\\.js",
     "website": "http://gogs.io"
@@ -1089,8 +1089,8 @@
       90
     ],
     "description": "Google Customer Reviews is a badge on your site that can help users identify your site with the Google brand and can be placed on any page of your site.",
-    "icon": "Google.svg",
     "dom": "iframe[src*='.google.com/shopping/customerreviews/'], a[href*='.google.com/shopping/customerreviews/'][target='_blank']",
+    "icon": "Google.svg",
     "pricing": [
       "freemium"
     ],
@@ -1350,14 +1350,14 @@
     ],
     "description": "Grafana is a multi-platform open source analytics and interactive visualisation web application.",
     "icon": "Grafana.svg",
-    "js": {
-      "__grafana_public_path__": "",
-      "grafanaBootData.settings.buildInfo['version']": "([\\d.]+)\\;version:\\1"
-    },
     "implies": [
       "Go",
       "Macaron"
     ],
+    "js": {
+      "__grafana_public_path__": "",
+      "grafanaBootData.settings.buildInfo['version']": "([\\d.]+)\\;version:\\1"
+    },
     "oss": true,
     "scriptSrc": "grafana\\..+\\.com/public/build/",
     "website": "https://grafana.com"
@@ -1516,6 +1516,23 @@
       "DC.identifier": "/content\\.jsp\\?objectid="
     },
     "website": "http://www.greenvalley.nl/Public/Producten/Content_Management/CMS"
+  },
+  "Greenhouse": {
+    "cats": [
+      101
+    ],
+    "description": "Greenhouse is an applicant tracking and hiring tool. Greenhouse features automated workflow, recruitment analytics, CRM, and onboarding.",
+    "icon": "Greenhouse.svg",
+    "js": {
+      "populateGreenhouseJobs": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.greenhouse\\.io/",
+    "website": "https://www.greenhouse.io"
   },
   "Griddo": {
     "cats": [
@@ -1762,8 +1779,8 @@
     "headers": {
       "Server": "gunicorn(?:/([\\d.]+))?\\;version:\\1"
     },
-    "implies": "Python",
     "icon": "gunicorn.png",
+    "implies": "Python",
     "website": "http://gunicorn.org"
   }
 }

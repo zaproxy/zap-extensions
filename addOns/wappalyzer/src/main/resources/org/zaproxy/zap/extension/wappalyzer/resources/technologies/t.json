@@ -1190,7 +1190,8 @@
   },
   "Thimatic": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Thimatic is a Shopify app for product reviews.",
     "icon": "Thimatic.png",
@@ -1795,6 +1796,17 @@
     "website": "https://triplelift.com",
     "xhr": "\\.3lift\\.com"
   },
+  "Trix": {
+    "cats": [
+      24
+    ],
+    "description": "Trix is an open-source project from Basecamp, the creators of Ruby on Rails.",
+    "icon": "trix.png",
+    "js": {
+      "Trix.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "website": "https://trix-editor.org"
+  },
   "TruValidate": {
     "cats": [
       16,
@@ -1892,14 +1904,14 @@
       90
     ],
     "description": "Google Reviews s a premium plugin that can help you to embed reviews on your site by Trustindex.",
-    "icon": "Trustindex.svg",
     "dom": "link[href*='/wp-content/plugins/widget-google-reviews/']",
-    "scriptSrc": "/wp-content/plugins/widget-google-reviews/",
-    "saas": true,
+    "icon": "Trustindex.svg",
     "pricing": [
       "onetime"
     ],
     "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/widget-google-reviews/",
     "website": "https://www.trustindex.io"
   },
   "Trustpilot": {
@@ -1945,6 +1957,18 @@
     "icon": "Tumblr.png",
     "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
     "website": "http://www.tumblr.com"
+  },
+  "Turbo": {
+    "cats": [
+      92
+    ],
+    "description": "Turbo is a JavaScript framework for building fast web applications.",
+    "icon": "Turbo.svg",
+    "js": {
+      "Turbo": ""
+    },
+    "oss": true,
+    "website": "https://turbo.hotwired.dev/"
   },
   "Turbolinks": {
     "cats": [
@@ -2234,6 +2258,7 @@
       "Server": "TwistedWeb(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "TwistedWeb.png",
+    "oss": true,
     "website": "http://twistedmatrix.com/trac/wiki/TwistedWeb"
   },
   "Twitch Player": {

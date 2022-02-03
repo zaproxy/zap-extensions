@@ -141,6 +141,51 @@
     "scriptSrc": "tag\\.navdmp\\.com",
     "website": "https://www.navegg.com/"
   },
+  "Naver Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Naver Analytics is a Korean based analytics service.",
+    "icon": "Naver.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "wcs\\.naver\\.net/wcslog\\.js",
+    "website": "https://analytics.naver.com"
+  },
+  "Naver Maps": {
+    "cats": [
+      35
+    ],
+    "description": "Naver Maps help develop location-based services which provided by Naver.",
+    "icon": "Naver.svg",
+    "js": {
+      "naver.maps": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "openapi\\.map\\.naver\\.com/openapi/v([\\d\\.]+)\\;version:\\1",
+    "website": "https://www.ncloud.com/product/applicationService/maps"
+  },
+  "Naver RUA": {
+    "cats": [
+      92,
+      78
+    ],
+    "description": "Naver RUA (Real User Analytics) collects performance data from real users to analyze the speed of your website by country, operating system, and browser.",
+    "icon": "Naver.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "rua-api\\.ncloud\\.com/",
+    "website": "https://analytics.naver.com"
+  },
   "Neos CMS": {
     "cats": [
       1

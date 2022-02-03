@@ -111,6 +111,22 @@
     ],
     "website": "https://www.seur.com"
   },
+  "SHE Media": {
+    "cats": [
+      36
+    ],
+    "description": "SHE Media is an ad network, which means that they basically serve as a coordinator between advertisers and publishers (bloggers).",
+    "icon": "SHE Media.png",
+    "js": {
+      "SheMedia": "",
+      "blogherads.adq": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.shemedia.com"
+  },
   "SIMsite": {
     "cats": [
       1
@@ -1110,6 +1126,7 @@
       6
     ],
     "description": "Sellix is an ecommerce payment processor. It accepts PayPal, PerfectMoney and popular cryptocurrencies.",
+    "dom": "link[href*='.sellix.io']",
     "icon": "Sellix.svg",
     "pricing": [
       "low",
@@ -1119,6 +1136,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.sellix\\.io/static/js/embed\\.js",
     "website": "https://sellix.io/"
+  },
+  "Sellsy": {
+    "cats": [
+      53
+    ],
+    "description": "Sellsy is a cloud-based sales management solution for small to midsize businesses",
+    "icon": "Sellsy.svg",
+    "js": {
+      "SellsySnippet": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sellsy\\.com/",
+    "website": "https://go.sellsy.com"
   },
   "Selly": {
     "cats": [
@@ -2387,6 +2421,25 @@
     "scriptSrc": "/wp-content/plugins/so-widgets-bundle/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://siteorigin.com/widgets-bundle"
   },
+  "SitePad": {
+    "cats": [
+      57
+    ],
+    "description": "Build your professional website using easy to use editor and publish static web pages.",
+    "icon": "SitePad.png",
+    "implies": [
+      "PHP"
+    ],
+    "meta": {
+      "generator": "^SitePad .+$"
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "website": "https://sitepad.com/"
+  },
   "SiteSpect": {
     "cats": [
       74
@@ -2441,14 +2494,18 @@
     ],
     "cookies": {
       "SC_ANALYTICS_GLOBAL_COOKIE": "",
+      "SC_OS_SessionId": "",
       "sc_expview": ""
     },
     "description": "Sitecore provides web content management, and multichannel marketing automation software.",
     "html": "<img[^>]+src=\"[^>]*/~/media/[^>]+\\.ashx",
-    "icon": "Sitecore.png",
+    "icon": "Sitecore.svg",
     "pricing": [
-      "poa"
+      "poa",
+      "recurring",
+      "high"
     ],
+    "requires": "Microsoft ASP.NET",
     "saas": true,
     "website": "https://www.sitecore.com/"
   },
@@ -4050,11 +4107,14 @@
     "cats": [
       18
     ],
-    "description": "StimulusReflex lets you create reactive web interfaces with Ruby on Rails.",    
+    "description": "StimulusReflex lets you create reactive web interfaces with Ruby on Rails.",
     "dom": "[data-reflex]",
     "icon": "stimulus-reflex-logo.svg",
-    "implies": ["Ruby on Rails", "Stimulus"],    
-    "scripts": "\\.stimulate",    
+    "implies": [
+      "Ruby on Rails",
+      "Stimulus"
+    ],
+    "scripts": "\\.stimulate",
     "website": "https://docs.stimulusreflex.com"
   },
   "Stitches": {
@@ -4136,10 +4196,16 @@
     "cats": [
       1
     ],
-    "icon": "storyblok.png",
+    "description": "Storyblok is a headless CMS with a visual editor for developers, marketers and content editors. Storyblok helps your team to manage content and digital experiences for every use-case from corporate websites, ecommerce, helpdesks, mobile apps, screen displays, and more.",
+    "icon": "Storyblok.svg",
     "meta": {
       "generator": "storyblok"
     },
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
     "website": "https://www.storyblok.com"
   },
   "Strapdown.js": {
@@ -4379,8 +4445,7 @@
     "icon": "SummerCart.svg",
     "implies": "PHP",
     "js": {
-      "SC": "\\;confidence:10",
-      "SCEvents": "\\;confidence:40"
+      "SCEvents": ""
     },
     "pricing": [
       "mid",

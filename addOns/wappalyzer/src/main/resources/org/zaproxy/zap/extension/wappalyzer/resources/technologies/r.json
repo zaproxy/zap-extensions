@@ -52,6 +52,23 @@
     },
     "website": "https://github.com/ruby/rdoc"
   },
+  "REDAXO": {
+    "cats": [
+      1
+    ],
+    "description": "REDAXO is a content management system that provides business optimisation through web projects and output codes.",
+    "icon": "REDAXO.png",
+    "implies": "PHP",
+    "js": {
+      "redaxo": "\\;confidence:50"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "url": "^https?://(?:www\\.)?[\\d\\w\\-]+\\.[\\w]+/redaxo/\\;confidence:50",
+    "website": "https://redaxo.org"
+  },
   "REG.RU": {
     "cats": [
       88
@@ -138,7 +155,10 @@
       "rakutenRanMID": "",
       "rakutenSource": ""
     },
-    "scriptSrc": "tag\\.rmp\\.rakuten\\.com",
+    "scriptSrc": [
+      "tag\\.rmp\\.rakuten\\.com",
+      "\\.linksynergy\\.com"
+    ],
     "website": "https://www.rakuten.com/"
   },
   "Rakuten Advertising": {
@@ -554,7 +574,8 @@
   },
   "RecoverMyCart": {
     "cats": [
-      76
+      76,
+      100
     ],
     "description": "RecoverMyCart is a shopify app for abandoned basket recovery.",
     "icon": "RecoverMyCart.png",
@@ -566,6 +587,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.recovermycart\\.com",
     "website": "https://app.recovermycart.com/"
+  },
+  "Recruitee": {
+    "cats": [
+      101
+    ],
+    "description": "Recruitee is an integrated cloud-based recruitment management and applicant tracking system.",
+    "dom": "a[href*='.recruitee.com']",
+    "icon": "Recruitee.svg",
+    "js": {
+      "RtApp.mapBoxToken": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://recruitee.com"
   },
   "Recurly": {
     "cats": [
@@ -810,10 +848,10 @@
       18,
       22
     ],
-    "description": "Remix is a full stack web framework focused on web fundamentals and modern UX.",
+    "description": "Remix is a React framework used for server-side rendering (SSR).",
     "icon": "Remix.svg",
     "implies": [
-      "Node.js"
+      "React"
     ],
     "js": {
       "__remixContext": ""
@@ -1358,6 +1396,22 @@
       "rollbar\\.js/([0-9.]+)\\;version:\\1"
     ],
     "website": "https://rollbar.com/"
+  },
+  "Rotic": {
+    "cats": [
+      52
+    ],
+    "description": "Rotic is a conversion chatbot that answers questions, captures contacts, and books meetings.",
+    "icon": "Rotic.svg",
+    "js": {
+      "Rotic.setting": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://rotic.ir"
   },
   "RoundCube": {
     "cats": [

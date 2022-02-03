@@ -330,6 +330,24 @@
     "implies": "Microsoft ASP.NET",
     "website": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel"
   },
+  "Kevel": {
+    "cats": [
+      36
+    ],
+    "description": "Kevel (formerly Adzerk) is a developer of ad-serving APIs to help developers build server-side ad platforms.",
+    "dom": "iframe[src*='adzerk.net'], link[href*='adzerk.net']",
+    "icon": "Kevel.svg",
+    "js": {
+      "ados": "",
+      "adosResults": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "adzerk\\.net/",
+    "website": "https://www.kevel.com"
+  },
   "KeyCDN": {
     "cats": [
       31
