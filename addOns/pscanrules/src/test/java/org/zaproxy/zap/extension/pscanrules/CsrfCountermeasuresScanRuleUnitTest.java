@@ -346,7 +346,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     }
 
     @Test
-    void shouldRaiseLowAlertWhenFormAttributeAndRuleConfigMismatch() {
+    void shouldRaiseMediumAlertWhenFormAttributeAndRuleConfigMismatch() {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
 
@@ -358,7 +358,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(Alert.RISK_LOW, alertsRaised.get(0).getRisk());
+        assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
     }
 
     @Test

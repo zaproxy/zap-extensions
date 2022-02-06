@@ -202,7 +202,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 String formDetails = sbForm.toString();
                 String tokenNamesFlattened = tokenNames.toString();
 
-                int risk = Alert.RISK_LOW;
+                int risk = Alert.RISK_MEDIUM;
                 String desc = Constant.messages.getString("pscanrules.noanticsrftokens.desc");
                 String extraInfo =
                         Constant.messages.getString(
@@ -218,7 +218,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
                 newAlert()
                         .setRisk(risk)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setConfidence(Alert.CONFIDENCE_LOW)
                         .setDescription(desc + "\n" + getDescription())
                         .setOtherInfo(extraInfo)
                         .setSolution(getSolution())

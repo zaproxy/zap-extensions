@@ -226,7 +226,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                     }
                     // If vulnerable, generates the alert
                     if (vuln) {
-                        int risk = Alert.RISK_HIGH;
+                        int risk = Alert.RISK_MEDIUM;
                         String evidence = formElement.getFirstElement().getStartTag().toString();
                         String otherInfo = "";
 
@@ -300,7 +300,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
 
     @Override
     public int getRisk() {
-        return Alert.RISK_HIGH;
+        return Alert.RISK_MEDIUM;
     }
 
     @Override
