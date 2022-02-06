@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2021 The ZAP Development Team
+ * Copyright 2022 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,29 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 
-public class ImportPaneListener implements RequesterListener {
+public class ProgressListener extends ProgressPaneListener implements RequesterListener {
 
-    private final ImportPane importPane;
-    private int messagesSent;
-
-    public ImportPaneListener(ImportPane importPane) {
-        this.importPane = importPane;
+    public ProgressListener(ProgressPane progressPane) {
+        super(progressPane);
     }
 
     @Override
     public void handleMessage(final HttpMessage message, int initiator) {
         if (!HttpStatusCode.isRedirection(message.getResponseHeader().getStatusCode())) {
-            messagesSent++;
+            setTasksDone(getTasksDone() + 1);
         }
-        importPane.setImportedEndpoints(messagesSent);
-        importPane.setCurrentImport(message.getRequestHeader().getURI().toString());
+        getProgressPane().setProcessedTasks(getTasksDone());
+        getProgressPane()
+                .setCurrentTask(
+                        Constant.messages.getString(
+                                "openapi.progress.importpane.currentimport",
+                                message.getRequestHeader().getURI().toString()));
     }
 }

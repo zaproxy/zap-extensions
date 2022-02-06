@@ -24,6 +24,13 @@ zapAddOn {
                 }
             }
         }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.8.0 & < 2.0.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -42,6 +49,8 @@ configurations {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
     implementation("io.swagger.parser.v3:swagger-parser:2.0.28")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.56") {
         // Not needed:
@@ -53,6 +62,8 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
