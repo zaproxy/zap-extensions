@@ -58,8 +58,8 @@ import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestClient;
 import org.zaproxy.addon.network.testutils.TextTestClient;
 
-/** Unit test for {@link PassthroughHandler}. */
-class PassthroughHandlerUnitTest {
+/** Unit test for {@link PassThroughHandler}. */
+class PassThroughHandlerUnitTest {
 
     private static final String CLIENT_CODEC_NAME = "http.client";
 
@@ -81,7 +81,7 @@ class PassthroughHandlerUnitTest {
         eventLoopGroup =
                 new NioEventLoopGroup(
                         NettyRuntime.availableProcessors(),
-                        new DefaultThreadFactory("ZAP-PassthroughHandlerUnitTest"));
+                        new DefaultThreadFactory("ZAP-PassThroughHandlerUnitTest"));
 
         client =
                 new TextTestClient(
@@ -124,13 +124,13 @@ class PassthroughHandlerUnitTest {
         }
     }
 
-    private BaseServer createProxy(Predicate<HttpRequestHeader> passthroughCondition) {
-        proxy = new BaseServer(eventLoopGroup, ch -> initProxyChannel(ch, passthroughCondition));
+    private BaseServer createProxy(Predicate<HttpRequestHeader> passThroughCondition) {
+        proxy = new BaseServer(eventLoopGroup, ch -> initProxyChannel(ch, passThroughCondition));
         return proxy;
     }
 
     private void initProxyChannel(
-            SocketChannel ch, Predicate<HttpRequestHeader> passthroughCondition) {
+            SocketChannel ch, Predicate<HttpRequestHeader> passThroughCondition) {
         ch.pipeline()
                 .addLast(new HttpRequestDecoder())
                 .addLast(HttpResponseEncoder.getInstance())
@@ -144,7 +144,7 @@ class PassthroughHandlerUnitTest {
                                 ctx.fireChannelRead(msg);
                             }
                         })
-                .addLast(new PassthroughHandler(passthroughCondition))
+                .addLast(new PassThroughHandler(passThroughCondition))
                 .addLast(
                         new SimpleChannelInboundHandler<HttpMessage>() {
 
@@ -207,7 +207,7 @@ class PassthroughHandlerUnitTest {
     }
 
     @Test
-    void shouldNotPassthroughIfDisabled() throws Exception {
+    void shouldNotPassThroughIfDisabled() throws Exception {
         // Given
         int serverPort = startServer();
         int proxyPort = createProxy(NO_PASSTHROUGH).start(Server.ANY_PORT);
@@ -218,7 +218,7 @@ class PassthroughHandlerUnitTest {
         clientChannel.writeAndFlush(request).sync();
         HttpMessage response = (HttpMessage) TextTestClient.waitForResponse(clientChannel);
         // Then
-        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASSTHROUGH).get()));
+        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASS_THROUGH).get()));
         assertThat(proxyMessagesProcessed, hasSize(1));
         assertThat(serverMessagesReceived, hasSize(0));
         assertThat(
@@ -227,7 +227,7 @@ class PassthroughHandlerUnitTest {
     }
 
     @Test
-    void shouldNotPassthroughIfNotConnect() throws Exception {
+    void shouldNotPassThroughIfNotConnect() throws Exception {
         // Given
         int serverPort = startServer();
         int proxyPort = createProxy(PASSTHROUGH_ALL).start(Server.ANY_PORT);
@@ -237,7 +237,7 @@ class PassthroughHandlerUnitTest {
         clientChannel.writeAndFlush(request).sync();
         HttpMessage response = (HttpMessage) TextTestClient.waitForResponse(clientChannel);
         // Then
-        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASSTHROUGH).get()));
+        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASS_THROUGH).get()));
         assertThat(proxyMessagesProcessed, hasSize(1));
         assertThat(serverMessagesReceived, hasSize(0));
         assertThat(
@@ -246,7 +246,7 @@ class PassthroughHandlerUnitTest {
     }
 
     @Test
-    void shouldNotPassthroughIfNotAllowedConnect() throws Exception {
+    void shouldNotPassThroughIfNotAllowedConnect() throws Exception {
         // Given
         int serverPort = startServer();
         int proxyPort =
@@ -258,7 +258,7 @@ class PassthroughHandlerUnitTest {
         clientChannel.writeAndFlush(request).sync();
         HttpMessage response = (HttpMessage) TextTestClient.waitForResponse(clientChannel);
         // Then
-        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASSTHROUGH).get()));
+        assertTrue(Boolean.FALSE.equals(proxyChannel.attr(ChannelAttributes.PASS_THROUGH).get()));
         assertThat(proxyMessagesProcessed, hasSize(1));
         assertThat(serverMessagesReceived, hasSize(0));
         assertThat(
@@ -267,7 +267,7 @@ class PassthroughHandlerUnitTest {
     }
 
     @Test
-    void shouldPassthroughIfAllowedConnect() throws Exception {
+    void shouldPassThroughIfAllowedConnect() throws Exception {
         // Given
         int serverPort = startServer();
         int proxyPort =
@@ -283,15 +283,15 @@ class PassthroughHandlerUnitTest {
                 is(equalTo("HTTP/1.1 200 Connection established\r\n\r\n")));
         clientChannel.pipeline().remove(CLIENT_CODEC_NAME);
         clientChannel.writeAndFlush("Message 1\n").sync();
-        String passthroughResponse1 = (String) TextTestClient.waitForResponse(clientChannel);
+        String passThroughResponse1 = (String) TextTestClient.waitForResponse(clientChannel);
         clientChannel.writeAndFlush("Message 2\n").sync();
-        String passthroughResponse2 = (String) TextTestClient.waitForResponse(clientChannel);
+        String passThroughResponse2 = (String) TextTestClient.waitForResponse(clientChannel);
         // Then
-        assertTrue(Boolean.TRUE.equals(proxyChannel.attr(ChannelAttributes.PASSTHROUGH).get()));
+        assertTrue(Boolean.TRUE.equals(proxyChannel.attr(ChannelAttributes.PASS_THROUGH).get()));
         assertThat(proxyMessagesProcessed, hasSize(0));
         assertThat(serverMessagesReceived, contains("Message 1", "Message 2"));
-        assertThat(passthroughResponse1, is(equalTo("Received: Message 1")));
-        assertThat(passthroughResponse2, is(equalTo("Received: Message 2")));
+        assertThat(passThroughResponse1, is(equalTo("Received: Message 1")));
+        assertThat(passThroughResponse2, is(equalTo("Received: Message 2")));
     }
 
     @Test

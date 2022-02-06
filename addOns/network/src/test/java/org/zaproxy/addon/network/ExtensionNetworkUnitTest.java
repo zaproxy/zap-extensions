@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -264,6 +265,60 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(
                 extension.getLegacyProxyListenerHandler(),
                 is(equalTo(argument.getAllValues().get(0))));
+    }
+
+    @Test
+    void shouldAddLocalServersOptionsOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(LocalServersOptions.class)));
+        assertThat(extension.getLocalServersOptions(), is(equalTo(argument.getAllValues().get(1))));
+    }
+
+    @Test
+    void shouldNotAddLocalServersOptionsOnHookIfNotHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), not(contains(instanceOf(LocalServersOptions.class))));
+        assertThat(extension.getLocalServersOptions(), is(nullValue()));
+    }
+
+    @Test
+    void shouldCreatePassThroughHandlerOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getPassThroughHandler(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldNotCreatePassThroughHandlerOnHookIfNotHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getPassThroughHandler(), is(nullValue()));
     }
 
     @Test

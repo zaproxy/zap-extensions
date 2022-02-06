@@ -66,6 +66,7 @@ import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
@@ -104,6 +105,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private SslCertificateService sslCertificateService;
 
+    private LocalServersOptions localServersOptions;
+    private LocalServersOptionsPanel localServersOptionsPanel;
+
+    private PassThroughHandler passThroughHandler;
+
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
 
@@ -115,6 +121,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean isHandleServerCerts() {
         return handleServerCerts;
+    }
+
+    boolean isHandleLocalServers() {
+        return handleLocalServers;
     }
 
     @Override
@@ -314,16 +324,36 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
 
+        if (handleLocalServers) {
+            localServersOptions = new LocalServersOptions();
+            extensionHook.addOptionsParamSet(localServersOptions);
+
+            passThroughHandler =
+                    new PassThroughHandler(
+                            requestHeader ->
+                                    localServersOptions.getPassThroughs().stream()
+                                            .anyMatch(e -> e.test(requestHeader)));
+        }
+
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             String[] networkNode = {Constant.messages.getString("network.ui.options.name")};
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
             optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
+
+            if (handleLocalServers) {
+                localServersOptionsPanel = new LocalServersOptionsPanel(this);
+                optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
+            }
         }
     }
 
     LegacyProxyListenerHandler getLegacyProxyListenerHandler() {
         return legacyProxyListenerHandler;
+    }
+
+    PassThroughHandler getPassThroughHandler() {
+        return passThroughHandler;
     }
 
     private static CommandLineArgument[] createCommandLineArgs() {
@@ -431,6 +461,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     ServerCertificatesOptions getServerCertificatesOptions() {
         return serverCertificatesOptions;
+    }
+
+    LocalServersOptions getLocalServersOptions() {
+        return localServersOptions;
     }
 
     @Override
@@ -574,6 +608,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
+
+            if (handleLocalServers) {
+                optionsDialog.removeParamPanel(localServersOptionsPanel);
+            }
         }
     }
 

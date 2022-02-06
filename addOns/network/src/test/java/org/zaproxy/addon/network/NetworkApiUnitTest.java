@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
@@ -43,7 +44,9 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +57,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiElement;
@@ -69,6 +73,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     private NetworkApi networkApi;
     private ServerCertificatesOptions serverCertificatesOptions;
+    private LocalServersOptions localServersOptions;
     private ExtensionNetwork extensionNetwork;
 
     @BeforeEach
@@ -78,6 +83,8 @@ class NetworkApiUnitTest extends TestUtils {
         serverCertificatesOptions = mock(ServerCertificatesOptions.class, withSettings().lenient());
         given(extensionNetwork.getServerCertificatesOptions())
                 .willReturn(serverCertificatesOptions);
+        localServersOptions = mock(LocalServersOptions.class, withSettings().lenient());
+        given(extensionNetwork.getLocalServersOptions()).willReturn(localServersOptions);
         networkApi = new NetworkApi(extensionNetwork);
     }
 
@@ -115,6 +122,19 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(networkApi.getApiActions(), hasSize(4));
         assertThat(networkApi.getApiViews(), hasSize(2));
+        assertThat(networkApi.getApiOthers(), hasSize(1));
+    }
+
+    @Test
+    void shouldAddAdditionalApiElementsWhenHandlingLocalServers() {
+        // Given
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        networkApi = new NetworkApi(extensionNetwork);
+        // Then
+        assertThat(networkApi.getApiActions(), hasSize(7));
+        assertThat(networkApi.getApiViews(), hasSize(3));
         assertThat(networkApi.getApiOthers(), hasSize(1));
     }
 
@@ -429,7 +449,169 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnOkForAddedPassThrough() throws Exception {
+        // Given
+        String name = "addPassThrough";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        params.put("enabled", "false");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addPassThrough(newPassThrough("example.org", false));
+    }
+
+    @Test
+    void shouldThrowApiExceptionForInvalidAddedPassThrough() throws Exception {
+        // Given
+        String name = "addPassThrough";
+        JSONObject params = new JSONObject();
+        params.put("authority", "*");
+        params.put("enabled", "true");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+    }
+
+    @Test
+    void shouldDefaultToEnabledForAddedPassThrough() throws Exception {
+        // Given
+        String name = "addPassThrough";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addPassThrough(newPassThrough("example.org", true));
+    }
+
+    @Test
+    void shouldReturnOkForRemovedPassThrough() throws Exception {
+        // Given
+        String name = "removePassThrough";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removePassThrough(any())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).removePassThrough("example.org");
+    }
+
+    @Test
+    void shouldhrowApiExceptionForMissingRemovedPassThrough() throws Exception {
+        // Given
+        String name = "removePassThrough";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removePassThrough(any())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(localServersOptions).removePassThrough("example.org");
+    }
+
+    @Test
+    void shouldReturnOkForChangedPassThrough() throws Exception {
+        // Given
+        String name = "setPassThroughEnabled";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        params.put("enabled", "false");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).setPassThroughEnabled("example.org", false);
+    }
+
+    @Test
+    void shouldThrowApiExceptionForMissingChangedPassThrough() throws Exception {
+        // Given
+        String name = "setPassThroughEnabled";
+        JSONObject params = new JSONObject();
+        params.put("authority", "example.org");
+        params.put("enabled", "true");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(localServersOptions).setPassThroughEnabled("example.org", true);
+    }
+
+    @Test
+    void shouldGetPassThroughs() throws Exception {
+        // Given
+        String name = "getPassThroughs";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getPassThroughs())
+                .willReturn(
+                        Arrays.asList(
+                                newPassThrough("example.org", true),
+                                newPassThrough("example.com", false)));
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(
+                response.toJSON().toString(),
+                is(
+                        equalTo(
+                                "{\"getPassThroughs\":[{\"name\":\"example.org\",\"enabled\":true},"
+                                        + "{\"name\":\"example.com\",\"enabled\":false}]}")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"addPassThrough", "removePassThrough", "setPassThroughEnabled"})
+    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingLocalServers(String name)
+            throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"getPassThroughs"})
+    void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingLocalServers(String name)
+            throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
+    }
+
+    @Test
     void shouldHaveDescriptionsForAllApiElements() {
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);
         checkApiElements(
@@ -461,5 +643,9 @@ class NetworkApiUnitTest extends TestUtils {
         if (!Constant.messages.containsKey(key)) {
             missingKeys.add(key);
         }
+    }
+
+    private static PassThrough newPassThrough(String authority, boolean enabled) {
+        return new PassThrough(Pattern.compile(authority), enabled);
     }
 }
