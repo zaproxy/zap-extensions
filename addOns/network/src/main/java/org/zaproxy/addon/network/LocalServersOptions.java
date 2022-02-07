@@ -116,6 +116,9 @@ public class LocalServersOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
+        // Do always, for now, in case -config args are in use.
+        migrateCoreConfigs();
+
         List<HierarchicalConfiguration> fields =
                 ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_ALIASES_KEY);
         aliases = new ArrayList<>(fields.size());
@@ -591,5 +594,75 @@ public class LocalServersOptions extends VersionedAbstractParam {
      */
     public boolean isConfirmRemoveServer() {
         return confirmRemoveServer;
+    }
+
+    private void migrateCoreConfigs() {
+        List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+        try {
+            tlsProtocols = migrateMainProxy();
+        } catch (Exception e) {
+            LOGGER.warn("An error occurred while migrating the main proxy:", e);
+        }
+        ((HierarchicalConfiguration) getConfig()).clearTree("proxy");
+
+        try {
+            migrateAdditionalProxies(tlsProtocols);
+        } catch (Exception e) {
+            LOGGER.warn("An error occurred while migrating the additional proxies:", e);
+        }
+        ((HierarchicalConfiguration) getConfig()).clearTree("proxies");
+    }
+
+    private List<String> migrateMainProxy() {
+        String address = getString("proxy.ip", null);
+        if (address == null) {
+            return TlsUtils.getSupportedProtocols();
+        }
+        LocalServerConfig config = new LocalServerConfig();
+        config.setAddress(address);
+        config.setPort(getInt("proxy.port", LocalServerConfig.DEFAULT_PORT));
+        config.setBehindNat(getBoolean("proxy.behindnat", false));
+        config.setRemoveAcceptEncoding(getBoolean("proxy.removeUnsupportedEncodings", true));
+        config.setDecodeResponse(getBoolean("proxy.decodeGzip", true));
+
+        List<String> tlsProtocols =
+                getConfig().getList("proxy.securityProtocolsEnabled.protocol").stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+        config.setTlsProtocols(tlsProtocols);
+
+        setMainProxy(config);
+        return tlsProtocols;
+    }
+
+    private void migrateAdditionalProxies(List<String> tlsProtocols) {
+        String confirmRemoveKey = "proxies.confirmRemoveProxy";
+        if (getConfig().containsKey(confirmRemoveKey)) {
+            setConfirmRemoveServer(getBoolean(confirmRemoveKey, true));
+        }
+
+        List<HierarchicalConfiguration> proxies =
+                ((HierarchicalConfiguration) getConfig()).configurationsAt("proxies.all");
+        List<LocalServerConfig> additionalServers = new ArrayList<>(proxies.size());
+        for (HierarchicalConfiguration sub : proxies) {
+            LocalServerConfig config = new LocalServerConfig();
+            String address = sub.getString("address", null);
+            if (address == null) {
+                continue;
+            }
+            config.setAddress(address);
+            config.setPort(sub.getInt("port", LocalServerConfig.DEFAULT_PORT));
+            config.setEnabled(sub.getBoolean("enabled", true));
+            config.setBehindNat(sub.getBoolean("behindnat", false));
+            config.setRemoveAcceptEncoding(sub.getBoolean("remunsupported", true));
+            config.setDecodeResponse(sub.getBoolean("decode", true));
+            config.setTlsProtocols(tlsProtocols);
+
+            additionalServers.add(config);
+        }
+
+        if (!additionalServers.isEmpty()) {
+            setServers(additionalServers);
+        }
     }
 }
