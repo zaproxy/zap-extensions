@@ -35,12 +35,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link LocalServersOptions}. */
 class LocalServersOptionsUnitTest {
 
+    private static final String ALIAS_KEY = "network.localServers.aliases.alias";
     private static final String PASS_THROUGH_KEY = "network.localServers.passThroughs.passThrough";
 
     private LocalServersOptions options;
@@ -70,6 +72,266 @@ class LocalServersOptionsUnitTest {
         // Then
         assertThat(options.getPassThroughs(), is(empty()));
         assertThat(options.isConfirmRemovePassThrough(), is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadConfigWithConfirmRemoveAlias(boolean value) {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <aliases>\n"
+                                + "      <confirmRemove>"
+                                + value
+                                + "</confirmRemove>\n"
+                                + "    </aliases>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isConfirmRemoveAlias(), is(equalTo(value)));
+    }
+
+    @Test
+    void shouldLoadConfigWithInvalidConfirmRemoveAlias() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <aliases>\n"
+                                + "      <confirmRemove>not boolean</confirmRemove>\n"
+                                + "    </aliases>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isConfirmRemoveAlias(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldAddAlias() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        Alias alias = new Alias("example.org", true);
+        // When
+        options.addAlias(alias);
+        // Then
+        assertThat(options.getAliases(), hasSize(1));
+        assertThat(config.getProperty(ALIAS_KEY + ".name"), is(equalTo("example.org")));
+        assertThat(config.getProperty(ALIAS_KEY + ".enabled"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldThrowIfAddingNullAlias() {
+        // Given
+        Alias alias = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> options.addAlias(alias));
+        assertThat(options.getAliases(), hasSize(0));
+    }
+
+    @Test
+    void shouldSetAliasEnabled() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        options.addAlias(new Alias("example.org", true));
+        options.addAlias(new Alias("example.com", true));
+        // When
+        boolean removed = options.setAliasEnabled("example.org", false);
+        // Then
+        assertThat(removed, is(equalTo(true)));
+        assertThat(options.getAliases(), hasSize(2));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).name"), is(equalTo("example.org")));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).enabled"), is(equalTo(false)));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).name"), is(equalTo("example.com")));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).enabled"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnFalseIfAliasNotChanged() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        options.addAlias(new Alias("example.org", true));
+        options.addAlias(new Alias("example.com", true));
+        // When
+        boolean removed = options.setAliasEnabled("other.example.org", false);
+        // Then
+        assertThat(removed, is(equalTo(false)));
+        assertThat(options.getAliases(), hasSize(2));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).name"), is(equalTo("example.org")));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).enabled"), is(equalTo(true)));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).name"), is(equalTo("example.com")));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).enabled"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldThrowIfSettingNullNameEnabled() {
+        // Given
+        String name = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> options.setAliasEnabled(name, true));
+        assertThat(options.getAliases(), hasSize(0));
+    }
+
+    @Test
+    void shouldRemoveAlias() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        options.addAlias(new Alias("example.org", true));
+        options.addAlias(new Alias("example.com", true));
+        // When
+        boolean removed = options.removeAlias("example.org");
+        // Then
+        assertThat(removed, is(equalTo(true)));
+        assertThat(options.getAliases(), hasSize(1));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).name"), is(equalTo("example.com")));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).enabled"), is(equalTo(true)));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).name"), is(nullValue()));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).enabled"), is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnFalseIfAliasNotRemoved() {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        options.addAlias(new Alias("example.org", true));
+        options.addAlias(new Alias("example.com", true));
+        // When
+        boolean removed = options.removeAlias("other.example.org");
+        // Then
+        assertThat(removed, is(equalTo(false)));
+        assertThat(options.getAliases(), hasSize(2));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).name"), is(equalTo("example.org")));
+        assertThat(config.getProperty(ALIAS_KEY + "(0).enabled"), is(equalTo(true)));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).name"), is(equalTo("example.com")));
+        assertThat(config.getProperty(ALIAS_KEY + "(1).enabled"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldThrowIfRemovingNullName() {
+        // Given
+        String name = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> options.removeAlias(name));
+        assertThat(options.getAliases(), hasSize(0));
+    }
+
+    @Test
+    void shouldSetAndPersistConfirmRemoveAlias() throws Exception {
+        // Given
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        options.load(config);
+        // When
+        options.setConfirmRemoveAlias(false);
+        // Then
+        assertThat(options.isConfirmRemoveAlias(), is(equalTo(false)));
+        assertThat(
+                config.getBoolean("network.localServers.aliases.confirmRemove"),
+                is(equalTo(false)));
+    }
+
+    @Test
+    void shouldLoadConfigWithAliases() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <aliases>\n"
+                                + "      <alias>\n"
+                                + "        <name>example.org</name>\n"
+                                + "        <enabled>true</enabled>\n"
+                                + "      </alias>\n"
+                                + "      <alias>\n"
+                                + "        <name>example.com</name>\n"
+                                + "        <enabled>false</enabled>\n"
+                                + "      </alias>\n"
+                                + "    </aliases>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getAliases(), hasSize(2));
+        assertThat(options.getAliases().get(0).getName(), is(equalTo("example.org")));
+        assertThat(options.getAliases().get(0).isEnabled(), is(equalTo(true)));
+        assertThat(options.getAliases().get(1).getName(), is(equalTo("example.com")));
+        assertThat(options.getAliases().get(1).isEnabled(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldSetAndPersistAliases() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <aliases>\n"
+                                + "      <alias>\n"
+                                + "        <name>example.org</name>\n"
+                                + "        <enabled>true</enabled>\n"
+                                + "      </alias>\n"
+                                + "      <alias>\n"
+                                + "        <name>example.com</name>\n"
+                                + "        <enabled>false</enabled>\n"
+                                + "      </alias>\n"
+                                + "    </aliases>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        options.load(config);
+        List<Alias> aliases = options.getAliases();
+        options.load(new ZapXmlConfiguration());
+        // When
+        options.setAliases(aliases);
+        // Then
+        assertThat(options.getAliases(), hasSize(2));
+        assertThat(options.getAliases().get(0).getName(), is(equalTo("example.org")));
+        assertThat(options.getAliases().get(0).isEnabled(), is(equalTo(true)));
+        assertThat(options.getAliases().get(1).getName(), is(equalTo("example.com")));
+        assertThat(options.getAliases().get(1).isEnabled(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldLoadConfigWhileIgnoringInvalidAliases() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <aliases>\n"
+                                + "      <alias>\n"
+                                + "        <name></name>\n"
+                                + "        <enabled>true</enabled>\n"
+                                + "      </alias>\n"
+                                + "      <alias>\n"
+                                + "        <enabled>false</enabled>\n"
+                                + "      </alias>\n"
+                                + "      <alias>\n"
+                                + "        <name>example.com</name>\n"
+                                + "        <enabled>not a boolean</enabled>\n"
+                                + "      </alias>\n"
+                                + "      <alias>\n"
+                                + "        <name>valid.example.com</name>\n"
+                                + "      </alias>\n"
+                                + "    </aliases>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getAliases(), hasSize(1));
+        assertThat(options.getAliases().get(0).getName(), is(equalTo("valid.example.com")));
+        assertThat(options.getAliases().get(0).isEnabled(), is(equalTo(true)));
     }
 
     @ParameterizedTest

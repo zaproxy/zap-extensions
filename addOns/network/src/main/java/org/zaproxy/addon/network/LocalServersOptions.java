@@ -28,6 +28,7 @@ import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
@@ -55,6 +56,12 @@ public class LocalServersOptions extends VersionedAbstractParam {
      */
     private static final String CONFIG_VERSION_KEY = BASE_KEY + VERSION_ATTRIBUTE;
 
+    private static final String ALIASES_BASE_KEY = BASE_KEY + ".aliases";
+    private static final String ALL_ALIASES_KEY = ALIASES_BASE_KEY + ".alias";
+    private static final String ALIAS_ENABLED = "enabled";
+    private static final String ALIAS_NAME = "name";
+    private static final String CONFIRM_REMOVE_ALIAS = ALIASES_BASE_KEY + ".confirmRemove";
+
     private static final String PASS_THROUGHS_BASE_KEY = BASE_KEY + ".passThroughs";
     private static final String ALL_PASS_THROUGHS_KEY = PASS_THROUGHS_BASE_KEY + ".passThrough";
     private static final String PASS_THROUGH_ENABLED = "enabled";
@@ -62,6 +69,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_PASS_THROUGH =
             PASS_THROUGHS_BASE_KEY + ".confirmRemove";
 
+    private List<Alias> aliases = new ArrayList<>();
+    private boolean confirmRemoveAlias = true;
     private List<PassThrough> passThroughs = new ArrayList<>();
     private boolean confirmRemovePassThrough = true;
 
@@ -83,7 +92,22 @@ public class LocalServersOptions extends VersionedAbstractParam {
     @Override
     protected void parseImpl() {
         List<HierarchicalConfiguration> fields =
-                ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_PASS_THROUGHS_KEY);
+                ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_ALIASES_KEY);
+        aliases = new ArrayList<>(fields.size());
+        for (HierarchicalConfiguration sub : fields) {
+            try {
+                String value = sub.getString(ALIAS_NAME, "");
+                if (value != null && !value.isEmpty()) {
+                    boolean enabled = sub.getBoolean(ALIAS_ENABLED, true);
+                    aliases.add(new Alias(value, enabled));
+                }
+            } catch (ConversionException e) {
+                LOGGER.warn("An error occurred while reading an alias:", e);
+            }
+        }
+        confirmRemoveAlias = getBoolean(CONFIRM_REMOVE_ALIAS, true);
+
+        fields = ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_PASS_THROUGHS_KEY);
         passThroughs = new ArrayList<>(fields.size());
         for (HierarchicalConfiguration sub : fields) {
             try {
@@ -98,6 +122,110 @@ public class LocalServersOptions extends VersionedAbstractParam {
             }
         }
         confirmRemovePassThrough = getBoolean(CONFIRM_REMOVE_PASS_THROUGH, true);
+    }
+
+    /**
+     * Adds the given alias.
+     *
+     * @param alias the alias.
+     * @throws NullPointerException if the given alias is {@code null}.
+     */
+    public void addAlias(Alias alias) {
+        Objects.requireNonNull(alias);
+        aliases.add(alias);
+        persistAliases();
+    }
+
+    private void persistAliases() {
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ALIASES_KEY);
+
+        for (int i = 0, size = aliases.size(); i < size; ++i) {
+            String elementBaseKey = ALL_ALIASES_KEY + "(" + i + ").";
+            Alias alias = aliases.get(i);
+
+            getConfig().setProperty(elementBaseKey + ALIAS_NAME, alias.getName());
+            getConfig().setProperty(elementBaseKey + ALIAS_ENABLED, alias.isEnabled());
+        }
+    }
+
+    /**
+     * Sets whether or not the alias with the given name should be enabled.
+     *
+     * @param name the name of the alias.
+     * @param enabled {@code true} if the alias should be enabled, {@code false} otherwise.
+     * @return {@code true} if the alias was changed, {@code false} otherwise.
+     * @throws NullPointerException if the given name is {@code null}.
+     */
+    public boolean setAliasEnabled(String name, boolean enabled) {
+        Objects.requireNonNull(name);
+        for (Iterator<Alias> it = aliases.iterator(); it.hasNext(); ) {
+            Alias alias = it.next();
+            if (name.equals(alias.getName())) {
+                alias.setEnabled(enabled);
+                persistAliases();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes an alias.
+     *
+     * @param name the name of the alias.
+     * @return {@code true} if the alias was removed, {@code false} otherwise.
+     */
+    public boolean removeAlias(String name) {
+        Objects.requireNonNull(name);
+        for (Iterator<Alias> it = aliases.iterator(); it.hasNext(); ) {
+            if (name.equals(it.next().getName())) {
+                it.remove();
+                persistAliases();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the aliases.
+     *
+     * @param aliases the aliases.
+     * @throws NullPointerException if the given list is {@code null}.
+     */
+    public void setAliases(List<Alias> aliases) {
+        Objects.requireNonNull(aliases);
+
+        this.aliases = new ArrayList<>(aliases);
+        persistAliases();
+    }
+
+    /**
+     * Gets the aliases.
+     *
+     * @return the aliases, never {@code null}.
+     */
+    public List<Alias> getAliases() {
+        return aliases;
+    }
+
+    /**
+     * Sets whether or not the removal of an alias needs confirmation.
+     *
+     * @param confirmRemove {@code true} if the removal needs confirmation, {@code false} otherwise.
+     */
+    public void setConfirmRemoveAlias(boolean confirmRemove) {
+        this.confirmRemoveAlias = confirmRemove;
+        getConfig().setProperty(CONFIRM_REMOVE_ALIAS, confirmRemoveAlias);
+    }
+
+    /**
+     * Tells whether or not the removal of an alias needs confirmation.
+     *
+     * @return {@code true} if the removal needs confirmation, {@code false} otherwise.
+     */
+    public boolean isConfirmRemoveAlias() {
+        return confirmRemoveAlias;
     }
 
     /**

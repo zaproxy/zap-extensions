@@ -57,6 +57,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
@@ -133,8 +134,8 @@ class NetworkApiUnitTest extends TestUtils {
         // When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(7));
-        assertThat(networkApi.getApiViews(), hasSize(3));
+        assertThat(networkApi.getApiActions(), hasSize(10));
+        assertThat(networkApi.getApiViews(), hasSize(4));
         assertThat(networkApi.getApiOthers(), hasSize(1));
     }
 
@@ -449,6 +450,121 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnOkForAddedAlias() throws Exception {
+        // Given
+        String name = "addAlias";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        params.put("enabled", "false");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addAlias(new Alias("example.org", false));
+    }
+
+    @Test
+    void shouldDefaultToEnabledForAddedAlias() throws Exception {
+        // Given
+        String name = "addAlias";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addAlias(new Alias("example.org", true));
+    }
+
+    @Test
+    void shouldReturnOkForRemovedAlias() throws Exception {
+        // Given
+        String name = "removeAlias";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removeAlias(any())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).removeAlias("example.org");
+    }
+
+    @Test
+    void shouldhrowApiExceptionForMissingRemovedAlias() throws Exception {
+        // Given
+        String name = "removeAlias";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removeAlias(any())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(localServersOptions).removeAlias("example.org");
+    }
+
+    @Test
+    void shouldReturnOkForChangedAlias() throws Exception {
+        // Given
+        String name = "setAliasEnabled";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        params.put("enabled", "false");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).setAliasEnabled("example.org", false);
+    }
+
+    @Test
+    void shouldThrowApiExceptionForMissingChangedAlias() throws Exception {
+        // Given
+        String name = "setAliasEnabled";
+        JSONObject params = new JSONObject();
+        params.put("name", "example.org");
+        params.put("enabled", "true");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(localServersOptions).setAliasEnabled("example.org", true);
+    }
+
+    @Test
+    void shouldGetAliases() throws Exception {
+        // Given
+        String name = "getAliases";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getAliases())
+                .willReturn(
+                        Arrays.asList(
+                                new Alias("example.org", true), new Alias("example.com", false)));
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(
+                response.toJSON().toString(),
+                is(
+                        equalTo(
+                                "{\"getAliases\":[{\"name\":\"example.org\",\"enabled\":true},"
+                                        + "{\"name\":\"example.com\",\"enabled\":false}]}")));
+    }
+
+    @Test
     void shouldReturnOkForAddedPassThrough() throws Exception {
         // Given
         String name = "addPassThrough";
@@ -580,7 +696,15 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"addPassThrough", "removePassThrough", "setPassThroughEnabled"})
+    @ValueSource(
+            strings = {
+                "addAlias",
+                "removeAlias",
+                "setAliasEnabled",
+                "addPassThrough",
+                "removePassThrough",
+                "setPassThroughEnabled"
+            })
     void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingLocalServers(String name)
             throws Exception {
         // Given
@@ -594,7 +718,7 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"getPassThroughs"})
+    @ValueSource(strings = {"getAliases", "getPassThroughs"})
     void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingLocalServers(String name)
             throws Exception {
         // Given

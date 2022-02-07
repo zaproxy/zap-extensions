@@ -13,6 +13,15 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
+			addAlias (name* enabled): Adds an alias for the local servers/proxies.
+			<ul>
+				<li>name: The name of the alias.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
 			addPassThrough (authority* enabled): Adds an authority to pass-through the local proxies.
 			<ul>
 				<li>authority: The value of the authority, can be a regular expression.</li>
@@ -28,9 +37,26 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
+			removeAlias (name*): Removes an alias.
+			<ul>
+				<li>name: The name of the alias.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
 			removePassThrough (authority*):  Removes a pass-through.
 			<ul>
 				<li>authority: The value of the authority.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setAliasEnabled (name* enabled): Sets whether or not an alias is enabled.
+			<ul>
+				<li>name: The name of the alias.</li>
+				<li>enabled: The enabled state, true or false.</li>
 			</ul>
 		</li>
 		<li>
@@ -63,6 +89,7 @@
 	<h3>Views</h3>
 	<strong>Note:</strong> These endpoints are only available in weekly releases and versions after 2.11.
 	<ul>
+		<li>getAliases: Gets the aliases used to identify the local servers/proxies.</li>
 		<li>getPassThroughs: Gets the authorities that will pass-through the local proxies.</li>
 		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
 		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>

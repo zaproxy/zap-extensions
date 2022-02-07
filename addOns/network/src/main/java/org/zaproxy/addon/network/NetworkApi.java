@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -51,14 +52,18 @@ public class NetworkApi extends ApiImplementor {
 
     private static final String PREFIX = "network";
 
+    private static final String ACTION_ADD_ALIAS = "addAlias";
     private static final String ACTION_ADD_PASS_THROUGH = "addPassThrough";
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
+    private static final String ACTION_REMOVE_ALIAS = "removeAlias";
     private static final String ACTION_REMOVE_PASS_THROUGH = "removePassThrough";
+    private static final String ACTION_SET_ALIAS_ENABLED = "setAliasEnabled";
     private static final String ACTION_SET_PASS_THROUGH_ENABLED = "setPassThroughEnabled";
     private static final String ACTION_SET_ROOT_CA_CERT_VALIDITY = "setRootCaCertValidity";
     private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
 
+    private static final String VIEW_GET_ALIASES = "getAliases";
     private static final String VIEW_GET_PASS_THROUGHS = "getPassThroughs";
     private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
     private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
@@ -68,6 +73,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String PARAM_AUTHORITY = "authority";
     private static final String PARAM_ENABLED = "enabled";
     private static final String PARAM_FILE_PATH = "filePath";
+    private static final String PARAM_NAME = "name";
     private static final String PARAM_VALIDITY = "validity";
 
     private final ExtensionNetwork extensionNetwork;
@@ -96,16 +102,26 @@ public class NetworkApi extends ApiImplementor {
         if (isHandleLocalServers(extensionNetwork)) {
             this.addApiAction(
                     new ApiAction(
+                            ACTION_ADD_ALIAS,
+                            Arrays.asList(PARAM_NAME),
+                            Arrays.asList(PARAM_ENABLED)));
+            this.addApiAction(
+                    new ApiAction(
                             ACTION_ADD_PASS_THROUGH,
                             Arrays.asList(PARAM_AUTHORITY),
                             Arrays.asList(PARAM_ENABLED)));
+            this.addApiAction(new ApiAction(ACTION_REMOVE_ALIAS, Arrays.asList(PARAM_NAME)));
             this.addApiAction(
                     new ApiAction(ACTION_REMOVE_PASS_THROUGH, Arrays.asList(PARAM_AUTHORITY)));
+            this.addApiAction(
+                    new ApiAction(
+                            ACTION_SET_ALIAS_ENABLED, Arrays.asList(PARAM_NAME, PARAM_ENABLED)));
             this.addApiAction(
                     new ApiAction(
                             ACTION_SET_PASS_THROUGH_ENABLED,
                             Arrays.asList(PARAM_AUTHORITY, PARAM_ENABLED)));
 
+            this.addApiView(new ApiView(VIEW_GET_ALIASES));
             this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
         }
 
@@ -128,6 +144,17 @@ public class NetworkApi extends ApiImplementor {
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         switch (name) {
+            case ACTION_ADD_ALIAS:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String aliasName = params.getString(PARAM_NAME);
+                    boolean enabled = getParam(params, PARAM_ENABLED, true);
+                    Alias alias = new Alias(aliasName, enabled);
+                    extensionNetwork.getLocalServersOptions().addAlias(alias);
+                    return ApiResponseElement.OK;
+                }
             case ACTION_ADD_PASS_THROUGH:
                 {
                     if (!isHandleLocalServers(extensionNetwork)) {
@@ -153,6 +180,19 @@ public class NetworkApi extends ApiImplementor {
                     return ApiResponseElement.OK;
                 }
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, errorMessage);
+            case ACTION_REMOVE_ALIAS:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String aliasName = params.getString(PARAM_NAME);
+                    boolean removed =
+                            extensionNetwork.getLocalServersOptions().removeAlias(aliasName);
+                    if (!removed) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_NAME);
+                    }
+                    return ApiResponseElement.OK;
+                }
 
             case ACTION_REMOVE_PASS_THROUGH:
                 {
@@ -164,6 +204,22 @@ public class NetworkApi extends ApiImplementor {
                             extensionNetwork.getLocalServersOptions().removePassThrough(authority);
                     if (!removed) {
                         throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_AUTHORITY);
+                    }
+                    return ApiResponseElement.OK;
+                }
+            case ACTION_SET_ALIAS_ENABLED:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String aliasName = params.getString(PARAM_NAME);
+                    boolean enabled = getParam(params, PARAM_ENABLED, true);
+                    boolean changed =
+                            extensionNetwork
+                                    .getLocalServersOptions()
+                                    .setAliasEnabled(aliasName, enabled);
+                    if (!changed) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_NAME);
                     }
                     return ApiResponseElement.OK;
                 }
@@ -226,6 +282,20 @@ public class NetworkApi extends ApiImplementor {
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
         switch (name) {
+            case VIEW_GET_ALIASES:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_VIEW);
+                    }
+                    ApiResponseList response = new ApiResponseList(name);
+                    for (Alias alias : extensionNetwork.getLocalServersOptions().getAliases()) {
+                        Map<String, Object> entry = new HashMap<>();
+                        entry.put("name", alias.getName());
+                        entry.put("enabled", alias.isEnabled());
+                        response.addItem(new ApiResponseSet<>("alias", entry));
+                    }
+                    return response;
+                }
             case VIEW_GET_PASS_THROUGHS:
                 if (!isHandleLocalServers(extensionNetwork)) {
                     throw new ApiException(ApiException.Type.BAD_VIEW);
