@@ -116,14 +116,13 @@ public class RecursiveRequestHandler extends SimpleChannelInboundHandler<HttpMes
             InetSocketAddress localInetAddress,
             HttpRequestHeader header) {
         try {
-            String targetDomain = header.getHostName();
-            if (serverConfig.getAliases().contains(targetDomain)) {
+            if (serverConfig.isAlias(header)) {
                 return true;
             }
 
             if (header.getHostPort() == localInetAddress.getPort()
                     && isServerAddress(
-                            InetAddress.getByName(targetDomain),
+                            InetAddress.getByName(header.getHostName()),
                             serverConfig,
                             localInetAddress.getAddress())) {
                 return true;

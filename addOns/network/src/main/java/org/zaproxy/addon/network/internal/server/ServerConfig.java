@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.network.internal.server;
 
-import java.util.Set;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 /** The configuration of a server. */
 public interface ServerConfig {
@@ -42,12 +42,13 @@ public interface ServerConfig {
     boolean isBehindNat();
 
     /**
-     * Gets the aliases of the server.
+     * Tells whether or not the hostname in the given header is an alias.
      *
      * <p>Allows to identify the server with different addresses/domains to serve those requests
      * itself. For example, the {@code zap} domain.
      *
-     * @return the aliases, never {@code null}.
+     * @param header the request header.
+     * @return {@code true} if the hostname is an alias, {@code false} otherwise.
      */
-    Set<String> getAliases();
+    boolean isAlias(HttpRequestHeader header);
 }

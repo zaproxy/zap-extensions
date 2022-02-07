@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 
 import io.netty.buffer.ByteBuf;
@@ -39,13 +40,9 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
@@ -232,12 +229,11 @@ class RecursiveRequestHandlerUnitTest {
         assertThat(exceptionsThrown, hasSize(0));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"example.com", "zap", "zap:1234"})
-    void shouldBeRecursiveIfAnAlias(String domain) throws Exception {
+    @Test
+    void shouldBeRecursiveIfAnAlias() throws Exception {
         // Given
-        given(serverConfig.getAliases()).willReturn(aliases(domain));
-        String request = "GET / HTTP/1.1\r\nHost: " + domain + "\r\n\r\n";
+        given(serverConfig.isAlias(any())).willReturn(true);
+        String request = "GET / HTTP/1.1\r\nHost: zap\r\n\r\n";
         // When
         written(request);
         // Then
@@ -277,11 +273,5 @@ class RecursiveRequestHandlerUnitTest {
     private void written(String content) {
         ByteBuf buf = Unpooled.copiedBuffer(content, StandardCharsets.US_ASCII);
         assertThat(channel.writeInbound(buf), is(equalTo(false)));
-    }
-
-    private static Set<String> aliases(String domain) {
-        Set<String> aliases = new HashSet<>();
-        aliases.add(domain.split(":")[0]);
-        return aliases;
     }
 }

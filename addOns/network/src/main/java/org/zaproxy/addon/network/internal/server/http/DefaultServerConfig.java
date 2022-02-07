@@ -21,8 +21,7 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Set;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 import org.zaproxy.addon.network.server.Server;
 
@@ -45,8 +44,8 @@ public class DefaultServerConfig implements ServerConfig {
     }
 
     @Override
-    public Set<String> getAliases() {
-        return Collections.emptySet();
+    public boolean isAlias(HttpRequestHeader header) {
+        return false;
     }
 
     @Override

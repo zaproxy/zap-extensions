@@ -25,6 +25,8 @@ import javax.swing.JTabbedPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.addon.network.internal.ui.AliasTableModel;
+import org.zaproxy.addon.network.internal.ui.AliasTablePanel;
 import org.zaproxy.addon.network.internal.ui.PassThroughTableModel;
 import org.zaproxy.addon.network.internal.ui.PassThroughTablePanel;
 
@@ -32,14 +34,18 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private final AliasPanel aliasPanel;
     private final PassThroughPanel passThroughPanel;
 
     public LocalServersOptionsPanel(ExtensionNetwork extensionNetwork) {
+        aliasPanel = new AliasPanel();
         passThroughPanel = new PassThroughPanel();
 
         setName(Constant.messages.getString("network.ui.options.localservers.name"));
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add(
+                Constant.messages.getString("network.ui.options.alias.tab"), aliasPanel.getPanel());
         tabbedPane.add(
                 Constant.messages.getString("network.ui.options.passthrough.tab"),
                 passThroughPanel.getPanel());
@@ -57,6 +63,7 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
     public void initParam(Object mainOptions) {
         LocalServersOptions options = getLocalServersOptions(mainOptions);
 
+        aliasPanel.init(options);
         passThroughPanel.init(options);
     }
 
@@ -68,12 +75,49 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
     public void saveParam(Object mainOptions) throws Exception {
         LocalServersOptions options = getLocalServersOptions(mainOptions);
 
+        aliasPanel.save(options);
         passThroughPanel.save(options);
     }
 
     @Override
     public String getHelpIndex() {
         return "addon.network.options.localservers";
+    }
+
+    private static class AliasPanel {
+
+        private final AliasTableModel tableModel;
+        private final AliasTablePanel tablePanel;
+        private final JPanel panel;
+
+        AliasPanel() {
+            tableModel = new AliasTableModel();
+            tablePanel = new AliasTablePanel(tableModel);
+
+            panel = new JPanel();
+            GroupLayout layout = new GroupLayout(panel);
+            panel.setLayout(layout);
+            layout.setAutoCreateGaps(true);
+            layout.setAutoCreateContainerGaps(true);
+
+            layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tablePanel));
+
+            layout.setVerticalGroup(layout.createSequentialGroup().addComponent(tablePanel));
+        }
+
+        JPanel getPanel() {
+            return panel;
+        }
+
+        void init(LocalServersOptions options) {
+            tableModel.setAliases(options.getAliases());
+            tablePanel.setRemoveWithoutConfirmation(!options.isConfirmRemoveAlias());
+        }
+
+        void save(LocalServersOptions options) {
+            options.setAliases(tableModel.getElements());
+            options.setConfirmRemoveAlias(!tablePanel.isRemoveWithoutConfirmation());
+        }
     }
 
     private static class PassThroughPanel {
