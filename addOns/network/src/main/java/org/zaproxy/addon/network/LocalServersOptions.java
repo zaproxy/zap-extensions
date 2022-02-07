@@ -20,15 +20,22 @@
 package org.zaproxy.addon.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.server.http.Alias;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
@@ -56,6 +63,21 @@ public class LocalServersOptions extends VersionedAbstractParam {
      */
     private static final String CONFIG_VERSION_KEY = BASE_KEY + VERSION_ATTRIBUTE;
 
+    private static final String MAIN_PROXY_BASE_KEY = BASE_KEY + ".mainProxy";
+    private static final String SERVERS_BASE_KEY = BASE_KEY + ".servers";
+    private static final String ALL_SERVERS_KEY = SERVERS_BASE_KEY + ".server";
+    private static final String SERVER_PROXY = "proxy";
+    private static final String SERVER_API = "api";
+    private static final String SERVER_ADDRESS = "address";
+    private static final String SERVER_PORT = "port";
+    private static final String SERVER_TLS_PROTOCOLS = "tlsProtocols";
+    private static final String SERVER_TLS_PROTOCOL = "protocol";
+    private static final String SERVER_BEHIND_NAT = "behindNat";
+    private static final String SERVER_REMOVE_ACCEPT_ENCODING = "removeAcceptEncoding";
+    private static final String SERVER_DECODE_RESPONSE = "decodeResponse";
+    private static final String SERVER_ENABLED = "enabled";
+    private static final String CONFIRM_REMOVE_SERVER = SERVERS_BASE_KEY + ".confirmRemove";
+
     private static final String ALIASES_BASE_KEY = BASE_KEY + ".aliases";
     private static final String ALL_ALIASES_KEY = ALIASES_BASE_KEY + ".alias";
     private static final String ALIAS_ENABLED = "enabled";
@@ -73,6 +95,9 @@ public class LocalServersOptions extends VersionedAbstractParam {
     private boolean confirmRemoveAlias = true;
     private List<PassThrough> passThroughs = new ArrayList<>();
     private boolean confirmRemovePassThrough = true;
+    private LocalServerConfig mainProxy = new LocalServerConfig();
+    private List<LocalServerConfig> servers = Collections.emptyList();
+    private boolean confirmRemoveServer = true;
 
     @Override
     protected int getCurrentVersion() {
@@ -122,6 +147,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
             }
         }
         confirmRemovePassThrough = getBoolean(CONFIRM_REMOVE_PASS_THROUGH, true);
+
+        readMainProxyAndServers();
     }
 
     /**
@@ -342,5 +369,227 @@ public class LocalServersOptions extends VersionedAbstractParam {
             LOGGER.warn("Ignoring invalid pass-through pattern:", e);
             return null;
         }
+    }
+
+    private void readMainProxyAndServers() {
+        if (getConfig().containsKey(MAIN_PROXY_BASE_KEY + "." + SERVER_ADDRESS)) {
+            mainProxy =
+                    readServerConfig(
+                            ((HierarchicalConfiguration) getConfig())
+                                    .configurationAt(MAIN_PROXY_BASE_KEY));
+        }
+        if (mainProxy == null) {
+            mainProxy = new LocalServerConfig();
+        } else if (!mainProxy.getMode().hasProxy()) {
+            mainProxy.setMode(ServerMode.API_AND_PROXY);
+        }
+        mainProxy.setEnabled(true);
+
+        List<HierarchicalConfiguration> fields =
+                ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_SERVERS_KEY);
+        servers = new ArrayList<>(fields.size());
+        for (HierarchicalConfiguration sub : fields) {
+            LocalServerConfig serverConfig = readServerConfig(sub);
+            if (serverConfig != null) {
+                servers.add(serverConfig);
+            }
+        }
+        confirmRemoveServer = getBoolean(CONFIRM_REMOVE_SERVER, true);
+
+        Set<String> addresses = new HashSet<>();
+        addresses.add(serverAddress(mainProxy));
+
+        for (Iterator<LocalServerConfig> it = servers.iterator(); it.hasNext(); ) {
+            LocalServerConfig server = it.next();
+            String serverAddress = serverAddress(server);
+            if (!addresses.add(serverAddress)) {
+                it.remove();
+                LOGGER.warn("Discarding server with duplicated address/port: {}", serverAddress);
+            }
+        }
+    }
+
+    private static String serverAddress(LocalServerConfig server) {
+        return server.getAddress() + ":" + server.getPort();
+    }
+
+    private static LocalServerConfig readServerConfig(HierarchicalConfiguration config) {
+        try {
+            LocalServerConfig serverConfig = new LocalServerConfig();
+            serverConfig.setAddress(
+                    config.getString(SERVER_ADDRESS, LocalServerConfig.DEFAULT_ADDRESS));
+            serverConfig.setPort(config.getInt(SERVER_PORT, LocalServerConfig.DEFAULT_PORT));
+            boolean proxy = config.getBoolean(SERVER_PROXY, true);
+            boolean api = config.getBoolean(SERVER_API, true);
+            serverConfig.setMode(
+                    proxy && api
+                            ? ServerMode.API_AND_PROXY
+                            : proxy ? ServerMode.PROXY : ServerMode.API);
+            List<String> protocols =
+                    config.getList(SERVER_TLS_PROTOCOLS + "." + SERVER_TLS_PROTOCOL).stream()
+                            .map(Object::toString)
+                            .collect(Collectors.toList());
+            if (protocols.isEmpty()) {
+                protocols = TlsUtils.getSupportedProtocols();
+            }
+            try {
+                serverConfig.setTlsProtocols(protocols);
+            } catch (Exception e) {
+                LOGGER.warn("An error occurred while setting TLS protocols:", e);
+                serverConfig.setTlsProtocols(TlsUtils.getSupportedProtocols());
+            }
+            serverConfig.setBehindNat(config.getBoolean(SERVER_BEHIND_NAT, false));
+            serverConfig.setRemoveAcceptEncoding(
+                    config.getBoolean(SERVER_REMOVE_ACCEPT_ENCODING, true));
+            serverConfig.setDecodeResponse(config.getBoolean(SERVER_DECODE_RESPONSE, true));
+            serverConfig.setEnabled(config.getBoolean(SERVER_ENABLED, true));
+            return serverConfig;
+        } catch (Exception e) {
+            LOGGER.warn("An error occurred while reading a server configuration:", e);
+        }
+        return null;
+    }
+
+    private void persistServerConfig(String baseKey, LocalServerConfig serverConfig) {
+        String baseKeyDot = baseKey + ".";
+        getConfig().setProperty(baseKeyDot + SERVER_ENABLED, serverConfig.isEnabled());
+
+        getConfig().setProperty(baseKeyDot + SERVER_PROXY, serverConfig.getMode().hasProxy());
+        getConfig().setProperty(baseKeyDot + SERVER_API, serverConfig.getMode().hasApi());
+
+        getConfig().setProperty(baseKeyDot + SERVER_ADDRESS, serverConfig.getAddress());
+        getConfig().setProperty(baseKeyDot + SERVER_PORT, serverConfig.getPort());
+
+        String protocolsBaseKey = baseKeyDot + SERVER_TLS_PROTOCOLS;
+        ((HierarchicalConfiguration) getConfig()).clearTree(protocolsBaseKey);
+        for (int i = 0; i < serverConfig.getTlsProtocols().size(); ++i) {
+            String elementBaseKey = protocolsBaseKey + "." + SERVER_TLS_PROTOCOL + "(" + i + ")";
+            getConfig().setProperty(elementBaseKey, serverConfig.getTlsProtocols().get(i));
+        }
+
+        getConfig().setProperty(baseKeyDot + SERVER_BEHIND_NAT, serverConfig.isBehindNat());
+        getConfig()
+                .setProperty(
+                        baseKeyDot + SERVER_REMOVE_ACCEPT_ENCODING,
+                        serverConfig.isRemoveAcceptEncoding());
+        getConfig()
+                .setProperty(baseKeyDot + SERVER_DECODE_RESPONSE, serverConfig.isDecodeResponse());
+    }
+
+    /**
+     * Gets the main proxy.
+     *
+     * @return the main proxy, never {@code null}.
+     */
+    public LocalServerConfig getMainProxy() {
+        return mainProxy;
+    }
+
+    /**
+     * Sets the main proxy.
+     *
+     * <p>The main proxy is always persisted enabled and having a proxy (i.e. server mode not {@code
+     * API}). The proxy is expected to have a unique address and port.
+     *
+     * @param mainProxy the main proxy.
+     * @throws NullPointerException if the given proxy is {@code null}.
+     */
+    public void setMainProxy(LocalServerConfig mainProxy) {
+        this.mainProxy = Objects.requireNonNull(mainProxy);
+        mainProxy.setEnabled(true);
+        if (!mainProxy.getMode().hasProxy()) {
+            mainProxy.setMode(ServerMode.API_AND_PROXY);
+        }
+
+        persistServerConfig(MAIN_PROXY_BASE_KEY, mainProxy);
+    }
+
+    /**
+     * Adds the given server.
+     *
+     * <p>The server is expected to have a unique address and port.
+     *
+     * @param server the server.
+     * @throws NullPointerException if the given server is {@code null}.
+     */
+    public void addServer(LocalServerConfig server) {
+        Objects.requireNonNull(server);
+        servers.add(server);
+        persistServers();
+    }
+
+    private void persistServers() {
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_SERVERS_KEY);
+
+        for (int i = 0, size = servers.size(); i < size; ++i) {
+            String baseKey = ALL_SERVERS_KEY + "(" + i + ")";
+            LocalServerConfig server = servers.get(i);
+
+            persistServerConfig(baseKey, server);
+        }
+    }
+
+    /**
+     * Removes the server with the given address and port.
+     *
+     * @param address the address of the server.
+     * @param port the port of the server.
+     * @return {@code true} if the server was removed, {@code false} otherwise.
+     * @throws NullPointerException if the given address is {@code null}.
+     */
+    public boolean removeServer(String address, int port) {
+        Objects.requireNonNull(address);
+        for (Iterator<LocalServerConfig> it = servers.iterator(); it.hasNext(); ) {
+            LocalServerConfig server = it.next();
+            if (server.getPort() == port && address.equals(server.getAddress())) {
+                it.remove();
+                persistServers();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the servers.
+     *
+     * <p>The servers are expected to have a unique address and port.
+     *
+     * @param servers the servers.
+     * @throws NullPointerException if the given list is {@code null}.
+     */
+    public void setServers(List<LocalServerConfig> servers) {
+        Objects.requireNonNull(servers);
+        this.servers = new ArrayList<>(servers);
+
+        persistServers();
+    }
+
+    /**
+     * Gets the servers.
+     *
+     * @return the servers, never {@code null}.
+     */
+    public List<LocalServerConfig> getServers() {
+        return servers;
+    }
+
+    /**
+     * Sets whether or not the removal of a server needs confirmation.
+     *
+     * @param confirmRemove {@code true} if the removal needs confirmation, {@code false} otherwise.
+     */
+    public void setConfirmRemoveServer(boolean confirmRemove) {
+        this.confirmRemoveServer = confirmRemove;
+        getConfig().setProperty(CONFIRM_REMOVE_SERVER, confirmRemoveServer);
+    }
+
+    /**
+     * Tells whether or not the removal of a server needs confirmation.
+     *
+     * @return {@code true} if the removal needs confirmation, {@code false} otherwise.
+     */
+    public boolean isConfirmRemoveServer() {
+        return confirmRemoveServer;
     }
 }

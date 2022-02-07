@@ -35,6 +35,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
@@ -45,6 +46,7 @@ import java.security.KeyStore;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
@@ -58,6 +60,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.server.http.Alias;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
@@ -134,8 +138,8 @@ class NetworkApiUnitTest extends TestUtils {
         // When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(10));
-        assertThat(networkApi.getApiViews(), hasSize(4));
+        assertThat(networkApi.getApiActions(), hasSize(12));
+        assertThat(networkApi.getApiViews(), hasSize(5));
         assertThat(networkApi.getApiOthers(), hasSize(1));
     }
 
@@ -695,6 +699,181 @@ class NetworkApiUnitTest extends TestUtils {
                                         + "{\"name\":\"example.com\",\"enabled\":false}]}")));
     }
 
+    @Test
+    void shouldReturnOkForAddedLocalServer() throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        int port = getRandomPort();
+        params.put("port", port);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
+        given(localServersOptions.getServers()).willReturn(Collections.emptyList());
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addServer(newLocalServer("localhost", port));
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfDuplicatedWithMainProxyForAddedLocalServer() throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "8080");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
+        given(localServersOptions.getServers()).willReturn(Collections.emptyList());
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.toString(true), containsString("already defined"));
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfDuplicatedWithOtherLocalServerForAddedLocalServer()
+            throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "8080");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8081));
+        given(localServersOptions.getServers())
+                .willReturn(Arrays.asList(newLocalServer("localhost", 8080)));
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.toString(true), containsString("already defined"));
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfUnableToListenForAddedLocalServer() throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "80");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
+        given(localServersOptions.getServers())
+                .willReturn(Arrays.asList(newLocalServer("localhost", 8081)));
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.toString(true), containsString("listen on"));
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfInvalidPortForAddedLocalServer() throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "808080808");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.toString(true), containsString("port"));
+    }
+
+    @Test
+    void shouldUseOptionalParamsForAddedLocalServer() throws Exception {
+        // Given
+        String name = "addLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        int port = getRandomPort();
+        params.put("port", port);
+        params.put("proxy", "true");
+        params.put("api", "false");
+        params.put("behindNat", "true");
+        params.put("removeAcceptEncoding", "false");
+        params.put("decodeResponse", "false");
+        LocalServerConfig server = newLocalServer("localhost", port);
+        server.setMode(ServerMode.PROXY);
+        server.setBehindNat(true);
+        server.setRemoveAcceptEncoding(false);
+        server.setDecodeResponse(false);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
+        given(localServersOptions.getServers()).willReturn(Collections.emptyList());
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).addServer(server);
+    }
+
+    @Test
+    void shouldReturnOkForRemovedLocalServer() throws Exception {
+        // Given
+        String name = "removeLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "8080");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removeServer(any(), anyInt())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(localServersOptions).removeServer("localhost", 8080);
+    }
+
+    @Test
+    void shouldhrowApiExceptionForMissingRemovedLocalServer() throws Exception {
+        // Given
+        String name = "removeLocalServer";
+        JSONObject params = new JSONObject();
+        params.put("address", "localhost");
+        params.put("port", "8080");
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.removeServer(any(), anyInt())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(localServersOptions).removeServer("localhost", 8080);
+    }
+
+    @Test
+    void shouldGetLocalServers() throws Exception {
+        // Given
+        String name = "getLocalServers";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(localServersOptions.getServers())
+                .willReturn(
+                        Arrays.asList(
+                                newLocalServer("localhost", 8080),
+                                newLocalServer("192.168.0.1", 8081)));
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(
+                response.toJSON().toString(),
+                is(
+                        equalTo(
+                                "{\"getLocalServers\":[{\"proxy\":true,\"address\":\"localhost\",\"port\":8080,\"api\":true,\"behindNat\":false,\"removeAcceptEncoding\":true,\"decodeResponse\":true,\"enabled\":true},"
+                                        + "{\"proxy\":true,\"address\":\"192.168.0.1\",\"port\":8081,\"api\":true,\"behindNat\":false,\"removeAcceptEncoding\":true,\"decodeResponse\":true,\"enabled\":true}]}")));
+    }
+
     @ParameterizedTest
     @ValueSource(
             strings = {
@@ -703,7 +882,9 @@ class NetworkApiUnitTest extends TestUtils {
                 "setAliasEnabled",
                 "addPassThrough",
                 "removePassThrough",
-                "setPassThroughEnabled"
+                "setPassThroughEnabled",
+                "addLocalServer",
+                "removeLocalServer"
             })
     void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingLocalServers(String name)
             throws Exception {
@@ -718,7 +899,7 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"getAliases", "getPassThroughs"})
+    @ValueSource(strings = {"getAliases", "getPassThroughs", "getLocalServers"})
     void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingLocalServers(String name)
             throws Exception {
         // Given
@@ -771,5 +952,12 @@ class NetworkApiUnitTest extends TestUtils {
 
     private static PassThrough newPassThrough(String authority, boolean enabled) {
         return new PassThrough(Pattern.compile(authority), enabled);
+    }
+
+    private static LocalServerConfig newLocalServer(String address, int port) {
+        LocalServerConfig server = new LocalServerConfig();
+        server.setAddress(address);
+        server.setPort(port);
+        return server;
     }
 }
