@@ -24,6 +24,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOption;
@@ -41,28 +42,34 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 
 /**
- * Handles HTTTP CONNECT requests to passthrough the data to the server.
+ * Handles HTTTP CONNECT requests to pass-through the data to the server.
  *
- * <p>The whole pipeline is reworked to passthrough the data, otherwise the handler just removes
+ * <p>The whole pipeline is reworked to pass-through the data, otherwise the handler just removes
  * itself.
  */
-public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage> {
+@Sharable
+public class PassThroughHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
-    private static final Logger LOGGER = LogManager.getLogger(PassthroughHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(PassThroughHandler.class);
     private static final String CONNECT_HTTP_200 = "HTTP/1.1 200 Connection established";
 
     private static final int CONNECT_TIMEOUT_MILLIS = (int) TimeUnit.SECONDS.toMillis(20);
     private static final int READ_TIMEOUT_MINUTES = 2;
 
-    private final Predicate<HttpRequestHeader> passthroughCondition;
+    private final Predicate<HttpRequestHeader> passThroughCondition;
 
     /**
-     * Constructs a {@code PassthroughHandler} with the given condition.
+     * Constructs a {@code PassThroughHandler} with the given condition.
      *
-     * @param condition the passthrough condition.
+     * @param condition the pass-through condition.
      */
-    public PassthroughHandler(Predicate<HttpRequestHeader> condition) {
-        this.passthroughCondition = Objects.requireNonNull(condition);
+    public PassThroughHandler(Predicate<HttpRequestHeader> condition) {
+        this.passThroughCondition = Objects.requireNonNull(condition);
+    }
+
+    @Override
+    public boolean isSharable() {
+        return true;
     }
 
     @Override
@@ -71,7 +78,7 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
             throw (Exception) msg.getUserObject();
         }
 
-        if (!isPassthrough(ctx, msg)) {
+        if (!isPassThrough(ctx, msg)) {
             ctx.fireChannelRead(msg);
             return;
         }
@@ -109,27 +116,27 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
                             ctx.pipeline()
                                     .addAfter(
                                             "timeout",
-                                            "passthrough",
+                                            "pass-through",
                                             new ClientSideHandler(host, port));
                             ctx.fireChannelReadComplete();
                         });
     }
 
-    private boolean isPassthrough(ChannelHandlerContext ctx, HttpMessage msg) {
-        boolean passthrough = false;
+    private boolean isPassThrough(ChannelHandlerContext ctx, HttpMessage msg) {
+        boolean passThrough = false;
         try {
             HttpRequestHeader request = msg.getRequestHeader();
             if (!HttpRequestHeader.CONNECT.equals(request.getMethod())) {
                 return false;
             }
 
-            passthrough = passthroughCondition.test(request);
-            return passthrough;
+            passThrough = passThroughCondition.test(request);
+            return passThrough;
         } catch (Exception e) {
-            LOGGER.error("An error occurred while checking if passthrough request:", e);
+            LOGGER.error("An error occurred while checking if pass-through request:", e);
             return false;
         } finally {
-            ctx.channel().attr(ChannelAttributes.PASSTHROUGH).set(passthrough);
+            ctx.channel().attr(ChannelAttributes.PASS_THROUGH).set(passThrough);
             ctx.pipeline().remove(this);
         }
     }
@@ -287,7 +294,7 @@ public class PassthroughHandler extends SimpleChannelInboundHandler<HttpMessage>
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
             if (cause instanceof ChannelPipelineException) {
                 LOGGER.warn(
-                        "Failed while connecting to passthrough to target: {}",
+                        "Failed while connecting to pass-through to target: {}",
                         cause.getCause().getMessage());
                 ctx.close();
                 return;

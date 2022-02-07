@@ -24,12 +24,16 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -37,6 +41,8 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiResponseList;
+import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 
 public class NetworkApi extends ApiImplementor {
@@ -45,16 +51,22 @@ public class NetworkApi extends ApiImplementor {
 
     private static final String PREFIX = "network";
 
+    private static final String ACTION_ADD_PASS_THROUGH = "addPassThrough";
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
+    private static final String ACTION_REMOVE_PASS_THROUGH = "removePassThrough";
+    private static final String ACTION_SET_PASS_THROUGH_ENABLED = "setPassThroughEnabled";
     private static final String ACTION_SET_ROOT_CA_CERT_VALIDITY = "setRootCaCertValidity";
     private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
 
+    private static final String VIEW_GET_PASS_THROUGHS = "getPassThroughs";
     private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
     private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
 
     private static final String OTHER_ROOT_CA_CERT = "rootCaCert";
 
+    private static final String PARAM_AUTHORITY = "authority";
+    private static final String PARAM_ENABLED = "enabled";
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String PARAM_VALIDITY = "validity";
 
@@ -81,11 +93,31 @@ public class NetworkApi extends ApiImplementor {
             this.addApiView(new ApiView(VIEW_GET_SERVER_CERT_VALIDITY));
         }
 
+        if (isHandleLocalServers(extensionNetwork)) {
+            this.addApiAction(
+                    new ApiAction(
+                            ACTION_ADD_PASS_THROUGH,
+                            Arrays.asList(PARAM_AUTHORITY),
+                            Arrays.asList(PARAM_ENABLED)));
+            this.addApiAction(
+                    new ApiAction(ACTION_REMOVE_PASS_THROUGH, Arrays.asList(PARAM_AUTHORITY)));
+            this.addApiAction(
+                    new ApiAction(
+                            ACTION_SET_PASS_THROUGH_ENABLED,
+                            Arrays.asList(PARAM_AUTHORITY, PARAM_ENABLED)));
+
+            this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
+        }
+
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
     }
 
     private static boolean isHandleServerCerts(ExtensionNetwork extensionNetwork) {
         return extensionNetwork == null || extensionNetwork.isHandleServerCerts();
+    }
+
+    private static boolean isHandleLocalServers(ExtensionNetwork extensionNetwork) {
+        return extensionNetwork == null || extensionNetwork.isHandleLocalServers();
     }
 
     @Override
@@ -96,6 +128,18 @@ public class NetworkApi extends ApiImplementor {
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         switch (name) {
+            case ACTION_ADD_PASS_THROUGH:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    Pattern authority = createAuthorityPattern(params.getString(PARAM_AUTHORITY));
+                    boolean enabled = getParam(params, PARAM_ENABLED, true);
+                    PassThrough passThrough = new PassThrough(authority, enabled);
+                    extensionNetwork.getLocalServersOptions().addPassThrough(passThrough);
+                    return ApiResponseElement.OK;
+                }
+
             case ACTION_GENERATE_ROOT_CA_CERT:
                 if (extensionNetwork.generateRootCaCert()) {
                     return ApiResponseElement.OK;
@@ -109,6 +153,36 @@ public class NetworkApi extends ApiImplementor {
                     return ApiResponseElement.OK;
                 }
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, errorMessage);
+
+            case ACTION_REMOVE_PASS_THROUGH:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String authority = params.getString(PARAM_AUTHORITY);
+                    boolean removed =
+                            extensionNetwork.getLocalServersOptions().removePassThrough(authority);
+                    if (!removed) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_AUTHORITY);
+                    }
+                    return ApiResponseElement.OK;
+                }
+            case ACTION_SET_PASS_THROUGH_ENABLED:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String authority = params.getString(PARAM_AUTHORITY);
+                    boolean enabled = getParam(params, PARAM_ENABLED, true);
+                    boolean changed =
+                            extensionNetwork
+                                    .getLocalServersOptions()
+                                    .setPassThroughEnabled(authority, enabled);
+                    if (!changed) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_AUTHORITY);
+                    }
+                    return ApiResponseElement.OK;
+                }
 
             case ACTION_SET_ROOT_CA_CERT_VALIDITY:
                 if (!isHandleServerCerts(extensionNetwork)) {
@@ -141,9 +215,31 @@ public class NetworkApi extends ApiImplementor {
         }
     }
 
+    private static Pattern createAuthorityPattern(String value) throws ApiException {
+        try {
+            return PassThrough.createAuthorityPattern(value);
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_AUTHORITY, e);
+        }
+    }
+
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
         switch (name) {
+            case VIEW_GET_PASS_THROUGHS:
+                if (!isHandleLocalServers(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_VIEW);
+                }
+                ApiResponseList response = new ApiResponseList(name);
+                for (PassThrough passThrough :
+                        extensionNetwork.getLocalServersOptions().getPassThroughs()) {
+                    Map<String, Object> entry = new HashMap<>();
+                    entry.put("name", passThrough.getAuthority().pattern());
+                    entry.put("enabled", passThrough.isEnabled());
+                    response.addItem(new ApiResponseSet<>("passThrough", entry));
+                }
+                return response;
+
             case VIEW_GET_ROOT_CA_CERT_VALIDITY:
                 if (!isHandleServerCerts(extensionNetwork)) {
                     throw new ApiException(ApiException.Type.BAD_VIEW);

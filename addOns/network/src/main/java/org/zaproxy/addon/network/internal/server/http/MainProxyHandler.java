@@ -58,19 +58,19 @@ public class MainProxyHandler extends MainServerHandler {
             return false;
         }
 
-        LegacySocketAdapter passthroughAdapter = new LegacySocketAdapter(ctx.channel());
+        LegacySocketAdapter passThroughAdapter = new LegacySocketAdapter(ctx.channel());
         ZapGetMethod method = (ZapGetMethod) msg.getUserObject();
         if (method == null) {
             method = new ZapGetMethod();
-            method.setUpgradedSocket(passthroughAdapter.getSocket());
+            method.setUpgradedSocket(passThroughAdapter.getSocket());
             try {
-                method.setUpgradedInputStream(passthroughAdapter.getSocket().getInputStream());
+                method.setUpgradedInputStream(passThroughAdapter.getSocket().getInputStream());
             } catch (IOException ignore) {
             }
         }
         boolean keepConnectionOpen =
                 legacyHandler.notifyPersistentConnectionListener(
-                        msg, passthroughAdapter.getSocket(), method);
+                        msg, passThroughAdapter.getSocket(), method);
         if (keepConnectionOpen) {
             return true;
         }
