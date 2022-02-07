@@ -8,18 +8,18 @@
 </HEAD>
 <BODY>
 
-<H1>SOAP Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>Поддержка платформы автоматизации SOAP</H1>
+Это дополнение поддерживает Automation Framework. 
 <br><br>
-The add-on will import WSDL files containing SOAP endpoints if they are found while spidering but adding them explicitly via a URL or local file is recommended if they are available.
+Надстройка будет импортировать файлы WSDL, содержащие конечные точки SOAP, если они будут найдены во время поиска, но рекомендуется добавлять их явно через URL-адрес или локальный файл, если они доступны. 
 
-<H2>Job: soap</H2>
-The soap job allows you to import WSDL files locally or from a URL.
+<H2>Задание:soap</H2>
+Задание soap позволяет импортировать файлы WSDL локально или по URL-адресу. 
 <pre>
-  - type: soap                         # SOAP WSDL import
+  - type: soap                         # SOAP WSDL импорт
     parameters:
-      wsdlFile:                        # String: Local file path of the WSDL, default: null, no definition will be imported
-      wsdlUrl:                         # String: URL pointing to the WSDL, default: null, no definition will be imported
+      wsdlFile:                        # String: Путь к локальному файлу WSDL, по умолчанию: null, определение не будет импортировано. 
+      wsdlUrl:                         # String: URL-адрес, указывающий на WSDL, по умолчанию: null, определение не будет импортировано. 
 </pre>
 
 </BODY>
