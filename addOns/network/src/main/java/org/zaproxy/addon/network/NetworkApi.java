@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.network;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
@@ -26,6 +29,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +39,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.server.http.Alias;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -53,10 +60,12 @@ public class NetworkApi extends ApiImplementor {
     private static final String PREFIX = "network";
 
     private static final String ACTION_ADD_ALIAS = "addAlias";
+    private static final String ACTION_ADD_LOCAL_SERVER = "addLocalServer";
     private static final String ACTION_ADD_PASS_THROUGH = "addPassThrough";
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
     private static final String ACTION_REMOVE_ALIAS = "removeAlias";
+    private static final String ACTION_REMOVE_LOCAL_SERVER = "removeLocalServer";
     private static final String ACTION_REMOVE_PASS_THROUGH = "removePassThrough";
     private static final String ACTION_SET_ALIAS_ENABLED = "setAliasEnabled";
     private static final String ACTION_SET_PASS_THROUGH_ENABLED = "setPassThroughEnabled";
@@ -64,16 +73,24 @@ public class NetworkApi extends ApiImplementor {
     private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
 
     private static final String VIEW_GET_ALIASES = "getAliases";
+    private static final String VIEW_GET_LOCAL_SERVERS = "getLocalServers";
     private static final String VIEW_GET_PASS_THROUGHS = "getPassThroughs";
     private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
     private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
 
     private static final String OTHER_ROOT_CA_CERT = "rootCaCert";
 
+    private static final String PARAM_ADDRESS = "address";
+    private static final String PARAM_API = "api";
     private static final String PARAM_AUTHORITY = "authority";
+    private static final String PARAM_BEHIND_NAT = "behindNat";
+    private static final String PARAM_DECODE_RESPONSE = "decodeResponse";
     private static final String PARAM_ENABLED = "enabled";
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String PARAM_NAME = "name";
+    private static final String PARAM_PORT = "port";
+    private static final String PARAM_PROXY = "proxy";
+    private static final String PARAM_REMOVE_ACCEPT_ENCODING = "removeAcceptEncoding";
     private static final String PARAM_VALIDITY = "validity";
 
     private final ExtensionNetwork extensionNetwork;
@@ -107,10 +124,23 @@ public class NetworkApi extends ApiImplementor {
                             Arrays.asList(PARAM_ENABLED)));
             this.addApiAction(
                     new ApiAction(
+                            ACTION_ADD_LOCAL_SERVER,
+                            Arrays.asList(PARAM_ADDRESS, PARAM_PORT),
+                            Arrays.asList(
+                                    PARAM_API,
+                                    PARAM_PROXY,
+                                    PARAM_BEHIND_NAT,
+                                    PARAM_DECODE_RESPONSE,
+                                    PARAM_REMOVE_ACCEPT_ENCODING)));
+            this.addApiAction(
+                    new ApiAction(
                             ACTION_ADD_PASS_THROUGH,
                             Arrays.asList(PARAM_AUTHORITY),
                             Arrays.asList(PARAM_ENABLED)));
             this.addApiAction(new ApiAction(ACTION_REMOVE_ALIAS, Arrays.asList(PARAM_NAME)));
+            this.addApiAction(
+                    new ApiAction(
+                            ACTION_REMOVE_LOCAL_SERVER, Arrays.asList(PARAM_ADDRESS, PARAM_PORT)));
             this.addApiAction(
                     new ApiAction(ACTION_REMOVE_PASS_THROUGH, Arrays.asList(PARAM_AUTHORITY)));
             this.addApiAction(
@@ -122,6 +152,7 @@ public class NetworkApi extends ApiImplementor {
                             Arrays.asList(PARAM_AUTHORITY, PARAM_ENABLED)));
 
             this.addApiView(new ApiView(VIEW_GET_ALIASES));
+            this.addApiView(new ApiView(VIEW_GET_LOCAL_SERVERS));
             this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
         }
 
@@ -153,6 +184,33 @@ public class NetworkApi extends ApiImplementor {
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     Alias alias = new Alias(aliasName, enabled);
                     extensionNetwork.getLocalServersOptions().addAlias(alias);
+                    return ApiResponseElement.OK;
+                }
+            case ACTION_ADD_LOCAL_SERVER:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    LocalServerConfig server = new LocalServerConfig();
+                    server.setAddress(params.getString(PARAM_ADDRESS));
+                    try {
+                        server.setPort(
+                                getParam(params, PARAM_PORT, LocalServerConfig.DEFAULT_PORT));
+                    } catch (IllegalArgumentException e) {
+                        throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_PORT);
+                    }
+                    boolean proxy = getParam(params, PARAM_PROXY, true);
+                    boolean api = getParam(params, PARAM_API, true);
+                    server.setMode(
+                            proxy && api
+                                    ? ServerMode.API_AND_PROXY
+                                    : proxy ? ServerMode.PROXY : ServerMode.API);
+                    server.setBehindNat(getParam(params, PARAM_BEHIND_NAT, false));
+                    server.setRemoveAcceptEncoding(
+                            getParam(params, PARAM_REMOVE_ACCEPT_ENCODING, true));
+                    server.setDecodeResponse(getParam(params, PARAM_DECODE_RESPONSE, true));
+                    validateLocalServer(server);
+                    extensionNetwork.getLocalServersOptions().addServer(server);
                     return ApiResponseElement.OK;
                 }
             case ACTION_ADD_PASS_THROUGH:
@@ -193,7 +251,20 @@ public class NetworkApi extends ApiImplementor {
                     }
                     return ApiResponseElement.OK;
                 }
-
+            case ACTION_REMOVE_LOCAL_SERVER:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String address = params.getString(PARAM_ADDRESS);
+                    int port = getParam(params, PARAM_PORT, LocalServerConfig.DEFAULT_PORT);
+                    boolean removed =
+                            extensionNetwork.getLocalServersOptions().removeServer(address, port);
+                    if (!removed) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST);
+                    }
+                    return ApiResponseElement.OK;
+                }
             case ACTION_REMOVE_PASS_THROUGH:
                 {
                     if (!isHandleLocalServers(extensionNetwork)) {
@@ -271,6 +342,43 @@ public class NetworkApi extends ApiImplementor {
         }
     }
 
+    private void validateLocalServer(LocalServerConfig server) throws ApiException {
+        LocalServersOptions options = extensionNetwork.getLocalServersOptions();
+        Set<LocalServerConfig> currentAddresses =
+                new TreeSet<>(
+                        (o1, o2) -> {
+                            int result = Integer.compare(o1.getPort(), o2.getPort());
+                            if (result != 0) {
+                                return result;
+                            }
+                            return o1.getAddress().compareToIgnoreCase(o2.getAddress());
+                        });
+
+        currentAddresses.add(options.getMainProxy());
+        options.getServers().forEach(currentAddresses::add);
+
+        if (!currentAddresses.add(server)) {
+            throw new ApiException(
+                    ApiException.Type.ILLEGAL_PARAMETER,
+                    "A local server/proxy with this address and port is already defined: "
+                            + server.getAddress()
+                            + ":"
+                            + server.getPort());
+        }
+
+        try (ServerSocket socket =
+                new ServerSocket(server.getPort(), 0, InetAddress.getByName(server.getAddress()))) {
+            socket.getLocalPort();
+        } catch (IOException e) {
+            throw new ApiException(
+                    ApiException.Type.ILLEGAL_PARAMETER,
+                    "Unable to listen on this address and port: "
+                            + server.getAddress()
+                            + ":"
+                            + server.getPort());
+        }
+    }
+
     private static Pattern createAuthorityPattern(String value) throws ApiException {
         try {
             return PassThrough.createAuthorityPattern(value);
@@ -293,6 +401,27 @@ public class NetworkApi extends ApiImplementor {
                         entry.put("name", alias.getName());
                         entry.put("enabled", alias.isEnabled());
                         response.addItem(new ApiResponseSet<>("alias", entry));
+                    }
+                    return response;
+                }
+            case VIEW_GET_LOCAL_SERVERS:
+                {
+                    if (!isHandleLocalServers(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_VIEW);
+                    }
+                    ApiResponseList response = new ApiResponseList(name);
+                    for (LocalServerConfig server :
+                            extensionNetwork.getLocalServersOptions().getServers()) {
+                        Map<String, Object> entry = new HashMap<>();
+                        entry.put("address", server.getAddress());
+                        entry.put("port", server.getPort());
+                        entry.put("api", server.getMode().hasApi());
+                        entry.put("proxy", server.getMode().hasProxy());
+                        entry.put("behindNat", server.isBehindNat());
+                        entry.put("removeAcceptEncoding", server.isRemoveAcceptEncoding());
+                        entry.put("decodeResponse", server.isDecodeResponse());
+                        entry.put("enabled", server.isEnabled());
+                        response.addItem(new ApiResponseSet<>("localServer", entry));
                     }
                     return response;
                 }
