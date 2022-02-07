@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Traditional-json-plus report
+- Template specific help pages
 
 ### Changed
 - Update minimum ZAP version to 2.11.1.

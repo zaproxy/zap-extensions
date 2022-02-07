@@ -6,6 +6,8 @@
 <index version="2.0">
 	<!-- index entries are merged (sorted) into core index -->
 	<indexitem text="reports" target="reports" />
+	<indexitem text="reports templates"
+		target="reports.templates" />
 	<indexitem text="reports automation"
 		target="reports.automation" />
 	<indexitem text="reports creating reports"
