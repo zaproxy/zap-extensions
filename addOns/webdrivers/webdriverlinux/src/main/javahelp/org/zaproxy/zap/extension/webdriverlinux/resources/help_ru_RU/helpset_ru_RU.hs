@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="ru-RU">
-  <title>Linux WebDrivers</title>
+  <title>Веб-драйверы Linux </title>
 
   <maps>
      <homeID>top</homeID>
@@ -9,7 +9,7 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Содержание</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>

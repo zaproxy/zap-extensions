@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Token Generator" image="tokengen-icon" target="tokengen">
-				<tocitem text="Options" target="tokengen.options" />
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Генератор токенов " image="tokengen-icon" target="tokengen">
+				<tocitem text="Параметры" target="tokengen.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
