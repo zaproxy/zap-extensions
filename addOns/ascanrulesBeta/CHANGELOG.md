@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hidden File Finder scan rule, content checking has been added for .svn/entries as well as detection for wc.db.
 - Use Network add-on to detect/serve HttPoxy scan rule requests.
 - Maintenance changes.
+- The CSRF Token scan rule will now raise alerts as Medium risk (Issue 7021).
 
 ### Fixed
 - Adapted Cloud Metadata Attack scan rule to use Custom Pages and active scan analyzer to help reduce false positives in certain cases (Issue 7033).

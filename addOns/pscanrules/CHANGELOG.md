@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Address false positive condition for Timestamp Disclosure scan rule when values are percentages (Issue 7057).
 - Update Cache-control scan rule name, description, and solution to make it more clear that there are cases in which caching is reasonable. Reduced risk to Info (Issue 6462).
 - Maintenance changes.
+- The CSRF Token scan rule will now raise alerts as Medium risk and Low confidence (Issue 7021).
 
 ## [38] - 2022-01-07
 ### Changed
