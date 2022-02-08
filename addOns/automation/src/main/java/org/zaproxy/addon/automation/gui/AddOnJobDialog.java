@@ -161,7 +161,7 @@ public class AddOnJobDialog extends StandardFieldsDialog {
     private AddOnsTableModel getAddOnsInstallModel() {
         if (addOnsInstallModel == null) {
             addOnsInstallModel = new AddOnsTableModel();
-            addOnsInstallModel.setAddOns(job.getData().getInstall());
+            addOnsInstallModel.setAddOns(new ArrayList<>(job.getData().getInstall()));
         }
         return addOnsInstallModel;
     }
@@ -183,7 +183,7 @@ public class AddOnJobDialog extends StandardFieldsDialog {
     private AddOnsTableModel getAddOnsUninstallModel() {
         if (addOnsUninstallModel == null) {
             addOnsUninstallModel = new AddOnsTableModel();
-            addOnsUninstallModel.setAddOns(job.getData().getUninstall());
+            addOnsUninstallModel.setAddOns(new ArrayList<>(job.getData().getUninstall()));
         }
         return addOnsUninstallModel;
     }
