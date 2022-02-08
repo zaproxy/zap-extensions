@@ -1325,6 +1325,151 @@ class LocalServersOptionsUnitTest {
         assertThat(options.getPassThroughs().get(0).isEnabled(), is(equalTo(true)));
     }
 
+    @Test
+    void shouldMigrateCoreProxy() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<proxy>\n"
+                                + "  <port>1234</port>\n"
+                                + "  <decodeGzip>false</decodeGzip>\n"
+                                + "  <behindnat>true</behindnat>\n"
+                                + "  <removeUnsupportedEncodings>false</removeUnsupportedEncodings>\n"
+                                + "  <ip>127.0.0.2</ip>\n"
+                                + "  <securityProtocolsEnabled>\n"
+                                + "    <protocol>SSLv3</protocol>\n"
+                                + "    <protocol>TLSv1</protocol>\n"
+                                + "    <protocol>TLSv1.3</protocol>\n"
+                                + "    <protocol>TLSv1.2</protocol>\n"
+                                + "    <protocol>TLSv1.1</protocol>\n"
+                                + "  </securityProtocolsEnabled>\n"
+                                + "</proxy>");
+        // When
+        options.load(config);
+        // Then
+        assertServerFields(
+                options.getMainProxy(),
+                "127.0.0.2",
+                1234,
+                ServerMode.API_AND_PROXY,
+                true,
+                false,
+                false,
+                true);
+        assertThat(config.getProperty("proxy.ip"), is(nullValue()));
+    }
+
+    @Test
+    void shouldUseDefaultsIfCoreProxyDataNotPresent() {
+        // Given
+        ZapXmlConfiguration config = configWith("<proxy></proxy>");
+        // When
+        options.load(config);
+        // Then
+        assertDefaultValues();
+        assertThat(config.getProperty("proxy.ip"), is(nullValue()));
+    }
+
+    @Test
+    void shouldUseDefaultsIfFailedToMigrateCoreProxy() {
+        // Given
+        ZapXmlConfiguration config = configWith("<proxy><ip/></proxy>");
+        // When
+        options.load(config);
+        // Then
+        assertDefaultValues();
+        assertThat(config.getProperty("proxy.ip"), is(nullValue()));
+    }
+
+    @Test
+    void shouldMigrateAdditionalProxies() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<proxies>\n"
+                                + "  <confirmRemoveProxy>false</confirmRemoveProxy>\n"
+                                + "  <all>\n"
+                                + "    <address>localhost</address>\n"
+                                + "    <port>8123</port>\n"
+                                + "    <enabled>true</enabled>\n"
+                                + "    <anylocal>false</anylocal>\n"
+                                + "    <remunsupported>true</remunsupported>\n"
+                                + "    <decode>true</decode>\n"
+                                + "    <behindnat>false</behindnat>\n"
+                                + "  </all>\n"
+                                + "  <all>\n"
+                                + "    <address>0.0.0.0</address>\n"
+                                + "    <port>8234</port>\n"
+                                + "    <enabled>false</enabled>\n"
+                                + "    <anylocal>false</anylocal>\n"
+                                + "    <remunsupported>false</remunsupported>\n"
+                                + "    <decode>false</decode>\n"
+                                + "    <behindnat>true</behindnat>\n"
+                                + "  </all>\n"
+                                + "</proxies>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isConfirmRemoveServer(), is(equalTo(false)));
+        assertThat(options.getServers(), hasSize(2));
+        assertServerFields(
+                options.getServers().get(0),
+                "localhost",
+                8123,
+                ServerMode.API_AND_PROXY,
+                false,
+                true,
+                true,
+                true);
+        assertServerFields(
+                options.getServers().get(1),
+                "0.0.0.0",
+                8234,
+                ServerMode.API_AND_PROXY,
+                true,
+                false,
+                false,
+                false);
+        assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
+        assertThat(config.getProperty("proxies.all"), is(nullValue()));
+    }
+
+    @Test
+    void shouldSkipIfAdditionalProxyDataNotPresent() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<proxies><confirmRemoveProxy>true</confirmRemoveProxy><all/></proxies>");
+        // When
+        options.load(config);
+        // Then
+        assertDefaultValues();
+        assertThat(options.getServers(), hasSize(0));
+        assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
+        assertThat(config.getProperty("proxies.all"), is(nullValue()));
+    }
+
+    @Test
+    void shouldUseDefaultsIfFailedToMigrateAdditionalProxies() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<proxies>\n"
+                                + "  <confirmRemoveProxy>true</confirmRemoveProxy>\n"
+                                + "  <all>\n"
+                                + "    <address>localhost</address>\n"
+                                + "    <port>not a port</port>\n"
+                                + "  </all>\n"
+                                + "</proxies>");
+        // When
+        options.load(config);
+        // Then
+        assertDefaultValues();
+        assertThat(options.getServers(), hasSize(0));
+        assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
+        assertThat(config.getProperty("proxies.all"), is(nullValue()));
+    }
+
     private static ZapXmlConfiguration configWith(String value) {
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         String contents =
