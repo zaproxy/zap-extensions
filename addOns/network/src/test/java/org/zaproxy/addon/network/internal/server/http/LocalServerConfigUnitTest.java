@@ -25,6 +25,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -33,7 +37,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.TlsUtils;
+import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.server.Server;
 
@@ -295,6 +301,35 @@ class LocalServerConfigUnitTest {
         LocalServerConfig server = new LocalServerConfig();
         // When / Then
         assertThrows(NullPointerException.class, () -> server.setAddress(address));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldUseProvidedAliasChecker(boolean value) {
+        // Given
+        LocalServerConfig other = new LocalServerConfig();
+        AliasChecker aliasChecker = mock(AliasChecker.class);
+        given(aliasChecker.isAlias(any())).willReturn(value);
+        LocalServerConfig server = new LocalServerConfig(other, aliasChecker);
+        HttpRequestHeader requestHeader = mock(HttpRequestHeader.class);
+        // When
+        boolean alias = server.isAlias(requestHeader);
+        // Then
+        verify(aliasChecker).isAlias(requestHeader);
+        assertThat(alias, is(equalTo(value)));
+    }
+
+    @Test
+    void shouldNotBeAliasIfNoProvidedAliasChecker() {
+        // Given
+        LocalServerConfig other = new LocalServerConfig();
+        AliasChecker aliasChecker = null;
+        LocalServerConfig server = new LocalServerConfig(other, aliasChecker);
+        HttpRequestHeader requestHeader = mock(HttpRequestHeader.class);
+        // When
+        boolean alias = server.isAlias(requestHeader);
+        // Then
+        assertThat(alias, is(equalTo(false)));
     }
 
     @Test

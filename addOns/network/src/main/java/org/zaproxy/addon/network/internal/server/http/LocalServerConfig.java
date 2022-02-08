@@ -26,6 +26,7 @@ import java.util.Objects;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.handlers.TlsConfig;
+import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.utils.Enableable;
@@ -88,6 +89,7 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
     private boolean behindNat;
     private boolean removeAcceptEncoding;
     private boolean decodeResponse;
+    private AliasChecker aliasChecker;
 
     /** Constructs a {@code LocalServerConfig} with the defaults. */
     public LocalServerConfig() {
@@ -103,7 +105,7 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
     /**
      * Constructs a {@code LocalServerConfig} from the given instance.
      *
-     * @param other other instance with the data.
+     * @param other another instance with the data.
      * @throws NullPointerException if the given instance is {@code null}.
      */
     public LocalServerConfig(LocalServerConfig other) {
@@ -112,9 +114,22 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
     }
 
     /**
+     * Constructs a {@code LocalServerConfig} from the given instance and with the given alias
+     * checker.
+     *
+     * @param other another instance with the data.
+     * @param aliasChecker the alias checker.
+     * @throws NullPointerException if the given instance is {@code null}.
+     */
+    public LocalServerConfig(LocalServerConfig other, AliasChecker aliasChecker) {
+        this(other);
+        this.aliasChecker = aliasChecker;
+    }
+
+    /**
      * Updates this instance with the data from the given one.
      *
-     * @param other other instance with the data.
+     * @param other another instance with the data.
      * @return {@code true} if the address/port has changed, {@code false} otherwise.
      * @throws NullPointerException if the given instance is {@code null}.
      */
@@ -312,7 +327,7 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
 
     @Override
     public boolean isAlias(HttpRequestHeader header) {
-        return false;
+        return aliasChecker != null && aliasChecker.isAlias(header);
     }
 
     @Override
