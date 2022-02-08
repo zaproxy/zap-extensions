@@ -253,6 +253,28 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddHostAndPortCommandLineArgsOnHookIfHandlingLocalServerServers() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<CommandLineArgument[]> argument =
+                ArgumentCaptor.forClass(CommandLineArgument[].class);
+        verify(extensionHook).addCommandLine(argument.capture());
+        CommandLineArgument[] args = argument.getAllValues().get(0);
+        assertThat(args, arrayWithSize(5));
+        assertThat(args[3].getName(), is(equalTo("-host")));
+        assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[3].getHelpMessage(), is(not(emptyString())));
+        assertThat(args[4].getName(), is(equalTo("-port")));
+        assertThat(args[4].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[4].getHelpMessage(), is(not(emptyString())));
+    }
+
+    @Test
     void shouldAddLegacyProxyListenerHandlerOnHookAlways() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);

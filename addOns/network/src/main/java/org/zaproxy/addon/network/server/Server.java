@@ -84,11 +84,13 @@ public interface Server extends Closeable {
      * Validates that the given port is within the allowed range.
      *
      * @param port the port to validate
+     * @return the valid port.
      * @throws IllegalArgumentException if the port is invalid.
      */
-    static void validatePort(int port) {
+    static int validatePort(int port) {
         if (port < ANY_PORT || port > MAX_PORT) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
+        return port;
     }
 }

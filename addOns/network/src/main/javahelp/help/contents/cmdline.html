@@ -25,7 +25,21 @@
 			<td>-certfulldump</td>
 			<td>Dumps the Root CA certificate and the private key into the specified file, this is suitable for importing into ZAP.</td>
 		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-host</td>
+			<td>Overrides the host used for proxying specified in the configuration file.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-port</td>
+			<td>Overrides the port used for proxying specified in the configuration file.</td>
+		</tr>
 	</table>
+
+	<H3>Local Servers/Proxies</H3>
+	The local servers/proxies are not started when ZAP is running in command line mode (i.e. <code>-cmd</code>). If unable to start the main
+	proxy in daemon mode (i.e. <code>-daemon</code>) ZAP is terminated, when running with GUI an appropriate warning is shown instead.
 
 	<H2>See also</H2>
 	<table>

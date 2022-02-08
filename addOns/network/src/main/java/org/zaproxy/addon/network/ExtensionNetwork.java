@@ -78,6 +78,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListen
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 
@@ -90,6 +91,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_CERT_LOAD = 0;
     private static final int ARG_CERT_PUB_DUMP = 1;
     private static final int ARG_CERT_FULL_DUMP = 2;
+
+    private static final int ARG_HOST_IDX = 3;
+    private static final int ARG_PORT_IDX = 4;
 
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
@@ -114,6 +118,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         super(ExtensionNetwork.class.getSimpleName());
 
         setI18nPrefix(I18N_PREFIX);
+
+        // Let the servers start after everything has been initialised.
+        setOrder(Integer.MAX_VALUE);
 
         // Force initialisation.
         TlsUtils.getSupportedProtocols();
@@ -317,7 +324,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             return;
         }
 
-        extensionHook.addCommandLine(createCommandLineArgs());
+        extensionHook.addCommandLine(createCommandLineArgs(handleLocalServers));
 
         sslCertificateService = new SslCertificateServiceImpl();
 
@@ -348,6 +355,26 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @Override
+    public void postInstall() {
+        if (!handleLocalServers) {
+            return;
+        }
+
+        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
+            logNoStartCmdLineMode();
+            return;
+        }
+
+        startLocalServers(null, -1);
+    }
+
+    private static void logNoStartCmdLineMode() {
+        LOGGER.info("Not starting local servers/proxies, running in command line mode.");
+    }
+
+    private void startLocalServers(String mainProxyAddress, int mainProxyPort) {}
+
     LegacyProxyListenerHandler getLegacyProxyListenerHandler() {
         return legacyProxyListenerHandler;
     }
@@ -356,8 +383,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return passThroughHandler;
     }
 
-    private static CommandLineArgument[] createCommandLineArgs() {
-        CommandLineArgument[] arguments = new CommandLineArgument[3];
+    private static CommandLineArgument[] createCommandLineArgs(boolean includeHostPort) {
+        CommandLineArgument[] arguments = new CommandLineArgument[includeHostPort ? 5 : 3];
         arguments[ARG_CERT_LOAD] =
                 new CommandLineArgument(
                         "-certload",
@@ -382,6 +409,26 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "",
                         "-certfulldump <path>     "
                                 + Constant.messages.getString("network.cmdline.certfulldump"));
+
+        if (includeHostPort) {
+            arguments[ARG_HOST_IDX] =
+                    new CommandLineArgument(
+                            "-host",
+                            1,
+                            null,
+                            "",
+                            "-host <host>             "
+                                    + Constant.messages.getString("network.cmdline.proxy.host"));
+            arguments[ARG_PORT_IDX] =
+                    new CommandLineArgument(
+                            "-port",
+                            1,
+                            null,
+                            "",
+                            "-port <port>             "
+                                    + Constant.messages.getString("network.cmdline.proxy.port"));
+        }
+
         return arguments;
     }
 
@@ -418,6 +465,44 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     arguments[ARG_CERT_FULL_DUMP].getArguments().firstElement(),
                     this::writeRootCaCertAndPrivateKeyAsPem);
         }
+
+        if (!handleLocalServers) {
+            return;
+        }
+
+        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
+            logNoStartCmdLineMode();
+            return;
+        }
+
+        String mainProxyAddress = null;
+        if (arguments[ARG_HOST_IDX].isEnabled()) {
+            mainProxyAddress = arguments[ARG_HOST_IDX].getArguments().firstElement();
+        }
+
+        int mainProxyPort = -1;
+        if (arguments[ARG_PORT_IDX].isEnabled()) {
+            String argValue = arguments[ARG_PORT_IDX].getArguments().firstElement();
+            try {
+                mainProxyPort = Server.validatePort(Integer.parseInt(argValue));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warn(
+                        "The main proxy will not be started, invalid -port value: {}", argValue);
+
+                if (ZAP.getProcessType() == ZAP.ProcessType.daemon) {
+                    throw new Error("Terminating ZAP, unable to start the main proxy.");
+                }
+
+                JOptionPane.showMessageDialog(
+                        getView().getMainFrame(),
+                        Constant.messages.getString(
+                                "network.cmdline.proxy.port.invalid.message", argValue),
+                        Constant.messages.getString("network.cmdline.proxy.port.invalid.title"),
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+
+        startLocalServers(mainProxyAddress, mainProxyPort);
     }
 
     private static void writeCert(String path, CertWriter writer) {
