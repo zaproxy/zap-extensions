@@ -333,6 +333,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             requestHeader ->
                                     localServersOptions.getPassThroughs().stream()
                                             .anyMatch(e -> e.test(requestHeader)));
+
+            extensionHook.addApiImplementor(new LegacyProxiesApi(this));
         }
 
         if (hasView()) {

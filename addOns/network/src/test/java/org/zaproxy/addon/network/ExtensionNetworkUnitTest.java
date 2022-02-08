@@ -189,6 +189,20 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddLegacyProxiesApiOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<LegacyProxiesApi> argument = ArgumentCaptor.forClass(LegacyProxiesApi.class);
+        verify(extensionHook, times(2)).addApiImplementor(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(LegacyProxiesApi.class)));
+    }
+
+    @Test
     void shouldNotAddServerCertificatesOptionsOnHookIfNotHandlingServerCerts() throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
