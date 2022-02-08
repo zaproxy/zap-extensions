@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports;
 import com.lowagie.text.DocumentException;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -65,6 +66,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.DesktopUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionReports extends ExtensionAdaptor {
@@ -357,112 +359,123 @@ public class ExtensionReports extends ExtensionAdaptor {
     public File generateReport(
             ReportData reportData, Template template, String reportFilename, boolean display)
             throws IOException {
-        TemplateEngine templateEngine = new TemplateEngine();
-        FileTemplateResolver templateResolver = new FileTemplateResolver();
-        templateResolver.setTemplateMode(template.getMode());
-        templateEngine.setTemplateResolver(templateResolver);
+        try {
+            TemplateEngine templateEngine = new TemplateEngine();
+            FileTemplateResolver templateResolver = new FileTemplateResolver();
+            templateResolver.setTemplateMode(template.getMode());
+            templateEngine.setTemplateResolver(templateResolver);
 
-        templateEngine.setMessageResolver(new ReportMessageResolver(template));
+            templateEngine.setMessageResolver(new ReportMessageResolver(template));
 
-        Context context = new Context();
-        context.setVariable("alertTree", reportData.getAlertTreeRootNode());
-        context.setVariable("reportTitle", reportData.getTitle());
-        context.setVariable("description", reportData.getDescription());
-        context.setVariable("helper", new ReportHelper());
-        context.setVariable("alertCounts", getAlertCountsByRisk(reportData.getAlertTreeRootNode()));
-        context.setVariable(
-                "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
-        context.setVariable("reportData", reportData);
-
-        ExtensionStats extStats =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
-        if (extStats != null) {
-            InMemoryStats stats = extStats.getInMemoryStats();
-            if (stats != null) {
-                context.setVariable("stats", stats.getStats(""));
-            }
-        }
-
-        synchronized (SIMPLE_DATE_FORMAT) {
+            Context context = new Context();
+            context.setVariable("alertTree", reportData.getAlertTreeRootNode());
+            context.setVariable("reportTitle", reportData.getTitle());
+            context.setVariable("description", reportData.getDescription());
+            context.setVariable("helper", new ReportHelper());
             context.setVariable(
-                    "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
-        }
-        context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
+                    "alertCounts", getAlertCountsByRisk(reportData.getAlertTreeRootNode()));
+            context.setVariable(
+                    "alertCountsByRule", getAlertCountsByRule(reportData.getAlertTreeRootNode()));
+            context.setVariable("reportData", reportData);
 
-        if (reportDataHandler != null) {
-            reportDataHandler.handle(reportData);
-        }
-
-        if ("PDF".equals(template.getFormat())) {
-            if (reportFilename.toLowerCase().endsWith(".pdf")) {
-                reportFilename = reportFilename.substring(0, reportFilename.length() - 4);
-            }
-            reportFilename += ".html";
-        }
-
-        // Handle any resources
-        File resourcesDir = template.getResourcesDir();
-        if (resourcesDir.exists()) {
-            String subDirName;
-            int dotIndex = reportFilename.lastIndexOf(".");
-            if (dotIndex > 0) {
-                subDirName = reportFilename.substring(0, dotIndex);
-            } else {
-                subDirName = reportFilename + "_d";
-            }
-            File subDir = new File(subDirName);
-            int i = 1;
-            while (subDir.exists()) {
-                i += 1;
-                subDir = new File(subDirName + i);
-            }
-            LOGGER.debug(
-                    "Copying resources from {} to {}",
-                    resourcesDir.getAbsolutePath(),
-                    subDir.getAbsolutePath());
-            FileUtils.copyDirectory(resourcesDir, subDir);
-            context.setVariable("resources", subDir.getName());
-        }
-
-        File file = new File(reportFilename);
-        try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            templateEngine.process(
-                    template.getReportTemplateFile().getAbsolutePath(), context, writer);
-        }
-
-        if ("PDF".equals(template.getFormat())) {
-            // Will have appended ".html" above
-            reportFilename = reportFilename.substring(0, reportFilename.length() - 5);
-            reportFilename += ".pdf";
-            File pdfFile = new File(reportFilename);
-            try (OutputStream outputStream = new FileOutputStream(pdfFile)) {
-                ITextRenderer renderer = new ITextRenderer();
-                renderer.setDocument(file);
-                renderer.layout();
-                try {
-                    renderer.createPDF(outputStream);
-                } catch (DocumentException e) {
-                    // Throw a standard exception so that add-ons using this method don't need to
-                    // import it
-                    throw new IOException("Invalid template: " + template.getConfigName(), e);
+            ExtensionStats extStats =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+            if (extStats != null) {
+                InMemoryStats stats = extStats.getInMemoryStats();
+                if (stats != null) {
+                    context.setVariable("stats", stats.getStats(""));
                 }
             }
-            if (!file.delete()) {
-                LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
-            }
-            file = pdfFile;
-        }
 
-        LOGGER.debug("Generated report {}", file.getAbsolutePath());
-        if (display) {
-            if ("HTML".equals(template.getFormat())) {
-                DesktopUtils.openUrlInBrowser(file.toURI());
-            } else {
-                Desktop desktop = Desktop.getDesktop();
-                desktop.open(file);
+            synchronized (SIMPLE_DATE_FORMAT) {
+                context.setVariable(
+                        "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
             }
+            context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
+
+            if (reportDataHandler != null) {
+                reportDataHandler.handle(reportData);
+            }
+
+            if ("PDF".equals(template.getFormat())) {
+                if (reportFilename.toLowerCase().endsWith(".pdf")) {
+                    reportFilename = reportFilename.substring(0, reportFilename.length() - 4);
+                }
+                reportFilename += ".html";
+            }
+
+            // Handle any resources
+            File resourcesDir = template.getResourcesDir();
+            if (resourcesDir.exists()) {
+                String subDirName;
+                int dotIndex = reportFilename.lastIndexOf(".");
+                if (dotIndex > 0) {
+                    subDirName = reportFilename.substring(0, dotIndex);
+                } else {
+                    subDirName = reportFilename + "_d";
+                }
+                File subDir = new File(subDirName);
+                int i = 1;
+                while (subDir.exists()) {
+                    i += 1;
+                    subDir = new File(subDirName + i);
+                }
+                LOGGER.debug(
+                        "Copying resources from {} to {}",
+                        resourcesDir.getAbsolutePath(),
+                        subDir.getAbsolutePath());
+                FileUtils.copyDirectory(resourcesDir, subDir);
+                context.setVariable("resources", subDir.getName());
+            }
+
+            File file = new File(reportFilename);
+            try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+                templateEngine.process(
+                        template.getReportTemplateFile().getAbsolutePath(), context, writer);
+                Stats.incCounter("stats.reports.generated." + template.getConfigName());
+            }
+
+            if ("PDF".equals(template.getFormat())) {
+                // Will have appended ".html" above
+                reportFilename = reportFilename.substring(0, reportFilename.length() - 5);
+                reportFilename += ".pdf";
+                File pdfFile = new File(reportFilename);
+                try (OutputStream outputStream = new FileOutputStream(pdfFile)) {
+                    ITextRenderer renderer = new ITextRenderer();
+                    renderer.setDocument(file);
+                    renderer.layout();
+                    try {
+                        renderer.createPDF(outputStream);
+                    } catch (DocumentException e) {
+                        // Throw a standard exception so that add-ons using this method don't need
+                        // to
+                        // import it
+                        throw new IOException("Invalid template: " + template.getConfigName(), e);
+                    }
+                }
+                if (!file.delete()) {
+                    LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
+                }
+                file = pdfFile;
+            }
+
+            LOGGER.debug("Generated report {}", file.getAbsolutePath());
+            if (display) {
+                if ("HTML".equals(template.getFormat())) {
+                    DesktopUtils.openUrlInBrowser(file.toURI());
+                } else {
+                    Desktop desktop = Desktop.getDesktop();
+                    desktop.open(file);
+                }
+            }
+            return file;
+        } catch (FileNotFoundException e) {
+            Stats.incCounter("stats.reports.nofile." + template.getConfigName());
+            throw e;
+        } catch (IOException e) {
+            Stats.incCounter("stats.reports.error." + template.getConfigName());
+            throw e;
         }
-        return file;
     }
 
     public void setReportDataHandler(ReportDataHandler reportDataHandler) {
