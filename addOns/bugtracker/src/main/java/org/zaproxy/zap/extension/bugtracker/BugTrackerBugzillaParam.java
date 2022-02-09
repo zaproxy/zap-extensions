@@ -45,7 +45,6 @@ public class BugTrackerBugzillaParam extends AbstractParam {
             GITHUB_BASE_KEY + ".confirmRemoveConfig";
 
     private List<BugTrackerBugzillaConfigParams> configs = null;
-    // private List<String> enabledConfigsNames = null;
 
     private boolean confirmRemoveConfig = true;
 
@@ -57,7 +56,7 @@ public class BugTrackerBugzillaParam extends AbstractParam {
             List<HierarchicalConfiguration> fields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_CONFIGS_KEY);
             this.configs = new ArrayList<>(fields.size());
-            // enabledConfigsNames = new ArrayList<>(fields.size());
+
             List<String> tempConfigsNames = new ArrayList<>(fields.size());
             for (HierarchicalConfiguration sub : fields) {
                 String name = sub.getString(CONFIG_NAME_KEY, "");
@@ -67,23 +66,11 @@ public class BugTrackerBugzillaParam extends AbstractParam {
                     this.configs.add(
                             new BugTrackerBugzillaConfigParams(name, password, bugzillaUrl));
                     tempConfigsNames.add(name);
-                    // if (enabled) {
-                    //     enabledConfigsNames.add(name);
-                    // }
                 }
             }
         } catch (ConversionException e) {
             logger.error("Error while loading bugzilla configs: {}", e.getMessage(), e);
-            // this.configs = new ArrayList<>(DEFAULT_CONFIGS_NAMES.length);
-            // this.enabledConfigsNames = new ArrayList<>(DEFAULT_CONFIGS_NAMES.length);
         }
-
-        // if (this.configs.size() == 0) {
-        //     for (String configName : DEFAULT_CONFIGS_NAMES) {
-        //         this.configs.add(new BugTrackerBugzillaConfigParams(configName));
-        //         this.enabledConfigsNames.add(configName);
-        //     }
-        // }
 
         try {
             this.confirmRemoveConfig = getConfig().getBoolean(CONFIRM_REMOVE_CONFIG_KEY, true);
@@ -104,7 +91,6 @@ public class BugTrackerBugzillaParam extends AbstractParam {
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_CONFIGS_KEY);
 
-        // ArrayList<String> enabledConfigs = new ArrayList<>(configs.size());
         for (int i = 0, size = configs.size(); i < size; ++i) {
             String elementBaseKey = ALL_CONFIGS_KEY + "(" + i + ").";
             BugTrackerBugzillaConfigParams config = configs.get(i);
@@ -113,16 +99,7 @@ public class BugTrackerBugzillaParam extends AbstractParam {
             getConfig().setProperty(elementBaseKey + CONFIG_PASSWORD_KEY, config.getPassword());
             getConfig()
                     .setProperty(elementBaseKey + CONFIG_BUGZILLA_URL_KEY, config.getBugzillaUrl());
-            // getConfig().setProperty(elementBaseKey + CONFIG_ENABLED_KEY,
-            // Boolean.valueOf(config.isEnabled()));
-
-            // if (config.isEnabled()) {
-            //     enabledConfigs.add(config.getName());
-            // }
         }
-
-        // enabledConfigs.trimToSize();
-        // this.enabledConfigsNames = enabledConfigs;
     }
 
     /**
@@ -145,8 +122,6 @@ public class BugTrackerBugzillaParam extends AbstractParam {
         }
 
         this.configs.add(new BugTrackerBugzillaConfigParams(name, password, bugzillaUrl));
-
-        // this.enabledConfigsNames.add(name);
     }
 
     /**
@@ -166,17 +141,10 @@ public class BugTrackerBugzillaParam extends AbstractParam {
             BugTrackerBugzillaConfigParams config = it.next();
             if (name.equals(config.getName())) {
                 it.remove();
-                // if (config.isEnabled()) {
-                //     this.enabledConfigsNames.remove(name);
-                // }
                 break;
             }
         }
     }
-
-    // public List<String> getConfigsNames() {
-    //     return enabledConfigsNames;
-    // }
 
     @ZapApiIgnore
     public boolean isConfirmRemoveConfig() {

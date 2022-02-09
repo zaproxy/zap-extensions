@@ -135,7 +135,7 @@ public class GenBaseCase {
                 if (!baseResponce1.equalsIgnoreCase(baseResponce2)
                         || !baseResponce1.equalsIgnoreCase(baseResponce3)
                         || !baseResponce2.equalsIgnoreCase(baseResponce3)) {
-                    if (manager.getFailCaseRegexes().size() != 0) {
+                    if (!manager.getFailCaseRegexes().isEmpty()) {
 
                         /*
                          * for each saved regex see if it will work, if it does then use that one

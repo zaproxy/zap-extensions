@@ -68,7 +68,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner {
 
         Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
         params.addAll(msg.getUrlParams());
-        if (params.size() == 0) {
+        if (params.isEmpty()) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner {
     private void checkMetaContentCharset(
             HttpMessage msg, int id, Source source, Set<HtmlParameter> params) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
-        if (metaElements == null || metaElements.size() == 0) {
+        if (metaElements == null || metaElements.isEmpty()) {
             return;
         }
 
@@ -137,7 +137,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner {
     private void checkXmlEncodingCharset(
             HttpMessage msg, int id, Source source, Set<HtmlParameter> params) {
         List<StartTag> xmlDeclarationTags = source.getAllStartTags(StartTagType.XML_DECLARATION);
-        if (xmlDeclarationTags.size() == 0) {
+        if (xmlDeclarationTags.isEmpty()) {
             return;
         }
 

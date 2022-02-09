@@ -154,7 +154,7 @@ public class ReplacerParam extends AbstractParam {
             this.rules = new ArrayList<>(defaultList.size());
         }
 
-        if (this.rules.size() == 0) {
+        if (this.rules.isEmpty()) {
             for (ReplacerParamRule geu : defaultList) {
                 this.rules.add(new ReplacerParamRule(geu));
             }

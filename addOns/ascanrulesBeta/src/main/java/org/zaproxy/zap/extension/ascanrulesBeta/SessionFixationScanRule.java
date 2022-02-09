@@ -1314,7 +1314,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
      */
     private HtmlParameter getResponseCookie(HttpMessage message, String cookieName) {
         TreeSet<HtmlParameter> cookieBackParams = message.getResponseHeader().getCookieParams();
-        if (cookieBackParams.size() == 0) {
+        if (cookieBackParams.isEmpty()) {
             // no cookies
             return null;
         }

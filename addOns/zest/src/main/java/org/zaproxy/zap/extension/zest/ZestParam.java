@@ -110,7 +110,7 @@ public class ZestParam extends AbstractParam {
 
             this.ignoredHeaders.clear();
             List<Object> ignoreList = getConfig().getList(IGNORE_HEADERS_KEY);
-            if (ignoreList == null || ignoreList.size() == 0) {
+            if (ignoreList == null || ignoreList.isEmpty()) {
                 // Use the defaults
                 for (String header : DEFAULT_IGNORED_HEADERS) {
                     this.ignoredHeaders.add(header);

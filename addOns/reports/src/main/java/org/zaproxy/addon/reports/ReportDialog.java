@@ -307,7 +307,7 @@ public class ReportDialog extends StandardFieldsDialog {
 
             List<String> sections = template.getSections();
             sectionsMap = new HashMap<>();
-            if (sections.size() == 0) {
+            if (sections.isEmpty()) {
                 sectionPanel.add(
                         new JLabel(
                                 Constant.messages.getString("reports.dialog.field.sections.none")));
@@ -321,7 +321,7 @@ public class ReportDialog extends StandardFieldsDialog {
                                             "report.template.section." + section, null));
                     cb.setSelected(
                             sectionList == null
-                                    || sectionList.size() == 0
+                                    || sectionList.isEmpty()
                                     || sectionList.contains(section));
                     sectionsMap.put(section, cb);
                     sectionPanel.add(cb);
@@ -545,7 +545,7 @@ public class ReportDialog extends StandardFieldsDialog {
         if (root.getChildCount() == 0 && !this.getBoolValue(FIELD_GENERATE_ANYWAY)) {
             return Constant.messages.getString("reports.dialog.error.noalerts");
         }
-        if (sectionsMap.size() > 0 && reportData.getSections().size() == 0) {
+        if (sectionsMap.size() > 0 && reportData.getSections().isEmpty()) {
             return Constant.messages.getString("reports.dialog.error.nosections");
         }
 

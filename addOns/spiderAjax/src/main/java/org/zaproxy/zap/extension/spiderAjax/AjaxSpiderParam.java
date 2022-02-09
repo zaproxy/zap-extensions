@@ -256,7 +256,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             this.enabledElemsNames = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
         }
 
-        if (this.elems.size() == 0) {
+        if (this.elems.isEmpty()) {
             for (String elemName : DEFAULT_ELEMS_NAMES) {
                 this.elems.add(new AjaxSpiderParamElem(elemName));
                 this.enabledElemsNames.add(elemName);

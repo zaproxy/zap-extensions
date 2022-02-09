@@ -312,7 +312,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         }
         // Allow 2 secs for the threads to stop - if we wait 'for ever' then we can get deadlocks
         for (int i = 0; i < 20; i++) {
-            if (activeScans.size() == 0) {
+            if (activeScans.isEmpty()) {
                 break;
             }
             try {
