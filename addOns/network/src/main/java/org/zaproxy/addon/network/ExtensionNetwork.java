@@ -76,6 +76,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHan
 import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
+import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.ZAP;
@@ -113,6 +114,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private LocalServersOptionsPanel localServersOptionsPanel;
 
     private PassThroughHandler passThroughHandler;
+
+    private LocalServerInfoLabel localServerInfoLabel;
 
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
@@ -353,7 +356,22 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             if (handleLocalServers) {
                 localServersOptionsPanel = new LocalServersOptionsPanel(this);
                 optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
+
+                localServerInfoLabel =
+                        new LocalServerInfoLabel(
+                                getView().getMainFrame().getMainFooterPanel(), localServersOptions);
             }
+        }
+    }
+
+    @Override
+    public void postInit() {
+        if (!handleLocalServers) {
+            return;
+        }
+
+        if (hasView()) {
+            localServerInfoLabel.update();
         }
     }
 
@@ -697,6 +715,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
 
             if (handleLocalServers) {
+                localServerInfoLabel.unload();
+
                 optionsDialog.removeParamPanel(localServersOptionsPanel);
             }
         }

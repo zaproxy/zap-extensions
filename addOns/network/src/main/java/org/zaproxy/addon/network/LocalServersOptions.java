@@ -98,6 +98,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
     private LocalServerConfig mainProxy = new LocalServerConfig();
     private List<LocalServerConfig> servers = Collections.emptyList();
     private boolean confirmRemoveServer = true;
+    private List<ServersChangedListener> serversChangedListener = new ArrayList<>(2);
 
     @Override
     protected int getCurrentVersion() {
@@ -505,6 +506,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
         }
 
         persistServerConfig(MAIN_PROXY_BASE_KEY, mainProxy);
+
+        serversChangedListener.forEach(e -> e.mainProxySet(mainProxy));
     }
 
     /**
@@ -519,6 +522,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
         Objects.requireNonNull(server);
         servers.add(server);
         persistServers();
+
+        serversChangedListener.forEach(e -> e.serverAdded(server));
     }
 
     private void persistServers() {
@@ -547,6 +552,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
             if (server.getPort() == port && address.equals(server.getAddress())) {
                 it.remove();
                 persistServers();
+
+                serversChangedListener.forEach(e -> e.serverRemoved(server));
                 return true;
             }
         }
@@ -566,6 +573,8 @@ public class LocalServersOptions extends VersionedAbstractParam {
         this.servers = new ArrayList<>(servers);
 
         persistServers();
+
+        serversChangedListener.forEach(e -> e.serversSet(servers));
     }
 
     /**
@@ -664,5 +673,48 @@ public class LocalServersOptions extends VersionedAbstractParam {
         if (!additionalServers.isEmpty()) {
             setServers(additionalServers);
         }
+    }
+
+    /**
+     * Adds the given listener.
+     *
+     * @param listener the listener.
+     * @throws NullPointerException if the given listener is {@code null}.
+     */
+    public void addServersChangedListener(ServersChangedListener listener) {
+        Objects.requireNonNull(listener);
+        this.serversChangedListener.add(listener);
+    }
+
+    /** A listener of server changes. */
+    public interface ServersChangedListener {
+
+        /**
+         * Notifies that the main proxy was set.
+         *
+         * @param mainProxyConfig the main proxy.
+         */
+        void mainProxySet(LocalServerConfig mainProxyConfig);
+
+        /**
+         * Notifies that a server was added.
+         *
+         * @param serverConfig the server added.
+         */
+        void serverAdded(LocalServerConfig serverConfig);
+
+        /**
+         * Notifies that a server was removed.
+         *
+         * @param serverConfig the server removed.
+         */
+        void serverRemoved(LocalServerConfig serverConfig);
+
+        /**
+         * Notifies that servers were set.
+         *
+         * @param servers the servers set.
+         */
+        void serversSet(List<LocalServerConfig> servers);
     }
 }
