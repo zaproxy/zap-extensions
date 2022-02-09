@@ -124,6 +124,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         extension = new ExtensionNetwork();
+        extension.init();
         mockMessages(extension);
         setSslCertificateService = mock(Consumer.class);
         extension.setSslCertificateService = setSslCertificateService;
