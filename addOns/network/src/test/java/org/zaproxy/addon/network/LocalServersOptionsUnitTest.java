@@ -29,6 +29,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +46,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
@@ -95,11 +100,14 @@ class LocalServersOptionsUnitTest {
                     + "</network>";
 
     private ZapXmlConfiguration config;
+    private ServersChangedListener serversChangedlistener;
     private LocalServersOptions options;
 
     @BeforeEach
     void setUp() {
         options = new LocalServersOptions();
+        serversChangedlistener = mock(ServersChangedListener.class);
+        options.addServersChangedListener(serversChangedlistener);
         config = new ZapXmlConfiguration();
         options.load(config);
     }
@@ -281,6 +289,7 @@ class LocalServersOptionsUnitTest {
                 config.getProperty(MAIN_PROXY_KEY + ".decodeResponse"),
                 is(equalTo(decodeResponse)));
         assertThat(config.getProperty(MAIN_PROXY_KEY + ".enabled"), is(equalTo(true)));
+        verify(serversChangedlistener).mainProxySet(server);
     }
 
     @Test
@@ -328,6 +337,7 @@ class LocalServersOptionsUnitTest {
                 is(equalTo(removeAcceptEncoding)));
         assertThat(config.getProperty(SERVER_KEY + ".decodeResponse"), is(equalTo(decodeResponse)));
         assertThat(config.getProperty(SERVER_KEY + ".enabled"), is(equalTo(enabled)));
+        verify(serversChangedlistener).serverAdded(server);
     }
 
     @Test
@@ -343,7 +353,8 @@ class LocalServersOptionsUnitTest {
     void shouldRemoveServer() {
         // Given
         options.addServer(newDefaultServer("192.168.0.1", 8080));
-        options.addServer(newDefaultServer("localhost", 8080));
+        LocalServerConfig server = newDefaultServer("localhost", 8080);
+        options.addServer(server);
         options.addServer(newDefaultServer("127.0.0.1", 8181));
         // When
         boolean removed = options.removeServer("localhost", 8080);
@@ -359,6 +370,7 @@ class LocalServersOptionsUnitTest {
         assertThat(config.getProperty(SERVER_KEY + "(2).address"), is(nullValue()));
         assertThat(config.getProperty(SERVER_KEY + "(2.port"), is(nullValue()));
         assertServerFieldsPresent(2, false);
+        verify(serversChangedlistener).serverRemoved(server);
     }
 
     private static LocalServerConfig newDefaultServer(String address, int port) {
@@ -384,6 +396,7 @@ class LocalServersOptionsUnitTest {
         assertThat(config.getProperty(SERVER_KEY + "(1).address"), is(equalTo("127.0.0.1")));
         assertThat(config.getProperty(SERVER_KEY + "(1).port"), is(equalTo(8181)));
         assertServerFieldsPresent(1, true);
+        verify(serversChangedlistener, times(0)).serverRemoved(any());
     }
 
     private void assertServerFieldsPresent(int pos, boolean present) {
@@ -676,6 +689,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true);
+        verify(serversChangedlistener).serversSet(servers);
     }
 
     @Test
