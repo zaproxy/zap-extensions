@@ -553,7 +553,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     }
 
     private static String createSubCategoryFullName(List<String> categories) {
-        if (categories == null || categories.size() == 0) {
+        if (categories == null || categories.isEmpty()) {
             return "";
         }
         if (categories.size() == 1) {

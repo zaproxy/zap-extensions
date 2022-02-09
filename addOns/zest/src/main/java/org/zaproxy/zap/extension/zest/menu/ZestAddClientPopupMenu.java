@@ -88,7 +88,7 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
                     // Launching a Window isnt passive, and it will just go down hill from there ;)
                     return false;
                 }
-                if (this.requiresHandle && script.getClientWindowHandles().size() == 0) {
+                if (this.requiresHandle && script.getClientWindowHandles().isEmpty()) {
                     // This type of popup requires a window handle, and there arent any in this
                     // script
                     this.setEnabled(false);

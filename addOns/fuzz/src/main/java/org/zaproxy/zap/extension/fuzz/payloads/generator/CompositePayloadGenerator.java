@@ -57,7 +57,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
 
     @Override
     public ResettableAutoCloseableIterator<E> iterator() {
-        if (payloadGenerators.size() == 0) {
+        if (payloadGenerators.isEmpty()) {
             return EmptyResettableAutoCloseableIterator.emptyIterator();
         }
         return new CompositeIterator<>(payloadGenerators);

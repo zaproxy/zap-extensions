@@ -48,7 +48,7 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
         String otherInfo = null;
 
         List<Element> links = source.getAllElements(HTMLElementName.A);
-        if (links.size() == 0) {
+        if (links.isEmpty()) {
             // if no links but there are scripts then thats another indication
             List<Element> scripts = source.getAllElements(HTMLElementName.SCRIPT);
             if (scripts.size() > 0) {

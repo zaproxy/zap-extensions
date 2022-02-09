@@ -327,7 +327,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
             lastResult = zrw;
 
-            if (request.getAssertions().size() == 0) {
+            if (request.getAssertions().isEmpty()) {
                 zrw.setPassed(true);
             } else {
                 for (ZestAssertion za : request.getAssertions()) {

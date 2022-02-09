@@ -238,15 +238,15 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
 
             HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
             List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
-            if (contexts.size() == 0) {
+            if (contexts.isEmpty()) {
                 // Lower case?
                 contexts = hca.getHtmlContexts(Constant.getEyeCatcher().toLowerCase(), null, 0);
             }
-            if (contexts.size() == 0) {
+            if (contexts.isEmpty()) {
                 // Upper case?
                 contexts = hca.getHtmlContexts(Constant.getEyeCatcher().toUpperCase(), null, 0);
             }
-            if (contexts.size() == 0) {
+            if (contexts.isEmpty()) {
                 // No luck - try again, appending the eyecatcher to the original
                 // value
                 msg2 = getNewMsg();
@@ -264,7 +264,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 hca = new HtmlContextAnalyser(msg2);
                 contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
-            if (contexts.size() == 0) {
+            if (contexts.isEmpty()) {
                 // No luck - lets just try a direct attack
                 for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
                     List<HtmlContext> contexts2 =

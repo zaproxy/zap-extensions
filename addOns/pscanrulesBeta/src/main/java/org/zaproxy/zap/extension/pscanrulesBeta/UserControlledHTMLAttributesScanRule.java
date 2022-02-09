@@ -64,13 +64,13 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
         }
 
         List<Element> htmlElements = source.getAllElements();
-        if (htmlElements.size() == 0) {
+        if (htmlElements.isEmpty()) {
             return;
         }
 
         Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
         params.addAll(msg.getUrlParams());
-        if (params.size() == 0) {
+        if (params.isEmpty()) {
             return;
         }
 

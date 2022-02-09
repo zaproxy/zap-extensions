@@ -87,7 +87,7 @@ public class FormHandlerParam extends AbstractParam {
             this.enabledFieldsNames = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
         }
 
-        if (this.fields.size() == 0) {
+        if (this.fields.isEmpty()) {
             // Grab the entry for every set in the map
             for (Map.Entry<String, String> entry : DEFAULT_KEY_VALUE_PAIRS.entrySet()) {
                 // Store the key and value of that entry in variables
