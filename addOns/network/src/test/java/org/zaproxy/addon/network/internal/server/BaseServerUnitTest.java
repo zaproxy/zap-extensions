@@ -299,6 +299,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -309,6 +310,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -321,6 +323,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -334,6 +337,7 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     @Test
@@ -347,6 +351,7 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     @Test
@@ -362,6 +367,7 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     @Test
@@ -374,6 +380,7 @@ class BaseServerUnitTest extends TestUtils {
         server.start(port);
         // Then
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -394,6 +401,7 @@ class BaseServerUnitTest extends TestUtils {
         assertThat(messagesReceived, contains(message1, message2, message3));
         client.waitChannelsInactive();
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     private static <T> void assertChannelAttribute(

@@ -57,7 +57,7 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
     private final PassThroughPanel passThroughPanel;
 
     public LocalServersOptionsPanel(ExtensionNetwork extensionNetwork) {
-        serversPanel = new ServersPanel();
+        serversPanel = new ServersPanel(extensionNetwork);
         aliasPanel = new AliasPanel();
         passThroughPanel = new PassThroughPanel();
 
@@ -118,12 +118,15 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
 
     private static class ServersPanel {
 
+        private final ExtensionNetwork extensionNetwork;
         private final MainProxyPanel mainProxyPanel;
         private final LocalServersTablePanel localServersTablePanel;
         private final LocalServersTableModel localServersTableModel;
         private final JPanel panel;
 
-        ServersPanel() {
+        ServersPanel(ExtensionNetwork extensionNetwork) {
+            this.extensionNetwork = extensionNetwork;
+
             ZapLabel labelDesc =
                     new ZapLabel(
                             Constant.messages.getString("network.ui.options.localservers.desc"));
@@ -240,13 +243,7 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
                 }
             }
 
-            LocalServerConfig mainProxy = options.getMainProxy();
-            if (mainProxy.isStarted()) {
-                requiredConfigs.remove(mainProxy);
-            }
-            options.getServers().stream()
-                    .filter(LocalServerConfig::isStarted)
-                    .forEach(requiredConfigs::remove);
+            extensionNetwork.removeStartedLocalServers(requiredConfigs);
 
             Set<ListeningAddress> listeningAddresses = new HashSet<>();
             for (LocalServerConfig requiredConfig : requiredConfigs) {

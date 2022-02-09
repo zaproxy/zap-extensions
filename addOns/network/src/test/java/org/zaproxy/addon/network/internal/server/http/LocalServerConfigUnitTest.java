@@ -208,17 +208,6 @@ class LocalServerConfigUnitTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void shouldSetStarted(boolean state) {
-        // Given
-        LocalServerConfig server = new LocalServerConfig();
-        // When
-        server.setStarted(state);
-        // Then
-        assertThat(server.isStarted(), is(equalTo(state)));
-    }
-
-    @ParameterizedTest
     @EnumSource(names = {"API_AND_PROXY", "API"})
     void shouldHaveApiEnabledIfModeAllows(ServerMode mode) {
         // Given

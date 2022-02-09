@@ -106,6 +106,15 @@ public class BaseServer implements Server {
         this.channelInitialiser = Objects.requireNonNull(channelInitialiser);
     }
 
+    /**
+     * Tells whether or not the server is started.
+     *
+     * @return {@code true} if the server is started, {@code false} otherwise.
+     */
+    public boolean isStarted() {
+        return serverChannel != null;
+    }
+
     @Override
     public int start(String address, int port) throws IOException {
         Server.validatePort(port);

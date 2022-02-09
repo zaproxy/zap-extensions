@@ -79,7 +79,6 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
         }
     }
 
-    private boolean started;
     private ServerMode mode;
     private String address;
     private boolean anyLocalAddress;
@@ -146,19 +145,6 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
         removeAcceptEncoding = other.removeAcceptEncoding;
         decodeResponse = other.decodeResponse;
         return requiresRestart;
-    }
-
-    /**
-     * Tells whether or not the server is started.
-     *
-     * @return {@code true} if the server is started, {@code false} otherwise.
-     */
-    public boolean isStarted() {
-        return started;
-    }
-
-    void setStarted(boolean started) {
-        this.started = started;
     }
 
     /**
