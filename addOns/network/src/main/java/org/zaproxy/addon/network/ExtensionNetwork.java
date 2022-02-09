@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.swing.JOptionPane;
@@ -68,6 +69,7 @@ import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveRequestHandler;
@@ -394,6 +396,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     private void startLocalServers(String mainProxyAddress, int mainProxyPort) {}
+
+    /**
+     * Removes the configurations of the started local servers.
+     *
+     * @param serverConfigs the server configurations to filter.
+     */
+    void removeStartedLocalServers(Set<LocalServerConfig> serverConfigs) {}
 
     LegacyProxyListenerHandler getLegacyProxyListenerHandler() {
         return legacyProxyListenerHandler;
