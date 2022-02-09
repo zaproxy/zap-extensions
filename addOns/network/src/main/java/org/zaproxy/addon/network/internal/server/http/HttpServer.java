@@ -53,14 +53,37 @@ import org.zaproxy.addon.network.internal.server.BaseServer;
  */
 public class HttpServer extends BaseServer {
 
+    private static final TlsConfig DEFAULT_TLS_CONFIG = new TlsConfig();
+
     private final EventExecutorGroup mainHandlerExecutor;
     private final SslCertificateService sslCertificateService;
-    private final Supplier<MainServerHandler> handler;
+    private Supplier<MainServerHandler> handler;
     private DefaultServerConfig serverConfig;
-    private TlsConfig tlsConfig;
 
     /**
-     * Constructs a {@code HttpServer} with the given properties,
+     * Constructs a {@code HttpServer} with the given properties and no handler.
+     *
+     * <p>A handler must be set before starting the server.
+     *
+     * @param group the event loop group.
+     * @param mainHandlerExecutor the event executor for the main handler.
+     * @param sslCertificateService the certificate service.
+     * @see #setMainServerHandler(Supplier)
+     */
+    protected HttpServer(
+            NioEventLoopGroup group,
+            EventExecutorGroup mainHandlerExecutor,
+            SslCertificateService sslCertificateService) {
+        super(group);
+        this.mainHandlerExecutor = Objects.requireNonNull(mainHandlerExecutor);
+        this.sslCertificateService = Objects.requireNonNull(sslCertificateService);
+
+        this.serverConfig = new DefaultServerConfig();
+        setChannelInitialiser(this::initChannel);
+    }
+
+    /**
+     * Constructs a {@code HttpServer} with the given properties.
      *
      * @param group the event loop group.
      * @param mainHandlerExecutor the event executor for the main handler.
@@ -72,21 +95,25 @@ public class HttpServer extends BaseServer {
             EventExecutorGroup mainHandlerExecutor,
             SslCertificateService sslCertificateService,
             Supplier<MainServerHandler> handler) {
-        super(group);
-        this.mainHandlerExecutor = Objects.requireNonNull(mainHandlerExecutor);
-        this.sslCertificateService = Objects.requireNonNull(sslCertificateService);
-        this.handler = Objects.requireNonNull(handler);
+        this(group, mainHandlerExecutor, sslCertificateService);
 
-        tlsConfig = new TlsConfig();
-        serverConfig = new DefaultServerConfig();
-
-        setChannelInitialiser(this::initChannel);
+        setMainServerHandler(handler);
     }
 
-    private void initChannel(SocketChannel ch) {
+    /**
+     * Sets the main server handler.
+     *
+     * @param handler the main server handler.
+     * @throws NullPointerException if the given handler is {@code null}.
+     */
+    protected void setMainServerHandler(Supplier<MainServerHandler> handler) {
+        this.handler = Objects.requireNonNull(handler);
+    }
+
+    protected void initChannel(SocketChannel ch) {
         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(sslCertificateService);
         ch.attr(ChannelAttributes.SERVER_CONFIG).set(serverConfig);
-        ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
+        ch.attr(ChannelAttributes.TLS_CONFIG).set(DEFAULT_TLS_CONFIG);
 
         ch.pipeline()
                 .addLast(
@@ -103,6 +130,9 @@ public class HttpServer extends BaseServer {
 
     @Override
     public int start(String address, int port) throws IOException {
+        if (handler == null) {
+            throw new IOException("No main server handler set.");
+        }
         int boundPort = super.start(address, port);
         serverConfig.setAddress(address);
         return boundPort;

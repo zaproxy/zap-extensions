@@ -19,29 +19,57 @@
  */
 package org.zaproxy.addon.network.internal.server.http;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
+import java.io.IOException;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.server.Server;
 
 /** Unit test for {@link HttpServer}. */
 class HttpServerUnitTest {
 
-    private NioEventLoopGroup group;
-    private EventExecutorGroup mainHandlerExecutor;
+    private static NioEventLoopGroup group;
+    private static EventExecutorGroup mainHandlerExecutor;
     private SslCertificateService sslCertificateService;
     private Supplier<MainServerHandler> handlerSupplier;
 
+    @BeforeAll
+    static void setupAll() throws Exception {
+        group = new NioEventLoopGroup(1, new DefaultThreadFactory("ZAP-HttpServerUnitTest"));
+        mainHandlerExecutor =
+                new DefaultEventExecutorGroup(
+                        1, new DefaultThreadFactory("ZAP-HttpServerUnitTest-Events"));
+    }
+
+    @AfterAll
+    static void tearDownAll() throws Exception {
+        if (group != null) {
+            group.shutdownGracefully();
+            group = null;
+        }
+
+        if (mainHandlerExecutor != null) {
+            mainHandlerExecutor.shutdownGracefully();
+            mainHandlerExecutor = null;
+        }
+    }
+
     @BeforeEach
     void setUp() throws Exception {
-        group = mock(NioEventLoopGroup.class);
-        mainHandlerExecutor = mock(EventExecutorGroup.class);
         sslCertificateService = mock(SslCertificateService.class);
         handlerSupplier = () -> mock(MainServerHandler.class);
     }
@@ -49,7 +77,7 @@ class HttpServerUnitTest {
     @Test
     void shouldThrowIfNoEventLoopGroup() throws Exception {
         // Given
-        group = null;
+        NioEventLoopGroup group = null;
         // When / Then
         assertThrows(
                 NullPointerException.class,
@@ -64,7 +92,7 @@ class HttpServerUnitTest {
     @Test
     void shouldThrowIfNoEventExecutorGroup() throws Exception {
         // Given
-        mainHandlerExecutor = null;
+        EventExecutorGroup mainHandlerExecutor = null;
         // When / Then
         assertThrows(
                 NullPointerException.class,
@@ -115,5 +143,41 @@ class HttpServerUnitTest {
                                 mainHandlerExecutor,
                                 sslCertificateService,
                                 handlerSupplier));
+    }
+
+    @Test
+    void shouldCreateWithNoHandler() throws Exception {
+        assertDoesNotThrow(() -> new HttpServer(group, mainHandlerExecutor, sslCertificateService));
+    }
+
+    @Test
+    void shouldFailToStartWithNoHandler() throws Exception {
+        try (HttpServer server =
+                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+            IOException exception =
+                    assertThrows(IOException.class, () -> server.start(Server.ANY_PORT));
+            assertThat(exception.getMessage(), is(equalTo("No main server handler set.")));
+        }
+    }
+
+    @Test
+    void shouldStartWithHandlerSet() throws Exception {
+        try (HttpServer server =
+                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+            server.setMainServerHandler(handlerSupplier);
+            assertDoesNotThrow(() -> server.start(Server.ANY_PORT));
+        }
+    }
+
+    @Test
+    void shouldThrowIfSettingNullHandler() throws Exception {
+        // Given
+        handlerSupplier = null;
+        // When / Then
+        try (HttpServer server =
+                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+            assertThrows(
+                    NullPointerException.class, () -> server.setMainServerHandler(handlerSupplier));
+        }
     }
 }
