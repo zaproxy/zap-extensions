@@ -22,6 +22,8 @@ package org.zaproxy.addon.network.internal.server.http;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.ssl.SslClosedEngineException;
+import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +34,9 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 
 /** The main handler of a HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly. */
 public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> {
+
+    private static final String ERROR_WRITE =
+            "Failed to write/forward the HTTP response to the client: ";
 
     protected enum HandlerResult {
         CONTINUE,
@@ -135,12 +140,17 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
                 .addListener(
                         e -> {
                             if (!e.isSuccess()) {
+                                Throwable cause = e.cause();
+                                if (cause instanceof ClosedChannelException
+                                        || cause instanceof SslClosedEngineException) {
+                                    LOGGER.debug(() -> ERROR_WRITE + "connection closed.");
+                                    return;
+                                }
+
                                 LOGGER.warn(
                                         () -> {
-                                            Throwable cause = e.cause();
                                             StringBuilder strBuilder = new StringBuilder(200);
-                                            strBuilder.append(
-                                                    "Failed to write/forward the HTTP response to the client: ");
+                                            strBuilder.append(ERROR_WRITE);
                                             strBuilder.append(cause.getClass().getName());
                                             if (cause.getMessage() != null) {
                                                 strBuilder.append(": ").append(cause.getMessage());
