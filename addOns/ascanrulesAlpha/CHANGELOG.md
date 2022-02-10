@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Out-of-band XSS Scan Rule.
 - Exponential Entity Expansion (Billion Laughs Attack) Scan Rule.
 
+### Changed
+- Improved performance of a Web Cache Deception scan rule (Issue 6655).
+
 ## [35] - 2022-01-07
 ### Fixed
 - Log4Shell: Fixed the RMI Payloads (Issue 7002).

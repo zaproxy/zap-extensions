@@ -28,9 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -39,9 +42,20 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDeceptionScanRule> {
 
+    private static final String RESPONSE_BODY =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis ex ac orci consectetur viverra. Aenean porttitor tincidunt ligula. Suspendisse et ornare justo. Fusce vel maximus est. Donec id arcu nec justo egestas hendrerit. Sed pulvinar ultrices ultricies. Mauris ultrices odio non tellus mattis, id pharetra justo porta. Donec venenatis ante ac nisi blandit gravida. Nunc tellus dolor, finibus nec placerat ac, ullamcorper sit amet tellus.";
+
     private static final String AUTHORISED_RESPONSE =
-            "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
-                    + "<html><head></head><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis ex ac orci consectetur viverra. Aenean porttitor tincidunt ligula. Suspendisse et ornare justo. Fusce vel maximus est. Donec id arcu nec justo egestas hendrerit. Sed pulvinar ultrices ultricies. Mauris ultrices odio non tellus mattis, id pharetra justo porta. Donec venenatis ante ac nisi blandit gravida. Nunc tellus dolor, finibus nec placerat ac, ullamcorper sit amet tellus.</body></html>";
+            String.format(
+                    "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
+                            + "<html><head></head><body>%s</body></html>",
+                    RESPONSE_BODY);
+
+    private static final String LONG_AUTHORISED_RESPONSE =
+            String.format(
+                    "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
+                            + "<html><head></head><body>%s</body></html>",
+                    StringUtils.repeat(RESPONSE_BODY, 100));
 
     private static final String UNAUTHORISED_RESPONSE =
             "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
@@ -77,7 +91,7 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
     void shouldNotAlertIfInitialAuthorisedAndUnauthorisedResponseSame() throws Exception {
         // Given
         HttpMessage message = this.getHttpMessage("/private");
-        nano.addHandler(new FirstInitialTestResponse("/private"));
+        nano.addHandler(new FirstInitialTestResponse("/private", AUTHORISED_RESPONSE));
         rule.init(message, this.parent);
         // When
         rule.scan();
@@ -144,6 +158,20 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
     }
 
+    @Test
+    @Timeout(value = 3, unit = TimeUnit.SECONDS)
+    void shouldDetectSimilarMessagesWithoutDelayOnLongResponse() throws Exception {
+        // Given
+        HttpMessage message = this.getHttpMessage("/private");
+        nano.addHandler(new FirstInitialTestResponse("/private", LONG_AUTHORISED_RESPONSE));
+        rule.init(message, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertEquals(1, httpMessagesSent.size());
+    }
+
     private static class CachedTestResponse extends NanoServerHandler {
 
         private final String header;
@@ -194,14 +222,16 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
 
     private static class FirstInitialTestResponse extends NanoServerHandler {
 
-        FirstInitialTestResponse(String path) {
+        private final String body;
+
+        FirstInitialTestResponse(String path, String body) {
             super(path);
+            this.body = body;
         }
 
         @Override
         protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
-            return newFixedLengthResponse(
-                    NanoHTTPD.Response.Status.OK, "text/html", AUTHORISED_RESPONSE);
+            return newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "text/html", this.body);
         }
     }
 
