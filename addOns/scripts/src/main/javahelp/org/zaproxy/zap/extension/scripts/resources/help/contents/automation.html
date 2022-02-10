@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Scripts Automation Framework Support</TITLE>
+</HEAD>
+<BODY>
+	<H1>Scripts Automation Framework Support</H1>
+	This add-on supports the Automation Framework.
+
+	<H2>Job: script</H2>
+    The script job allows you to execute various actions with scripts.
+    Run standalone scripts is currently the only action, but more actions are planned (add/remove/enable/disable)
+    <pre>
+  - type: script
+    parameters:
+      action:                    # String: The executed action - available actions: run
+      type:                      # String: The type of the script - available script type for action run: standalone
+      name:                      # String: The name of the script
+</pre>
+
+</BODY>
+</HTML>
