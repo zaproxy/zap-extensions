@@ -47,7 +47,6 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -90,7 +89,10 @@ public final class LogsImporter {
         try {
             processModSecLogs(new ModSecurity2AuditReader(file));
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(
+                    Constant.messages.getString(
+                            ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsoluteFile()));
+            ExtensionExim.updateOutput(ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath());
         }
     }
 
@@ -112,7 +114,7 @@ public final class LogsImporter {
                 }
                 break;
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOG.warn(e.getMessage());
             }
         }
 
@@ -141,25 +143,27 @@ public final class LogsImporter {
             List<String> parsedText = readFile(newFile);
             try {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE);
-                updateOutput("exim.output.start", newFile.toPath().toString());
+                ExtensionExim.updateOutput("exim.output.start", newFile.toPath().toString());
                 processZapLogs(parsedText);
-                updateOutput("exim.output.end", newFile.toPath().toString());
+                ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (HttpMalformedHeaderException e) {
-                LOG.error(e.getMessage(), e);
+                LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_ERROR);
-                updateOutput("exim.output.error", newFile.toPath().toString());
+                ExtensionExim.updateOutput(
+                        ExtensionExim.EXIM_OUTPUT_ERROR, newFile.getAbsolutePath());
                 return false;
             }
         } else if (logChoice == LogType.MOD_SECURITY_2) {
             try {
-                updateOutput("exim.output.start", newFile.toPath().toString());
+                ExtensionExim.updateOutput("exim.output.start", newFile.toPath().toString());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE);
                 readModSecLogsFromFile(newFile);
-                updateOutput("exim.output.end", newFile.toPath().toString());
+                ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_ERROR);
-                updateOutput("exim.output.error", newFile.toPath().toString());
+                ExtensionExim.updateOutput(
+                        ExtensionExim.EXIM_OUTPUT_ERROR, newFile.getAbsolutePath());
                 return false;
             }
         }
@@ -178,7 +182,7 @@ public final class LogsImporter {
             sc.close();
             return parsed;
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(e.getMessage());
         }
         return Collections.emptyList();
     }
@@ -265,20 +269,12 @@ public final class LogsImporter {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG);
             }
         } catch (DatabaseException | HttpMalformedHeaderException | NullPointerException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(e.getMessage());
             if (LogType.ZAP.equals(logType)) {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_MSG_ERROR);
             } else {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG_ERROR);
             }
-        }
-    }
-
-    private static void updateOutput(String messageKey, String filePath) {
-        if (View.isInitialised()) {
-            StringBuilder sb = new StringBuilder(128);
-            sb.append(Constant.messages.getString(messageKey, filePath)).append('\n');
-            View.getSingleton().getOutputPanel().append(sb.toString());
         }
     }
 }

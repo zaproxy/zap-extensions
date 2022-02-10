@@ -57,7 +57,7 @@ public final class UrlsImporter {
             if (View.isInitialised()) {
                 View.getSingleton().getOutputPanel().setTabFocus();
             }
-            updateOutput("exim.output.start", file.toPath().toString());
+            ExtensionExim.updateOutput("exim.output.start", file.toPath().toString());
 
             HttpSender sender =
                     new HttpSender(
@@ -98,11 +98,13 @@ public final class UrlsImporter {
                     }
                 }
             }
-            updateOutput("exim.output.end", file.toPath().toString());
+            ExtensionExim.updateOutput("exim.output.end", file.toPath().toString());
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(
+                    Constant.messages.getString(
+                            ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsoluteFile()));
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_ERROR);
-            updateOutput("exim.output.error", file.toPath().toString());
+            ExtensionExim.updateOutput(ExtensionExim.EXIM_OUTPUT_ERROR, file.toPath().toString());
             return false;
         }
         return true;
@@ -118,7 +120,7 @@ public final class UrlsImporter {
                             HistoryReference.TYPE_ZAP_USER,
                             message);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage());
             return;
         }
 
@@ -133,14 +135,6 @@ public final class UrlsImporter {
                                 .getSiteTree()
                                 .addPath(historyRef, message);
                     });
-        }
-    }
-
-    private static void updateOutput(String messageKey, String filePath) {
-        if (View.isInitialised()) {
-            StringBuilder sb = new StringBuilder(128);
-            sb.append(Constant.messages.getString(messageKey, filePath)).append('\n');
-            View.getSingleton().getOutputPanel().append(sb.toString());
         }
     }
 }

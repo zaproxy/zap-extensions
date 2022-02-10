@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -113,7 +114,9 @@ public final class HarImporter {
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
             return true;
         } catch (IOException e) {
-            LOG.error(e);
+            LOG.warn(
+                    Constant.messages.getString(
+                            ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath()));
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
             return false;
         }
@@ -136,7 +139,7 @@ public final class HarImporter {
                             message);
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage());
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG_ERROR);
             return;
         }
