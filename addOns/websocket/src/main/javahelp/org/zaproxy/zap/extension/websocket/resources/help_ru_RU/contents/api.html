@@ -7,48 +7,48 @@ WebSocket API
 </TITLE>
 </HEAD>
 <BODY>
-<H1>WebSocket API</H1>
+<H1>API веб-сокетов </H1>
 
-<h2>Views</h2>
-	<h3>channels</h3>
-		Returns all of the registered web socket channels.
+<h2>Просмотры</h2>
+	<h3>Каналы</h3>
+		Возвращает все зарегистрированные каналы веб-сокетов. 
 
-	<h3>message</h3>
+	<h3>сообщение</h3>
 	
-		Mandatory Parameters:
+		Обязательные параметры: 
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>messageId: the message identifier</li>
+		<li>channelId: идентификатор канала </li>
+		<li>messageId: идентификатор сообщения </li>
 		</ul>
-		Returns full details of the specified message.<br>
-		The 'channelId' and 'messageId' can be discovered via the 'messages' view.
+		Возвращает полную информацию об указанном сообщении.<br>
+«channelId» и «messageId» могут быть обнаружены через представление «сообщения». 
 
-	<h3>messages</h3>
+	<h3>сообщения</h3>
 	
-		Optional Parameters:
+		Дополнительные параметры: 
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>start: the offset to start returning messages from, starting from 0.</li>
-		<li>count: the number of messages to return.</li>
-		<li>payloadPreviewLength: the maximum number bytes to return for the payload contents.</li>
+		<li>channelId: идентификатор канала </li>
+		<li>start: смещение, с которого начинают возвращаться сообщения, начиная с 0. </li>
+		<li>count: количество возвращаемых сообщений. </li>
+		<li>payloadPreviewLength: максимальное количество байтов, возвращаемых для содержимого полезной нагрузки. </li>
 		</ul>
-		Returns a list of all of the messages that meet the given criteria - by default all messages are returned<br>
-		The channelId can be discovered via the 'channels' view.<br>
-		The 'start' and 'count' parameters can be used to page through the messages<br>
-		The 'payloadPreviewLength' can be used to restrict the size of the data returned.<br>
+		Возвращает список всех сообщений, соответствующих заданным критериям. По умолчанию возвращаются все сообщения<br>.
+ChannelId можно найти в представлении «каналы».<br>
+Параметры start и count можно использовать для постраничного просмотра сообщений<br>.
+'payloadPreviewLength' можно использовать для ограничения размера возвращаемых данных. <br>
 
-<h2>Actions</h2>
+<h2>Действия</h2>
 
 	<h3>sendTextMessage</h3>
 	
-		Mandatory Parameters:
+		Обязательные параметры: 
 		<ul>
-		<li>channelId: the channel identifier</li>
-		<li>outgoing: 'True' if the message is to be sent to the server and 'False' if it is to be sent to the client</li>
-		<li>message: the message to send</li>
+		<li>channelId: идентификатор канала </li>
+		<li>исходящий: «Истина», если сообщение должно быть отправлено на сервер, и «Ложь», если оно должно быть отправлено клиенту </li>
+		<li>сообщение: сообщение для отправки </li>
 		</ul>
-		Sends the specified message on the specified channel.<br>
-		The channelId can be discovered via the 'channels' view.<br>
+		Отправляет указанное сообщение по указанному каналу.<br>
+ChannelId можно найти в представлении «каналы». <br>
 
 </BODY>
 </HTML>

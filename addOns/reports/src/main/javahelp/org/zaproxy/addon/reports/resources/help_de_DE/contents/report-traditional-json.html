@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Traditional JSON Report</TITLE>
+</HEAD>
+<BODY>
+	<H1>Traditional JSON Report</H1>
+
+	<H3>Sample</H3>
+
+	<pre>
+{
+    "@version": "Dev Build",
+    "@generated": "Fri, 4 Feb 2022 13:04:51",
+    "site":[
+        {
+            "@name": "http://localhost:8080",
+            "@host": "localhost",
+            "@port": "8080",
+            "@ssl": "false",
+            "alerts": [
+                {
+                    "pluginid": "40012",
+                    "alertRef": "40012",
+                    "alert": "Cross Site Scripting (Reflected)",
+                    "name": "Cross Site Scripting (Reflected)",
+                    "riskcode": "3",
+                    "confidence": "2",
+                    "riskdesc": "High (Medium)",
+                    "desc": "&lt;p&gt;Cross-site Scripting (XSS) is an attack technique that involves ...&lt;/p&gt;",
+                    "instances":[
+                        {
+                            "uri": "http://localhost:8080/bodgeit/search.jsp?q=%3C%2Ffont%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Cfont%3E",
+                            "method": "GET",
+                            "param": "q",
+                            "attack": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;",
+                            "evidence": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;"
+                        },
+                        {
+                            "uri": "http://localhost:8080/bodgeit/contact.jsp",
+                            "method": "POST",
+                            "param": "comments",
+                            "attack": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;",
+                            "evidence": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;"
+                        }
+                    ],                   
+                    "count": "2", 
+                    "solution": "&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not ...&lt;/p&gt;",
+                    "otherinfo": "",
+                    "reference": "&lt;p&gt;http://projects.webappsec.org/Cross-Site-Scripting&lt;/p&gt;&lt;p&gt;http://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;",
+                    "cweid": "79",
+                    "wascid": "8",
+                    "sourceid": "36977"
+                },
+
+</pre>
+
+</BODY>
+</HTML>
+

@@ -3,10 +3,12 @@
 <index version="2.0">
 	<!-- index entries are merged (sorted) into core index -->
 	<indexitem text="отчеты" target="reports" />
-	<indexitem text="автоматизация отчетов "
+	<indexitem text="reports templates"
+		target="reports.templates" />
+	<indexitem text="reports automation"
 		target="reports.automation" />
-	<indexitem text="отчеты создание отчетов "
+	<indexitem text="reports creating reports"
 		target="reports.create" />
-	<indexitem text="сообщает о " target="reports.about" />
-	<indexitem text="отчеты api" target="reports.api" />
+	<indexitem text="reports about" target="reports.about" />
+	<indexitem text="reports api" target="reports.api" />
 </index>

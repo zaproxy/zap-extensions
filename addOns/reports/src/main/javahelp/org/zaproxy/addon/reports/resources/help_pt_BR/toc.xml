@@ -5,6 +5,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Report Generation" image="reports-icon"
 				target="reports">
+				<tocitem text="Templates" target="reports.templates" />
 				<tocitem text="Automation" target="reports.automation" />
 				<tocitem text="Creating Reports" target="reports.create" />
 				<tocitem text="About" target="reports.about" />

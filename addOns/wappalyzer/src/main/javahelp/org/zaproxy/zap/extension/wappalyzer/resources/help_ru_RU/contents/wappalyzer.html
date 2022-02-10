@@ -2,47 +2,47 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Technology Detection</title>
+<title>Обнаружение технологий </title>
 </head>
 <body>
-<h1>Technology Detection Using Wappalyzer</h1>
+<h1>Обнаружение технологий с помощью Wappalyzer </h1>
 <p>
-The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
-It works in a very similar way to the Wappalyzer browser add-ons with the following exceptions:
+Дополнение Technology Detection использует правила Wappalyzer для обнаружения технологий, используемых приложениями. <p>
+Он работает очень похоже на надстройки браузера Wappalyzer со следующими исключениями: 
 <ul>
-<li>It does not use the 'Global JavaScript variables' as these are difficult to test without a 'full' browser</li>
-<li>It does not not show the confidence - this is still todo</li>
-<li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
-<li>It allows you to see the 'evidence' used to detect the technologies</li>
+<li>Он не использует «глобальные переменные JavaScript», так как их трудно протестировать без «полного» браузера. </li>
+<li>Он не показывает уверенность - это еще предстоит сделать </li>
+<li>Это не соответствует технологиям на основе свойств DOM, так как некоторые свойства устанавливаются JavaScript в браузере после того, как ответ прошел через ZAP. </li>
+<li>Это позволяет вам увидеть «доказательства», используемые для обнаружения технологий. </li>
 </ul>
-<h2>The Technology Tab</h2>
-This tab shows all of the detected technologies for the site selected.<br>
-Right clicking on a technology will display a 'Show evidence' menu under which are all of the regexes used to detect it.<br>
-Selecting a regex will switch to the 'Search' tab and search through the history for that regex. Note: If multiple rows are selected
-the menu will not be displayed.
+<h2>Вкладка «Технологии» </h2>
+На этой вкладке отображаются все обнаруженные технологии для выбранного сайта. <br>
+Щелчок правой кнопкой мыши по технологии отобразит меню «Показать доказательства», в котором находятся все регулярные выражения, используемые для ее обнаружения. <br>
+При выборе регулярного выражения вы переключитесь на вкладку «Поиск» и выполните поиск по истории для этого регулярного выражения. Примечание. Если выбрано несколько строк
+меню не будет отображаться. 
 <p>
-Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
-table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
-passive scanner.
+Рядом с раскрывающимся списком выбора сайта находится кнопка «Экспорт», которую можно использовать для экспорта файла CSV (значения, разделенные запятыми) на основе
+табличная информация, отображаемая в данный момент.  Существует также кнопка-переключатель, которая позволяет пользователям легко включать/отключать Wappalyzer.
+пассивный сканер. 
 <p>
-The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
-This enabled state is persisted between ZAP sessions.
+На панели инструментов есть кнопка-переключатель включения/выключения, которая определяет, работает ли правило пассивного сканирования обнаружения технологий.
+Это включенное состояние сохраняется между сеансами ZAP. 
 
-<h2>Reporting</h2>
+<h2>Составление отчетов</h2>
 
-Technology data is available to reports via the 
-<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> class.
+Технологические данные доступны для отчетов через  
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData">WappalyzerJobResultData</a> класс.
 
-<h2>External Links</h2>
+<h2>Внешние ссылки</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
-	<td>The Wappalyzer Homepage</td></tr>
+	<td>Домашняя страница Wappalyzer </td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/AliasIO/Wappalyzer">https://github.com/AliasIO/Wappalyzer</a></td>
-	<td>The Wappalyzer Repository</td>
+	<td>Репозиторий Wappalyzer </td>
 </tr>
 </table>
 

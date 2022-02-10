@@ -2,92 +2,92 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Пикантность</title>
+<title>Zest</title>
 </head>
 <body>
 <h1>Zest</h1>
 <p>
-Zest is an experimental specialized scripting language (also known as a domain-specific language) 
-originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
+ZEST - это экспериментальный специализированный язык сценариев (также известный как удельный язык домена)
+Первоначально разработанный командой безопасности Mozilla и предназначен для использования в инструментах безопасности на веб-сайте. 
 <p>
-It is included by default with ZAP.<br>
+Он включен по умолчанию с zap. <br>
 
-<h2>Creating Zest scripts</h2>
+<h2>Создание скриптов Zest </h2>
 
-There are a variety of ways to create Zest scripts:
+Есть множество способов создания сценариев Zest: 
 
-<h3>Record a new Zest script Button</h3>
+<h3>Записать новую кнопку скрипта Zest </h3>
 <ul>
-<li>Press the 'Record a new Zest script' button on the main toolbar</li>
-<li>Type in a suitable name for your script in the 'Add a Zest Script' dialog</li>
-<li>Select the prefix you want to record requests for, or leave blank to record all requests</li>
-<li>Press the 'Save' button</li>
-<li>The 'Record a new Zest script' button will stay pressed, change to 'Recording a new Zest script' and show a red icon.</li>
+<li>Нажмите кнопку «Запись нового Zest» на главной панели инструментов </li>
+<li>Введите подходящее имя для вашего скрипта в диалоговом окне «Добавить Zest» </li>
+<li>Выберите префикс, который вы хотите записать запросы, или оставьте пустым, чтобы записать все запросы </li>
+<li>Выберите префикс, которой вы хотьте записать запросы, или остаться пустынями, что </li>
+<li>«Запись нового скрипта Zest» останется нажатой, изменять на «запись нового Zest Script» и показать красный значок. </li>
 </ul>
-The new Zest script will be shown in the Scripts tab with a red 'recording' icon.<br>
-Any requests that you make underneath the specified prefix will be added to the script.<br>
-Press the 'Recording a new Zest script' again to stop recording the requests.<br>
-Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+Новый Zest Script будет показан на вкладке «Сценарии» с красной «запись» иконом. <br>
+Любые запросы, которые вы делаете под указанный префикс, будут добавлены в скрипт. <br>
+Нажмите «Запись нового Zest Script» еще раз, чтобы остановить запись запросов. <br>
+Обратите внимание, что вы можете записать только «стоять в одиночестве» ('Stand Alone') Zest Scripts таким образом. Если вы хотите создать другие типы Zest Script, вы должны использовать другой механизм. 
 <br><br>
-You can also right click any Stand Alone Zest script and use the 'Start recording' and 'Stop recording' buttons. 
+Вы также можете щелкнуть правой кнопкой мыши любой стенд в одном Zest Script и используйте кнопки «Начать запись» и «Стоп записи».  
 
-<h3>New Script Button</h3>
+<h3>Новый скрипт кнопки</h3>
 <ul>
-<li>Navigate to the Scripts tree tab</li>
-<li>Press the 'New Script...' button</li>
-<li>Type in a suitable name for your script in the 'New Script' dialog</li>
-<li>Select the script type (see the Scripts add-on help page for more details)</li>
-<li>Select the Zest script engine</li>
-<li>Select one of the templates (if relevant)</li>
-<li>Press the 'Save' button</li>
+<li>Перейдите к вкладке дерева скриптов </li>
+<li>Нажмите кнопку «Новый скрипт ...» </li>
+<li>Введите подходящее имя для вашего сценария в диалоге «Новый сценарий» </li>
+<li>Выберите тип сценария (см. Дополнительную страницу добавления сценариев для более подробной информации) </li>
+<li>Выберите сценарий Zest </li>
+<li>Выберите один из шаблонов (если это уместно) </li>
+<li>Нажмите кнопку «Сохранить» </li>
 </ul>
-Any type of Zest script can be created this way.
+Любой тип сценария Zest может быть создан таким образом. 
 
-<h3>Right clicking a Zest template</h3>
+<h3>Щелкнуть правой кнопкой мыши на Zest шаблон </h3>
 <ul>
-<li>Navigate to the Scripts tree tab</li>
-<li>Expand the 'Templates' node and find a template you want to use</li>
-<li>Right click on the template and select 'New Script...'</li>
-<li>Press the 'Save' button</li>
+<li>Перейдите к вкладке дерева скриптов </li>
+<li>Разверните «Узел шаблонов» и найдите шаблон, который вы хотите использовать </li>
+<li>Щелкните правой кнопкой мыши на шаблоне и выберите «Новый скрипт ...» </li>
+<li>Нажмите кнопку «Сохранить» </li>
 </ul>
-Any type of Zest script can be created this way.
+Любой тип сценария Zest может быть создан таким образом. 
 
-<h3>Right clicking requests</h3>
+<h3>Щелкните правой кнопкой мыши </h3>
 <ul>
-<li>Navigate to any tab that shows requests, such as the History tab</li>
-<li>Select one or more requests</li>
-<li>Right click on them</li>
-<li>Select the 'Add to Zest Script' menu which allows you to select an existing Stand Alone script or create a new one</li>
+<li>Перейдите на любую вкладку, которая показывает запросы, такие как вкладка «История» </li>
+<li>Выберите один или несколько запросов </li>
+<li>Щелкните правой кнопкой мыши </li>
+<li>Выберите меню «Добавить в Zest Script», который позволяет вам выбрать существующий стенд один скрипт или создать новый </li>
 </ul>
-Note that you can only add request to 'Stand Alone' Zest scripts.
+Обратите внимание, что вы можете добавить запрос на «Стоять в одних»  ('Stand Alone') Zest Scripts. 
 
 <h3>Plug-n-Hack</h3>
-If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+Если вы используете недавнюю версию Firefox, вы можете создавать сценарии Zest из вашего браузера. <br>
 <ul>
-<li>Press the 'Plug-n-Hack' button on the ZAP 'Quick Start' tab</li>
-<li>Install the Plug-n-Hack Firefox Add-on and accept all of the dialogs</li>
-<li>Press 'Shift F2' in Firefox to access the Developer Toolbar</li>
-<li>Type 'zap record on global' to start recording a new Zest script</li>
-<li>Any requests you make through ZAP will be added to the script</li>
-<li>Type 'zap record off global' to stop recording the script</li>
+<li>Нажмите кнопку «Plug-N Hack» на вкладке «Quick» ZAP ' </li>
+<li>Установите дополнение Firefox Plug-Nack Firefox и примите все диалоги </li>
+<li>Нажмите «Shift F2» в Firefox, чтобы получить доступ к панели инструментов разработчика </li>
+<li>Введите запись ZAP на Global ', чтобы начать запись нового Zest Script </li>
+<li>Любые запросы, которые вы делаете через ZAP, будут добавлены в скрипт </li>
+<li>Тип «zap записать глобальную», чтобы остановить запись скрипта </li>
 </ul>
-Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+Обратите внимание, что вы можете записать только «стоять в одиночестве» ( 'Stand Alone' ) Zest Scripts таким образом. Если вы хотите создать другие типы Zest Script, вы должны использовать другой механизм. 
 
-<h2>Editing Zest scripts</h2>
-Zest scripts are edited graphically in the Scripts tree tab.<br>
-Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
-You can add, move and remove statements via right clicking the Zest nodes.<br>
-You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
-There are also some right click options available when you select text in the Request or Response tabs.<br>
+<h2>Редактирование  Zest сценариев </h2>
+Zest сценарии редактируются графически на вкладке «Дерево сценариев». <br>
+Каждое утверждение представляет собой узел в дереве - дважды щелчке щелчка, чтобы редактировать свойства оператора. <br>
+Вы можете добавить, перемещать и удалять операторы через правые щелчок по узлам Zest. <br>
+Вы также можете добавить запросы на «стоять в одиночку» Zest, щелкнув правой кнопкой мыши на запросах на любой из других вкладок. <br>
+Есть также некоторые варианты правой кнопки щелчка, доступные при выборе текста в вкладках запроса или ответа. <br>
 <br>
-Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
-A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+Zest включает в себя набор «встроенных» переменных, а также позволяя вам объявить свой собственный. <br>
+Предоставляется правое щелчок MENU (в случае необходимости) в диалоговых окнах редактирования, чтобы позволить вам вставить в любом из доступных имени переменных. <br>
 
-<h2>External links</h2>
+<h2>внешняя ссылка</h2>
 <table>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
-	<td>The Zest GitHub repository, including details of the language</td>
+	<td>Репозиторий Zest Github, включая детали языка </td>
 </tr>
 </table>
 

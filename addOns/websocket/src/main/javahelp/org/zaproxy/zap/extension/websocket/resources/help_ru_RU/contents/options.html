@@ -3,47 +3,47 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-WebSocket specific options
+Варианты конкретных Websocket 
 </title>
 </head>
 <body>
-<h1>WebSocket specific options</h1>
+<h1>Варианты конкретных Websocket </h1>
 <p>
-This screen allows you to configure the WebSocket options:
+Этот экран позволяет настроить параметры WebSocket: 
 
-<h3>Forward all</h3>
-If you're not interested in WebSockets communication, but you want to allow its messages being sent back &amp; forth through ZAP, then you should enable this option.
-As a result no message will be stored in the session database. Moreover no message will appear in the WebSockets tab. This setting can be useful if you have to deal with performance critical WebSocket connections and you're not interested what is being sent.
+<h3>Вперед все </h3>
+Если вы не заинтересованы в Websockets Communication, но вы хотите, чтобы его сообщения были отправлены обратно и AMP; Далее через zap, то вы должны включить эту опцию. 
+В результате сообщения не будет сохранено в базе данных сеанса.  Кроме того, на вкладке WebSockets не появится сообщение.  Этот параметр может быть полезен, если вам нужно иметь дело с эффективными критическими соединениями Websocket, и вы не заинтересованы в том, что отправляется. 
 <br><br>
-If you want to ignore just one specific channel, check out the WebSocket specific <i>Свойства сессии</i>.
+Если вы хотите игнорировать только один конкретный канал, ознакомьтесь с конкретным веб-сайтом  <i>Свойства сессии</i>.
 
 
-<h3>Break on all</h3>
-In the <i>Прерывание</i> toolbar, there are two buttons:
+<h3>Перерываться </h3>
+в <i>Прерывание</i> Панель инструментов, есть две кнопки: 
 <ul>
-	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
-	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i> Установите перерыв на все запросы </> </li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i> Установите перерыв на все ответы </> </li>
 </ul>
-When you enable this option, then all outgoing (respectively incoming) WebSocket messages are also caught by these control buttons.
+Когда вы включаете эту опцию, то все исходящие (соответственно входящие) сообщения Websocket также пойманы этими кнопками управления. 
 <br><br>
-By default this option is disabled. In this case only HTTP messages are caught, but you can add explicit breakpoints on WebSocket communication in the <a href="tab.html">WebSocket tab</a>. 
+По умолчанию эта опция отключена. В этом случае пойманы только HTTP-сообщения, но вы можете добавить явные точки останова на связь Websocket в  <a href="tab.html">Вкладка WebSocket </a>. 
 
 
-<h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> and <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<h3>Перерыв на Пинг &amp; Понг сообщений</h3>
+<i>PING</i> и <i>PONG</i> Сообщения часто используются серверами WebSocket для определения здоровья текущего соединения. Если вы поймаете входящий  <i>PING</i> сообщение, браузер не может вернуть  <i>PONG</i> сообщение немедленно, в результате чего в результате плохой задержки. 
 <br><br>
-If this option is disabled no <i>PING</i> or <i>PONG</i> message is caught when you:
+Если эта опция отключена, нет  <i>PING</i> или <i>PONG</i> сообщение поймано, когда вы: 
 <ul>
-	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
-	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
+	<li>Установите точку останова на <u> Все запросы </> или <u> Все ответы </>, <i> или </> </li>
+	<li>Пройдите до следующего запроса или ответа и A <i> Ping </> или <i> PONG </> </li>
 </ul>
-This setting does not affect breakpoints that are set explicitly on <i>PING</i> or <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+Этот параметр не влияет на точки останова, которые установлены явно на  <i>PING</i> или <i>PONG</i> Сообщения. Вы можете просмотреть такие явные точки останова в  <i>Контрольные точки вкладка </i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
-This option should always be enabled unless the client or the server under test requires them. The WebSocket
-messages might not be correctly processed by ZAP when extensions are used.
+<h3>Удалить <code> Sec-Websocket-Extensions </> Заголовок </h3>
+Позволяет удалить заголовок HTTP  <code>Sec-Websocket-расширения </code> от сообщений рукопожатия, так что никакие преобразования не сделаны
+к сообщениям Websocket, отправленные / полученные. <br>
+Эта опция всегда должна быть включена, если клиент или сервер не требует их теста. WebSocket.
+Сообщения могут быть неправильно обрабатываются за ZAP при использовании расширений. 
 
 </body>
 </html>
