@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Traditional JSON Report with Requests and Responses</TITLE>
+</HEAD>
+<BODY>
+	<H1>Traditional JSON Report with Requests and Responses</H1>
+
+	<H3>Sample</H3>
+
+	<pre>
+{
+    "@version": "Dev Build",
+    "@generated": "Fri, 4 Feb 2022 13:04:51",
+    "site":[
+        {
+            "@name": "http://localhost:8080",
+            "@host": "localhost",
+            "@port": "8080",
+            "@ssl": "false",
+            "alerts": [
+                {
+                    "pluginid": "40012",
+                    "alertRef": "40012",
+                    "alert": "Cross Site Scripting (Reflected)",
+                    "name": "Cross Site Scripting (Reflected)",
+                    "riskcode": "3",
+                    "confidence": "2",
+                    "riskdesc": "High (Medium)",
+                    "desc": "&lt;p&gt;Cross-site Scripting (XSS) is an attack technique that involves ...&lt;/p&gt;",
+                    "instances":[
+                        {
+                            "uri": "http://localhost:8080/bodgeit/search.jsp?q=%3C%2Ffont%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Cfont%3E",
+                            "method": "GET",
+                            "param": "q",
+                            "attack": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;",
+                            "evidence": "&lt;/font&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;font&gt;",
+                            "request-header": "GET http://localhost:8080/bodgeit/search.jsp?q=%3C%2Ffont%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Cfont%3E HTTP/1.1\r\n...",
+                            "request-body": "",
+                            "response-header": "HTTP/1.1 200\r\nContent-Type: text/html;charset=ISO-8859-1\r\nContent-Length: 2045\r\nDate: Fri, 04 Feb 2022 11:56:38 GMT\r\n\r\n",
+                            "response-body": "\n\n\n\n\n\n\n&lt;!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\"&gt;\n&lt;html&gt;..."
+                        },
+                        {
+                            "uri": "http://localhost:8080/bodgeit/contact.jsp",
+                            "method": "POST",
+                            "param": "comments",
+                            "attack": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;",
+                            "evidence": "&lt;/td&gt;&lt;scrIpt&gt;alert(1);&lt;/scRipt&gt;&lt;td&gt;",
+                            "request-header": "POST http://localhost:8080/bodgeit/contact.jsp HTTP/1.1\r\nHost: localhost:8080\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0)...",
+                            "request-body": "null=&anticsrf=0.7583553183173598&comments=%3C%2Ftd%3E%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E%3Ctd%3E",
+                            "response-header": "HTTP/1.1 200\r\nContent-Type: text/html;charset=ISO-8859-1\r\nContent-Length: 2025\r\nDate: Fri, 04 Feb 2022 11:56:35 GMT\r\n\r\n",
+                            "response-body": "\n\n\n\n\n\n&lt;!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\"&gt;\n&lt;html&gt;..."
+                        }
+                    ],                   
+                    "count": "2", 
+                    "solution": "&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not ...&lt;/p&gt;",
+                    "otherinfo": "",
+                    "reference": "&lt;p&gt;http://projects.webappsec.org/Cross-Site-Scripting&lt;/p&gt;&lt;p&gt;http://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;",
+                    "cweid": "79",
+                    "wascid": "8",
+                    "sourceid": "36977"
+                },
+
+</pre>
+
+</BODY>
+</HTML>
+

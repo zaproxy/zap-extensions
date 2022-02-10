@@ -6,9 +6,10 @@
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Генерация отчетов " image="reports-icon"
 				target="reports">
-				<tocitem text="Автоматизация " target="reports.automation" />
-				<tocitem text="Создать отчёт" target="reports.create" />
-				<tocitem text="О программе" target="reports.about" />
+				<tocitem text="Templates" target="reports.templates" />
+				<tocitem text="Automation" target="reports.automation" />
+				<tocitem text="Creating Reports" target="reports.create" />
+				<tocitem text="About" target="reports.about" />
 				<tocitem text="API" target="reports.api" />
 			</tocitem>
 		</tocitem>

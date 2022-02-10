@@ -6,6 +6,7 @@
 <map version="1.0">
 	<mapID target="reports-icon" url="contents/images/report.png" />
     <mapID target="reports" url="contents/reports.html" />
+    <mapID target="reports.templates" url="contents/templates.html" />
     <mapID target="reports.automation" url="contents/automation.html" />
     <mapID target="reports.create" url="contents/create.html" />
     <mapID target="reports.about" url="contents/about.html" />
