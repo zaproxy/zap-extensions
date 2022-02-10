@@ -17,11 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi;
+package org.zaproxy.addon.commonlib.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,22 +45,28 @@ import org.parosproxy.paros.extension.ViewDelegate;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 
+/**
+ * The panel which displays {@link ProgressPane}s with progress bars and text messages providing
+ * updates as to the status of various processes.
+ *
+ * @since 1.8.0
+ */
 public class ProgressPanel extends AbstractPanel {
 
     private enum DisplayStatus {
         ALL("all", pane -> true),
-        COMPLETED("completed", ImportPane::isCompleted),
+        COMPLETED("completed", ProgressPane::isCompleted),
         IN_PROGRESS("inprogress", pane -> !pane.isCompleted());
 
         private final String label;
-        private final Predicate<ImportPane> condition;
+        private final Predicate<ProgressPane> condition;
 
-        DisplayStatus(String statusKey, Predicate<ImportPane> condition) {
-            label = Constant.messages.getString("openapi.progress.panel.status." + statusKey);
+        DisplayStatus(String statusKey, Predicate<ProgressPane> condition) {
+            label = Constant.messages.getString("commonlib.progress.panel.status." + statusKey);
             this.condition = condition;
         }
 
-        boolean matches(ImportPane pane) {
+        boolean matches(ProgressPane pane) {
             return condition.test(pane);
         }
 
@@ -74,23 +81,23 @@ public class ProgressPanel extends AbstractPanel {
     private static final ImageIcon PROGRESS_ICON =
             new ImageIcon(
                     ProgressPanel.class.getResource(
-                            "/org/zaproxy/zap/extension/openapi/resources/ui-progress-bar-indeterminate.png"));
+                            "/org/zaproxy/addon/commonlib/resources/ui-progress-bar-indeterminate.png"));
     private JToolBar toolBar = null;
     private JScrollPane jScrollPane = null;
-    private JPanel importProgressPanel = null;
-    private JPanel importPanesPanel = null;
-    private List<ImportPane> importPanes = new ArrayList<>();
+    private JPanel progressPanel = null;
+    private JPanel progressPanesPanel = null;
+    private List<ProgressPane> progressPanes = new ArrayList<>();
     private GridBagConstraints panelConstraints;
 
     public ProgressPanel(ViewDelegate view) {
         super();
         this.setLayout(new CardLayout());
-        this.setName(Constant.messages.getString("openapi.progress.panel.title"));
+        this.setName(Constant.messages.getString("commonlib.progress.panel.title"));
         this.setIcon(PROGRESS_ICON);
         this.setDefaultAccelerator(
                 view.getMenuShortcutKeyStroke(
                         KeyEvent.VK_M, java.awt.event.InputEvent.SHIFT_DOWN_MASK, false));
-        this.setMnemonic(Constant.messages.getChar("openapi.progress.panel.mnemonic"));
+        this.setMnemonic(Constant.messages.getChar("commonlib.progress.panel.mnemonic"));
         this.panelConstraints =
                 new GridBagConstraints(
                         0,
@@ -104,17 +111,17 @@ public class ProgressPanel extends AbstractPanel {
                         new Insets(0, 0, 0, 0),
                         0,
                         0);
-        this.add(getImportProgressPanel(), getImportPanesPanel().getName());
+        this.add(getProgressPanel(), getProgressPanesPanel().getName());
     }
 
-    private JPanel getImportProgressPanel() {
-        if (importProgressPanel == null) {
-            importProgressPanel = new JPanel(new BorderLayout());
-            importProgressPanel.setName("ProgressPanel");
-            importProgressPanel.add(getToolBar(), BorderLayout.PAGE_START);
-            importProgressPanel.add(getJScrollPane(), BorderLayout.CENTER);
+    private JPanel getProgressPanel() {
+        if (progressPanel == null) {
+            progressPanel = new JPanel(new BorderLayout());
+            progressPanel.setName("ProgressPanel");
+            progressPanel.add(getToolBar(), BorderLayout.PAGE_START);
+            progressPanel.add(getJScrollPane(), BorderLayout.CENTER);
         }
-        return importProgressPanel;
+        return progressPanel;
     }
 
     private JToolBar getToolBar() {
@@ -125,7 +132,7 @@ public class ProgressPanel extends AbstractPanel {
 
             JButton clearButton =
                     new JButton(
-                            Constant.messages.getString("openapi.progress.panel.button.clear"),
+                            Constant.messages.getString("commonlib.progress.panel.button.clear"),
                             DisplayUtils.getScaledIcon(
                                     ProgressPanel.class.getResource(
                                             "/resource/icon/fugue/broom.png")));
@@ -139,10 +146,10 @@ public class ProgressPanel extends AbstractPanel {
             // TODO : Change to not use setMaximumSize
             statusCombo.setMaximumSize(new Dimension(150, Integer.MAX_VALUE));
             statusCombo.addActionListener(
-                    e -> updateImportPanesPanel((DisplayStatus) statusCombo.getSelectedItem()));
+                    e -> updateProgressPanesPanel((DisplayStatus) statusCombo.getSelectedItem()));
 
             JLabel showLabel =
-                    new JLabel(Constant.messages.getString("openapi.progress.panel.status.show"));
+                    new JLabel(Constant.messages.getString("commonlib.progress.panel.status.show"));
             showLabel.setLabelFor(statusCombo);
 
             toolBar.add(clearButton);
@@ -155,7 +162,7 @@ public class ProgressPanel extends AbstractPanel {
 
     private JScrollPane getJScrollPane() {
         if (jScrollPane == null) {
-            jScrollPane = new JScrollPane(getImportPanesPanel());
+            jScrollPane = new JScrollPane(getProgressPanesPanel());
             jScrollPane.setFont(FontUtils.getFont("Dialog"));
             jScrollPane.setVerticalScrollBarPolicy(
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -163,51 +170,66 @@ public class ProgressPanel extends AbstractPanel {
         return jScrollPane;
     }
 
-    private JPanel getImportPanesPanel() {
-        if (importPanesPanel == null) {
-            importPanesPanel = new JPanel();
-            importPanesPanel.setLayout(new GridBagLayout());
+    private JPanel getProgressPanesPanel() {
+        if (progressPanesPanel == null) {
+            progressPanesPanel = new JPanel();
+            progressPanesPanel.setLayout(new GridBagLayout());
         }
-        return importPanesPanel;
+        return progressPanesPanel;
     }
 
-    private void updateImportPanesPanel(DisplayStatus status) {
-        getImportPanesPanel().removeAll();
+    private void updateProgressPanesPanel(DisplayStatus status) {
+        getProgressPanesPanel().removeAll();
         panelConstraints.gridy = 0;
-        for (ImportPane pane : importPanes) {
+        for (ProgressPane pane : progressPanes) {
             if (status.matches(pane)) {
-                getImportPanesPanel().add(pane, panelConstraints);
+                getProgressPanesPanel().add(pane, panelConstraints);
                 panelConstraints.gridy++;
             }
         }
-        getImportPanesPanel().revalidate();
-        getImportPanesPanel().repaint();
+        getProgressPanesPanel().revalidate();
+        getProgressPanesPanel().repaint();
     }
 
-    public void addImportPane(ImportPane pane) {
-        importPanes.add(pane);
-        getImportPanesPanel().add(pane, panelConstraints);
-        panelConstraints.gridy++;
+    /**
+     * Adds the given {@link ProgressPane} to be displayed.
+     *
+     * @param pane the {@link ProgressPane} to be displayed.
+     */
+    public void addProgressPane(ProgressPane pane) {
+        EventQueue.invokeLater(
+                () -> {
+                    if (progressPanes.isEmpty()) {
+                        this.setTabFocus();
+                    }
+                    progressPanes.add(pane);
+                    getProgressPanesPanel().add(pane, panelConstraints);
+                    panelConstraints.gridy++;
+                });
     }
 
     private void clear() {
-        ArrayList<ImportPane> panesToRemove = new ArrayList<>();
-        for (ImportPane pane : importPanes) {
+        List<ProgressPane> panesToRemove = new ArrayList<>();
+        for (ProgressPane pane : progressPanes) {
             if (pane.isCompleted()) {
-                getImportPanesPanel().remove(pane);
+                getProgressPanesPanel().remove(pane);
                 panesToRemove.add(pane);
             }
         }
-        importPanes.removeAll(panesToRemove);
-        getImportPanesPanel().revalidate();
-        getImportPanesPanel().repaint();
+        progressPanes.removeAll(panesToRemove);
+        getProgressPanesPanel().revalidate();
+        getProgressPanesPanel().repaint();
     }
 
+    /** Clears and disposes of all the {@link ProgressPane}s which are currently being displayed. */
     public void clearAndDispose() {
-        getImportPanesPanel().removeAll();
-        getImportPanesPanel().revalidate();
-        getImportPanesPanel().repaint();
-        importPanes.clear();
-        panelConstraints.gridy = 0;
+        EventQueue.invokeLater(
+                () -> {
+                    getProgressPanesPanel().removeAll();
+                    getProgressPanesPanel().revalidate();
+                    getProgressPanesPanel().repaint();
+                    progressPanes.clear();
+                    panelConstraints.gridy = 0;
+                });
     }
 }
