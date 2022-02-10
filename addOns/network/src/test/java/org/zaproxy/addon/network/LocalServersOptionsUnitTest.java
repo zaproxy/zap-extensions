@@ -1374,6 +1374,25 @@ class LocalServersOptionsUnitTest {
     }
 
     @Test
+    void shouldMigrateCoreProxyWithJustPort() {
+        // Given
+        ZapXmlConfiguration config = configWith("<proxy><port>1234</port></proxy>");
+        // When
+        options.load(config);
+        // Then
+        assertServerFields(
+                options.getMainProxy(),
+                "0.0.0.0",
+                1234,
+                ServerMode.API_AND_PROXY,
+                false,
+                true,
+                true,
+                true);
+        assertThat(config.getProperty("proxy.ip"), is(nullValue()));
+    }
+
+    @Test
     void shouldUseDefaultsIfCoreProxyDataNotPresent() {
         // Given
         ZapXmlConfiguration config = configWith("<proxy></proxy>");
