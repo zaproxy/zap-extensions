@@ -623,12 +623,11 @@ public class LocalServersOptions extends VersionedAbstractParam {
     }
 
     private List<String> migrateMainProxy() {
-        String address = getString("proxy.ip", null);
-        if (address == null) {
+        if (!getConfig().containsKey("proxy.port")) {
             return TlsUtils.getSupportedProtocols();
         }
         LocalServerConfig config = new LocalServerConfig();
-        config.setAddress(address);
+        config.setAddress(getString("proxy.ip", ""));
         config.setPort(getInt("proxy.port", LocalServerConfig.DEFAULT_PORT));
         config.setBehindNat(getBoolean("proxy.behindnat", false));
         config.setRemoveAcceptEncoding(getBoolean("proxy.removeUnsupportedEncodings", true));
@@ -638,6 +637,9 @@ public class LocalServersOptions extends VersionedAbstractParam {
                 getConfig().getList("proxy.securityProtocolsEnabled.protocol").stream()
                         .map(Object::toString)
                         .collect(Collectors.toList());
+        if (tlsProtocols.isEmpty()) {
+            tlsProtocols = TlsUtils.getSupportedProtocols();
+        }
         config.setTlsProtocols(tlsProtocols);
 
         setMainProxy(config);
