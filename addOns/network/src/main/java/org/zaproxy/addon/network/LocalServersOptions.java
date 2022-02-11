@@ -627,7 +627,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
             return TlsUtils.getSupportedProtocols();
         }
         LocalServerConfig config = new LocalServerConfig();
-        config.setAddress(getString("proxy.ip", ""));
+        config.setAddress(getString("proxy.ip", LocalServerConfig.DEFAULT_ADDRESS));
         config.setPort(getInt("proxy.port", LocalServerConfig.DEFAULT_PORT));
         config.setBehindNat(getBoolean("proxy.behindnat", false));
         config.setRemoveAcceptEncoding(getBoolean("proxy.removeUnsupportedEncodings", true));

@@ -1382,14 +1382,14 @@ class LocalServersOptionsUnitTest {
         // Then
         assertServerFields(
                 options.getMainProxy(),
-                "0.0.0.0",
+                "localhost",
                 1234,
                 ServerMode.API_AND_PROXY,
                 false,
                 true,
                 true,
                 true);
-        assertThat(config.getProperty("proxy.ip"), is(nullValue()));
+        assertThat(config.getProperty("proxy.port"), is(nullValue()));
     }
 
     @Test

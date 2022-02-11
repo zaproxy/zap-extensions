@@ -31,6 +31,7 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.channels.UnresolvedAddressException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -457,6 +458,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             if (mainProxyServer.getConfig().updateFrom(mainProxyConfig)) {
                 try {
                     mainProxyServer.start();
+                    updateCoreProxy(mainProxyConfig);
                 } catch (IOException e) {
                     LOGGER.warn("An error occurred while restarting the main proxy:", e);
                 }
@@ -645,9 +647,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             localServersOptions.setMainProxy(serverConfig);
         }
 
-        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
-        proxyParam.setProxyIp(address);
-        proxyParam.setProxyPort(port);
+        updateCoreProxy(serverConfig);
 
         mainProxyServer = createLocalServer(serverConfig);
         if (overridePort == INVALID_PORT) {
@@ -703,6 +703,23 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             "network.cmdline.proxy.error.message", detailedError),
                     Constant.messages.getString("network.cmdline.proxy.error.title"),
                     JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void updateCoreProxy(LocalServerConfig serverConfig) {
+        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        proxyParam.setProxyIp(
+                serverConfig.isAnyLocalAddress()
+                        ? getLocalhostAddress()
+                        : serverConfig.getAddress());
+        proxyParam.setProxyPort(serverConfig.getPort());
+    }
+
+    private static String getLocalhostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+            return LocalServerConfig.DEFAULT_ADDRESS;
         }
     }
 
