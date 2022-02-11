@@ -66,6 +66,7 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
@@ -435,6 +436,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 localServerInfoLabel =
                         new LocalServerInfoLabel(
                                 getView().getMainFrame().getMainFooterPanel(), localServersOptions);
+
+                ExtensionHookView hookView = extensionHook.getHookView();
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel.getName()));
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("proxies", localServersOptionsPanel.getName()));
             }
         }
     }
