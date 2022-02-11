@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Problem generating 'Risk and Confidence HTML' report with Java 17 (Issue 7026)
+
 ## [0.11.0] - 2022-02-08
 ### Added
 - Traditional-json-plus report

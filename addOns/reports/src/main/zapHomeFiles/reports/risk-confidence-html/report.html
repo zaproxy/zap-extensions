@@ -29,7 +29,7 @@
 	</header>
 
 	<main
-		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${alertTree.children.hasMoreElements()? alertTree.depthFirstEnumeration().{? #this.isLeaf()}: {}}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
+		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
 
 		<section data-th-if="${reportData.isIncludeSection('contents')}"
 			id="contents" class="contents">
@@ -586,7 +586,7 @@
 </th-block> </th-block> <th-block data-th-fragment="alertsTable(alert)">
 <table data-th-with="userObject=${alert.userObject}"
 	class="alerts-table">
-	<tr data-th-unless="${userObject.tags.isEmpty()}">
+	<tr>
 		<th scope="row" data-th-text="#{report.template.alertsTable.tags}">Tags</th>
 		<td>
 			<ul class="alert-tags-list">
