@@ -381,6 +381,8 @@ public class AttackPanel extends QuickStartSubPanel {
         getStopButton().setEnabled(true);
 
         getExtensionQuickStart().attack(url, spiderCheckBox.isSelected());
+        getSpiderCheckBox().setEnabled(false);
+        plugableSpider.setEnabledAjax(false);
         return true;
     }
 
@@ -392,6 +394,8 @@ public class AttackPanel extends QuickStartSubPanel {
         getExtensionQuickStart().stopAttack();
 
         stopButton.setEnabled(false);
+        getSpiderCheckBox().setEnabled(true);
+        plugableSpider.setEnabledAjax(true);
     }
 
     protected void notifyProgress(AttackThread.Progress progress) {
