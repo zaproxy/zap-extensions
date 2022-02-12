@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+## [34] - 2022-01-12
+### Changed
+- Spider checkboxes in Automated Scan will be disabled when scan is running. (Issue 7072)
 
 ## [33] - 2021-12-13
 ### Changed
