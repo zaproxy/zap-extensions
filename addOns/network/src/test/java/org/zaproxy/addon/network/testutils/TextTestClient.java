@@ -29,26 +29,36 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+<<<<<<< HEAD
 import io.netty.util.AttributeKey;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+=======
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** A client that allows to send and receive text messages, to help with the tests. */
 public class TextTestClient extends TestClient {
 
+<<<<<<< HEAD
     private static final AttributeKey<CompletableFuture<Object>> RESPONSE_ATTRIBUTE =
             AttributeKey.newInstance("zap.client.response");
 
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     /**
      * Constructs a {@code TextTestClient} with the given address.
      *
      * @param address the address to connect to.
      */
     public TextTestClient(String address) {
+<<<<<<< HEAD
         this(address, null);
     }
 
@@ -65,21 +75,31 @@ public class TextTestClient extends TestClient {
     private static void initChannel(
             SocketChannel channel, Consumer<SocketChannel> channelDecorator) {
         channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
+=======
+        super(address, TextTestClient::initChannel);
+    }
+
+    private static void initChannel(SocketChannel channel) {
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
         channel.pipeline()
                 .addLast(new DelimiterBasedFrameDecoder(1024, Delimiters.lineDelimiter()))
                 .addLast(new StringDecoder(StandardCharsets.UTF_8))
                 .addLast(new StringEncoder(StandardCharsets.UTF_8))
                 .addLast(new ResponseHandler())
                 .addLast(ServerExceptionHandler.getInstance());
+<<<<<<< HEAD
 
         if (channelDecorator != null) {
             channelDecorator.accept(channel);
         }
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Override
     public <T> Channel connect(int port, T msg) throws Exception {
         Channel channel = super.connect(port, msg != null ? msg + "\n" : msg);
+<<<<<<< HEAD
         if (msg != null) {
             waitForResponse(channel);
         }
@@ -107,23 +127,49 @@ public class TextTestClient extends TestClient {
 
         private static CompletableFuture<Object> getCompletableFuture(ChannelHandlerContext ctx) {
             return TextTestClient.getCompletableFuture(ctx.channel());
+=======
+        channel.pipeline().get(ResponseHandler.class).getResponse();
+        return channel;
+    }
+
+    private static class ResponseHandler extends SimpleChannelInboundHandler<Object> {
+
+        private CompletableFuture<Object> response = new CompletableFuture<>();
+
+        public Object getResponse() throws InterruptedException, ExecutionException {
+            Object message = response.get();
+            response = new CompletableFuture<>();
+            return message;
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             super.channelInactive(ctx);
+<<<<<<< HEAD
             getCompletableFuture(ctx).complete(null);
+=======
+            response.complete(null);
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
             ctx.close();
         }
 
         @Override
         public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+<<<<<<< HEAD
             getCompletableFuture(ctx).complete(msg);
+=======
+            response.complete(msg);
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
         }
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+<<<<<<< HEAD
             getCompletableFuture(ctx).completeExceptionally(cause);
+=======
+            response.completeExceptionally(cause);
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
             ctx.close();
         }
     }

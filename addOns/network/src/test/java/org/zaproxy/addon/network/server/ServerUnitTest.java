@@ -101,8 +101,11 @@ class ServerUnitTest {
         public boolean isStarted() {
             return started;
         }
+<<<<<<< HEAD
 
         @Override
         public void close() {}
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 }

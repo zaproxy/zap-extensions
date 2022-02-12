@@ -145,6 +145,7 @@ class BaseServerUnitTest extends TestUtils {
         server = new BaseServer(eventLoopGroup, channelInitialiser);
     }
 
+<<<<<<< HEAD
     @Test
     void shouldThrowIfNoChannelInitialiserProvided() throws Exception {
         // Given
@@ -174,6 +175,8 @@ class BaseServerUnitTest extends TestUtils {
         assertThrows(IOException.class, () -> server.start(port));
     }
 
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     @ParameterizedTest
     @ValueSource(ints = {-1, Server.MAX_PORT + 1})
     void shouldThrowWhenStartingWithInvalidPort(int port) throws Exception {
@@ -276,6 +279,7 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+<<<<<<< HEAD
     void shouldAddProcessingMessageAttributeToChannel() throws Exception {
         // Given
         createServer(
@@ -290,6 +294,8 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     void shouldStartServerOnSpecifiedPort() throws Exception {
         // Given
         int port = getRandomPort();
@@ -299,7 +305,10 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+<<<<<<< HEAD
         assertThat(server.isStarted(), is(equalTo(true)));
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Test
@@ -310,7 +319,10 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+<<<<<<< HEAD
         assertThat(server.isStarted(), is(equalTo(true)));
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Test
@@ -323,7 +335,10 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+<<<<<<< HEAD
         assertThat(server.isStarted(), is(equalTo(true)));
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Test
@@ -337,6 +352,7 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
+<<<<<<< HEAD
         assertThat(server.isStarted(), is(equalTo(false)));
     }
 
@@ -368,6 +384,8 @@ class BaseServerUnitTest extends TestUtils {
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
         assertThat(server.isStarted(), is(equalTo(false)));
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Test
@@ -380,7 +398,10 @@ class BaseServerUnitTest extends TestUtils {
         server.start(port);
         // Then
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+<<<<<<< HEAD
         assertThat(server.isStarted(), is(equalTo(true)));
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     @Test
@@ -399,9 +420,13 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message A"));
         assertThat(messagesReceived, contains(message1, message2, message3));
+<<<<<<< HEAD
         client.waitChannelsInactive();
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
         assertThat(server.isStarted(), is(equalTo(false)));
+=======
+        assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     }
 
     private static <T> void assertChannelAttribute(

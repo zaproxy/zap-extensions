@@ -123,6 +123,7 @@ public class TestClient implements Closeable {
         allChannels.close().sync();
     }
 
+<<<<<<< HEAD
     /**
      * Waits until all channels are inactive.
      *
@@ -134,6 +135,8 @@ public class TestClient implements Closeable {
         }
     }
 
+=======
+>>>>>>> 6790cf8a44d6ba1358ac50cc1fefcb8d44445e10
     @Override
     public void close() throws IOException {
         try {
