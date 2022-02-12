@@ -36,4 +36,8 @@ public interface PlugableSpider {
     boolean isSelected();
 
     boolean isRunning();
+
+    boolean isEnabledAjax();
+
+    void setEnabledAjax(boolean val);
 }
