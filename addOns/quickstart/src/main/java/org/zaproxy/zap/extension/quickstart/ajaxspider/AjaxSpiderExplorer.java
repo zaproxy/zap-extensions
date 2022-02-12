@@ -156,6 +156,11 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         return this.getExtAjax().isSpiderRunning();
     }
 
+    @Override
+    public void setEnabled(boolean val) {
+        getSelectCheckBox().setEnabled(val);
+    }
+
     public void optionsLoaded(QuickStartParam quickStartParam) {
         getSelectCheckBox().setSelected(quickStartParam.isAjaxSpiderEnabled());
         String def = quickStartParam.getAjaxSpiderDefaultBrowser();

@@ -381,6 +381,7 @@ public class AttackPanel extends QuickStartSubPanel {
         getStopButton().setEnabled(true);
 
         getExtensionQuickStart().attack(url, spiderCheckBox.isSelected());
+        setSpiderButtonsEnabled(false);
         return true;
     }
 
@@ -394,10 +395,18 @@ public class AttackPanel extends QuickStartSubPanel {
         stopButton.setEnabled(false);
     }
 
+    private void setSpiderButtonsEnabled(boolean enabled) {
+        getSpiderCheckBox().setEnabled(enabled);
+        if (plugableSpider != null) {
+            plugableSpider.setEnabled(enabled);
+        }
+    }
+
     protected void notifyProgress(AttackThread.Progress progress) {
         this.notifyProgress(progress, null);
     }
 
+    @SuppressWarnings("fallthrough")
     protected void notifyProgress(AttackThread.Progress progress, String msg) {
         if (msg == null) {
             msg = Constant.messages.getString("quickstart.progress." + progress.name());
@@ -407,8 +416,6 @@ public class AttackPanel extends QuickStartSubPanel {
 
         switch (progress) {
             case complete:
-                getAttackButton().setEnabled(true);
-                getStopButton().setEnabled(false);
                 ExtensionAlert extAlert =
                         ((ExtensionAlert)
                                 Control.getSingleton()
@@ -417,11 +424,11 @@ public class AttackPanel extends QuickStartSubPanel {
                 if (extAlert != null) {
                     extAlert.setAlertTabFocus();
                 }
-                break;
             case failed:
             case stopped:
                 getAttackButton().setEnabled(true);
                 getStopButton().setEnabled(false);
+                setSpiderButtonsEnabled(true);
                 break;
             default:
                 break;

@@ -36,4 +36,6 @@ public interface PlugableSpider {
     boolean isSelected();
 
     boolean isRunning();
+
+    void setEnabled(boolean val);
 }
