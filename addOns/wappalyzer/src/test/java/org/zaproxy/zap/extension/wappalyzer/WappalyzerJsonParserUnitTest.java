@@ -40,7 +40,7 @@ class WappalyzerJsonParserUnitTest {
         List<Application> apps = wappData.getApplications();
         Application app = apps.get(0);
         // Then
-        assertEquals(5, apps.size());
+        assertEquals(6, apps.size());
         assertEquals("Test Entry", app.getName());
         assertEquals("Test Entry is a test entry for UnitTests", app.getDescription());
         assertEquals("https://www.example.com/testentry", app.getWebsite());
@@ -53,9 +53,12 @@ class WappalyzerJsonParserUnitTest {
         assertEquals(0, app.getImplies().size());
         assertEquals(2, app.getDom().size());
         assertEquals("", app.getCpe());
+
+        app = apps.get(1);
+        assertEquals(1, app.getSimpleDom().size());
         // Ignore Icon
 
-        app = apps.get(2);
+        app = apps.get(3);
         assertEquals("Apache", app.getName());
         assertEquals(1, app.getMetas().size());
     }

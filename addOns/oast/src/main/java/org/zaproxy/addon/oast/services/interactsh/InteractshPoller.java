@@ -19,11 +19,13 @@
  */
 package org.zaproxy.addon.oast.services.interactsh;
 
+import java.time.LocalDateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.oast.OastRequest;
+import org.zaproxy.addon.oast.OastState;
 
 public class InteractshPoller implements Runnable {
 
@@ -38,6 +40,11 @@ public class InteractshPoller implements Runnable {
     public void run() {
         LOGGER.debug("Polling the Interactsh Server.");
         this.interactshService.getInteractions().forEach(this::handleInteraction);
+        this.interactshService.fireOastStateChanged(
+                new OastState(
+                        interactshService.getName(),
+                        interactshService.isRegistered(),
+                        LocalDateTime.now()));
     }
 
     private void handleInteraction(InteractshEvent event) {

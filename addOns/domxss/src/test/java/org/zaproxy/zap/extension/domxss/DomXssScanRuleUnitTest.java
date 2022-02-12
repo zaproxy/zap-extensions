@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -37,19 +38,33 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
+    private static ExtensionNetwork extensionNetwork;
+
     @BeforeAll
     static void setup() {
         WebDriverManager.firefoxdriver().setup();
         WebDriverManager.chromedriver().setup();
+
+        extensionNetwork = new ExtensionNetwork();
+        extensionNetwork.init();
+        Model model = Model.getSingleton();
+        extensionNetwork.initModel(model);
+        Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
+        extensionNetwork.hook(new ExtensionHook(model, null));
     }
 
     static Stream<String> testBrowsers() throws Exception {
@@ -60,10 +75,12 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     @AfterAll
     static void tidyUp() {
         DomXssScanRule.tidyUp();
+        extensionNetwork.stop();
     }
 
     @Override
     protected DomXssScanRule createScanner() {
+        DomXssScanRule.extensionNetwork = extensionNetwork;
         return new DomXssScanRule();
     }
 

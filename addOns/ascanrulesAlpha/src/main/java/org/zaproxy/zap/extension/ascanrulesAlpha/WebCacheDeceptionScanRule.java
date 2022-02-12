@@ -120,8 +120,11 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
     }
 
     private boolean checkSimilarity(String a, String b) {
-        LevenshteinDistance distance = new LevenshteinDistance();
+        LevenshteinDistance distance = new LevenshteinDistance(LEVENSHTEIN_THRESHOLD);
         int levenshteinDistance = distance.apply(a, b);
+        if (levenshteinDistance == -1) {
+            return false; // LEVENSHTEIN_THRESHOLD exceeded
+        }
         // if response length is less than threshold
         if (b.length() <= LEVENSHTEIN_THRESHOLD) {
             return levenshteinDistance < (int) (b.length() * 0.90);

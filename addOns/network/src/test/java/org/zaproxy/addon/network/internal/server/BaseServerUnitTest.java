@@ -145,6 +145,35 @@ class BaseServerUnitTest extends TestUtils {
         server = new BaseServer(eventLoopGroup, channelInitialiser);
     }
 
+    @Test
+    void shouldThrowIfNoChannelInitialiserProvided() throws Exception {
+        // Given
+        Consumer<SocketChannel> channelInitialiser = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> server = new BaseServer(eventLoopGroup, channelInitialiser));
+    }
+
+    @Test
+    void shouldThrowIfSettingNullChannelInitialiser() throws Exception {
+        // Given
+        server = new BaseServer(eventLoopGroup);
+        Consumer<SocketChannel> channelInitialiser = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class, () -> server.setChannelInitialiser(channelInitialiser));
+    }
+
+    @Test
+    void shouldFailToStartWithNoChannelInitialiser() throws Exception {
+        // Given
+        server = new BaseServer(eventLoopGroup);
+        int port = getRandomPort();
+        // When / Then
+        assertThrows(IOException.class, () -> server.start(port));
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {-1, Server.MAX_PORT + 1})
     void shouldThrowWhenStartingWithInvalidPort(int port) throws Exception {
@@ -247,6 +276,20 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddProcessingMessageAttributeToChannel() throws Exception {
+        // Given
+        createServer(
+                ch -> {
+                    assertChannelAttribute(ch, ChannelAttributes.PROCESSING_MESSAGE, Boolean.FALSE);
+                    initDefaultChannel(ch);
+                });
+        int port = getRandomPort();
+        server.start(port);
+        // When / Then
+        client.send(port, "Message");
+    }
+
+    @Test
     void shouldStartServerOnSpecifiedPort() throws Exception {
         // Given
         int port = getRandomPort();
@@ -256,6 +299,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -266,6 +310,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -278,6 +323,7 @@ class BaseServerUnitTest extends TestUtils {
         client.send(port, message);
         // Then
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -291,6 +337,37 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message 2"));
         assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldStopServerOnClose() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        String message = "Message 1";
+        client.send(port, message);
+        // When
+        server.close();
+        // Then
+        assertThrows(IOException.class, () -> client.send(port, "Message 2"));
+        assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldBeAutoCloseable() throws Exception {
+        // Given
+        int port;
+        String message = "Message 1";
+        try (BaseServer server = new BaseServer(eventLoopGroup, this::initDefaultChannel)) {
+            port = server.start(Server.ANY_PORT);
+            client.send(port, message);
+            // When auto closed
+        }
+        // Then
+        assertThrows(IOException.class, () -> client.send(port, "Message 2"));
+        assertThat(messagesReceived, contains(message));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     @Test
@@ -303,6 +380,7 @@ class BaseServerUnitTest extends TestUtils {
         server.start(port);
         // Then
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        assertThat(server.isStarted(), is(equalTo(true)));
     }
 
     @Test
@@ -321,7 +399,9 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message A"));
         assertThat(messagesReceived, contains(message1, message2, message3));
+        client.waitChannelsInactive();
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        assertThat(server.isStarted(), is(equalTo(false)));
     }
 
     private static <T> void assertChannelAttribute(

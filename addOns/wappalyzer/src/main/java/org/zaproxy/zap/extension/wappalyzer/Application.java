@@ -38,6 +38,7 @@ public class Application {
     private List<AppPattern> html = new ArrayList<>();
     private List<Map<String, AppPattern>> metas;
     private List<Map<String, Map<String, Map<String, AppPattern>>>> dom;
+    private List<String> simpleDom;
     private List<AppPattern> css = new ArrayList<>();
     private List<AppPattern> script = new ArrayList<>();
 
@@ -109,6 +110,14 @@ public class Application {
 
     public void setDom(List<Map<String, Map<String, Map<String, AppPattern>>>> dom) {
         this.dom = dom;
+    }
+
+    void setSimpleDom(List<String> simpleDom) {
+        this.simpleDom = simpleDom;
+    }
+
+    List<String> getSimpleDom() {
+        return simpleDom;
     }
 
     public void setScript(List<AppPattern> script) {

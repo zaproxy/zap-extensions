@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -34,6 +35,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import io.netty.channel.Channel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -76,16 +79,28 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.testutils.TestClient;
+import org.zaproxy.addon.network.testutils.TextTestClient;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
@@ -109,6 +124,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         extension = new ExtensionNetwork();
+        extension.init();
         mockMessages(extension);
         setSslCertificateService = mock(Consumer.class);
         extension.setSslCertificateService = setSslCertificateService;
@@ -135,6 +151,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Security.addProvider(new BouncyCastleProvider());
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
         zap.close();
+        extension.stop();
     }
 
     @Test
@@ -153,6 +170,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCreateLegacyCertServiceOnInit() {
+        // Given / When
+        extension.init();
+        // Then
+        assertThat(extension.getSslCertificateService(), is(notNullValue()));
+    }
+
+    @Test
     void shouldAddNetworkApiOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
@@ -162,6 +187,20 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ArgumentCaptor<ApiImplementor> argument = ArgumentCaptor.forClass(ApiImplementor.class);
         verify(extensionHook).addApiImplementor(argument.capture());
         assertThat(argument.getAllValues(), contains(instanceOf(NetworkApi.class)));
+    }
+
+    @Test
+    void shouldAddLegacyProxiesApiOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<LegacyProxiesApi> argument = ArgumentCaptor.forClass(LegacyProxiesApi.class);
+        verify(extensionHook, times(2)).addApiImplementor(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(LegacyProxiesApi.class)));
     }
 
     @Test
@@ -226,6 +265,97 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(args[2].getName(), is(equalTo("-certfulldump")));
         assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[2].getHelpMessage(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldAddHostAndPortCommandLineArgsOnHookIfHandlingLocalServerServers() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<CommandLineArgument[]> argument =
+                ArgumentCaptor.forClass(CommandLineArgument[].class);
+        verify(extensionHook).addCommandLine(argument.capture());
+        CommandLineArgument[] args = argument.getAllValues().get(0);
+        assertThat(args, arrayWithSize(5));
+        assertThat(args[3].getName(), is(equalTo("-host")));
+        assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[3].getHelpMessage(), is(not(emptyString())));
+        assertThat(args[4].getName(), is(equalTo("-port")));
+        assertThat(args[4].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[4].getHelpMessage(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldAddLegacyProxyListenerHandlerOnHookAlways() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<ProxyServer> argument = ArgumentCaptor.forClass(ProxyServer.class);
+        verify(extensionLoader).addProxyServer(argument.capture());
+        assertThat(argument.getAllValues(), contains(instanceOf(LegacyProxyListenerHandler.class)));
+        assertThat(
+                extension.getLegacyProxyListenerHandler(),
+                is(equalTo(argument.getAllValues().get(0))));
+    }
+
+    @Test
+    void shouldAddLocalServersOptionsOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(LocalServersOptions.class)));
+        assertThat(extension.getLocalServersOptions(), is(equalTo(argument.getAllValues().get(1))));
+    }
+
+    @Test
+    void shouldNotAddLocalServersOptionsOnHookIfNotHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), not(contains(instanceOf(LocalServersOptions.class))));
+        assertThat(extension.getLocalServersOptions(), is(nullValue()));
+    }
+
+    @Test
+    void shouldCreatePassThroughHandlerOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getPassThroughHandler(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldNotCreatePassThroughHandlerOnHookIfNotHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getPassThroughHandler(), is(nullValue()));
     }
 
     @Test
@@ -504,6 +634,18 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(nullValue()));
     }
 
+    @Test
+    void shouldUnloadLegacyProxyListenerHandlerAlways() {
+        // Given
+        extension.hook(mock(ExtensionHook.class));
+        LegacyProxyListenerHandler handler = extension.getLegacyProxyListenerHandler();
+        // When
+        extension.unload();
+        // Then
+        verify(extensionLoader).removeProxyServer(handler);
+        assertThat(extension.getLegacyProxyListenerHandler(), is(nullValue()));
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"db1", "db2"})
@@ -720,6 +862,126 @@ class ExtensionNetworkUnitTest extends TestUtils {
         String result = extension.importRootCaCert(file);
         // Then
         assertThat(result, is(startsWith("The private key is not properly base64 encoded.")));
+    }
+
+    @Test
+    void shouldCreateHttpServerWithProvidedHandler() throws Exception {
+        // Given
+        HttpMessageHandler handler =
+                (ctx, msg) -> {
+                    if (!ctx.isFromClient()) {
+                        return;
+                    }
+                    try {
+                        msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                    } catch (HttpMalformedHeaderException ignore) {
+                        // Valid header.
+                    }
+                };
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        // When
+        try (Server server = extension.createHttpServer(handler)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            msg = (HttpMessage) TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(
+                    msg.getResponseHeader().toString(),
+                    is(equalTo("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldCreateHttpProxyWithProvidedInitiatorAndHandler() throws Exception {
+        // Given
+        HttpMessageHandler handler =
+                (ctx, msg) -> {
+                    ctx.overridden();
+                    try {
+                        msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                    } catch (HttpMalformedHeaderException ignore) {
+                        // Valid header.
+                    }
+                };
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        given(optionsParam.getConnectionParam()).willReturn(new ConnectionParam());
+        extension.initModel(model);
+        // When
+        try (Server server = extension.createHttpProxy(1, handler)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            msg = (HttpMessage) TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(
+                    msg.getResponseHeader().toString(),
+                    is(equalTo("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldCreateHttpProxyWithProvidedHttpSenderAndHandler() throws Exception {
+        // Given
+        HttpMessageHandler handler =
+                (ctx, msg) -> {
+                    ctx.overridden();
+                    try {
+                        msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                    } catch (HttpMalformedHeaderException ignore) {
+                        // Valid header.
+                    }
+                };
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        ConnectionParam connectionParam = new ConnectionParam();
+        given(optionsParam.getConnectionParam()).willReturn(connectionParam);
+        extension.initModel(model);
+        // When
+        try (Server server =
+                extension.createHttpProxy(new HttpSender(connectionParam, true, 1), handler)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            msg = (HttpMessage) TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(
+                    msg.getResponseHeader().toString(),
+                    is(equalTo("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n")));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldThrowIfCreatingHttpServerWithNullHandler() throws Exception {
+        // Given
+        extension.handleServerCerts = true;
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessageHandler handler = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> extension.createHttpServer(handler));
     }
 
     private void mockRootCaKeyStore() throws Exception {

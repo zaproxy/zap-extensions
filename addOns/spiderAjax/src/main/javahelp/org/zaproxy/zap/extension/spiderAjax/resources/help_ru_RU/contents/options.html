@@ -2,109 +2,109 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options AJAX Spider screen</title>
+<title>Параметры экрана AJAX Spider </title>
 </head>
 <body>
-	<h1>Options AJAX Spider screen</h1>
+	<h1>Параметры экрана AJAX Spider </h1>
 
-	This screen allows you to configure the
-	<a href="concepts.html">AJAX-паук</a> options. The AJAX Spider is an add-on for a
-	crawler called Crawljax. The add-on sets up a local proxy in ZAP to talk to Crawljax.
-	The AJAX Spider allows you to crawl web applications written in AJAX in far more depth than
-	the native Spider. Use the AJAX Spider if you may have web applications written in AJAX. You should also use
-	the native Spider as well for complete coverage of a web application (e.g., to cover HTML comments). 
+	Этот экран позволяет настроить 
+	<a href="concepts.html">AJAX-паук</a> опции.  AJAX Spider — это надстройка для
+краулер под названием Crawljax.  Надстройка устанавливает локальный прокси в ZAP для связи с Crawljax. 
+	AJAX Spider позволяет сканировать веб-приложения, написанные на AJAX, гораздо глубже, чем
+родной Паук.  Используйте AJAX Spider, если у вас есть веб-приложения, написанные на AJAX.  Вы также должны использовать
+родной Spider, а также для полного покрытия веб-приложения (например, для покрытия комментариев HTML).  
     <br/>
     <br/>
-    <h2>Configuration Options</h2>
+    <h2>Параметры конфигурации</h2>
     <br/>
 	<table border ="2">
 		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
+			<th>Поле</th>
+			<th>Детали</th>
+			<th>По умолчанию</th>
 		</tr>
 		<tr>
-			<td>Browser</td>
-			<td>AJAX Spider relies on an external browser to crawl the targeted site. You can
-				specify which one you want to use. For more details on supported browsers refer to
-				"Selenium" add-on help pages.</td>
+			<td>браузер</td>
+			<td>AJAX Spider использует внешний браузер для сканирования целевого сайта. Ты сможешь
+укажать, какой из них вы хотите использовать. Дополнительные сведения о поддерживаемых браузерах см.
+Страницы справки надстройки "Selenium". </td>
 			<td align="center">Firefox Headless</td>
 		</tr>
 		<tr>
-			<td>Number of Browser Windows to Open</td>
-			<td>You can configure the number of windows to be used by AJAX Spider.
-				 The more windows, the faster the process will be.</td>
+			<td>Количество открытых окон браузера </td>
+			<td>Вы можете настроить количество окон, которые будет использовать AJAX Spider.
+Чем больше окон, тем быстрее будет процесс. </td>
 			<td align = "center">1</td>
 		</tr>
 		<tr>
-			<td>Maximum Crawl Depth</td>
-			<td>The maximum depth that the crawler can reach. Zero means unlimited depth.</td>
+			<td>Максимальная глубина обхода </td>
+			<td>Максимальная глубина, которую может достичь краулер. Ноль означает неограниченную глубину. </td>
 			<td align = "center">10</td>
 		</tr>
 		<tr>
-		    <td>Maximum Crawl States</td>
-			<td>The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. </td>
-			<td align = "center"> 0 (unlimited)</td>
+		    <td>Максимальное количество состояний сканирования </td>
+			<td>Максимальное количество состояний, которое должен просканировать сканер. Ноль означает неограниченное количество состояний сканирования.  </td>
+			<td align = "center"> 0 (неограниченно) </td>
 		</tr>
 		<tr>
-			<td>Maximum Duration</td>
-			<td>The maximum time that the crawler is allowed to run. Zero means unlimited running time.</td>
-			<td align = "center">60 minutes</td>
+			<td>Максимальная продолжительность </td>
+			<td>Максимальное время работы сканера. Ноль означает неограниченное время работы. </td>
+			<td align = "center">60 минут</td>
 		</tr>
 		<tr>
-			<td>Event Wait Time</td>
-			<td>The time to wait after a client side event is fired.</td>
-			<td align = "center">1000 ms</td>
+			<td>Время ожидания события </td>
+			<td>Время ожидания после запуска события на стороне клиента. </td>
+			<td align = "center">1000 мс </td>
 		</tr>
 		<tr>
-			<td>Reload Wait Time</td>
-			<td>The time to wait after URL is loaded.</td>
-			<td align = "center">1000 ms</td>
+			<td>Время ожидания перезагрузки </td>
+			<td>Время ожидания после загрузки URL. </td>
+			<td align = "center">1000 мс </td>
 		</tr>
 		<tr>
-			<td>Click Elements Once</td>
-			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
-			<td align = "center">True</td>
+			<td>Нажмите Элементы один раз </td>
+			<td>Если этот параметр включен, сканер пытается взаимодействовать с каждым элементом (например, щелкнуть мышью) только один раз.   Если это не установлено, сканер попытается щелкнуть несколько раз.  Отключение этого параметра является более строгим, но может занять значительно больше времени. </td>
+			<td align = "center">Истинный </td>
 		</tr>
 		<tr>
-			<td>Use Random Values in Form Fields</td>
-			<td>When enabled, inserts random values into form fields. Otherwise, it uses empty values.</td>
-			<td align = "center">True</td>
+			<td>Используйте случайные значения в полях формы </td>
+			<td>Когда включено, вставляет случайные значения в поля формы. В противном случае используются пустые значения. </td>
+			<td align = "center">Истинный </td>
 		</tr>
 		<tr>
-			<td>Click Default Elements Only</td>
-			<td>When enabled, only elements "a", "button" and "input" will be clicked during crawl. Otherwise, it uses the table below to determine which elements will be clicked.  For more in depth analysis, disable this and configure the clickable elements in the table.</td>
-			<td align = "center">True</td>
+			<td>Нажмите «Только элементы по умолчанию». </td>
+			<td>Если этот параметр включен, во время сканирования будут нажиматься только элементы «a», «button» и «input».  В противном случае он использует приведенную ниже таблицу, чтобы определить, какие элементы будут нажаты.   Для более глубокого анализа отключите это и настройте интерактивные элементы в таблице. </td>
+			<td align = "center">Истинный </td>
 		</tr>
 		<tr>
-			<td>Select elements to click during crawl (table)</td>
-			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
-			<td align = "center">All enabled</td>
+			<td>Выберите элементы для нажатия во время сканирования (таблица) </td>
+			<td>Список элементов для обхода. Эта таблица применяется только в том случае, если не включен параметр «щелкать только элементы по умолчанию». Используйте «включить все» для более глубокого анализа, хотя это может занять несколько больше времени. </td>
+			<td align = "center">Все включено </td>
 		</tr>
 		<tr>
-			<td>Allowed Resources (table)</td>
-			<td>The list of allowed resources. The allowed resources are always fetched even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.</td>
+			<td>Разрешенные ресурсы (таблица) </td>
+			<td>Список разрешенных ресурсов. Разрешенные ресурсы всегда извлекаются, даже если они выходят за рамки, что позволяет включать необходимые ресурсы (например, сценарии) от третьих сторон. </td>
 			<td align = "center"></td>
 		</tr>
 		
 	</table>
 	
-	<h2>See also</h2>
+	<h2>Смотрите также </h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">AJAX-паук</a></td>
+			<td>для обзора вкладки AJAX Spider </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">AJAX Spider tab</a></td>
-			<td>for an overview of the AJAX Spider Tab</td>
+			<td><a href="tab.html">Вкладка «Паук AJAX» </a></td>
+			<td>для обзора вкладки AJAX Spider </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="scandialog.html">AJAX Spider dialog</a></td>
-			<td>for an overview of the AJAX Spider Dialog</td>
+			<td><a href="scandialog.html">Диалоговое окно AJAX Паук</a></td>
+			<td>для обзора диалогового окна AJAX Spider </td>
 		</tr>
 	</table>
 

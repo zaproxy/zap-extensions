@@ -19,9 +19,20 @@
  */
 package org.zaproxy.addon.network;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.NettyRuntime;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.nio.channels.UnresolvedAddressException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,37 +40,78 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyParam;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.SSLConnector;
+import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
 import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
+import org.zaproxy.addon.network.internal.server.AliasChecker;
+import org.zaproxy.addon.network.internal.server.http.HttpServer;
+import org.zaproxy.addon.network.internal.server.http.LocalServer;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.LocalServerHandler;
+import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
+import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveRequestHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
+import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
+import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
+
+    private static final int NO_PORT_OVERRIDE = -1;
+    private static final int INVALID_PORT = -2;
 
     private static final String I18N_PREFIX = "network";
 
@@ -67,26 +119,63 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_CERT_PUB_DUMP = 1;
     private static final int ARG_CERT_FULL_DUMP = 2;
 
+    private static final int ARG_HOST_IDX = 3;
+    private static final int ARG_PORT_IDX = 4;
+
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
+    boolean handleLocalServers;
+    private LegacyProxyListenerHandler legacyProxyListenerHandler;
+    private Object syncGroups = new Object();
+    private boolean groupsInitiated;
+    private NioEventLoopGroup mainEventLoopGroup;
+    private EventExecutorGroup mainEventExecutorGroup;
 
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
 
-    private SslCertificateServiceImpl sslCertificateService;
+    private SslCertificateService sslCertificateService;
+
+    private LocalServersOptions localServersOptions;
+    private LocalServersOptionsPanel localServersOptionsPanel;
+
+    private HttpSender proxyHttpSender;
+    private HttpSenderHandler httpSenderHandler;
+    private PassThroughHandler passThroughHandler;
+    private AliasChecker aliasChecker;
+    private Map<String, LocalServer> localServers;
+    private LocalServer mainProxyServer;
+    private LocalServerHandler.SerialiseState serialiseForBreak;
+    private ExtensionBreak extensionBreak;
+    private Method addBreakListenerMethod;
+    private Method removeBreakListenerMethod;
+
+    private LocalServerInfoLabel localServerInfoLabel;
 
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
 
         setI18nPrefix(I18N_PREFIX);
+
+        // Let the servers start after everything has been initialised.
+        setOrder(Integer.MAX_VALUE);
+
+        // Force initialisation.
+        TlsUtils.getSupportedProtocols();
     }
 
     boolean isHandleServerCerts() {
         return handleServerCerts;
     }
 
+    boolean isHandleLocalServers() {
+        return handleLocalServers;
+    }
+
     @Override
     public void init() {
+        localServers = Collections.synchronizedMap(new HashMap<>());
+
         handleServerCerts = ExtensionDynSSL.class.getAnnotation(Deprecated.class) != null;
         setSslCertificateService =
                 new Consumer<SslCertificateService>() {
@@ -109,6 +198,183 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         }
                     }
                 };
+        handleLocalServers = ProxyServer.class.getAnnotation(Deprecated.class) != null;
+
+        if (handleLocalServers) {
+            extensionBreak =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+            if (extensionBreak != null) {
+                try {
+                    addBreakListenerMethod =
+                            extensionBreak
+                                    .getClass()
+                                    .getDeclaredMethod(
+                                            "addSerialisationRequiredListener", Consumer.class);
+                    removeBreakListenerMethod =
+                            extensionBreak
+                                    .getClass()
+                                    .getDeclaredMethod(
+                                            "removeSerialisationRequiredListener", Consumer.class);
+                } catch (Exception e) {
+                    LOGGER.error("An error occurred while getting the break methods:", e);
+                }
+            }
+        }
+
+        if (!handleServerCerts) {
+            sslCertificateService = new LegacySslCertificateServiceImpl();
+        }
+    }
+
+    @Override
+    public void initModel(Model model) {
+        super.initModel(model);
+
+        if (!handleLocalServers) {
+            return;
+        }
+
+        ConnectionParam connectionParam = model.getOptionsParam().getConnectionParam();
+        proxyHttpSender = new HttpSender(connectionParam, true, HttpSender.PROXY_INITIATOR);
+        httpSenderHandler = new HttpSenderHandler(connectionParam, proxyHttpSender);
+    }
+
+    private NioEventLoopGroup getMainEventLoopGroup() {
+        if (!groupsInitiated) {
+            initEventGroups();
+        }
+        return mainEventLoopGroup;
+    }
+
+    private EventExecutorGroup getMainEventExecutorGroup() {
+        if (!groupsInitiated) {
+            initEventGroups();
+        }
+        return mainEventExecutorGroup;
+    }
+
+    private void initEventGroups() {
+        synchronized (syncGroups) {
+            if (groupsInitiated) {
+                return;
+            }
+
+            if (mainEventLoopGroup == null) {
+                mainEventLoopGroup =
+                        new NioEventLoopGroup(
+                                NettyRuntime.availableProcessors(),
+                                new DefaultThreadFactory("ZAP-IO", Thread.MAX_PRIORITY));
+            }
+
+            if (mainEventExecutorGroup == null) {
+                mainEventExecutorGroup =
+                        new DefaultEventExecutorGroup(
+                                NettyRuntime.availableProcessors(),
+                                new DefaultThreadFactory(
+                                        "ZAP-IO-EventExecutor", Thread.MAX_PRIORITY));
+            }
+
+            groupsInitiated = true;
+        }
+    }
+
+    private void shutdownEventGroups() {
+        synchronized (syncGroups) {
+            if (mainEventLoopGroup != null) {
+                try {
+                    mainEventLoopGroup.shutdownGracefully().sync();
+                } catch (InterruptedException e) {
+                    LOGGER.warn(
+                            "Interrupted while waiting for the main event loop group to shutdown.");
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                mainEventLoopGroup = null;
+            }
+
+            if (mainEventExecutorGroup != null) {
+                try {
+                    mainEventExecutorGroup.shutdownGracefully().sync();
+                } catch (InterruptedException e) {
+                    LOGGER.warn(
+                            "Interrupted while waiting for the main event executor group to shutdown.");
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            groupsInitiated = false;
+        }
+    }
+
+    /**
+     * Creates a HTTP server.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade.
+     *
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the given handler is {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpServer(HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        List<HttpMessageHandler> handlers =
+                Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler);
+        return createHttpServer(() -> new MainServerHandler(handlers));
+    }
+
+    private Server createHttpServer(Supplier<MainServerHandler> handler) {
+        return new HttpServer(
+                getMainEventLoopGroup(),
+                getMainEventExecutorGroup(),
+                sslCertificateService,
+                handler);
+    }
+
+    /**
+     * Creates a HTTP proxy.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
+     * connection is automatically closed on recursive requests.
+     *
+     * @param initiator the initiator used for the {@code HttpSender}.
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the given handler is {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        HttpSender httpSender =
+                new HttpSender(getModel().getOptionsParam().getConnectionParam(), true, initiator);
+        return createHttpProxy(httpSender, handler);
+    }
+
+    /**
+     * Creates a HTTP proxy using an existing {@code HttpSender}.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
+     * connection is automatically closed on recursive requests.
+     *
+     * @param httpSender the HTTP sender.
+     * @param handler the message handler.
+     * @return the server.
+     * @throws NullPointerException if the HTTP sender and given handler are {@code null}.
+     * @since 0.1.0
+     */
+    public Server createHttpProxy(HttpSender httpSender, HttpMessageHandler handler) {
+        Objects.requireNonNull(handler);
+        Objects.requireNonNull(httpSender);
+        List<HttpMessageHandler> handlers =
+                Arrays.asList(
+                        ConnectReceivedHandler.getSetAndOverrideInstance(),
+                        CloseOnRecursiveRequestHandler.getInstance(),
+                        RemoveAcceptEncodingHandler.getEnabledInstance(),
+                        DecodeResponseHandler.getEnabledInstance(),
+                        handler,
+                        new HttpSenderHandler(
+                                getModel().getOptionsParam().getConnectionParam(), httpSender));
+        return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
     }
 
     @Override
@@ -125,27 +391,471 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addApiImplementor(new NetworkApi(this));
 
+        legacyProxyListenerHandler = new LegacyProxyListenerHandler();
+        Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
+
         if (!handleServerCerts) {
             return;
         }
 
-        extensionHook.addCommandLine(createCommandLineArgs());
+        extensionHook.addCommandLine(createCommandLineArgs(handleLocalServers));
 
         sslCertificateService = new SslCertificateServiceImpl();
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
 
+        if (handleLocalServers) {
+            localServersOptions = new LocalServersOptions();
+            localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
+            extensionHook.addOptionsParamSet(localServersOptions);
+
+            passThroughHandler =
+                    new PassThroughHandler(
+                            requestHeader ->
+                                    localServersOptions.getPassThroughs().stream()
+                                            .anyMatch(e -> e.test(requestHeader)));
+
+            aliasChecker =
+                    requestHeader ->
+                            localServersOptions.getAliases().stream()
+                                    .anyMatch(e -> e.test(requestHeader));
+
+            extensionHook.addApiImplementor(new LegacyProxiesApi(this));
+        }
+
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             String[] networkNode = {Constant.messages.getString("network.ui.options.name")};
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
             optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
+
+            if (handleLocalServers) {
+                localServersOptionsPanel = new LocalServersOptionsPanel(this);
+                optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
+
+                localServerInfoLabel =
+                        new LocalServerInfoLabel(
+                                getView().getMainFrame().getMainFooterPanel(), localServersOptions);
+
+                ExtensionHookView hookView = extensionHook.getHookView();
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel.getName()));
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("proxies", localServersOptionsPanel.getName()));
+            }
         }
     }
 
-    private static CommandLineArgument[] createCommandLineArgs() {
-        CommandLineArgument[] arguments = new CommandLineArgument[3];
+    private class ServersChangedListenerImpl implements ServersChangedListener {
+
+        @Override
+        public void mainProxySet(LocalServerConfig mainProxyConfig) {
+            if (mainProxyServer == null) {
+                return;
+            }
+
+            if (mainProxyServer.getConfig().updateFrom(mainProxyConfig)) {
+                try {
+                    mainProxyServer.start();
+                    updateCoreProxy(mainProxyConfig);
+                } catch (IOException e) {
+                    LOGGER.warn("An error occurred while restarting the main proxy:", e);
+                }
+            }
+        }
+
+        @Override
+        public void serverAdded(LocalServerConfig serverConfig) {
+            if (serverConfig.isEnabled()) {
+                startAdditionalLocalServer(createLocalServer(serverConfig));
+            }
+        }
+
+        @Override
+        public void serverRemoved(LocalServerConfig serverConfig) {
+            stopAdditionalLocalServer(localServers.remove(keyLocalServer(serverConfig)));
+        }
+
+        @Override
+        public void serversSet(List<LocalServerConfig> configs) {
+            localServers.values().removeIf(server -> checkLocalServerChange(server, configs));
+
+            configs.parallelStream()
+                    .filter(LocalServerConfig::isEnabled)
+                    .filter(e -> !localServers.containsKey(keyLocalServer(e)))
+                    .forEach(e -> startAdditionalLocalServer(createLocalServer(e)));
+        }
+    }
+
+    private boolean checkLocalServerChange(LocalServer server, List<LocalServerConfig> configs) {
+        Optional<LocalServerConfig> result =
+                configs.parallelStream()
+                        .filter(
+                                config -> {
+                                    if (config.getPort() != server.getConfig().getPort()) {
+                                        return false;
+                                    }
+                                    return config.getAddress()
+                                            .equals(server.getConfig().getAddress());
+                                })
+                        .findAny();
+
+        if (result.isPresent()) {
+            LocalServerConfig newConfig = result.get();
+            if (!newConfig.isEnabled()) {
+                stopAdditionalLocalServer(server);
+                return true;
+            }
+
+            if (server.getConfig().updateFrom(newConfig)) {
+                startAdditionalLocalServer(server);
+            }
+            return false;
+        }
+
+        stopAdditionalLocalServer(server);
+        return true;
+    }
+
+    @Override
+    public void postInit() {
+        if (!handleLocalServers) {
+            return;
+        }
+
+        serialiseForBreak = new BreakSerialiseState();
+        if (addBreakListenerMethod != null) {
+            try {
+                addBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while adding the break listener:", e);
+            }
+        }
+
+        if (hasView()) {
+            localServerInfoLabel.update();
+        }
+    }
+
+    private static class BreakSerialiseState
+            implements LocalServerHandler.SerialiseState, Consumer<Boolean> {
+
+        private volatile boolean serialise;
+
+        @Override
+        public void accept(Boolean serialise) {
+            this.serialise = serialise;
+        }
+
+        @Override
+        public boolean isSerialise() {
+            return serialise;
+        }
+    }
+
+    @Override
+    public void postInstall() {
+        if (!handleLocalServers) {
+            return;
+        }
+
+        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
+            logNoStartCmdLineMode();
+            return;
+        }
+
+        startLocalServers(null, NO_PORT_OVERRIDE, false);
+    }
+
+    private static void logNoStartCmdLineMode() {
+        LOGGER.info("Not starting local servers/proxies, running in command line mode.");
+    }
+
+    private void startAdditionalLocalServer(LocalServer server) {
+        if (server == null) {
+            return;
+        }
+
+        String key = keyLocalServer(server.getConfig());
+        try {
+            server.start();
+            localServers.put(key, server);
+            LOGGER.info("Started additional server: {}", key);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to start additional server {} reason: {}", key, e.getMessage());
+        }
+    }
+
+    private static boolean stopLocalServer(LocalServer server) {
+        if (server == null) {
+            return false;
+        }
+
+        try {
+            server.close();
+        } catch (IOException e) {
+            LOGGER.debug("An error occurred while stopping the server:", e);
+        }
+        return true;
+    }
+
+    private static boolean stopAdditionalLocalServer(LocalServer server) {
+        if (stopLocalServer(server)) {
+            LOGGER.info("Stopped additional server: {}", () -> keyLocalServer(server.getConfig()));
+        }
+        return true;
+    }
+
+    private LocalServer createLocalServer(LocalServerConfig config) {
+        return new LocalServer(
+                getMainEventLoopGroup(),
+                getMainEventExecutorGroup(),
+                sslCertificateService,
+                legacyProxyListenerHandler,
+                passThroughHandler,
+                httpSenderHandler,
+                new LocalServerConfig(config, aliasChecker),
+                serialiseForBreak,
+                getModel());
+    }
+
+    private void startLocalServers(
+            String overrideAddress, int overridePort, boolean mainProxyRequired) {
+        localServersOptions.getServers().stream()
+                .filter(LocalServerConfig::isEnabled)
+                .map(this::createLocalServer)
+                .forEach(this::startAdditionalLocalServer);
+
+        LocalServerConfig serverConfig = localServersOptions.getMainProxy();
+        boolean overrides = false;
+        String address = serverConfig.getAddress();
+        if (overrideAddress != null) {
+            address = overrideAddress;
+            serverConfig.setAddress(address);
+            overrides = true;
+        }
+
+        int port = serverConfig.getPort();
+        if (overridePort > 0) {
+            port = overridePort;
+            serverConfig.setPort(port);
+            overrides = true;
+        }
+
+        if (overrides) {
+            localServersOptions.setMainProxy(serverConfig);
+        }
+
+        updateCoreProxy(serverConfig);
+
+        mainProxyServer = createLocalServer(serverConfig);
+        if (overridePort == INVALID_PORT) {
+            return;
+        }
+
+        try {
+            mainProxyServer.start();
+
+            if (mainProxyRequired) {
+                LOGGER.info("ZAP is now listening on {}:{}", address, port);
+            }
+        } catch (Exception e) {
+
+            if (mainProxyRequired) {
+                LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
+                throw new Error("Terminating ZAP, unable to start the main proxy.");
+            }
+
+            String detailedError = null;
+            if (e instanceof UnresolvedAddressException) {
+                detailedError =
+                        Constant.messages.getString(
+                                "network.cmdline.proxy.error.host.unknown", address);
+            } else if (e instanceof BindException || e instanceof SocketException) {
+                if (containsMessage(e, "requested address")) {
+                    detailedError =
+                            Constant.messages.getString(
+                                    "network.cmdline.proxy.error.host.assign", address);
+                } else if (containsMessage(e, "denied") || containsMessage(e, "in use")) {
+                    if (promptUserMainProxyPort()) {
+                        return;
+                    }
+
+                    detailedError =
+                            Constant.messages.getString(
+                                    "network.cmdline.proxy.error.port",
+                                    address,
+                                    String.valueOf(port));
+                }
+            }
+
+            if (detailedError == null) {
+                detailedError =
+                        Constant.messages.getString(
+                                "network.cmdline.proxy.error.generic", e.getMessage());
+                LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
+            }
+
+            JOptionPane.showMessageDialog(
+                    getView().getMainFrame(),
+                    Constant.messages.getString(
+                            "network.cmdline.proxy.error.message", detailedError),
+                    Constant.messages.getString("network.cmdline.proxy.error.title"),
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void updateCoreProxy(LocalServerConfig serverConfig) {
+        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        proxyParam.setProxyIp(
+                serverConfig.isAnyLocalAddress()
+                        ? getLocalhostAddress()
+                        : serverConfig.getAddress());
+        proxyParam.setProxyPort(serverConfig.getPort());
+    }
+
+    private static String getLocalhostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+            return LocalServerConfig.DEFAULT_ADDRESS;
+        }
+    }
+
+    private boolean promptUserMainProxyPort() {
+        LocalServerConfig serverConfig = mainProxyServer.getConfig();
+        PromptPortPanel prompt =
+                new PromptPortPanel(serverConfig.getAddress(), serverConfig.getPort());
+        do {
+            int result =
+                    JOptionPane.showConfirmDialog(
+                            getView().getMainFrame(),
+                            prompt,
+                            Constant.messages.getString("network.cmdline.proxy.error.title"),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null);
+            if (result != JOptionPane.YES_OPTION) {
+                return false;
+            }
+
+            mainProxyServer.getConfig().setPort(prompt.getPort());
+            try {
+                mainProxyServer.start();
+                break;
+            } catch (Exception ignore) {
+                // Keep trying.
+            }
+
+            prompt.retry();
+
+        } while (true);
+
+        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        proxyParam.setProxyPort(prompt.getPort());
+
+        LocalServer currentProxyServer = mainProxyServer;
+        mainProxyServer = null;
+        localServersOptions.setMainProxy(serverConfig);
+        mainProxyServer = currentProxyServer;
+        return true;
+    }
+
+    private static class PromptPortPanel extends JPanel {
+
+        private static final long serialVersionUID = 1L;
+
+        private static final int MAX_PORT_RETRIES = 50;
+
+        private final String address;
+        private final JLabel label;
+        private final ZapPortNumberSpinner portSpinner;
+
+        public PromptPortPanel(String address, int port) {
+            this.address = address;
+
+            label = new JLabel();
+            portSpinner = new ZapPortNumberSpinner(port);
+
+            GroupLayout layout = new GroupLayout(this);
+            setLayout(layout);
+            layout.setAutoCreateGaps(true);
+            layout.setAutoCreateContainerGaps(true);
+
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup().addComponent(label).addComponent(portSpinner));
+            layout.setVerticalGroup(
+                    layout.createParallelGroup().addComponent(label).addComponent(portSpinner));
+
+            retry();
+        }
+
+        void retry() {
+            int port = portSpinner.getValue();
+            label.setText(
+                    Constant.messages.getString(
+                            "network.cmdline.proxy.error.port.retry", String.valueOf(port)));
+            if (port < 1024 || port > Server.MAX_PORT - MAX_PORT_RETRIES) {
+                port = 1024;
+            }
+
+            int maxPort = port + MAX_PORT_RETRIES;
+            for (; port <= maxPort; port++) {
+                try (ServerSocket server =
+                        new ServerSocket(port, 0, InetAddress.getByName(address))) {
+                    port = server.getLocalPort();
+                    break;
+                } catch (IOException ignore) {
+                    // Just trying to get a free port.
+                }
+            }
+
+            portSpinner.setValue(port);
+        }
+
+        int getPort() {
+            return portSpinner.getValue();
+        }
+    }
+
+    private static boolean containsMessage(Exception e, String contents) {
+        String message = e.getMessage();
+        if (message == null) {
+            return false;
+        }
+        return message.contains(contents);
+    }
+
+    private static String keyLocalServer(LocalServerConfig serverConfig) {
+        return serverConfig.getAddress() + ":" + serverConfig.getPort();
+    }
+
+    /**
+     * Removes the configurations of the started local servers.
+     *
+     * @param serverConfigs the server configurations to filter.
+     */
+    void removeStartedLocalServers(Set<LocalServerConfig> serverConfigs) {
+        if (mainProxyServer.isStarted()) {
+            serverConfigs.remove(mainProxyServer.getConfig());
+        }
+        localServers.values().stream()
+                .filter(LocalServer::isStarted)
+                .map(LocalServer::getConfig)
+                .forEach(serverConfigs::remove);
+    }
+
+    LegacyProxyListenerHandler getLegacyProxyListenerHandler() {
+        return legacyProxyListenerHandler;
+    }
+
+    PassThroughHandler getPassThroughHandler() {
+        return passThroughHandler;
+    }
+
+    private static CommandLineArgument[] createCommandLineArgs(boolean includeHostPort) {
+        CommandLineArgument[] arguments = new CommandLineArgument[includeHostPort ? 5 : 3];
         arguments[ARG_CERT_LOAD] =
                 new CommandLineArgument(
                         "-certload",
@@ -170,6 +880,26 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "",
                         "-certfulldump <path>     "
                                 + Constant.messages.getString("network.cmdline.certfulldump"));
+
+        if (includeHostPort) {
+            arguments[ARG_HOST_IDX] =
+                    new CommandLineArgument(
+                            "-host",
+                            1,
+                            null,
+                            "",
+                            "-host <host>             "
+                                    + Constant.messages.getString("network.cmdline.proxy.host"));
+            arguments[ARG_PORT_IDX] =
+                    new CommandLineArgument(
+                            "-port",
+                            1,
+                            null,
+                            "",
+                            "-port <port>             "
+                                    + Constant.messages.getString("network.cmdline.proxy.port"));
+        }
+
         return arguments;
     }
 
@@ -206,6 +936,47 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     arguments[ARG_CERT_FULL_DUMP].getArguments().firstElement(),
                     this::writeRootCaCertAndPrivateKeyAsPem);
         }
+
+        if (!handleLocalServers) {
+            return;
+        }
+
+        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
+            logNoStartCmdLineMode();
+            return;
+        }
+
+        boolean daemon = ZAP.getProcessType() == ZAP.ProcessType.daemon;
+
+        String mainProxyAddress = null;
+        if (arguments[ARG_HOST_IDX].isEnabled()) {
+            mainProxyAddress = arguments[ARG_HOST_IDX].getArguments().firstElement();
+        }
+
+        int mainProxyPort = NO_PORT_OVERRIDE;
+        if (arguments[ARG_PORT_IDX].isEnabled()) {
+            String argValue = arguments[ARG_PORT_IDX].getArguments().firstElement();
+            try {
+                mainProxyPort = Server.validatePort(Integer.parseInt(argValue));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warn(
+                        "The main proxy will not be started, invalid -port value: {}", argValue);
+
+                if (daemon) {
+                    throw new Error("Terminating ZAP, unable to start the main proxy.");
+                }
+
+                mainProxyPort = INVALID_PORT;
+                JOptionPane.showMessageDialog(
+                        getView().getMainFrame(),
+                        Constant.messages.getString(
+                                "network.cmdline.proxy.port.invalid.message", argValue),
+                        Constant.messages.getString("network.cmdline.proxy.port.invalid.title"),
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+
+        startLocalServers(mainProxyAddress, mainProxyPort, daemon);
     }
 
     private static void writeCert(String path, CertWriter writer) {
@@ -243,8 +1014,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return Collections.emptyList();
     }
 
+    SslCertificateService getSslCertificateService() {
+        return sslCertificateService;
+    }
+
     ServerCertificatesOptions getServerCertificatesOptions() {
         return serverCertificatesOptions;
+    }
+
+    LocalServersOptions getLocalServersOptions() {
+        return localServersOptions;
     }
 
     @Override
@@ -256,6 +1035,19 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (loadRootCaCert()) {
             setSslCertificateService(sslCertificateService);
         }
+    }
+
+    @Override
+    public void stop() {
+        if (handleLocalServers) {
+            localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
+            stopLocalServer(mainProxyServer);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        shutdownEventGroups();
     }
 
     private void setSslCertificateService(SslCertificateService sslCertificateService) {
@@ -285,6 +1077,29 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             try {
                 return generator.generate(certData);
             } catch (GenerationException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+
+    private static class LegacySslCertificateServiceImpl implements SslCertificateService {
+
+        @Override
+        public void initializeRootCA(KeyStore keyStore) {
+            // Nothing to do, not called.
+        }
+
+        @Override
+        public KeyStore createCertForHost(String hostname) {
+            // Nothing to do, no longer used by core.
+            return null;
+        }
+
+        @Override
+        public KeyStore createCertForHost(CertData certData) throws IOException {
+            try {
+                return CachedSslCertifificateServiceImpl.getService().createCertForHost(certData);
+            } catch (Exception e) {
                 throw new IOException(e);
             }
         }
@@ -347,6 +1162,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void unload() {
+        Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
+        legacyProxyListenerHandler = null;
+
         if (!handleServerCerts) {
             return;
         }
@@ -357,6 +1175,20 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
+
+            if (handleLocalServers) {
+                localServerInfoLabel.unload();
+
+                optionsDialog.removeParamPanel(localServersOptionsPanel);
+
+                if (removeBreakListenerMethod != null) {
+                    try {
+                        removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
+                    } catch (Exception e) {
+                        LOGGER.error("An error occurred while removing the break listener:", e);
+                    }
+                }
+            }
         }
     }
 

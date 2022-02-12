@@ -195,10 +195,10 @@
     "cats": [
       1
     ],
+    "description": "Umbraco is an open-source Microsoft ASP.NET based content management system.",
     "headers": {
       "X-Umbraco-Version": "^(.+)$\\;version:\\1"
     },
-    "html": "powered by <a href=[^>]+umbraco",
     "icon": "Umbraco.png",
     "implies": "Microsoft ASP.NET",
     "js": {
@@ -210,8 +210,17 @@
     "meta": {
       "generator": "umbraco"
     },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scripts": "/Umbraco/Api/",
     "url": "/umbraco/login\\.aspx(?:$|\\?)",
-    "website": "http://umbraco.com"
+    "website": "http://umbraco.com",
+    "xhr": "/umbraco/api/"
   },
   "Unbounce": {
     "cats": [
@@ -571,15 +580,15 @@
     "scriptSrc": "static\\.usizy\\.es/",
     "website": "https://usizy.com"
   },
-  "Uvicorn":{
+  "Uvicorn": {
     "cats": [
       22
     ],
     "headers": {
       "Server": "uvicorn"
     },
-    "implies": "Python",
     "icon": "uvicorn.png",
+    "implies": "Python",
     "oss": true,
     "website": "https://www.uvicorn.org/"
   },

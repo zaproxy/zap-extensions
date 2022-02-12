@@ -76,6 +76,7 @@ var addOns = listOf(
     "sequence",
     "simpleexample",
     "soap",
+    "spider",
     "spiderAjax",
     "sqliplugin",
     "sse",

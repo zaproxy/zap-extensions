@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.network.server;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -26,7 +27,7 @@ import java.io.IOException;
  *
  * @since 0.1.0
  */
-public interface Server {
+public interface Server extends Closeable {
 
     /** The default address the server will bind to. */
     static final String DEFAULT_ADDRESS = "127.0.0.1";
@@ -83,11 +84,13 @@ public interface Server {
      * Validates that the given port is within the allowed range.
      *
      * @param port the port to validate
+     * @return the valid port.
      * @throws IllegalArgumentException if the port is invalid.
      */
-    static void validatePort(int port) {
+    static int validatePort(int port) {
         if (port < ANY_PORT || port > MAX_PORT) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
+        return port;
     }
 }

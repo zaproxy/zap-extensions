@@ -350,6 +350,10 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         return Alert.RISK_HIGH;
     }
 
+    private String getOtherInfo(String testType, String testValue) {
+        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo." + testType, testValue);
+    }
+
     @Override
     public void init() {
         try {
@@ -544,6 +548,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             "[OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
+                    String otherInfo = getOtherInfo("feedback-based", paramValue);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -551,6 +556,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             .setAttack(paramValue)
                             .setEvidence(matcher.group())
                             .setMessage(msg)
+                            .setOtherInfo(otherInfo)
                             .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
@@ -631,12 +637,14 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
+                    String otherInfo = getOtherInfo("time-based", paramValue);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(paramName)
                             .setAttack(paramValue)
                             .setMessage(msg)
+                            .setOtherInfo(otherInfo)
                             .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent

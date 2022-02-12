@@ -5,52 +5,52 @@
 <TITLE>GraphQL Support Script</TITLE>
 </HEAD>
 <BODY>
-	<H1>GraphQL Support Script</H1>
+	<H1>Скрипт поддержки GraphQL </H1>
 
-	The GraphQL Support script is responsible for two things:
+	Сценарий поддержки GraphQL отвечает за две вещи: 
 	<ol>
-		<li>Correctly representing the nodes for a GraphQL request in the sites tree (since ZAP 2.10.0).</li>
-		<li>Adding GraphQL support for Active Scan Input Vectors.</li>
+		<li>Правильное представление узлов для запроса GraphQL в дереве сайтов (начиная с ZAP 2.10.0). </li>
+		<li>Добавлена поддержка GraphQL для входных векторов активного сканирования. </li>
 	</ol>
 
-	The following sections will elaborate a little on each of these functionalities.
+	В следующих разделах будет подробно рассказано о каждой из этих функций. 
 
-	<h2>Sites Tree Representation</h2>
+	<h2>Древовидное представление сайтов </h2>
 
-	Each unique GraphQL request proxied through ZAP is represented in the sites tree. 
-	Requests are placed under a common node if they have the same operations.
-	Two queries that have the same fields will be represented by the same node.
-	The only exception is when a query is sent with inline arguments and also using variables. 
-	In this case, a prefix of either '0' or '1' is added to distinguish between them respectively.
+	Каждый уникальный запрос GraphQL, переданный через ZAP, представлен в дереве сайтов.  
+	Запросы размещаются под общим узлом, если они имеют одинаковые операции. 
+	Два запроса с одинаковыми полями будут представлены одним и тем же узлом. 
+	Единственное исключение — когда запрос отправляется со встроенными аргументами, а также с использованием переменных.  
+	В этом случае добавляется префикс «0» или «1», чтобы различать их соответственно. 
 	<br>
-	For example, the following figure illustrates how two requests may be represented in the sites tree.
+Например, на следующем рисунке показано, как два запроса могут быть представлены в дереве сайтов. 
 	<br>
 	<img src="images/sitesTreeExample.png">
 
-	<h2>Active Scan Input Vectors</h2>
+	<h2>Входные векторы активного сканирования </h2>
 
-	If Active Scan Script Input Vectors are enabled,
-	values are injected for inline arguments in all queries proxied through ZAP. 
-	If a query uses variables, then variables are replaced inline and variable definitions are deleted.
+	Если входные векторы Active Scan Script включены,
+значения вводятся для встроенных аргументов во всех запросах, передаваемых через ZAP.  
+	Если в запросе используются переменные, переменные заменяются встроенными, а определения переменных удаляются. 
 	<br>
-	Note that the built-in JSON Input Vector handler also works when a request is sent as JSON.
+Обратите внимание, что встроенный обработчик входного вектора JSON также работает, когда запрос отправляется в формате JSON. 
 
-	<h2>See also</h2>
+	<h2>Смотрите также </h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="graphql.html">GraphQL</a></td>
-			<td>for an overview of the GraphQL add-on.</td>
+			<td>для обзора надстройки GraphQL. </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">GraphQL Options</a></td>
-			<td>for information about the optional parameters.</td>
+			<td><a href="options.html">Параметры GraphQL </a></td>
+			<td>для получения информации о дополнительных параметрах. </td>
 		</tr>
         <tr>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td><a href="automation.html">GraphQL Automation</a></td>
-            <td>for information about the automation framework support.</td>
+            <td><a href="automation.html">GraphQL автоматизация </a></td>
+            <td>для получения информации о поддержке платформы автоматизации. </td>
         </tr>
 	</table>
 

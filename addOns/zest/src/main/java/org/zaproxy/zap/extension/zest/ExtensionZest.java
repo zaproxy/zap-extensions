@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -58,6 +59,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
@@ -118,7 +120,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     private static final Logger logger = LogManager.getLogger(ExtensionZest.class);
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            Collections.unmodifiableList(
+                    Arrays.asList(ExtensionScript.class, ExtensionNetwork.class));
 
     private ZestParam param = null;
     private OptionsZestPanel optionsZestPanel = null;
@@ -150,12 +154,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private String startRecordingUrl = null;
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionZest() {
         super(NAME);

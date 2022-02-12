@@ -176,15 +176,6 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertEquals(0, alertsRaised.size());
     }
 
-    @Test
-    void patternFontExtensionShouldNotFindSubString() {
-        // Given / When
-        boolean result =
-                SourceCodeDisclosureScanRule.PATTERN_FONT_EXTENSIONS.matcher("/font.woffL").find();
-        // Then
-        assertEquals(false, result);
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"font/ttf", "font/otf", "font/woff", "font/woff2"})
     void shouldNotRaiseAlertOnValidPhpWhenInFontResponse(String type) throws Exception {

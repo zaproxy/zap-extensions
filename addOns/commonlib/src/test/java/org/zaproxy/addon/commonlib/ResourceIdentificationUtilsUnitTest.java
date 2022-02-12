@@ -98,6 +98,53 @@ public class ResourceIdentificationUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnTrueWhenRequestUrlSeemsToBeAnImageFile()
+            throws HttpMalformedHeaderException, URIException, NullPointerException {
+        // Given
+        msg.getRequestHeader().setURI(new URI("http://example.com/something.jpg", false));
+        // When
+        boolean result = ResourceIdentificationUtils.isImage(msg);
+        // Then
+        assertThat(result, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnFalseWhenRequestUrlDoesNotSeemToBeAnImageFile()
+            throws HttpMalformedHeaderException, URIException, NullPointerException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/any.xml", false));
+        // When
+        boolean result = ResourceIdentificationUtils.isImage(msg);
+        // Then
+        assertThat(result, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReturnTrueWhenResponseSeemsToBeAnImageFile()
+            throws HttpMalformedHeaderException, URIException, NullPointerException {
+        // Given
+        msg.getRequestHeader().setURI(new URI("http://example.com/logo", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/jpg");
+        // When
+        boolean result = ResourceIdentificationUtils.isImage(msg);
+        // Then
+        assertThat(result, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnFalseWhenResponseDoesNotSeemsToBeAnImageFile()
+            throws HttpMalformedHeaderException, URIException, NullPointerException {
+        // Given
+        msg.getRequestHeader().setURI(new URI("http://example.com/logo", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
+        // When
+        boolean result = ResourceIdentificationUtils.isImage(msg);
+        // Then
+        assertThat(result, is(equalTo(false)));
+    }
+
+    @Test
     void shouldReturnTrueWhenRequestUrlSeemsToBeACssFile()
             throws HttpMalformedHeaderException, URIException, NullPointerException {
         // Given

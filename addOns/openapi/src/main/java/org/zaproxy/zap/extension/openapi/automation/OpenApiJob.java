@@ -83,6 +83,11 @@ public class OpenApiJob extends AutomationJob {
     }
 
     @Override
+    public void applyParameters(AutomationProgress progress) {
+        // Nothing to do
+    }
+
+    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_API_URL, "");

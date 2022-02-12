@@ -2,48 +2,48 @@
 <html>
 <head>
 <title>
-Revisit
+повторное посещение (Revisit)
 </title>
 </head>
 <body>
-<h1>Revisit</h1>
+<h1>повторное посещение (Revisit)</h1>
 <p>
-Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, 
-perhaps when you dont have access to it, or after its been changed in some way?<br>
-If so then this add-on is for you!
+Вы когда-нибудь хотели иметь возможность просматривать приложение, которое вы тестировали с помощью ZAP, в определенное время?
+возможно, когда у вас нет к нему доступа или после того, как он каким-то образом изменился?<br>
+Если да, то это дополнение для вас! 
 </p>
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
-This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
+Надстройка позволяет указать ZAP возвращать содержимое из истории ZAP между указанными
+даты, а не пересылать запросы на сайт.<br>
+Это позволяет вам явно просматривать и использовать веб-сайт, к которому у вас больше нет доступа.<br>
+Это также позволяет вам увидеть, как это выглядело между определенными моментами времени, что полезно, если
+с тех пор приложение изменилось.<br>
 <br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
-ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
-Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
+При возврате страниц из истории ZAP плавающие нижние колонтитулы внедряются в HTML-страницы для
+дать визуальное представление о том, что эти страницы созданы с помощью ZAP.<br>
+ZAP будет возвращать страницы, полученные в результате запросов GET и POST, если найдет совпадающие.<br>
+Страницы совпадают, только если все параметры URL и POST совпадают, игнорируя порядок и любые известные токены CSRF.<br>
+Если в истории не удается найти подходящую страницу, возвращается пользовательская страница 404, которая будет
+включать ссылки на ту же страницу, если она была вызвана с другими параметрами или вне указанного периода времени.<br>
 <br>
-This add-on adds right click menus to the Sites tree:
+Это дополнение добавляет контекстное меню в дерево сайтов: 
 </p>
-<h3>Enable Revisit</h3>
-When selected a popup will be shown which asks for the start and end times to be used.<br>
-The start time defaults to the time of the first request in the session.<br>
-The end time defaults to the time of the last request in the session.<br>
-If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the History tree.
+<h3>Включить повторное посещение </h3>
+При выборе будет показано всплывающее окно, в котором запрашивается время начала и окончания. <br>
+Время начала по умолчанию равно времени первого запроса в сеансе. <br>
+Время окончания по умолчанию равно времени последнего запроса в сеансе. <br>
+Если какие-либо элементы времени (например, «день месяца») не изменились, эти элементы будут отключены. <br>
+Если нажата диалоговая кнопка OK, функция повторного посещения будет включена для выбранного сайта,
+и значок «календарь», добавленный к узлу сайта в дереве истории. 
 
-<h3>Disable Revisit</h3>
-When selected then the revisit functionality will be disabled for the selected site.
+<h3>Отключить повторное посещение </h3>
+Если выбрано, функция повторного посещения будет отключена для выбранного сайта. 
 
 <h2>API</h2>
-The add on supports the following API endpoints:<br><br>
-revisit / view / revisitList Returns the list of sites enabled for revisit<br>
-revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
-revisit / action / revisitSiteOff  Turns revisit off for the specified site
+Надстройка поддерживает следующие конечные точки API: <br><br>
+revisit /view /revisitList Возвращает список сайтов, разрешенных для повторного посещения <br>
+revisit / action / revisitSiteOn Включает повторное посещение для указанного сайта. Даты должны быть в формате: "гггг/мм/дд чч:мм:сс" <br> 
+revisit / action / revisitSiteOff Отключает повторное посещение для указанного сайта. 
 
 </body>
 </html>

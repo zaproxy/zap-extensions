@@ -3,44 +3,44 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-SOAP Support
+Поддержка SOAP 
 </title>
 </head>
 <body>
-<h1>SOAP Support</h1>
-This add-on imports and scans WSDL files containing SOAP endpoints.
+<h1>Поддержка SOAP </h1>
+Это дополнение импортирует и сканирует файлы WSDL, содержащие конечные точки SOAP. 
 <br><br>
-It also supports the <a href="automation.html">Automation Framework</a>.
+Он также поддерживает  <a href="automation.html">Платформа автоматизации </a>.
 
-<h2>Importing</h2>
-The add-on will automatically detect any SOAP definitions and spider them as long as they are in scope.
+<h2>Импортирование</h2>
+Надстройка автоматически обнаружит любые определения SOAP и просканирует их, пока они находятся в области действия. 
 <br><br>
-2 menu items are also added to the Import menu:
+В меню импорта также добавлено 2 пункта меню: 
 <ul>
-<li>Import a WSDL file from local file system</li>
-<li>Import a WSDL file from a URL</li>
+<li>Импорт файла WSDL из локальной файловой системы </li>
+<li>Импорт файла WSDL из URL-адреса </li>
 </ul>
-These operations are also available via the API.
+Эти операции также доступны через API. 
 <br><br>
-<b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
+<b>ПРИМЕЧАНИЯ</b> Начиная с версии 6 этого дополнения поддерживаются только закодированные URL-адреса. 
 
-<h3>Form Handler Add-on Support</h3>
-The SOAP add-on supports overriding default parameter values based on field names via the Form Handler add-on.
-For example,
+<h3>Поддержка надстройки обработчика форм </h3>
+Надстройка SOAP поддерживает переопределение значений параметров по умолчанию на основе имен полей через надстройку обработчика форм.
+Например, 
 <br>
-<img src="images/formHandlerExample.png" alt="Form Handler Example" width="300">
+<img src="images/formHandlerExample.png" alt="Пример обработчика формы " width="300">
 
-<h2>Scanning</h2>
-The scan rules added by this add-on are:
+<h2>Сканнирование</h2>
+Правила сканирования, добавленные этим дополнением: 
 <ul>
-<li>Action Spoofing : <a href="http://www.ws-attacks.org/index.php/SOAPAction_Spoofing">http://www.ws-attacks.org/index.php/SOAPAction_Spoofing</a></li>
+<li>Подмена действия: <a href="http://www.ws-attacks.org/index.php/SOAPAction_Spoofing">http://www.ws-attacks.org/index.php/SOAPAction_Spoofing</a>. </li>
 <li>XML Injection : <a href="http://www.ws-attacks.org/index.php/XML_Injection">http://www.ws-attacks.org/index.php/XML_Injection</a></li>
 </ul>
 
-<h2>Statistics</h2>
-This add-on maintains the following statistics:
+<h2>Статистика </h2>
+Это дополнение поддерживает следующую статистику: 
 <ul>
-    <li>soap.urls.added: The total number of URLs (or SOAP Actions) added from imported WSDL files.</li>
+    <li>soap.urls.added: общее количество URL-адресов (или действий SOAP), добавленных из импортированных файлов WSDL. </li>
 </ul>
 
 </body>

@@ -235,13 +235,13 @@
     "headers": {
       "Server": "Daphne"
     },
-    "implies":[
+    "icon": "daphne.svg",
+    "implies": [
       "TwistedWeb",
       "Python",
       "Zope"
     ],
     "oss": true,
-    "icon": "daphne.svg",
     "website": "https://github.com/django/daphne"
   },
   "Dart": {
@@ -910,15 +910,15 @@
     ],
     "description": "Dominate WooCommerce is a cloud-based checkout-page which supports PayPal Smart buttons for Venmo, PayPal Credit, and other payment methods.",
     "icon": "Dominate.png",
+    "pricing": [
+      "freemium"
+    ],
     "requires": [
       "WordPress",
       "WooCommerce"
     ],
-    "scriptSrc": "/wp-content/plugins/iwd-checkout-connector/",
     "saas": true,
-    "pricing": [
-      "freemium"
-    ],
+    "scriptSrc": "/wp-content/plugins/iwd-checkout-connector/",
     "website": "https://www.dominate.co/woocommerce"
   },
   "Doofinder": {
@@ -1127,7 +1127,8 @@
       "driftt": ""
     },
     "pricing": [
-      "poa"
+      "poa",
+      "mid"
     ],
     "saas": true,
     "website": "https://www.drift.com/"

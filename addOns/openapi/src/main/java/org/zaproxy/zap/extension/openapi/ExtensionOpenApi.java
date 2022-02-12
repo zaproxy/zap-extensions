@@ -25,6 +25,8 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -35,12 +37,16 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
@@ -58,11 +64,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     private static final String THREAD_PREFIX = "ZAP-Import-OpenAPI-";
 
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
+
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
     private ImportFromFileDialog currentFileDialog = null;
     private ImportFromUrlDialog currentUrlDialog = null;
-    private ProgressPanel progressPanel = null;
     private int threadId = 1;
     private SpiderParser customSpider;
 
@@ -126,11 +134,16 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
     private ProgressPanel getProgressPanel() {
-        if (progressPanel == null) {
-            progressPanel = new ProgressPanel(getView());
-        }
-        return progressPanel;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getProgressPanel();
     }
 
     /* Menu option to import a local OpenApi file. */
@@ -360,17 +373,16 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
                     @Override
                     public void run() {
-                        ImportPane currentImportPane = null;
+                        ProgressPane currentImportPane = null;
                         try {
                             List<RequestModel> requestModels = converter.getRequestModels();
                             converter.setStructuralNodeModifiers(contextId);
 
                             if (initViaUi) {
-                                currentImportPane = new ImportPane();
-                                requestor.addListener(new ImportPaneListener(currentImportPane));
-                                currentImportPane.setTotalEndpoints(requestModels.size());
-                                getProgressPanel().addImportPane(currentImportPane);
-                                getProgressPanel().setTabFocus();
+                                currentImportPane = new ProgressPane();
+                                requestor.addListener(new ProgressListener(currentImportPane));
+                                currentImportPane.setTotalTasks(requestModels.size());
+                                getProgressPanel().addProgressPane(currentImportPane);
                             }
                             errors.addAll(requestor.run(requestModels));
                             // Needs to be called after converter.getRequestModels() to get loop
@@ -578,7 +590,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             if (currentUrlDialog != null) {
                 currentUrlDialog.clear();
             }
-            getProgressPanel().clearAndDispose();
         }
 
         @Override

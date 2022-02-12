@@ -3,41 +3,41 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Context Options
+        Параметры контекста управления доступом 
     </title>
 </head>
 <body>
-<h1>Access Control Context Options</h1>
+<h1>Параметры контекста управления доступом </h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+    Параметры контекста управления доступом представлены в виде панели для каждого контекста при открытии свойств сеанса.
+     диалог.  Эта панель позволяет пользователям ZAP определять правила доступа для каждого пользователя каждого контекста. 
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    Как упоминалось на странице <a href="concepts.html">концепции</a>, ZAP использует древовидную структуру.
+     структура URL-адресов.  Таким образом, при настройке правил доступа необходимо явно задать только одно правило для всего
+     поддерево, а для остальных узлов выводятся правила.  Три возможных значения могут быть установлены для любого узла в Context для
+     каждый Пользователь: 
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Разрешено</b> — правило для узла <i>явно</i> установлено как разрешено. </li>
+    <li><b>Запрещено</b> — правило для узла <i>явно</i> установлено как Запрещено. </li>
+    <li><b>Унаследовано</b>. Правило для узла выводится на основе ближайшего родителя с явно заданным правилом. 
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>По умолчанию правила для любого узла имеют значение <i>Унаследовано</i>, а корневой узел имеет значение <i>Неизвестно</i>. 
+    Таким образом, для любого узла без родителя с явно настроенным правилом предполагаемое правило будет по умолчанию равно
+     <i>Неизвестно</i> .</p>
 
-<h2>See also</h2>
+<h2>Смотрите также </h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+            <a href="concepts.html">Концепции тестирования контроля доступа </a></td>
+        <td>для краткого введения в тестирование контроля доступа </td>
     </tr>
 </table>
 

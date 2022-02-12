@@ -21,6 +21,7 @@ package org.zaproxy.addon.reports;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
@@ -172,6 +173,32 @@ public class ReportHelper {
                 break;
             }
         }
+        return list;
+    }
+
+    public static List<AlertNode> getChildren(AlertNode node, boolean incLeaves) {
+        List<AlertNode> list = new ArrayList<>();
+        Enumeration<?> children = node.children();
+        while (children.hasMoreElements()) {
+            AlertNode childNode = (AlertNode) children.nextElement();
+            if (incLeaves || !childNode.isLeaf() && !node.equals(childNode)) {
+                list.add(childNode);
+            }
+        }
+
+        return list;
+    }
+
+    public static List<AlertNode> getDepthFirstChildren(AlertNode node, boolean incLeaves) {
+        List<AlertNode> list = new ArrayList<>();
+        Enumeration<?> children = node.depthFirstEnumeration();
+        while (children.hasMoreElements()) {
+            AlertNode childNode = (AlertNode) children.nextElement();
+            if (incLeaves || !childNode.isLeaf() && !node.equals(childNode)) {
+                list.add(childNode);
+            }
+        }
+
         return list;
     }
 

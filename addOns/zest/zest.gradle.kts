@@ -23,6 +23,9 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/zest/")
         dependencies {
             addOns {
+                register("network") {
+                    version.set(">=0.1.0")
+                }
                 register("selenium") {
                     version.set("15.*")
                 }
@@ -33,6 +36,7 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
     implementation("org.zaproxy:zest:0.15.0") {
         // Provided by Selenium add-on.
@@ -47,5 +51,6 @@ dependencies {
     }
 
     testImplementation(project(":testutils"))
+    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("selenium")!!)
 }

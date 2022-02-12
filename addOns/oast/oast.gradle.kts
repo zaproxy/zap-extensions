@@ -10,7 +10,9 @@ zapAddOn {
 
         dependencies {
             addOns {
-                register("network")
+                register("network") {
+                    version.set(">= 0.1.0")
+                }
             }
         }
 
@@ -48,4 +50,5 @@ dependencies {
     compileOnly(parent!!.childProjects["network"]!!)
 
     testImplementation(project(":testutils"))
+    testImplementation(parent!!.childProjects["network"]!!)
 }

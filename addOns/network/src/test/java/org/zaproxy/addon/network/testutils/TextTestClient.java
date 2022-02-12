@@ -29,14 +29,19 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.AttributeKey;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** A client that allows to send and receive text messages, to help with the tests. */
 public class TextTestClient extends TestClient {
+
+    private static final AttributeKey<CompletableFuture<Object>> RESPONSE_ATTRIBUTE =
+            AttributeKey.newInstance("zap.client.response");
 
     /**
      * Constructs a {@code TextTestClient} with the given address.
@@ -44,50 +49,81 @@ public class TextTestClient extends TestClient {
      * @param address the address to connect to.
      */
     public TextTestClient(String address) {
-        super(address, TextTestClient::initChannel);
+        this(address, null);
     }
 
-    private static void initChannel(SocketChannel channel) {
+    /**
+     * Constructs a {@code TextTestClient} with the given address and channel decorator.
+     *
+     * @param address the address to connect to.
+     * @param channelDecorator the channel decorator, called after the channel is initialised.
+     */
+    public TextTestClient(String address, Consumer<SocketChannel> channelDecorator) {
+        super(address, ch -> initChannel(ch, channelDecorator));
+    }
+
+    private static void initChannel(
+            SocketChannel channel, Consumer<SocketChannel> channelDecorator) {
+        channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
         channel.pipeline()
                 .addLast(new DelimiterBasedFrameDecoder(1024, Delimiters.lineDelimiter()))
                 .addLast(new StringDecoder(StandardCharsets.UTF_8))
                 .addLast(new StringEncoder(StandardCharsets.UTF_8))
                 .addLast(new ResponseHandler())
                 .addLast(ServerExceptionHandler.getInstance());
+
+        if (channelDecorator != null) {
+            channelDecorator.accept(channel);
+        }
     }
 
     @Override
     public <T> Channel connect(int port, T msg) throws Exception {
         Channel channel = super.connect(port, msg != null ? msg + "\n" : msg);
-        channel.pipeline().get(ResponseHandler.class).getResponse();
+        if (msg != null) {
+            waitForResponse(channel);
+        }
         return channel;
+    }
+
+    /**
+     * Waits for a response in the given channel.
+     *
+     * @param channel the channel where it's expected a response.
+     * @return the response.
+     * @throws Exception if an error occurred while waiting for the response.
+     */
+    public static Object waitForResponse(Channel channel) throws Exception {
+        Object response = getCompletableFuture(channel).get(5, TimeUnit.SECONDS);
+        channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
+        return response;
+    }
+
+    private static CompletableFuture<Object> getCompletableFuture(Channel channel) {
+        return channel.attr(RESPONSE_ATTRIBUTE).get();
     }
 
     private static class ResponseHandler extends SimpleChannelInboundHandler<Object> {
 
-        private CompletableFuture<Object> response = new CompletableFuture<>();
-
-        public Object getResponse() throws InterruptedException, ExecutionException {
-            Object message = response.get();
-            response = new CompletableFuture<>();
-            return message;
+        private static CompletableFuture<Object> getCompletableFuture(ChannelHandlerContext ctx) {
+            return TextTestClient.getCompletableFuture(ctx.channel());
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             super.channelInactive(ctx);
-            response.complete(null);
+            getCompletableFuture(ctx).complete(null);
             ctx.close();
         }
 
         @Override
         public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-            response.complete(msg);
+            getCompletableFuture(ctx).complete(msg);
         }
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            response.completeExceptionally(cause);
+            getCompletableFuture(ctx).completeExceptionally(cause);
             ctx.close();
         }
     }

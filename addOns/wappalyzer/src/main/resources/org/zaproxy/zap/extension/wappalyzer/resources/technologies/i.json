@@ -208,6 +208,25 @@
     "scriptSrc": "/wp-content/plugins/nextgen-gallery(?:-pro|-plus)?/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
   },
+  "Imber": {
+    "cats": [
+      52
+    ],
+    "description": "Imber is an all-in-one marketing automation platform built for customer support (live chat), sales, and marketing.",
+    "icon": "Imber.png",
+    "js": {
+      "$imber.getVisitor": "",
+      "IMBER_ID": "",
+      "IMBER_SOCKET": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://imber.live"
+  },
   "Immutable.js": {
     "cats": [
       59
@@ -694,6 +713,22 @@
     "scriptSrc": "Scripts/_app/Inv(?:\\w+)\\.js\\?v=(.+)$\\;version:\\1",
     "website": "https://www.inveon.com"
   },
+  "Invoca": {
+    "cats": [
+      32
+    ],
+    "description": "Invoca is an AI-powered call tracking and conversational analytics company.",
+    "icon": "Invoca.svg",
+    "js": {
+      "Invoca.PNAPI.version": "([\\d\\.]+)\\;version:\\1",
+      "InvocaTagId": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.invoca.com"
+  },
   "Ionic": {
     "cats": [
       18
@@ -820,6 +855,15 @@
     "saas": true,
     "scriptSrc": "\\.i-mobile\\.co\\.jp/",
     "website": "http://www2.i-mobile.co.jp"
+  },
+  "i30con": {
+    "cats": [
+      17
+    ],
+    "description": "i30con is an icon toolkit based on CSS and JavaScript.",
+    "dom": "[class^='i30con']",
+    "icon": "30namaPlayer.png",
+    "website": "https://30nama.com/"
   },
   "iEXExchanger": {
     "cats": [

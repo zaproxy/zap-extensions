@@ -148,7 +148,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
     private void resetTemplates() {
         List<String> templates = getTemplates();
-        if (templates.size() == 0) {
+        if (templates.isEmpty()) {
             // None to select :(
             setComboFields(FIELD_TEMPLATE, templates, "");
         } else if (!this.isEmptyField(FIELD_TEMPLATE)

@@ -9,38 +9,38 @@ WebSockets
 <body>
 <h1>WebSockets</h1>
 <p>
-WebSockets can be used by web applications or web sites to setup a
-bi-directional (two-way), full duplex communication channel over a
-single TCP connection.<br>
-It features a lightweight protocol, allowing developers to realize
-realtime use cases. WebSockets do also provide an alternative to 
-heavy use of Ajax, HTTP Long Polling or Comet.<br>
+WebSockets можно использовать веб-приложениями или веб-сайтами для настройки
+двунаправленные (двусторонние), полный канал дуплексного связи над
+Одиночное соединение TCP. <br>
+Он имеет легкий протокол, позволяющий разработчикам реализовать
+случаи использования в реальном времени.  Websockets также предоставляют альтернативу
+Тяжелое использование AJAX, HTTP длинного опроса или кометы. <br>
 </p>
 <p>
-After an initial HTTP based handshake, the TCP connection is kept open,
-allowing applications to send &amp; receive arbitrary data. Often port
-80 or 443 for encrypted WebSocket channels are used.
+После первоначального рукопожатия на основе HTTP соединение TCP остается открытым,
+разрешение приложений для отправки & AMP; получать произвольные данные. Часто порт
+80 или 443 для зашифрованных каналов WebSocket используются. 
 </p>
 <p>
 The WebSocket standard is defined in
 <dl>
 	<dt><a href="http://www.w3.org/TR/websockets/">The WebSocket API (http://www.w3.org/TR/websockets/)</a></dt>
-	<dd>specifies the interface in browsers</dd>
+	<dd>Определяет интерфейс в браузерах </dd>
 	<dt><a href="https://tools.ietf.org/html/rfc6455">The WebSocket Protocol (RFC6455) (https://tools.ietf.org/html/rfc6455)</a></dt>
-	<dd>describes the structure of WebSocket frames upon TCP</dd>
+	<dd>Описывает структуру рамок Websocket на TCP </dd>
 </dl>
 <p>
-ZAP is able to:
+ZAP может: 
 <ul>
-	<li>intercept and show WebSocket messages</li>
-	<li>set breakpoints on specific types of WebSocket messages</li>
-	<li>fuzz WebSocket messages (send lots of invalid or unexpected data to a browser or server)</li>
-  <li>passively scan WebSocket messages and raise alerts with scripts</li>
+	<li>Перехватить и показать сообщения WebSocket </li>
+	<li>Установить точки останова на определенные типы сообщений Websocket </li>
+	<li>fuzz Websocket cообщения (отправьте много недействительных или неожиданных данных в браузер или сервер) </li>
+  <li>Пассивно сканировать сообщения WebSocket и повышать оповещения со скриптами </li>
 </ul>
 
-WebSocket messages are displayed within the <a href="tab.html">WebSockets tab</a>.<br><br>
+Сообщения Websocket отображаются в пределах  <a href="tab.html">Вкладки WebSockets </a>.<br><br>
 
-The WebSocket add-on adds new <a href="script.html">scripts</a> and additional endpoints to the ZAP <a href="api.html">API</a>
+Настройка WebSocket добавляет новый  <a href="script.html">Сценарии</a> и дополнительные конечные точки на ZAP <a href="api.html">API</a>
 
 </body>
 </html>

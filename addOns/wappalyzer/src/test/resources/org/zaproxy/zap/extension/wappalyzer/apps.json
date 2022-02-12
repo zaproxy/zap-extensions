@@ -45,6 +45,15 @@
       "url": "^https?://test\\.example\\.com",
       "website": "https://www.example.com/testentry"
     },
+     "Test Entry2": {
+      "cats": [
+        36
+      ],
+      "dom": "script[src*='sites/g/files']",
+      "description": "Test Entry2 is a test entry for UnitTests",
+      "url": "^https?://test\\.example\\.com",
+      "website": "https://www.example.com/testentry2"
+    },
      "1C-Bitrix": {
       "cats": [
         1,

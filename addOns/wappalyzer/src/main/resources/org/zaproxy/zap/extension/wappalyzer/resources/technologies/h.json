@@ -94,6 +94,22 @@
     },
     "website": "https://halo.run"
   },
+  "Hamechio": {
+    "cats": [
+      18
+    ],
+    "description": "Hamechio is a web application framework.",
+    "icon": "Hamechio.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "hamech\\.io/"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://hamech.io"
+  },
   "Hammer.js": {
     "cats": [
       59
@@ -538,6 +554,21 @@
     },
     "website": "http://hinzaco.com"
   },
+  "Hireology": {
+    "cats": [
+      101
+    ],
+    "description": "Hireology is a staffing and hiring platform for the franchise and retail-automotive industries.",
+    "dom": "a[href*='sites.hireology.com/']",
+    "icon": "Hireology.png",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "url": "sites\\.hireology\\.com/",
+    "website": "https://hireology.com"
+  },
   "Histats": {
     "cats": [
       10
@@ -790,7 +821,7 @@
   },
   "HrFlow.ai": {
     "cats": [
-      19
+      101
     ],
     "description": "HrFlow.ai is an HR data automation API platform.",
     "icon": "HrFlow.ai.svg",
@@ -817,6 +848,11 @@
       "_hsq": "",
       "hubspot": ""
     },
+    "pricing": [
+      "recurring",
+      "high"
+    ],
+    "saas": true,
     "website": "https://www.hubspot.com"
   },
   "HubSpot Analytics": {
@@ -1065,8 +1101,8 @@
       "Server": "hypercorn"
     },
     "icon": "hypercorn.png",
-    "oss": true,
     "implies": "Python",
+    "oss": true,
     "website": "https://pgjones.gitlab.io/hypercorn/"
   },
   "Hyperspeed": {
@@ -1121,5 +1157,20 @@
     "saas": true,
     "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
     "website": "https://www.hoolah.co"
+  },
+  "hyva": {
+    "cats": [
+      6
+    ],
+    "description": "Hyvä themes is a frontend for Magento 2.",
+    "headers": {
+      "X-Built-With": "^Hyva Themes$"
+    },
+    "icon": "Hyva.svg",
+    "implies": "Magento",
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://hyva.io/"
   }
 }

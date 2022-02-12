@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
+- Issue when adding or removing add-ons via the UI (Issue 7075)
+
+## [0.12.0] - 2022-02-01
+### Added
+- Script authentication support
+
+### Fixed
 - When a Job is loaded via yaml and edited via UI Dialog then the saved changes will be applied on the next job run
 - DelayJob will be verified on yaml load
 
@@ -126,6 +133,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.11.0
 [0.10.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.10.1
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.10.0

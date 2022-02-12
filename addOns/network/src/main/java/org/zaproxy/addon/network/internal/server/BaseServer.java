@@ -43,28 +43,38 @@ import org.zaproxy.addon.network.server.Server;
  * The base server.
  *
  * <p>Provides basic functionality, allows to be started and stopped, and initialise the child
- * channels. It also adds the following channel attributes: {@link ChannelAttributes#LOCAL_ADDRESS},
- * {@link ChannelAttributes#REMOTE_ADDRESS}, and {@link ChannelAttributes#TLS_UPGRADED} (always
- * {@code false}).
+ * channels.
+ *
+ * <p>It also adds the following channel attributes:
+ *
+ * <ul>
+ *   <li>{@link ChannelAttributes#LOCAL_ADDRESS};
+ *   <li>{@link ChannelAttributes#REMOTE_ADDRESS};
+ *   <li>{@link ChannelAttributes#TLS_UPGRADED} (always {@code false});
+ *   <li>{@link ChannelAttributes#PROCESSING_MESSAGE} (always {@code false});
+ *   <li>{@link ChannelAttributes#RECURSIVE_MESSAGE} (always {@code false}).
+ * </ul>
  */
 public class BaseServer implements Server {
 
     private static final Logger LOGGER = LogManager.getLogger(BaseServer.class);
 
     private final ServerBootstrap bootstrap;
-    private final Consumer<SocketChannel> channelInitialiser;
+    private Consumer<SocketChannel> channelInitialiser;
     private ChannelGroup allChannels;
     private Channel serverChannel;
 
     /**
-     * Constructs a {@code BaseServer} with the given event loop group and channel initialiser.
+     * Constructs a {@code BaseServer} with the given event loop group and no channel initialiser.
+     *
+     * <p>The channel initialiser is expected to be set before starting the server, failing to do so
+     * will result in an exception.
      *
      * @param group the event loop group.
-     * @param channelInitialiser the channel initialiser.
+     * @see #setChannelInitialiser(Consumer)
      */
-    public BaseServer(NioEventLoopGroup group, Consumer<SocketChannel> channelInitialiser) {
+    protected BaseServer(NioEventLoopGroup group) {
         Objects.requireNonNull(group);
-        this.channelInitialiser = Objects.requireNonNull(channelInitialiser);
 
         this.bootstrap =
                 new ServerBootstrap()
@@ -73,9 +83,45 @@ public class BaseServer implements Server {
                         .childHandler(new ChannelInitializerImpl());
     }
 
+    /**
+     * Constructs a {@code BaseServer} with the given event loop group and channel initialiser.
+     *
+     * @param group the event loop group.
+     * @param channelInitialiser the channel initialiser.
+     * @throws NullPointerException if the given channel initialiser is {@code null}.
+     */
+    public BaseServer(NioEventLoopGroup group, Consumer<SocketChannel> channelInitialiser) {
+        this(group);
+
+        setChannelInitialiser(channelInitialiser);
+    }
+
+    /**
+     * Sets the channel initialiser.
+     *
+     * @param channelInitialiser the channel initialiser.
+     * @throws NullPointerException if the given channel initialiser is {@code null}.
+     */
+    protected void setChannelInitialiser(Consumer<SocketChannel> channelInitialiser) {
+        this.channelInitialiser = Objects.requireNonNull(channelInitialiser);
+    }
+
+    /**
+     * Tells whether or not the server is started.
+     *
+     * @return {@code true} if the server is started, {@code false} otherwise.
+     */
+    public boolean isStarted() {
+        return serverChannel != null;
+    }
+
     @Override
     public int start(String address, int port) throws IOException {
         Server.validatePort(port);
+
+        if (channelInitialiser == null) {
+            throw new IOException("No channel initialiser set.");
+        }
 
         stop();
 
@@ -128,6 +174,11 @@ public class BaseServer implements Server {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        stop();
+    }
+
     private class ChannelInitializerImpl extends ChannelInitializer<SocketChannel> {
 
         @Override
@@ -135,6 +186,8 @@ public class BaseServer implements Server {
             ch.attr(ChannelAttributes.LOCAL_ADDRESS).set(ch.localAddress());
             ch.attr(ChannelAttributes.REMOTE_ADDRESS).set(ch.remoteAddress());
             ch.attr(ChannelAttributes.TLS_UPGRADED).set(Boolean.FALSE);
+            ch.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
+            ch.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(Boolean.FALSE);
 
             ch.pipeline().addLast(new ChannelGroupHandler(allChannels));
 

@@ -5,9 +5,9 @@
 
 <toc version="2.0">
 	<tocitem text="Руководство пользователя ZAP" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="События, отправленные сервером" target="sse.introduction" image="html5connectivity" >
-				<tocitem text="Tab" target="sse.tab"/>
+				<tocitem text="Вкладка" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

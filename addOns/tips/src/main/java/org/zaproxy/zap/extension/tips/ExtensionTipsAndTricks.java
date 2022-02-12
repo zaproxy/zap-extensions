@@ -96,7 +96,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
                 }
             }
 
-            if (tipsAndTricks.size() == 0) {
+            if (tipsAndTricks.isEmpty()) {
                 this.getMenuTipsAndTricks().setEnabled(false);
             }
         }

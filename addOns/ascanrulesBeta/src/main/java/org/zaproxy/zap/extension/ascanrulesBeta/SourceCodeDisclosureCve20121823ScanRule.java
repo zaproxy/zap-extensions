@@ -33,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -131,7 +132,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                 return; // Ignore images, pdfs, etc.
             }
             if (getAlertThreshold() != AlertThreshold.LOW
-                    && getBaseMsg().getResponseHeader().isJavaScript()) {
+                    && ResourceIdentificationUtils.isJavaScript(getBaseMsg())) {
                 return;
             }
             // at Low or Medium strength, do not attack URLs which returned "Not Found"

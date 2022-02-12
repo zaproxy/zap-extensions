@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.gui;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -47,6 +48,9 @@ public class AddAddOnsDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
+        if (this.isEmptyField(ADDON_ID_PARAM)) {
+            return Constant.messages.getString("automation.dialog.addon.error.noname");
+        }
         // Nothing to do
         return null;
     }

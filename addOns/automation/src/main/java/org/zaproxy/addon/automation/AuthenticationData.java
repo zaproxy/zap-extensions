@@ -19,13 +19,19 @@
  */
 package org.zaproxy.addon.automation;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
@@ -34,13 +40,18 @@ import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBase
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class AuthenticationData extends AutomationData {
     public static final String METHOD_HTTP = "http";
     public static final String METHOD_FORM = "form";
     public static final String METHOD_JSON = "json";
     public static final String METHOD_MANUAL = "manual";
+    public static final String METHOD_SCRIPT = "script";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
@@ -48,6 +59,8 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
     public static final String PARAM_LOGIN_REQUEST_BODY = "loginRequestBody";
+    public static final String PARAM_SCRIPT = "script";
+    public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
 
     /** Field name in the underlying PostBasedAuthenticationMethod class * */
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
@@ -57,13 +70,13 @@ public class AuthenticationData extends AutomationData {
     public static final String VERIFICATION_ELEMENT = "verification";
 
     private static List<String> validMethods =
-            Arrays.asList(METHOD_MANUAL, METHOD_HTTP, METHOD_FORM, METHOD_JSON);
+            Arrays.asList(METHOD_MANUAL, METHOD_HTTP, METHOD_FORM, METHOD_JSON, METHOD_SCRIPT);
 
     private String method;
-    private String script;
-    private String scriptEngine;
     private Map<String, Object> parameters = new LinkedHashMap<>();
     private VerificationData verification;
+
+    private static final Logger LOG = LogManager.getLogger(AuthenticationData.class);
 
     public AuthenticationData() {}
 
@@ -91,6 +104,22 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(
                     parameters, PARAM_LOGIN_REQUEST_URL, FIELD_LOGIN_REQUEST_URL, jsonAuthMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_REQUEST_BODY, jsonAuthMethod);
+        } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
+            ScriptBasedAuthenticationMethod scriptAuthMethod =
+                    (ScriptBasedAuthenticationMethod) authMethod;
+            ScriptWrapper sw = (ScriptWrapper) JobUtils.getPrivateField(scriptAuthMethod, "script");
+            if (sw != null) {
+                setMethod(AuthenticationData.METHOD_SCRIPT);
+                parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
+                parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
+                @SuppressWarnings("unchecked")
+                Map<String, String> paramValues =
+                        (Map<String, String>)
+                                JobUtils.getPrivateField(scriptAuthMethod, "paramValues");
+                for (Entry<String, String> entry : paramValues.entrySet()) {
+                    parameters.put(entry.getKey(), entry.getValue());
+                }
+            }
         }
         if (authMethod != null) {
             setVerification(new VerificationData(context));
@@ -112,17 +141,6 @@ public class AuthenticationData extends AutomationData {
             }
             for (Entry<String, Object> entry : parameters.entrySet()) {
                 switch (entry.getKey()) {
-                    case PARAM_REALM:
-                    case PARAM_HOSTNAME:
-                    case PARAM_LOGIN_PAGE_URL:
-                    case PARAM_LOGIN_REQUEST_URL:
-                    case PARAM_LOGIN_REQUEST_BODY:
-                        if (!(entry.getValue() instanceof String)) {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            BAD_FIELD_ERROR_MSG, entry.getKey(), data));
-                        }
-                        break;
                     case PARAM_PORT:
                         try {
                             Integer.parseInt(entry.getValue().toString());
@@ -133,9 +151,12 @@ public class AuthenticationData extends AutomationData {
                         }
                         break;
                     default:
-                        progress.warn(
-                                Constant.messages.getString(
-                                        "automation.error.env.auth.param.unknown", data));
+                        if (!(entry.getValue() instanceof String)) {
+                            progress.error(
+                                    Constant.messages.getString(
+                                            BAD_FIELD_ERROR_MSG, entry.getKey(), data));
+                        }
+                        break;
                 }
             }
             if (dataMap.containsKey(VERIFICATION_ELEMENT)) {
@@ -221,6 +242,56 @@ public class AuthenticationData extends AutomationData {
                                             .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY)));
                     context.setAuthenticationMethod(jsonAuthMethod);
                     break;
+                case AuthenticationData.METHOD_SCRIPT:
+                    File f = new File(parameters.getOrDefault(PARAM_SCRIPT, "").toString());
+                    if (!f.exists() || !f.canRead()) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        f.getAbsolutePath()));
+                    } else {
+                        ScriptWrapper sw =
+                                JobUtils.getScriptWrapper(
+                                        f,
+                                        ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
+                                        parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
+                                        progress);
+                        ScriptBasedAuthenticationMethodType scriptType =
+                                new ScriptBasedAuthenticationMethodType();
+                        ScriptBasedAuthenticationMethod scriptMethod =
+                                scriptType.createAuthenticationMethod(context.getId());
+
+                        if (sw == null) {
+                            LOG.error(
+                                    "Error setting script authentication - failed to find script wrapper");
+                            progress.error(
+                                    Constant.messages.getString(
+                                            "automation.error.env.auth.script.bad",
+                                            f.getAbsolutePath()));
+                        } else {
+                            scriptMethod.loadScript(sw);
+                            JobUtils.setPrivateField(
+                                    scriptMethod, "paramValues", getScriptParameters(env));
+
+                            try {
+                                // OK, this does look weird, but it is the easiest way to actually
+                                // get the script data loaded :/
+                                Configuration config = new ZapXmlConfiguration();
+                                scriptType.exportData(config, scriptMethod);
+                                scriptType.importData(config, scriptMethod);
+                            } catch (ConfigurationException e) {
+                                LOG.error("Error setting script authentication", e);
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.unexpected.internal",
+                                                e.getMessage()));
+                            }
+
+                            context.setAuthenticationMethod(scriptMethod);
+                        }
+                    }
+                    break;
+
                 default:
                     progress.error(
                             Constant.messages.getString(
@@ -233,28 +304,25 @@ public class AuthenticationData extends AutomationData {
         }
     }
 
+    private Map<String, String> getScriptParameters(AutomationEnvironment env) {
+        Map<String, String> map = new HashMap<>();
+        for (Entry<String, Object> entry : this.parameters.entrySet()) {
+            // In theory we could filter out all of the parameters we know about, but they shouldnt
+            // cause any problems
+            if (entry.getValue() instanceof String) {
+                // Script variables must be strings, can ignore anything else
+                map.put(entry.getKey(), env.replaceVars(entry.getValue()));
+            }
+        }
+        return map;
+    }
+
     public String getMethod() {
         return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    public void setScript(String script) {
-        this.script = script;
-    }
-
-    public String getScriptEngine() {
-        return scriptEngine;
-    }
-
-    public void setScriptEngine(String scriptEngine) {
-        this.scriptEngine = scriptEngine;
     }
 
     public Map<String, Object> getParameters() {

@@ -22,7 +22,7 @@ package org.zaproxy.addon.network.internal.handlers;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.SSLHandshakeException;
@@ -47,11 +48,6 @@ import org.zaproxy.addon.network.internal.cert.GenerationException;
 
 /** Unit test for {@link ServerExceptionHandler}. */
 class ServerExceptionHandlerUnitTest {
-
-    static {
-        // Force initialisation of Netty classes to have clean log events later.
-        ReadTimeoutException.INSTANCE.getCause();
-    }
 
     private ChannelHandlerContext ctx;
     private List<String> logEvents;
@@ -90,7 +86,7 @@ class ServerExceptionHandlerUnitTest {
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
-        assertThat(logEvents, contains(startsWith("DEBUG Timed out while reading")));
+        assertThat(logEvents, hasItem(startsWith("DEBUG Timed out while reading")));
     }
 
     @Test
@@ -103,7 +99,7 @@ class ServerExceptionHandlerUnitTest {
         // Then
         assertThat(
                 logEvents,
-                contains(
+                hasItem(
                         startsWith(
                                 "WARN Failed while establishing secure connection, cause: missing protocol")));
     }
@@ -118,7 +114,7 @@ class ServerExceptionHandlerUnitTest {
         // Then
         assertThat(
                 logEvents,
-                contains(
+                hasItem(
                         startsWith(
                                 "WARN Failed while creating certificate, cause: java.lang.Exception: Cause")));
     }
@@ -133,7 +129,7 @@ class ServerExceptionHandlerUnitTest {
         // Then
         assertThat(
                 logEvents,
-                contains(
+                hasItem(
                         startsWith(
                                 "WARN Failed while creating certificate, cause: No Root CA cert")));
     }
@@ -147,7 +143,7 @@ class ServerExceptionHandlerUnitTest {
         // Then
         assertThat(
                 logEvents,
-                contains(
+                hasItem(
                         startsWith(
                                 "ERROR io.netty.handler.codec.DecoderException: Decoder Exception")));
     }
@@ -160,7 +156,7 @@ class ServerExceptionHandlerUnitTest {
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
-        assertThat(logEvents, contains(startsWith("ERROR java.lang.Exception: Unknown Cause")));
+        assertThat(logEvents, hasItem(startsWith("ERROR java.lang.Exception: Unknown Cause")));
     }
 
     @Test
@@ -170,7 +166,19 @@ class ServerExceptionHandlerUnitTest {
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
-        assertThat(logEvents, contains(startsWith("WARN Received malformed header: Missing xyz")));
+        assertThat(logEvents, hasItem(startsWith("WARN Received malformed header: Missing xyz")));
+    }
+
+    @Test
+    void shouldLogIoExceptionAsDebug() throws Exception {
+        // Given
+        Exception exception = new IOException("Connection reset by peer");
+        // When
+        serverExceptionHandler.exceptionCaught(ctx, exception);
+        // Then
+        assertThat(
+                logEvents,
+                hasItem(startsWith("DEBUG java.io.IOException: Connection reset by peer")));
     }
 
     @Test
@@ -180,7 +188,7 @@ class ServerExceptionHandlerUnitTest {
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
-        assertThat(logEvents, contains(startsWith("ERROR java.lang.Exception")));
+        assertThat(logEvents, hasItem(startsWith("ERROR java.lang.Exception")));
     }
 
     private static List<String> registerLogEvents() {

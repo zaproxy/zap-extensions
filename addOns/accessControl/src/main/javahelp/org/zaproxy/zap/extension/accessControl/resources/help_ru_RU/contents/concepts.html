@@ -3,106 +3,106 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Testing
+        Тестирование контроля доступа 
     </title>
 </head>
 <body>
-<h1>Access Control Testing</h1>
+<h1>Тестирование контроля доступа </h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Это дополнение позволяет пользователям сравнивать, какие части веб-приложения доступны для некоторых пользователей, осуществлять контроль доступа
+     тестирование и выявление потенциальных проблем с контролем доступа.  Он позволяет настраивать правила доступа и проводит полный
+     атака, направленная на выявление разделов веб-приложения, доступных для неавторизованных клиентов. 
 </p>
 
 <p>
-    There are two main concepts related to this add-on that should be explained: the <b>Access Rules</b> and the <b>testing
-    procedure</b>.
+    Следует объяснить две основные концепции, связанные с этим дополнением: <b>правила доступа</b> и <b>тестирование.
+     процедура</b> .
 </p>
 
-<h3>Access Rules</h3>
+<h3>Правило доступа</h3>
 
 <p>
-    In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    Чтобы выявить потенциальные проблемы с контролем доступа, ZAP должен знать, какие части веб-приложения
+     должен быть доступен для какого пользователя.  В ZAP эти правила называются <i>Правила доступа</i> и обычно имеют
+     значение: «<i>Страница A должна/не должна быть доступна пользователю X</i>». 
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Правила настроены для контекста, и для каждого пользователя этого контекста каждый узел сайта (веб-страница) будет
+     связано с одним из следующих значений: </p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Разрешено</b> - ресурс <b>может</b> быть доступен Пользователю, к которому относится правило. </li>
+    <li><b>Запрещено</b> - ресурс <b>не должен</b> быть доступен Пользователю, на которого ссылается правило. </li>
+    <li><b>Неизвестно</b> – <b>нет информации</b> о том, должен или не должен быть доступен ресурс.
+         Пользователю, к которому относится правило 
     </li>
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    Чтобы упростить процесс определения правил доступа, ZAP использует древовидную структуру URL-адресов. 
+    При анализе правил используется алгоритм вывода для обнаружения правил соответствия для каждого узла на основе его
+     parent в URL-адресе, если не определены конкретные правила.  Это означает, что при настройке правил доступа только 1
+     правило должно быть установлено явно для всего поддерева, в то время как для других узлов правила выводятся.  Подробнее
+     об этом можно узнать на странице справки <a href="contextOptions.html">Параметры контекста</a> контроля доступа. </td>
 </p>
 
-<h3>Testing procedure</h3>
+<h3>Процедура тестирования </h3>
 
-<p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
-    followed:</p>
+<p> В целом, чтобы полностью выполнить тестирование управления доступом для веб-приложения, следующие шаги должны быть
+     последовало: </p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>тестер определяет набор Пользователей и то, как они аутентифицируются; 
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>тестер определяет, как ZAP может идентифицировать неавторизованные запросы (через панель авторизации в сеансе
+         Характеристики); 
     </li>
-    <li>the web-application is explored either manually or via the Spider;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>веб-приложение исследуется либо вручную, либо через Паук; </li>
+    <li>тестер определяет правила доступа для каждого из пользователей, связанных с контекстом, в основном сообщая ZAP
+         какие части веб-приложения должны быть доступны тем или иным пользователям; 
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>«атака» выполняется ZAP, пытаясь получить доступ к каждому URL-адресу веб-приложения с точки зрения каждого
+         Пользователь; 
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>на соответствующей вкладке «Статус» отображаются результаты, показывающие, к каким страницам был успешно получен доступ
+         какие пользователи и отмечая случаи, когда правила доступа не соблюдались. 
     </li>
 </ul>
-<strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+<strong>Примечание: </strong> Тестирование контроля доступа не допускается в  <code>Безопасный</code> режим ни  <code>Защищённый</code> если контекст не входит в область действия. 
 
 <h2>API</h2>
 
-The Addon exposes the following API endpoints:
+Надстройка предоставляет следующие конечные точки API: 
 
-<h3>Actions</h3>
-	<h4>scan</h4>
-	Starts an Access Control scan with the given context ID and user ID (can be comma separated list of IDs). 
-	(Optional parameters: boolean identifying if an unauthenticated user should be included (default false), boolean 
-	identifying whether or not Alerts are raised (default true), and the Risk level for the Alerts (default High).) 
-	[<strong>Note:</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
+<h3>Действия</h3>
+	<h4>Сканировать</h4>
+	Запускает сканирование контроля доступа с заданным идентификатором контекста и идентификатором пользователя (может быть списком идентификаторов, разделенных запятыми).  
+	(Необязательные параметры: логическое значение, указывающее, следует ли включать неаутентифицированного пользователя (по умолчанию false), логическое значение
+определение того, выдаются ли предупреждения (по умолчанию — true), и уровень риска для предупреждений (по умолчанию — высокий).)
+[ <strong>Примечание: </strong>Это предполагает, что правила контроля доступа были ранее установлены через графический интерфейс ZAP, а необходимый контекст экспортирован/импортирован.] 
 
 	<h4>writeHTMLreport</h4>
-	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
+	Создает отчет об управлении доступом для данного идентификатора контекста и сохраняет его на основе предоставленного имени файла (пути). 
 
-<h3>Views</h3>
+<h3>Просмотры</h3>
 	<h4>getScanProgress</h4>
-	Gets the Access Control scan progress (percentage integer) for the given context ID.
+	Получает ход сканирования контроля доступа (целое число в процентах) для данного идентификатора контекста. 
 
 	<h4>getScanStatus</h4>
-	Gets the Access Control scan status (description string) for the given context ID.
+	Получает статус проверки контроля доступа (строка описания) для данного идентификатора контекста. 
 
-<h2>See also</h2>
+<h2>Смотрите также </h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="tab.html">Access Control Testing Tab</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+            <a href="tab.html">Вкладка «Тестирование контроля доступа» </a></td>
+        <td>для описания вкладки состояния, используемой надстройкой </td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+            <a href="contextOptions.html">Параметры контекста управления доступом </a></td>
+        <td>чтобы узнать о связанных параметрах контекста </td>
     </tr>
 </table>
 

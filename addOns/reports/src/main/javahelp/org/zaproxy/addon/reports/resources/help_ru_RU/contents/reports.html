@@ -4,112 +4,120 @@
 <TITLE>Report Generation</TITLE>
 </HEAD>
 <BODY>
-	<H1>Report Generation</H1>
-	This add-on allows you to generate a variety of reports in a flexible
-	and extensible way.
-	<p>It provides a dialog that can be accessed via menu "Report /
-		Generate Report..." menu item or via the "Generate Report..." toolbar
-		button.</p>
+	<H1>Генерация отчета</H1>
+	This add-on allows you to generate a
+	<a href="templates.html">variety of reports</a> in a flexible and
+	extensible way.
+	<p>Он предоставляет диалоговое окно, доступ к которому можно
+		получить через меню «Отчет / Создать отчет..." или через панель
+		инструментов "Создать отчет..." кнопка.</p>
 	<p>
-		It also supports the <a href="automation.html">Automation
-			Framework</a>.
+		Он также поддерживает <a href="automation.html">Автоматизацию
+			Фреймворк</a>.
 
 	</p>
-	<H1>Generate Report Dialog</H1>
+	<H1>Диалоговое окно создания отчета</H1>
 
-	<H2>Scope Fields</H2>
-	The Scope tab has the following fields:
+	<H2>Поля области действия</H2>
+	Вкладка Scope содержит следующие поля:
 
-	<H3>Report Title</H3>
-	The title that will be used in the report.
+	<H3>Название отчета</H3>
+	Заголовок, который будет использоваться в отчете.
 
-	<H3>Report Name</H3>
-	The filename that will be used for the report. This name can include
-	the following patterns:
+	<H3>Название отчета</H3>
+	Имя файла, которое будет использоваться для отчета. Это имя может
+	включать следующие шаблоны (patterns):
 	<ul>
-		<li><code>{{</code><i>date/time pattern</i> <code>}}</code> Any
-			Java Date/Time pattern, e.g. <code>yyyy-MM-dd</code></li>
-		<li><code>[[site]]</code> The name of the first site selected</li>
+		<li><code>{{</code><i>шаблон даты/времени</i> <code>}}</code>
+			Любой Дата Java /Шаблон времени, например. <code>гггг-мм-дд</code></li>
+		<li><code>[[site]]</code> Название первого выбранного сайта</li>
 	</ul>
-	The name will be automatically updated with the site selected and
-	extension for the report type.
-	<p>To change the default name used change the 'Report Name Pattern'
+	Имя будет автоматически обновлено в соответствии с выбранным сайтом и
+	расширение для типа отчета.
+	<p>Чтобы изменить используемое по умолчанию имя, измените «Шаблон
+		имени отчета» ( 'Report Name Pattern' ).</p>
+	<H3>Каталог отчетов</H3>
+	Каталог, в который будет записан отчет. Этот каталог будет выбран при
+	следующем открытии диалогового окна.
 
+	<H3>Описание</H3>
+	Описание, которое будет включено в отчет.
+
+	<H3>Контексты</H3>
+	Список всех контекстов, доступных в настоящее время. Выберите один или
+	несколько включать только оповещения и другую информацию из этих
+	контекстов в отчет. Вы можете использовать клавиши Shift или Control
+	для выбора и отмены выбора более одного контекста.
+	<p>По умолчанию будут включены все контексты.</p>
+	<H3>Сайты</H3>
+	Список всех сайтов, доступных в настоящее время. Выберите один или
+	несколько, чтобы включать только оповещения и другую информацию с этих
+	сайтов в отчет. Вы можете использовать клавиши Shift или Control для
+	выбора и отмены выбора более одного сайта.
+	<p>По умолчанию будут включены все сайты.</p>
+	<p>Если вы выбираете сайты, которые не входят в те контексты,
+		которые у вас есть также выбран, то данные не будут включены в отчет.
 	</p>
-	<H3>Report Directory</H3>
-	The directory into which the report will be written. This directory
-	will be selected when the dialog is next opened.
+	<H3>Генерировать, если нет предупреждений</H3>
+	По умолчанию диалоговое окно не позволит вам создать отчет без
+	оповещения. Установите этот флажок, если вы хотите создать отчет с
+	никаких предупреждений.
 
-	<H3>Description</H3>
-	The description that will be included in the report.
+	<H3>Отобразить отчет</H3>
+	Если выбрано, то ZAP попытается открыть отчет, используя настройки по
+	умолчанию. программа, используемая вашей операционной системой для
+	этого типа отчета.
 
-	<H3>Contexts</H3>
-	A list of all of the Contexts currently available. Select one or more
-	to only include alerts and other information from those contexts in the
-	report. You can use the shift or control keys to select and unselect
-	more than one context.
-	<p>By default all contexts will be included.</p>
-	<H3>Sites</H3>
-	A list of all of the Sites currently available. Select one or more to
-	only include alerts and other information from those sites in the
-	report. You can use the shift or control keys to select and unselect
-	more than one site.
-	<p>By default all sites will be included.</p>
-	<p>If you select sites that are not in the contexts that you have
-		also selected then no data will be included in the report.</p>
-	<H3>Generate If No Alerts</H3>
-	By default the dialog will prevent you from generating a report with no
-	alerts. Select this check box if you do want to generate a report with
-	no alerts.
+	<H2>Поля шаблона</H2>
+	Вкладка «Шаблон» ( Template tab ) содержит следующие поля:
 
-	<H3>Display Report</H3>
-	If selected then ZAP will attempt to open the report using the default
-	program used by your operating system for that report type.
+	<H3>Шаблон</H3>
+	Выпадающий список (pulldown containing), содержащий все доступные
+	шаблоны. Шаблон имена включают формат, в котором они будут созданы,
+	например. HTML, MD, PDF и др.
 
-	<H2>Template Fields</H2>
-	The Template tab has the following fields:
+	<H3>Темы</H3>
+	Шаблоны могут опционально определять «темы» ('themes' ) — обычно разных
+	цветов. и стилей, которые применяются к одному и тому же содержимому.
+	Если какие-либо темы определены для выбранного шаблона, вы можете
+	выбрать их здесь.
 
-	<H3>Template</H3>
-	A pulldown containing all of the available templates. The template
-	names include the format that they will be generated in, e.g. HTML, MD,
-	PDF etc.
+	<H3>Разделы</H3>
+	Шаблоны могут опционально определять «разделы» ('sections')— части
+	отчета, которые могут быть включены или исключены. Если выбранный
+	шаблон определяет разделы то здесь будет отображаться флажок для
+	каждого раздела. По умолчанию все флажки будут установлены. Если вы
+	отмените выбор любого из разделов, то они не будут включены в отчет.
 
-	<H3>Theme</H3>
-	Templates may optionally define 'themes' - typically different colours
-	and styles which apply to the same content. If any themes are defined
-	for the selected template then you can select them here.
+	<H2>Поля фильтра</H2>
+	Вкладка «Фильтр» содержит следующие поля:
 
-	<H3>Sections</H3>
-	Templates may optionally define 'sections' - parts of the report which
-	can be included or excluded. If the selected template defines sections
-	then a checkbox for each section will be displayed here. By default all
-	checkboxes will be selected. If you unselect any of the sections then
-	they will not be included in the report.
+	<H3>Включить риски</H3>
+	Включить оповещения с выбранными рисками.
 
-	<H2>Filter Fields</H2>
-	The Filter tab has the following fields:
+	<H3>Включить конфиденциальность</H3>
+	Включить оповещения с помощью избранные доверительные отношения.
 
-	<H3>Include Risks</H3>
-	Include alerts with the selected risks.
+	<H2>Поля опций</H2>
+	Вкладка «Параметры» содержит следующие поля:
 
-	<H3>Include Confidences</H3>
-	Include alerts with the selected confidences.
+	<H3>Шаблон имени отчета</H3>
+	Шаблон, который будет использоваться для создания имени отчета.
 
-	<H2>Options Fields</H2>
-	The Options tab has the following fields:
+	<H3>Каталог шаблонов</H3>
+	Каталог, из которого будут загружены шаблоны. Тебе не следует обычно
+	необходимо изменить, если только вы не разрабатываете новые отчеты, в
+	которых случае может быть полезно изменить, чтобы указать на ваш
+	локальный исходный код каталог отчетов. Папка «отчеты» в вашем домашнем
+	каталоге ZAP используется по умолчанию.
 
-	<H3>Report Name Pattern</H3>
-	The pattern that will be used to generate the report name.
-
-	<H3>Template Directory</H3>
-	The directory from which templates will be loaded. You should not
-	typically need to change unless you are designing new reports, in which
-	case it can be useful to change to point to your local source code
-	reports directory. The "reports" folder in your ZAP home directory is
-	used by default.
-
-	<H2>See also</H2>
+	<H2>Смотрите также</H2>
 	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="templates.html">Templates</a></td>
+			<td>for details of the templates currently available</td>
+		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="create.html">Creating Reports</a></td>

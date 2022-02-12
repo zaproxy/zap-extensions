@@ -37,6 +37,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -122,12 +123,13 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         checkMetaElementsMatches(source);
         checkScriptElementsMatches(source);
         checkCssElementsMatches(msg, source);
+        checkSimpleDomMatches(msg);
         checkDomElementMatches(msg);
     }
 
     private void checkCssElementsMatches(HttpMessage msg, Source source) {
         for (AppPattern appPattern : currentApp.getCss()) {
-            if (msg.getRequestHeader().isCss() || msg.getResponseHeader().isCss()) {
+            if (ResourceIdentificationUtils.isCss(msg)) {
                 addIfMatches(appPattern, msg.getResponseBody().toString());
             } else {
                 for (Element styleElement : source.getAllElements(HTMLElementName.STYLE)) {
@@ -196,6 +198,13 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         }
     }
 
+    private void checkSimpleDomMatches(HttpMessage msg) {
+        String body = msg.getResponseBody().toString();
+        for (String selector : currentApp.getSimpleDom()) {
+            addIfDomMatches(selector, body);
+        }
+    }
+
     private void checkBodyMatches(HttpMessage msg) {
         String body = msg.getResponseBody().toString();
         for (AppPattern p : currentApp.getHtml()) {
@@ -232,6 +241,14 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         String url = msg.getRequestHeader().getURI().toString();
         for (AppPattern p : currentApp.getUrl()) {
             addIfMatches(p, url);
+        }
+    }
+
+    private void addIfDomMatches(String selector, String content) {
+        Document doc = Jsoup.parse(content);
+        Elements elements = doc.select(selector);
+        if (!elements.isEmpty()) {
+            this.appMatch = getAppMatch();
         }
     }
 

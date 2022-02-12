@@ -31,6 +31,7 @@ import com.crawljax.core.plugin.Plugins;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.ProvisionException;
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +45,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyServer;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -56,7 +53,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.PersistentConnectionListener;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.model.ScanEventPublisher;
@@ -79,7 +79,7 @@ public class SpiderThread implements Runnable {
     private List<SpiderListener> spiderListeners;
     private final List<String> exclusionList;
     private final String targetHost;
-    private ProxyServer proxy;
+    private Server proxy;
     private int proxyPort;
     private final ExtensionAjax extension;
 
@@ -95,7 +95,8 @@ public class SpiderThread implements Runnable {
             String displayName,
             AjaxSpiderTarget target,
             ExtensionAjax extension,
-            SpiderListener spiderListener) {
+            SpiderListener spiderListener,
+            ExtensionNetwork extensionNetwork) {
         this.displayName = displayName;
         this.target = target;
         HttpPrefixUriValidator validator = null;
@@ -122,17 +123,9 @@ public class SpiderThread implements Runnable {
         createOutOfScopeResponse(
                 extension.getMessages().getString("spiderajax.outofscope.response"));
 
-        proxy = new AjaxProxyServer();
-        proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
-        proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
-        proxy.addProxyListener(new SpiderProxyResponseListener());
-
-        // Enable websockets, as long as the add-on is installed
-        Extension wsExt =
-                Control.getSingleton().getExtensionLoader().getExtension("ExtensionWebSocket");
-        if (wsExt != null && wsExt instanceof PersistentConnectionListener) {
-            proxy.addPersistentConnectionListener((PersistentConnectionListener) wsExt);
-        }
+        proxy =
+                extensionNetwork.createHttpProxy(
+                        HttpSender.AJAX_SPIDER_INITIATOR, new SpiderProxyListener());
     }
 
     private void createOutOfScopeResponse(String response) {
@@ -241,9 +234,10 @@ public class SpiderThread implements Runnable {
                 this.target.getUser());
 
         logger.info("Starting proxy...");
-        this.proxyPort = proxy.startServer(LOCAL_PROXY_IP, 0, true);
-        logger.info("Proxy started, listening at port [{}].", proxyPort);
         try {
+            this.proxyPort = proxy.start(LOCAL_PROXY_IP);
+            logger.info("Proxy started, listening at port [{}].", proxyPort);
+
             crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
             crawljax.call();
         } catch (ProvisionException e) {
@@ -258,6 +252,8 @@ public class SpiderThread implements Runnable {
                         .showWarningDialog(
                                 extSelenium.getWarnMessageFailedToStart(providedBrowserId, e));
             }
+        } catch (IOException e) {
+            logger.warn("An error occurred while starting the proxy.", e);
         } catch (Exception e) {
             logger.error(e, e);
         } finally {
@@ -273,7 +269,11 @@ public class SpiderThread implements Runnable {
 
     private void stopProxy() {
         if (proxy != null) {
-            proxy.stopServer();
+            try {
+                proxy.close();
+            } catch (IOException e) {
+                logger.debug("An error occurred while stopping the proxy.", e);
+            }
             proxy = null;
         }
     }
@@ -310,7 +310,7 @@ public class SpiderThread implements Runnable {
         }
     }
 
-    private class SpiderProxyListener implements OverrideMessageProxyListener {
+    private class SpiderProxyListener implements HttpMessageHandler {
 
         private final List<AllowedResource> allowedResourcesEnabled;
 
@@ -322,12 +322,15 @@ public class SpiderThread implements Runnable {
         }
 
         @Override
-        public int getArrangeableListenerOrder() {
-            return 0;
-        }
+        public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
+            if (!ctx.isFromClient()) {
+                notifyMessage(
+                        httpMessage,
+                        HistoryReference.TYPE_SPIDER_AJAX,
+                        getResourceState(httpMessage));
+                return;
+            }
 
-        @Override
-        public boolean onHttpRequestSend(HttpMessage httpMessage) {
             ResourceState state = ResourceState.PROCESSED;
             final String uri = httpMessage.getRequestHeader().getURI().toString();
             if (allowedResourcesEnabled.stream()
@@ -363,11 +366,11 @@ public class SpiderThread implements Runnable {
             if (state != ResourceState.PROCESSED) {
                 setOutOfScopeResponse(httpMessage);
                 notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
-                return true;
+                ctx.overridden();
+                return;
             }
 
             httpMessage.setRequestingUser(target.getUser());
-            return false;
         }
 
         private void setOutOfScopeResponse(HttpMessage httpMessage) {
@@ -381,9 +384,11 @@ public class SpiderThread implements Runnable {
             httpMessage.setResponseBody(outOfScopeResponseBody.getBytes());
         }
 
-        @Override
-        public boolean onHttpResponseReceived(final HttpMessage httpMessage) {
-            return false;
+        private ResourceState getResourceState(HttpMessage httpMessage) {
+            if (!httpMessage.isResponseFromTargetHost()) {
+                return ResourceState.IO_ERROR;
+            }
+            return ResourceState.PROCESSED;
         }
     }
 
@@ -404,33 +409,6 @@ public class SpiderThread implements Runnable {
             notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
         } catch (Exception e) {
             logger.error(e);
-        }
-    }
-
-    private class SpiderProxyResponseListener implements ProxyListener {
-
-        @Override
-        public int getArrangeableListenerOrder() {
-            return 0;
-        }
-
-        @Override
-        public boolean onHttpRequestSend(HttpMessage httpMessage) {
-            return true;
-        }
-
-        @Override
-        public boolean onHttpResponseReceive(HttpMessage httpMessage) {
-            notifyMessage(
-                    httpMessage, HistoryReference.TYPE_SPIDER_AJAX, getResourceState(httpMessage));
-            return true;
-        }
-
-        private ResourceState getResourceState(HttpMessage httpMessage) {
-            if (!httpMessage.isResponseFromTargetHost()) {
-                return ResourceState.IO_ERROR;
-            }
-            return ResourceState.PROCESSED;
         }
     }
 

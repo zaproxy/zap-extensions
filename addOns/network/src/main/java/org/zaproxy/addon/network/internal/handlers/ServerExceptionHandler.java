@@ -24,7 +24,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
+import java.io.IOException;
 import javax.net.ssl.SSLHandshakeException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -74,21 +76,32 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        if (cause instanceof IOException) {
+            LOGGER.debug(cause, cause);
+            return;
+        }
+
         if (!(cause instanceof DecoderException)) {
-            LOGGER.error(cause);
+            LOGGER.error(cause, cause);
             return;
         }
 
         Throwable nestedCause = cause.getCause();
         if (nestedCause == null) {
-            LOGGER.error(cause);
+            LOGGER.error(cause, cause);
             return;
         }
 
         if (nestedCause instanceof SSLHandshakeException) {
-            LOGGER.warn(
-                    "Failed while establishing secure connection, cause: {}",
-                    cause.getCause().getMessage());
+            Level level = Level.WARN;
+            String causeMessage = nestedCause.getMessage();
+            if (causeMessage != null && causeMessage.contains("unknown_ca")) {
+                causeMessage = "the client does not trust ZAP's Root CA Certificate.";
+                level = Level.DEBUG;
+            }
+
+            LOGGER.log(
+                    level, "Failed while establishing secure connection, cause: {}", causeMessage);
             return;
         }
 
@@ -98,6 +111,6 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        LOGGER.error(nestedCause);
+        LOGGER.error(nestedCause, nestedCause);
     }
 }

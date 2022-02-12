@@ -4,10 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [13] - 2022-02-01
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Dependency updates.
 - When the automation Job is edited via UI Dialog then the status will be set to Not started
+
+### Fixed
+- Do not report "Unrecognised parameter" for valid parameters.
 
 ## [12] - 2021-11-29
 ### Changed
@@ -100,6 +106,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/soap-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/soap-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/soap-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/soap-v10

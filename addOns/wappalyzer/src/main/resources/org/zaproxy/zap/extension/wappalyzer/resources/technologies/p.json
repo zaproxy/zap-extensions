@@ -1,4 +1,22 @@
 {
+  "PCRecruiter": {
+    "cats": [
+      101
+    ],
+    "description": "PCRecruiter is an ATS/CRM hybrid SaaS solution for recruiting and sourcing professionals.",
+    "icon": "PCRecruiter.png",
+    "js": {
+      "pcrbaseurl": "\\.pcrecruiter\\.net/",
+      "pcrdialog": "",
+      "pcrframeoptions": ""
+    },
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://www.pcrecruiter.net"
+  },
   "PDF.js": {
     "cats": [
       19
@@ -377,6 +395,42 @@
     "scriptSrc": "partial\\.ly",
     "website": "https://partial.ly/"
   },
+  "Partnerize": {
+    "cats": [
+      71
+    ],
+    "description": "Partnerize is the only partnership management solution for marketers seeking high quality, scalable subsidies to primary channels.",
+    "dom": "a[href*='prf.hn/click'], img[src*='.prf.hn/']",
+    "icon": "Partnerize.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://prf.hn"
+  },
+  "Parttrap ONE": {
+    "cats": [
+      6
+    ],
+    "description": "Parttrap ONE is a complete solution including PIM, CMS, business optimization and ERP integration.",
+    "icon": "Parttrap.png",
+    "implies": [
+      "Handlebars",
+      "Microsoft ASP.NET",
+      "Bootstrap"
+    ],
+    "js": {
+      "PT.Analytics.addItem": "",
+      "PT.Sections.Checkout": "",
+      "PT.Translation.BasketIsEmpty": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "requires": "Microsoft ASP.NET",
+    "saas": true,
+    "website": "https://www.parttrap.com"
+  },
   "Partytown": {
     "cats": [
       92
@@ -441,7 +495,7 @@
       91
     ],
     "description": "Pay It Later collect payments in weekly instalments from you when you make a purchase online, so you can buy now and pay it later.",
-    "dom": "a[href='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']",
+    "dom": "a[href*='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']",
     "icon": "Pay It Later.png",
     "js": {
       "payitlater": ""
@@ -593,6 +647,21 @@
     "saas": true,
     "scriptSrc": "payl8r\\.com",
     "website": "https://payl8r.com/"
+  },
+  "Paylocity": {
+    "cats": [
+      101
+    ],
+    "description": "Paylocity is an American company which provides cloud-based payroll and human capital management software.",
+    "dom": "a[href*='recruiting\\.paylocity\\.com/recruiting/jobs/']",
+    "icon": "Paylocity.svg",
+    "pricing": [
+      "low",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.paylocity.com"
   },
   "Peek": {
     "cats": [
@@ -786,6 +855,21 @@
     "saas": true,
     "scriptSrc": "cdn\\.personaclick\\.com/v([\\d.]+)\\.js\\;version:\\1",
     "website": "https://www.personaclick.com"
+  },
+  "Personio": {
+    "cats": [
+      101
+    ],
+    "description": "Personio is the all-in-one HR software for small- and medium-sized companies with 10 to 2000 employees.",
+    "dom": "a[href*='.jobs.personio.']",
+    "icon": "Personio.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.cdn\\.personio\\.",
+    "website": "https://www.personio.com"
   },
   "Perzonalization": {
     "cats": [
@@ -1192,8 +1276,8 @@
       93
     ],
     "description": "PizzaNetz is an ordering system and shop system for pizzerias, Chinese restaurant and kebabs.",
-    "icon": "PizzaNetz.png",
     "dom": "form[name*='pizzanetz']",
+    "icon": "PizzaNetz.png",
     "pricing": [
       "low",
       "recurring"
@@ -1475,7 +1559,7 @@
     "cats": [
       19
     ],
-    "description": "Popper is an tolltip & popover positioning engine",
+    "description": "Popper is an tooltip and popover positioning engine.",
     "html": [
       "<script [^>]*src=\"[^\"]*/popper\\.js/([0-9.]+)\\;version:\\1"
     ],
@@ -1550,9 +1634,9 @@
       99
     ],
     "description": "PostNL (formerly TNT) is a mail, parcel and ecommerce corporation with operations in the Netherlands, Germany, Italy, Belgium, and the United Kingdom.",
+    "dom": "img[alt*='postnl' i], img[src*='postnl' i]",
     "icon": "PostNL.svg",
     "requiresCategory": 6,
-    "dom": "img[alt*='postnl' i], img[src*='postnl' i]",
     "text": [
       "\\bPostNL\\b"
     ],

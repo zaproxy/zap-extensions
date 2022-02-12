@@ -7,9 +7,9 @@
     <!-- index entries are merged (sorted) into core index -->
     <indexitem text="websocket" target="websocket.introduction" />
     <indexitem text="websocket api" target="websocket.api" />
-    <indexitem text="websocket scripts" target="websocket.script" />
+    <indexitem text="websocket scripts ( сценарии)" target="websocket.script" />
     <indexitem text="websocket pscans" target="websocket.pscanrules" />
-    <indexitem text="websocket tab" target="websocket.tab" />
-    <indexitem text="websocket options" target="websocket.options" />
-    <indexitem text="websocket session properties" target="websocket.sessionProperties" />
+    <indexitem text="websocket tab (вкладка)" target="websocket.tab" />
+    <indexitem text="websocket options (параметры)" target="websocket.options" />
+    <indexitem text="свойства сеанса веб-сокета " target="websocket.sessionProperties" />
 </index>

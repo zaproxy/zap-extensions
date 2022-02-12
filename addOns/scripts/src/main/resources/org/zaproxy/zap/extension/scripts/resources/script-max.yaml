@@ -1,0 +1,5 @@
+  - type: script
+    parameters:
+      action:                    # String: The executed action - available actions: run
+      type:                      # String: The type of the script - available script type for action run: standalone
+      name:                      # String: The name of the script

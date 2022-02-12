@@ -6,18 +6,18 @@ Image Location and Privacy Scanner
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Image Location and Privacy Scanner</H1>
-The following passive scan rule is included in this add-on:
+<H1>Местоположение изображения и сканер конфиденциальности</H1>
+В это дополнение включено следующее правило пассивного сканирования:
 
-<H2>Image Location and Privacy Scanner</H2>
-<p>Passively scans for GPS location and other privacy-related exposures in images during normal security assessments of websites. Image Location and Privacy Scanner (ILS) assists in situations where end users may post profile images and possibly give away their home location, e.g. a dating site or children's chatroom.</p>
-<p>More information on this topic, including a white paper based on a real-world site audit given as a presentation at the New Jersey chapter of the OWASP organization, can be found at https://www.veggiespam.com/ils/ .</p>    
-<p>This software finds the GPS information inside of Exif tags, IPTC codes, and proprietary camera codes. Then, the Image Location and Privacy Scanner flags the findings in the ZAP Alerts list as an information message. It would be up to the auditor to determine if location exposure is truly a security risk based on context.</p>
+<H2>Местоположение изображения и сканер конфиденциальности</H2>
+<p>Пассивно сканирует местоположение GPS и другие данные, связанные с конфиденциальностью, на изображениях во время обычной оценки безопасности веб-сайтов. Сканер местоположения изображения и конфиденциальности (ILS) помогает в ситуациях, когда конечные пользователи могут публиковать изображения профилей и, возможно, выдавать свое домашнее местоположение, например. сайт знакомств или детский чат.</p>
+<p>Дополнительную информацию по этой теме, в том числе информационный документ, основанный на реальном аудите сайта, представленном в виде презентации в отделении OWASP в Нью-Джерси, можно найти по адресу https://www.veggiespam.com/ils/.</p>    
+<p>Это программное обеспечение находит информацию GPS внутри тегов Exif, кодов IPTC и собственных кодов камер. Затем сканер местоположения изображения и конфиденциальности помечает результаты в списке предупреждений ZAP как информационное сообщение. Аудитор должен определить, действительно ли обнаружение местоположения представляет угрозу безопасности в зависимости от контекста.</p>
 
-<p>Some Notes:</p>
+<p>Некоторые примечания:</p>
 <ul>
-    <li>Before ZAP 2.7.x, you must manually enabled image scanning with: Tools → Options → Display → Process images in the HTTP requests/responses pane.</li>
-    <li>If you have images disabled in Global Exclude URL, then any passive image scanner, like ILS, will be unable to see the images and report on privacy issues.</li>
+    <li>До ZAP 2.7.x необходимо вручную включить сканирование изображений с помощью: Инструменты → Параметры → Показать → Обработать изображения на панели HTTP-запросов/ответов.</li>
+    <li>Если у вас отключены изображения в URL-адресе глобального исключения, то любой пассивный сканер изображений, такой как ILS, не сможет просматривать изображения и сообщать о проблемах с конфиденциальностью.</li>
 </ul>
 </BODY>
 </HTML>

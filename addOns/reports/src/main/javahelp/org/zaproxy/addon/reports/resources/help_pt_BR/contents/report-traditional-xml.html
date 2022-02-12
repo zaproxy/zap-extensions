@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Traditional XML Report</TITLE>
+</HEAD>
+<BODY>
+	<H1>Traditional XML Report</H1>
+
+	<H3>Sample</H3>
+
+	<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;OWASPZAPReport version="Dev Build" generated="Fri, 4 Feb 2022 17:42:18"&gt;
+    
+        &lt;site name="http://localhost:8080" host="localhost" port="8080" ssl="false"&gt;
+            &lt;alerts&gt;
+
+                    &lt;alertitem&gt;
+                        &lt;pluginid&gt;20012&lt;/pluginid&gt;
+                        &lt;alertRef&gt;20012&lt;/alertRef&gt;
+                        &lt;alert&gt;Anti-CSRF Tokens Check&lt;/alert&gt;
+                        &lt;name&gt;Anti-CSRF Tokens Check&lt;/name&gt;
+                        &lt;riskcode&gt;3&lt;/riskcode&gt;
+                        &lt;confidence&gt;2&lt;/confidence&gt;
+                        &lt;riskdesc&gt;High (Medium)&lt;/riskdesc&gt;
+                        &lt;confidencedesc&gt;Medium&lt;/confidencedesc&gt;
+                        &lt;desc&gt;&lt;p&gt;A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge...&lt;/desc&gt;
+                        &lt;instances&gt;
+
+                                &lt;instance&gt;
+                                    &lt;uri&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/uri&gt;
+                                    &lt;method&gt;GET&lt;/method&gt;
+                                    &lt;param&gt;&lt;/param&gt;
+                                    &lt;attack&gt;&lt;/attack&gt;
+                                    &lt;evidence&gt;&lt;form id=&quot;advanced&quot; name=&quot;advanced&quot; method=&quot;POST&quot; onsubmit=&quot;return validateForm(this);false;&quot;&gt;&lt;/evidence&gt;
+                                &lt;/instance&gt;
+
+                                &lt;instance&gt;
+                                    &lt;uri&gt;http://localhost:8080/bodgeit/advanced.jsp&lt;/uri&gt;
+                                    &lt;method&gt;GET&lt;/method&gt;
+                                    &lt;param&gt;&lt;/param&gt;
+                                    &lt;attack&gt;&lt;/attack&gt;
+                                    &lt;evidence&gt;&lt;form id=&quot;query&quot; name=&quot;advanced&quot; method=&quot;POST&quot;&gt;&lt;/evidence&gt;
+                                &lt;/instance&gt;
+
+                                &lt;instance&gt;
+                                    &lt;uri&gt;http://localhost:8080/bodgeit/basket.jsp&lt;/uri&gt;
+                                    &lt;method&gt;GET&lt;/method&gt;
+                                    &lt;param&gt;&lt;/param&gt;
+                                    &lt;attack&gt;&lt;/attack&gt;
+                                    &lt;evidence&gt;&lt;form action=&quot;basket.jsp&quot; method=&quot;post&quot;&gt;&lt;/evidence&gt;
+                                &lt;/instance&gt;
+
+
+</pre>
+
+</BODY>
+</HTML>
+
