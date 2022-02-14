@@ -4,15 +4,15 @@
 <TITLE>Traditional Markdown Report</TITLE>
 </HEAD>
 <BODY>
-	<H1>Traditional Markdown Report</H1>
+	<H1>Традиционный отчет уценки</H1>
 
-	<H3>Sample</H3>
+	<H3>Образец</H3>
 
 	<pre>
 
-# ZAP Scanning Report
+# Отчет о сканировании ZAP 
 
-## Summary of Alerts
+## Сводка предупреждений 
 
 | Risk Level | Number of Alerts |
 | --- | --- |
@@ -46,22 +46,22 @@
 | Storable and Cacheable Content | Informational | 64 |
 | User Controllable HTML Element Attribute (Potential XSS) | Informational | 32 |
 
-## Alert Detail
+## Сведения об оповещении 
 
-### [ Anti-CSRF Tokens Check ](https://www.zaproxy.org/docs/alerts/20012/)
+### [ Проверка токенов против CSRF  ](https://www.zaproxy.org/docs/alerts/20012/)
 
 ##### High (Medium)
 
-### Description
+### Описание
 
-A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functionality using predictable URL/form actions in a repeatable way. The nature of the attack is that CSRF exploits the trust that a web site has for a user. By contrast, cross-site scripting (XSS) exploits the trust that a user has for a web site. Like XSS, CSRF attacks are not necessarily cross-site, but they can be. Cross-site request forgery is also known as CSRF, XSRF, one-click attack, session riding, confused deputy, and sea surf.
+Подделка межсайтовых запросов — это атака, которая включает в себя принуждение жертвы к отправке HTTP-запроса в целевое место назначения без их ведома или намерения, чтобы выполнить действие от имени жертвы.  The underlying cause is application functionality using predictable URL/form actions in a repeatable way. Суть атаки заключается в том, что CSRF использует доверие веб-сайта к пользователю.  Напротив, межсайтовый скриптинг (XSS) использует доверие пользователя к веб-сайту.  Как и XSS, CSRF-атаки не обязательно являются межсайтовыми, но могут быть таковыми.  Подделка межсайтовых запросов также известна как CSRF, XSRF, атака в один клик, сессионная езда, запутанный заместитель и морской прибой. 
 
-CSRF attacks are effective in a number of situations, including:
-    * The victim has an active session on the target site.
-    * The victim is authenticated via HTTP auth on the target site.
-    * The victim is on the same local network as the target site.
+Атаки CSRF эффективны в ряде ситуаций, в том числе:
+     * Жертва имеет активный сеанс на целевом сайте. 
+    * Жертва аутентифицируется через HTTP-аутентификацию на целевом сайте. 
+    * Жертва находится в той же локальной сети, что и целевой сайт. 
 
-CSRF has primarily been used to perform an action against a target site using the victim's privileges, but recent techniques have been discovered to disclose information by gaining access to the response. The risk of information disclosure is dramatically increased when the target site is vulnerable to XSS, because XSS can be used as a platform for CSRF, allowing the attack to operate within the bounds of the same-origin policy.
+CSRF в основном использовался для выполнения действий против целевого сайта с использованием привилегий жертвы, но недавно были обнаружены методы раскрытия информации путем получения доступа к ответу.  Риск раскрытия информации резко возрастает, когда целевой сайт уязвим для XSS, потому что XSS может использоваться как платформа для CSRF, позволяя атаке действовать в рамках политики того же происхождения. 
 
 * URL: http://localhost:8080/bodgeit/advanced.jsp
   * Method: `GET`
