@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuItemImportLogs extends ZapMenuItem {
@@ -40,7 +41,7 @@ public class MenuItemImportLogs extends ZapMenuItem {
                 e -> {
                     View view = View.getSingleton();
                     JFrame main = view.getMainFrame();
-                    JFileChooser fc = new JFileChooser();
+                    JFileChooser fc = new ReadableFileChooser();
                     fc.setAcceptAllFileFilterUsed(false);
                     FileFilter txtFilter =
                             new FileNameExtensionFilter(

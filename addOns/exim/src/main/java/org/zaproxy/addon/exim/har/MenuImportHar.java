@@ -24,6 +24,7 @@ import javax.swing.JFileChooser;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuImportHar extends ZapMenuItem {
@@ -41,7 +42,7 @@ public class MenuImportHar extends ZapMenuItem {
         this.addActionListener(
                 e -> {
                     JFileChooser chooser =
-                            new JFileChooser(
+                            new ReadableFileChooser(
                                     Model.getSingleton().getOptionsParam().getUserDirectory());
                     int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
                     if (rc == JFileChooser.APPROVE_OPTION) {

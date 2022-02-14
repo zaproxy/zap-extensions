@@ -15,6 +15,13 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.8.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
@@ -26,7 +33,10 @@ crowdin {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
 }
