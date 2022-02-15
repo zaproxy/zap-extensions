@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [36] - 2022-02-15
 ### Added
 - Out-of-band XSS Scan Rule.
 - Exponential Entity Expansion (Billion Laughs Attack) Scan Rule.
@@ -278,6 +278,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[36]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v33
