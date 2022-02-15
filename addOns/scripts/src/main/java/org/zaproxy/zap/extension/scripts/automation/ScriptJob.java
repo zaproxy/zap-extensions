@@ -31,6 +31,8 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.extension.scripts.automation.actions.AddScriptAction;
+import org.zaproxy.zap.extension.scripts.automation.actions.RemoveScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
@@ -40,9 +42,13 @@ public class ScriptJob extends AutomationJob {
     public static final String JOB_NAME = "script";
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_SCRIPT_NAME = "scriptName";
-    public static final Map<String, Function<ScriptJobParameters, ScriptAction>> ACTIONS =
+    protected static final Map<String, Function<ScriptJobParameters, ScriptAction>> ACTIONS =
             new HashMap<String, Function<ScriptJobParameters, ScriptAction>>() {
+                private static final long serialVersionUID = 1L;
+
                 {
+                    put(AddScriptAction.NAME.toLowerCase(), AddScriptAction::new);
+                    put(RemoveScriptAction.NAME.toLowerCase(), RemoveScriptAction::new);
                     put(RunScriptAction.NAME.toLowerCase(), RunScriptAction::new);
                 }
             };
@@ -68,12 +74,14 @@ public class ScriptJob extends AutomationJob {
 
         ScriptAction scriptAction = createScriptAction(progress);
         if (scriptAction != null) {
-            scriptAction.verifyParameters(progress);
+            scriptAction.verifyParameters(this.getName(), progress);
         }
     }
 
     @Override
-    public void applyParameters(AutomationProgress progress) {}
+    public void applyParameters(AutomationProgress progress) {
+        // Doesnt need to do anything
+    }
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
@@ -81,8 +89,10 @@ public class ScriptJob extends AutomationJob {
         if (scriptAction != null) {
             progress.info(
                     Constant.messages.getString(
-                            "scripts.automation.info.startAction", scriptAction.getName()));
-            scriptAction.runJob(env, progress);
+                            "scripts.automation.info.startAction",
+                            this.getName(),
+                            scriptAction.getName()));
+            scriptAction.runJob(this.getName(), env, progress);
         }
     }
 
@@ -102,7 +112,7 @@ public class ScriptJob extends AutomationJob {
 
     @Override
     public Order getOrder() {
-        return Order.REPORT;
+        return Order.CONFIGS;
     }
 
     @Override
@@ -143,31 +153,34 @@ public class ScriptJob extends AutomationJob {
         return ExtensionScriptAutomation.getResourceAsString(this.getType() + "-max.yaml");
     }
 
-    private ScriptAction createScriptAction(AutomationProgress progress) {
-        return createScriptAction(
-                getData().getParameters().getAction(), getData().getParameters(), progress);
+    public ScriptAction createScriptAction(AutomationProgress progress) {
+        return createScriptAction(getData().getParameters(), progress);
     }
 
-    private static ScriptAction createScriptAction(
-            String action, ScriptJobParameters parameters, AutomationProgress progress) {
-        if (action == null) {
-            progress.error(
-                    Constant.messages.getString(
-                            "scripts.automation.error.actionNull", validActionsAsString()));
+    public static ScriptAction createScriptAction(
+            ScriptJobParameters parameters, AutomationProgress progress) {
+        if (parameters.getAction() == null) {
+            if (progress != null) {
+                progress.error(
+                        Constant.messages.getString(
+                                "scripts.automation.error.actionNull", validActionsAsString()));
+            }
             return null;
         }
 
-        action = action.toLowerCase();
+        String action = parameters.getAction().toLowerCase();
         Function<ScriptJobParameters, ScriptAction> scriptActionFactory = ACTIONS.get(action);
         if (scriptActionFactory != null) {
             return scriptActionFactory.apply(parameters);
         }
 
-        progress.error(
-                Constant.messages.getString(
-                        "scripts.automation.error.actionNotDefined",
-                        action,
-                        validActionsAsString()));
+        if (progress != null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "scripts.automation.error.actionNotDefined",
+                            action,
+                            validActionsAsString()));
+        }
 
         return null;
     }
@@ -182,7 +195,7 @@ public class ScriptJob extends AutomationJob {
 
     public static List<String> validScriptTypesForAction(String action) {
         ScriptAction scriptAction =
-                createScriptAction(action, new ScriptJobParameters(), new AutomationProgress());
+                createScriptAction(new ScriptJobParameters(action), new AutomationProgress());
         if (scriptAction != null) {
             return scriptAction.getSupportedScriptTypes();
         }

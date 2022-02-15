@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Automation ScriptJob - Run a standalone script
+- Automation ScriptJob - Add or remove any script and run a standalone script
 
 ### Changed
 - Update minimum ZAP version to 2.11.1.

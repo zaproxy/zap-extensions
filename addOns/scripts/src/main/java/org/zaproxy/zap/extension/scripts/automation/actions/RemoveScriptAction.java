@@ -26,20 +26,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
 
-public class RunScriptAction extends ScriptAction {
+public class RemoveScriptAction extends ScriptAction {
 
-    public static final String NAME = "run";
-    private static final List<String> SCRIPT_TYPES = Arrays.asList(ExtensionScript.TYPE_STANDALONE);
+    public static final String NAME = "remove";
     private static final List<String> DISABLED_FIELDS =
             Arrays.asList(ScriptJobDialog.SCRIPT_ENGINE_PARAM, ScriptJobDialog.SCRIPT_FILE_PARAM);
 
-    public RunScriptAction(ScriptJobParameters parameters) {
+    public RemoveScriptAction(ScriptJobParameters parameters) {
         super(parameters);
     }
 
@@ -51,7 +48,7 @@ public class RunScriptAction extends ScriptAction {
     @Override
     public String getSummary() {
         return Constant.messages.getString(
-                "scripts.automation.dialog.summary.run", parameters.getName());
+                "scripts.automation.dialog.summary.remove", parameters.getName());
     }
 
     @Override
@@ -59,7 +56,6 @@ public class RunScriptAction extends ScriptAction {
             String jobName, ScriptJobParameters params, AutomationProgress progress) {
         List<String> list = new ArrayList<>();
         String issue;
-        String scriptType = params.getType();
 
         if (StringUtils.isEmpty(params.getName())) {
             issue =
@@ -71,27 +67,6 @@ public class RunScriptAction extends ScriptAction {
             }
         }
 
-        if (scriptType == null) {
-            issue =
-                    Constant.messages.getString(
-                            "scripts.automation.error.scriptTypeIsNull", jobName);
-            list.add(issue);
-            if (progress != null) {
-                progress.error(issue);
-            }
-        } else if (!this.isScriptTypeSupported()) {
-            issue =
-                    Constant.messages.getString(
-                            "scripts.automation.error.scriptTypeNotSupported",
-                            jobName,
-                            scriptType,
-                            getName(),
-                            String.join(", ", getSupportedScriptTypes()));
-            list.add(issue);
-            if (progress != null) {
-                progress.error(issue);
-            }
-        }
         // Note dont warn/error if script not currently in ZAP - it might be added by another job
         if (!StringUtils.isEmpty(params.getFile())) {
             issue =
@@ -108,7 +83,7 @@ public class RunScriptAction extends ScriptAction {
 
     @Override
     public List<String> getSupportedScriptTypes() {
-        return SCRIPT_TYPES;
+        return getAllScriptTypes();
     }
 
     @Override
@@ -118,31 +93,15 @@ public class RunScriptAction extends ScriptAction {
 
     @Override
     public void runJob(String jobName, AutomationEnvironment env, AutomationProgress progress) {
-        ScriptJobOutputListener scriptJobOutputListener =
-                new ScriptJobOutputListener(progress, parameters.getName());
-        try {
-            extScript.addScriptOutputListener(scriptJobOutputListener);
-            ScriptWrapper script = findScript();
-            if (script == null) {
-                progress.error(
-                        Constant.messages.getString(
-                                "scripts.automation.error.scriptNameNotFound",
-                                jobName,
-                                parameters.getName()));
-                return;
-            }
-            extScript.invokeScript(script);
-            scriptJobOutputListener.flush();
-        } catch (Exception e) {
-            LOGGER.error(e);
+        ScriptWrapper script = findScript();
+        if (script == null) {
             progress.error(
                     Constant.messages.getString(
-                            "scripts.automation.error.scriptError",
+                            "scripts.automation.error.scriptNameNotFound",
                             jobName,
-                            parameters.getName(),
-                            e.getMessage()));
-        } finally {
-            extScript.removeScriptOutputListener(scriptJobOutputListener);
+                            parameters.getName()));
+            return;
         }
+        extScript.removeScript(script);
     }
 }

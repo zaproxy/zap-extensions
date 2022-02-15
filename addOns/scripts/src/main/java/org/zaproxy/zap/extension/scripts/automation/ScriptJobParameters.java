@@ -24,7 +24,24 @@ import org.zaproxy.addon.automation.AutomationData;
 public class ScriptJobParameters extends AutomationData {
     private String action;
     private String type;
+    private String engine;
     private String name;
+    private String file;
+
+    public ScriptJobParameters() {}
+
+    public ScriptJobParameters(String action) {
+        this.action = action;
+    }
+
+    public ScriptJobParameters(
+            String action, String type, String engine, String name, String file) {
+        this.action = action;
+        this.type = type;
+        this.engine = engine;
+        this.name = name;
+        this.file = file;
+    }
 
     public String getAction() {
         return action;
@@ -42,11 +59,27 @@ public class ScriptJobParameters extends AutomationData {
         this.type = type;
     }
 
+    public String getEngine() {
+        return engine;
+    }
+
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 }
