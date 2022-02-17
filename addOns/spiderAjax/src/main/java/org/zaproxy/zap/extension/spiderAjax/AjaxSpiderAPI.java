@@ -468,7 +468,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         return (extension.isSpiderRunning() && spiderThread != null);
     }
 
-    private void stopSpider() {
+    void stopSpider() {
         if (isSpiderRunning()) {
             spiderThread.stopSpider();
             spiderThread = null;

@@ -79,11 +79,7 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
     }
 
     @Override
-    public void unload() {
-        super.unload();
-
-        PluginFactory.unloadedPlugin(scanner);
-
+    public void stop() {
         Server proxy = DomXssScanRule.proxy;
         if (proxy != null) {
             try {
@@ -92,6 +88,13 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
                 LOGGER.debug("An error occurred while stopping the proxy.", e);
             }
         }
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+
+        PluginFactory.unloadedPlugin(scanner);
     }
 
     @Override

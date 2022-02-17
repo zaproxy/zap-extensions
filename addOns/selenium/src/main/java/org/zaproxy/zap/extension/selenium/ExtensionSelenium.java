@@ -112,10 +112,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private List<ProvidedBrowserUI> providedBrowserUIList;
 
     /**
-     * A list containing all of the proxied WebDrivers opened, so that they can be closed when ZAP
-     * is closed.
+     * A list containing all of the WebDrivers opened, so that they can be closed when ZAP is
+     * closed.
      */
-    private Map<String, List<WebDriver>> proxiedWebDrivers = new HashMap<>();
+    private static List<WebDriver> webDrivers = new ArrayList<>();
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<>();
@@ -237,24 +237,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     @Override
-    public void stop() {
-        super.stop();
-        this.proxiedWebDrivers.values().forEach(ExtensionSelenium::quitWebDrivers);
-        this.proxiedWebDrivers.clear();
-    }
-
-    private static void quitWebDrivers(List<WebDriver> drivers) {
-        if (drivers == null || drivers.isEmpty()) {
-            return;
-        }
-
-        for (WebDriver wd : drivers) {
+    public void destroy() {
+        for (WebDriver wd : webDrivers) {
             try {
                 wd.quit();
             } catch (Exception ex) {
                 // Ignore - the user might well have already closed the browser
             }
         }
+        webDrivers.clear();
     }
 
     /**
@@ -336,7 +327,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public void removeWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
         validateWebDriverProvider(webDriverProvider);
 
-        quitWebDrivers(proxiedWebDrivers.remove(webDriverProvider.getId()));
         webDriverProviders.remove(webDriverProvider.getId());
         providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
         buildProvidedBrowserUIList();
@@ -714,13 +704,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                         Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort(),
                         enableExtensions);
 
-        if (webDriver != null) {
-            proxiedWebDrivers
-                    .computeIfAbsent(providedBrowserId, k -> new ArrayList<>())
-                    .add(webDriver);
-            if (url != null) {
-                webDriver.get(url);
-            }
+        if (webDriver != null && url != null) {
+            webDriver.get(url);
         }
         return webDriver;
     }
@@ -865,8 +850,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(
-                requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
+        WebDriver wd =
+                getWebDriverImpl(
+                        requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
+        webDrivers.add(wd);
+        return wd;
     }
 
     public static WebDriver getWebDriver(
@@ -887,7 +875,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
+        WebDriver wd =
+                getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
+        webDrivers.add(wd);
+        return wd;
     }
 
     private static void setCommonOptions(
