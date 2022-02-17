@@ -129,8 +129,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
-            getSpiderPanel().stopScan();
+        if (hasView()) {
             getSpiderPanel().unload();
 
             SpiderEventPublisher.unregisterPublisher();
@@ -143,6 +142,14 @@ public class ExtensionAjax extends ExtensionAdaptor {
         }
 
         super.unload();
+    }
+
+    @Override
+    public void stop() {
+        if (hasView()) {
+            stopScan();
+        }
+        ajaxSpiderApi.stopSpider();
     }
 
     @Override
