@@ -65,6 +65,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * An {@code Extension} that provides {@code WebDriver} implementations for several {@code
@@ -854,6 +855,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 getWebDriverImpl(
                         requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
         webDrivers.add(wd);
+        updateStats(browser);
         return wd;
     }
 
@@ -878,7 +880,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         WebDriver wd =
                 getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
         webDrivers.add(wd);
+        updateStats(browser);
         return wd;
+    }
+
+    private static void updateStats(Browser browser) {
+        Stats.incCounter("stats.selenium.launch." + browser.getId());
     }
 
     private static void setCommonOptions(
