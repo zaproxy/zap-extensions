@@ -45,7 +45,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastRequest;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 
 /* Unit test for {@link CallbackProxyListener}. */
 class CallbackProxyListenerUnitTest extends TestUtils {
@@ -138,6 +140,18 @@ class CallbackProxyListenerUnitTest extends TestUtils {
         // Then
         verify(ctx, times(0)).overridden();
         verify(callbackService, times(0)).handleOastRequest(oastRequest);
+    }
+
+    @Test
+    void shouldIncrementStatInteractionsCorrectly() throws Exception {
+        // Given
+        given(ctx.isFromClient()).willReturn(true);
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        listener.handleMessage(ctx, message);
+        // Then
+        assertThat(stats.getStat("stats.oast.callback.interactions"), is(1L));
     }
 
     private void verifyServiceAndFactory(String handler) throws Exception {

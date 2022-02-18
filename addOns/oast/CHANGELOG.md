@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- The following two statistics for each OAST service:
+  - `stats.oast.<service>.payloadsGenerated`
+  - `stats.oast.<service>.interactions`
+
 ### Changed
 - Use Network add-on to serve callback requests.
 - Maintenance changes.

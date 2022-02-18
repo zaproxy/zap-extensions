@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
 import java.security.spec.MGF1ParameterSpec;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.Cipher;
@@ -41,8 +42,10 @@ import net.sf.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 
 class InteractshServiceUnitTests extends TestUtils {
 
@@ -74,6 +77,21 @@ class InteractshServiceUnitTests extends TestUtils {
         assertThat(request.containsKey("public-key"), is(true));
         assertThat(request.containsKey("secret-key"), is(true));
         assertThat(request.containsKey("correlation-id"), is(true));
+    }
+
+    @Test
+    void shouldIncrementStatPayloadsGeneratedCorrectly() throws Exception {
+        // Given
+        InteractshParam param = new InteractshParam(serverUrl, 60, "");
+        InteractshService service = new InteractshService(param);
+        StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
+        nano.addHandler(handler);
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        service.getNewPayload();
+        // Then
+        assertThat(stats.getStat("stats.oast.interactsh.payloadsGenerated"), is(1L));
     }
 
     @Test
@@ -115,6 +133,32 @@ class InteractshServiceUnitTests extends TestUtils {
         // Given
         InteractshParam param = new InteractshParam(serverUrl, 60, "");
         InteractshService service = new InteractshService(param);
+        List<InteractshEvent> interactions = setUpMockRegisterAndPollEndpoints(service);
+        // When
+        List<InteractshEvent> decryptedEvents = service.getInteractions();
+        // Then
+        assertThat(decryptedEvents.size(), is(1));
+        assertThat(decryptedEvents.equals(interactions), is(true));
+    }
+
+    @Test
+    void shouldIncrementStatInteractionsCorrectly() throws Exception {
+        // Given
+        InteractshParam param = new InteractshParam(serverUrl, 60, "");
+        InteractshService service = new InteractshService(param);
+        setUpMockRegisterAndPollEndpoints(service);
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        List<InteractshEvent> decryptedEvents = service.getInteractions();
+        // Then
+        assertThat(
+                stats.getStat("stats.oast.interactsh.interactions"),
+                is((long) decryptedEvents.size()));
+    }
+
+    private List<InteractshEvent> setUpMockRegisterAndPollEndpoints(InteractshService service)
+            throws Exception {
         nano.addHandler(new StaticInteractshServerHandler("/register", ""));
         service.register();
 
@@ -161,13 +205,7 @@ class InteractshServiceUnitTests extends TestUtils {
         pollResponseJson.put("aes_key", Base64.getEncoder().encodeToString(aesKey));
         String pollResponse = pollResponseJson.toString();
         nano.addHandler(new StaticInteractshServerHandler("/poll", pollResponse));
-
-        // When
-        List<InteractshEvent> decryptedEvents = service.getInteractions();
-
-        // Then
-        assertThat(decryptedEvents.size(), is(1));
-        assertThat(decryptedEvents.get(0).equals(new InteractshEvent(eventJson)), is(true));
+        return Collections.singletonList(new InteractshEvent(eventJson));
     }
 
     private static class StaticInteractshServerHandler extends NanoServerHandler {

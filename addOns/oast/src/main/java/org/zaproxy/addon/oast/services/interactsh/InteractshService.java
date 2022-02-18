@@ -67,6 +67,7 @@ import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.utils.Stats;
 
 public class InteractshService extends OastService implements OptionsChangedListener {
 
@@ -295,6 +296,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         if (!isRegistered) {
             register();
         }
+        Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
         return RandomStringUtils.randomAlphanumeric(1).toLowerCase(Locale.ROOT)
                 + '.'
                 + correlationId
@@ -389,6 +391,7 @@ public class InteractshService extends OastService implements OptionsChangedList
                             event.getRemoteAddress());
                 }
             }
+            Stats.incCounter("stats.oast.interactsh.interactions", result.size());
             return result;
         } catch (Exception e) {
             LOGGER.error("Error during interactsh poll: {}", e.getMessage(), e);
