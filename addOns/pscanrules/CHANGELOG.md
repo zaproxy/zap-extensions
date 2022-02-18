@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Moved the detail information in Content Security Policy Rule to the otherInfo field and added alertRef ids.
 - Address false positive condition for Timestamp Disclosure scan rule when values are percentages (Issue 7057).
 - Update Cache-control scan rule name, description, and solution to make it more clear that there are cases in which caching is reasonable. Reduced risk to Info (Issue 6462).
 - Maintenance changes.
