@@ -31,8 +31,10 @@ import net.sf.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 
 class BoastServerUnitTests extends TestUtils {
 
@@ -65,6 +67,19 @@ class BoastServerUnitTests extends TestUtils {
     }
 
     @Test
+    void shouldIncrementStatPayloadsGeneratedCorrectly() throws Exception {
+        // Given
+        StaticBoastServerHandler handler = new StaticBoastServerHandler();
+        nano.addHandler(handler);
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        new BoastServer(boastUrl);
+        // Then
+        assertThat(stats.getStat("stats.oast.boast.payloadsGenerated"), is(1L));
+    }
+
+    @Test
     void shouldReturnBoastEventsOnPolling() throws Exception {
         // Given
         StaticBoastServerHandler handler = new StaticBoastServerHandler();
@@ -82,6 +97,20 @@ class BoastServerUnitTests extends TestUtils {
 
         // Then
         assertThat(events, is(expectedEvents));
+    }
+
+    @Test
+    void shouldIncrementStatInteractionsCorrectly() throws Exception {
+        // Given
+        StaticBoastServerHandler handler = new StaticBoastServerHandler();
+        nano.addHandler(handler);
+        BoastServer boastServer = new BoastServer(boastUrl);
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        List<BoastEvent> events = boastServer.poll();
+        // Then
+        assertThat(stats.getStat("stats.oast.boast.interactions"), is((long) events.size()));
     }
 
     @Test

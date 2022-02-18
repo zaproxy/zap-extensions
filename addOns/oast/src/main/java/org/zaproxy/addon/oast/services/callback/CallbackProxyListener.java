@@ -32,6 +32,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.oast.OastRequest;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 class CallbackProxyListener implements HttpMessageHandler {
@@ -60,6 +61,7 @@ class CallbackProxyListener implements HttpMessageHandler {
         ctx.overridden();
 
         try {
+            Stats.incCounter("stats.oast.callback.interactions");
             msg.setTimeSentMillis(System.currentTimeMillis());
             String path = msg.getRequestHeader().getURI().getPath();
             LOGGER.debug(

@@ -45,9 +45,7 @@ public class OastRequest extends DefaultHistoryReferencesTableEntry {
             throws DatabaseException, HttpMalformedHeaderException {
         HistoryReference historyReference =
                 new HistoryReference(
-                        Model.getSingleton().getSession(),
-                        ExtensionOast.HISTORY_TYPE_OAST,
-                        httpMessage);
+                        Model.getSingleton().getSession(), HistoryReference.TYPE_OAST, httpMessage);
         historyReference.addTag(source);
         historyReference.addTag(handler);
         return create(historyReference);

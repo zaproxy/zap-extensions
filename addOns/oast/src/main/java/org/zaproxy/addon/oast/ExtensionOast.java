@@ -66,7 +66,6 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
-    static final int HISTORY_TYPE_OAST = HistoryReference.TYPE_OAST;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
@@ -162,7 +161,8 @@ public class ExtensionOast extends ExtensionAdaptor {
                     .getDb()
                     .getTableHistory()
                     .deleteHistoryType(
-                            this.getModel().getSession().getSessionId(), HISTORY_TYPE_OAST);
+                            this.getModel().getSession().getSessionId(),
+                            HistoryReference.TYPE_OAST);
         } catch (DatabaseException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -348,7 +348,8 @@ public class ExtensionOast extends ExtensionAdaptor {
                         getModel()
                                 .getDb()
                                 .getTableHistory()
-                                .getHistoryIdsOfHistType(session.getSessionId(), HISTORY_TYPE_OAST);
+                                .getHistoryIdsOfHistType(
+                                        session.getSessionId(), HistoryReference.TYPE_OAST);
 
                 for (int historyId : historyIds) {
                     HistoryReference historyReference = new HistoryReference(historyId);

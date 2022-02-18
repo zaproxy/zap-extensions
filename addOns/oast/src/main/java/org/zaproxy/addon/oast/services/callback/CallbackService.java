@@ -32,6 +32,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.zap.utils.Stats;
 
 public class CallbackService extends OastService implements OptionsChangedListener {
 
@@ -136,6 +137,7 @@ public class CallbackService extends OastService implements OptionsChangedListen
         }
         String uuid = UUID.randomUUID().toString();
         handlers.put(uuid, handler);
+        Stats.incCounter("stats.oast.callback.payloadsGenerated");
         return getCallbackAddress() + uuid;
     }
 

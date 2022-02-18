@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.oast.services.callback;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,7 +44,9 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.addon.oast.OastRequestHandler;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link CallbackService}. */
@@ -160,6 +164,18 @@ class CallbackServiceUnitTest extends TestUtils {
         httpSender.sendAndReceive(serverRequest);
         // Then
         verify(oastRequestHandler, times(2)).handle(oastRequest);
+    }
+
+    @Test
+    void shouldIncrementStatPayloadsGeneratedCorrectly() throws Exception {
+        // Given
+        callbackService.startService();
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        // When
+        callbackService.getNewPayload();
+        // Then
+        assertThat(stats.getStat("stats.oast.callback.payloadsGenerated"), is(1L));
     }
 
     private HttpMessage createServerRequest(String path) throws Exception {

@@ -38,6 +38,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.zap.utils.Stats;
 
 public class BoastServer {
 
@@ -65,6 +66,7 @@ public class BoastServer {
         JSONObject result = JSONObject.fromObject(boastMsg.getResponseBody().toString());
         id = result.getString("id");
         canary = result.getString("canary");
+        Stats.incCounter("stats.oast.boast.payloadsGenerated");
     }
 
     /** @return new BOAST events found on polling */
@@ -81,6 +83,7 @@ public class BoastServer {
                     eventIds.add(event.getString("id"));
                 }
             }
+            Stats.incCounter("stats.oast.boast.interactions", newBoastEvents.size());
             return newBoastEvents;
         } catch (IOException e) {
             LOGGER.warn(
