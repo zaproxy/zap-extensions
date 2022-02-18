@@ -8,6 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - Use Network add-on to serve callback requests.
+- Maintenance changes.
 
 ## [0.9.0] - 2022-01-31
 ### Added
