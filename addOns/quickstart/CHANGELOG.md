@@ -4,9 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
 ### Changed
 - Spider checkboxes in Automated Scan will be disabled when scan is running. (Issue 7072)
+
+### Fixed
+- Accept any 2xx result code instead of just 200.
 
 ## [33] - 2021-12-13
 ### Changed
