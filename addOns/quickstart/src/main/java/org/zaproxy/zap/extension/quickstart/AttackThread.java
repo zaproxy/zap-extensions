@@ -234,7 +234,7 @@ public class AttackThread extends Thread {
             final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
             getHttpSender().sendAndReceive(msg, true);
 
-            if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+            if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
                 extension.notifyProgress(
                         Progress.failed,
                         Constant.messages.getString(
