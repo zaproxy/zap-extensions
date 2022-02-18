@@ -155,7 +155,9 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     public void deleteAllCallbacks() {
         try {
-            ThreadUtils.invokeAndWaitHandled(() -> getOastPanel().clearOastRequests());
+            if (hasView()) {
+                ThreadUtils.invokeAndWaitHandled(() -> getOastPanel().clearOastRequests());
+            }
             this.getModel()
                     .getDb()
                     .getTableHistory()
@@ -322,11 +324,13 @@ public class ExtensionOast extends ExtensionAdaptor {
     private class OastSessionChangedListener implements SessionChangedListener {
         @Override
         public void sessionChanged(Session session) {
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> {
-                        getOastPanel().clearOastRequests();
-                        addCallbacksFromDatabaseIntoCallbackPanel(session);
-                    });
+            if (session != null && hasView()) {
+                ThreadUtils.invokeAndWaitHandled(
+                        () -> {
+                            getOastPanel().clearOastRequests();
+                            addCallbacksFromDatabaseIntoCallbackPanel(session);
+                        });
+            }
             getOastServices().values().forEach(OastService::sessionChanged);
             getOastServices().values().forEach(OastService::clearOastRequestHandlers);
             alertCache.clear();
@@ -339,10 +343,6 @@ public class ExtensionOast extends ExtensionAdaptor {
         }
 
         private void addCallbacksFromDatabaseIntoCallbackPanel(Session session) {
-            if (session == null) {
-                return;
-            }
-
             try {
                 List<Integer> historyIds =
                         getModel()
