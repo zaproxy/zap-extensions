@@ -68,12 +68,12 @@ public class ImportExportApi extends ApiImplementor {
         switch (name) {
             case ACTION_IMPORT_HAR:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = HarImporter.importHarFile(file);
-                return handleFileImportResponse(success, file);
+                HarImporter harImporter = new HarImporter(file);
+                return handleFileImportResponse(harImporter.isSuccess(), file);
             case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = UrlsImporter.importUrlFile(file);
-                return handleFileImportResponse(success, file);
+                UrlsImporter importer = new UrlsImporter(file);
+                return handleFileImportResponse(importer.isSuccess(), file);
             case ACTION_IMPORT_ZAP_LOGS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
                 success = LogsImporter.processInput(file, LogsImporter.LogType.ZAP);

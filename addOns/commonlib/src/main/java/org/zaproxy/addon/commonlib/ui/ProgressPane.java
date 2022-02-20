@@ -45,10 +45,12 @@ public class ProgressPane extends JPanel {
     private boolean completed;
 
     public ProgressPane() {
+        this("");
+    }
+
+    public ProgressPane(String resource) {
         super(new GridBagLayout());
-        this.setBorder(
-                BorderFactory.createTitledBorder(
-                        Constant.messages.getString("commonlib.progress.pane.title")));
+        this.setBorder(BorderFactory.createTitledBorder(getTitle(resource)));
 
         progressStatus = new JLabel();
 
@@ -76,6 +78,13 @@ public class ProgressPane extends JPanel {
 
         setTotalTasks(100);
         setCurrentTask("");
+    }
+
+    private String getTitle(String resource) {
+        if (resource == null || resource.isEmpty()) {
+            return Constant.messages.getString("commonlib.progress.pane.title");
+        }
+        return Constant.messages.getString("commonlib.progress.pane.title.extended", resource);
     }
 
     /**
