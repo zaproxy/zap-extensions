@@ -29,6 +29,7 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 
@@ -174,6 +175,10 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     private static boolean isConnectionClose(HttpMessage msg) {
+        if (HttpRequestHeader.CONNECT.equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            return false;
+        }
+
         if (msg.getResponseHeader().isEmpty()) {
             return true;
         }

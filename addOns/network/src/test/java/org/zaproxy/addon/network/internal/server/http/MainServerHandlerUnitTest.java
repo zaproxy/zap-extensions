@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
@@ -279,6 +281,20 @@ class MainServerHandlerUnitTest {
         assertThat(exceptionsThrown, hasSize(0));
         handler1.assertCalled(1);
         handler2.assertCalled(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1.0", "1.1"})
+    void shouldNotCloseChannelForConnectRequest(String httpVersion) {
+        // Given
+        String request = "CONNECT example.org:443 HTTP/" + httpVersion + "\r\n\r\n";
+        handler1.addAction(0, (ctx, msg) -> msg.setResponseHeader("HTTP/1.1 200"));
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertChannelActive(true);
+        assertResponse("HTTP/1.1 200\r\n\r\n");
     }
 
     @Test
