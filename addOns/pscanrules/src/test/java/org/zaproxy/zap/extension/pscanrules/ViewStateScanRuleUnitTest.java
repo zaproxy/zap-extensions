@@ -117,6 +117,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
                 alertsRaised.get(0).getName(), equalTo("Viewstate without MAC Signature (Unsure)"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-4"));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -133,6 +134,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
                 alertsRaised.get(0).getName(), equalTo("Viewstate without MAC Signature (Sure)"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-5"));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -149,6 +151,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(1).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(1).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10032-3"));
         assertSame(msg, alertsRaised.get(1).getMessage());
     }
 
@@ -176,6 +179,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[Itest@test.com]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-2"));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -199,6 +203,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[127.0.0.1]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-1"));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
@@ -217,6 +222,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(1).getName(), equalTo("Split Viewstate in Use"));
         assertThat(alertsRaised.get(1).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(1).getCweId(), equalTo(642));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10032-6"));
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
