@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Alert refs for the alerts which use them (10020 and 10032).
+
 ### Changed
 - Address false positive condition for Timestamp Disclosure scan rule when values are percentages (Issue 7057).
 - Update Cache-control scan rule name, description, and solution to make it more clear that there are cases in which caching is reasonable. Reduced risk to Info (Issue 6462).

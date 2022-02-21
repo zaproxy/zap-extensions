@@ -49,10 +49,20 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner {
     boolean includedInCsp;
 
     private enum VulnType {
-        XFO_MISSING,
-        XFO_MULTIPLE_HEADERS,
-        XFO_META,
-        XFO_MALFORMED_SETTING
+        XFO_MISSING(1),
+        XFO_MULTIPLE_HEADERS(2),
+        XFO_META(3),
+        XFO_MALFORMED_SETTING(4);
+
+        private final int ref;
+
+        private VulnType(int ref) {
+            this.ref = ref;
+        }
+
+        public int getRef() {
+            return this.ref;
+        }
     }
 
     @Override
@@ -134,7 +144,8 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner {
                 .setReference(getAlertElement(currentVT, "refs"))
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setWascId(getWascId())
+                .setAlertRef(PLUGIN_ID + "-" + currentVT.getRef());
     }
 
     @Override

@@ -211,6 +211,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-1"));
     }
 
     @Test
@@ -237,6 +238,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-1"));
     }
 
     @Test
@@ -307,6 +309,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-1"));
     }
 
     @Test
@@ -378,6 +381,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-2"));
     }
 
     @Test
@@ -410,6 +414,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-1"));
     }
 
     @Test
@@ -439,6 +444,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-3"));
     }
 
     @Test
@@ -465,6 +471,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("STUFF"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-4"));
     }
 
     @Test
@@ -491,6 +498,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-1"));
     }
 
     @Test
@@ -564,6 +572,7 @@ class AntiClickjackingScanRuleUnitTest extends PassiveScannerTest<AntiClickjacki
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("BAD"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10020-4"));
     }
 
     @Test
