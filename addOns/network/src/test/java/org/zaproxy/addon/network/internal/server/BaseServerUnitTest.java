@@ -371,6 +371,7 @@ class BaseServerUnitTest extends TestUtils {
     }
 
     @Test
+    @Timeout(5)
     void shouldStopBeforeStartServer() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -379,6 +380,7 @@ class BaseServerUnitTest extends TestUtils {
         // When
         server.start(port);
         // Then
+        client.waitChannelsInactive();
         assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
         assertThat(server.isStarted(), is(equalTo(true)));
     }
