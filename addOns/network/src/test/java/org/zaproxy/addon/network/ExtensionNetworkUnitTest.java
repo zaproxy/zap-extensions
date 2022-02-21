@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -603,8 +602,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.start();
         // Then
-        assertThat(logEvents, hasSize(1));
-        assertThat(logEvents.get(0), startsWith("ZAP's Root CA certificate has expired"));
+        assertThat(logEvents, hasItem(startsWith("ZAP's Root CA certificate has expired")));
     }
 
     @Test
