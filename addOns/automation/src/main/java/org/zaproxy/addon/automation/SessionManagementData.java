@@ -81,14 +81,14 @@ public class SessionManagementData extends AutomationData {
                                 JobUtils.getPrivateField(
                                         contextMethod, SCRIPT_SESSION_MANAGEMENT_SCRIPT_FIELD);
                 if (wrapper != null) {
-                    setScript(wrapper.getFile().getAbsolutePath());
-                    setScriptEngine(wrapper.getEngine().getEngineName());
                     Object paramValues =
                             JobUtils.getPrivateField(
                                     contextMethod, SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD);
                     if (paramValues instanceof Map<?, ?>) {
                         setParameters((Map<String, String>) paramValues);
                     }
+                    getParameters().put(METHOD_SCRIPT, wrapper.getFile().getAbsolutePath());
+                    getParameters().put(PARAM_SCRIPT_ENGINE, wrapper.getFile().getAbsolutePath());
                 }
             }
         }
@@ -107,6 +107,20 @@ public class SessionManagementData extends AutomationData {
                 progress.error(
                         Constant.messages.getString(
                                 "automation.error.env.sessionmgmt.type.bad", data));
+            } else if (METHOD_SCRIPT.equalsIgnoreCase(method)) {
+                if (!getParameters().containsKey(PARAM_SCRIPT)) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.sessionmgmt.script.missing"));
+                } else {
+                    File f = new File(getParameters().get(PARAM_SCRIPT));
+                    if (!f.exists() || !f.canRead()) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        f.getAbsolutePath()));
+                    }
+                }
             }
         }
     }
@@ -123,6 +137,13 @@ public class SessionManagementData extends AutomationData {
                 context.setSessionManagementMethod(new HttpAuthSessionManagementMethod());
                 break;
             case SessionManagementData.METHOD_SCRIPT:
+                String scriptName = getParameters().get(PARAM_SCRIPT);
+                if (scriptName == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.sessionmgmt.script.missing"));
+                    break;
+                }
                 File f = new File(getParameters().get(PARAM_SCRIPT));
                 if (!f.exists() || !f.canRead()) {
                     progress.error(
@@ -202,13 +223,15 @@ public class SessionManagementData extends AutomationData {
         this.method = method;
     }
 
+    @Deprecated
     public void setScript(String script) {
-        // Required for backwards compatibility
+        // Required for backwards compatibility - called via JobUtils.applyParamsToObject(..)
         this.parameters.put(PARAM_SCRIPT, script);
     }
 
+    @Deprecated
     public void setScriptEngine(String scriptEngine) {
-        // Required for backwards compatibility
+        // Required for backwards compatibility - called via JobUtils.applyParamsToObject(..)
         this.parameters.put(PARAM_SCRIPT_ENGINE, scriptEngine);
     }
 
@@ -216,8 +239,14 @@ public class SessionManagementData extends AutomationData {
         return parameters;
     }
 
+    /**
+     * For backwards compatibility purposes this method adds to the specified parameters rather than
+     * replacing the existing ones. To remove the existing parameters use getParameters().clear()
+     *
+     * @param parameters the parameters to be added
+     */
     public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        this.parameters.putAll(parameters);
     }
 
     private ScriptBasedSessionManagementMethod getScriptBasedSessionManagementMethod(

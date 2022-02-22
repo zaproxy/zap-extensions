@@ -28,6 +28,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
@@ -238,8 +240,9 @@ class ContextWrapperUnitTest {
     }
 
     @Test
-    void shouldParseScriptSessionMgmtInOldFormat() {
+    void shouldParseScriptSessionMgmtInOldFormat() throws IOException {
         // Given
+        File f = File.createTempFile("sessmgmt-oldformat", ".js");
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -248,7 +251,9 @@ class ContextWrapperUnitTest {
                         + "      - http://www.example.com\n"
                         + "      sessionManagement:\n"
                         + "        method: script\n"
-                        + "        script: example_script\n"
+                        + "        script: "
+                        + f.getAbsolutePath()
+                        + "\n"
                         + "        scriptEngine: example_engine\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
@@ -272,8 +277,9 @@ class ContextWrapperUnitTest {
                         .getData()
                         .getSessionManagement()
                         .getParameters()
-                        .get(SessionManagementData.PARAM_SCRIPT),
-                is("example_script"));
+                        .get(SessionManagementData.PARAM_SCRIPT)
+                        .contains("/sessmgmt-oldformat"),
+                is(true));
         assertThat(
                 env.getContextWrappers()
                         .get(0)
@@ -285,8 +291,9 @@ class ContextWrapperUnitTest {
     }
 
     @Test
-    void shouldParseScriptSessionMgmtInNewFormat() {
+    void shouldParseScriptSessionMgmtInNewFormat() throws IOException {
         // Given
+        File f = File.createTempFile("sessmgmt-newformat", ".js");
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -296,7 +303,9 @@ class ContextWrapperUnitTest {
                         + "      sessionManagement:\n"
                         + "        method: script\n"
                         + "        parameters:\n"
-                        + "          script: example_script\n"
+                        + "          script: "
+                        + f.getAbsolutePath()
+                        + "\n"
                         + "          scriptEngine: example_engine\n"
                         + "          param: value\n";
         Yaml yaml = new Yaml();
@@ -321,8 +330,9 @@ class ContextWrapperUnitTest {
                         .getData()
                         .getSessionManagement()
                         .getParameters()
-                        .get(SessionManagementData.PARAM_SCRIPT),
-                is("example_script"));
+                        .get(SessionManagementData.PARAM_SCRIPT)
+                        .contains("/sessmgmt-newformat"),
+                is(true));
         assertThat(
                 env.getContextWrappers()
                         .get(0)
@@ -372,6 +382,36 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is("bad"));
+    }
+
+    @Test
+    void shouldFailOnSessionMgmtNoScript() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      sessionManagement:\n"
+                        + "        method: script\n"
+                        + "        parameters:\n"
+                        + "          scriptEngine: example_engine\n"
+                        + "          param: value\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!automation.error.env.sessionmgmt.script.missing!")));
     }
 
     @Test
