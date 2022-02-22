@@ -88,7 +88,7 @@ public class SessionManagementData extends AutomationData {
                         setParameters((Map<String, String>) paramValues);
                     }
                     getParameters().put(METHOD_SCRIPT, wrapper.getFile().getAbsolutePath());
-                    getParameters().put(PARAM_SCRIPT_ENGINE, wrapper.getFile().getAbsolutePath());
+                    getParameters().put(PARAM_SCRIPT_ENGINE, wrapper.getEngineName());
                 }
             }
         }
