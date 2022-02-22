@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Issue when adding or removing add-ons via the UI (Issue 7075)
+- Issue when creating a script session management with parameters from an existing context
 
 ## [0.12.0] - 2022-02-01
 ### Added
