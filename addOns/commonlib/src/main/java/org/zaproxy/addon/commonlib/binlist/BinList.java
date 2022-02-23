@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 public final class BinList {
 
     private static final Logger LOGGER = LogManager.getLogger(BinList.class);
-    private static final String BINLIST = "binlist-data.csv";
+    private static final String BINLIST_FILE = "binlist-data.csv";
 
     private static BinList singleton;
 
@@ -65,7 +65,7 @@ public final class BinList {
     private static Trie<String, BinRecord> createTrie() {
         Trie<String, BinRecord> trie = new PatriciaTrie<>();
         Iterable<CSVRecord> records;
-        try (InputStream in = BinList.class.getResourceAsStream(BINLIST);
+        try (InputStream in = BinList.class.getResourceAsStream(BINLIST_FILE);
                 BOMInputStream bomStream = new BOMInputStream(in);
                 InputStreamReader inStream =
                         new InputStreamReader(bomStream, StandardCharsets.UTF_8)) {
@@ -78,18 +78,18 @@ public final class BinList {
                             .parse(inStream)
                             .getRecords();
         } catch (NullPointerException | IOException e) {
-            LOGGER.warn("Exception while loading: {}", BINLIST, e);
+            LOGGER.warn("Exception while loading: {}", BINLIST_FILE, e);
             return trie;
         }
 
-        for (CSVRecord record : records) {
+        for (CSVRecord rec : records) {
             trie.put(
-                    record.get("bin"),
+                    rec.get("bin"),
                     new BinRecord(
-                            record.get("bin"),
-                            record.get("brand"),
-                            record.get("category"),
-                            record.get("issuer")));
+                            rec.get("bin"),
+                            rec.get("brand"),
+                            rec.get("category"),
+                            rec.get("issuer")));
         }
         return trie;
     }

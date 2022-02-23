@@ -85,10 +85,7 @@ public class ProgressPane extends JPanel {
      * @param text the text to be displayed indicating the item currently being processed.
      */
     public void setCurrentTask(String text) {
-        EventQueue.invokeLater(
-                () -> {
-                    currentProgress.setText(text);
-                });
+        EventQueue.invokeLater(() -> currentProgress.setText(text));
     }
 
     /**

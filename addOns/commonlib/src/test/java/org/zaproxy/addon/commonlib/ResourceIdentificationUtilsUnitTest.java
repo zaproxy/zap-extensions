@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit tests for {@link ResourceIdentificationUtils}. */
-public class ResourceIdentificationUtilsUnitTest extends TestUtils {
+class ResourceIdentificationUtilsUnitTest extends TestUtils {
 
     private static final String URI = "https://www.example.com";
     private HttpMessage msg;

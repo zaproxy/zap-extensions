@@ -169,11 +169,7 @@ public final class CookieUtils {
         }
 
         String cookieName = nameValuePair.substring(0, nameValuePairIdx).trim();
-        if (cookieName.isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return !cookieName.isEmpty();
     }
 
     private static void validateParameterNotNull(Object parameter, String name) {
