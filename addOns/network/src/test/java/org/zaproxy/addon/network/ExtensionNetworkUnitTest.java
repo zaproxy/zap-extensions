@@ -95,6 +95,8 @@ import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
+import org.zaproxy.addon.network.internal.server.AliasChecker;
+import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
@@ -200,6 +202,68 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ArgumentCaptor<LegacyProxiesApi> argument = ArgumentCaptor.forClass(LegacyProxiesApi.class);
         verify(extensionHook, times(2)).addApiImplementor(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(LegacyProxiesApi.class)));
+    }
+
+    @Test
+    void shouldNotCreateAliasCheckerOnHookIfNotHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getAliasChecker(), is(nullValue()));
+    }
+
+    @Test
+    void shouldCreateAliasCheckerOnHookIfHandlingLocalServers() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(extension.getAliasChecker(), is(notNullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"http://zap/", "https://zap/", "http://zap:8090/", "https://zap:1234/"})
+    void shouldBeAliasIfZapDomain(String requestTarget) throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(extensionHook);
+        AliasChecker aliasChecker = extension.getAliasChecker();
+        HttpRequestHeader requestHeader =
+                new HttpRequestHeader("GET " + requestTarget + " HTTP/1.1");
+        // When
+        boolean alias = aliasChecker.isAlias(requestHeader);
+        // Then
+        assertThat(alias, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldCheckAliasDefinedInOptions(boolean expectedAlias) throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(extensionHook);
+        Alias optionAlias = mock(Alias.class);
+        HttpRequestHeader requestHeader = new HttpRequestHeader("GET http://not.zap/ HTTP/1.1");
+        given(optionAlias.test(requestHeader)).willReturn(expectedAlias);
+        extension.getLocalServersOptions().load(new ZapXmlConfiguration());
+        extension.getLocalServersOptions().addAlias(optionAlias);
+        AliasChecker aliasChecker = extension.getAliasChecker();
+        // When
+        boolean alias = aliasChecker.isAlias(requestHeader);
+        // Then
+        assertThat(alias, is(equalTo(expectedAlias)));
+        verify(optionAlias).test(requestHeader);
     }
 
     @Test
