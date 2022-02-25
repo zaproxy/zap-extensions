@@ -117,19 +117,17 @@ public class HarImporter {
         }
     }
 
-    public boolean importHarFile(File file) {
+    private void importHarFile(File file) {
         try {
             processMessages(file);
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
             success = true;
-            return success;
         } catch (IOException e) {
             LOG.warn(
                     Constant.messages.getString(
                             ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath()));
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
             success = false;
-            return success;
         }
     }
 
@@ -189,7 +187,7 @@ public class HarImporter {
         if (progressListener != null) {
             progressListener.setTasksDone(count);
             progressListener.setCurrentTask(
-                    Constant.messages.getString("exim.har.progress.currentimport", line));
+                    Constant.messages.getString("exim.progress.currentimport", line));
         }
     }
 

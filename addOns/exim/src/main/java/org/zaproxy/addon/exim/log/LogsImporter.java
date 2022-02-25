@@ -47,12 +47,13 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.Stats;
 
-public final class LogsImporter {
+public class LogsImporter {
 
     private static final Logger LOG = LogManager.getLogger(LogsImporter.class);
     private static final String STATS_ZAP_FILE = "import.zap.file";
@@ -63,6 +64,9 @@ public final class LogsImporter {
     private static final String STATS_MODSEC2_FILE_ERROR = "import.modsec2.file.errors";
     private static final String STATS_MODSEC2_FILE_MSG = "import.modsec2.file.message";
     private static final String STATS_MODSEC2_FILE_MSG_ERROR = "import.modsec2.file.message.errors";
+
+    private ProgressPaneListener progressListener;
+    private boolean success;
 
     /** Logging options for the import */
     public enum LogType {
@@ -81,11 +85,16 @@ public final class LogsImporter {
         }
     }
 
-    private LogsImporter() {
-        // Utility class
+    public LogsImporter(File file, LogType type) {
+        this(file, type, null);
     }
 
-    private static void readModSecLogsFromFile(File file) {
+    public LogsImporter(File file, LogType type, ProgressPaneListener listener) {
+        this.progressListener = listener;
+        processInput(file, type);
+    }
+
+    private void readModSecLogsFromFile(File file) {
         try {
             processModSecLogs(new ModSecurity2AuditReader(file));
         } catch (Exception e) {
@@ -96,7 +105,7 @@ public final class LogsImporter {
         }
     }
 
-    private static void processModSecLogs(ModSecurity2AuditReader reader) throws IOException {
+    private void processModSecLogs(ModSecurity2AuditReader reader) throws IOException {
 
         while (reader.bytesRead() < reader.bytesAvailable()) {
             try {
@@ -111,6 +120,7 @@ public final class LogsImporter {
                                     new HttpResponseBody());
                     httpMessage.setResponseFromTargetHost(true);
                     createHistoryReferenceAndAddToTree(httpMessage, LogType.MOD_SECURITY_2);
+                    updateProgress(httpMessage.getRequestHeader().getURI().toString());
                 }
                 break;
             } catch (Exception e) {
@@ -138,7 +148,7 @@ public final class LogsImporter {
      *     the API
      * @param logChoice type of logfile being imported
      */
-    public static boolean processInput(File newFile, LogType logChoice) {
+    public boolean processInput(File newFile, LogType logChoice) {
         if (logChoice == LogType.ZAP) {
             List<String> parsedText = readFile(newFile);
             try {
@@ -146,6 +156,7 @@ public final class LogsImporter {
                 ExtensionExim.updateOutput("exim.output.start", newFile.toPath().toString());
                 processZapLogs(parsedText);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
+                completed();
             } catch (HttpMalformedHeaderException e) {
                 LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_ERROR);
@@ -159,6 +170,7 @@ public final class LogsImporter {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE);
                 readModSecLogsFromFile(newFile);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
+                completed();
             } catch (Exception e) {
                 LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_ERROR);
@@ -187,7 +199,7 @@ public final class LogsImporter {
         return Collections.emptyList();
     }
 
-    private static void processZapLogs(List<String> parsedRequestAndResponse)
+    private void processZapLogs(List<String> parsedRequestAndResponse)
             throws HttpMalformedHeaderException {
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
         Pattern requestP =
@@ -252,6 +264,7 @@ public final class LogsImporter {
                                 tempResponseBody);
                 httpMessage.setResponseFromTargetHost(true);
                 createHistoryReferenceAndAddToTree(httpMessage, LogType.ZAP);
+                updateProgress(httpMessage.getRequestHeader().getURI().toString());
             }
         }
     }
@@ -275,6 +288,23 @@ public final class LogsImporter {
             } else {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG_ERROR);
             }
+        }
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    private void updateProgress(String line) {
+        if (progressListener != null) {
+            progressListener.setCurrentTask(
+                    Constant.messages.getString("exim.progress.currentimport", line));
+        }
+    }
+
+    private void completed() {
+        if (progressListener != null) {
+            progressListener.completed();
         }
     }
 }

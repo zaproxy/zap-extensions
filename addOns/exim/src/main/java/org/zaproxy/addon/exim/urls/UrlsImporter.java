@@ -156,7 +156,7 @@ public class UrlsImporter {
         if (progressListener != null) {
             progressListener.setTasksDone(count);
             progressListener.setCurrentTask(
-                    Constant.messages.getString("exim.importurls.progress.currentimport", line));
+                    Constant.messages.getString("exim.progress.currentimport", line));
         }
     }
 
