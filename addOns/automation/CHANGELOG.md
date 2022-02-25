@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.13.0] - 2022-02-25
 ### Fixed
 - Issue when adding or removing add-ons via the UI (Issue 7075)
 - Issue when creating a script session management with parameters from an existing context
@@ -134,6 +134,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.11.0
 [0.10.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.10.1
