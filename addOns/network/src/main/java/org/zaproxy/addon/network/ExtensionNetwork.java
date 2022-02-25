@@ -101,6 +101,7 @@ import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
@@ -170,6 +171,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean isHandleLocalServers() {
         return handleLocalServers;
+    }
+
+    AliasChecker getAliasChecker() {
+        return aliasChecker;
     }
 
     @Override
@@ -417,9 +422,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                                             .anyMatch(e -> e.test(requestHeader)));
 
             aliasChecker =
-                    requestHeader ->
-                            localServersOptions.getAliases().stream()
-                                    .anyMatch(e -> e.test(requestHeader));
+                    requestHeader -> {
+                        if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
+                            return true;
+                        }
+
+                        return localServersOptions.getAliases().stream()
+                                .anyMatch(e -> e.test(requestHeader));
+                    };
 
             extensionHook.addApiImplementor(new LegacyProxiesApi(this));
         }
