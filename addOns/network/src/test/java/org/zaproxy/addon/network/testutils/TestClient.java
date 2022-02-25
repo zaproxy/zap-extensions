@@ -72,11 +72,11 @@ public class TestClient implements Closeable {
     }
 
     /**
-     * Gets the count of active channels.
+     * Gets the count of channels.
      *
-     * @return the count of active channels.
+     * @return the count of channels.
      */
-    public int getActiveChannelsCount() {
+    public int getChannelsCount() {
         return allChannels.size();
     }
 
@@ -124,12 +124,12 @@ public class TestClient implements Closeable {
     }
 
     /**
-     * Waits until all channels are inactive.
+     * Waits until all channels are closed.
      *
-     * @throws InterruptedException if interrupted while waiting for the channels to be inactive.
+     * @throws InterruptedException if interrupted while waiting for the channels to be closed.
      */
-    public void waitChannelsInactive() throws InterruptedException {
-        while (allChannels.stream().anyMatch(Channel::isActive)) {
+    public void waitChannelsClosed() throws InterruptedException {
+        while (!allChannels.isEmpty()) {
             Thread.sleep(150);
         }
     }

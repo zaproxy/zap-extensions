@@ -376,12 +376,12 @@ class BaseServerUnitTest extends TestUtils {
         // Given
         int port = server.start(Server.ANY_PORT);
         client.connect(port, "");
-        assertThat(client.getActiveChannelsCount(), is(equalTo(1)));
+        assertThat(client.getChannelsCount(), is(equalTo(1)));
         // When
         server.start(port);
         // Then
-        client.waitChannelsInactive();
-        assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        client.waitChannelsClosed();
+        assertThat(client.getChannelsCount(), is(equalTo(0)));
         assertThat(server.isStarted(), is(equalTo(true)));
     }
 
@@ -401,8 +401,8 @@ class BaseServerUnitTest extends TestUtils {
         // Then
         assertThrows(IOException.class, () -> client.send(port, "Message A"));
         assertThat(messagesReceived, contains(message1, message2, message3));
-        client.waitChannelsInactive();
-        assertThat(client.getActiveChannelsCount(), is(equalTo(0)));
+        client.waitChannelsClosed();
+        assertThat(client.getChannelsCount(), is(equalTo(0)));
         assertThat(server.isStarted(), is(equalTo(false)));
     }
 
