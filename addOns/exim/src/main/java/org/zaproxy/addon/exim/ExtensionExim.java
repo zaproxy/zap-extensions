@@ -19,10 +19,17 @@
  */
 package org.zaproxy.addon.exim;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 import org.zaproxy.addon.exim.log.MenuItemImportLogs;
@@ -33,9 +40,16 @@ public class ExtensionExim extends ExtensionAdaptor {
     public static final String STATS_PREFIX = "stats.exim.";
     public static final String EXIM_OUTPUT_ERROR = "exim.output.error";
     private static final String NAME = "ExtensionExim";
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
 
     public ExtensionExim() {
         super(NAME);
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     @Override
@@ -75,5 +89,12 @@ public class ExtensionExim extends ExtensionAdaptor {
             sb.append(Constant.messages.getString(messageKey, filePath)).append('\n');
             View.getSingleton().getOutputPanel().append(sb.toString());
         }
+    }
+
+    public static ProgressPanel getProgressPanel() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getProgressPanel();
     }
 }

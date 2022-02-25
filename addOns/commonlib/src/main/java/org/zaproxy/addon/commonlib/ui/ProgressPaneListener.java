@@ -25,7 +25,7 @@ package org.zaproxy.addon.commonlib.ui;
  *
  * @since 1.8.0
  */
-public abstract class ProgressPaneListener {
+public class ProgressPaneListener {
 
     private final ProgressPane progressPane;
     private int tasksDone;
@@ -35,7 +35,7 @@ public abstract class ProgressPaneListener {
      *
      * @param progressPane the pane the listener pertains to.
      */
-    protected ProgressPaneListener(ProgressPane progressPane) {
+    public ProgressPaneListener(ProgressPane progressPane) {
         this.progressPane = progressPane;
     }
 
@@ -62,7 +62,22 @@ public abstract class ProgressPaneListener {
      *
      * @param tasksDone the number of tasks which have been processed.
      */
-    protected void setTasksDone(int tasksDone) {
+    public void setTasksDone(int tasksDone) {
+        getProgressPane().setProcessedTasks(tasksDone);
         this.tasksDone = tasksDone;
+    }
+
+    /**
+     * Sets the description of the task currently being processed.
+     *
+     * @param task the description of the task currently being processed.
+     */
+    public void setCurrentTask(String task) {
+        progressPane.setCurrentTask(task);
+    }
+
+    /** Sets the completed state of the {@code ProgressPane}. */
+    public void completed() {
+        progressPane.completed();
     }
 }

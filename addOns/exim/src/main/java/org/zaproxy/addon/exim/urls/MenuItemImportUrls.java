@@ -20,16 +20,27 @@
 package org.zaproxy.addon.exim.urls;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.stream.Stream;
 import javax.swing.JFileChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuItemImportUrls extends ZapMenuItem {
 
     private static final long serialVersionUID = 2617077109056192411L;
+    private static final Logger LOG = LogManager.getLogger(MenuItemImportUrls.class);
     private static final String THREAD_PREFIX = "ZAP-Exim-Import-Urls-";
 
     private int threadId = 1;
@@ -48,10 +59,33 @@ public class MenuItemImportUrls extends ZapMenuItem {
                     if (rc == JFileChooser.APPROVE_OPTION) {
 
                         new Thread(
-                                        () -> UrlsImporter.importUrlFile(chooser.getSelectedFile()),
+                                        () -> {
+                                            File file = chooser.getSelectedFile();
+                                            ProgressPane currentImportPane =
+                                                    new ProgressPane(file.getAbsolutePath());
+                                            currentImportPane.setTotalTasks(getLineCount(file));
+                                            ExtensionExim.getProgressPanel()
+                                                    .addProgressPane(currentImportPane);
+                                            new UrlsImporter(
+                                                    file,
+                                                    new ProgressPaneListener(currentImportPane));
+                                        },
                                         THREAD_PREFIX + threadId++)
                                 .start();
                     }
                 });
+    }
+
+    private static int getLineCount(File file) {
+        int lineCount = 0;
+        try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
+            lineCount =
+                    (int)
+                            stream.filter(line -> !line.startsWith("#") && line.trim().length() > 0)
+                                    .count();
+        } catch (IOException e) {
+            LOG.warn("Couldn't count lines in: {}", file.getAbsoluteFile());
+        }
+        return lineCount;
     }
 }

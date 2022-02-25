@@ -37,11 +37,9 @@ public class ProgressListener extends ProgressPaneListener implements RequesterL
         if (!HttpStatusCode.isRedirection(message.getResponseHeader().getStatusCode())) {
             setTasksDone(getTasksDone() + 1);
         }
-        getProgressPane().setProcessedTasks(getTasksDone());
-        getProgressPane()
-                .setCurrentTask(
-                        Constant.messages.getString(
-                                "openapi.progress.importpane.currentimport",
-                                message.getRequestHeader().getURI().toString()));
+        setCurrentTask(
+                Constant.messages.getString(
+                        "openapi.progress.importpane.currentimport",
+                        message.getRequestHeader().getURI().toString()));
     }
 }

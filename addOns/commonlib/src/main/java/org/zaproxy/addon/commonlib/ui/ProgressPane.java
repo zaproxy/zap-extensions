@@ -43,17 +43,50 @@ public class ProgressPane extends JPanel {
     private final JProgressBar progressBar;
     private final JLabel currentProgress;
     private boolean completed;
+    private boolean indeterminant;
 
+    /**
+     * Constructs a progress pane with default title (no resource indication) which includes a
+     * determinant progress bar.
+     */
     public ProgressPane() {
+        this("");
+    }
+
+    /**
+     * Constructs a progress pane with an extended title including the identified resource (ex: a
+     * URL or file system path) which includes a determinant progress bar.
+     *
+     * @param resource a string representing the location or source of the resource being processed
+     *     (ex: a URL or file system path).
+     */
+    public ProgressPane(String resource) {
+        this(resource, false);
+    }
+
+    /**
+     * Constructs a progress pane with an extended title including the identified resource (ex: a
+     * URL or file system path) and indeterminant status indicated.
+     *
+     * @param resource a string representing the location or source of the resource being processed
+     *     (ex: a URL or file system path).
+     * @param indeterminant a {@code boolean} indicating whether or not the associated progress bar
+     *     should be indeterminant (true) or not (false);
+     */
+    public ProgressPane(String resource, boolean indeterminant) {
         super(new GridBagLayout());
-        this.setBorder(
-                BorderFactory.createTitledBorder(
-                        Constant.messages.getString("commonlib.progress.pane.title")));
+        this.indeterminant = indeterminant;
+        this.setBorder(BorderFactory.createTitledBorder(getTitle(resource)));
 
         progressStatus = new JLabel();
 
         progressBar = new JProgressBar();
         progressBar.setStringPainted(true);
+        progressBar.setIndeterminate(indeterminant);
+        if (indeterminant) {
+            progressBar.setString(
+                    Constant.messages.getString("commonlib.progress.panel.status.inprogress"));
+        }
 
         currentProgress = new JLabel();
 
@@ -62,7 +95,9 @@ public class ProgressPane extends JPanel {
         c.gridy = 0;
         c.weightx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        add(progressStatus, c);
+        if (!indeterminant) {
+            add(progressStatus, c);
+        }
 
         c.gridy++;
         c.ipady = 5;
@@ -76,6 +111,13 @@ public class ProgressPane extends JPanel {
 
         setTotalTasks(100);
         setCurrentTask("");
+    }
+
+    private String getTitle(String resource) {
+        if (resource == null || resource.isEmpty()) {
+            return Constant.messages.getString("commonlib.progress.pane.title");
+        }
+        return Constant.messages.getString("commonlib.progress.pane.title.extended", resource);
     }
 
     /**
@@ -127,11 +169,17 @@ public class ProgressPane extends JPanel {
         return completed;
     }
 
-    /** Sets that the process as having been completed. */
+    /** Sets the process as having been completed. */
     public void completed() {
         EventQueue.invokeLater(
                 () -> {
                     completed = true;
+                    if (indeterminant) {
+                        progressBar.setString(
+                                Constant.messages.getString("commonlib.progress.pane.completed"));
+                        progressBar.setIndeterminate(false);
+                        progressBar.setValue(100);
+                    }
                     currentProgress.setText(
                             Constant.messages.getString("commonlib.progress.pane.completed"));
                 });

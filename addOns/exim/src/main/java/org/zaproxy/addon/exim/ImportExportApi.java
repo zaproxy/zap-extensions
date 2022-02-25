@@ -63,25 +63,25 @@ public class ImportExportApi extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         LOG.debug("handleApiAction {} {}", name, params);
 
-        boolean success;
         File file;
         switch (name) {
             case ACTION_IMPORT_HAR:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = HarImporter.importHarFile(file);
-                return handleFileImportResponse(success, file);
+                HarImporter harImporter = new HarImporter(file);
+                return handleFileImportResponse(harImporter.isSuccess(), file);
             case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = UrlsImporter.importUrlFile(file);
-                return handleFileImportResponse(success, file);
+                UrlsImporter importer = new UrlsImporter(file);
+                return handleFileImportResponse(importer.isSuccess(), file);
             case ACTION_IMPORT_ZAP_LOGS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = LogsImporter.processInput(file, LogsImporter.LogType.ZAP);
-                return handleFileImportResponse(success, file);
+                LogsImporter zapImporter = new LogsImporter(file, LogsImporter.LogType.ZAP);
+                return handleFileImportResponse(zapImporter.isSuccess(), file);
             case ACTION_IMPORT_MODSEC2_LOGS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
-                success = LogsImporter.processInput(file, LogsImporter.LogType.MOD_SECURITY_2);
-                return handleFileImportResponse(success, file);
+                LogsImporter logsImporter =
+                        new LogsImporter(file, LogsImporter.LogType.MOD_SECURITY_2);
+                return handleFileImportResponse(logsImporter.isSuccess(), file);
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }

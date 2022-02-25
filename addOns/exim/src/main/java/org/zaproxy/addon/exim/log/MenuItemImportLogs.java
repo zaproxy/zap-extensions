@@ -27,7 +27,10 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuItemImportLogs extends ZapMenuItem {
@@ -79,7 +82,13 @@ public class MenuItemImportLogs extends ZapMenuItem {
                         int openChoice = fc.showOpenDialog(main);
                         if (openChoice == JFileChooser.APPROVE_OPTION) {
                             File newFile = fc.getSelectedFile();
-                            LogsImporter.processInput(newFile, logChoice);
+                            ProgressPane currentImportPane =
+                                    new ProgressPane(newFile.getAbsolutePath(), true);
+                            ExtensionExim.getProgressPanel().addProgressPane(currentImportPane);
+                            new LogsImporter(
+                                    newFile,
+                                    logChoice,
+                                    new ProgressPaneListener(currentImportPane));
                         }
                     }
                 });
