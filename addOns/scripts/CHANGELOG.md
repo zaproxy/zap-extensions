@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [30] - 2022-02-25
 ### Added
 - Automation ScriptJob - Add or remove any script and run a standalone script
