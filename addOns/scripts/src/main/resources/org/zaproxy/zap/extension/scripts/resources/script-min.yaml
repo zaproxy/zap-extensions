@@ -1,5 +1,7 @@
   - type: script
     parameters:
-      action:                    # String: The executed action - available actions: run
-      type:                      # String: The type of the script - available script type for action run: standalone
-      name:                      # String: The name of the script
+      action:                    # String: The executed action - available actions: add, remove, run
+      type:                      # String: The type of the script
+      engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
+      name:                      # String: The name of the script, defaults to the file name
+      file:                      # String: The full file path, must be readable

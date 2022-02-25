@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -34,8 +35,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
@@ -43,7 +47,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -55,17 +61,21 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-public class ScriptJobUnitTest extends TestUtils {
+class ScriptJobUnitTest extends TestUtils {
 
     private static ExtensionLoader extensionLoader;
     private static MockedStatic<CommandLine> mockedCmdLine;
+    private static final String TEST_JS_ENGINE = "TestJsEngine";
     private ExtensionScript extScript;
     private AutomationEnvironment env;
     private AutomationProgress progress;
+    private ScriptEngineWrapper engineWrapper;
 
     @BeforeAll
     static void setUpAll() {
@@ -85,6 +95,7 @@ public class ScriptJobUnitTest extends TestUtils {
     @BeforeEach
     void setUpEach() {
         extScript = mock(ExtensionScript.class);
+        engineWrapper = mock(ScriptEngineWrapper.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extScript);
         progress = new AutomationProgress();
         env = new AutomationEnvironment(progress);
@@ -101,6 +112,7 @@ public class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.actionNull!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
@@ -116,6 +128,7 @@ public class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.actionNull!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
@@ -131,13 +144,14 @@ public class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.actionNotDefined!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
     void shouldFailToRunIfScriptTypeIsNull() {
         // Given
         ScriptJob job = new ScriptJob();
-        String yamlStr = String.join("\n", "parameters:", "  action: RuN");
+        String yamlStr = String.join("\n", "parameters:", "  name: test", "  action: RuN");
         setJobData(job, yamlStr);
 
         // When
@@ -146,15 +160,21 @@ public class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptTypeIsNull!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "-", "UNKNOWN"})
-    void shouldFailToRunIfScriptTypeIsUnknown(String scriptType) {
+    @CsvSource({"RuN,", "Run,-", "ruN,UNKNOWN"})
+    void shouldFailToRunIfScriptTypeIsUnknown(String action, String scriptType) {
         // Given
         ScriptJob job = new ScriptJob();
         String yamlStr =
-                String.join("\n", "parameters:", "  action: RuN", "  type: \"" + scriptType + "\"");
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: " + action,
+                        "  name: test",
+                        "  type: \"" + scriptType + "\"");
         setJobData(job, yamlStr);
 
         // When
@@ -165,22 +185,60 @@ public class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains("!scripts.automation.error.scriptTypeNotSupported!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
-    @Test
-    void shouldFailToRunIfScriptIsNull() {
+    @ParameterizedTest
+    @ValueSource(strings = {"Remove", "Run"})
+    void shouldFailToRunJobIfScriptIsNull(String action) {
         // Given
         ScriptJob job = new ScriptJob();
         String yamlStr =
-                String.join("\n", "parameters:", "  action: RuN", "  type: \"standalone\"");
+                String.join("\n", "parameters:", "  action: " + action, "  type: \"standalone\"");
         setJobData(job, yamlStr);
 
         // When
         job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "!scripts.automation.error.scriptNameIsNull!",
+                        "!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Remove", "Run"})
+    void shouldFailToRunJobIfScriptIsEmpty(String action) {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: " + action,
+                        "  type: \"standalone\"",
+                        "  name: \"\"");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "!scripts.automation.error.scriptNameIsNull!",
+                        "!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
@@ -191,21 +249,48 @@ public class ScriptJobUnitTest extends TestUtils {
                 String.join(
                         "\n",
                         "parameters:",
-                        "  action: RuN",
+                        "  action: RUN",
                         "  type: \"standalone\"",
                         "  name: NotExisting");
         setJobData(job, yamlStr);
 
         // When
         job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
-    void shouldSucceedIfScriptFound() {
+    void shouldFailToRemoveIfScriptNotFound() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: REMOVE",
+                        "  type: \"standalone\"",
+                        "  name: NotExisting");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldSucceedIfRunScriptFound() {
         // Given
         ScriptJob job = new ScriptJob();
         String yamlStr =
@@ -216,20 +301,65 @@ public class ScriptJobUnitTest extends TestUtils {
                         "  type: \"standalone\"",
                         "  name: myScript");
         setJobData(job, yamlStr);
-        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
-        when(scriptWrapper.getName()).thenReturn("myScript");
-        when(extScript.getScripts(ExtensionScript.TYPE_STANDALONE))
-                .thenReturn(Arrays.asList(scriptWrapper));
 
         // When
         job.verifyParameters(progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
-    void shouldExecuteIfScriptFound() throws Exception {
+    void shouldWarnIfRunFileSpecified() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: run",
+                        "  type: \"standalone\"",
+                        "  name: myScript",
+                        "  file: notNeeded");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), equalTo(1));
+        assertThat(progress.getWarnings(), contains("!scripts.automation.warn.fileNotNeeded!"));
+    }
+
+    @Test
+    void shouldWarnIfRemoveFileSpecified() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: remove",
+                        "  type: \"standalone\"",
+                        "  name: myScript",
+                        "  file: notNeeded");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), equalTo(1));
+        assertThat(progress.getWarnings(), contains("!scripts.automation.warn.fileNotNeeded!"));
+    }
+
+    @Test
+    void shouldExecuteIfRunScriptFound() throws Exception {
         // Given
         ScriptJob job = new ScriptJob();
         String yamlStr =
@@ -241,9 +371,7 @@ public class ScriptJobUnitTest extends TestUtils {
                         "  name: myScript");
         setJobData(job, yamlStr);
         ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
-        when(scriptWrapper.getName()).thenReturn("myScript");
-        when(extScript.getScripts(ExtensionScript.TYPE_STANDALONE))
-                .thenReturn(Arrays.asList(scriptWrapper));
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
 
         // When
         job.verifyParameters(progress);
@@ -253,6 +381,303 @@ public class ScriptJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         verify(extScript, times(1)).invokeScript(scriptWrapper);
+    }
+
+    @Test
+    void shouldExecuteIfRemoveScriptFound() throws Exception {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: removE",
+                        "  type: \"standalone\"",
+                        "  name: myScript");
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extScript, times(1)).removeScript(scriptWrapper);
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfNoType() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptFileNoType", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptTypeIsNull!"));
+    }
+
+    @Test
+    void shouldFailToAddIfUnknownType() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptFileNoType", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"unknown\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(
+                progress.getErrors(),
+                contains("!scripts.automation.error.scriptTypeNotSupported!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfNoFile() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.file.missing!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfFileNotReadable() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+        File f = File.createTempFile("scriptFileNoType", ".js");
+        f.setReadable(false);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: CannotRead",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.file.cannotRead!"));
+    }
+
+    @Test
+    void shouldFailToAddIfFileIsDir() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+        File f = File.createTempFile("scriptFileNoType", ".js");
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getParent());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.file.notFile!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfNoEngineAndUnknownExt() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(null)).willReturn(null);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptFileNoEngine", "");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  name: NotExisting",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(
+                progress.getErrors(), contains("!scripts.automation.error.scriptEngineNotFound!"));
+    }
+
+    @Test
+    void shouldVerifyAddIfExtOk() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptExtOk", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldAddScriptWithGivenName() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptExtOk", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+        ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        verify(extScript).addScript(argument.capture());
+        assertEquals("NotExisting", argument.getValue().getName());
+    }
+
+    @Test
+    void shouldAddScriptWithFileName() throws IOException {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptExtFileOk", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+        ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        verify(extScript).addScript(argument.capture());
+        assertEquals(f.getName(), argument.getValue().getName());
     }
 
     @Test
