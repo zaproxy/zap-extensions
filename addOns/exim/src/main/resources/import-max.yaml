@@ -1,0 +1,4 @@
+  - type: import                        # Import a file of requests
+      parameters:
+        type:                            # String: One of ['har', 'modsec2', 'url', 'zap_messages']
+        fileName:                        # String: Name of the file containing the data

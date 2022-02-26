@@ -6,7 +6,9 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Import/Export" target="exim"/>
+            <tocitem text="Import/Export" target="exim">
+                <tocitem text="Automation" target="exim.automation"/>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

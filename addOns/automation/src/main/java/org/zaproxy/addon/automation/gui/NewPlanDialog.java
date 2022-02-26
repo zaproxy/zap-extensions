@@ -59,6 +59,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String CUSTOM_PROFILE_NAME = "automation.dialog.newplan.profile.custom";
     private static final String BASELINE_PROFILE_NAME =
             "automation.dialog.newplan.profile.baseline";
+    private static final String IMPORT_PROFILE_NAME = "automation.dialog.newplan.profile.import";
     private static final String OPENAPI_PROFILE_NAME = "automation.dialog.newplan.profile.openapi";
     private static final String GRAPHQL_PROFILE_NAME = "automation.dialog.newplan.profile.graphql";
     private static final String SOAP_PROFILE_NAME = "automation.dialog.newplan.profile.soap";
@@ -71,6 +72,16 @@ public class NewPlanDialog extends StandardFieldsDialog {
         SpiderJob.JOB_NAME,
         "spiderAjax",
         PassiveScanWaitJob.JOB_NAME,
+        REPORT_JOB_NAME
+    };
+    private static final String[] IMPORT_PROFILE = {
+        AddOnJob.JOB_NAME,
+        PassiveScanConfigJob.JOB_NAME,
+        "import",
+        SpiderJob.JOB_NAME,
+        "spiderAjax",
+        PassiveScanWaitJob.JOB_NAME,
+        ActiveScanJob.JOB_NAME,
         REPORT_JOB_NAME
     };
     private static final String[] OPENAPI_PROFILE = {
@@ -145,6 +156,9 @@ public class NewPlanDialog extends StandardFieldsDialog {
         profiles.add(Constant.messages.getString(CUSTOM_PROFILE_NAME));
         profiles.add(Constant.messages.getString(BASELINE_PROFILE_NAME));
         // Only add the following profiles if the key jobs are present
+        if (jobNames.contains("import")) {
+            profiles.add(Constant.messages.getString(IMPORT_PROFILE_NAME));
+        }
         if (jobNames.contains("graphql")) {
             profiles.add(Constant.messages.getString(GRAPHQL_PROFILE_NAME));
         }
@@ -168,6 +182,8 @@ public class NewPlanDialog extends StandardFieldsDialog {
                     } else if (selected.equals(
                             Constant.messages.getString(BASELINE_PROFILE_NAME))) {
                         setJobs(BASELINE_PROFILE);
+                    } else if (selected.equals(Constant.messages.getString(IMPORT_PROFILE_NAME))) {
+                        setJobs(IMPORT_PROFILE);
                     } else if (selected.equals(Constant.messages.getString(OPENAPI_PROFILE_NAME))) {
                         setJobs(OPENAPI_PROFILE);
                     } else if (selected.equals(Constant.messages.getString(GRAPHQL_PROFILE_NAME))) {
