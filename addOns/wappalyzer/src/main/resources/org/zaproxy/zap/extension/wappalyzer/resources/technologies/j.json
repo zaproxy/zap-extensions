@@ -430,10 +430,25 @@
       "generator": "Jobberbase"
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "http://www.jobberbase.com"
+  },
+  "Jobvite": {
+    "cats": [
+      101
+    ],
+    "description": "Jobvite is an applicant tracking software and recruiting platform.",
+    "dom": "a[href*='.jobvite.com/']",
+    "icon": "Jobvite.png",
+    "js": {
+      "Jobvite": ""
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.jobvite.com"
   },
   "JoomShopping": {
     "cats": [
@@ -447,7 +462,6 @@
     },
     "oss": true,
     "pricing": [
-      "freemium",
       "onetime"
     ],
     "scriptSrc": "/components/com_jshopping/",

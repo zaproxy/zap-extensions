@@ -274,6 +274,22 @@
     "saas": true,
     "website": "https://www.zestmoney.in"
   },
+  "Zeus Technology": {
+    "cats": [
+      36
+    ],
+    "description": "Zeus Technology is a media monetisation platform that levels the playing field for publishers and advertisers of all sizes.",
+    "icon": "Zeus Technology.svg",
+    "js": {
+      "zeus.version": "v([\\d\\.]+)\\;version:\\1",
+      "zeusAdUnitPath": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.zeustechnology.com"
+  },
   "Zimbra": {
     "cats": [
       30
@@ -296,7 +312,7 @@
     },
     "oss": true,
     "pricing": [
-      "freemium",
+      "recurring",
       "mid"
     ],
     "saas": true,

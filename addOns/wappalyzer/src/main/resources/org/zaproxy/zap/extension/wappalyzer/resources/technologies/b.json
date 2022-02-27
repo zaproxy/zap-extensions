@@ -17,9 +17,6 @@
     "html": "<[^>]+data-bem",
     "icon": "BEM.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "http://en.bem.info"
   },
   "BIGACE": {
@@ -228,9 +225,6 @@
       "generator": "^Batflat$"
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://batflat.org"
   },
   "Bazaarvoice": {
@@ -373,17 +367,6 @@
     "scriptSrc": "(?:\\.|plugins/)?bigcommerce(?:\\.com)?/(?:assets)?",
     "url": "mybigcommerce\\.com",
     "website": "http://www.bigcommerce.com"
-  },
-  "BigDump": {
-    "cats": [
-      3
-    ],
-    "html": "<!-- <h1>BigDump: Staggered MySQL Dump Importer ver\\. ([\\d.b]+)\\;version:\\1",
-    "implies": [
-      "MySQL",
-      "PHP"
-    ],
-    "website": "http://www.ozerov.de/bigdump.php"
   },
   "Bigware": {
     "cats": [
@@ -582,23 +565,21 @@
     "icon": "Blesta.png",
     "website": "http://www.blesta.com"
   },
-  "Blip.tv": {
-    "cats": [
-      14
-    ],
-    "description": "Blip.tv is a media platform for web series content and also a dashboard for producers of original web series to distribute and monetise their productions.",
-    "html": "<(?:param|embed|iframe)[^>]+blip\\.tv/play",
-    "icon": "Blip.tv.png",
-    "website": "http://blip.tv"
-  },
   "Blitz": {
     "cats": [
       92
     ],
     "description": "Blitz provides intelligent static page caching for creating lightning-fast sites with Craft CMS.",
+    "headers": {
+      "X-Powered-By": "^Blitz$"
+    },
     "html": "<!-- Cached by Blitz on",
     "icon": "Blitz.svg",
     "implies": "Craft CMS",
+    "js": {
+      "Blitz": "",
+      "blitzReplace": ""
+    },
     "pricing": [
       "onetime",
       "low"
@@ -644,21 +625,19 @@
       1
     ],
     "html": "<[^>]+/binaries/(?:[^/]+/)*content/gallery/",
-    "icon": "Bloomreach.png",
+    "icon": "Bloomreach.svg",
     "website": "https://developers.bloomreach.com"
   },
-  "Bloomreach Search & Merchandising": {
+  "Bloomreach Discovery": {
     "cats": [
       29,
-      10,
-      32,
       74
     ],
-    "description": "Bloomreach Search & Merchandising (brSM) is an AI-driven platform for ecommerce.",
-    "icon": "Bloomreach.png",
+    "description": "Bloomreach Discovery is a powerful combination of AI-powered site search, SEO, recommendations, and product merchandising.",
+    "icon": "Bloomreach.svg",
     "js": {
-      "BrTrk": "",
-      "br_data": ""
+      "BrTrk.scriptVersion": "([\\d\\.]+)\\;version:\\1",
+      "br_data.acct_id": ""
     },
     "pricing": [
       "high",
@@ -666,10 +645,10 @@
     ],
     "saas": true,
     "scriptSrc": [
-      "cdns\\.brsrvr\\.com/v([\\d.]+)\\;version:\\1",
-      "cdn\\.brcdn\\.com/v([\\d.]+)\\;version:\\1"
+      "\\.brsrvr\\.com/",
+      "\\.brcdn\\.com/"
     ],
-    "website": "https://developers.bloomreach.com/products/personalization/dev-studio"
+    "website": "https://www.bloomreach.com/en/products/discovery"
   },
   "Blossom Travel": {
     "cats": [
@@ -1107,9 +1086,6 @@
     },
     "icon": "Bootstrap Icons.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://icons.getbootstrap.com"
   },
   "Bootstrap Table": {
@@ -1373,9 +1349,6 @@
     "html": "<!-- Breadcrumb NavXT ([\\d\\.]+)\\;version:\\1",
     "icon": "Breadcrumb NavXT.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://github.com/mtekk/Breadcrumb-NavXT"
   },
@@ -1393,6 +1366,24 @@
     ],
     "saas": true,
     "website": "https://home.breinify.ai"
+  },
+  "BrightEdge": {
+    "cats": [
+      54
+    ],
+    "description": "BrightEdge is an SEO solution and content performance marketing platform.",
+    "icon": "BrightEdge.png",
+    "js": {
+      "BEJSSDK.CLIENT_VERSION": "([\\d\\.]+)\\;version:\\1",
+      "_bright3.VERSION": "([\\d\\.]+)\\;version:\\1",
+      "be_sdk_options": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.brightedge\\.com/",
+    "website": "https://www.brightedge.com"
   },
   "BrightInfo": {
     "cats": [
@@ -1426,6 +1417,7 @@
       "recurring"
     ],
     "saas": true,
+    "scripts": "players\\.brightcove\\.net/",
     "website": "https://www.brightcove.com"
   },
   "Brightspot": {

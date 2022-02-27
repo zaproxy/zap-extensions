@@ -63,9 +63,6 @@
       "redaxo": "\\;confidence:50"
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "url": "^https?://(?:www\\.)?[\\d\\w\\-]+\\.[\\w]+/redaxo/\\;confidence:50",
     "website": "https://redaxo.org"
   },
@@ -457,9 +454,6 @@
     "dom": "img[src*='/wp-content/plugins/really-simple-captcha/']",
     "icon": "Really Simple CAPTCHA.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://wordpress.org/plugins/really-simple-captcha"
   },
@@ -1098,14 +1092,14 @@
     "implies": "Go",
     "website": "https://revel.github.io"
   },
-  "RevenueHut": {
+  "RevenueHunt": {
     "cats": [
       71
     ],
-    "description": "RevenueHut is an affiliate marketing and advertising company specializing in paid surveys and cost per lead campaigns.",
-    "icon": "RevenueHut.png",
+    "description": "RevenueHunt is an affiliate marketing and advertising company specializing in paid surveys and cost per lead campaigns.",
+    "icon": "RevenueHunt.png",
     "scriptSrc": "admin\\.revenuehunt\\.com/",
-    "website": "https://revenuehut.com"
+    "website": "https://revenuehunt.com"
   },
   "ReviewSolicitors": {
     "cats": [
@@ -1387,6 +1381,22 @@
     "saas": true,
     "website": "https://rocket.chat"
   },
+  "Rokt": {
+    "cats": [
+      76
+    ],
+    "description": "Rokt is an ecommerce marketing technology that gives customers a personalised and relevant experience while buying online.",
+    "headers": {
+      "Content-Security-Policy": "\\.rokt\\.com"
+    },
+    "icon": "Rokt.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.rokt\\.com/",
+    "website": "https://www.rokt.com"
+  },
   "Rollbar": {
     "cats": [
       13
@@ -1543,6 +1553,15 @@
     ],
     "website": "https://rudderstack.com/"
   },
+  "Rust": {
+    "cats": [
+      27
+    ],
+    "description": "Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency.",
+    "icon": "Rust.svg",
+    "oss": true,
+    "website": "https://www.rust-lang.org"
+  },
   "RxJS": {
     "cats": [
       12
@@ -1577,21 +1596,25 @@
     "cats": [
       16
     ],
-    "html": [
-      "<div[^>]+id=\"recaptcha_image",
-      "<link[^>]+recaptcha",
-      "<div[^>]+class=\"g-recaptcha\""
-    ],
+    "description": "reCAPTCHA is a free service from Google that helps protect websites from spam and abuse.",
+    "dom": "#recaptcha_image, iframe[src*='.google.com/recaptcha/'], div.g-recaptcha",
     "icon": "reCAPTCHA.svg",
     "js": {
       "Recaptcha": "",
       "recaptcha": ""
     },
+    "pricing": [
+      "freemium",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
     "scriptSrc": [
       "api-secure\\.recaptcha\\.net",
       "recaptcha_ajax\\.js",
-      "/recaptcha/api\\.js"
+      "/recaptcha/(?:api|enterprise)\\.js"
     ],
+    "scripts": "/recaptcha/api\\.js",
     "website": "https://www.google.com/recaptcha/"
   }
 }

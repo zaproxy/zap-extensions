@@ -41,9 +41,6 @@
       "mdui.Drawer": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://www.mdui.org"
   },
   "MGID": {
@@ -185,7 +182,7 @@
     "cpe": "cpe:/a:magento:magento",
     "description": "Magento is an open-source ecommerce platform written in PHP.",
     "dom": {
-      "script[data-requiremodule*='mage'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
+      "script[data-requiremodule*='mage/'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
         "exists": "\\;version:2"
       },
       "script[type='text/x-magento-init']": {
@@ -460,6 +457,27 @@
     "scriptSrc": "\\.marchex\\.io/",
     "website": "https://www.marchex.com"
   },
+  "Marfeel": {
+    "cats": [
+      10,
+      36
+    ],
+    "description": "Marfeel is a publisher platform that allows publishers to create, optimise and monetise their mobile websites.",
+    "icon": "Marfeel.svg",
+    "js": {
+      "marfeel": ""
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.marfeel\\.com/",
+      "\\.mrf\\.io/"
+    ],
+    "website": "https://www.marfeel.com"
+  },
   "MariaDB": {
     "cats": [
       34
@@ -532,6 +550,24 @@
       "v([\\d.]+)/js/marketo-alt-form\\.min\\.js\\;version:\\1"
     ],
     "website": "https://www.marketo.com"
+  },
+  "Marko": {
+    "cats": [
+      18,
+      66
+    ],
+    "description": "Marko is HTML re-imagined as a language for building dynamic and reactive user interfaces.",
+    "dom": "#data-marko-key, html[data-framework='marko']",
+    "icon": "Marko.svg",
+    "implies": "Node.js",
+    "js": {
+      "markoComponent": "",
+      "markoSections": "",
+      "markoVars": ""
+    },
+    "oss": true,
+    "scripts": "\\.marko(\\.js)?",
+    "website": "https://markojs.com"
   },
   "Mastercard": {
     "cats": [
@@ -1906,9 +1942,6 @@
       "Muuri": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://muuri.dev"
   },
   "My Flying Box": {
@@ -1959,9 +1992,6 @@
       "MyBBEditor": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://mybb.com"
   },
   "MyBlogLog": {
@@ -2160,6 +2190,20 @@
     },
     "scriptSrc": "math(?:\\.min)?\\.js",
     "website": "http://mathjs.org"
+  },
+  "mdBook": {
+    "cats": [
+      4
+    ],
+    "description": "mdBook is a utility to create modern online books from Markdown files.",
+    "icon": "mdBook.svg",
+    "implies": [
+      "Rust",
+      "Handlebars"
+    ],
+    "oss": true,
+    "scripts": "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)",
+    "website": "https://github.com/rust-lang/mdBook"
   },
   "microCMS": {
     "cats": [

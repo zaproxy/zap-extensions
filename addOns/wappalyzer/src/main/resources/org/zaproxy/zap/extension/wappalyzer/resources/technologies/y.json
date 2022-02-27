@@ -18,7 +18,7 @@
     ],
     "description": "UIDoc is a Node.js application used at build time to generate API documentation.",
     "html": "(?:<html[^>]* yuilibrary\\.com/rdf/[\\d.]+/yui\\.rdf|<body[^>]+class=\"yui3-skin-sam)",
-    "icon": "yahoo.png",
+    "icon": "Yahoo.svg",
     "website": "http://developer.yahoo.com/yui/yuidoc"
   },
   "YaBB": {
@@ -31,18 +31,21 @@
   },
   "Yahoo Advertising": {
     "cats": [
-      36
+      36,
+      77
     ],
-    "html": [
-      "<iframe[^>]+adserver\\.yahoo\\.com",
-      "<img[^>]+clicks\\.beap\\.bc\\.yahoo\\.com"
-    ],
-    "icon": "yahoo.png",
+    "description": "Yahoo Advertising includes a comprehensive suite of web, mobile, and video ad products across native, audience, and premium display, which are accessible through a new buying platform.",
+    "dom": "link[href*='bc.yahoo.com']",
+    "icon": "Yahoo.svg",
     "js": {
-      "adxinserthtml": ""
+      "adxinserthtml": "",
+      "yahooCvLoad": "",
+      "yahoo_retargeting_pv_id": "",
+      "yahoo_ydn_conv_label": "",
+      "yahoo_ydn_conv_transaction_id": ""
     },
-    "scriptSrc": "adinterax\\.com",
-    "website": "http://advertising.yahoo.com"
+    "scriptSrc": "(?:adinterax|adserver\\.yahoo)\\.com",
+    "website": "https://www.adtech.yahooinc.com"
   },
   "Yahoo! Ecommerce": {
     "cats": [
@@ -52,7 +55,7 @@
       "X-XRDS-Location": "/ystore/"
     },
     "html": "<link[^>]+store\\.yahoo\\.net",
-    "icon": "yahoo.png",
+    "icon": "Yahoo.svg",
     "js": {
       "YStore": ""
     },
@@ -63,7 +66,7 @@
       42
     ],
     "html": "<!-- (?:End )?Yahoo! Tag Manager -->",
-    "icon": "yahoo.png",
+    "icon": "Yahoo.svg",
     "scriptSrc": "b\\.yjtag\\.jp/iframe",
     "website": "https://tagmanager.yahoo.co.jp/"
   },
@@ -71,12 +74,46 @@
     "cats": [
       10
     ],
-    "icon": "yahoo.png",
+    "icon": "Yahoo.svg",
     "js": {
       "YWA": ""
     },
     "scriptSrc": "d\\.yimg\\.com/mi/ywa\\.js",
     "website": "http://web.analytics.yahoo.com"
+  },
+  "Yampi Checkout": {
+    "cats": [
+      41
+    ],
+    "description": "Yampi Checkout is an payment processor from Brazil.",
+    "icon": "Yampi.svg",
+    "js": {
+      "yampiCheckoutUrl": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.yampi.com.br/checkout"
+  },
+  "Yampi Virtual store": {
+    "cats": [
+      6
+    ],
+    "description": "Yampi Virtual store is an ecommerce platform from Brazil.",
+    "icon": "Yampi.svg",
+    "implies": "Yampi Checkout",
+    "js": {
+      "Yampi.api_domain": "",
+      "Yampi.cart_token": ""
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.yampi\\.io/",
+    "website": "https://www.yampi.com.br/loja-virtual"
   },
   "Yandex.Cloud": {
     "cats": [
@@ -353,6 +390,30 @@
     },
     "scriptSrc": "cdn\\.yottaa\\.\\w+/",
     "website": "https://www.yottaa.com"
+  },
+  "YouCan": {
+    "cats": [
+      6
+    ],
+    "description": "YouCan is an integrated platform specialised in ecommerce, offering a wide range of services needed by merchants and entrepreneurs.",
+    "headers": {
+      "x-powered-by": "Youcan\\.Private\\.DC/"
+    },
+    "icon": "YouCan.svg",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Redis",
+      "Laravel"
+    ],
+    "js": {
+      "YCPay": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://youcan.shop"
   },
   "YouTrack": {
     "cats": [

@@ -1194,7 +1194,7 @@
     "implies": "Drupal",
     "oss": true,
     "scriptSrc": [
-      "sites\\/(?!default|all).*\\/files"
+      "/sites/(?!.*(default|all)).*/(?:files|themes|modules)/"
     ],
     "website": "https://www.drupal.org/docs/multisite-drupal"
   },
@@ -1284,16 +1284,38 @@
   },
   "Dynatrace": {
     "cats": [
-      10
+      10,
+      92
     ],
     "cookies": {
       "dtCookie1": ""
     },
-    "icon": "Dynatrace.png",
+    "description": "Dynatrace is a technology company that produces a software intelligence platform based on artificial intelligence to monitor and optimise application performance and development, IT infrastructure, and user experience for businesses and government agencies throughout the world.",
+    "icon": "Dynatrace.svg",
     "js": {
       "dtrum": ""
     },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
     "website": "https://www.dynatrace.com"
+  },
+  "Dynatrace RUM": {
+    "cats": [
+      78
+    ],
+    "description": "Dynatrace RUM is a AI powered, full stack, automated real user monutoring platform built by Dynatrace.",
+    "icon": "Dynatrace.svg",
+    "implies": "Dynatrace",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "/ruxitagentjs_(?:.+)_(?:.+)\\.js",
+    "website": "https://www.dynatrace.com/platform/real-user-monitoring"
   },
   "db-ip": {
     "cats": [

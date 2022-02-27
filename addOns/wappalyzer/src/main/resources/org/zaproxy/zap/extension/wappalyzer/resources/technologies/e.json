@@ -94,9 +94,6 @@
       "ewww_webp_supported": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/ewww-image-optimizer/",
     "website": "https://github.com/nosilver4u/ewww-image-optimizer"
@@ -239,9 +236,6 @@
       "EditorJS": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://editorjs.io"
   },
   "Elastic APM": {
@@ -289,10 +283,6 @@
       "STVID": "\\;confidence:50"
     },
     "description": "ElasticSuite is a merchandising suite for Magento and OroCommerce.",
-    "html": [
-      "<input [^>]*Smile_Elasticsuite[^>]*>",
-      "<[\\S\\s.*]*Smile_Elasticsuite[\\S\\s.*]*>"
-    ],
     "icon": "ElasticSuite.svg",
     "implies": [
       "PHP",
@@ -309,7 +299,7 @@
       "OroCommerce",
       "Magento"
     ],
-    "scriptSrc": "Smile_ElasticsuiteTracker/js/tracking\\.js",
+    "scriptSrc": "/Smile_ElasticsuiteTracker/",
     "website": "https://elasticsuite.io"
   },
   "Elasticsearch": {
@@ -440,7 +430,7 @@
       "ELOQUA": ""
     },
     "description": "Eloqua is a Software-as-a-Service (SaaS) platform for marketing automation offered that aims to help B2B marketers and organisations manage marketing campaigns and sales lead generation.",
-    "icon": "Oracle.png",
+    "icon": "Oracle.svg",
     "js": {
       "_elq": "",
       "_elqQ": "",
