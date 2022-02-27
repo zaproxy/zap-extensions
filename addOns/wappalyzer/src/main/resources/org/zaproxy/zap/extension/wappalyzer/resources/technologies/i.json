@@ -749,6 +749,19 @@
     "icon": "Ionicons.png",
     "website": "http://ionicons.com"
   },
+  "IrisLMS": {
+    "cats": [
+      21
+    ],
+    "description": "IrisLMS comprehensive education management system, in order to support e-learning and provide suitable conditions for holding online and offline classes with all facilities.",
+    "icon": "IrisLMS.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.irislms\\.ir/",
+    "website": "https://irislms.ir"
+  },
   "Irroba": {
     "cats": [
       6

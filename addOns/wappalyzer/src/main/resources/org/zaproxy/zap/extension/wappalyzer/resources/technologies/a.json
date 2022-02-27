@@ -482,7 +482,8 @@
     ],
     "icon": "acquia-site-factory.png",
     "implies": [
-      "Acquia Cloud Platform"
+      "Acquia Cloud Platform",
+      "Drupal Multisite"
     ],
     "saas": true,
     "scriptSrc": [
@@ -964,9 +965,6 @@
     "icon": "AddToAny.svg",
     "implies": "AddToAny",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/add-to-any/addtoany\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/projectestac/wordpress-add-to-any"
@@ -1032,6 +1030,25 @@
     "icon": "adminer.png",
     "implies": "PHP",
     "website": "http://www.adminer.org"
+  },
+  "Admiral": {
+    "cats": [
+      19
+    ],
+    "description": "Admiral is a Visitor Relationship Management (VRM) platform.",
+    "icon": "Admiral.svg",
+    "js": {
+      "admiral": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": "admiral(?:-engaged|:enabled)",
+    "website": "https://www.getadmiral.com"
   },
   "Admitad": {
     "cats": [
@@ -1130,6 +1147,7 @@
       86
     ],
     "cookies": {
+      "Demdex": "",
       "aam_uuid": ""
     },
     "description": "Adobe Audience Manager is a versatile audience data management platform.",
@@ -1140,6 +1158,17 @@
     ],
     "saas": true,
     "website": "https://business.adobe.com/products/audience-manager/adobe-audience-manager.html"
+  },
+  "Adobe Client Data Layer": {
+    "cats": [
+      12
+    ],
+    "description": "Adobe Client Data Layer is a framework of JavaScript objects on your site that contains all variable values used in your implementation.",
+    "icon": "Adobe.svg",
+    "js": {
+      "adobeDataLayer.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "website": "https://github.com/adobe/adobe-client-data-layer"
   },
   "Adobe ColdFusion": {
     "cats": [
@@ -1597,9 +1626,6 @@
     "dom": "form[action*='airform.io/']",
     "icon": "Airform.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://airform.io"
   },
   "Airship": {
@@ -1772,9 +1798,6 @@
       "OpenLayers"
     ],
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://aksaracms.com"
   },
   "Albacross": {
@@ -1831,6 +1854,9 @@
     "cats": [
       29
     ],
+    "cookies": {
+      "_ALGOLIA": ""
+    },
     "description": "Algolia offers a hosted web search product delivering real-time results.",
     "headers": {
       "Content-Security-Policy": "\\.algolia"
@@ -1907,6 +1933,18 @@
     "saas": true,
     "scriptSrc": "portal\\.allyable\\.com/",
     "website": "https://allyable.com"
+  },
+  "AlmaLinux": {
+    "cats": [
+      28
+    ],
+    "description": "AlmaLinux is an open-source, community-driven Linux operating system that fills the gap left by the discontinuation of the CentOS Linux stable release.",
+    "headers": {
+      "server": "AlmaLinux"
+    },
+    "icon": "AlmaLinux.svg",
+    "oss": true,
+    "website": "https://almalinux.org"
   },
   "Alpine Linux": {
     "cats": [
@@ -2484,10 +2522,40 @@
       "antd.version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
+    "website": "https://ant.design"
+  },
+  "AntV G2": {
+    "cats": [
+      25
+    ],
+    "description": "AntV G2 is a highly interactive data-driven visualisation grammar for statistical charts.",
+    "dom": "div.g2-tooltip",
+    "icon": "AntV.svg",
+    "js": {
+      "G2.Chart": "",
+      "G2.VERSION": "([\\d\\.]+)\\;version:\\1"
+    },
     "pricing": [
       "freemium"
     ],
-    "website": "https://ant.design"
+    "saas": true,
+    "website": "https://g2plot.antv.vision"
+  },
+  "AntV G6": {
+    "cats": [
+      25
+    ],
+    "description": "AntV G6 is a graph visualisation framework in JavaScript.",
+    "icon": "AntV.svg",
+    "js": {
+      "g6.Graph": "",
+      "g6.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://g6.antv.vision"
   },
   "AnyClip": {
     "cats": [
@@ -2630,6 +2698,7 @@
     "cats": [
       59
     ],
+    "description": "Apollo is a fully-featured caching GraphQL client with integrations for React, Angular, and more.",
     "dom": "script#__APOLLO_STATE__",
     "icon": "Apollo.svg",
     "implies": [
@@ -2765,6 +2834,7 @@
     "icon": "Apple.svg",
     "js": {
       "ApplePay": "",
+      "braintree.applePay": "",
       "checkout.enabledpayments.applepay": "^true$",
       "dw.applepay": "",
       "enableApplePay": ""
@@ -2793,6 +2863,21 @@
     },
     "scriptSrc": "appleid\\.auth\\.js",
     "website": "https://developer.apple.com/sign-in-with-apple/"
+  },
+  "ApplicantStack": {
+    "cats": [
+      101
+    ],
+    "description": "ApplicantStack is a full-service applicant tracking system that automates and streamlines all stages of the hiring process.",
+    "dom": "a[href*='.applicantstack.com/']",
+    "icon": "ApplicantStack.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.applicantstack\\.com/",
+    "website": "https://www.applicantstack.com"
   },
   "Appointy": {
     "cats": [
@@ -2890,9 +2975,6 @@
     "icon": "Arastta.svg",
     "implies": "PHP",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "scriptSrc": "arastta\\.js",
     "website": "http://arastta.org"
   },
@@ -3120,9 +3202,6 @@
     },
     "icon": "Astro.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://astro.build"
   },
   "Astute Solutions": {
@@ -3331,9 +3410,6 @@
       "localAurelia": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "scriptSrc": "/aurelia[\\d\\w\\-\\.]+\\.js",
     "website": "http://aurelia.io"
   },
@@ -3352,6 +3428,19 @@
     "saas": true,
     "scriptSrc": "cdn\\.auryc\\.com/",
     "website": "https://www.auryc.com"
+  },
+  "Australia Post": {
+    "cats": [
+      99
+    ],
+    "description": "Australia Post is the government business enterprise that provides postal services in Australia.",
+    "icon": "AusPost.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bAusPost\\b",
+      "\\bAustralia Post\\b"
+    ],
+    "website": "https://auspost.com.au"
   },
   "Auth0": {
     "cats": [

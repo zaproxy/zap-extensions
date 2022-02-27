@@ -147,6 +147,9 @@
     ],
     "description": "Naver Analytics is a Korean based analytics service.",
     "icon": "Naver.svg",
+    "meta": {
+      "naver-site-verification": ""
+    },
     "pricing": [
       "freemium",
       "payg"
@@ -460,6 +463,27 @@
     ],
     "website": "https://niagahoster.co.id"
   },
+  "Nicepage": {
+    "cats": [
+      51
+    ],
+    "description": "Nicepage is a free website building tool that requires no coding skills and integrates seamlessly with all leading CMS systems.",
+    "dom": "link[href*='nicepage.css']",
+    "icon": "Nicepage.png",
+    "js": {
+      "_npAccordionInit": "",
+      "_npDialogsInit": ""
+    },
+    "meta": {
+      "generator": "Nicepage\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://nicepage.com"
+  },
   "Ninja Forms": {
     "cats": [
       87
@@ -594,9 +618,6 @@
       "generator": "NukeViet v([\\d.]+)\\;version:\\1"
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://nukeviet.vn/en/"
   },
   "Nuqlium": {

@@ -57,6 +57,7 @@ public class WappalyzerJsonParser {
 
     private static final String FIELD_CONFIDENCE = "confidence:";
     private static final String FIELD_VERSION = "version:";
+    private static final String FIELD_SEPARATOR = "\\\\;";
     private static final int SIZE = 16;
 
     private static final Logger logger = LogManager.getLogger(WappalyzerJsonParser.class);
@@ -238,16 +239,23 @@ public class WappalyzerJsonParser {
         List<String> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : (JSONArray) json) {
-                if (isValidQuery(obj.toString())) {
-                    list.add(obj.toString());
+                String selector = strToDomSelector(obj.toString());
+                if (isValidQuery(selector)) {
+                    list.add(selector);
                 }
             }
         } else if (json != null) {
-            if (isValidQuery(json.toString())) {
-                list.add(json.toString());
+            String selector = strToDomSelector(json.toString());
+            if (isValidQuery(selector)) {
+                list.add(selector);
             }
         }
         return list;
+    }
+
+    private String strToDomSelector(String json) {
+        String[] parts = json.split(FIELD_SEPARATOR);
+        return parts[0];
     }
 
     private List<String> jsonToStringList(Object json) {
@@ -426,7 +434,7 @@ public class WappalyzerJsonParser {
     private AppPattern strToAppPattern(String type, String str) {
         AppPattern ap = new AppPattern();
         ap.setType(type);
-        String[] values = str.split("\\\\;");
+        String[] values = str.split(FIELD_SEPARATOR);
         String pattern = values[0];
         for (int i = 1; i < values.length; i++) {
             try {

@@ -684,6 +684,21 @@
     "scriptSrc": "\\.global-e\\.com",
     "website": "https://www.global-e.com"
   },
+  "GloriaFood": {
+    "cats": [
+      93
+    ],
+    "description": "GloriaFood is an online ordering and food delivery platform that helps restaurant owners manage orders and streamline point-of-sale operations.",
+    "icon": "Oracle.svg",
+    "js": {
+      "glfBindButtons": "",
+      "glfWidget": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://www.gloriafood.com"
+  },
   "Glyphicons": {
     "cats": [
       17
@@ -692,6 +707,37 @@
     "html": "(?:<link[^>]* href=[^>]+glyphicons(?:\\.min)?\\.css|<img[^>]* src=[^>]+glyphicons)",
     "icon": "Glyphicons.png",
     "website": "http://glyphicons.com"
+  },
+  "Gnuboard": {
+    "cats": [
+      1
+    ],
+    "description": "Gnuboard is an open-source bulletin board system or CMS from South Korea.",
+    "dom": {
+      "a[href*='board.php']": {
+        "attributes": {
+          "href": "(?:gnuboard/)?bbs/(?:gnu)?board\\.php"
+        }
+      },
+      "link[href*='/gnuboard/style.css']": {
+        "attributes": {
+          "href": ""
+        }
+      }
+    },
+    "icon": "default.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "g4_bbs_img": "",
+      "g4_is_admin": "",
+      "g5_is_admin": "",
+      "g5_js_ver": ""
+    },
+    "oss": true,
+    "website": "https://github.com/gnuboard"
   },
   "Go": {
     "cats": [
@@ -780,9 +826,6 @@
     "dom": "link[href*='/wp-content/plugins/coblocks/']",
     "icon": "GoDaddy.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/coblocks/",
     "website": "https://github.com/godaddy-wordpress/coblocks"
@@ -809,9 +852,6 @@
       "goFrontend.openMenuOnHover": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/go/.+frontend\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://github.com/godaddy-wordpress/go"
@@ -898,6 +938,27 @@
     "oss": true,
     "scriptSrc": "gc\\.zgo\\.at/count\\.js",
     "website": "https://www.goatcounter.com/"
+  },
+  "Goftino": {
+    "cats": [
+      52
+    ],
+    "description": "Goftino is an online chat service for web users.",
+    "icon": "Goftino.svg",
+    "js": {
+      "Goftino.setWidget": "",
+      "goftinoRemoveLoad": "",
+      "goftino_1": "",
+      "goftino_getUrl": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.goftino\\.com/",
+    "website": "https://www.goftino.com"
   },
   "Gogs": {
     "cats": [
@@ -1052,15 +1113,24 @@
   },
   "Google Cloud": {
     "cats": [
-      31
+      63
     ],
     "cpe": "cpe:/a:google:cloud_platform",
     "description": "Google Cloud is a suite of cloud computing services.",
+    "icon": "google_cloud.svg",
+    "website": "https://cloud.google.com"
+  },
+  "Google Cloud CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Cloud CDN uses Google's global edge network to serve content closer to users.",
     "headers": {
       "Via": "^1\\.1 google$"
     },
-    "icon": "google_cloud.svg",
-    "website": "https://cloud.google.com"
+    "icon": "google-cloud-cdn.svg",
+    "implies": "Google Cloud",
+    "website": "https://cloud.google.com/cdn"
   },
   "Google Cloud Storage": {
     "cats": [
@@ -1073,6 +1143,18 @@
     "icon": "google-cloud-storage.svg",
     "implies": "Google Cloud",
     "website": "https://cloud.google.com/storage"
+  },
+  "Google Cloud Trace": {
+    "cats": [
+      92
+    ],
+    "description": "Google Cloud Trace is a distributed tracing system that collects latency data from applications and displays it in the Google Cloud Console.",
+    "headers": {
+      "x-cloud-trace-context": ""
+    },
+    "icon": "google-cloud-trace.svg",
+    "implies": "Google Cloud",
+    "website": "https://cloud.google.com/trace"
   },
   "Google Code Prettify": {
     "cats": [
@@ -1251,9 +1333,6 @@
     "icon": "Google Tag Manager for WordPress.png",
     "implies": "Google Tag Manager",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/duracelltomi-google-tag-manager/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gtm4wp.com"
@@ -1426,6 +1505,9 @@
     ],
     "description": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.",
     "icon": "GraphQL.svg",
+    "meta": {
+      "store-config": "graphqlMethod"
+    },
     "oss": true,
     "website": "https://graphql.org"
   },
@@ -1704,9 +1786,6 @@
     },
     "icon": "Gutenberg.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/gutenberg/",
     "website": "https://github.com/WordPress/gutenberg"

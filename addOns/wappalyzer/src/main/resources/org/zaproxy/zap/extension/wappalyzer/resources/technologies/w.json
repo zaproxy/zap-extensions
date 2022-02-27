@@ -216,9 +216,6 @@
     "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
     "icon": "WP-PageNavi.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://github.com/lesterchan/wp-pagenavi"
   },
@@ -270,7 +267,6 @@
     },
     "oss": true,
     "pricing": [
-      "freemium",
       "onetime"
     ],
     "requires": "WordPress",
@@ -521,9 +517,6 @@
       "mtnc_front_options": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://wordpress.org/plugins/maintenance"
   },
@@ -535,9 +528,6 @@
     "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
     "icon": "WebFactory.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://wordpress.org/plugins/under-construction-page"
   },
@@ -602,24 +592,6 @@
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
     "website": "http://websitex5.com"
-  },
-  "WebToffee GDPR Cookie Consent": {
-    "cats": [
-      87,
-      67
-    ],
-    "description": "WebToffee GDPR Cookie Consent is a cookie consent and compliance notice WordPress plugin which will assist you in making your website GDPR (RGPD, DSVGO) compliant.",
-    "dom": "link[href*='/wp-content/plugins/cookie-law-info/']",
-    "icon": "WebToffee.svg",
-    "implies": "CookieYes",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/cookie-law-info/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://www.webtoffee.com/product/gdpr-cookie-consent/"
   },
   "Webflow": {
     "cats": [
@@ -1249,9 +1221,6 @@
     },
     "icon": "WooCommerce Blocks.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": [
       "WordPress",
       "WooCommerce"
@@ -1297,9 +1266,6 @@
     "icon": "WooCommerce PayPal.png",
     "implies": "PayPal",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/woocommerce-paypal-payments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/woocommerce/woocommerce-paypal-payments"
@@ -1572,6 +1538,21 @@
     "icon": "worldshopping.png",
     "scriptSrc": "checkout-api\\.worldshopping\\.jp/(v\\d+)?\\;version:\\1",
     "website": "https://www.worldshopping.global/"
+  },
+  "Worldz": {
+    "cats": [
+      5,
+      76
+    ],
+    "description": "Worldz calculates the economic value of a user’s social popularity (qualitatively and quantitatively). In proportion to this value, it provides a personalised discount, which can be applied in exchange for a social sharing by the user on their Instagram or Facebook profile.",
+    "icon": "Worldz.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.worldztool\\.com/",
+    "website": "https://www.worldz-business.net"
   },
   "Wufoo": {
     "cats": [

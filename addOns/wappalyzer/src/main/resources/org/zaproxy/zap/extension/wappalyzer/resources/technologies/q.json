@@ -160,6 +160,19 @@
     "scriptSrc": "quicklink@([\\d.]+)/dist/quicklink.*\\.js\\;version:\\1",
     "website": "https://getquick.link/"
   },
+  "Quicq": {
+    "cats": [
+      92
+    ],
+    "description": "Quicq is an image optimisation tool by Afosto.",
+    "dom": "img[src*='.qcqcdn.com/'], img[data-src*='.qcqcdn.com/'], img[src*='cdn.quicq.io/'], img[data-src*='cdn.quicq.io/']",
+    "icon": "Quicq.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://afosto.com/apps/quicq"
+  },
   "Quill": {
     "cats": [
       24

@@ -131,24 +131,24 @@
   },
   "Launchrock": {
     "cats": [
-      74,
-      51
+      51,
+      75
     ],
     "description": "Launchrock is an online tool designed to help capture email addresses and create online product launching events.",
     "icon": "Launchrock.svg",
     "js": {
       "lrIgnition": "\\;confidence:25",
       "lrLoadedJs": "\\;confidence:25",
+      "lrSiteRenderingData.apiEndpoint": "",
       "lrSiteSettingAsBoolean": "\\;confidence:25",
       "lrignition": "\\;confidence:25"
     },
     "pricing": [
-      "freemium",
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "js/ignition-current\\.min\\.js\\;confidence:50",
+    "scriptSrc": "builder\\.launchrock\\.com",
     "website": "https://www.launchrock.com"
   },
   "LayBuy": {
@@ -177,7 +177,8 @@
   },
   "Layer0": {
     "cats": [
-      92
+      31,
+      62
     ],
     "cookies": {
       "layer0_bucket": "",
@@ -185,6 +186,11 @@
       "layer0_eid": ""
     },
     "description": "Layer0 is an all-in-one Jamstack platform to develop, deploy, preview, split test, and monitor the company's frontend.",
+    "headers": {
+      "x-0-status": "",
+      "x-0-t": "",
+      "x-0-version": "^\\d+ ([\\d.]+) \\;version:\\1"
+    },
     "icon": "Layer0.svg",
     "js": {
       "Layer0.Metrics": ""
@@ -1151,9 +1157,6 @@
     "dom": "lottie-player, div[data-animation-type='lottie'], div[data-testid='lottie-player'], clipPath[id*='__lottie_element_']",
     "icon": "LottieFiles.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "scriptSrc": [
       "/dist/lottie-player\\.js",
       "/dist/tgs-player\\.js"
@@ -1297,9 +1300,30 @@
     },
     "icon": "lighttpd.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "http://www.lighttpd.net"
+  },
+  "lit-element": {
+    "cats": [
+      59
+    ],
+    "description": "lit-element is a simple base class for creating web components that work in any web page with any framework. lit-element uses lit-html to render into shadow DOM, and adds API to manage properties and attributes.",
+    "icon": "Lit.svg",
+    "js": {
+      "litElementVersions.0": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://lit.dev"
+  },
+  "lit-html": {
+    "cats": [
+      59
+    ],
+    "description": "lit-html is a simple, modern, safe, small and fast HTML templating library for JavaScript.",
+    "icon": "Lit.svg",
+    "js": {
+      "litHtmlVersions.0": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://lit.dev"
   }
 }

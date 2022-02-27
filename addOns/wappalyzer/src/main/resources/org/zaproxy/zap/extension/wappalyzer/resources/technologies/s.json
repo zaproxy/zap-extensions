@@ -224,6 +224,22 @@
     "icon": "SQLite.png",
     "website": "http://www.sqlite.org"
   },
+  "STN Video": {
+    "cats": [
+      36,
+      14
+    ],
+    "description": "STN Video is a online video platform that solves digital video for publishers, content creators, and advertisers.",
+    "icon": "STN Video.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "embed\\.sendtonews\\.com/",
+    "scripts": "embed\\.sendtonews\\.com/",
+    "website": "https://www.stnvideo.com"
+  },
   "STUDIO": {
     "cats": [
       51
@@ -269,9 +285,6 @@
     "dom": "link[href*='/wp-content/plugins/svg-support/']",
     "icon": "SVG Support.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/svg-support/",
     "website": "https://github.com/wp-plugins/svg-support"
@@ -1576,14 +1589,29 @@
         "text": "ShopPay"
       }
     },
-    "icon": "Shopify.svg",
+    "icon": "Shop Pay.svg",
     "js": {
       "ShopifyPay.apiHost": ""
     },
+    "requires": "Shopify",
     "scriptSrc": [
       "cdn\\.shopify\\.com/shopifycloud/shopify_pay/"
     ],
     "website": "https://shop.app"
+  },
+  "Shop Pay Installments": {
+    "cats": [
+      91
+    ],
+    "description": "Shop Pay Installments allows customers to pay for orders between 50 USD and 3,000 USD in 4 interest-free installments.",
+    "dom": ".shopify-installments__learn-more, .shopify-installments, #shopify-installments-cta",
+    "icon": "Shop Pay.svg",
+    "implies": [
+      "Affirm",
+      "Shop Pay"
+    ],
+    "requires": "Shopify",
+    "website": "https://shoppay.affirm.com"
   },
   "ShopGold": {
     "cats": [
@@ -2756,6 +2784,21 @@
     "scriptSrc": "/wp-content/plugins/smart-slider-3(?:-pro)?/",
     "website": "https://smartslider3.com"
   },
+  "SmartRecruiters": {
+    "cats": [
+      101
+    ],
+    "description": "SmartRecruiters is a web-based talent acquisition platform.",
+    "dom": "a[href*='careers.smartrecruiters.com/']",
+    "icon": "SmartRecruiters.png",
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.smartrecruiters\\.com/",
+    "website": "https://www.smartrecruiters.com"
+  },
   "SmartSite": {
     "cats": [
       1
@@ -3320,6 +3363,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "\\.sndcdn\\.com/",
     "website": "https://developers.soundcloud.com/docs/api/html5-widget"
   },
   "SoundManager": {
@@ -3527,25 +3571,18 @@
     "saas": true,
     "website": "https://www.splittypay.com"
   },
-  "Splunk": {
+  "Splunkd": {
     "cats": [
       19
     ],
-    "html": "<p class=\"footer\">&copy; [-\\d]+ Splunk Inc\\.(?: Splunk ([\\d\\.]+(?: build [\\d\\.]*\\d)?))?[^<]*</p>\\;version:\\1",
-    "icon": "Splunk.png",
-    "meta": {
-      "author": "Splunk Inc\\;confidence:50"
-    },
-    "website": "http://splunk.com"
-  },
-  "Splunkd": {
-    "cats": [
-      22
-    ],
+    "description": "Splunkd is the system process that handles indexing, searching, forwarding.",
     "headers": {
       "Server": "Splunkd"
     },
-    "icon": "Splunk.png",
+    "icon": "Splunk.svg",
+    "pricing": [
+      "poa"
+    ],
     "website": "http://splunk.com"
   },
   "SpotHopper": {
@@ -4131,14 +4168,6 @@
     "oss": true,
     "website": "https://stitches.dev"
   },
-  "Store Systems": {
-    "cats": [
-      6
-    ],
-    "html": "Shopsystem von <a href=[^>]+store-systems\\.de\"",
-    "icon": "Store Systems.png",
-    "website": "http://store-systems.de"
-  },
   "StoreHippo": {
     "cats": [
       6
@@ -4483,7 +4512,7 @@
       "Server": "SunOS( [\\d\\.]+)?\\;version:\\1",
       "Servlet-engine": "SunOS( [\\d\\.]+)?\\;version:\\1"
     },
-    "icon": "Oracle.png",
+    "icon": "Oracle.svg",
     "website": "http://oracle.com/solaris"
   },
   "Super Socializer": {
@@ -4562,6 +4591,9 @@
     ],
     "description": "SvelteKit is the official Svelte framework for building web applications with a flexible filesystem-based routing.",
     "dom": {
+      "#svelte-announcer": {
+        "exists": ""
+      },
       "a": {
         "attributes": {
           "sveltekit:prefetch": ""
@@ -4569,6 +4601,11 @@
       }
     },
     "icon": "Svelte.svg",
+    "implies": [
+      "Svelte",
+      "Node.js",
+      "Vite"
+    ],
     "oss": true,
     "website": "https://kit.svelte.dev"
   },

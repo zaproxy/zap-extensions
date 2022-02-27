@@ -174,9 +174,6 @@
     "dom": "link[href*='/wp-content/plugins/tablepress/']",
     "icon": "TablePress.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://tablepress.org"
   },
@@ -205,6 +202,22 @@
     "scriptSrc": "\\.taboola\\.com",
     "website": "https://www.taboola.com",
     "xhr": "\\.taboola\\.com"
+  },
+  "TagPro": {
+    "cats": [
+      42
+    ],
+    "description": "TagPro is software that updates and allows you to manage tags within websites, identifying various types of variables to optimise loads for advertising.",
+    "icon": "TagPro.png",
+    "js": {
+      "initAdproTags": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "tagpro\\.adpromedia\\.net/",
+    "website": "https://tagpro.adpromedia.net"
   },
   "Tagboard": {
     "cats": [
@@ -1847,6 +1860,25 @@
     "scriptSrc": "cdn\\.nexternal\\.com/",
     "website": "https://www.truecommerce.com"
   },
+  "Trumba": {
+    "cats": [
+      72
+    ],
+    "description": "Trumba offers web-hosted event calendar software for publishing online, interactive, calendars of events.",
+    "dom": "a[href*='www.trumba.com/calendars/']",
+    "icon": "Trumba.png",
+    "js": {
+      "$Trumba": "",
+      "$Trumba.version": "([\\d\\.]+)\\;version:\\1",
+      "Trumba": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.trumba.com"
+  },
   "Trunkrs": {
     "cats": [
       99
@@ -2475,6 +2507,18 @@
     },
     "icon": "thttpd.png",
     "website": "https://acme.com/software/thttpd"
+  },
+  "toastr": {
+    "cats": [
+      12
+    ],
+    "description": "toastr is a Javascript library for non-blocking notifications. The goal is to create a simple core library that can be customized and extended.",
+    "icon": "toastr.png",
+    "js": {
+      "toastr.version": "(.*)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/CodeSeven/toastr"
   },
   "total.js": {
     "cats": [

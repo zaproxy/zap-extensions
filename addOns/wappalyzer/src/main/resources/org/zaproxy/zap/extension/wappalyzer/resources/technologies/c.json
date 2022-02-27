@@ -609,6 +609,33 @@
     ],
     "website": "https://centminmod.com"
   },
+  "Chabokan": {
+    "cats": [
+      62
+    ],
+    "description": "Chabokan is a cloud services provider, offering a wide range of incorporated cloud services including Cloud Object Storage, DBaaS, BaaS, and PaaS.",
+    "headers": {
+      "ch-powered-by": "Chabokan\\s\\(chabokan\\.net\\)"
+    },
+    "icon": "Chabokan.svg",
+    "pricing": [
+      "low",
+      "payg"
+    ],
+    "website": "https://chabokan.net"
+  },
+  "Chakra UI": {
+    "cats": [
+      66
+    ],
+    "description": "Chakra UI is a simple, modular and accessible component library that gives you the building blocks you need to build your React applications.",
+    "dom": "html[style*='chakra-ui-color-mode']",
+    "icon": "Chakra UI.svg",
+    "implies": "React",
+    "oss": true,
+    "scriptSrc": "\\.chakra-ui\\.",
+    "website": "https://chakra-ui.com"
+  },
   "Chamilo": {
     "cats": [
       21
@@ -2252,6 +2279,9 @@
     "dom": {
       "#cookie-law-info-bar": {
         "text": ""
+      },
+      "link[href*='/wp-content/plugins/cookie-law-info/']": {
+        "exists": ""
       }
     },
     "icon": "cookieyes.svg",
@@ -2260,7 +2290,8 @@
     },
     "scriptSrc": [
       "app\\.cookieyes\\.com/client_data/",
-      "cdn-cookieyes\\.com/client_data/"
+      "cdn-cookieyes\\.com/client_data/",
+      "/wp-content/plugins/cookie-law-info/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://www.cookieyes.com/"
   },
@@ -2790,9 +2821,6 @@
     "description": "Custom Fonts plugin helps you easily embed custom fonts files (woff2, woff, ttf, svg, eot, otf) easily in your WordPress website.",
     "icon": "Custom Fonts.png",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/custom-fonts/",
     "website": "https://github.com/brainstormforce/custom-fonts"
@@ -2907,6 +2935,18 @@
     "html": "<!-- cPanel",
     "icon": "cPanel.png",
     "website": "http://www.cpanel.net"
+  },
+  "cState": {
+    "cats": [
+      13
+    ],
+    "description": "cState is an open-source static (serverless) status page.",
+    "icon": "cState.svg",
+    "meta": {
+      "generator": "cState v([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/cstate/cstate"
   },
   "cdnjs": {
     "cats": [

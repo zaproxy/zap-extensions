@@ -88,6 +88,19 @@
     ],
     "website": "https://www.ups.com"
   },
+  "USPS": {
+    "cats": [
+      99
+    ],
+    "description": "The United States Postal Service (USPS) is an independent agency of the executive branch of the United States federal government responsible for providing postal service in the United States.",
+    "icon": "USPS.svg",
+    "requiresCategory": 6,
+    "text": [
+      "\\bUSPS\\b",
+      "\\bUnited States Postal Service\\b"
+    ],
+    "website": "https://www.usps.com"
+  },
   "USWDS": {
     "cats": [
       18

@@ -493,7 +493,6 @@
   "Klarna Checkout": {
     "cats": [
       41,
-      6,
       91
     ],
     "cookies": {
@@ -502,6 +501,9 @@
     },
     "description": "Klarna Checkout is a complete payment solution where Klarna handles a store's entire checkout.",
     "dom": "[aria-labelledby='pi-klarna']",
+    "headers": {
+      "content-security-policy": "\\.klarna(?:cdn|services)\\.(?:net|com)"
+    },
     "icon": "Klarna.svg",
     "js": {
       "KlarnaOnsiteService": "",

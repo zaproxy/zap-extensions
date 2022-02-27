@@ -131,6 +131,20 @@
     "scriptSrc": "www\\.powr\\.io/powr\\.js",
     "website": "https://www.powr.io"
   },
+  "PWA Studio": {
+    "cats": [
+      6
+    ],
+    "description": "PWA Studio is a collection of tools that lets developers build complex Progressive Web Applications on top of Magento 2 or Adobe Commerce stores.",
+    "icon": "PWA Studio.png",
+    "js": {
+      "__fetchLocaleData__": "\\;confidence:50",
+      "fetchRootComponent": "\\;confidence:50"
+    },
+    "oss": true,
+    "requires": "Magento",
+    "website": "https://github.com/magento/pwa-studio"
+  },
   "Pace": {
     "cats": [
       41,
@@ -441,9 +455,6 @@
       "partytown.lib": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "https://github.com/BuilderIO/partytown"
   },
   "Paths.js": {
@@ -572,12 +583,16 @@
         "exists": ""
       }
     },
+    "headers": {
+      "content-security-policy": "\\.paypal\\.com"
+    },
     "icon": "PayPal.svg",
     "js": {
       "PAYPAL": "",
       "__paypal_global__": "",
       "checkout.enabledpayments.paypal": "^true$",
       "enablePaypal": "",
+      "paypal": "",
       "paypalClientId": "",
       "paypalJs": ""
     },
@@ -770,6 +785,20 @@
       "generator": "(?:Percussion|Rhythmyx)"
     },
     "website": "http://percussion.com"
+  },
+  "Perfex CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Perfex CRM is self hosted customer relationship management software that is a great fit for almost any company, freelancer or many other uses.",
+    "icon": "Perfex CRM.png",
+    "pricing": [
+      "onetime",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "/assets/themes/perfex/js/global\\.min\\.js(?:\\?v=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.perfexcrm.com"
   },
   "PerimeterX": {
     "cats": [
@@ -1512,9 +1541,6 @@
     "dom": "img[src*='/wp-content/plugins/polylang/']",
     "icon": "Polylang.svg",
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "requires": "WordPress",
     "website": "https://github.com/polylang/polylang"
   },
@@ -1559,17 +1585,14 @@
     "cats": [
       19
     ],
-    "description": "Popper is an tooltip and popover positioning engine.",
-    "html": [
-      "<script [^>]*src=\"[^\"]*/popper\\.js/([0-9.]+)\\;version:\\1"
-    ],
-    "icon": "Popper.png",
+    "description": "Popper is a positioning engine, its purpose is to calculate the position of an element to make it possible to position it near a given reference element.",
+    "icon": "Popper.svg",
     "js": {
+      "Popper.Defaults": "",
       "createPopper": ""
     },
-    "scriptSrc": [
-      "/popper\\.js/([0-9.]+)\\;version:\\1"
-    ],
+    "oss": true,
+    "scriptSrc": "/popper(?:\\.min)?\\.js(?:/([0-9.]+))?\\;version:\\1",
     "website": "https://popper.js.org"
   },
   "PopularFX": {
@@ -1770,9 +1793,6 @@
       "pbjs": ""
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "scriptSrc": [
       "/prebid\\.js",
       "adnxs\\.com/[^\"]*(?:prebid|/pb\\.js)"
@@ -1906,9 +1926,6 @@
       "generator": "PrestaShop"
     },
     "oss": true,
-    "pricing": [
-      "freemium"
-    ],
     "website": "http://www.prestashop.com"
   },
   "Pretty Links": {
