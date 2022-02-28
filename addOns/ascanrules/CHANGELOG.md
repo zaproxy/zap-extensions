@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Path Traversal scan rule, updated the regex for case 5 to be case-insensitive when searching for Error or Exception in content body.
 - Maintenance changes.
 
+### Fixed
+- Server Side Code Injection scan rule, prevent use of zero when injecting ASP multiplication to avoid false positives (Issue 7107).
+
 ## [44] - 2022-01-13
 ### Changed
 - Update minimum ZAP version to 2.11.1.

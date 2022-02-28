@@ -81,7 +81,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     private static final Logger log = LogManager.getLogger(CodeInjectionScanRule.class);
 
     private static final Random RAND = new Random();
-    private static final int MAX_VALUE = 999999;
+    private static final int MAX_VALUE = 999998;
 
     @Override
     public int getId() {
@@ -237,8 +237,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
      * @see #ASP_PAYLOADS
      */
     private boolean testAspInjection(String paramName) {
-        int bignum1 = RAND.nextInt(MAX_VALUE);
-        int bignum2 = RAND.nextInt(MAX_VALUE);
+        int bignum1 = getRandomValue();
+        int bignum2 = getRandomValue();
 
         for (String aspPayload : ASP_PAYLOADS) {
             if (isStop()) {
@@ -284,5 +284,9 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
         }
 
         return false;
+    }
+
+    private static int getRandomValue() {
+        return RAND.nextInt(MAX_VALUE) + 1;
     }
 }
