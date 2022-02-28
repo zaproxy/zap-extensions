@@ -178,6 +178,10 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     public synchronized void register() throws InteractshException {
+        register(true);
+    }
+
+    synchronized void register(boolean startPolling) throws InteractshException {
         try {
             if (isRegistered) {
                 return;
@@ -225,7 +229,9 @@ public class InteractshService extends OastService implements OptionsChangedList
                     reqMsg.getResponseHeader().getStatusCode(),
                     reqMsg.getResponseBody());
             isRegistered = true;
-            schedulePoller(0);
+            if (startPolling) {
+                schedulePoller(0);
+            }
         } catch (IOException | CloneNotSupportedException | NoSuchAlgorithmException e) {
             LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
             throw new InteractshException(

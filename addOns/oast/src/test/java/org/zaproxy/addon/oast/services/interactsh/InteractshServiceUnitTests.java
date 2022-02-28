@@ -160,7 +160,7 @@ class InteractshServiceUnitTests extends TestUtils {
     private List<InteractshEvent> setUpMockRegisterAndPollEndpoints(InteractshService service)
             throws Exception {
         nano.addHandler(new StaticInteractshServerHandler("/register", ""));
-        service.register();
+        service.register(false);
 
         JSONObject eventJson = new JSONObject();
         eventJson.put("protocol", "http");
