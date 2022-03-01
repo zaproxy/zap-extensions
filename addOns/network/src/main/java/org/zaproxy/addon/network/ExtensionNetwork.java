@@ -88,6 +88,7 @@ import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.LocalServer;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.LocalServerHandler;
 import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
@@ -570,16 +571,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             return;
         }
 
-        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
-            logNoStartCmdLineMode();
-            return;
-        }
-
-        startLocalServers(null, NO_PORT_OVERRIDE, false);
-    }
-
-    private static void logNoStartCmdLineMode() {
-        LOGGER.info("Not starting local servers/proxies, running in command line mode.");
+        startLocalServers(null, NO_PORT_OVERRIDE, true);
     }
 
     private void startAdditionalLocalServer(LocalServer server) {
@@ -630,12 +622,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 getModel());
     }
 
-    private void startLocalServers(
-            String overrideAddress, int overridePort, boolean mainProxyRequired) {
-        localServersOptions.getServers().stream()
-                .filter(LocalServerConfig::isEnabled)
-                .map(this::createLocalServer)
-                .forEach(this::startAdditionalLocalServer);
+    private void startLocalServers(String overrideAddress, int overridePort, boolean install) {
+        boolean commandLineMode = ZAP.getProcessType() == ZAP.ProcessType.cmdline;
+        boolean daemonMode = ZAP.getProcessType() == ZAP.ProcessType.daemon;
+
+        if (!commandLineMode) {
+            localServersOptions.getServers().stream()
+                    .filter(LocalServerConfig::isEnabled)
+                    .map(this::createLocalServer)
+                    .forEach(this::startAdditionalLocalServer);
+        }
 
         LocalServerConfig serverConfig = localServersOptions.getMainProxy();
         boolean overrides = false;
@@ -659,6 +655,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         updateCoreProxy(serverConfig);
 
+        if (commandLineMode) {
+            serverConfig.setMode(ServerMode.PROXY);
+        }
+
         mainProxyServer = createLocalServer(serverConfig);
         if (overridePort == INVALID_PORT) {
             return;
@@ -667,14 +667,19 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         try {
             mainProxyServer.start();
 
-            if (mainProxyRequired) {
+            if (daemonMode) {
                 LOGGER.info("ZAP is now listening on {}:{}", address, port);
             }
         } catch (Exception e) {
 
-            if (mainProxyRequired) {
+            if (!install && (daemonMode || commandLineMode)) {
                 LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
-                throw new Error("Terminating ZAP, unable to start the main proxy.");
+
+                String message = "Terminating ZAP, unable to start the main proxy.";
+                if (daemonMode) {
+                    throw new Error(message);
+                }
+                throw new IllegalStateException(message + " Cause: " + e.getMessage());
             }
 
             String detailedError = null;
@@ -951,13 +956,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             return;
         }
 
-        if (ZAP.getProcessType() == ZAP.ProcessType.cmdline) {
-            logNoStartCmdLineMode();
-            return;
-        }
-
-        boolean daemon = ZAP.getProcessType() == ZAP.ProcessType.daemon;
-
         String mainProxyAddress = null;
         if (arguments[ARG_HOST_IDX].isEnabled()) {
             mainProxyAddress = arguments[ARG_HOST_IDX].getArguments().firstElement();
@@ -972,7 +970,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 LOGGER.warn(
                         "The main proxy will not be started, invalid -port value: {}", argValue);
 
-                if (daemon) {
+                if (ZAP.getProcessType() == ZAP.ProcessType.daemon) {
                     throw new Error("Terminating ZAP, unable to start the main proxy.");
                 }
 
@@ -986,7 +984,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
         }
 
-        startLocalServers(mainProxyAddress, mainProxyPort, daemon);
+        startLocalServers(mainProxyAddress, mainProxyPort, false);
     }
 
     private static void writeCert(String path, CertWriter writer) {

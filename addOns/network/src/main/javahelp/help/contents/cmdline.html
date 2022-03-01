@@ -38,8 +38,9 @@
 	</table>
 
 	<H3>Local Servers/Proxies</H3>
-	The local servers/proxies are not started when ZAP is running in command line mode (i.e. <code>-cmd</code>). If unable to start the main
-	proxy in daemon mode (i.e. <code>-daemon</code>) ZAP is terminated, when running with GUI an appropriate warning is shown instead.
+	When ZAP is running in command line mode (i.e. <code>-cmd</code>) only the main proxy is started, for example, to proxy integration tests.
+	If unable to start the main proxy in command line mode or in daemon mode (i.e. <code>-daemon</code>) ZAP is terminated, when running with
+	GUI an appropriate warning is shown instead.
 
 	<H2>See also</H2>
 	<table>
