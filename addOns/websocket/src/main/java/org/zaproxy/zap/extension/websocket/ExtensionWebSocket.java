@@ -491,12 +491,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
         HttpSender.removeListener(httpSenderListener);
 
-        // close all existing connections
-        for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
-            WebSocketProxy wsProxy = wsEntry.getValue();
-            wsProxy.shutdown();
-        }
-
         Control control = Control.getSingleton();
         ExtensionLoader extLoader = control.getExtensionLoader();
 
@@ -548,6 +542,15 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         if (extensionScript != null) {
             removeAllChannelSenderListener(webSocketSenderScriptListener);
             extensionScript.removeScriptType(websocketSenderSciptType);
+        }
+    }
+
+    @Override
+    public void stop() {
+        // close all existing connections
+        for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
+            WebSocketProxy wsProxy = wsEntry.getValue();
+            wsProxy.shutdown();
         }
 
         // shut down Passive Scanner & unregister the WebSocket Passive Scan script type
