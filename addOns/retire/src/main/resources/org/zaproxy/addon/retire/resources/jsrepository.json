@@ -1281,6 +1281,32 @@
 				"severity": "medium",
 				"identifiers": { "summary": "Fixed security vulnerability by adding die calls to all php files to prevent them from being executed unless modified." },
 				"info" : [ "https://github.com/moxiecode/plupload/releases/tag/v3.1.3" ]
+			},
+			{
+				"below" : "3.1.4",
+				"atOrAbove" : "3.0.0",
+				"severity": "medium",
+				"identifiers": { "summary": "Fixed a potential security issue with not entity encoding the file names in the html in the queue/ui widgets." },
+				"info" : [ "https://github.com/moxiecode/plupload/releases/tag/v3.1.4" ]
+			},
+			{
+				"below" : "2.3.8",
+				"severity": "medium",
+				"identifiers": { "summary": "Fixed a potential security issue with not entity encoding the file names in the html in the queue/ui widgets." },
+				"info" : [ "https://github.com/moxiecode/plupload/releases/tag/v2.3.8" ]
+			},
+			{
+				"below" : "3.1.5",
+				"atOrAbove" : "3.0.0",
+				"severity": "medium",
+				"identifiers": { "summary": "Fixed another case of html entities not being encoded that could be exploded by uploading a file name with html in it." },
+				"info" : [ "https://github.com/moxiecode/plupload/releases/tag/v3.1.5" ]
+			},
+			{
+				"below" : "2.3.9",
+				"severity": "medium",
+				"identifiers": { "summary": "Fixed another case of html entities not being encoded that could be exploded by uploading a file name with html in it." },
+				"info" : [ "https://github.com/moxiecode/plupload/releases/tag/v2.3.9" ]
 			}
 		],
 		"extractors" : {
@@ -1531,7 +1557,7 @@
 				"severity": "low",
 				"identifiers": { 
 					"summary" : "Regular Expression Denial of Service (ReDoS)",
-					"CVE" : ["CVE-2017-18214"]
+					"CVE" : [ "CVE-2017-18214" ] 
 				},
 				"info" : [ 
 					"https://security.snyk.io/vuln/npm:moment:20170905",
@@ -1781,6 +1807,18 @@
 				},
 				"severity" : "medium",
 				"info": [ "https://github.com/ckeditor/ckeditor4/security/advisories/GHSA-m94c-37g6-cjhc" ]
+			},
+			{
+				"below" : "4.17.0",
+				"identifiers" : {
+					"summary" : "XSS vulnerabilities in the core module",
+					"CVE": [ "CVE-2021-41164", "CVE-2021-41165" ]
+				},
+				"severity" : "medium",
+				"info": [ 
+					"https://github.com/ckeditor/ckeditor4/security/advisories/GHSA-pvmx-g8h5-cprj",
+					"https://github.com/ckeditor/ckeditor4/security/advisories/GHSA-7h26-63m7-qhf2"
+				]
 			}
 		],
 		"extractors" : {
