@@ -407,6 +407,20 @@
     "saas": true,
     "website": "https://partners.accuweather.com"
   },
+  "Ace": {
+    "cats": [
+      24
+    ],
+    "description": "Ace is an embeddable code editor written in JavaScript.",
+    "icon": "Ace.png",
+    "js": {
+      "ace.EditSession": "",
+      "ace.Editor": "",
+      "ace.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/ajaxorg/ace"
+  },
   "Ackee": {
     "cats": [
       10
@@ -3194,6 +3208,11 @@
     ],
     "description": "Astro is a new JavaScript-based static site builder.",
     "dom": {
+      "[class^='astro-']": {
+        "attributes": {
+          "class": "astro-[\\d\\w]{8,}"
+        }
+      },
       "link[href*='/_astro/']": {
         "attributes": {
           "href": "/_astro/(?:common|index)-[\\d\\w]+\\.css"

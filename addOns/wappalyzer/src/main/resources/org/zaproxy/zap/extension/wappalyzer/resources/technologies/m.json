@@ -1298,6 +1298,22 @@
     "scriptSrc": "\\.miestro\\.com",
     "website": "https://miestro.com"
   },
+  "Milestone CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Milestone CMS is a SEO-first CMS that offers built-in advanced schema markups and Core Web Vitals conformance for improved search performance.",
+    "icon": "Milestone.svg",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "^Milestone\\sCMS\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.milestoneinternet.com/products/milestone-cms"
+  },
   "Milligram": {
     "cats": [
       66
@@ -1652,6 +1668,20 @@
     },
     "scriptSrc": "moment(?:\\.min)?\\.js",
     "website": "https://momentjs.com"
+  },
+  "Monaco Editor": {
+    "cats": [
+      24
+    ],
+    "css": "\\.monaco-editor",
+    "description": "Monaco Editor is the code editor that powers VS Code. Monaco Editor is a tool in the text editor category of a tech stack.",
+    "icon": "Microsoft.svg",
+    "js": {
+      "MonacoEnvironment": "",
+      "monaco.editor": ""
+    },
+    "oss": true,
+    "website": "https://microsoft.github.io/monaco-editor/"
   },
   "Mondial Relay": {
     "cats": [

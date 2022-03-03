@@ -1,4 +1,30 @@
 {
+  "Q4": {
+    "cats": [
+      53
+    ],
+    "description": "Q4 is a SaaS platform that provides communication and intelligence solutions to investor relations professionals.",
+    "icon": "Q4.png",
+    "js": {
+      "q4App.a11yAnnouncement": "",
+      "q4Defaults.fancySignup": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.q4inc.com/products/investor-relations-websites/default.aspx"
+  },
+  "Q4 Cookie Monster": {
+    "cats": [
+      5,
+      67
+    ],
+    "description": "Q4 Cookie Monster is an cookie compliance widget built by Q4.",
+    "icon": "Q4.png",
+    "scriptSrc": "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
+    "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
+  },
   "Qualaroo": {
     "cats": [
       73

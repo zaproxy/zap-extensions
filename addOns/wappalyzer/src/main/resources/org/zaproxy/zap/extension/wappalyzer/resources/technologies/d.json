@@ -731,6 +731,9 @@
     "cats": [
       18
     ],
+    "cookies": {
+      "django_language": ""
+    },
     "cpe": "cpe:/a:djangoproject:django",
     "description": "Django is a Python-based free and open-source web application framework.",
     "html": "(?:powered by <a[^>]+>Django ?([\\d.]+)?<\\/a>|<input[^>]*name=[\"']csrfmiddlewaretoken[\"'][^>]*>)\\;version:\\1",
@@ -747,9 +750,6 @@
     "cats": [
       1
     ],
-    "cookies": {
-      "django_language": ""
-    },
     "description": "Django CMS is a free and open source content management system platform for publishing content on the World Wide Web and intranets.",
     "icon": "Django CMS.png",
     "implies": [

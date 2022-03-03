@@ -622,6 +622,25 @@
     ],
     "website": "http://gerrit.googlesource.com/gitiles/"
   },
+  "GiveWP": {
+    "cats": [
+      41,
+      87
+    ],
+    "description": "GiveWP is a donation plugin for WordPress.",
+    "icon": "GiveWP.svg",
+    "js": {
+      "Give.donor": "",
+      "giveApiSettings": ""
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://givewp.com"
+  },
   "Gladly": {
     "cats": [
       52,
