@@ -3057,6 +3057,27 @@
     "scriptSrc": "https://cdn\\.snipcart\\.com/themes/v([\\w.]+)/default/snipcart\\.js\\;version:\\1",
     "website": "https://snipcart.com"
   },
+  "SniperFast": {
+    "cats": [
+      29
+    ],
+    "description": "SniperFast is instant search system for ecommerce sites.",
+    "icon": "SniperFast.png",
+    "requiresCategory": 6,
+    "js": {
+      "sniperfast_page_id": "",
+      "sniperEnableSearch": "",
+      "sniper_search_key": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sniperfast\\.com",
+    "website": "https://www.sniperfast.com"
+  },
   "Sniply": {
     "cats": [
       96

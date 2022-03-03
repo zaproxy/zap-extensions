@@ -848,6 +848,19 @@
     "scriptSrc": "livewire(?:\\.min)?\\.js",
     "website": "https://laravel-livewire.com"
   },
+  "Loadable-Components": {
+    "cats": [
+      59
+    ],
+    "description": "Loadable-Components is a library to solve the React code-splitting client-side and server-side.",
+    "dom": "script#__LOADABLE_REQUIRED_CHUNKS__",
+    "icon": "Loadable-Components.png",
+    "js": {
+      "__LOADABLE_LOADED_CHUNKS__": ""
+    },
+    "oss": true,
+    "website": "https://github.com/gregberge/loadable-components"
+  },
   "LocalFocus": {
     "cats": [
       25
