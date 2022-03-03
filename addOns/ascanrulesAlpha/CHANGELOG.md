@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Web Cache Deception scan rule now uses a comparison mechanism which should be more performant, and will no longer scan messages which had an error response to start with (Issue 6655).
 
 ## [36] - 2022-02-15
 ### Added

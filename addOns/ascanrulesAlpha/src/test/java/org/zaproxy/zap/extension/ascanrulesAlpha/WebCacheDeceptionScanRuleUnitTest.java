@@ -34,6 +34,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -85,6 +87,24 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals("/test.css,/test.js,/test.gif,/test.png,/test.svg,", alert.getAttack());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {403, 404, 500})
+    void shouldNotTestIfOriginalResponseWasError(int status) throws Exception {
+        // Given
+        HttpMessage message = this.getHttpMessage("/private");
+        HttpRequestHeader headers = message.getRequestHeader();
+        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        message.setRequestHeader(headers);
+        message.getResponseHeader().setStatusCode(status);
+        nano.addHandler(new CachedTestResponse("/private", "authorization"));
+        rule.init(message, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(0));
     }
 
     @Test
@@ -159,7 +179,7 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
     }
 
     @Test
-    @Timeout(value = 3, unit = TimeUnit.SECONDS)
+    @Timeout(value = 1, unit = TimeUnit.SECONDS)
     void shouldDetectSimilarMessagesWithoutDelayOnLongResponse() throws Exception {
         // Given
         HttpMessage message = this.getHttpMessage("/private");
