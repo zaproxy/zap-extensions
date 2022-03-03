@@ -7,8 +7,9 @@
 	<tocitem text="Panduan pengguna" tocid="toplevelitem">
 		<tocitem text="Pengaya" tocid="addons">
 			<tocitem text="Script Console" image="addon.scripts.icon" target="addon.scripts.scripts">
-				<tocitem text="Menghibur" target="addon.scripts.console" />
-				<tocitem text="Pohon" target="addon.scripts.tree" />
+				<tocitem text="Automation" target="addon.scripts.automation" />
+				<tocitem text="Console" target="addon.scripts.console" />
+				<tocitem text="Tree" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

@@ -7,6 +7,7 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Script Console" image="addon.scripts.icon" target="addon.scripts.scripts">
+				<tocitem text="Automation" target="addon.scripts.automation" />
 				<tocitem text="Console" target="addon.scripts.console" />
 				<tocitem text="Tree" target="addon.scripts.tree" />
 			</tocitem>

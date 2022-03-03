@@ -7,8 +7,9 @@
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
 			<tocitem text="Script Console" image="addon.scripts.icon" target="addon.scripts.scripts">
-				<tocitem text="Konsol" target="addon.scripts.console" />
-				<tocitem text="Ağaç" target="addon.scripts.tree" />
+				<tocitem text="Automation" target="addon.scripts.automation" />
+				<tocitem text="Console" target="addon.scripts.console" />
+				<tocitem text="Tree" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

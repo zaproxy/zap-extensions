@@ -4,7 +4,8 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
+	<indexitem text="scripts automation" target="addon.scripts.automation" />
 	<indexitem text="script console" target="addon.scripts.scripts" />
-	<indexitem text="ang script sa console na tab" target="addon.scripts.console" />
-	<indexitem text="mga script sa tree na tab" target="addon.scripts.tree" />
+	<indexitem text="script console tab" target="addon.scripts.console" />
+	<indexitem text="scripts tree tab" target="addon.scripts.tree" />
 </index>
