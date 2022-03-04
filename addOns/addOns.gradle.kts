@@ -65,12 +65,7 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
 
 val releaseAddOn by tasks.registering
 
-val crowdinExcludedProjects = setOf(
-    childProjects.get("importLogFiles"),
-    childProjects.get("importurls"),
-    childProjects.get("saverawmessage"),
-    childProjects.get("savexmlmessage")
-)
+val crowdinExcludedProjects = emptySet<Project>()
 
 subprojects {
     if (parentProjects.contains(project.name)) {
