@@ -62,6 +62,7 @@ import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionCallHome extends ExtensionAdaptor
@@ -91,6 +92,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
     public static final String WEBSWING_NAME = "webswing";
     public static final String KALI_NAME = "kali";
     private static final String BACK_BOX_ID = "BackBox";
+    private static final HttpRequestConfig HTTP_REQUEST_CONFIG =
+            HttpRequestConfig.builder().setFollowRedirects(true).setNotifyListeners(false).build();
 
     public enum OS {
         WINDOWS,
@@ -218,8 +221,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
         msg.getRequestBody().setBody(data.toString());
         msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-
-        getHttpSender().sendAndReceive(msg, true);
+        getHttpSender().sendAndReceive(msg, HTTP_REQUEST_CONFIG);
         if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
             throw new IOException(
                     "Expected '200 OK' but got '"
