@@ -123,7 +123,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addFieldListener(
                 MATCH_TYPE_FIELD,
                 e -> {
-                    save();
+                    saveImpl();
                     initFields();
                 });
         this.addFieldListener(INIT_TYPE_ALL_FIELD, e -> setUpInitiatorFields());
@@ -235,37 +235,41 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
+        saveImpl();
+    }
+
+    public void saveImpl() {
         List<Integer> initiators = null;
-        if (!getBoolValue(INIT_TYPE_ALL_FIELD)) {
+        if (Boolean.FALSE.equals(getBoolValue(INIT_TYPE_ALL_FIELD))) {
             initiators = new ArrayList<>();
-            if (getBoolValue(INIT_TYPE_PROXY_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_PROXY_FIELD))) {
                 initiators.add(HttpSender.PROXY_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SPIDER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SPIDER_FIELD))) {
                 initiators.add(HttpSender.SPIDER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SCANNER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SCANNER_FIELD))) {
                 initiators.add(HttpSender.ACTIVE_SCANNER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_BRUTE_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_BRUTE_FIELD))) {
                 initiators.add(HttpSender.FORCED_BROWSE_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_FUZZER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_FUZZER_FIELD))) {
                 initiators.add(HttpSender.FUZZER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_SPIDER_AJAX_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_SPIDER_AJAX_FIELD))) {
                 initiators.add(HttpSender.AJAX_SPIDER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_AUTH_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_AUTH_FIELD))) {
                 initiators.add(HttpSender.AUTHENTICATION_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_AC_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_AC_FIELD))) {
                 initiators.add(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_USER_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_USER_FIELD))) {
                 initiators.add(HttpSender.MANUAL_REQUEST_INITIATOR);
             }
-            if (getBoolValue(INIT_TYPE_TOKEN_GEN_FIELD)) {
+            if (Boolean.TRUE.equals(getBoolValue(INIT_TYPE_TOKEN_GEN_FIELD))) {
                 initiators.add(HttpSender.TOKEN_GENERATOR_INITIATOR);
             }
         }
@@ -296,7 +300,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         if (this.isEmptyField(MATCH_STR_FIELD)) {
             return Constant.messages.getString("replacer.add.warning.nomatch");
         }
-        if (this.getBoolValue(REGEX_FIELD)) {
+        if (Boolean.TRUE.equals(this.getBoolValue(REGEX_FIELD))) {
             // Check the regex is valid
             try {
                 Pattern.compile(this.getStringValue(MATCH_STR_FIELD));
