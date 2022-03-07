@@ -314,7 +314,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             allowedSources.add("img-src");
         }
         if (checkPolicy(pol::allowsConnection)) {
-            allowedSources.add("connects-src");
+            allowedSources.add("connect-src");
         }
         if (checkPolicy(pol::allowsFrame)) {
             allowedSources.add("frame-src");

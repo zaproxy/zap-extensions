@@ -126,7 +126,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), are not "
                                 + "defined, or are overly broadly defined: \nscript-src, style-src, img-src, "
-                                + "connects-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
+                                + "connect-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
                                 + "manifest-src, worker-src, prefetch-src, form-action\n\nThe directive(s): "
                                 + "frame-ancestors, form-action are among the directives that do not fallback "
                                 + "to default-src, missing/excluding them is the same as allowing anything."));
@@ -202,6 +202,32 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("frame-ancestors *; default-src 'self'; form-action 'none'"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+    }
+
+    @Test
+    void shouldAlertOnWildcardConnectSourceDirective() {
+        // Given
+        HttpMessage msg =
+                createHttpMessage(
+                        "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The following directives either allow wildcard sources (or ancestors), are not "
+                                + "defined, or are overly broadly defined: \nconnect-src"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(
+                        "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
