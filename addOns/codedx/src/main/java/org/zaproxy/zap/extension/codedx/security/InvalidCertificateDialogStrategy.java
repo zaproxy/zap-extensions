@@ -86,7 +86,7 @@ public class InvalidCertificateDialogStrategy implements InvalidCertificateStrat
 			
 			message.add(issuer,gbc);
 			gbc.gridx = 1;
-			message.add(new JLabel(cert.getIssuerDN().toString()),gbc);
+			message.add(new JLabel(cert.getIssuerX500Principal().getName()),gbc);
 			
 			try {
 				JLabel fingerprint = new JLabel(Constant.messages.getString("codedx.ssl.fingerprint") + " ");

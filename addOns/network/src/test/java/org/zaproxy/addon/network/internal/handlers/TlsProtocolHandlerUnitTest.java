@@ -371,16 +371,7 @@ class TlsProtocolHandlerUnitTest {
         // When
         Channel clientChannel = clientTls.connect(port, message);
         // Then
-        assertThat(
-                clientChannel
-                        .pipeline()
-                        .get(SslHandler.class)
-                        .engine()
-                        .getSession()
-                        .getPeerCertificateChain()[0]
-                        .getSubjectDN()
-                        .getName(),
-                containsString("CN=example.org"));
+        assertThat(getCertificate(clientChannel).toString(), containsString("CN=example.org"));
     }
 
     @Test
@@ -406,19 +397,21 @@ class TlsProtocolHandlerUnitTest {
         // When
         Channel clientChannel = clientTls.connect(port, message);
         // Then
-        assertThat(
-                clientChannel
-                        .pipeline()
-                        .get(SslHandler.class)
-                        .engine()
-                        .getSession()
-                        .getPeerCertificateChain()[0]
-                        .toString(),
-                containsString("IPAddress: " + localAddress));
+        assertThat(getCertificate(clientChannel), containsString("IPAddress: " + localAddress));
     }
 
     private void waitForServerChannel() throws InterruptedException {
         serverChannelReady.await(5, TimeUnit.SECONDS);
         assertThat(serverChannel, is(notNullValue()));
+    }
+
+    private static String getCertificate(Channel clientChannel) throws Exception {
+        return clientChannel
+                .pipeline()
+                .get(SslHandler.class)
+                .engine()
+                .getSession()
+                .getPeerCertificates()[0]
+                .toString();
     }
 }
