@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Importing a file of URLs or HAR is now displayed in the progress panel provided via commonlib.
+- Automation Framework (Issue 7078).
 
 ## [0.0.1] - 2021-12-22
 

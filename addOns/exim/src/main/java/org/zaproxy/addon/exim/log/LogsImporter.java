@@ -91,7 +91,7 @@ public class LogsImporter {
 
     public LogsImporter(File file, LogType type, ProgressPaneListener listener) {
         this.progressListener = listener;
-        processInput(file, type);
+        success = processInput(file, type);
     }
 
     private void readModSecLogsFromFile(File file) {

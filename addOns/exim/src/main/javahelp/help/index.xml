@@ -5,4 +5,5 @@
 
 <index version="2.0">
     <indexitem text="exim" target="exim" />
+    <indexitem text="exim automation" target="exim.automation" />
 </index>

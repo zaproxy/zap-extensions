@@ -15,6 +15,20 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+        extensions {
+            register("org.zaproxy.addon.exim.automation.ExtensionEximAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.exim.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.12.0")
+                        }
+                    }
+                }
+            }
+        }
         dependencies {
             addOns {
                 register("commonlib") {
@@ -33,10 +47,12 @@ crowdin {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
+    testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }
