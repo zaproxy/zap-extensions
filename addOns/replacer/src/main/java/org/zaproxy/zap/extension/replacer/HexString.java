@@ -27,6 +27,10 @@ class HexString {
     private static final Pattern HEX_VALUE = Pattern.compile("\\\\?\\\\x\\p{XDigit}{2}");
     private static final String ESCAPED_ESCAPE_CHAR = "\\\\";
 
+    private HexString() {
+        // Utility class
+    }
+
     static String compile(String binaryRegex) {
         Matcher matcher = HEX_VALUE.matcher(binaryRegex);
         StringBuffer sb = new StringBuffer();

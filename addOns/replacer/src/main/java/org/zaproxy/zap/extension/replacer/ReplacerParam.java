@@ -47,6 +47,7 @@ public class ReplacerParam extends AbstractParam {
     private static final String RULE_INITIATORS_KEY = "initiators";
 
     private static final String CONFIRM_REMOVE_RULE_KEY = REPLACER_BASE_KEY + ".confirmRemoveToken";
+    private static final String FALSE_STRING = "false";
 
     private static ArrayList<ReplacerParamRule> defaultList = new ArrayList<>();
 
@@ -62,33 +63,33 @@ public class ReplacerParam extends AbstractParam {
                 ReplacerParamRule.MatchType.RESP_HEADER.name(),
                 "Content-Security-Policy",
                 "",
-                "false",
+                FALSE_STRING,
                 "",
-                "false"
+                FALSE_STRING
             },
             {
                 "Remove HSTS",
                 ReplacerParamRule.MatchType.RESP_HEADER.name(),
                 "Strict-Transport-Security",
                 "",
-                "false",
+                FALSE_STRING,
                 "",
-                "false"
+                FALSE_STRING
             },
             {
                 "Replace User-Agent with shellshock attack",
                 ReplacerParamRule.MatchType.REQ_HEADER.name(),
                 "User-Agent",
                 "() {:;}; /bin/cat /etc/passwd",
-                "false",
+                FALSE_STRING,
                 "",
-                "false"
+                FALSE_STRING
             }
         };
 
         for (String[] row : defaultListArray) {
-            boolean regex = row[4].equalsIgnoreCase("true") ? true : false;
-            boolean enabled = row[6].equalsIgnoreCase("true") ? true : false;
+            boolean regex = row[4].equalsIgnoreCase("true");
+            boolean enabled = row[6].equalsIgnoreCase("true");
             defaultList.add(
                     new ReplacerParamRule(
                             row[0],
