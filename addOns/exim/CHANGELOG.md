@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.1.0] - 2022-03-07
 ### Changed
 - Reduce logging and display a warning dialog when unable to read files being imported (Issue 7081).
