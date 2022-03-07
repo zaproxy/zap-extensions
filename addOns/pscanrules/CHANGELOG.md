@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [39] - 2022-03-07
 ### Added
 - Alert refs for the alerts which use them (10020 and 10032).
 
@@ -292,6 +292,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[39]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v36
