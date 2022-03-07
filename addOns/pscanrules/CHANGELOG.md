@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - The CSRF Token scan rule will now raise alerts as Medium risk and Low confidence (Issue 7021).
 
+### Fixed
+- CSP scan rule will now alert in situations where default-src contains 'unsafe-inline' or is not defined (Issue 7120). In certain situations this may mean a marked increase in CSP related Alerts.
+
 ## [38] - 2022-01-07
 ### Changed
 - Update minimum ZAP version to 2.11.1.

@@ -19,10 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import com.shapesecurity.salvation2.Directives.SourceExpressionDirective;
-import com.shapesecurity.salvation2.FetchDirectiveKind;
 import com.shapesecurity.salvation2.Policy;
 import com.shapesecurity.salvation2.Policy.PolicyErrorConsumer;
+import com.shapesecurity.salvation2.PolicyInOrigin;
 import com.shapesecurity.salvation2.URLs.URI;
 import com.shapesecurity.salvation2.URLs.URLWithScheme;
 import java.util.ArrayList;
@@ -202,39 +201,27 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             "4");
                 }
 
-                Optional<SourceExpressionDirective> optDirective =
-                        policy.getFetchDirective(FetchDirectiveKind.ScriptSrc);
-                if (optDirective.isPresent()) {
-                    SourceExpressionDirective directive = optDirective.get();
-                    boolean allowed = directive.unsafeInline();
-                    if (allowed) {
-                        raiseAlert(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "scriptsrc.unsafe.name"),
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "scriptsrc.unsafe.otherinfo"),
-                                "",
-                                Alert.RISK_MEDIUM,
-                                csp,
-                                "5");
-                    }
+                PolicyInOrigin p = new PolicyInOrigin(policy, URI.parseURI(RAND_FQDN).orElse(null));
+                if (p.allowsUnsafeInlineScript()) {
+                    raiseAlert(
+                            Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"),
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.otherinfo"),
+                            "",
+                            Alert.RISK_MEDIUM,
+                            csp,
+                            "5");
                 }
 
-                optDirective = policy.getFetchDirective(FetchDirectiveKind.StyleSrc);
-                if (optDirective.isPresent()) {
-                    SourceExpressionDirective directive = optDirective.get();
-                    boolean allowed = directive.unsafeInline();
-                    if (allowed) {
-                        raiseAlert(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "stylesrc.unsafe.name"),
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "stylesrc.unsafe.otherinfo"),
-                                "",
-                                Alert.RISK_MEDIUM,
-                                csp,
-                                "6");
-                    }
+                if (p.allowsUnsafeInlineStyle()) {
+                    raiseAlert(
+                            Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"),
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "stylesrc.unsafe.otherinfo"),
+                            "",
+                            Alert.RISK_MEDIUM,
+                            csp,
+                            "6");
                 }
             }
         }
