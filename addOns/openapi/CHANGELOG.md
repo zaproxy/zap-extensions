@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support content field (JSON) in parameters (Issue 6166).
+
 ### Changed
 - Now depends on commonlib for display of import progress (Issue 6783).
 

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.openapi.generators;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
@@ -122,6 +123,15 @@ public class DataGenerator {
         if (example != null && !example.isEmpty()) {
             return example;
         }
+
+        Content content = parameter.getContent();
+        if (content != null) {
+            if (content.containsKey("application/json")) {
+                return generators.getBodyGenerator().generate(content.get("application/json"));
+            }
+            return getExampleValue(parameter);
+        }
+
         if (isArray(parameter.getSchema().getType())) {
             return generateArrayValue(name, parameter);
         }
