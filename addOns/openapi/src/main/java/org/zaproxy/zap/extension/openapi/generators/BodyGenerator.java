@@ -181,6 +181,9 @@ public class BodyGenerator {
                                         property.getKey(),
                                         property.getValue().getType(),
                                         generate(property.getValue()));
+                if ("string".equals(property.getValue().getType()) && !value.startsWith("\"")) {
+                    value = "\"" + value + "\"";
+                }
             }
             json.append(value);
         }
