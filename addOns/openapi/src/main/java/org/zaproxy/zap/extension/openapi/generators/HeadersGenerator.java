@@ -26,8 +26,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
@@ -100,21 +101,36 @@ public class HeadersGenerator {
             return;
         }
 
-        for (String type : operation.getRequestBody().getContent().keySet()) {
-            String typeLc = type.toLowerCase(Locale.ROOT);
-            if (typeLc.contains("json") || typeLc.contains("x-www-form-urlencoded")) {
-                headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
-                break;
+        // Note: the order in which the content types are evaluated should match the order in
+        // RequestModelConverter.
+        Set<String> contentTypes = operation.getRequestBody().getContent().keySet();
+        String contentType =
+                getPartialMatch(contentTypes, "json", "x-www-form-urlencoded", "octet-stream");
+        if (contentType != null) {
+            headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, contentType));
+            return;
+        }
+
+        contentType = getPartialMatch(contentTypes, "multipart");
+        if (contentType != null) {
+            if (requestBody.length() > 0) {
+                contentType += "; boundary=" + requestBody.substring(2, 38);
             }
-            if (typeLc.contains("multipart")) {
-                String contentTypeValue = type;
-                if (requestBody.length() > 0) {
-                    contentTypeValue += "; boundary=" + requestBody.substring(2, 38);
-                }
-                headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, contentTypeValue));
-                break;
+            headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, contentType));
+        }
+    }
+
+    private static String getPartialMatch(Set<String> values, String... wantedMatches) {
+        for (String wantedMatch : wantedMatches) {
+            Optional<String> match =
+                    values.stream()
+                            .filter(e -> StringUtils.containsIgnoreCase(e, wantedMatch))
+                            .findFirst();
+            if (match.isPresent()) {
+                return match.get();
             }
         }
+        return null;
     }
 
     void generateAcceptHeaders(Operation operation, List<HttpHeaderField> headers) {

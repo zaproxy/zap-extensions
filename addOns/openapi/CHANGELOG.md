@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Now depends on commonlib for display of import progress (Issue 6783).
 
+### Fixed
+- Properly generate Content-Type header when in presence of more than one supported content (Issue 7082).
+
 ## [26] - 2022-02-01
 
 ### Fixed
