@@ -145,14 +145,13 @@ class HeadersGeneratorUnitTest {
     }
 
     @Test
-    void shouldGenerateJustFirstSupportedContentType() {
+    void shouldGenerateJustFirstSupportedContentTypeInBodyGeneratedOrder() {
         // Given
-        RequestBody request =
-                mockRequestWithMediaTypes("application/json", "application/x-www-form-urlencoded");
+        RequestBody request = mockRequestWithMediaTypes("multipart/form-data", "application/json");
         Operation operation = mockOperationWithRequest(request);
         List<HttpHeaderField> headers = new ArrayList<>();
         // When
-        headersGenerator.generateContentTypeHeaders(operation, headers, "");
+        headersGenerator.generateContentTypeHeaders(operation, headers, "{\"a\":\"b\"}");
         // Then
         assertThat(headers, contains(header("Content-Type", "application/json")));
     }
