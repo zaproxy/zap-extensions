@@ -81,6 +81,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         REDIRECT_SITE,
         "http://" + REDIRECT_SITE,
         "https://" + REDIRECT_SITE,
+        "https://" + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
         "http:\\\\" + REDIRECT_SITE,
         "https:\\\\" + REDIRECT_SITE,
         "//" + REDIRECT_SITE,
