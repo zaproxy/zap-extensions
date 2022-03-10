@@ -5,4 +5,5 @@
 
 <map version="1.0">
     <mapID target="exim" url="contents/exim.html" />
+    <mapID target="exim.automation" url="contents/automation.html" />
 </map>
