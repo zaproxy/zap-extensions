@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Automation Framework Support
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+
+<H2>Job: import</H2>
+The import job allows you to import HAR(HTTP Archive File), ModSecurity2 Logs, ZAP Messages or a file containing URLs locally.
+<pre>
+  - type: import                       # Import a file of requests
+    parameters:
+      type:                            # String: One of ['har', 'modsec2', 'url', 'zap_messages']
+      fileName:                        # String: Name of the file containing the data
+</pre>
+
+</BODY>
+</HTML>
