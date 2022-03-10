@@ -76,6 +76,7 @@ public class WappalyzerJsonParser {
     }
 
     WappalyzerData parse(String categories, List<String> technologies) {
+        logger.info("Starting to parse Wappalyzer technologies.");
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
         technologies.forEach(path -> parseJson(wappalyzerData, getStringResource(path)));
