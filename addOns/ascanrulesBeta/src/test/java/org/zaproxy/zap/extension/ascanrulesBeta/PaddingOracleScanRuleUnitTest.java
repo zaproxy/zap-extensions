@@ -19,19 +19,33 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import fi.iki.elonen.NanoHTTPD;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanRule> {
 
     @Override
     protected PaddingOracleScanRule createScanner() {
         return new PaddingOracleScanRule();
+    }
+
+    static Stream<String> errorPatternsProvider() {
+        return Stream.of(PaddingOracleScanRule.ERROR_PATTERNS);
     }
 
     @Test
@@ -62,5 +76,81 @@ class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getValue())));
+    }
+
+    @ParameterizedTest
+    @MethodSource("errorPatternsProvider")
+    void shouldReportPaddingOracleForBase64Value(String errorPattern) throws Exception {
+        assumeFalse(
+                "runtime error".equals(errorPattern), "It's matched by 'runtime' error pattern.");
+
+        // Given
+        String test = "/shouldReportPaddingOracleForBase64Value/";
+        String token = "0VMIb2LTBeKOxKV3Dhtt78AAJmajZbsuZ8pjOPJi2XpVRdWi2qjrSZ333DRl8HjD";
+        nano.addHandler(
+                new ServerHandler(
+                        test,
+                        injectedValue -> {
+                            if (token.equals(injectedValue)) {
+                                return newFixedLengthResponse("All ok.");
+                            }
+                            if ("0VMIb2LTBeKOxKV3Dhtt78AAJmajZbsuZ8pjOPJi2XpVRdWi2qjrSZ333DRl8HjC"
+                                    .equals(injectedValue)) {
+                                return newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                                        NanoHTTPD.MIME_PLAINTEXT,
+                                        "Something went wrong: " + errorPattern);
+                            }
+                            return newFixedLengthResponse("Unknown value.");
+                        }));
+        HttpMessage msg = getHttpMessage(test + "?field=" + token);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(2));
+        assertThat(alertsRaised.get(1).getParam(), equalTo("field"));
+        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo(errorPattern)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("errorPatternsProvider")
+    void shouldNotReportPaddingOracleForValidationFields(String errorPattern) throws Exception {
+        // Given
+        String test = "/shouldNotReportPaddingOracleForValidationFields/";
+        String validationField = "0VMIb2LTBeKOxKV3Dhtt78AAJmajZbsuZ8pjOPJi2XpVRdWi2qjrSZ333DRl8HjD";
+        nano.addHandler(
+                new ServerHandler(
+                        test,
+                        injectedValue -> {
+                            if (validationField.equals(injectedValue)) {
+                                return newFixedLengthResponse("Verification passed.");
+                            }
+                            return newFixedLengthResponse(
+                                    "Verification failed and here's an error pattern: "
+                                            + errorPattern);
+                        }));
+        HttpMessage msg = getHttpMessage(test + "?field=" + validationField);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    private static class ServerHandler extends NanoServerHandler {
+
+        private final Function<String, NanoHTTPD.Response> responseHandler;
+
+        public ServerHandler(String path, Function<String, NanoHTTPD.Response> responseHandler) {
+            super(path);
+
+            this.responseHandler = responseHandler;
+        }
+
+        @Override
+        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+            return responseHandler.apply(getFirstParamValue(session, "field"));
+        }
     }
 }
