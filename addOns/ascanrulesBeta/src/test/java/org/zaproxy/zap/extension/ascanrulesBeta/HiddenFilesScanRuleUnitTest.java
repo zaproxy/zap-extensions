@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -60,6 +61,8 @@ import org.zaproxy.zap.testutils.StaticContentServerHandler;
  * rule.init()}
  */
 class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule> {
+
+    private static final String NOT_FOUND_PATH = "/404.html";
 
     @Override
     protected HiddenFilesScanRule createScanner() {
@@ -122,10 +125,10 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         // When
         rule.scan();
         // Then
-        assertEquals(httpMessagesSent.size(), 1);
-        assertEquals(httpMessagesSent.get(0).getRequestHeader().getMethod(), HttpRequestHeader.GET);
+        assertEquals(1, httpMessagesSent.size());
+        assertEquals(HttpRequestHeader.GET, httpMessagesSent.get(0).getRequestHeader().getMethod());
         assertNull(httpMessagesSent.get(0).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
-        assertEquals(httpMessagesSent.get(0).getRequestBody().length(), 0);
+        assertEquals(0, httpMessagesSent.get(0).getRequestBody().length());
     }
 
     @Test
@@ -165,12 +168,44 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
                 rule.getReference() + '\n' + hiddenFile.getLinks().get(0), alert.getReference());
     }
 
+    @Test
+    void shouldNotRaiseAlertIfTestedUrlRespondRedirect() throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldNotAlert";
+
+        String testPath = "foo/test.php";
+        List<String> contents = Arrays.asList("Awesome");
+        List<String> links = Collections.emptyList();
+        HiddenFile hiddenFile =
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(new RedirectResponse("/" + testPath));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        rule.init(msg, this.parent);
+        HiddenFilesScanRule.addTestPayload(hiddenFile);
+        // When
+        rule.scan();
+        // Then
+        boolean accessed = false;
+        for (HttpMessage message : httpMessagesSent) {
+            if (message.getRequestHeader().getURI().toString().contains(NOT_FOUND_PATH)) {
+                accessed = true;
+            }
+        }
+        assertFalse(accessed);
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @ParameterizedTest
     @EnumSource(names = {"LOW", "MEDIUM"})
     void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotHigh(
             AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
-        String servePath = "/shouldAlert";
+        String servePath = "/shouldNotAlert";
 
         String testPath = "foo/test.php";
         List<String> contents = Arrays.asList("Awesome");
@@ -703,6 +738,25 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         protected Response serve(IHTTPSession session) {
             return NanoHTTPD.newFixedLengthResponse(
                     Response.Status.NOT_FOUND, "text/html", NOT_FOUND_RESPONSE);
+        }
+    }
+
+    private static class RedirectResponse extends NanoServerHandler {
+
+        private static final String REDIRECT_RESPONSE =
+                "<!DOCTYPE html\">\n" + "<html><head></head><H>Redirecting</H1>... <html>";
+
+        public RedirectResponse(String path) {
+            super(path);
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            Response resp =
+                    NanoHTTPD.newFixedLengthResponse(
+                            Response.Status.REDIRECT, "text/html", REDIRECT_RESPONSE);
+            resp.addHeader(HttpHeader.LOCATION, NOT_FOUND_PATH);
+            return resp;
         }
     }
 
