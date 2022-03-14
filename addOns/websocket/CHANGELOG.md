@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [25] - 2022-03-14
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Update the reference links used in the Username IDOR passive scan script.
@@ -183,6 +183,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/websocket-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/websocket-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/websocket-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/websocket-v22
