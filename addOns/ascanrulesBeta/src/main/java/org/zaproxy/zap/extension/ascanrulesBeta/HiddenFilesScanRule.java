@@ -165,7 +165,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             testMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
             testMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
             testMsg.setRequestBody("");
-            sendAndReceive(testMsg);
+            sendAndReceive(testMsg, false);
             return testMsg;
         } catch (URIException uEx) {
             LOG.debug(
