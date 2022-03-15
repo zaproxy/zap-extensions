@@ -643,16 +643,19 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             if (contexts2 == null) {
                                 break;
                             }
-                            if (contexts2.size() > 0) {
-                                // Yep, its vulnerable
-                                newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                        .setParam(param)
-                                        .setAttack(contexts2.get(0).getTarget())
-                                        .setEvidence(contexts2.get(0).getTarget())
-                                        .setMessage(contexts2.get(0).getMsg())
-                                        .raise();
-                                attackWorked = true;
+                            for (HtmlContext ctx : contexts2) {
+                                if (!ctx.getSurroundingQuote().isEmpty()) {
+                                    // Yep, its vulnerable
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(ctx.getTarget())
+                                            .setEvidence(ctx.getTarget())
+                                            .setMessage(ctx.getMsg())
+                                            .raise();
+                                    attackWorked = true;
+                                    break;
+                                }
                             }
                         } else {
                             // Try an img tag
