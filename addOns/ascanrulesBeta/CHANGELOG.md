@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [40] - 2022-03-15
 ### Changed
 - Hidden File Finder scan rule, content checking has been added for .svn/entries as well as detection for wc.db.
 - Use Network add-on to detect/serve HttPoxy scan rule requests.
@@ -342,6 +342,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v37
