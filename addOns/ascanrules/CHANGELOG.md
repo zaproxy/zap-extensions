@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [45] - 2022-03-15
 ### Changed 
 - Remote OS Command Injection rule now has more information in the Other Info field to differentiate feedback-based or time-based tests
