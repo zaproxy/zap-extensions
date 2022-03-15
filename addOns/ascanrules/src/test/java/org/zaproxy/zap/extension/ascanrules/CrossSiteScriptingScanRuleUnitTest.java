@@ -1324,10 +1324,41 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
-    void shouldNotAlertXssInJsVariableWithEncoding() throws HttpMalformedHeaderException {
+    void shouldAlertXssInJsString() throws HttpMalformedHeaderException {
         // Given
         String path = "/user/search";
-        this.nano.addHandler(
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response =
+                                getHtml("InputInScript.html", new String[][] {{"name", name}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?name=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("\";alert(1);\""));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("\";alert(1);\""));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotAlertXssInJsStringWithEncoding() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/search";
+        nano.addHandler(
                 new NanoServerHandler(path) {
 
                     @Override
@@ -1353,6 +1384,35 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotAlertXssInFilteredJsString() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/search";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        // Remove tags and quotes, based on Webseclab case "/xss/reflect/js3_fp".
+                        name = name.replaceAll("(?i)(<([^>]+)>)", "");
+                        name = name.replaceAll("'|\"", "");
+                        String response =
+                                getHtml("InputInScript.html", new String[][] {{"name", name}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?name=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test

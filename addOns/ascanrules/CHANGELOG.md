@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Server Side Code Injection scan rule, prevent use of zero when injecting ASP multiplication to avoid false positives (Issue 7107).
 - External Redirect scan rule to detect redirects with dots deny listed.
+- Cross Site Scripting (Reflected) scan rule will no longer raise an alert for unsuccessful JavaScript string injections (Issue 1641).
 
 ## [44] - 2022-01-13
 ### Changed
