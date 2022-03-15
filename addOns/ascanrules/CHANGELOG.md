@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2022-03-15
 ### Changed 
 - Remote OS Command Injection rule now has more information in the Other Info field to differentiate feedback-based or time-based tests
 - Path Traversal scan rule, updated the regex for case 5 to be case-insensitive when searching for Error or Exception in content body.
@@ -297,6 +297,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v42
