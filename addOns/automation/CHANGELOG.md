@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Import Job profile (Issue 7078).
 
+### Changed
+- The ascan job 'Scan All Header' GUI label
+
 ## [0.13.0] - 2022-02-25
 ### Fixed
 - Issue when adding or removing add-ons via the UI (Issue 7075)
