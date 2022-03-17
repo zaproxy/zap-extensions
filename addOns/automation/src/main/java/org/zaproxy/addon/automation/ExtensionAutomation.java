@@ -373,7 +373,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (this.hasView()) {
             this.getAutomationPanel().setCurrentPlan(plan);
         }
-        this.plans.put(plan.getId(), plan);
+        registerPlan(plan);
     }
 
     public AutomationPlan getPlan(int planId) {
@@ -396,9 +396,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
         try {
             AutomationPlan plan = new AutomationPlan(this, f);
-            if (this.hasView()) {
-                this.getAutomationPanel().setCurrentPlan(plan);
-            }
+            this.displayPlan(plan);
             this.runPlan(plan, false);
             AutomationProgress progress = plan.getProgress();
 
