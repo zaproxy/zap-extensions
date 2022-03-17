@@ -44,7 +44,7 @@ dependencies {
     implementation("com.predic8:soa-model-core:1.6.3")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:2.0.1")
     implementation("jakarta.xml.soap:jakarta.xml.soap-api:2.0.1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }

@@ -60,7 +60,7 @@ dependencies {
     }
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
 }
 
 val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
