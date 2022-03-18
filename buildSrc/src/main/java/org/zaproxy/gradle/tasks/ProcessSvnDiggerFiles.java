@@ -28,6 +28,7 @@ import java.util.Set;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.tasks.IgnoreEmptyDirectories;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SkipWhenEmpty;
@@ -52,6 +53,7 @@ public class ProcessSvnDiggerFiles extends DefaultTask {
 
     @InputFiles
     @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     public ConfigurableFileTree getSourceFiles() {
         return sourceFiles;
     }
