@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.11.1.
+- Scan Rule ID values are no longer displayed with commas.
 
 ## [0.2.0] - 2021-10-06
 ### Changed

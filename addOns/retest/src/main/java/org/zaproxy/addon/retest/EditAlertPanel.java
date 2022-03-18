@@ -170,7 +170,7 @@ public class EditAlertPanel extends AbstractPanel {
             int gbcRow = 0;
 
             JLabel pluginLabel =
-                    new JLabel(Constant.messages.getString("retest.edit.dialog.pluginid"));
+                    new JLabel(Constant.messages.getString("retest.edit.dialog.scanruleid"));
             pluginLabel.setLabelFor(alertEditPlugin);
 
             JLabel nameLabel = new JLabel(Constant.messages.getString("retest.edit.dialog.name"));

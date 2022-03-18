@@ -30,7 +30,7 @@ public class PlanTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("retest.dialog.table.header.status"),
-        Constant.messages.getString("retest.dialog.table.header.pluginid"),
+        Constant.messages.getString("retest.dialog.table.header.scanruleid"),
         Constant.messages.getString("retest.dialog.table.header.alertname"),
         Constant.messages.getString("retest.dialog.table.header.url"),
         Constant.messages.getString("retest.dialog.table.header.method"),
@@ -63,9 +63,6 @@ public class PlanTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int c) {
-        if (c == 1) {
-            return Integer.class;
-        }
         return String.class;
     }
 
