@@ -55,6 +55,7 @@ public class ActiveScanJobResultData extends JobResultData {
                         plugin.getTimeStarted().getTime() - plugin.getTimeFinished().getTime());
                 data.setStrength(plugin.getAttackStrength());
                 data.setThreshold(plugin.getAlertThreshold());
+                data.setNumURLs(hp.getTestTotalCount());
             }
         }
         List<Integer> alertIds = activeScan.getAlertsIds();
@@ -97,6 +98,7 @@ public class ActiveScanJobResultData extends JobResultData {
         private long timeTakenMs;
         private Plugin.AlertThreshold threshold;
         private Plugin.AttackStrength strength;
+        private int numURLs;
 
         public RuleData(int id, String name) {
             this.id = id;
@@ -123,6 +125,8 @@ public class ActiveScanJobResultData extends JobResultData {
             this.strength = strength;
         }
 
+        public void setNumURLs(int num) { this.numURLs = num; }
+
         public int getId() {
             return id;
         }
@@ -134,5 +138,7 @@ public class ActiveScanJobResultData extends JobResultData {
         public long getTimeTakenMs() {
             return timeTakenMs;
         }
+
+        public int getNumURLs() { return numURLs; }
     }
 }

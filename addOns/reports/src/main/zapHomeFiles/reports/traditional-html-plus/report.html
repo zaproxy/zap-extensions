@@ -150,6 +150,7 @@
 			</tr>
 			<th:block
 				th:if="${reportData.reportObjects.get('activeScanData') != null}">
+				<!-- Add number of URLs scanned here -->
 				<th:block
 					th:each="ascan : ${reportData.reportObjects.get('activeScanData').allRuleData}">
 					<tr th:if="${alertCountsByRule.get(ascan.id) == null}">
@@ -160,6 +161,7 @@
 						<td th:text="#{report.template.pass.type.active}" align="center">Active</td>
 						<td align="center" th:text="${ascan.threshold}">Threshold</td>
 						<td align="center" th:text="${ascan.strength}">Strength</td>
+						<td align="center" th:text="${ascan.numURLs}">Number of URLs scanned</td>
 					</tr>
 				</th:block>
 			</th:block>
