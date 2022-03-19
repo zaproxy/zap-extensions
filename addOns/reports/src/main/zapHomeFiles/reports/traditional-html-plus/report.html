@@ -190,6 +190,11 @@
 	</th:block>
 
 	<h2 th:text="#{report.sites.title}">Sites</h2>
+
+	<strong>Number of Sites tree nodes actively scanned:</strong>
+	<th:block
+		th:text="${reportData.reportObjects.get('activeScanData') != null ? reportData.reportObjects.get('activeScanData').numberScannedNodes : 0}">42</th:block>
+
 	<th:block th:each="site: ${reportData.sites}">
 		<h3 th:text="${site}">Site</h3>
 		<th:block th:if="${reportData.isIncludeSection('statistics')}">
