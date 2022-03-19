@@ -19,14 +19,21 @@
  */
 package org.zaproxy.zap.extension.scripts.automation.actions;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobOutputListener;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
@@ -35,9 +42,13 @@ import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
 public class RunScriptAction extends ScriptAction {
 
     public static final String NAME = "run";
-    private static final List<String> SCRIPT_TYPES = Arrays.asList(ExtensionScript.TYPE_STANDALONE);
+    private static final List<String> SCRIPT_TYPES =
+            Arrays.asList(ExtensionScript.TYPE_STANDALONE, ExtensionScript.TYPE_TARGETED);
     private static final List<String> DISABLED_FIELDS =
-            Arrays.asList(ScriptJobDialog.SCRIPT_ENGINE_PARAM, ScriptJobDialog.SCRIPT_FILE_PARAM);
+            Arrays.asList(
+                    ScriptJobDialog.SCRIPT_ENGINE_PARAM,
+                    ScriptJobDialog.SCRIPT_FILE_PARAM,
+                    ScriptJobDialog.SCRIPT_TARGET_PARAM);
 
     public RunScriptAction(ScriptJobParameters parameters) {
         super(parameters);
@@ -103,6 +114,30 @@ public class RunScriptAction extends ScriptAction {
             }
         }
 
+        if (ExtensionScript.TYPE_TARGETED.equals(scriptType)) {
+            if (getEngineWrapper(params) == null) {
+                issue =
+                        Constant.messages.getString(
+                                "scripts.automation.error.scriptEngineNotFound",
+                                jobName,
+                                this.parameters.getEngine());
+                list.add(issue);
+                if (progress != null) {
+                    progress.error(issue);
+                }
+            }
+
+            if (StringUtils.isEmpty(params.getTarget())) {
+                issue =
+                        Constant.messages.getString(
+                                "scripts.automation.error.scriptTargetIsNull", jobName);
+                list.add(issue);
+                if (progress != null) {
+                    progress.error(issue);
+                }
+            }
+        }
+
         return list;
     }
 
@@ -114,6 +149,27 @@ public class RunScriptAction extends ScriptAction {
     @Override
     public List<String> getDisabledFields() {
         return DISABLED_FIELDS;
+    }
+
+    private ScriptEngineWrapper getEngineWrapper(ScriptJobParameters params) {
+        ScriptEngineWrapper se = null;
+        try {
+            se = extScript.getEngineWrapper(this.parameters.getEngine());
+        } catch (Exception e) {
+            String filename = params.getFile();
+            if (filename != null && filename.contains(".")) {
+                try {
+                    se =
+                            extScript.getEngineWrapper(
+                                    extScript.getEngineNameForExtension(
+                                            filename.substring(filename.indexOf(".") + 1)
+                                                    .toLowerCase(Locale.ROOT)));
+                } catch (InvalidParameterException e1) {
+                    // Ignore - will return null below
+                }
+            }
+        }
+        return se;
     }
 
     @Override
@@ -131,7 +187,24 @@ public class RunScriptAction extends ScriptAction {
                                 parameters.getName()));
                 return;
             }
-            extScript.invokeScript(script);
+            if (parameters.getType().equals(ExtensionScript.TYPE_TARGETED)) {
+                URI targetUri = new URI(parameters.getTarget(), true);
+                SiteNode siteNode =
+                        Model.getSingleton().getSession().getSiteTree().findNode(targetUri);
+                if (siteNode == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "scripts.automation.error.scriptTargetNotFound",
+                                    jobName,
+                                    parameters.getTarget()));
+                    return;
+                }
+
+                HttpMessage httpMessage = siteNode.getHistoryReference().getHttpMessage();
+                extScript.invokeTargetedScript(script, httpMessage);
+            } else {
+                extScript.invokeScript(script);
+            }
             scriptJobOutputListener.flush();
         } catch (Exception e) {
             LOGGER.error(e);
