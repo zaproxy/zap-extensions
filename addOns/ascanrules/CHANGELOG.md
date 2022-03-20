@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Fix Cross Site Scripting (Reflected) scan rule false negatives introduced in previous version.
+
 ## [45] - 2022-03-15
 ### Changed 
 - Remote OS Command Injection rule now has more information in the Other Info field to differentiate feedback-based or time-based tests
