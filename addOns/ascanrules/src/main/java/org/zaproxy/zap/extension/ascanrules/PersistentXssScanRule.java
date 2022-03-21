@@ -36,6 +36,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.SourceSinkUtils;
 import org.zaproxy.zap.httputils.HtmlContext;
 import org.zaproxy.zap.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -185,7 +186,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                         sourceMsg.getRequestHeader().getURI().toString());
 
         try {
-            Set<Integer> sinks = PersistentXssUtils.getSinksIdsForSource(sourceMsg, param);
+            Set<Integer> sinks = SourceSinkUtils.getSinksIdsForSource(sourceMsg, param);
 
             if (sinks != null) {
                 // Loop through each one
@@ -201,7 +202,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                         break;
                     }
 
-                    HttpMessage sinkMsg = PersistentXssUtils.getMessage(sinkMsgId);
+                    HttpMessage sinkMsg = SourceSinkUtils.getMessage(sinkMsgId);
                     if (sinkMsg == null) {
                         continue;
                     }
