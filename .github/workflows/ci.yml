@@ -27,7 +27,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.m2/repository/webdriver
+            ~/.cache/selenium
           key: ${{ runner.os }}-gradle-${{ matrix.java }}-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-${{ matrix.java }}-
