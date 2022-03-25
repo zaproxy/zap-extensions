@@ -283,44 +283,31 @@ tasks.register("deployMandatoryAddOns") {
 }
 
 tasks.register<TestReport>("testReport") {
-    destinationDir = file("$buildDir/reports/allTests")
+    destinationDirectory.set(file("$buildDir/reports/allTests"))
     subprojects.forEach {
         it.plugins.withType(JavaPlugin::class) {
-            reportOn(it.tasks.withType<Test>())
+            testResults.from(it.tasks.withType<Test>())
         }
     }
 
     doLast {
-        val reportUrl = File(destinationDir, "index.html").toURL()
+        val reportUrl = File(destinationDirectory.get().getAsFile(), "index.html").toURL()
         logger.lifecycle("Test Report: $reportUrl")
     }
 }
 
-val jacocoMerge by tasks.registering(JacocoMerge::class) {
-    destinationFile = file("$buildDir/jacoco/all.exec")
-    subprojects.forEach {
-        it.plugins.withType(JavaPlugin::class) {
-            executionData(it.tasks.withType<Test>())
-        }
-    }
-
-    doFirst {
-        executionData = files(executionData.files.filter { it.exists() })
-    }
-}
-
 val jacocoReport by tasks.registering(JacocoReport::class) {
-    executionData(jacocoMerge)
     subprojects.forEach {
         it.plugins.withType(JavaPlugin::class) {
             val sourceSets = it.extensions.getByName("sourceSets") as SourceSetContainer
             sourceDirectories.from(files(sourceSets["main"].java.srcDirs))
             classDirectories.from(files(sourceSets["main"].output.classesDirs))
+            executionData(it.tasks.withType<Test>())
         }
     }
 
     doLast {
-        val reportUrl = File(reports.html.destination, "index.html").toURL()
+        val reportUrl = File(reports.html.outputLocation.get().getAsFile(), "index.html").toURL()
         logger.lifecycle("Coverage Report: $reportUrl")
     }
 }

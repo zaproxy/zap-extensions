@@ -23,10 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
@@ -65,6 +68,7 @@ public class ExtensionRetest extends ExtensionAdaptor {
         extensionHook.addApiImplementor(retestApi);
 
         if (hasView()) {
+            extensionHook.addSessionListener(new SessionChangedListenerImpl());
             extensionHook.getHookMenu().addPopupMenuItem(getRetestMenu());
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemRetest());
         }
@@ -78,8 +82,13 @@ public class ExtensionRetest extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+        disposeDialog();
+    }
+
+    private void disposeDialog() {
         if (retestDialog != null) {
             retestDialog.dispose();
+            retestDialog = null;
         }
     }
 
@@ -130,5 +139,22 @@ public class ExtensionRetest extends ExtensionAdaptor {
                 && data.getConfidence().equals(testData.getConfidence())
                 && data.getRisk().equals(testData.getRisk())
                 && data.getOtherInfo().equals(testData.getOtherInfo());
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionScopeChanged(Session session) {}
+
+        @Override
+        public void sessionModeChanged(Mode mode) {}
+
+        @Override
+        public void sessionChanged(Session session) {}
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            disposeDialog();
+        }
     }
 }

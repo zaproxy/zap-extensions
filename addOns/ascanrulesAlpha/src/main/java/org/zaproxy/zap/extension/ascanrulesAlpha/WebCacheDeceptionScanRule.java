@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,6 +33,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 
 /**
  * Active scan rule which attempts Web Cache Deception attack.
@@ -42,15 +42,13 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  */
 public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
 
-    private static final int LEVENSHTEIN_THRESHOLD = 200;
-
     private static final String MESSAGE_PREFIX = "ascanalpha.webCacheDeception.";
     private static final Logger LOG = LogManager.getLogger(WebCacheDeceptionScanRule.class);
 
     protected static final String[] TEST_EXTENSIONS = {
         "css", "jpg", "js", "html", "gif", "png", "svg", "php", "txt", "pdf", "asp"
     };
-
+    private static final float SIMILARITY_THRESHOLD = 0.80f;
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
@@ -74,6 +72,9 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
 
     @Override
     public void scan() {
+        if (!isSuccess(getBaseMsg())) {
+            return;
+        }
         if (initialTest()) {
             HttpMessage authorisedMessage = getNewMsg();
             try {
@@ -87,12 +88,14 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
                     uri.setPath(newPath);
                     authorisedMessage.getRequestHeader().setURI(uri);
                     sendAndReceive(authorisedMessage);
-                    String cachedResponse = authorisedMessage.getResponseBody().toString();
-                    String unauthorisedCachedResponse =
+                    ComparableResponse authCompResp =
+                            new ComparableResponse(authorisedMessage, null);
+                    HttpMessage unauthorisedCachedResponse =
                             makeUnauthorisedRequest(
                                     uri, authorisedMessage.getRequestHeader().getMethod());
-
-                    if (checkSimilarity(unauthorisedCachedResponse, cachedResponse)) {
+                    ComparableResponse unAuthCompResp =
+                            new ComparableResponse(unauthorisedCachedResponse, null);
+                    if (authCompResp.compareWith(unAuthCompResp) >= SIMILARITY_THRESHOLD) {
                         extensions.add(ext);
                     }
                 }
@@ -119,21 +122,7 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
         }
     }
 
-    private boolean checkSimilarity(String a, String b) {
-        LevenshteinDistance distance = new LevenshteinDistance(LEVENSHTEIN_THRESHOLD);
-        int levenshteinDistance = distance.apply(a, b);
-        if (levenshteinDistance == -1) {
-            return false; // LEVENSHTEIN_THRESHOLD exceeded
-        }
-        // if response length is less than threshold
-        if (b.length() <= LEVENSHTEIN_THRESHOLD) {
-            return levenshteinDistance < (int) (b.length() * 0.90);
-        } else {
-            return levenshteinDistance < LEVENSHTEIN_THRESHOLD;
-        }
-    }
-
-    private String makeUnauthorisedRequest(URI uri, String method) throws IOException {
+    private HttpMessage makeUnauthorisedRequest(URI uri, String method) throws IOException {
 
         HttpMessage unauthorisedMessage = new HttpMessage(uri);
         unauthorisedMessage.getRequestHeader().setMethod(method);
@@ -141,7 +130,7 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
                 new HttpSender(
                         Model.getSingleton().getOptionsParam().getConnectionParam(), false, 1);
         sender.sendAndReceive(unauthorisedMessage);
-        return unauthorisedMessage.getResponseBody().toString();
+        return unauthorisedMessage;
     }
 
     private boolean initialTest() {
@@ -149,11 +138,13 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
         try {
             sendAndReceive(authorisedMessage);
             URI uri = authorisedMessage.getRequestHeader().getURI();
-            String authorisedResponse = authorisedMessage.getResponseBody().toString();
-            String unauthorisedResponse =
+            ComparableResponse authCompResp = new ComparableResponse(authorisedMessage, null);
+            HttpMessage unauthorisedCachedResponse =
                     makeUnauthorisedRequest(uri, authorisedMessage.getRequestHeader().getMethod());
+            ComparableResponse unAuthCompResp =
+                    new ComparableResponse(unauthorisedCachedResponse, null);
             // check whether authorised and unauthorised message are similar
-            if (checkSimilarity(unauthorisedResponse, authorisedResponse)) {
+            if (authCompResp.compareWith(unAuthCompResp) >= SIMILARITY_THRESHOLD) {
                 return false;
             }
             String path = uri.getPath();
@@ -161,9 +152,9 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
             uri.setPath(newPath);
             authorisedMessage.getRequestHeader().setURI(uri);
             sendAndReceive(authorisedMessage);
-            String pathAppendedResponse = authorisedMessage.getResponseBody().toString();
-            // check whether adding path to uri gives same response
-            if (!checkSimilarity(pathAppendedResponse, authorisedResponse)) {
+            ComparableResponse pathAppendedCompResp =
+                    new ComparableResponse(authorisedMessage, null);
+            if (authCompResp.compareWith(pathAppendedCompResp) < SIMILARITY_THRESHOLD) {
                 return false;
             }
 

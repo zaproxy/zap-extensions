@@ -17,13 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules;
+package org.zaproxy.addon.commonlib;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,13 +34,22 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXssUtils {
+/**
+ * A utility class to assist in identifying input sources and their related sinks. Useful, for
+ * example, in identifying SSTI issues, or persistent XSS.
+ *
+ * @since 1.9.0
+ */
+public final class SourceSinkUtils {
 
     private static int uniqueIndex;
     public static final String PXSS_PREFIX = "zApPX";
     public static final String PXSS_POSTFIX = "sS";
     private static Map<String, UserDataSource> map;
     private static Map<String, HashSet<Integer>> sourceToSinks;
+
+    private SourceSinkUtils() {}
+
     /**
      * A {@code Map} to cache the URIs used by source messages ({@code UserDataSource}).
      *
@@ -65,7 +75,7 @@ public class PersistentXssUtils {
      */
     private static Map<String, String> cachedParams;
 
-    private static Logger log = LogManager.getLogger(PersistentXssUtils.class);
+    private static Logger log = LogManager.getLogger(SourceSinkUtils.class);
 
     static {
         reset();
@@ -150,9 +160,11 @@ public class PersistentXssUtils {
         map = new HashMap<>();
         sourceToSinks = new HashMap<>();
         cachedUris =
-                Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
+                Collections.synchronizedMap(
+                        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT));
         cachedParams =
-                Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
+                Collections.synchronizedMap(
+                        new ReferenceMap(AbstractReferenceMap.SOFT, AbstractReferenceMap.SOFT));
     }
 
     /**
@@ -170,15 +182,6 @@ public class PersistentXssUtils {
             log.warn("Failed to read HTTP message from database:", e);
         }
         return null;
-    }
-
-    private static String getCachedItem(Map<String, String> map, String item) {
-        String cachedItem = map.get(item);
-        if (cachedItem != null) {
-            return cachedItem;
-        }
-        map.put(item, item);
-        return item;
     }
 
     private static class UserDataSource {
@@ -205,6 +208,15 @@ public class PersistentXssUtils {
 
         public String getParam() {
             return param;
+        }
+
+        private static String getCachedItem(Map<String, String> map, String item) {
+            String cachedItem = map.get(item);
+            if (cachedItem != null) {
+                return cachedItem;
+            }
+            map.put(item, item);
+            return item;
         }
     }
 }

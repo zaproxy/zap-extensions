@@ -19,25 +19,23 @@
  */
 package org.zaproxy.gradle.tasks;
 
-import io.github.bonigarcia.wdm.Architecture;
-import io.github.bonigarcia.wdm.DriverManagerType;
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
-import io.github.bonigarcia.wdm.OperatingSystem;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.github.bonigarcia.wdm.config.Architecture;
+import io.github.bonigarcia.wdm.config.DriverManagerType;
+import io.github.bonigarcia.wdm.config.OperatingSystem;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
@@ -61,7 +59,8 @@ public abstract class DownloadWebDriver extends DefaultTask {
 
     public enum Arch {
         X32,
-        X64
+        X64,
+        ARM64
     }
 
     @Input
@@ -82,9 +81,16 @@ public abstract class DownloadWebDriver extends DefaultTask {
     @Inject
     public abstract WorkerExecutor getWorkerExecutor();
 
+    @Classpath
+    public abstract ConfigurableFileCollection getWebdriverClasspath();
+
     @TaskAction
     public void download() {
-        WorkQueue workQueue = getWorkerExecutor().classLoaderIsolation();
+        WorkQueue workQueue =
+                getWorkerExecutor()
+                        .classLoaderIsolation(
+                                workerSpec ->
+                                        workerSpec.getClasspath().from(getWebdriverClasspath()));
 
         workQueue.submit(
                 Download.class,
@@ -118,11 +124,7 @@ public abstract class DownloadWebDriver extends DefaultTask {
         @Override
         public void execute() {
             WebDriverManager wdm = getInstance(getParameters().getBrowser().get());
-            wdm.forceCache()
-                    .avoidPreferences()
-                    .avoidExport()
-                    .avoidAutoVersion()
-                    .version(getParameters().getWdVersion().get())
+            wdm.driverVersion(getParameters().getWdVersion().get())
                     .operatingSystem(getParameters().getOs().get())
                     .architecture(getParameters().getArch().get())
                     .setup();
@@ -130,13 +132,13 @@ public abstract class DownloadWebDriver extends DefaultTask {
             File outputFile = getParameters().getOutputFile().get().getAsFile();
             try {
                 Files.copy(
-                        Paths.get(wdm.getBinaryPath()),
+                        Paths.get(wdm.getDownloadedDriverPath()),
                         outputFile.toPath(),
                         StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new UncheckedIOException(
                         "Failed to copy the WebDriver from "
-                                + wdm.getBinaryPath()
+                                + wdm.getDownloadedDriverPath()
                                 + " to "
                                 + outputFile,
                         e);
@@ -148,47 +150,10 @@ public abstract class DownloadWebDriver extends DefaultTask {
                 case CHROME:
                     return WebDriverManager.chromedriver();
                 case FIREFOX:
-                    return new FirefoxDriverManagerCustom();
+                    return WebDriverManager.firefoxdriver();
                 default:
                     throw new UnsupportedOperationException(
                             "Only Chrome and Firefox are currently supported.");
-            }
-        }
-
-        private static class FirefoxDriverManagerCustom extends FirefoxDriverManager {
-
-            FirefoxDriverManagerCustom() {
-                instanceMap.put(DriverManagerType.FIREFOX, this);
-            }
-
-            @Override
-            protected List<URL> getDrivers() throws IOException {
-                List<URL> urls = super.getDrivers();
-                urls.removeIf(url -> url.toString().contains("aarch64"));
-                return urls;
-            }
-
-            @Override
-            protected Optional<String> getDriverFromCache(
-                    String driverVersion, Architecture arch, String os) {
-                Optional<String> driver = super.getDriverFromCache(driverVersion, arch, os);
-                if (isRequestedArch(driver, os, arch)) {
-                    return driver;
-                }
-                return Optional.empty();
-            }
-
-            private static boolean isRequestedArch(
-                    Optional<String> driver, String os, Architecture arch) {
-                // macOS has only one geckodriver binary.
-                if ("MAC".equals(os)) {
-                    return true;
-                }
-
-                return driver.isPresent()
-                        && driver.get()
-                                .toLowerCase()
-                                .contains(os.toLowerCase() + arch.toString().toLowerCase());
             }
         }
     }

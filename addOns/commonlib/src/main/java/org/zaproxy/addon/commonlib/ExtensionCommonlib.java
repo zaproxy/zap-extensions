@@ -34,8 +34,8 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
-            extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
+        extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }
 
     public ProgressPanel getProgressPanel() {
@@ -64,7 +64,10 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
         @Override
         public void sessionAboutToChange(Session session) {
-            getProgressPanel().clearAndDispose();
+            if (hasView()) {
+                getProgressPanel().clearAndDispose();
+            }
+            SourceSinkUtils.reset();
         }
 
         @Override

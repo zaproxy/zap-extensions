@@ -644,7 +644,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                 break;
                             }
                             for (HtmlContext ctx : contexts2) {
-                                if (!ctx.getSurroundingQuote().isEmpty()) {
+                                if (context.getSurroundingQuote().isEmpty()
+                                        || !ctx.getSurroundingQuote().isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)

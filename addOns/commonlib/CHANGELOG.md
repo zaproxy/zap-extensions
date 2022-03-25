@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.9.0] - 2022-03-21
+### Changed
+- Maintenance changes.
+
 ## [1.8.0] - 2022-03-07
 ### Added
 - A generic component for displaying progress, such as when importing an openapi definition (Issue 6783).
@@ -64,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.9.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.9.0
 [1.8.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.8.0
 [1.7.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.7.0
 [1.6.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.6.0

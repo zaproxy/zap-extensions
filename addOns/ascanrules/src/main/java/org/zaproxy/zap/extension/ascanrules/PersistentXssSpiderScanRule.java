@@ -26,6 +26,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.SourceSinkUtils;
 
 public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
 
@@ -76,7 +77,7 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
         try {
             HttpMessage msg1 = msg.cloneRequest();
             sendAndReceive(msg1, false);
-            PersistentXssUtils.testForSink(msg1);
+            SourceSinkUtils.testForSink(msg1);
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);

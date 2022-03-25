@@ -26,6 +26,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.SourceSinkUtils;
 
 public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
 
@@ -68,7 +69,7 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
         try {
             HttpMessage msg1 = msg.cloneRequest();
-            this.setParameter(msg1, param, PersistentXssUtils.getUniqueValue(msg1, param));
+            this.setParameter(msg1, param, SourceSinkUtils.getUniqueValue(msg1, param));
             log.debug("Prime msg={} param={}", msg1.getRequestHeader().getURI(), param);
             sendAndReceive(msg1, false);
         } catch (Exception e) {

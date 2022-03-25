@@ -26,8 +26,18 @@ tasks {
         arch.set(DownloadWebDriver.Arch.X64)
     }
 
+    register<DownloadWebDriver>("downloadChromeDriverArm") {
+        browser.set(DownloadWebDriver.Browser.CHROME)
+        arch.set(DownloadWebDriver.Arch.ARM64)
+    }
+
     register<DownloadWebDriver>("downloadGeckodriver") {
         browser.set(DownloadWebDriver.Browser.FIREFOX)
         arch.set(DownloadWebDriver.Arch.X64)
+    }
+
+    register<DownloadWebDriver>("downloadGeckodriverArm") {
+        browser.set(DownloadWebDriver.Browser.FIREFOX)
+        arch.set(DownloadWebDriver.Arch.ARM64)
     }
 }
