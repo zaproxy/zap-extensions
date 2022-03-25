@@ -37,8 +37,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
-import org.zaproxy.zap.httputils.HtmlContext;
-import org.zaproxy.zap.httputils.HtmlContextAnalyser;
+import org.zaproxy.zap.extension.ascanrules.utils.HtmlContext;
+import org.zaproxy.zap.extension.ascanrules.utils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
