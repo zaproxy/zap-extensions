@@ -687,6 +687,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
+        this.rule.setAlertThreshold(AlertThreshold.HIGH);
 
         this.rule.scan();
 

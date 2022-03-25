@@ -176,7 +176,11 @@ public class HtmlContextAnalyser {
             }
 
             // Work out the location in the DOM
-            Element element = src.getEnclosingElement(context.getStart());
+            int start = context.getStart();
+            if (context.getTarget().startsWith("<") && start > 0) {
+                start--;
+            }
+            Element element = src.getEnclosingElement(start);
             if (element != null) {
                 // See if its in an attribute
                 boolean isInputTag =

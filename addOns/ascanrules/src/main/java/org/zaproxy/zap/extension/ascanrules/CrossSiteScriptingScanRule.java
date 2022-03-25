@@ -694,59 +694,55 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                     return;
                                 }
                                 for (HtmlContext ctx : contexts2) {
-                                    if (ctx.getParentTag() != null) {
-                                        // Yep, its vulnerable
-                                        if (ctx.getMsg().getResponseHeader().isHtml()) {
+                                    // Yep, its vulnerable
+                                    if (ctx.getMsg().getResponseHeader().isHtml()) {
+                                        newAlert()
+                                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                .setParam(param)
+                                                .setAttack(ctx.getTarget())
+                                                .setEvidence(ctx.getTarget())
+                                                .setMessage(contexts2.get(0).getMsg())
+                                                .raise();
+                                    } else {
+                                        HttpMessage ctx2Message = contexts2.get(0).getMsg();
+                                        if (StringUtils.containsIgnoreCase(
+                                                ctx.getMsg()
+                                                        .getResponseHeader()
+                                                        .getHeader(HttpHeader.CONTENT_TYPE),
+                                                "json")) {
                                             newAlert()
-                                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                    .setRisk(Alert.RISK_LOW)
+                                                    .setConfidence(Alert.CONFIDENCE_LOW)
+                                                    .setName(
+                                                            Constant.messages.getString(
+                                                                    MESSAGE_PREFIX + "json.name"))
+                                                    .setDescription(
+                                                            Constant.messages.getString(
+                                                                    MESSAGE_PREFIX + "json.desc"))
                                                     .setParam(param)
-                                                    .setAttack(ctx.getTarget())
-                                                    .setEvidence(ctx.getTarget())
-                                                    .setMessage(contexts2.get(0).getMsg())
+                                                    .setAttack(scriptAlert)
+                                                    .setOtherInfo(
+                                                            Constant.messages.getString(
+                                                                    MESSAGE_PREFIX
+                                                                            + "otherinfo.nothtml"))
+                                                    .setMessage(ctx2Message)
                                                     .raise();
                                         } else {
-                                            HttpMessage ctx2Message = contexts2.get(0).getMsg();
-                                            if (StringUtils.containsIgnoreCase(
-                                                    ctx.getMsg()
-                                                            .getResponseHeader()
-                                                            .getHeader(HttpHeader.CONTENT_TYPE),
-                                                    "json")) {
-                                                newAlert()
-                                                        .setRisk(Alert.RISK_LOW)
-                                                        .setConfidence(Alert.CONFIDENCE_LOW)
-                                                        .setName(
-                                                                Constant.messages.getString(
-                                                                        MESSAGE_PREFIX
-                                                                                + "json.name"))
-                                                        .setDescription(
-                                                                Constant.messages.getString(
-                                                                        MESSAGE_PREFIX
-                                                                                + "json.desc"))
-                                                        .setParam(param)
-                                                        .setAttack(scriptAlert)
-                                                        .setOtherInfo(
-                                                                Constant.messages.getString(
-                                                                        MESSAGE_PREFIX
-                                                                                + "otherinfo.nothtml"))
-                                                        .setMessage(ctx2Message)
-                                                        .raise();
-                                            } else {
-                                                newAlert()
-                                                        .setConfidence(Alert.CONFIDENCE_LOW)
-                                                        .setParam(param)
-                                                        .setAttack(ctx.getTarget())
-                                                        .setOtherInfo(
-                                                                Constant.messages.getString(
-                                                                        MESSAGE_PREFIX
-                                                                                + "otherinfo.nothtml"))
-                                                        .setEvidence(ctx.getTarget())
-                                                        .setMessage(ctx2Message)
-                                                        .raise();
-                                            }
+                                            newAlert()
+                                                    .setConfidence(Alert.CONFIDENCE_LOW)
+                                                    .setParam(param)
+                                                    .setAttack(ctx.getTarget())
+                                                    .setOtherInfo(
+                                                            Constant.messages.getString(
+                                                                    MESSAGE_PREFIX
+                                                                            + "otherinfo.nothtml"))
+                                                    .setEvidence(ctx.getTarget())
+                                                    .setMessage(ctx2Message)
+                                                    .raise();
                                         }
-                                        attackWorked = true;
-                                        break;
                                     }
+                                    attackWorked = true;
+                                    break;
                                 }
                             }
                             if (attackWorked || isStop()) {
