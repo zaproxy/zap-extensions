@@ -19,7 +19,9 @@
  */
 package org.zaproxy.addon.graphql.automation;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
@@ -27,11 +29,22 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
@@ -44,11 +57,14 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.graphql.ExtensionGraphQl;
 import org.zaproxy.addon.graphql.GraphQlParam;
+import org.zaproxy.zap.testutils.NanoServerHandler;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-class GraphQlJobUnitTest {
+class GraphQlJobUnitTest extends TestUtils {
 
     private ExtensionGraphQl extGraphQl;
+    private GraphQlServer graphQlServer;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +75,13 @@ class GraphQlJobUnitTest {
         extGraphQl = mock(ExtensionGraphQl.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionGraphQl.class)).willReturn(extGraphQl);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        graphQlServer = new GraphQlServer();
+    }
+
+    @AfterEach
+    void cleanUp() {
+        stopServer();
     }
 
     @Test
@@ -120,6 +143,89 @@ class GraphQlJobUnitTest {
         assertThat(job.getParameters().getEndpoint(), is(equalTo(endpoint)));
         assertThat(job.getParameters().getSchemaFile(), is(equalTo(schemaFile)));
         assertThat(job.getParameters().getSchemaUrl(), is(equalTo(schemaUrl)));
+    }
+
+    @Test
+    void shouldReplaceVarInEndpointWhenRunning() throws IOException {
+        // Given
+        String server = serverWithGraphQl();
+        String endpoint = "${server}endpoint";
+        String schemaUrl = server + "schemaUrl";
+        GraphQlJob job =
+                createGraphQlJob(
+                        "parameters:\n"
+                                + "  endpoint: "
+                                + endpoint
+                                + "\n"
+                                + "  schemaUrl: "
+                                + schemaUrl);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        env.getData().getVars().put("server", server);
+        job.verifyParameters(progress);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(graphQlServer.getAccessedUrls(), contains("/schemaUrl", "/endpoint"));
+    }
+
+    @Test
+    void shouldReplaceVarInSchemaFileWhenRunning(@TempDir Path dir) throws IOException {
+        // Given
+        String server = serverWithGraphQl();
+        String endpoint = server + "endpoint";
+        String schemaFile = "${schemaFile}";
+        GraphQlJob job =
+                createGraphQlJob(
+                        "parameters:\n"
+                                + "  endpoint: "
+                                + endpoint
+                                + "\n"
+                                + "  schemaFile: "
+                                + schemaFile);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        Path file = dir.resolve("schema");
+        Files.write(file, "type Query { name: String }".getBytes(StandardCharsets.UTF_8));
+        env.getData().getVars().put("schemaFile", file.toString());
+        job.verifyParameters(progress);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(graphQlServer.getAccessedUrls(), contains("/endpoint"));
+    }
+
+    @Test
+    void shouldReplaceVarInSchemaUrlWhenRunning() throws IOException {
+        // Given
+        String server = serverWithGraphQl();
+        String endpoint = server + "endpoint";
+        String schemaUrl = "${server}schemaUrl";
+        GraphQlJob job =
+                createGraphQlJob(
+                        "parameters:\n"
+                                + "  endpoint: "
+                                + endpoint
+                                + "\n"
+                                + "  schemaUrl: "
+                                + schemaUrl);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        env.getData().getVars().put("server", server);
+        job.verifyParameters(progress);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(graphQlServer.getAccessedUrls(), contains("/schemaUrl", "/endpoint"));
     }
 
     @Test
@@ -249,5 +355,38 @@ class GraphQlJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(progress.getErrors().get(0), is(equalTo("!graphql.automation.error!")));
+    }
+
+    private String serverWithGraphQl() throws IOException {
+        startServer();
+        nano.addHandler(graphQlServer);
+        return "http://localhost:" + nano.getListeningPort() + "/";
+    }
+
+    private static GraphQlJob createGraphQlJob(String data) {
+        GraphQlJob job = new GraphQlJob();
+        job.setJobData(new Yaml().load(data));
+        return job;
+    }
+
+    private static class GraphQlServer extends NanoServerHandler {
+
+        private Set<String> accessedUrls;
+
+        GraphQlServer() {
+            super("");
+            accessedUrls = new HashSet<>();
+        }
+
+        Set<String> getAccessedUrls() {
+            return accessedUrls;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            accessedUrls.add(session.getUri());
+            return newFixedLengthResponse(
+                    Status.OK, "application/graphql", "type Query { name: String }");
+        }
     }
 }

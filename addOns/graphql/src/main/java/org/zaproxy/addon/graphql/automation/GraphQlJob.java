@@ -109,10 +109,11 @@ public class GraphQlJob extends AutomationJob {
             String schemaUrl = this.getParameters().getSchemaUrl();
 
             if (schemaFile != null && !schemaFile.isEmpty()) {
+                String file = env.replaceVars(schemaFile);
                 progress.info(
                         Constant.messages.getString(
-                                "graphql.automation.info.import.file", schemaFile, endpointUrl));
-                parser.importFile(schemaFile);
+                                "graphql.automation.info.import.file", file, endpointUrl));
+                parser.importFile(file);
             } else if (schemaUrl != null && !schemaUrl.isEmpty()) {
                 String url = env.replaceVars(schemaUrl);
                 progress.info(
