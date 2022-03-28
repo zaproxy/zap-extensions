@@ -19,19 +19,24 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
+import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link RemoteFileIncludeScanRule}. */
@@ -97,5 +102,89 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRaiseAlertIfResponseHasRemoteFileContent() throws HttpMalformedHeaderException {
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String file = getFirstParamValue(session, "file");
+                        if (file != null && file.length() > 1) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.OK,
+                                            NanoHTTPD.MIME_HTML,
+                                            "<html><title>Google</title></html>");
+                            return response;
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        rule.init(getHttpMessage("/?file=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfResponseIsRedirectWithoutRemoteFileContent()
+            throws HttpMalformedHeaderException {
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String file = getFirstParamValue(session, "file");
+                        if (file != null && file.length() > 1) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.REDIRECT,
+                                            NanoHTTPD.MIME_HTML,
+                                            "<html><title>Redirecting</title></html>");
+                            response.addHeader(HttpHeader.LOCATION, file);
+                            return response;
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        rule.init(getHttpMessage("/?file=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfResponseIsOkWithoutRemoteFileContent()
+            throws HttpMalformedHeaderException {
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String file = getFirstParamValue(session, "file");
+                        if (file != null && file.length() > 1) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.OK,
+                                            NanoHTTPD.MIME_HTML,
+                                            "<html><title>Fred's Place</title></html>");
+                            return response;
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        rule.init(getHttpMessage("/?file=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 }
