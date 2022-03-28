@@ -945,6 +945,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
                 chromeOptions.setHeadless(browser == Browser.CHROME_HEADLESS);
+                String binary = System.getProperty(SeleniumOptions.CHROME_BINARY_SYSTEM_PROPERTY);
+                if (binary != null && !binary.isEmpty()) {
+                    chromeOptions.setBinary(binary);
+                }
 
                 consumer.accept(chromeOptions);
                 return new ChromeDriver(chromeOptions);

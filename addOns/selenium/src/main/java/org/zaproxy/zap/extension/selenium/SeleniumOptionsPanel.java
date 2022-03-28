@@ -67,6 +67,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final JLabel infoBundledFirefoxDriverLabel;
     private final JButton useBundledFirefoxDriverButton;
 
+    private final JTextField chromeBinaryTextField;
     private final JTextField firefoxBinaryTextField;
     private final JTextField phantomJsBinaryTextField;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
@@ -108,6 +109,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         infoBundledWebDriverToolTip,
                         chromeDriverTextField,
                         Browser.CHROME);
+
+        chromeBinaryTextField = createTextField();
+        JButton chromeBinaryButton =
+                createButtonFileChooser(selectFileButtonLabel, chromeBinaryTextField);
+        JLabel chromeBinaryLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.chrome.binary"));
+        chromeBinaryLabel.setLabelFor(chromeBinaryTextField);
 
         firefoxBinaryTextField = createTextField();
         JButton firefoxBinaryButton =
@@ -249,11 +257,17 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 binariesLayout
                                         .createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(chromeBinaryLabel)
                                         .addComponent(firefoxBinaryLabel)
                                         .addComponent(phantomJsBinaryLabel))
                         .addGroup(
                                 binariesLayout
                                         .createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                binariesLayout
+                                                        .createSequentialGroup()
+                                                        .addComponent(chromeBinaryTextField)
+                                                        .addComponent(chromeBinaryButton))
                                         .addGroup(
                                                 binariesLayout
                                                         .createSequentialGroup()
@@ -268,6 +282,12 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         binariesLayout.setVerticalGroup(
                 binariesLayout
                         .createSequentialGroup()
+                        .addGroup(
+                                binariesLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(chromeBinaryLabel)
+                                        .addComponent(chromeBinaryTextField)
+                                        .addComponent(chromeBinaryButton))
                         .addGroup(
                                 binariesLayout
                                         .createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -376,6 +396,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 getEffectiveDriverPath(
                         Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
 
+        chromeBinaryTextField.setText(seleniumOptions.getChromeBinaryPath());
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
         phantomJsBinaryTextField.setText(seleniumOptions.getPhantomJsBinaryPath());
 
@@ -415,6 +436,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
+        seleniumOptions.setChromeBinaryPath(chromeBinaryTextField.getText());
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
