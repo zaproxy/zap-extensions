@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.8.0] - 2022-03-29
 ### Added
 - Support aarch64/arm64 WebDrivers.
 - Allow to choose the location of Chrome binary (Issue 7166).
@@ -136,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.8.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.8.0
 [15.7.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.7.0
 [15.6.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.6.0
 [15.5.1]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.5.1
