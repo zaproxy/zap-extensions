@@ -1,0 +1,34 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Example API
+  description: 'Example Description'
+servers:
+  - url: '{scheme}://localhost:@@@PORT@@@/{basePath}'
+    variables:
+      scheme:
+        enum:
+          - https
+          - http
+        default: http
+      basePath:
+        default: ''
+
+paths:
+  /example:
+    post:
+      tags:
+        - example
+      summary: example
+      requestBody:
+        content:
+          application/json:
+            example:
+              key: value
+      responses:
+        default:
+          description: Example response.
+          content:
+            application/json:
+              example:
+                message: Received request successfully.
