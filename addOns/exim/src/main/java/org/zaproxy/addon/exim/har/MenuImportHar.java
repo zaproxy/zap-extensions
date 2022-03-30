@@ -61,9 +61,8 @@ public class MenuImportHar extends ZapMenuItem {
                                     public void run() {
                                         this.setName(THREAD_PREFIX + threadId++);
                                         File file = chooser.getSelectedFile();
-                                        ProgressPane currentImportPane =
-                                                new ProgressPane(file.getAbsolutePath());
                                         int tasks = 0;
+                                        boolean indeterminate;
                                         try {
                                             tasks =
                                                     new HarFileReader()
@@ -71,11 +70,16 @@ public class MenuImportHar extends ZapMenuItem {
                                                             .getEntries()
                                                             .getEntries()
                                                             .size();
+                                            indeterminate = false;
                                         } catch (IOException e) {
+                                            indeterminate = true;
                                             LOG.warn(
                                                     "Couldn't count entries in: {}",
                                                     file.getAbsoluteFile());
                                         }
+                                        ProgressPane currentImportPane =
+                                                new ProgressPane(
+                                                        file.getAbsolutePath(), indeterminate);
                                         currentImportPane.setTotalTasks(tasks);
                                         ExtensionExim.getProgressPanel()
                                                 .addProgressPane(currentImportPane);
