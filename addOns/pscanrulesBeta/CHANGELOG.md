@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
 
+### Removed
+- Content Security Policy (CSP) Header Not Set scan rule promoted to release.
+
 ## [28] - 2021-12-01
 ### Fixed
 - Fixed false positive in Reverse Tabnabbing scan rule.

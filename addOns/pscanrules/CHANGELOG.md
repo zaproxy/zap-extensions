@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Clarify the alert solution for the Cache Control scan rule.
 
+### Added
+- Content Security Policy (CSP) Header Not Set scan rule promoted to release.
+
 ## [39] - 2022-03-07
 ### Added
 - Alert refs for the alerts which use them (10020 and 10032).
