@@ -290,6 +290,26 @@
     "saas": true,
     "website": "https://www.zeustechnology.com"
   },
+  "Zid": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "zid_catalog_session": ""
+    },
+    "description": "Zid is an ecommerce SaaS that allows merchants to build and manage their online stores.",
+    "icon": "Zid.png",
+    "js": {
+      "zid.store": "",
+      "zidTracking.sendGaProductRemoveFromCartEvent": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://zid.sa"
+  },
   "Zimbra": {
     "cats": [
       30

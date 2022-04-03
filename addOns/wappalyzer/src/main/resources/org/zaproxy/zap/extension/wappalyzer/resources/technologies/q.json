@@ -25,6 +25,22 @@
     "scriptSrc": "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
+  "Qikify": {
+    "cats": [
+      100
+    ],
+    "description": "Qikify is a trusted Shopify Expert providing services for over 35,000 Shopify merchants through Shopify Apps or custom modifications.",
+    "icon": "Qikify.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "sdk\\.qikify\\.com/",
+    "website": "https://qikify.com"
+  },
   "Qualaroo": {
     "cats": [
       73
@@ -221,5 +237,21 @@
     },
     "scriptSrc": "\\.quora\\.com/",
     "website": "https://quoraadsupport.zendesk.com/hc/en-us/categories/115001573928-Pixels-Tracking"
+  },
+  "Qwik": {
+    "cats": [
+      18
+    ],
+    "description": "Qwik is designed for the fastest possible page load time, by delivering pure HTML with near 0 JavaScript.",
+    "dom": {
+      "*": {
+        "attributes": {
+          "q:version": "^([\\d\\.]+(?:-\\d+)?)\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Qwik.svg",
+    "oss": true,
+    "website": "https://qwik.builder.io"
   }
 }

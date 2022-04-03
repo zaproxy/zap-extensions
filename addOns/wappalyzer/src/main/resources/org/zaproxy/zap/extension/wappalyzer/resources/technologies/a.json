@@ -307,6 +307,23 @@
     "saas": true,
     "website": "https://abicart.com/"
   },
+  "Accentuate Custom Fields": {
+    "cats": [
+      100
+    ],
+    "description": "Accentuate Custom Fields is the professional and de facto solution to easily extend your Shopify store with your own custom fields such multi-language text fields, images, checkboxes, dates, selection list and custom JSON objects.",
+    "dom": "a[style*='.accentuate.io/'], a[data-bg*='.accentuate.io/'], div[style*='.accentuate.io/'], img[src*='.accentuate.io/'], img[data-src*='.accentuate.io/']",
+    "icon": "Accentuate Custom Fields.png",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scripts": "\\.accentuate\\.io/",
+    "website": "https://www.accentuate.io"
+  },
   "AccessTrade": {
     "cats": [
       71
@@ -678,6 +695,25 @@
     "saas": true,
     "scriptSrc": "\\.acuityscheduling\\.com",
     "website": "https://acuityscheduling.com"
+  },
+  "AcuityAds": {
+    "cats": [
+      36
+    ],
+    "description": "AcuityAds offers automatic solutions to marketers willing to connect through clients across mobile, social, and online display advertising campaigns.",
+    "headers": {
+      "Content-Security-Policy": "\\.acuityplatform\\.com"
+    },
+    "icon": "AcuityAds.svg",
+    "js": {
+      "acuityAdsEventQueue": "",
+      "acuityAdsPixelKey": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.acuityads.com"
   },
   "Ad Lightning": {
     "cats": [
@@ -1214,6 +1250,19 @@
     "saas": true,
     "website": "https://marketing.adobe.com/resources/help/en_US/dtm/c_overview.html"
   },
+  "Adobe Dynamic Media Classic": {
+    "cats": [
+      95
+    ],
+    "description": "Adobe Dynamic Media Classic is a platform that enables customers to manage, enhance, publish, and deliver dynamic rich media content and personal experiences to consumers across all channels and devices, including web, print material, email campaigns, desktops, social, and mobile.",
+    "dom": "source[srcset*='.scene7.com/'], link[href*='.scene7.com']",
+    "headers": {
+      "Content-Security-Policy": "\\.scene7\\.com"
+    },
+    "icon": "Adobe Experience Platform.svg",
+    "saas": true,
+    "website": "https://business.adobe.com/uk/products/experience-manager/scene7-login.html"
+  },
   "Adobe Experience Manager": {
     "cats": [
       1
@@ -1489,6 +1538,21 @@
     "saas": true,
     "scriptSrc": "static\\.affiliatly\\.com/",
     "website": "https://www.affiliatly.com"
+  },
+  "Affilo": {
+    "cats": [
+      71,
+      100
+    ],
+    "description": "Affilo is an all-in-one solution for referrals and affiliate marketing.",
+    "icon": "Affilo.png",
+    "pricing": [
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "//affilo\\.io/",
+    "website": "https://affilo.io"
   },
   "Affirm": {
     "cats": [
@@ -2571,6 +2635,19 @@
     "saas": true,
     "website": "https://g6.antv.vision"
   },
+  "Antsomi CDP 365": {
+    "cats": [
+      97
+    ],
+    "description": "Antsomi CDP 365 is a AI-enabled customer data platform from Southeast Asia.",
+    "icon": "Antsomi.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.cdp\\.asia/",
+    "website": "https://www.antsomi.com"
+  },
   "AnyClip": {
     "cats": [
       36
@@ -3131,6 +3208,19 @@
     },
     "website": "http://www.methods.co.nz/asciidoc"
   },
+  "Asciidoctor": {
+    "cats": [
+      4
+    ],
+    "description": "Asciidoctor is an open-source text processor and publishing toolchain, written in Ruby, for converting AsciiDoc content to HTML 5, DocBook 5, and other formats.",
+    "icon": "Asciidoctor.png",
+    "implies": "Ruby",
+    "meta": {
+      "generator": "^Asciidoctor\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/asciidoctor/asciidoctor"
+  },
   "Asciinema": {
     "cats": [
       14
@@ -3463,7 +3553,7 @@
   },
   "Auth0": {
     "cats": [
-      19
+      69
     ],
     "description": "Auth0 provides authentication and authorisation as a service.",
     "icon": "Auth0.png",
@@ -3475,7 +3565,7 @@
   },
   "Auth0 Lock": {
     "cats": [
-      19
+      69
     ],
     "description": "Auth0's signin solution",
     "icon": "Auth0.png",
@@ -3528,6 +3618,72 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/autoptimize/.+\\.js(?:\\?ao_version=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://autoptimize.com"
+  },
+  "Avada AVASHIP": {
+    "cats": [
+      100
+    ],
+    "description": "Avada AVASHIP is an order tracking Shopify app.",
+    "icon": "Avada.svg",
+    "js": {
+      "AVADA_FSB.bars": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "freeshippingbar\\.apps\\.avada\\.io/",
+    "website": "https://apps.shopify.com/avaship"
+  },
+  "Avada Boost Sales": {
+    "cats": [
+      100,
+      5
+    ],
+    "description": "AVADA Boost Sales is a one-stop solution that is specially designed to increase your sales with countdown timer, trust badges, sales pop, sales boost and many more.",
+    "icon": "Avada.svg",
+    "js": {
+      "AVADA_BS_LAST_UPDATE": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "boostsales\\.apps\\.avada\\.io/",
+    "website": "https://apps.shopify.com/avada-boost-sales"
+  },
+  "Avada SEO": {
+    "cats": [
+      100,
+      54
+    ],
+    "description": "Avada SEO is a Shopify app built and designed following strict SEO practices.",
+    "icon": "Avada.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "seo\\.apps\\.avada\\.io/",
+    "website": "https://apps.shopify.com/avada-seo-suite"
+  },
+  "Avada Size Chart": {
+    "cats": [
+      100
+    ],
+    "description": "Avada Size Chart is a thoughtful app that helps online stores reduce return rates with useful size guides.",
+    "icon": "Avada.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "sizechart\\.apps\\.avada\\.io/",
+    "website": "https://apps.shopify.com/avada-size-chart"
   },
   "Avangate": {
     "cats": [
@@ -3704,6 +3860,25 @@
     "icon": "azure.svg",
     "implies": "Azure",
     "website": "https://azure.microsoft.com/en-us/services/cdn/"
+  },
+  "Azure Monitor": {
+    "cats": [
+      10,
+      92
+    ],
+    "description": "Azure Monitor collects monitoring telemetry from a variety of on-premises and Azure sources. Azure Monitor helps you maximise the availability and performance of your applications and services.",
+    "dom": "link[href*='js.monitor.azure.com']",
+    "headers": {
+      "Content-Security-Policy": "js\\.monitor\\.azure\\.com"
+    },
+    "icon": "azure.svg",
+    "implies": "Azure",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "js\\.monitor\\.azure\\.com/",
+    "website": "https://azure.microsoft.com/en-us/services/monitor"
   },
   "a-blog cms": {
     "cats": [

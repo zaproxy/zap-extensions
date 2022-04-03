@@ -3,15 +3,17 @@
     "cats": [
       6
     ],
-    "html": "<(?:a|link|script)[^>]*(?:href|src)=\".*(?:/wcsstore/|webapp\\/wcs)",
+    "description": "HCL Commerce is a software platform framework for ecommerce, including marketing, sales, customer and order processing functionality.",
+    "dom": "link[href*='/wcsstore/'], link[href*='webapp/wcs/'], a[href*='/wcsstore/'], a[href*='webapp/wcs/'], script[src*='/wcsstore/'], script[src*='webapp/wcs/']",
     "icon": "HCL Commerce.svg",
     "implies": "Java",
     "pricing": [
       "poa"
     ],
     "saas": true,
+    "scripts": "/webapp/wcs/",
     "url": "/wcs/",
-    "website": "https://www.hcltechsw.com/products/commerce"
+    "website": "https://www.hcltechsw.com/commerce"
   },
   "HCL Digital Experience": {
     "cats": [
@@ -146,6 +148,20 @@
     },
     "scriptSrc": "api\\.handtalk\\.me",
     "website": "https://www.handtalk.me/"
+  },
+  "Happy Returns": {
+    "cats": [
+      102
+    ],
+    "description": "Happy Returns is a return software and reverse logistics company, provides a packaging-free, in-person way for customers to return an online purchase for an immediate refund.",
+    "dom": "a[href*='.happyreturns.com'], img[src*='.happyreturns.com/']",
+    "icon": "Happy Returns.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://happyreturns.com"
   },
   "HappyFox Helpdesk": {
     "cats": [
@@ -366,8 +382,7 @@
   },
   "HelpDocs": {
     "cats": [
-      4,
-      19
+      4
     ],
     "description": "HelpDocs is an knowledge management system.",
     "icon": "HelpDocs.svg",
@@ -398,7 +413,7 @@
   },
   "Hero": {
     "cats": [
-      6
+      103
     ],
     "description": "Hero is a virtual shopping platform for ecommerce and retail stores.",
     "icon": "Hero.png",
@@ -448,6 +463,27 @@
     "scriptSrc": "themes/hestia.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/hestia/"
   },
+  "HetrixTools": {
+    "cats": [
+      13
+    ],
+    "description": "HetrixTools is an uptime and blacklist monitoring platform.",
+    "headers": {
+      "content-security-policy": "\\.hetrixtools\\.com"
+    },
+    "icon": "HetrixTools.png",
+    "js": {
+      "htoolz": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hetrixtools\\.com/",
+    "website": "https://hetrixtools.com"
+  },
   "Hetzner": {
     "cats": [
       88,
@@ -482,23 +518,6 @@
       "generator": "Hexo(?: v?([\\d.]+))?\\;version:\\1"
     },
     "website": "https://hexo.io"
-  },
-  "HiConversion": {
-    "cats": [
-      74
-    ],
-    "description": "HiConversion is a SaaS solution that caters to ecommerce brands seeking actionable insights through their adaptive customer experience optimisation.",
-    "icon": "HiConversion.png",
-    "js": {
-      "__hic.version": "([\\d.]+)\\;version:\\1"
-    },
-    "pricing": [
-      "poa",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "deploy\\.hiconversion\\.com",
-    "website": "https://www.hiconversion.com"
   },
   "Hiawatha": {
     "cats": [
@@ -542,7 +561,7 @@
   },
   "Highlight.js": {
     "cats": [
-      19
+      59
     ],
     "icon": "Highlight.js.png",
     "js": {
@@ -560,22 +579,6 @@
     "icon": "Highcharts.png",
     "scriptSrc": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
     "website": "http://highcharts.com/products/highstock"
-  },
-  "Highstreet": {
-    "cats": [
-      19
-    ],
-    "description": "Highstreet is the enterprise-grade D2C app platform for global fashion and lifestyle brands.",
-    "icon": "Highstreet.png",
-    "js": {
-      "highstreetBanner.config": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.api\\.highstreetapp\\.com/",
-    "website": "https://www.highstreetmobile.com"
   },
   "HikeOrders": {
     "cats": [
@@ -638,6 +641,20 @@
       "/history(@|/)([\\d.]+)(?:/[a-z]+)?/history(?:(.production|.development))?(?:.min)?\\.js\\;version:\\2"
     ],
     "website": "https://github.com/ReactTraining/history"
+  },
+  "Hoefler&Co": {
+    "cats": [
+      17
+    ],
+    "description": "Hoefler&Co is a digital type foundry (font design studio) in Woburn, Massachusetts (formerly New York City), founded by type designer Jonathan Hoefler. Hoefler&Co designs typefaces for clients and for retail on its website.",
+    "dom": "link[href*='cloud.typography.com/']",
+    "icon": "Hoefler&Co.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.typography.com"
   },
   "Hogan.js": {
     "cats": [
@@ -1001,7 +1018,7 @@
   },
   "HulkApps Age Verification": {
     "cats": [
-      5
+      100
     ],
     "description": "HulkApps Age Verification allow your customers to certify their age before they land in your store.",
     "icon": "HulkApps.svg",
@@ -1165,6 +1182,25 @@
     ],
     "saas": true,
     "website": "https://www.hyperspeed.me/"
+  },
+  "Hypervisual Page Builder": {
+    "cats": [
+      51,
+      100
+    ],
+    "description": "Hypervisual Page Builder is a page builder for Shopify.",
+    "icon": "Hypervisual.png",
+    "js": {
+      "hypervisualPreflight": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.gethypervisual\\.com/",
+    "website": "https://gethypervisual.com"
   },
   "hCaptcha": {
     "cats": [
