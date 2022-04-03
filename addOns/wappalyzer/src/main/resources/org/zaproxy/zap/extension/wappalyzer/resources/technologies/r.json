@@ -406,7 +406,7 @@
       }
     },
     "html": "<[^>]+data-react",
-    "icon": "React.png",
+    "icon": "React.svg",
     "js": {
       "React.version": "^(.+)$\\;version:\\1",
       "ReactOnRails": "",
@@ -418,6 +418,28 @@
       "^react\\b.*\\.js"
     ],
     "website": "https://reactjs.org"
+  },
+  "React Bricks": {
+    "cats": [
+      1
+    ],
+    "description": "React Bricks is a visual editing CMS based on React components.",
+    "dom": {
+      "img[src*='react']": {
+        "attributes": {
+          "src": "react(?:-)?bricks\\."
+        }
+      }
+    },
+    "icon": "React Bricks.svg",
+    "implies": "React",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": "React",
+    "saas": true,
+    "website": "https://reactbricks.com"
   },
   "React Redux": {
     "cats": [
@@ -471,7 +493,8 @@
   },
   "Rebuy": {
     "cats": [
-      76
+      76,
+      100
     ],
     "description": "Rebuy offers personlisation solutions for ecommerce sites.",
     "icon": "Rebuy.png",

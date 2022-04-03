@@ -59,15 +59,6 @@
     "saas": true,
     "website": "https://fabric.inc"
   },
-  "Facebook": {
-    "cats": [
-      5
-    ],
-    "description": "Facebook is an online social media and social networking service.",
-    "icon": "Facebook.svg",
-    "scriptSrc": "//connect\\.facebook\\.([a-z]+)/[^/]*/[a-z]*\\.js",
-    "website": "http://facebook.com"
-  },
   "Facebook Ads": {
     "cats": [
       36
@@ -447,6 +438,24 @@
     "scriptSrc": "\\.feefo\\.com/",
     "website": "https://www.feefo.com"
   },
+  "Fenicio": {
+    "cats": [
+      6
+    ],
+    "description": "Fenicio is a cloud platform that handles all aspects of ecommerce sales channel operation and management.",
+    "icon": "Fenicio.svg",
+    "js": {
+      "_FN.validadorTelefono": "",
+      "fneCommerce.miCompraVisto": "",
+      "fnWishlist.cargarInfoArticulos": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://fenicio.io"
+  },
   "Fera": {
     "cats": [
       90
@@ -548,6 +557,24 @@
     ],
     "website": "https://fingerprintjs.com"
   },
+  "FintechOS": {
+    "cats": [
+      58
+    ],
+    "description": "FintechOS is a low-code platform for banking and insurance.",
+    "icon": "FintechOS.svg",
+    "meta": {
+      "ftos-app-version": "\\sv([\\d\\.]+)\\s\\;version:\\1"
+    },
+    "js": {
+      "FtosChat": "",
+      "ftos.core.getB2CCulture": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://fintechos.com"
+  },
   "Firebase": {
     "cats": [
       34
@@ -619,7 +646,6 @@
   },
   "Fit Analytics": {
     "cats": [
-      5,
       76
     ],
     "description": "Fit Analytics is a platform that provides clothing size recommendations for online customers by measuring individual dimensions via webcams.",
@@ -767,6 +793,24 @@
     "saas": true,
     "scriptSrc": "(?:shopify-)?cdn\\.flow\\.io/",
     "website": "https://www.flow.io/"
+  },
+  "Flowplayer": {
+    "cats": [
+      14
+    ],
+    "description": "Flowplayer is a scalable, performance-first HTML 5 video player and platform hosting solution for publishers, broadcasters and digital media.",
+    "icon": "Flowplayer.svg",
+    "js": {
+      "flowplayer": "",
+      "flowplayer.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://flowplayer.com"
   },
   "Flutter": {
     "cats": [
@@ -1119,6 +1163,27 @@
     "saas": true,
     "scriptSrc": "cdn\\.foxycart\\.com",
     "website": "https://www.foxy.io"
+  },
+  "Framer Sites": {
+    "cats": [
+      51
+    ],
+    "description": "Framer is primarily a design and prototyping tool. It allows you to design interactive prototypes of websites and applications using production components and real data.",
+    "icon": "Framer Sites.svg",
+    "implies": "React",
+    "js": {
+      "Framer.Animatable": "",
+      "Framer.version": "([\\d\\.]+)\\;version:\\1\\;confidence:0"
+    },
+    "oss": false,
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "framerusercontent\\.com",
+    "website": "https://framer.com/sites"
   },
   "France Express": {
     "cats": [
@@ -1473,7 +1538,6 @@
       59
     ],
     "description": "fullPage.js a jQuery and vanilla JavaScript plugin for fullscreen scrolling websites.",
-    "dom": "link[href*='fullPage.css']\\;confidence:10",
     "icon": "fullPage.js.png",
     "implies": "jQuery",
     "js": {

@@ -59,7 +59,8 @@
     "cats": [
       1
     ],
-    "html": "<(?:link [^>]*href|img [^>]*src)=\"/polopoly_fs/",
+    "description": "DM Polopoly is a web content management solution focused on enhancing the user experience built by Atex.",
+    "dom": "img[data-src*='/polopoly_fs/'], link[href*='/polopoly_fs/'], img[src*='/polopoly_fs/']",
     "icon": "DM Polopoly.png",
     "implies": "Java",
     "website": "http://www.atex.com/products/dm-polopoly"
@@ -108,6 +109,19 @@
       "\\bDPD\\b"
     ],
     "website": "https://www.dpd.com"
+  },
+  "DPlayer": {
+    "cats": [
+      14
+    ],
+    "description": "DPlayer is an HTML 5 video player that supports pop-up.",
+    "icon": "DPlayer.png",
+    "js": {
+      "DPlayer": "",
+      "DPlayer.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://dplayer.js.org"
   },
   "DTScout": {
     "cats": [
@@ -248,16 +262,18 @@
     "cats": [
       27
     ],
+    "description": "Dart is an open-source, general-purpose, object-oriented programming language with C-style syntax developed by Google in 2011.",
+    "dom": "script[type='application/dart']",
     "excludes": [
       "Angular",
       "AngularJS"
     ],
-    "html": "/(?:<script)[^>]+(?:type=\"application/dart\")/",
     "icon": "Dart.svg",
     "js": {
       "___dart__$dart_dartObject_ZxYxX_0_": "",
       "___dart_dispatch_record_ZxYxX_0_": ""
     },
+    "oss": true,
     "scriptSrc": [
       "/(?:\\.)?(?:dart)(?:\\.js)?/",
       "packages/browser/dart\\.js"
@@ -353,8 +369,17 @@
     "cats": [
       1
     ],
-    "html": "<[^>]+https://www\\.datocms-assets\\.com",
-    "icon": "datocms.svg",
+    "description": "DatoCMS is a cloud-based headless Content as a service (CaaS) platform created to work with static websites, mobile apps and server-side applications of any kind.",
+    "dom": "link[href*='datocms-assets.com'], img[src*='datocms-assets.com'], source[src*='datocms-assets.com'], div[style*='datocms-assets.com']",
+    "headers": {
+      "content-security-policy": "\\.datocms-assets\\.com"
+    },
+    "icon": "DatoCMS.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
     "website": "https://www.datocms.com"
   },
   "Day.js": {
@@ -438,6 +463,37 @@
       "\\bDelivengo\\b"
     ],
     "website": "https://mydelivengo.laposte.fr/"
+  },
+  "Demandbase": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "Demandbase is a targeting and personalization platform for business-to-business companies.",
+    "icon": "demandbase.svg",
+    "js": {
+      "Demandbase": "",
+      "Demandbase.version": "^(.+)$\\;version:\\1"
+    },
+    "pricing": [
+      "high",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "tag.demandbase.com",
+    "website": "https://www.demandbase.com"
+  },
+  "Deta": {
+    "cats": [
+      62
+    ],
+    "description": "Deta is a cloud platform for building and deploying apps.",
+    "headers": {
+      "Server": "^Deta$"
+    },
+    "icon": "deta.svg",
+    "url": "^https?://[^/]+\\.deta\\.(?:app|dev)",
+    "website": "https://deta.sh"
   },
   "Detectify": {
     "cats": [
@@ -642,13 +698,17 @@
     ],
     "cpe": "cpe:/a:disqus:disqus_comment_system",
     "description": "Disqus is a worldwide blog comment hosting service for web sites and online communities that use a networked platform.",
-    "html": "<div[^>]+id=\"disqus_thread\"",
+    "dom": "div#disqus_thread",
     "icon": "Disqus.svg",
     "js": {
       "DISQUS": "",
       "disqus_shortname": "",
       "disqus_url": ""
     },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
     "scriptSrc": "disqus_url",
     "website": "https://disqus.com"
   },
@@ -877,16 +937,17 @@
       "DokuWiki": ""
     },
     "cpe": "cpe:/a:dokuwiki:dokuwiki",
-    "description": "DokuWiki is a Free open-source wiki software.",
-    "html": [
-      "<div[^>]+id=\"dokuwiki__>",
-      "<a[^>]+href=\"#dokuwiki__"
-    ],
+    "description": "DokuWiki is a free open-source wiki software.",
     "icon": "DokuWiki.png",
     "implies": "PHP",
+    "js": {
+      "DOKU_TPL": "\\;confidence:50",
+      "doku_edit_text_content": "\\;confidence:50"
+    },
     "meta": {
       "generator": "^DokuWiki( Release [\\d-]+)?\\;version:\\1"
     },
+    "oss": true,
     "website": "https://www.dokuwiki.org"
   },
   "DomainFactory": {
@@ -1133,6 +1194,25 @@
     "saas": true,
     "website": "https://www.drift.com/"
   },
+  "Drop A Hint": {
+    "cats": [
+      100
+    ],
+    "description": "Drop A Hint is an Shopify app which help share hints via email, SMS, WhatsApp and messengers.",
+    "icon": "Drop A Hint.png",
+    "js": {
+      "DropAHint.BaseURL": "dropahint\\.love/",
+      "dropAHintTypeProduct": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "website": "https://apps.shopify.com/drop-a-hint-v2"
+  },
   "Dropbox": {
     "cats": [
       95
@@ -1234,14 +1314,17 @@
     "cats": [
       1,
       11,
-      51,
-      53
+      51
     ],
     "description": "Duopana is a platform for creating online communities, blogs and managing collaborative content.",
-    "html": "(?:<!-- /*BeraCode script)",
     "icon": "Duopana.svg",
-    "scriptSrc": "\\*berajs.beracode.com\\*",
-    "website": "https://duopana.com/"
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.beracode\\.com/",
+    "website": "https://duopana.com"
   },
   "Dynamic Yield": {
     "cats": [
@@ -1284,8 +1367,7 @@
   },
   "Dynatrace": {
     "cats": [
-      10,
-      92
+      10
     ],
     "cookies": {
       "dtCookie1": ""

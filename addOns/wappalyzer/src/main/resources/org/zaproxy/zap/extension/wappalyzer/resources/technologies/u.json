@@ -385,6 +385,25 @@
     "scriptSrc": "app\\.upserve\\.com/",
     "website": "https://onlineordering.upserve.com"
   },
+  "UptimeRobot": {
+    "cats": [
+      13
+    ],
+    "description": "UptimeRobot is a web-based software that is designed to monitor the sites frequently to check whether any site is down owing to server problem or any bug in coding.",
+    "dom": "a[href*='stats.uptimerobot.com/']",
+    "headers": {
+      "content-security-policy": "\\.uptimerobot\\.com"
+    },
+    "icon": "UptimeRobot.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "stats\\.uptimerobot\\.com/",
+    "website": "https://uptimerobot.com"
+  },
   "Upvoty": {
     "cats": [
       47
@@ -555,6 +574,44 @@
     "saas": true,
     "scriptSrc": "\\.usercentrics\\.eu/.+\\.js",
     "website": "https://usercentrics.com"
+  },
+  "Userflow": {
+    "cats": [
+      58
+    ],
+    "description": "Userflow is a user onboarding software for building product tours and onboarding checklists, tailored to your app and your users.",
+    "icon": "Userflow.svg",
+    "js": {
+      "USERFLOWJS_QUEUE": "",
+      "userflow.endAllFlows": "\\;confidence:50",
+      "userflow.endChecklist": "\\;confidence:50"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.userflow\\.com/",
+    "website": "https://userflow.com"
+  },
+  "Userpilot": {
+    "cats": [
+      58,
+      97
+    ],
+    "description": "Userpilot is a cloud-based product experience platform designed for customer success and product teams to onboard users and increase product adoption through behavior-triggered experiences.",
+    "icon": "Userpilot.svg",
+    "js": {
+      "userpilot.triggerById": "",
+      "userpilotInitiatorSDK": "",
+      "userpilotPako": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://userpilot.com"
   },
   "Ushahidi": {
     "cats": [

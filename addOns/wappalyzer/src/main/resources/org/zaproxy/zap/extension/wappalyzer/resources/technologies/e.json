@@ -14,6 +14,21 @@
     ],
     "website": "http://www.ec-cube.net"
   },
+  "ECharts": {
+    "cats": [
+      25
+    ],
+    "description": "ECharts is an open-source JavaScript visualisation library.",
+    "dom": "div[_echarts_instance_]",
+    "icon": "echarts.png",
+    "oss": true,
+    "scriptSrc": [
+      "/echarts\\.min\\.[a-zA-Z0-9]*\\.js",
+      "/echarts(?:\\.simple)?(?:\\.esm)?(?:\\.common)?(?:\\.min)?\\.js",
+      "cdn\\.jsdelivr\\.net/(?:npm|gh/apache)/echarts@([\\d.]+(?:-[^/]+)?|latest)/dist/echarts.*\\.js\\;version:\\1"
+    ],
+    "website": "https://echarts.apache.org/"
+  },
   "EKM": {
     "cats": [
       6
@@ -118,6 +133,22 @@
     ],
     "website": "https://ex.co",
     "xhr": "prd-collector-anon\\.ex\\.co"
+  },
+  "Easy Redirects": {
+    "cats": [
+      100
+    ],
+    "description": "Easy Redirects is a Shopify app built by Eastside, and part of the best Shopify Apps collection.",
+    "icon": "Easy Redirects.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "easy-redirects\\..+/redirect-app\\.js",
+    "website": "https://apps.shopify.com/easyredirects"
   },
   "EasyDigitalDownloads": {
     "cats": [
@@ -545,8 +576,7 @@
   },
   "Enable": {
     "cats": [
-      68,
-      87
+      68
     ],
     "description": "Enable is a web accessibility plugin by uPress.",
     "icon": "Enable.png",
@@ -557,9 +587,8 @@
       "freemium",
       "poa"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "cdn\\.enable\\.co\\.il/.+\\.js\\?ver=(\\d+(?:\\.\\d+)+)\\;version:\\1",
-    "website": "https://www.enable-accessibility.com"
+    "scriptSrc": "cdn\\.enable\\.co\\.il/",
+    "website": "https://www.enable.co.il"
   },
   "Engagio": {
     "cats": [
@@ -886,6 +915,22 @@
       "media\\.ethicalads\\.io"
     ],
     "website": "https://www.ethicalads.io/"
+  },
+  "Etix": {
+    "cats": [
+      104
+    ],
+    "description": "Etix is an international web-based ticketing service provider for the entertainment, travel, and sports industries.",
+    "dom": "a[href*='.etix.com/ticket/'][target='_blank']",
+    "icon": "Etix.svg",
+    "js": {
+      "Etix.javaContext": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://hello.etix.com"
   },
   "Etracker": {
     "cats": [
