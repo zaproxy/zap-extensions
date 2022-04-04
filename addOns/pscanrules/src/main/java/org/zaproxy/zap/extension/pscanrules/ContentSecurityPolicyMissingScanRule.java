@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanbeta.contentsecuritypolicymissing.";
+    private static final String MESSAGE_PREFIX = "pscanrules.contentsecuritypolicymissing.";
     private static final int PLUGIN_ID = 10038;
 
     private static final Logger logger =
