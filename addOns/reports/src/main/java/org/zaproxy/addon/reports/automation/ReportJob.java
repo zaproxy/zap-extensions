@@ -160,7 +160,7 @@ public class ReportJob extends AutomationJob {
         reportData.setTheme(theme);
 
         // Work out the file name based on the pattern
-        String filePattern = this.getParameters().getReportFile();
+        String filePattern = env.replaceVars(getParameters().getReportFile());
         if (StringUtils.isEmpty(filePattern)) {
             filePattern = ReportParam.DEFAULT_NAME_PATTERN;
         }
@@ -173,7 +173,7 @@ public class ReportJob extends AutomationJob {
         }
 
         File file;
-        String reportDir = this.getParameters().getReportDir();
+        String reportDir = env.replaceVars(getParameters().getReportDir());
         if (reportDir != null && reportDir.length() > 0) {
             file = new File(reportDir, fileName);
         } else {
