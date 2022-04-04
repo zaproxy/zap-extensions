@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -144,6 +146,11 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
 
     private AlertBuilder buildAlert() {
         return newAlert().setRisk(Alert.RISK_HIGH).setConfidence(Alert.CONFIDENCE_MEDIUM);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return Arrays.asList(buildAlert().build());
     }
 
     @Override
