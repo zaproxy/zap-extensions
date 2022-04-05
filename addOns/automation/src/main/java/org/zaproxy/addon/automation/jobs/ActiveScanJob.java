@@ -324,7 +324,7 @@ public class ActiveScanJob extends AutomationJob {
                     JobUtils.parseAlertThreshold(rule.getThreshold(), this.getName(), progress);
             if (pluginTh != null) {
                 plugin.setAlertThreshold(pluginTh);
-                plugin.setEnabled(true);
+                plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
                 progress.info(
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setthreshold",

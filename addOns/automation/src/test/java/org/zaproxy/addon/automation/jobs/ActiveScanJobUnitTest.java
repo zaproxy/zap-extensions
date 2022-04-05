@@ -490,6 +490,51 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
+    void shouldTurnOffSpecifiedRule() throws MalformedURLException {
+        // There is one built in rule, and mocking more is tricky outside of the package :/
+
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", 50000);
+        ruleDefn.put("strength", "medium");
+        ruleDefn.put("threshold", "oFF");
+
+        LinkedHashMap<String, List<?>> policyDefn = new LinkedHashMap<>();
+
+        ArrayList<LinkedHashMap<?, ?>> rulesDefn = new ArrayList<>();
+        rulesDefn.add(ruleDefn);
+        policyDefn.put("rules", rulesDefn);
+
+        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
+        data.put("policyDefinition", policyDefn);
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        ScanPolicy policy = job.getScanPolicy(progress);
+
+        // Then
+        assertThat(policy, is(notNullValue()));
+        assertThat(policy.getPluginFactory(), is(notNullValue()));
+        assertThat(policy.getPluginFactory().getAllPlugin(), is(notNullValue()));
+        assertThat(policy.getPluginFactory().getAllPlugin().size(), is(1));
+        assertThat(policy.getPluginFactory().getAllPlugin().get(0), is(notNullValue()));
+        assertThat(policy.getPluginFactory().getAllPlugin().get(0).isEnabled(), is(equalTo(false)));
+        assertThat(policy.getPluginFactory().getAllPlugin().get(0).getId(), is(equalTo(50000)));
+        assertThat(
+                policy.getPluginFactory().getAllPlugin().get(0).getAttackStrength(),
+                is(equalTo(AttackStrength.MEDIUM)));
+        assertThat(
+                policy.getPluginFactory().getAllPlugin().get(0).getAlertThreshold(),
+                is(equalTo(AlertThreshold.OFF)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldWarnOnUnknownRule() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
