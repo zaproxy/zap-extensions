@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Register plans run by -autorun to prevent NPEs when editing them
+- Issue when turning off specific active scan rules
 
 ## [0.13.0] - 2022-02-25
 ### Fixed
