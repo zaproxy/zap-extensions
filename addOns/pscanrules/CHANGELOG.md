@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [40] - 2022-04-05
 ### Changed
 - Clarify the alert solution for the Cache Control scan rule.
 
@@ -299,6 +299,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v37
