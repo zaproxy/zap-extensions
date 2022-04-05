@@ -101,6 +101,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncod
 import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
@@ -147,6 +148,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private AliasChecker aliasChecker;
     private Map<String, LocalServer> localServers;
     private LocalServer mainProxyServer;
+    private ServerInfo mainProxyServerInfo;
     private LocalServerHandler.SerialiseState serialiseForBreak;
     private ExtensionBreak extensionBreak;
     private Method addBreakListenerMethod;
@@ -235,6 +237,20 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void initModel(Model model) {
         super.initModel(model);
+
+        mainProxyServerInfo =
+                new ServerInfo() {
+
+                    @Override
+                    public String getAddress() {
+                        return getModel().getOptionsParam().getProxyParam().getProxyIp();
+                    }
+
+                    @Override
+                    public int getPort() {
+                        return getModel().getOptionsParam().getProxyParam().getProxyPort();
+                    }
+                };
 
         if (!handleLocalServers) {
             return;
@@ -335,6 +351,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 getMainEventExecutorGroup(),
                 sslCertificateService,
                 handler);
+    }
+
+    /**
+     * Gets the server info of the main proxy.
+     *
+     * @return the server info.
+     * @since 0.2.0
+     */
+    public ServerInfo getMainProxyServerInfo() {
+        return mainProxyServerInfo;
     }
 
     /**
