@@ -10,6 +10,14 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/selenium/")
+
+        dependencies {
+            addOns {
+                register("network") {
+                    version.set(">=0.2.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -24,5 +32,8 @@ dependencies {
     api("org.seleniumhq.selenium:htmlunit-driver:2.54.0")
     api("com.codeborne:phantomjsdriver:1.4.4")
 
+    compileOnly(parent!!.childProjects.get("network")!!)
+
+    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(project(":testutils"))
 }

@@ -123,26 +123,35 @@ public class ZestScriptWrapper extends ScriptWrapper {
     public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
         // Clone the wrapper so that we get a new instance every time
         if (class1.isAssignableFrom(ZestPassiveRunner.class)) {
-            return (T) new ZestPassiveRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestPassiveRunner(this.getExtension(), getExtensionNetwork(), this.clone());
 
         } else if (class1.isAssignableFrom(ZestActiveRunner.class)) {
-            return (T) new ZestActiveRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestActiveRunner(this.getExtension(), getExtensionNetwork(), this.clone());
 
         } else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
-            return (T) new ZestTargetedRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestTargetedRunner(
+                            this.getExtension(), getExtensionNetwork(), this.clone());
 
         } else if (class1.isAssignableFrom(ZestHttpSenderRunner.class)) {
-            return (T) new ZestHttpSenderRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestHttpSenderRunner(
+                            this.getExtension(), getExtensionNetwork(), this.clone());
 
         } else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
-            return (T) new ZestProxyRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestProxyRunner(this.getExtension(), getExtensionNetwork(), this.clone());
 
         } else if (class1.isAssignableFrom(ZestAuthenticationRunner.class)) {
             return (T)
                     new ZestAuthenticationRunner(
                             this.getExtension(), getExtensionNetwork(), this.clone());
         } else if (class1.isAssignableFrom(ZestSequenceRunner.class)) {
-            return (T) new ZestSequenceRunner(this.getExtension(), this.clone());
+            return (T)
+                    new ZestSequenceRunner(
+                            this.getExtension(), getExtensionNetwork(), this.clone());
         }
         return null;
     }
