@@ -37,8 +37,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
-import org.zaproxy.zap.httputils.HtmlContext;
-import org.zaproxy.zap.httputils.HtmlContextAnalyser;
+import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
+import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -125,7 +125,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
             HttpMessage sinkMsg,
             HtmlContext targetContext,
             int ignoreFlags) {
-        return performAttack(sourceMsg, param, attack, sinkMsg, targetContext, ignoreFlags, false);
+        return performAttack(
+                sourceMsg, param, attack, sinkMsg, targetContext, ignoreFlags, false, false);
     }
 
     private List<HtmlContext> performAttack(
@@ -135,7 +136,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
             HttpMessage sinkMsg,
             HtmlContext targetContext,
             int ignoreFlags,
-            boolean findDecoded) {
+            boolean findDecoded,
+            boolean ignoreSafeParents) {
         if (isStop()) {
             return null;
         }
@@ -167,10 +169,14 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
             // High level, so check all results are in the expected context
             return hca.getHtmlContexts(
-                    findDecoded ? getURLDecode(attack) : attack, targetContext, ignoreFlags);
+                    findDecoded ? getURLDecode(attack) : attack,
+                    targetContext,
+                    ignoreFlags,
+                    ignoreSafeParents);
         }
 
-        return hca.getHtmlContexts(findDecoded ? getURLDecode(attack) : attack);
+        return hca.getHtmlContexts(
+                findDecoded ? getURLDecode(attack) : attack, null, 0, ignoreSafeParents);
     }
 
     @Override
@@ -302,7 +308,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     break;
                                 }
 
-                                if (contexts2.size() > 0) {
+                                if (!contexts2.isEmpty()) {
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                             .setParam(param)
@@ -335,7 +341,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     break;
                                 }
 
-                                if (contexts2.size() > 0) {
+                                if (!contexts2.isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -369,7 +375,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     break;
                                 }
 
-                                if (contexts2.size() > 0) {
+                                if (!contexts2.isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -400,7 +406,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 break;
                             }
 
-                            if (contexts2.size() > 0) {
+                            if (!contexts2.isEmpty()) {
                                 // Yep, its vulnerable
                                 newAlert()
                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -420,7 +426,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                                 sinkMsg,
                                                 context,
                                                 HtmlContext.IGNORE_HTML_COMMENT);
-                                if (contexts2 != null && contexts2.size() > 0) {
+                                if (contexts2 != null && !contexts2.isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -449,7 +455,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     break;
                                 }
 
-                                if (contexts2.size() > 0) {
+                                if (!contexts2.isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -500,8 +506,9 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                                             sinkMsg,
                                                             null,
                                                             0,
-                                                            true);
-                                            if (contexts3 != null && contexts3.size() > 0) {
+                                                            true,
+                                                            false);
+                                            if (contexts3 != null && !contexts3.isEmpty()) {
                                                 attackWorked = true;
                                                 newAlert()
                                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -540,7 +547,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     break;
                                 }
 
-                                if (contexts2.size() > 0) {
+                                if (!contexts2.isEmpty()) {
                                     // Yep, its vulnerable
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -565,7 +572,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     if (contexts2 == null) {
                                         break;
                                     }
-                                    if (contexts2.size() > 0) {
+                                    if (!contexts2.isEmpty()) {
                                         // Yep, its vulnerable
                                         newAlert()
                                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -585,8 +592,10 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                                     "<img src=x onerror=alert(1);>",
                                                     sinkMsg,
                                                     context,
-                                                    0);
-                                    if (contextsA != null && contextsA.size() > 0) {
+                                                    0,
+                                                    false,
+                                                    true);
+                                    if (contextsA != null && !contextsA.isEmpty()) {
                                         newAlert()
                                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                                 .setParam(param)
@@ -611,7 +620,9 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                                     GENERIC_SCRIPT_ALERT,
                                                     sinkMsg,
                                                     null,
-                                                    0);
+                                                    0,
+                                                    false,
+                                                    true);
                                     if (contexts2 == null) {
                                         break;
                                     }
