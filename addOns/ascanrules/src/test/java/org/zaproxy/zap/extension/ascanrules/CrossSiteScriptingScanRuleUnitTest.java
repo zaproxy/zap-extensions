@@ -1696,6 +1696,69 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(1));
     }
 
+    @Test
+    void shouldAlertXssInEscapedTextArea() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/escapetextarea";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String text = getFirstParamValue(session, "text");
+                        String response =
+                                getHtml("InputInTextArea.html", new String[][] {{"text", text}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?text=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldNotAlertXssInTextArea() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/textarea";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String text = getFirstParamValue(session, "text");
+                        // Remove a </textarea> type tag
+                        String notAllowed = "/textarea";
+                        int badOffset = text.toLowerCase().indexOf(notAllowed);
+                        if (badOffset > -1) {
+                            text =
+                                    text.substring(0, badOffset)
+                                            + text.substring(badOffset + notAllowed.length());
+                        }
+                        String response =
+                                getHtml("InputInTextArea.html", new String[][] {{"text", text}});
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?text=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        if (alertsRaised.size() > 0) {
+            System.out.println(alertsRaised.get(0).toPluginXML(""));
+        }
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Override
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);
