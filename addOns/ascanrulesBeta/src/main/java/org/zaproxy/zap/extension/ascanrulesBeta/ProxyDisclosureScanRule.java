@@ -32,7 +32,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -254,12 +254,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             tracemsg.setRequestHeader(traceRequestHeader);
             // create a random cookie, and set it up, so we can detect if the TRACE is enabled (in
             // which case, it should echo it back in the response)
-            String randomcookiename =
-                    RandomStringUtils.random(
-                            15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-            String randomcookievalue =
-                    RandomStringUtils.random(
-                            40, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+            String randomcookiename = RandomStringUtils.randomAlphanumeric(15);
+            String randomcookievalue = RandomStringUtils.randomAlphanumeric(40);
             TreeSet<HtmlParameter> cookies = tracemsg.getCookieParams();
             cookies.add(
                     new HtmlParameter(
@@ -454,14 +450,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
                     // create a random cookie, and set it up, so we can detect if the TRACE is
                     // enabled (in which case, it should echo it back in the response)
-                    String randomcookiename2 =
-                            RandomStringUtils.random(
-                                    15,
-                                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-                    String randomcookievalue2 =
-                            RandomStringUtils.random(
-                                    40,
-                                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+                    String randomcookiename2 = RandomStringUtils.randomAlphanumeric(15);
+                    String randomcookievalue2 = RandomStringUtils.randomAlphanumeric(40);
                     TreeSet<HtmlParameter> cookies2 = mfMethodMsg.getCookieParams();
                     cookies2.add(
                             new HtmlParameter(
