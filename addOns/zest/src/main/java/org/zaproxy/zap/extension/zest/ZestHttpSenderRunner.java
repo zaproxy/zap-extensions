@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.script.HttpSenderScript;
 import org.zaproxy.zap.extension.script.HttpSenderScriptHelper;
 import org.zaproxy.zest.core.v1.ZestRequest;
@@ -45,8 +46,9 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 
     private Logger logger = LogManager.getLogger(ZestHttpSenderRunner.class);
 
-    public ZestHttpSenderRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestHttpSenderRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         this.script = script;
     }

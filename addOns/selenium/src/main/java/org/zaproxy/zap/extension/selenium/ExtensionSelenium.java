@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,10 +57,13 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
@@ -78,6 +82,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionSelenium";
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
+
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
 
     private static final int MIN_PORT = 1;
 
@@ -125,6 +132,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private ScriptType seleniumScriptType;
 
+    private ExtensionNetwork extensionNetwork;
+
     public ExtensionSelenium() {
         super(NAME);
     }
@@ -142,6 +151,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     @Override
     public int getOrder() {
         return 300;
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return EXTENSION_DEPENDENCIES;
     }
 
     @Override
@@ -566,12 +580,23 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      */
     public WebDriver getWebDriverProxyingViaZAP(
             int requester, String providedBrowserId, boolean enableExtensions) {
+        ServerInfo serverInfo = getExtensionNetwork().getMainProxyServerInfo();
         return this.getWebDriver(
                 requester,
                 providedBrowserId,
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort(),
+                serverInfo.getAddress(),
+                serverInfo.getPort(),
                 enableExtensions);
+    }
+
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
+        }
+        return extensionNetwork;
     }
 
     public WebDriver getProxiedBrowser(String providedBrowserId) {
@@ -697,12 +722,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             final String providedBrowserId,
             final String url,
             boolean enableExtensions) {
+        ServerInfo serverInfo = getExtensionNetwork().getMainProxyServerInfo();
         WebDriver webDriver =
                 getWebDriver(
                         requester,
                         providedBrowserId,
-                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort(),
+                        serverInfo.getAddress(),
+                        serverInfo.getPort(),
                         enableExtensions);
 
         if (webDriver != null && url != null) {
