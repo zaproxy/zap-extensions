@@ -50,7 +50,7 @@ public class BugTrackerGithub extends BugTracker {
     private String FIELD_ASSIGNEE_MANUAL = "bugtracker.trackers.github.issue.assignee.manual";
     private String FIELD_ASSIGNEE_LIST = "bugtracker.trackers.github.issue.assignee.list";
     private String FIELD_USERNAME = "bugtracker.trackers.github.issue.username";
-    private String FIELD_PASSWORD = "bugtracker.trackers.github.issue.password";
+    private String FIELD_TOKEN = "bugtracker.trackers.github.issue.token";
     private String FIELD_GITHUB_CONFIG = "bugtracker.trackers.github.issue.config";
     private String titleIssue = null;
     private String bodyIssue = null;
@@ -102,7 +102,7 @@ public class BugTrackerGithub extends BugTracker {
         dialog.addTextField(FIELD_ASSIGNEE_MANUAL, "");
         dialog.addComboField(FIELD_ASSIGNEE_LIST, new ArrayList<>(), "");
         dialog.addTextField(FIELD_USERNAME, "");
-        dialog.addTextField(FIELD_PASSWORD, "");
+        dialog.addTextField(FIELD_TOKEN, "");
         updateAssigneeList();
         dialog.addFieldListener(FIELD_GITHUB_CONFIG, e -> updateAssigneeList());
     }
@@ -121,7 +121,7 @@ public class BugTrackerGithub extends BugTracker {
                         repoFormatted = repoFormatted.split("https://www.github.com/")[1];
                     }
                     collaborators =
-                            getCollaborators(config.getName(), config.getPassword(), repoFormatted);
+                            getCollaborators(config.getName(), config.getToken(), repoFormatted);
                     if (collaborators != null && collaborators.size() > 0) {
                         List<String> assignees = new ArrayList<>(collaborators);
                         dialog.setComboFields(FIELD_ASSIGNEE_LIST, assignees, "");
@@ -264,9 +264,9 @@ public class BugTrackerGithub extends BugTracker {
         return this.labelsIssue;
     }
 
-    public Set<String> getCollaborators(String username, String password, String repo)
+    public Set<String> getCollaborators(String username, String token, String repo)
             throws IOException {
-        GitHub github = GitHub.connectUsingPassword(username, password);
+        GitHub github = GitHub.connect(username, token);
         Set<String> collaborators = null;
         try {
             GHRepository repository = github.getRepository(repo);
@@ -295,9 +295,9 @@ public class BugTrackerGithub extends BugTracker {
             String labels,
             String assignee,
             String username,
-            String password)
+            String token)
             throws IOException {
-        GitHub github = GitHub.connectUsingPassword(username, password);
+        GitHub github = GitHub.connect(username, token);
         try {
             GHRepository repository = github.getRepository(repo);
             GHIssueBuilder issue = repository.createIssue(title);
@@ -361,14 +361,14 @@ public class BugTrackerGithub extends BugTracker {
         labels = dialog.getStringValue(FIELD_LABELS);
         assignee = dialog.getStringValue(FIELD_ASSIGNEE_MANUAL);
         username = dialog.getStringValue(FIELD_USERNAME);
-        password = dialog.getStringValue(FIELD_PASSWORD);
+        password = dialog.getStringValue(FIELD_TOKEN);
         configGithub = dialog.getStringValue(FIELD_GITHUB_CONFIG);
         if (repo.equals("") || username.equals("") || password.equals("")) {
             List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
             for (BugTrackerGithubConfigParams config : configs) {
                 if (config.getName().equals(configGithub)) {
                     username = config.getName();
-                    password = config.getPassword();
+                    password = config.getToken();
                 }
             }
         }

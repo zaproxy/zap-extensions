@@ -31,7 +31,7 @@ public class BugTrackerGithubTableModel
 
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("bugtracker.trackers.github.table.header.username"),
-        Constant.messages.getString("bugtracker.trackers.github.table.header.password"),
+        Constant.messages.getString("bugtracker.trackers.github.table.header.token"),
         Constant.messages.getString("bugtracker.trackers.github.table.header.repoUrl")
     };
 

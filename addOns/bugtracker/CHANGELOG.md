@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.11.1.
 - Dependency updates.
 - Maintenance changes.
+- Updated to use PAT not password (https://github.blog/changelog/2021-08-12-git-password-authentication-is-shutting-down/).
 
 ## [3] - 2021-10-07
 ### Added

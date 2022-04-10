@@ -38,7 +38,7 @@ public class BugTrackerGithubParam extends AbstractParam {
     private static final String ALL_CONFIGS_KEY = GITHUB_BASE_KEY + ".configs.config";
 
     private static final String CONFIG_NAME_KEY = "name";
-    private static final String CONFIG_PASSWORD_KEY = "password";
+    private static final String CONFIG_TOKEN_KEY = "token";
     private static final String CONFIG_REPO_URL_KEY = "repoUrl";
 
     private static final String CONFIRM_REMOVE_CONFIG_KEY =
@@ -59,7 +59,7 @@ public class BugTrackerGithubParam extends AbstractParam {
             List<String> tempConfigsNames = new ArrayList<>(fields.size());
             for (HierarchicalConfiguration sub : fields) {
                 String name = sub.getString(CONFIG_NAME_KEY, "");
-                String password = sub.getString(CONFIG_PASSWORD_KEY, "");
+                String password = sub.getString(CONFIG_TOKEN_KEY, "");
                 String repoUrl = sub.getString(CONFIG_REPO_URL_KEY, "");
                 if (!"".equals(name) && !tempConfigsNames.contains(name)) {
                     this.configs.add(new BugTrackerGithubConfigParams(name, password, repoUrl));
@@ -94,7 +94,7 @@ public class BugTrackerGithubParam extends AbstractParam {
             BugTrackerGithubConfigParams config = configs.get(i);
 
             getConfig().setProperty(elementBaseKey + CONFIG_NAME_KEY, config.getName());
-            getConfig().setProperty(elementBaseKey + CONFIG_PASSWORD_KEY, config.getPassword());
+            getConfig().setProperty(elementBaseKey + CONFIG_TOKEN_KEY, config.getToken());
             getConfig().setProperty(elementBaseKey + CONFIG_REPO_URL_KEY, config.getRepoUrl());
         }
     }

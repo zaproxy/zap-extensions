@@ -46,9 +46,9 @@ class DialogAddGithubConfig extends AbstractFormDialog {
     private static final String NAME_FIELD_LABEL =
             Constant.messages.getString(
                     "bugtracker.trackers.github.dialog.config.field.label.name");
-    private static final String PASSWORD_FIELD_LABEL =
+    private static final String TOKEN_FIELD_LABEL =
             Constant.messages.getString(
-                    "bugtracker.trackers.github.dialog.config.field.label.password");
+                    "bugtracker.trackers.github.dialog.config.field.label.token");
     private static final String REPO_URL_FIELD_LABEL =
             Constant.messages.getString(
                     "bugtracker.trackers.github.dialog.config.field.label.repoUrl");
@@ -61,7 +61,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
                     "bugtracker.trackers.github.dialog.config.warning.name.repeated.text");
 
     private ZapTextField nameTextField;
-    private JPasswordField passwordTextField;
+    private JPasswordField tokenTextField;
     private ZapTextField repoUrlTextField;
 
     protected BugTrackerGithubConfigParams config;
@@ -85,7 +85,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
         layout.setAutoCreateContainerGaps(true);
 
         JLabel nameLabel = new JLabel(NAME_FIELD_LABEL);
-        JLabel passwordLabel = new JLabel(PASSWORD_FIELD_LABEL);
+        JLabel tokenLabel = new JLabel(TOKEN_FIELD_LABEL);
         JLabel repoUrlLabel = new JLabel(REPO_URL_FIELD_LABEL);
 
         layout.setHorizontalGroup(
@@ -93,12 +93,12 @@ class DialogAddGithubConfig extends AbstractFormDialog {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(nameLabel)
-                                        .addComponent(passwordLabel)
+                                        .addComponent(tokenLabel)
                                         .addComponent(repoUrlLabel))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(getNameTextField())
-                                        .addComponent(getPasswordTextField())
+                                        .addComponent(getTokenTextField())
                                         .addComponent(getRepoUrlTextField())));
 
         layout.setVerticalGroup(
@@ -109,8 +109,8 @@ class DialogAddGithubConfig extends AbstractFormDialog {
                                         .addComponent(getNameTextField()))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(passwordLabel)
-                                        .addComponent(getPasswordTextField()))
+                                        .addComponent(tokenLabel)
+                                        .addComponent(getTokenTextField()))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(repoUrlLabel)
@@ -127,7 +127,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
     @Override
     protected void init() {
         getNameTextField().setText("");
-        getPasswordTextField().setText("");
+        getTokenTextField().setText("");
         getRepoUrlTextField().setText("");
         config = null;
     }
@@ -155,7 +155,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
         config =
                 new BugTrackerGithubConfigParams(
                         getNameTextField().getText(),
-                        new String(getPasswordTextField().getPassword()),
+                        new String(getTokenTextField().getPassword()),
                         getRepoUrlTextField().getText());
     }
 
@@ -163,7 +163,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
     protected void clearFields() {
         getNameTextField().setText("");
         getNameTextField().discardAllEdits();
-        getPasswordTextField().setText("");
+        getTokenTextField().setText("");
         getRepoUrlTextField().setText("");
         getRepoUrlTextField().discardAllEdits();
     }
@@ -205,10 +205,10 @@ class DialogAddGithubConfig extends AbstractFormDialog {
         return nameTextField;
     }
 
-    protected JPasswordField getPasswordTextField() {
-        if (passwordTextField == null) {
-            passwordTextField = new JPasswordField(50);
-            passwordTextField
+    protected JPasswordField getTokenTextField() {
+        if (tokenTextField == null) {
+            tokenTextField = new JPasswordField(50);
+            tokenTextField
                     .getDocument()
                     .addDocumentListener(
                             new DocumentListener() {
@@ -230,12 +230,12 @@ class DialogAddGithubConfig extends AbstractFormDialog {
 
                                 private void checkAndEnableConfirmButton() {
                                     setConfirmButtonEnabled(
-                                            getPasswordTextField().getDocument().getLength() > 0);
+                                            getTokenTextField().getDocument().getLength() > 0);
                                 }
                             });
         }
 
-        return passwordTextField;
+        return tokenTextField;
     }
 
     protected ZapTextField getRepoUrlTextField() {
