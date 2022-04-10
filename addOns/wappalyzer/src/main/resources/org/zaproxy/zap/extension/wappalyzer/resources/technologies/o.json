@@ -17,7 +17,7 @@
   },
   "OWL Carousel": {
     "cats": [
-      5
+      59
     ],
     "description": "OWL Carousel is an enabled jQuery plugin that lets you create responsive carousel sliders.",
     "html": "<link [^>]*href=\"[^\"]+owl\\.carousel(?:\\.min)?\\.css",
@@ -68,6 +68,26 @@
     "icon": "OXID eShop.svg",
     "implies": "PHP",
     "website": "https://www.oxid-esales.com"
+  },
+  "Obviyo": {
+    "cats": [
+      100,
+      76
+    ],
+    "description": "Obviyo is an ecommerce intelligence platform helping merchants personalise and optimise shopping experience.",
+    "icon": "Obviyo.png",
+    "js": {
+      "__hic.version": "([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "deploy\\.hiconversion\\.com",
+    "website": "https://www.obviyo.com"
   },
   "Occasion": {
     "cats": [
@@ -231,7 +251,7 @@
   },
   "Okta": {
     "cats": [
-      19
+      69
     ],
     "description": "Okta is a platform in the Identity-as-a-Service (IDaaS) category. Okta features include Provisioning, Single Sign-On (SSO), Active Directory (AD) and LDAP integration, the centralized de-provisioning of users, multi-factor authentication (MFA), mobile identity management.",
     "icon": "Okta.svg",
@@ -436,6 +456,24 @@
     "scriptSrc": "/wp-content/themes/one-page-express(?:-pro)?/",
     "website": "https://onepageexpress.com"
   },
+  "OnePress Social Locker": {
+    "cats": [
+      87
+    ],
+    "description": "Social Locker locks your most valuable site content behind a set of social buttons until the visitor likes, shares, +1s or tweets your page.",
+    "icon": "OnePress Social Locker.png",
+    "js": {
+      "__pandalockers": "",
+      "bizpanda": ""
+    },
+    "pricing": [
+      "freemium",
+      "low"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/social-?locker(?:-next-premium)?/bizpanda/assets/",
+    "website": "https://wordpress.org/plugins/social-locker"
+  },
   "OneSignal": {
     "cats": [
       32,
@@ -483,6 +521,24 @@
       "optanon\\.blob\\.core\\.windows\\.net"
     ],
     "website": "http://www.onetrust.com"
+  },
+  "Oney": {
+    "cats": [
+      91
+    ],
+    "description": "Oney is an app that gives consumers back the power over their spending and makes split payments universal.",
+    "icon": "Oney.svg",
+    "requiresCategory": 6,
+    "js": {
+      "isOneyActive": "",
+      "OneyMarketplace": "",
+      "openOneyLayer": ""
+    },
+    "scriptSrc": "/modules/oney(?:/)?/views/js/front\\.js",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.oney.com"
   },
   "Onfido": {
     "cats": [
@@ -826,7 +882,6 @@
   },
   "OpinionLab": {
     "cats": [
-      5,
       73
     ],
     "description": "OpinionLab is a omnichannel customer feedback solution provider.",
@@ -882,7 +937,9 @@
     "description": "Optimizely is an experimentation platform that helps developers build and run A/B tests on websites.",
     "icon": "Optimizely.svg",
     "js": {
-      "optimizely": ""
+      "optimizely": "",
+      "optimizelyClient.clientVersion": "([\\d\\.]+)\\;version:\\1",
+      "optimizelySdk": ""
     },
     "pricing": [
       "poa",
@@ -973,20 +1030,24 @@
       6
     ],
     "cpe": "cpe:/a:oracle:commerce_platform",
+    "description": "Oracle Commerce is a unified B2B and B2C ecommerce platform.",
+    "dom": "input[name*='/atg/commerce/'], .atgShoppingBagContent",
     "headers": {
       "X-ATG-Version": "(?:ATGPlatform/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Oracle.svg",
+    "saas": true,
     "website": "http://www.oracle.com/applications/customer-experience/commerce/products/commerce-platform/index.html"
   },
   "Oracle Commerce Cloud": {
     "cats": [
       6
     ],
+    "description": "Oracle Commerce Cloud is a cloud-native, fully featured, extensible SaaS ecommerce solution, delivered in the Oracle Cloud, supporting B2C and B2B models in a single platform.",
+    "dom": "#oracle-cc",
     "headers": {
       "OracleCommerceCloud-Version": "^(.+)$\\;version:\\1"
     },
-    "html": "<[^>]+id=\"oracle-cc\"",
     "icon": "Oracle.svg",
     "website": "http://cloud.oracle.com/commerce-cloud"
   },
@@ -1125,6 +1186,25 @@
     ],
     "saas": true,
     "website": "https://www.orckestra.com"
+  },
+  "OrderLogic app": {
+    "cats": [
+      100
+    ],
+    "description": "OrderLogic app allows you to define minimum and maximum product quantities for all products in your Shopify store.",
+    "icon": "OrderLogic app.png",
+    "js": {
+      "OrderLogic.ALERTS_KEY": "",
+      "OrderLogic.DEFAULT_MONEY_FORMAT": "",
+      "OrderLogic.cartData": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "website": "https://apps.shopify.com/orderlogic"
   },
   "OrderYOYO": {
     "cats": [

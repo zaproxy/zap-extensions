@@ -42,13 +42,16 @@
     "icon": "SAP.svg",
     "implies": "Java",
     "js": {
+      "ACC.config.commonResourcePath": "/_ui/responsive/common\\;confidence:25",
+      "ACC.config.rootPath": "/_ui/responsive\\;confidence:25",
+      "ACC.config.themeResourcePath": "/_ui/responsive/theme-\\;confidence:50",
       "smartedit": ""
     },
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "website": "https://www.sap.com/products/crm/e-commerce-platforms.html"
+    "website": "https://www.sap.com/products/commerce-cloud.html"
   },
   "SAP Customer Data Cloud Sign-in": {
     "cats": [
@@ -81,6 +84,20 @@
     "html": "<img[^>]+_tcm\\d{2,3}-\\d{6}\\.",
     "icon": "SDL Tridion.svg",
     "website": "http://www.sdl.com/products/tridion"
+  },
+  "Sematext Experience": {
+    "cats": [
+      78
+    ],
+    "description": "Sematext Experience for Real User Monitoring Analyze data collected from real-user sessions, detect anomalies, send alerts in real-time, and enhance overall customer digital experience.",
+    "icon": "Sematext.svg",
+    "scriptSrc": "\\.sematext\\.com/experience\\.js",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://sematext.com/experience"
   },
   "SEMrush": {
     "cats": [
@@ -321,6 +338,20 @@
     "saas": true,
     "scriptSrc": "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js",
     "website": "https://www.saasquatch.com"
+  },
+  "Saba.Host": {
+    "cats": [
+      88
+    ],
+    "description": "Saba.Host is a total web-hosting solutions. It provides shared hosting, WordPress hosting, dedicated server, virtual private server (VPS), SSL and more.",
+    "dns": {
+      "SOA": "\\.saba\\.host"
+    },
+    "icon": "Saba.Host.png",
+    "pricing": [
+      "recurring"
+    ],
+    "website": "https://saba.host"
   },
   "Saber": {
     "cats": [
@@ -934,6 +965,25 @@
     "scriptSrc": "cdn\\.searchspring\\.net",
     "website": "https://searchspring.com"
   },
+  "Secomapp": {
+    "cats": [
+      100
+    ],
+    "description": "Secomapp is a trusted Shopify Expert providing services through Shopify Apps.",
+    "icon": "Secomapp.png",
+    "js": {
+      "SECOMAPP": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.secomapp\\.com/",
+    "website": "https://www.secomapp.com"
+  },
   "Sectigo": {
     "cats": [
       70
@@ -1429,11 +1479,27 @@
     "icon": "Sezzle.svg",
     "js": {
       "AwesomeSezzle": "",
+      "renderSezzleIframe": "",
       "sezzle_footer_images": ""
     },
+    "meta": {
+      "sezzle_cid": ""
+    },
     "saas": true,
-    "scriptSrc": "widget\\.sezzle\\.in",
+    "scriptSrc": "widget\\.sezzle\\.(?:in|com)",
     "website": "https://sezzle.com/"
+  },
+  "Shaka Player": {
+    "cats": [
+      14
+    ],
+    "description": "Shaka Player is an open-source JavaScript library for adaptive media.",
+    "icon": "Shaka Player.png",
+    "js": {
+      "shaka.Player.version": "v([\\d\\.-\\w]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/shaka-project/shaka-player"
   },
   "Shanon": {
     "cats": [
@@ -1493,6 +1559,21 @@
     ],
     "scriptSrc": "\\.sharethrough\\.com/",
     "website": "https://www.sharethrough.com"
+  },
+  "Sharetribe": {
+    "cats": [
+      6
+    ],
+    "description": "Sharetribe is cloud-based platform for small to medium businesses, which helps businesses to create and manage custom online marketplaces.",
+    "dom": "img[srcset*='sharetribe.imgix.net/'], img[src*='user-assets.sharetribe.com/']",
+    "icon": "Sharetribe.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sharetribe\\.com/",
+    "website": "https://www.sharetribe.com"
   },
   "SharpSpring": {
     "cats": [
@@ -1643,6 +1724,25 @@
     "requires": "October CMS",
     "website": "https://shopaholic.one"
   },
+  "Shopapps": {
+    "cats": [
+      100
+    ],
+    "description": "Shopapps is a trusted Shopify Expert providing services through Shopify Apps.",
+    "icon": "Shopapps.png",
+    "js": {
+      "iStockUrl": "iwish\\.myshopapps\\.com/",
+      "iWishUrl": "iwish\\.myshopapps\\.com/"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.myshopapps\\.com/",
+    "website": "http://www.shopapps.in"
+  },
   "Shopatron": {
     "cats": [
       6
@@ -1770,24 +1870,39 @@
   },
   "Shopify Consent Management": {
     "cats": [
-      67
+      67,
+      100
     ],
     "description": "Shopify Consent Management let's you create a tracking consent banner for EU customers.",
     "icon": "Shopify.svg",
+    "requires": "Shopify",
     "scriptSrc": [
       "cookie_consent_shopify\\.js"
     ],
     "website": "https://apps.shopify.com/customer-privacy-banner"
   },
+  "Shopify Geolocation App": {
+    "cats": [
+      100,
+      79
+    ],
+    "description": "Shopify Geolocation App makes language and country recommendations to your customers based on their geographic location and browser or device language.",
+    "icon": "Shopify Geolocation App.png",
+    "requires": "Shopify",
+    "scriptSrc": "geolocation-recommendations\\.shopifycloud\\.com/",
+    "website": "https://apps.shopify.com/geolocation"
+  },
   "Shopify Product Reviews": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Shopify Product reviews allows you to add a customer review feature to your products.",
     "icon": "Shopify.svg",
     "js": {
       "SPR": ""
     },
+    "requires": "Shopify",
     "scriptSrc": [
       "productreviews\\.shopifycdn\\.com"
     ],
@@ -2021,6 +2136,21 @@
     "scriptSrc": "/wp-content/plugins/shortcodes-ultimate/.+index\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://getshortcodes.com"
   },
+  "ShoutOut": {
+    "cats": [
+      71
+    ],
+    "description": "ShoutOut is a multi-level marketing SaaS solution that allows tracking of affiliates.",
+    "icon": "ShoutOut.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requiresCategory": 6,
+    "scriptSrc": "\\.shoutout\\.global/",
+    "website": "https://www.shoutout.global"
+  },
   "Shuttle": {
     "cats": [
       1
@@ -2202,7 +2332,7 @@
     ],
     "description": "Simpli.fi is a programmatic advertising and agency management software.",
     "icon": "Simplifi.png",
-    "scriptSrc": "i\\.simpli\\.fi",
+    "scriptSrc": "\\.simpli\\.fi",
     "website": "https://simpli.fi/"
   },
   "Simplo7": {
@@ -2810,6 +2940,22 @@
     },
     "website": "http://www.seneca.nl/pub/Smartsite/Smartsite-Smartsite-iXperion"
   },
+  "SmartWeb": {
+    "cats": [
+      6
+    ],
+    "description": "SmartWeb is an ecommerce platform from Denmark.",
+    "icon": "SmartWeb.png",
+    "meta": {
+      "generator": "^SmartWeb$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.smartweb.dk"
+  },
   "Smarter Click": {
     "cats": [
       77
@@ -3063,17 +3209,17 @@
     ],
     "description": "SniperFast is instant search system for ecommerce sites.",
     "icon": "SniperFast.png",
-    "requiresCategory": 6,
     "js": {
-      "sniperfast_page_id": "",
       "sniperEnableSearch": "",
-      "sniper_search_key": ""
+      "sniper_search_key": "",
+      "sniperfast_page_id": ""
     },
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "requiresCategory": 6,
     "saas": true,
     "scriptSrc": "\\.sniperfast\\.com",
     "website": "https://www.sniperfast.com"
@@ -3605,6 +3751,22 @@
       "poa"
     ],
     "website": "http://splunk.com"
+  },
+  "Splunk RUM": {
+    "cats": [
+      78
+    ],
+    "description": "Splunk RUM is a real-time, front-end user monitoring and troubleshooting.",
+    "icon": "Splunk.svg",
+    "js": {
+      "PLUMBR._core.version": "^([\\d\\.]+).+$\\;version:\\1",
+      "PLUMBR._core.selfURL": "browser\\.plumbr\\.io/pa(?:-early)?\\.js"
+    },
+    "scriptSrc": "browser\\.plumbr\\.io/pa(?:-early)?\\.js",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.splunk.com/en_us/observability/real-user-monitoring.html"
   },
   "SpotHopper": {
     "cats": [
@@ -4347,7 +4509,6 @@
   },
   "Stylitics": {
     "cats": [
-      5,
       32
     ],
     "description": "Stylitics is a cloud-based SaaS platform for retailers to automate and distribute visual content at scale.",
@@ -4536,6 +4697,22 @@
     "icon": "Oracle.svg",
     "website": "http://oracle.com/solaris"
   },
+  "Super Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Super Builder is a new tool for creating sleek landing pages right in Notion.",
+    "dom": "link[href*='super-static-assets.'], img[srcset*='super-static-assets.']",
+    "icon": "Super Builder.svg",
+    "implies": "Next.js",
+    "oss": false,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://super.so"
+  },
   "Super Socializer": {
     "cats": [
       69,
@@ -4547,6 +4724,23 @@
     "requires": "WordPress",
     "scriptSrc": "plugins/super-socializer/.+?ver=([\\d.]+)\\;version:\\1",
     "website": "https://super-socializer-wordpress.heateor.com"
+  },
+  "SuperLemon app": {
+    "cats": [
+      100
+    ],
+    "description": "SuperLemon app is an all-in-one WhatsApp plugin for Shopify stores.",
+    "icon": "SuperLemon.png",
+    "implies": "WhatsApp Business Chat",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "/files/superlemon_.+\\.js",
+    "website": "https://apps.shopify.com/whatsapp-chat-button"
   },
   "Supersized": {
     "cats": [
@@ -4584,6 +4778,28 @@
     ],
     "saas": true,
     "website": "https://www.supporthero.com/"
+  },
+  "Survicate": {
+    "cats": [
+      73
+    ],
+    "description": "Survicate is an all-in-one customer feedback tool that allows you collect feedback.",
+    "dom": "link[href*='.survicate.com']",
+    "headers": {
+      "content-security-policy": "api\\.survicate\\.com"
+    },
+    "icon": "Survicate.svg",
+    "js": {
+      "survicate": ""
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.survicate\\.com/",
+    "website": "https://survicate.com"
   },
   "Svbtle": {
     "cats": [

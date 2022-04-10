@@ -56,6 +56,7 @@ public class UrlsImporter {
     public UrlsImporter(File file, ProgressPaneListener listener) {
         this.progressListener = listener;
         importUrlFile(file);
+        completed();
     }
 
     private void importUrlFile(File file) {
@@ -86,7 +87,6 @@ public class UrlsImporter {
             success = false;
             return;
         }
-        completed();
         success = true;
     }
 

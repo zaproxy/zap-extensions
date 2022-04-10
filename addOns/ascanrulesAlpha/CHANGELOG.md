@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [38] - 2022-04-08
+### Added
+- Scan rules for Server Side Template Injection ([Issue 2332](https://github.com/zaproxy/zaproxy/issues/2332)).
+
+## [37] - 2022-04-04
+### Added
+- Spring4Shell (CVE-2022-22965) Scan Rule.
+### Changed
 - The Web Cache Deception scan rule now uses a comparison mechanism which should be more performant, and will no longer scan messages which had an error response to start with (Issue 6655).
 
 ## [36] - 2022-02-15
@@ -282,6 +292,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v38
+[37]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v34

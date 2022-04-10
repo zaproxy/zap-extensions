@@ -61,7 +61,7 @@ zapAddOn {
                     version.set(">= 0.0.1")
                 }
                 register("network") {
-                    version.set(">= 0.0.1")
+                    version.set(">= 0.2.0")
                 }
             }
         }

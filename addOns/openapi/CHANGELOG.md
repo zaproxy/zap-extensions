@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- JSON body examples specified under `schema` were being enclosed in quotes.
+
+## [27] - 2022-03-29
 ### Added
 - Support content field (JSON) in parameters (Issue 6166).
 
@@ -14,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Properly generate Content-Type header when in presence of more than one supported content (Issue 7082).
 - Quote provided string values in JSON content (Issue 7128).
+- Properly handle empty default values in server variables.
 
 ## [26] - 2022-02-01
 
@@ -207,6 +212,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/openapi-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/openapi-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/openapi-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/openapi-v24

@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -55,6 +55,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.callhome.ExtensionCallHome;
 import org.zaproxy.addon.callhome.InvalidServiceUrlException;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -109,13 +110,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     private ExtensionReports extReport;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionReports.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.unmodifiableList(
+                    Arrays.asList(ExtensionReports.class, ExtensionNetwork.class));
 
     public ExtensionQuickStart() {
         super(NAME);

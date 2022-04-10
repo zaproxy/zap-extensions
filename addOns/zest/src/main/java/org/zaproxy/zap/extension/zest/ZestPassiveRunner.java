@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.pscan.PassiveScript;
 import org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner;
 import org.zaproxy.zest.core.v1.ZestRequest;
@@ -38,8 +39,9 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 
     private Logger logger = LogManager.getLogger(ZestPassiveRunner.class);
 
-    public ZestPassiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestPassiveRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         // this.runner = this.getExtension().getRunner(script);
         this.script = script;

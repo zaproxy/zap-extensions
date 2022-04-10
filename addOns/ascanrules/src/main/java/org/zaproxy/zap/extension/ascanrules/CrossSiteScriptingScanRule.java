@@ -40,8 +40,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.httputils.HtmlContext;
-import org.zaproxy.zap.httputils.HtmlContextAnalyser;
+import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
+import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -147,7 +147,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             String attack,
             HtmlContext targetContext,
             int ignoreFlags) {
-        return performAttack(msg, param, attack, targetContext, ignoreFlags, false, false);
+        return performAttack(msg, param, attack, targetContext, ignoreFlags, false, false, false);
     }
 
     private List<HtmlContext> performAttack(
@@ -157,7 +157,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             HtmlContext targetContext,
             int ignoreFlags,
             boolean findDecoded) {
-        return performAttack(msg, param, attack, targetContext, ignoreFlags, findDecoded, false);
+        return performAttack(
+                msg, param, attack, targetContext, ignoreFlags, findDecoded, false, false);
     }
 
     private List<HtmlContext> performAttack(
@@ -167,7 +168,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             HtmlContext targetContext,
             int ignoreFlags,
             boolean findDecoded,
-            boolean isNullByteSpecialHandling) {
+            boolean isNullByteSpecialHandling,
+            boolean ignoreSafeParents) {
         if (isStop()) {
             return null;
         }
@@ -203,10 +205,14 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
             // High level, so check all results are in the expected context
             return hca.getHtmlContexts(
-                    findDecoded ? getURLDecode(attack) : attack, targetContext, ignoreFlags);
+                    findDecoded ? getURLDecode(attack) : attack,
+                    targetContext,
+                    ignoreFlags,
+                    ignoreSafeParents);
         }
 
-        return hca.getHtmlContexts(findDecoded ? getURLDecode(attack) : attack);
+        return hca.getHtmlContexts(
+                findDecoded ? getURLDecode(attack) : attack, null, 0, ignoreSafeParents);
     }
 
     @Override
@@ -272,7 +278,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     if (contexts2 == null) {
                         return;
                     }
-                    if (contexts2.size() > 0) {
+                    if (!contexts2.isEmpty()) {
                         // Yep, its vulnerable
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_LOW)
@@ -371,7 +377,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             break;
                         }
 
-                        if (contexts2.size() > 0) {
+                        if (!contexts2.isEmpty()) {
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                     .setParam(param)
@@ -401,7 +407,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             if (contexts2 == null) {
                                 return;
                             }
-                            if (contexts2.size() > 0) {
+                            if (!contexts2.isEmpty()) {
                                 // Yep, its vulnerable
                                 newAlert()
                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -438,7 +444,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         if (contexts2 == null) {
                             break;
                         }
-                        if (contexts2.size() > 0) {
+                        if (!contexts2.isEmpty()) {
                             // Yep, its vulnerable
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -468,7 +474,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         if (contexts2 == null) {
                             return;
                         }
-                        if (contexts2.size() > 0) {
+                        if (!contexts2.isEmpty()) {
                             // Yep, its vulnerable
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -495,7 +501,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     if (contexts2 == null) {
                         break;
                     }
-                    if (contexts2.size() > 0) {
+                    if (!contexts2.isEmpty()) {
                         // Yep, its vulnerable
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -523,7 +529,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             if (contexts2 == null) {
                                 return;
                             }
-                            if (contexts2.size() > 0) {
+                            if (!contexts2.isEmpty()) {
                                 // Yep, its vulnerable
                                 newAlert()
                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -574,7 +580,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                                 null,
                                                 0,
                                                 true);
-                                if (contexts3 != null && contexts3.size() > 0) {
+                                if (contexts3 != null && !contexts3.isEmpty()) {
                                     attackWorked = true;
                                     newAlert()
                                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -666,8 +672,11 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                             param,
                                             GENERIC_ONERROR_ALERT,
                                             context,
-                                            HtmlContext.IGNORE_IN_SCRIPT);
-                            if (contextsA != null && contextsA.size() > 0) {
+                                            HtmlContext.IGNORE_IN_SCRIPT,
+                                            false,
+                                            false,
+                                            true);
+                            if (contextsA != null && !contextsA.isEmpty()) {
                                 newAlert()
                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                         .setParam(param)
@@ -689,7 +698,14 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                                     .contains(context.getTarget())) {
                                 List<HtmlContext> contexts2 =
                                         performAttack(
-                                                msg, param, scriptAlert, null, 0, false, true);
+                                                msg,
+                                                param,
+                                                scriptAlert,
+                                                null,
+                                                0,
+                                                false,
+                                                true,
+                                                true);
                                 if (contexts2 == null) {
                                     return;
                                 }

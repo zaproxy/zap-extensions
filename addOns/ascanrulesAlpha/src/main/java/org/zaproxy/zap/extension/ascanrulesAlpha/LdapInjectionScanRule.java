@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -221,10 +221,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             // to see if a placebo attack has the same effect
             // the parameter will be the same length as the actual attack, but will contain purely
             // alphanumeric characters
-            String placeboAttack =
-                    RandomStringUtils.random(
-                            errorAttack.length(),
-                            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+            String placeboAttack = RandomStringUtils.randomAlphanumeric(errorAttack.length());
             HttpMessage placeboAttackMsg = getNewMsg();
             this.setParameter(placeboAttackMsg, paramname, placeboAttack);
             sendAndReceive(placeboAttackMsg);

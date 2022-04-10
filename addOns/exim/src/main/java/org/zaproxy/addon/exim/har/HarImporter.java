@@ -65,10 +65,10 @@ public class HarImporter {
     public HarImporter(File file, ProgressPaneListener listener) {
         this.progressListener = listener;
         importHarFile(file);
+        completed();
     }
 
-    public static List<HttpMessage> getHttpMessages(HarLog log)
-            throws HttpMalformedHeaderException {
+    static List<HttpMessage> getHttpMessages(HarLog log) throws HttpMalformedHeaderException {
         List<HttpMessage> result = new ArrayList<>();
         HarEntries entries = log.getEntries();
         for (HarEntry entry : entries.getEntries()) {
@@ -131,7 +131,7 @@ public class HarImporter {
         }
     }
 
-    public void processMessages(File file) throws IOException {
+    private void processMessages(File file) throws IOException {
         List<HttpMessage> messages =
                 HarImporter.getHttpMessages(new HarFileReader().readHarFile(file));
         int count = 1;
@@ -140,7 +140,6 @@ public class HarImporter {
             updateProgress(count, msg.getRequestHeader().getURI().toString());
             count++;
         }
-        completed();
     }
 
     private static void persistMessage(HttpMessage message) {

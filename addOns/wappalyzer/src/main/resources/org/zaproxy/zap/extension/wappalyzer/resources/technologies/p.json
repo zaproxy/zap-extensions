@@ -142,8 +142,8 @@
       "fetchRootComponent": "\\;confidence:50"
     },
     "oss": true,
-    "requires": "Magento",
-    "website": "https://github.com/magento/pwa-studio"
+    "scripts": "RootCmp_CMS_PAGE",
+    "website": "https://developer.adobe.com/commerce/pwa-studio/"
   },
   "Pace": {
     "cats": [
@@ -298,6 +298,23 @@
     "saas": true,
     "scriptSrc": "apps\\.paidy\\.com",
     "website": "https://paidy.com"
+  },
+  "Paloma": {
+    "cats": [
+      100
+    ],
+    "description": "Paloma helps ecommerce businesses sell directly to customers in messaging channels, with automated personal shopping conversations.",
+    "icon": "Paloma.svg",
+    "js": {
+      "Paloma.createCookie": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.getpaloma\\.com/",
+    "website": "https://www.getpaloma.com"
   },
   "Pantheon": {
     "cats": [
@@ -735,12 +752,14 @@
   },
   "Pendo": {
     "cats": [
+      10,
       58
     ],
-    "description": "Pendo is a product experience platform for teams to capture product usage data and behavior.",
+    "description": "Pendo is a product analytics platform used in release to enrich the product experience and provide insights to the product management team.",
     "icon": "Pendo.svg",
     "js": {
-      "pendo.VERSION": "(.+)\\;version:\\1"
+      "pendo.HOST": "\\.pendo\\.io",
+      "pendo.VERSION": "(.+)\\;version:\\1\\;confidence:1"
     },
     "pricing": [
       "freemium",
@@ -1373,6 +1392,21 @@
     "implies": "Scala",
     "website": "https://www.playframework.com"
   },
+  "Plaza": {
+    "cats": [
+      103
+    ],
+    "description": "Plaza is a ecommerce platform that allows brands and retailers to communicate with customers via live video.",
+    "dom": "iframe[src*='stream.useplaza.com/']",
+    "icon": "Plaza.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.useplaza.com"
+  },
   "Pleroma": {
     "cats": [
       2
@@ -1521,6 +1555,21 @@
       "PojoA11yOptions": ""
     },
     "website": "https://pojo.me/plugins/accessibility/"
+  },
+  "Poloriz": {
+    "cats": [
+      76
+    ],
+    "description": "Poloriz's technology automatically creates a personalised, full-screen, mobile-first, cross-selling user experience for shoppers.",
+    "icon": "Poloriz.svg",
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "widget\\.poloriz\\.com/",
+    "website": "https://www.poloriz.com"
   },
   "Polyfill": {
     "cats": [
@@ -2000,6 +2049,15 @@
     "scriptSrc": "static\\.cdn\\.printful\\.com",
     "website": "https://www.printful.com/"
   },
+  "Priority Hints": {
+    "cats": [
+      92
+    ],
+    "description": "Priority Hints exposes a mechanism for developers to signal a relative priority for browsers to consider when fetching resources.",
+    "dom": "iframe[fetchpriority], img[fetchpriority], script[fetchpriority], link[fetchpriority]",
+    "icon": "default.svg",
+    "website": "https://wicg.github.io/priority-hints/"
+  },
   "Prism": {
     "cats": [
       19
@@ -2098,6 +2156,28 @@
       "projesoft\\.js"
     ],
     "website": "https://www.projesoft.com.tr"
+  },
+  "PromoBuilding": {
+    "cats": [
+      51
+    ],
+    "cookies": {
+      "promobuilding_session": ""
+    },
+    "description": "PromoBuilding is a subscription-based website builder for optimising budgets for creating promotional campaigns.",
+    "icon": "PromoBuilding.svg",
+    "js": {
+      "promoApi": "\\;confidence:25",
+      "promoDomain": "\\;confidence:25",
+      "promoIsOver": "\\;confidence:25",
+      "promoStart": "\\;confidence:25"
+    },
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://promobuilding.ru"
   },
   "Prototype": {
     "cats": [

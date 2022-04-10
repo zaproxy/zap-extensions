@@ -211,7 +211,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
 
                     // send the modified request, and see what we get back
                     try {
-                        sendAndReceive(msg);
+                        sendAndReceive(msg, false);
                     } catch (IllegalStateException | UnknownHostException ex) {
                         log.debug(
                                 "Caught {} {} when accessing: {}",

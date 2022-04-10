@@ -401,6 +401,8 @@
     "js": {
       "BaynoteAPI": "",
       "BaynoteJSVersion": "",
+      "certona.recommendations": "",
+      "certonaRecommendations": "",
       "monetate": "",
       "monetateQ": "",
       "monetateT": ""
@@ -411,7 +413,8 @@
     "saas": true,
     "scriptSrc": [
       "\\.monetate\\.net",
-      "\\.baynote\\.net"
+      "\\.baynote\\.net",
+      "\\.certona\\.net"
     ],
     "website": "https://kibocommerce.com/personalization-software"
   },

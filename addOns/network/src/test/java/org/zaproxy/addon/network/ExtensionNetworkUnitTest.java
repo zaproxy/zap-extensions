@@ -78,6 +78,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -100,6 +101,7 @@ import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.addon.network.testutils.TestClient;
 import org.zaproxy.addon.network.testutils.TextTestClient;
 import org.zaproxy.zap.ZAP;
@@ -176,6 +178,26 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.init();
         // Then
         assertThat(extension.getSslCertificateService(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldCreateMainProxyServerInfoOnInitModel() {
+        // Given
+        String address = "address";
+        int port = 1234;
+        ProxyParam proxyParam = mock(ProxyParam.class);
+        given(proxyParam.getProxyIp()).willReturn(address);
+        given(proxyParam.getProxyPort()).willReturn(port);
+        given(optionsParam.getProxyParam()).willReturn(proxyParam);
+        // When
+        extension.initModel(model);
+        // Then
+        ServerInfo serverInfo = extension.getMainProxyServerInfo();
+        assertThat(serverInfo, is(notNullValue()));
+        assertThat(serverInfo.getAddress(), is(equalTo(address)));
+        assertThat(serverInfo.getPort(), is(equalTo(port)));
+        verify(proxyParam).getProxyIp();
+        verify(proxyParam).getProxyPort();
     }
 
     @Test

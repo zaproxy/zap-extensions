@@ -114,6 +114,24 @@
     "url": "/typo3/",
     "website": "https://typo3.org/"
   },
+  "Tabarnapp": {
+    "cats": [
+      100
+    ],
+    "description": "Tabarnapp is a platform for Shopify apps and themes.",
+    "icon": "Tabarnapp.png",
+    "js": {
+      "tabarnapp_loaded_ad": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.tabarn\\.app/",
+    "website": "https://tabarnapp.com"
+  },
   "Tabby": {
     "cats": [
       41,
@@ -287,6 +305,7 @@
     "cats": [
       66
     ],
+    "css": "\\--tw*\\;confidence:75",
     "description": "Tailwind is a utility-first CSS framework.",
     "dom": {
       "link[rel='stylesheet'][href*='tailwind']": {
@@ -719,6 +738,26 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thethemefoundry.com/wordpress-themes/make"
+  },
+  "The.com": {
+    "cats": [
+      18,
+      51
+    ],
+    "description": "The.com is a low-code website building platform with community-created components that you can share and own.",
+    "icon": "The.com.svg",
+    "implies": [
+      "React",
+      "Amazon S3"
+    ],
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/",
+    "website": "https://www.the.com"
   },
   "Thefork": {
     "cats": [
@@ -1201,6 +1240,23 @@
     "scriptSrc": "/wp-content/themes/iconic-one(?:-[\\w]+)?/",
     "website": "https://themonic.com/iconic-one"
   },
+  "Thesis": {
+    "cats": [
+      10
+    ],
+    "description": "Thesis is a conversion rate optimisation company.",
+    "icon": "Thesis.svg",
+    "js": {
+      "thix.history": "\\;confidence:50",
+      "thix.t": "\\;confidence:50"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "thix\\.ttsep\\.com/",
+    "website": "https://www.thesistesting.com"
+  },
   "Thimatic": {
     "cats": [
       90,
@@ -1291,6 +1347,24 @@
     "saas": true,
     "scriptSrc": "\\.online-metrix\\.net",
     "website": "https://risk.lexisnexis.com/products/threatmetrix"
+  },
+  "Threekit": {
+    "cats": [
+      76,
+      95
+    ],
+    "description": "Threekit is a visual customer experience solution that enables brands to create, manage and scale photorealistic images and 3D product visuals, all from a single design file.",
+    "icon": "Threekit.svg",
+    "js": {
+      "threekit.configuratorForm": "",
+      "threekitAR": "",
+      "threekitPlayer": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.threekit.com"
   },
   "ThriveCart": {
     "cats": [
@@ -1664,6 +1738,26 @@
     "scriptSrc": "\\.tsyndicate\\.com/",
     "website": "https://trafficstars.com"
   },
+  "Transcy": {
+    "cats": [
+      89
+    ],
+    "description": "Transcy allows you to translate your whole store content into target languages to reach different nation shoppers.",
+    "icon": "Transcy.png",
+    "js": {
+      "_transcy": "",
+      "transcy_apiURI": "",
+      "transcy_shopifyLocales": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "website": "https://transcy.io"
+  },
   "Transifex": {
     "cats": [
       12
@@ -1819,6 +1913,23 @@
       "Trix.VERSION": "^(.+)$\\;version:\\1"
     },
     "website": "https://trix-editor.org"
+  },
+  "Trove Recommerce": {
+    "cats": [
+      6
+    ],
+    "description": "Trove (formerly Yerdle) builds white-label technology and end-to-end operations for ecommerce platforms.",
+    "dom": "img[src*='res.cloudinary.com/yerdle']",
+    "headers": {
+      "x-trove-app-name": "",
+      "x-trove-country-code": "",
+      "x-trove-order-uuid": "",
+      "x-yerdle-app-name": ""
+    },
+    "icon": "trove.png",
+    "saas": true,
+    "website": "https://trove.co",
+    "xhr": "reware-production\\.yerdlesite\\.com"
   },
   "TruValidate": {
     "cats": [
@@ -2492,8 +2603,10 @@
     "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
     "icon": "three.js.png",
     "js": {
-      "THREE.REVISION": "^(.+)$\\;version:\\1"
+      "THREE.REVISION": "^(.+)$\\;version:\\1",
+      "__THREE__": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "three(?:\\.min)?\\.js",
     "website": "https://threejs.org"
   },

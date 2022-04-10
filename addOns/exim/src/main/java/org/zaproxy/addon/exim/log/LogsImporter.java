@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -92,17 +91,11 @@ public class LogsImporter {
     public LogsImporter(File file, LogType type, ProgressPaneListener listener) {
         this.progressListener = listener;
         success = processInput(file, type);
+        completed();
     }
 
-    private void readModSecLogsFromFile(File file) {
-        try {
-            processModSecLogs(new ModSecurity2AuditReader(file));
-        } catch (Exception e) {
-            LOG.warn(
-                    Constant.messages.getString(
-                            ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsoluteFile()));
-            ExtensionExim.updateOutput(ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath());
-        }
+    private void readModSecLogsFromFile(File file) throws Exception {
+        processModSecLogs(new ModSecurity2AuditReader(file));
     }
 
     private void processModSecLogs(ModSecurity2AuditReader reader) throws IOException {
@@ -148,16 +141,15 @@ public class LogsImporter {
      *     the API
      * @param logChoice type of logfile being imported
      */
-    public boolean processInput(File newFile, LogType logChoice) {
+    private boolean processInput(File newFile, LogType logChoice) {
         if (logChoice == LogType.ZAP) {
-            List<String> parsedText = readFile(newFile);
             try {
+                List<String> parsedText = readFile(newFile);
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE);
                 ExtensionExim.updateOutput("exim.output.start", newFile.toPath().toString());
                 processZapLogs(parsedText);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
-                completed();
-            } catch (HttpMalformedHeaderException e) {
+            } catch (IOException e) {
                 LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_ERROR);
                 ExtensionExim.updateOutput(
@@ -170,7 +162,6 @@ public class LogsImporter {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE);
                 readModSecLogsFromFile(newFile);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
-                completed();
             } catch (Exception e) {
                 LOG.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_ERROR);
@@ -182,21 +173,17 @@ public class LogsImporter {
         return true;
     }
 
-    private static List<String> readFile(File file) {
+    private static List<String> readFile(File file) throws IOException {
         List<String> parsed = new ArrayList<>();
         Charset charset = StandardCharsets.US_ASCII;
-        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), charset)) {
-            Scanner sc = new Scanner(reader);
-            sc.useDelimiter(Pattern.compile("====\\s[0-9]*\\s=========="));
-            while (sc.hasNext()) {
-                parsed.add(sc.next());
-            }
-            sc.close();
-            return parsed;
-        } catch (IOException e) {
-            LOG.warn(e.getMessage());
+        BufferedReader reader = Files.newBufferedReader(file.toPath(), charset);
+        Scanner sc = new Scanner(reader);
+        sc.useDelimiter(Pattern.compile("====\\s[0-9]*\\s=========="));
+        while (sc.hasNext()) {
+            parsed.add(sc.next());
         }
-        return Collections.emptyList();
+        sc.close();
+        return parsed;
     }
 
     private void processZapLogs(List<String> parsedRequestAndResponse)

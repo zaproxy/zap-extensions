@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,5 +55,16 @@ class BodyGeneratorUnitTest {
         String result = bodyGenerator.generateMultiPart(null, null);
         // Then
         assertThat(result, is(equalTo("")));
+    }
+
+    @Test
+    void shouldProperlyUseJsonExample() {
+        // Given
+        ObjectSchema schema = new ObjectSchema().example("{\"foo\":\"bar\"}");
+        MediaType mediaType = new MediaType().schema(schema);
+        // When
+        String body = bodyGenerator.generate(mediaType);
+        // Then
+        assertThat(body, is(equalTo("{\"foo\":\"bar\"}")));
     }
 }

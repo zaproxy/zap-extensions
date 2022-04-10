@@ -83,6 +83,8 @@ public class ReportJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String VARIABLE_TOKEN = "${";
+
     private ExtensionReports extension = null;
     private ReportJob job;
 
@@ -112,6 +114,9 @@ public class ReportJobDialog extends StandardFieldsDialog {
         }
         this.addFileSelectField(
                 TAB_SCOPE, FIELD_REPORT_DIR, new File(dir), JFileChooser.DIRECTORIES_ONLY, null);
+        if (dir.contains(VARIABLE_TOKEN)) {
+            setFieldValue(FIELD_REPORT_DIR, dir);
+        }
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
         this.addCheckBoxField(
                 TAB_SCOPE, FIELD_DISPLAY_REPORT, JobUtils.unBox(params.getDisplayReport()));
@@ -318,6 +323,11 @@ public class ReportJobDialog extends StandardFieldsDialog {
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         if (template == null) {
             return Constant.messages.getString("reports.dialog.error.notemplate");
+        }
+
+        if (getStringValue(FIELD_REPORT_DIR).contains(VARIABLE_TOKEN)
+                || getStringValue(FIELD_REPORT_NAME).contains(VARIABLE_TOKEN)) {
+            return null;
         }
 
         File f = getReportFile();

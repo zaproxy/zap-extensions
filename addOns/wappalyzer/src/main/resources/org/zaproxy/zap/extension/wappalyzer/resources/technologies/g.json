@@ -533,9 +533,20 @@
     ],
     "description": "GitBook is a command-line tool for creating documentation using Git and Markdown.",
     "icon": "GitBook.png",
+    "js": {
+      "__GITBOOK_INITIAL_PROPS__": "",
+      "__GITBOOK_INITIAL_STATE__": "",
+      "__GITBOOK_LAZY_MODULES__": ""
+    },
     "meta": {
       "generator": "GitBook ([\\d.]+)?\\;version:\\1"
     },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "url": "^https?://[^/]+\\.gitbook\\.com/",
     "website": "https://www.gitbook.com"
   },

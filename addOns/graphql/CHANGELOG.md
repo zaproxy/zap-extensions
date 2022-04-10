@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 
 
+## [0.9.0] - 2022-04-05
+### Changed
+- Replace variables present in `schemaFile` when running the automation job.
+
 ## [0.8.0] - 2022-02-02
 ### Changed
 - Update minimum ZAP version to 2.11.1.
@@ -67,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.6.0

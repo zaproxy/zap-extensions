@@ -29,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.script.ProxyScript;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestVariables;
@@ -41,8 +42,9 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
     private Logger logger = LogManager.getLogger(ZestProxyRunner.class);
 
-    public ZestProxyRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestProxyRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         this.script = script;
     }

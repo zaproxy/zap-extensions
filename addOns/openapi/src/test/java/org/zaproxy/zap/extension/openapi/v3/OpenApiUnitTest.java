@@ -417,6 +417,71 @@ class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
+    void shouldInterpretServerVariablesWithEmptyDefaultValues()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/OpenApiYaml/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(
+                        test, defnName, "OpenApi_defn_servers_empty_default_value.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestBody().toString());
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+
+        String baseUrl = "http://" + "localhost:" + nano.getListeningPort();
+        assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/example"));
+        assertEquals("{\"key\":\"value\"}", accessedUrls.get("POST " + baseUrl + "/example"));
+    }
+
+    @Test
+    void shouldAddObjectSchemaExamplesCorrectly()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/OpenApiYaml/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "OpenApi_defn_body_with_json.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestBody().toString());
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+
+        String baseUrl = "http://" + "localhost:" + nano.getListeningPort();
+        assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/example"));
+        assertEquals("{\"foo\":\"bar\"}", accessedUrls.get("POST " + baseUrl + "/example"));
+    }
+
+    @Test
     void shouldGenerateAcceptHeaders() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";

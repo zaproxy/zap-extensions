@@ -80,6 +80,31 @@
     },
     "website": "https://www.bablic.com/"
   },
+  "Babylist": {
+    "cats": [
+      5
+    ],
+    "description": "Babylist is a universal wish list.",
+    "icon": "Babylist.svg",
+    "scriptSrc": "babylist\\.com/",
+    "website": "https://www.babylist.com"
+  },
+  "Back In Stock": {
+    "cats": [
+      100
+    ],
+    "description": "Back In Stock lets your customers choose restock alerts for specific variant combinations, including size, colour or style.",
+    "icon": "Back In Stock.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "app\\.backinstock\\.org/",
+    "website": "https://backinstock.org"
+  },
   "Backbone.js": {
     "cats": [
       12
@@ -158,17 +183,29 @@
   },
   "Bambuser": {
     "cats": [
-      19
+      103
     ],
+    "description": "Bambuser is a SaaS company based in Stockholm that provides live video shopping technology.",
     "icon": "Bambuser.png",
     "js": {
+      "BambuserLiveShopping": "",
       "_bambuser": ""
     },
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "cdn\\.liveshopping\\.bambuser\\.com",
-    "website": "https://bambuser.com/"
+    "saas": true,
+    "scriptSrc": "\\.bambuser\\.com/",
+    "website": "https://bambuser.com"
+  },
+  "BandsInTown Events Widget": {
+    "cats": [
+      5
+    ],
+    "description": "Bandsintown Events Widget is a free widget which makes it simple to embed your event listings and allow fans to buy tickets, RSVP, follow you and join your Email & SMS lists.",
+    "icon": "BandsInTown.png",
+    "scriptSrc": "widget\\.bandsintown\\.com/",
+    "website": "https://artists.bandsintown.com/support/events-widget"
   },
   "Banshee": {
     "cats": [

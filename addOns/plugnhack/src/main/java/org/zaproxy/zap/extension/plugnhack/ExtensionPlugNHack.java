@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +37,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -51,6 +52,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -82,6 +85,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         implements ProxyListener, SessionChangedListener {
 
     private static final Logger logger = LogManager.getLogger(ExtensionPlugNHack.class);
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
 
     private static final String REPLACE_ROOT_TOKEN = "__REPLACE_ROOT__";
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";
@@ -173,6 +179,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     private ClientTable clientTable = null;
     private MessageTable messageTable = null;
 
+    private ExtensionNetwork extensionNetwork;
+
     /*
      * TODO
      * Handle mode
@@ -181,6 +189,11 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public ExtensionPlugNHack() {
         super(NAME);
         this.setOrder(101);
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     @Override
@@ -700,8 +713,18 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     }
 
     protected String getApiRoot() {
-        ProxyParam proxyParams = Model.getSingleton().getOptionsParam().getProxyParam();
-        return "http://" + proxyParams.getProxyIp() + ":" + proxyParams.getProxyPort();
+        ServerInfo serverInfo = getExtensionNetwork().getMainProxyServerInfo();
+        return "http://" + serverInfo.getAddress() + ":" + serverInfo.getPort();
+    }
+
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
+        }
+        return extensionNetwork;
     }
 
     @Override

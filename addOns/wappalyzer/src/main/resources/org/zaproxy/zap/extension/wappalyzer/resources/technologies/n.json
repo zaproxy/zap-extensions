@@ -87,6 +87,23 @@
     "scriptSrc": "\\.nagich\\.co(?:m|\\.il)/core/([\\d.]+)/accessibility\\.js\\;version:\\1",
     "website": "https://www.nagich.co.il"
   },
+  "NagishLi": {
+    "cats": [
+      68
+    ],
+    "description": "NagishLi is a free accessibility plugin from Localize*, created to provide an equal oppurtunity for webmasters to make their website accessible and make the internet more accessible for people with disability.",
+    "icon": "NagishLi.png",
+    "js": {
+      "$NagishLi": "",
+      "initNagishLi": "",
+      "nagishli_commons.version": "(.+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "website": "https://www.nagish.li"
+  },
   "Najva": {
     "cats": [
       32
@@ -112,6 +129,27 @@
     "icon": "Narrativ.png",
     "scriptSrc": "static\\.narrativ\\.com/",
     "website": "https://narrativ.com/"
+  },
+  "Narvar": {
+    "cats": [
+      102,
+      99
+    ],
+    "description": "Narvar is a customer experience platform that helps retailers inspire long-term customer loyalty, at all steps of the post-purchase journey.",
+    "dom": "a[href*='.narvar.com/'], img[src*='.narvar.com/']",
+    "headers": {
+      "Content-Security-Policy": "\\.narvar\\.com"
+    },
+    "icon": "Narvar.svg",
+    "js": {
+      "NARVARJS_URL": "",
+      "narvar": "\\;confidence:1"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://corp.narvar.com"
   },
   "Nativo": {
     "cats": [
@@ -321,7 +359,7 @@
   },
   "New Relic": {
     "cats": [
-      10
+      78
     ],
     "description": "New Relic is a SaaS offering that focuses on performance and availability monitoring.",
     "dom": "link[href*='.newrelic.com']",
@@ -339,6 +377,22 @@
     ],
     "saas": true,
     "website": "https://newrelic.com"
+  },
+  "NewStore": {
+    "cats": [
+      19
+    ],
+    "description": "NewStore is the only integrated platform offering omnichannel solutions for stores and consumers.",
+    "icon": "NewStore.png",
+    "js": {
+      "highstreetBanner.config": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.api\\.highstreetapp\\.com/",
+    "website": "https://www.newstore.com"
   },
   "Newspack": {
     "cats": [
@@ -505,7 +559,8 @@
   },
   "NitroPack": {
     "cats": [
-      23
+      23,
+      92
     ],
     "description": "NitroPack creates optimised HTML cache for fast page loading experience.",
     "icon": "NitroPack.svg",
@@ -603,6 +658,28 @@
     "saas": true,
     "scriptSrc": "connect\\.nosto\\.\\w+/",
     "website": "https://www.nosto.com"
+  },
+  "Nudgify": {
+    "cats": [
+      32
+    ],
+    "description": "Nudgify is a Social Proof & Fomo App tool that integrates seamlessly with ecommerce platform such as Shopify, WooCommerce and Magento.",
+    "icon": "Nudgify.svg",
+    "js": {
+      "nudgify.cart": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "scriptSrc": [
+      "\\.nudgify\\.com/",
+      "cdn\\.convertize\\.com/nudgify-shopify\\.js"
+    ],
+    "website": "https://www.nudgify.com"
   },
   "Nukeviet CMS": {
     "cats": [

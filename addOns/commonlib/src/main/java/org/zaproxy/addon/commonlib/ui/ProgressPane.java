@@ -43,11 +43,11 @@ public class ProgressPane extends JPanel {
     private final JProgressBar progressBar;
     private final JLabel currentProgress;
     private boolean completed;
-    private boolean indeterminant;
+    private boolean indeterminate;
 
     /**
      * Constructs a progress pane with default title (no resource indication) which includes a
-     * determinant progress bar.
+     * determinate progress bar.
      */
     public ProgressPane() {
         this("");
@@ -55,7 +55,7 @@ public class ProgressPane extends JPanel {
 
     /**
      * Constructs a progress pane with an extended title including the identified resource (ex: a
-     * URL or file system path) which includes a determinant progress bar.
+     * URL or file system path) which includes a determinate progress bar.
      *
      * @param resource a string representing the location or source of the resource being processed
      *     (ex: a URL or file system path).
@@ -66,24 +66,24 @@ public class ProgressPane extends JPanel {
 
     /**
      * Constructs a progress pane with an extended title including the identified resource (ex: a
-     * URL or file system path) and indeterminant status indicated.
+     * URL or file system path) and indeterminate status indicated.
      *
      * @param resource a string representing the location or source of the resource being processed
      *     (ex: a URL or file system path).
-     * @param indeterminant a {@code boolean} indicating whether or not the associated progress bar
-     *     should be indeterminant (true) or not (false);
+     * @param indeterminate a {@code boolean} indicating whether or not the associated progress bar
+     *     should be indeterminate (true) or not (false);
      */
-    public ProgressPane(String resource, boolean indeterminant) {
+    public ProgressPane(String resource, boolean indeterminate) {
         super(new GridBagLayout());
-        this.indeterminant = indeterminant;
+        this.indeterminate = indeterminate;
         this.setBorder(BorderFactory.createTitledBorder(getTitle(resource)));
 
         progressStatus = new JLabel();
 
         progressBar = new JProgressBar();
         progressBar.setStringPainted(true);
-        progressBar.setIndeterminate(indeterminant);
-        if (indeterminant) {
+        progressBar.setIndeterminate(indeterminate);
+        if (indeterminate) {
             progressBar.setString(
                     Constant.messages.getString("commonlib.progress.panel.status.inprogress"));
         }
@@ -95,7 +95,7 @@ public class ProgressPane extends JPanel {
         c.gridy = 0;
         c.weightx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        if (!indeterminant) {
+        if (!indeterminate) {
             add(progressStatus, c);
         }
 
@@ -174,7 +174,7 @@ public class ProgressPane extends JPanel {
         EventQueue.invokeLater(
                 () -> {
                     completed = true;
-                    if (indeterminant) {
+                    if (indeterminate) {
                         progressBar.setString(
                                 Constant.messages.getString("commonlib.progress.pane.completed"));
                         progressBar.setIndeterminate(false);

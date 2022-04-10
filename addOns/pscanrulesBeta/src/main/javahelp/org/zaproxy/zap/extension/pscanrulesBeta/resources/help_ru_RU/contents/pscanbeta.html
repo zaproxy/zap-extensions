@@ -20,143 +20,132 @@
 Эта проверка просматривает введенные пользователем данные в параметрах строки запроса и данные POST, чтобы определить, где могут контролироваться параметры файлов cookie.  
 Это называется атакой с отравлением файлов cookie, и ее можно использовать, когда злоумышленник может манипулировать файлами cookie различными способами.  В некоторых случаях это невозможно использовать, однако разрешение параметрам URL задавать значения файлов cookie обычно считается ошибкой. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a>
 
-<h2>Заголовок Content Security Policy (CSP) не задан</h2>
-Это проверяет заголовки ответа HTML на наличие заголовка Content Security Policy.<br>
-По умолчанию это правило проверяет наличие заголовка Content-Security-Policy,
-а при низком пороге также проверяется наличие заголовков «X-Content-Security-Policy» и «X-WebKit-CSP».<br>
-Перенаправления и ответы, отличные от HTML, игнорируются, за исключением нижнего порога. 
+<h2>Directory Browsing</h2>
+Passively scans responses for signatures that are indicative that Directory Browsing is possible.
 <p>
-Если в ответе обнаружен заголовок «Content-Security-Policy-Report-Only», возникает предупреждение INFO.  Это может представлять собой правоприменение
-которая активно совершенствуется или разрабатывается, или реализуется лишь частично. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
 
-<h2>Просмотр каталогов</h2>
-Пассивно сканирует ответы на наличие сигнатур, указывающих на возможность просмотра каталогов. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
-
-<h2>Раскрытие хэша</h2>
-Пассивно сканирует хэши паролей, раскрытые веб-сервером.  <br>
-Включая различные форматы, в том числе некоторые форматы, такие как MD4, MD5 и SHA*, которые иногда используются для целей, отличных от хранения хэшей паролей. 
+<h2>Hash Disclosure</h2>
+Passively scans for password hashes disclosed by the web server. <br>
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
 <br>
-<strong>Примечание.</strong> Это правило сканирования будет анализировать ответы JavaScript только при НИЗКОМ пороговом значении.  
+<strong>Note:</strong> This scan rule will only analyze JavaScript responses on LOW Threshold. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 
-<h2>Уязвимость Heartbleed OpenSSL (ориентировочно)</h2>
-Пассивно сканирует ответы заголовков HTTP, которые могут указывать на то, что сервер уязвим для критической уязвимости HeartBleed OpenSSL.  
+<h2>Heartbleed OpenSSL Vulnerability (Indicative)</h2>
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HeartBleedScanRule.java">HeartBleedScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HeartBleedScanRule.java">HeartBleedScanRule.java</a>
 
-<h2>Заголовок ответа HTTP-сервера</h2>
-Это проверяет заголовки ответов на наличие заголовка сервера, содержащего сведения о версии. 
-При НИЗКОМ пороге выдается предупреждение на основе наличия поля заголовка независимо от того, обнаружена строка версии или нет. 
+<h2>HTTP Server Response Header</h2>
+This checks response headers for the presence of a server header that contains version details.
+At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServerHeaderInfoLeakScanRule.java">ServerHeaderInfoLeakScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServerHeaderInfoLeakScanRule.java">ServerHeaderInfoLeakScanRule.java</a>
 
-<h2>Небезопасный переход с HTTP на HTTPS в сообщении формы</h2>
-Эта проверка ищет небезопасные страницы HTTP, на которых размещены формы HTTPS.  Проблема в том, что небезопасная HTTP-страница может быть легко взломана с помощью MITM, а безопасная форма HTTPS может быть заменена или подделана. 
+<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
+This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormLoadScanRule.java">InsecureFormLoadScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormLoadScanRule.java">InsecureFormLoadScanRule.java</a>
 
-<h2>Небезопасный переход с HTTPS на HTTP в сообщении формы</h2>
-Эта проверка определяет безопасные страницы HTTPS, на которых размещены небезопасные формы HTTP.  Проблема в том, что безопасная страница переходит на небезопасную страницу, когда данные загружаются через форму.  Пользователь может подумать, что отправляет данные на защищенную страницу, хотя на самом деле это не так. 
+<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
+This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormPostScanRule.java">InsecureFormPostScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormPostScanRule.java">InsecureFormPostScanRule.java</a>
 
-<h2>Современное веб-приложение</h2>
-Это вызывает информационное предупреждение, если сайт выглядит как современное веб-приложение.<br>
-Это не указывает на какие-либо потенциальные уязвимости, но может указывать на то, что паук ajax может быть более эффективным при изучении этого сайта по сравнению с традиционным пауком. 
+<h2>Modern Web Application</h2>
+This raises an informational alert if a site appears to be a modern web application.<br>
+It does not indicate any potential vulnerabilities but it could indicate that the ajax spider might be more effective at exploring this site compared to the traditional spider.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ModernAppDetectionScanRule.java">ModernAppDetectionScanRule.java</a>.
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ModernAppDetectionScanRule.java">ModernAppDetectionScanRule.java</a>
 
-<h2>Открыть перенаправление</h2>
-Эта проверка просматривает введенные пользователем данные в параметрах строки запроса и данные POST, чтобы определить, где возможны открытые перенаправления.  Открытые перенаправления происходят, когда приложение разрешает ввод данных пользователем (например, http://nottrusted.com) для управления внешним перенаправлением.  Как правило, это довольно точный способ определить, где перенаправления 301 или 302 могут быть использованы спамерами или фишинговыми атаками. 
+<h2>Open Redirect</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledOpenRedirectScanRule.java">UserControlledOpenRedirectScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledOpenRedirectScanRule.java">UserControlledOpenRedirectScanRule.java</a>
 
-<h2>Раскрытие персональных данных</h2>
-PII — это такая информация, как номер кредитной карты, SSN и т. д.  Эта проверка в настоящее время сообщает только числа, которые соответствуют номерам кредитных карт и передают контрольную сумму Луна, что дает высокую уверенность в том, что это номер кредитной карты (изображения и CSS игнорируются). 
+<h2>PII Disclosure</h2>
+PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number (images and CSS are ignored).
 <br>
-При пороге СРЕДНИЙ и ВЫСОКИЙ он пытается использовать три символа контекста с каждой стороны потенциальных совпадений, чтобы исключить совпадения внутри содержимого, похожего на десятичное число. 
-При НИЗКОМ пороге для таких совпадений будут выдаваться оповещения. 
+At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within deicmal like content.
+At LOW threshold, alerts will be raised for such matches.
 <p>
-Примечание. В случае подозрения на стоимость кредитной карты потенциальные номера кредитных карт проверяются в списке банковских идентификационных номеров.
-(БИНСписок).  Если совпадение найдено, выдается предупреждение с высокой достоверностью, а дополнительные сведения добавляются в поле «Другая информация» в
-alert, в противном случае оповещения будут иметь средний уровень достоверности. 
-Дополнительную информацию см. в разделе <a href="https://github.com/iannuttall/binlist-data">binlist-data</a>. 
+Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
+(BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 
+alert, otherwise the alerts will have Medium confidence.
+See: <a href="https://github.com/iannuttall/binlist-data">binlist-data</a> for more information.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PiiScanRule.java">PiiScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PiiScanRule.java">PiiScanRule.java</a>
 
-<h2>Получено из кэша</h2>
-Это правило сканирования обнаруживает содержимое, которое было предоставлено из общего кэша. 
+<h2>Retrieved from Cache</h2>
+This scan rule detects content that has been served from a shared cache.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/RetrievedFromCacheScanRule.java">RetrievedFromCacheScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/RetrievedFromCacheScanRule.java">RetrievedFromCacheScanRule.java</a>
 
-<h2>Обратный переход</h2>
-При этом проверяется, используют ли какие-либо ссылки целевой атрибут с использованием ключевого слова opener в атрибуте rel, поскольку это может позволить целевым страницам занять место страницы, которая их открывает.<br>
-По умолчанию это правило будет игнорировать все ссылки, находящиеся в том же контексте, что и страница.  При НИЗКОМ пороге будут игнорироваться только ссылки, находящиеся на одном хосте.<br>
-При ВЫСОКОМ пороге он будет сообщать только о ссылках, которые используют цель "_blank".<br>
-Вы можете указать список шаблонов регулярных выражений URL, разделенных запятыми, используя параметр <code>rules.domains.trusted</code> на панели «Параметры» «Конфигурация правила». 
-Любой URL-адрес ссылки, соответствующий одному из этих шаблонов, будет считаться находящимся в доверенном домене и, следовательно, о нем не будет сообщено. 
+<h2>Reverse Tabnabbing</h2>
+This checks to see if any links use a target attribute using "opener" keyword in the "rel" attribute, as this may allow target pages to take over the page that opens them.<br>
+By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.<br>
+At HIGH threshold it will only report links that use the "_blank" target.<br>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/LinkTargetScanRule.java">LinkTargetScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/LinkTargetScanRule.java">LinkTargetScanRule.java</a>
 
-<h2>Загрязнение параметров сервлета</h2>
-Ищет в содержимом ответа HTML-формы, в которых не указан элемент действия.  Версия 3
-Спецификация Java Servlet требует агрегирования строки запроса и элементов пост-данных, что может привести к
-непреднамеренная обработка данных, контролируемых пользователем.  Это может повлиять и на другие фреймворки и технологии. 
-<strong>Примечание.</strong> Это правило сканирования будет анализировать ответы только при НИЗКОМ пороговом значении и в контекстных URL-адресах, для которых применим технический JSP/сервлет. 
+<h2>Servlet Parameter Pollution</h2>
+Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
+Java Servlet spec calls for aggregation of query string and post data elements which may result in 
+unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+<strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold, and in Context URLs for which the Tech JSP/Servlet is applicable.
 <p>
-Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a>
 
-<h2>Строгий заголовок безопасности транспорта </h2>
-Это правило проверяет ответы HTTPS на наличие заголовка HTTP Strict Transport Security (HSTS) и тестирует различные проблемы реализации,
-оповещение, если они будут найдены.
+<h2>Strict Transport Security Header</h2>
+This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
+alerting if they're found.
 
-Сгенерированные оповещения: 
+Alerts generated:
 <ul>
- <li><b>Strict-Transport-Security Header Not Set: </b> если ответ HTTPS и заголовок полностью отсутствует. </li>
- <li><b>Strict-Transport-Security Disabled: </b> если ответом является HTTPS, а значение max-age установлено равным нулю, таким образом сбрасывается информация HSTS браузера для сайта. </li>
- <li><b>Strict-Transport-Security Multiple Header Entries (не соответствует спецификации): </b> если ответ HTTPS и в ответе есть более одного заголовка HSTS. </li>
- <li><b>Отсутствует параметр Strict-Transport-Security Max-Age (не соответствует спецификации): </b> если ответ HTTPS, указывается заголовок HSTS, но значение max-age не содержит числа. </li>
- <li><b>Strict-Transport-Security определено через META (не соответствует спецификации): </b> если тело ответа включает тег META, который пытается определить HSTS. </li>
- <li><b>Заголовок Strict-Transport-Security в простом ответе HTTP: </b> если ответ является HTTP и присутствует заголовок HSTS. </li>
- <li><b>Strict-Transport-Security Max-Age искажен (не соответствует спецификации): </b> если ответ HTTPS и заголовок HSTS присутствует, но есть кавычки, предшествующие директиве max-age (кавычки разрешены вокруг значения max-age, но не вокруг самой директивы). </li>
- <li><b>Strict-Transport-Security Искаженный контент (не соответствующий спецификации): </b> если ответ HTTPS и заголовок HSTS присутствует, но есть непредвиденный контент (например, фигурные кавычки).  Ожидается, что содержимое будет печататься в формате ASCII. </li>
+ <li><b>Strict-Transport-Security Header Not Set: </b> If the response is HTTPS and the header is completely missing.</li>
+ <li><b>Strict-Transport-Security Disabled: </b> If the response is HTTPS and the max-age value is set to zero, thus resetting the browser's HSTS information for the site.</li>
+ <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> If the response is HTTPS and there is more than one HSTS header on the response.</li>
+ <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> If the response is HTTPS, a HSTS header is specified but the max-age value does not contain a number.</li>
+ <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec): </b> If the response body includes a META tag which attempts to define HSTS.</li>
+ <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> If the response is HTTP and the HSTS header is present.</li>
+ <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec): </b> If the response is HTTPS and the HSTS header is present, but there are quotes preceding the max-age directive (quotes are allowed around the max-age value, but not around the directive itself).</li>
+ <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
 </ul>
 
-О перенаправлениях на URL-адреса HTTPS в том же домене будет сообщаться только при низком пороге. 
+Redirects to HTTPS URLs on the same domain will only be reported at Low threshold.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/StrictTransportSecurityScanRule.java">StrictTransportSecurityScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/StrictTransportSecurityScanRule.java">StrictTransportSecurityScanRule.java</a>
 
-<h2>Управляемый пользователем набор символов</h2>
-Эта проверка просматривает предоставленные пользователем входные данные в параметрах строки запроса и данные POST, чтобы определить, где объявления кодировки Content-Type или метатега могут контролироваться пользователем.  Такие объявления кодировки всегда должны быть объявлены приложением.  Если злоумышленник может управлять набором символов ответа, он может манипулировать HTML для выполнения XSS или других атак. 
+<h2>User Controllable Charset</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a>
 
-<h2>Управляемый пользователем атрибут HTML-элемента (потенциальный XSS)</h2>
-Эта проверка просматривает введенные пользователем данные в параметрах строки запроса и данные POST, чтобы определить, где могут контролироваться определенные значения атрибутов HTML.  Это обеспечивает обнаружение горячих точек для XSS (межсайтовых сценариев), которые потребуют дальнейшей проверки аналитиком безопасности для определения возможности использования. 
+<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a>
 
-<h2>Управляемое пользователем событие Javascript (XSS)</h2>
-Эта проверка просматривает введенные пользователем данные в параметрах строки запроса и данные POST, чтобы определить, где могут контролироваться определенные значения атрибутов HTML.  Это обеспечивает обнаружение горячих точек для XSS (межсайтовых сценариев), которые потребуют дальнейшей проверки аналитиком безопасности для определения возможности использования.             
+<h2>User Controllable Javascript Event (XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a>
 
-<h2>Утечка информации из заголовка X-Backend-Server</h2>
-Это проверяет заголовки ответов на наличие сведений о X-Backend-Server. 
+<h2>X-Backend-Server Header Information Leak</h2>
+This checks response headers for the presence of X-Backend-Server details.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XBackendServerInformationLeak.java">XBackendServerInformationLeak.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XBackendServerInformationLeak.java">XBackendServerInformationLeak.java</a>
 
-<h2>Утечка информации из заголовка X-ChromeLogger-Data</h2>
-Это проверяет заголовки ответов на наличие сведений X-ChromeLogger-Data или X-ChromePhp-Data. 
+<h2>X-ChromeLogger-Data Header Information Leak</h2>
+This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XChromeLoggerDataInfoLeakScanRule.java">XChromeLoggerDataInfoLeakScanRule.java</a> 
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XChromeLoggerDataInfoLeakScanRule.java">XChromeLoggerDataInfoLeakScanRule.java</a>
 
 </body>
 </html>

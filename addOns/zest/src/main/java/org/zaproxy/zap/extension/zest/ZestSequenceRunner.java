@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.SequenceScript;
 import org.zaproxy.zap.model.StructuralNode;
@@ -70,10 +71,12 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
      * Initialize a ZestSequenceRunner.
      *
      * @param extension The Zest Extension.
+     * @param extensionNetwork the network extension.
      * @param wrapper A wrapper for the current script.
      */
-    public ZestSequenceRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
-        super(extension, wrapper);
+    public ZestSequenceRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper wrapper) {
+        super(extension, extensionNetwork, wrapper);
         this.script = wrapper;
         this.setStopOnAssertFail(false);
     }

@@ -37,6 +37,8 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -72,6 +74,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     private static Field fieldOutputWriter;
 
     private ExtensionZest extension;
+    private final ExtensionNetwork extensionNetwork;
     private ZestScriptWrapper wrapper = null;
     private HttpMessage target = null;
     private ZestResultWrapper lastResult = null;
@@ -86,11 +89,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private ScriptUI scriptUI;
 
-    /** */
-    public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
+    public ZestZapRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper wrapper) {
         super(Default.TIMEOUT_IN_SECONDS, true);
         log.debug("Constructor");
         this.extension = extension;
+        this.extensionNetwork = extensionNetwork;
         this.wrapper = wrapper;
         this.scriptUI = extension.getExtScript().getScriptUI();
         this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
@@ -99,9 +103,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         this.setStopOnTestFail(false);
 
         // Always proxy via ZAP
-        this.setProxy(
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+        ServerInfo serverInfo = extensionNetwork.getMainProxyServerInfo();
+        this.setProxy(serverInfo.getAddress(), serverInfo.getPort());
+    }
+
+    protected ExtensionNetwork getExtensionNetwork() {
+        return extensionNetwork;
     }
 
     @Override

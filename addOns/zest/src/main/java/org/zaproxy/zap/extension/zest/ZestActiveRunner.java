@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ActiveScript;
 import org.zaproxy.zap.extension.ascan.ScriptsActiveScanner;
 import org.zaproxy.zest.core.v1.ZestRequest;
@@ -40,8 +41,9 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
     private static Logger logger = LogManager.getLogger(ZestActiveRunner.class);
 
-    public ZestActiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestActiveRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         this.script = script;
     }

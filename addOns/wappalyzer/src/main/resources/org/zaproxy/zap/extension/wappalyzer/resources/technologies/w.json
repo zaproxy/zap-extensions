@@ -387,6 +387,19 @@
     "scriptSrc": "getwair\\.com",
     "website": "https://getwair.com"
   },
+  "Wakav Performance Monitoring": {
+    "cats": [
+      78
+    ],
+    "description": "Wakav Performance Monitoring is a real user monitoring (RUM), Web/App performance and availability test platform.",
+    "icon": "Wakav Performance Monitoring.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "rum\\.wakav\\.ir/",
+    "website": "https://www.wakav.ir"
+  },
   "WalkMe": {
     "cats": [
       58
@@ -447,6 +460,25 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min.\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://weavertheme.com"
+  },
+  "Web Shop Manager": {
+    "cats": [
+      6
+    ],
+    "description": "Web Shop Manager is an ecommerce and search platform for the automotive industry and markets with complex product catalogs.",
+    "icon": "Web Shop Manager.png",
+    "js": {
+      "WSM.Tracking": "",
+      "WSM_CHART_COLORS_OPAQUE": "",
+      "wsmHideHelpBox": "",
+      "wsm_catalogTabby": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webshopmanager.com"
   },
   "Web2py": {
     "cats": [
@@ -545,6 +577,22 @@
     },
     "website": "http://www.webgui.org"
   },
+  "WebHostUK": {
+    "cats": [
+      88
+    ],
+    "description": "WebHostUK is a UK based web hosting company offering cheap yet reliable and secure web hosting solutions on both Linux and Windows servers.",
+    "dns": {
+      "NS": "ns2\\d\\.dnshostcentral\\.com",
+      "SOA": "ns2\\d\\.dnshostcentral\\.com"
+    },
+    "icon": "WebHostUK.png",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://www.webhostuk.co.uk"
+  },
   "WebMetric": {
     "cats": [
       10
@@ -619,22 +667,6 @@
     },
     "scriptSrc": "analytics\\.webgains\\.io",
     "website": "https://www.webgains.com/"
-  },
-  "WebHostUK": {
-    "cats": [
-      88
-    ],
-    "description": "WebHostUK is a UK based web hosting company offering cheap yet reliable and secure web hosting solutions on both Linux and Windows servers.",
-    "icon": "WebHostUK.png",
-    "dns": {
-      "NS": "ns2\\d\\.dnshostcentral\\.com",
-      "SOA": "ns2\\d\\.dnshostcentral\\.com"
-    },
-    "pricing": [
-      "recurring",
-      "low"
-    ],
-    "website": "https://www.webhostuk.co.uk"
   },
   "Webix": {
     "cats": [
@@ -719,25 +751,6 @@
       "wsc_rendermode": ""
     },
     "website": "https://www.hosttech.ch/websitecreator"
-  },
-  "Web Shop Manager": {
-    "cats": [
-      6
-    ],
-    "description": "Web Shop Manager is an ecommerce and search platform for the automotive industry and markets with complex product catalogs.",
-    "icon": "Web Shop Manager.png",
-    "js": {
-      "WSM.Tracking": "",
-      "wsm_catalogTabby": "",
-      "wsmHideHelpBox": "",
-      "WSM_CHART_COLORS_OPAQUE": ""
-    },
-    "saas": true,
-    "pricing": [
-      "mid",
-      "recurring"
-    ],
-    "website": "https://webshopmanager.com"
   },
   "WebsiteBaker": {
     "cats": [
@@ -865,10 +878,10 @@
   },
   "Whatfix": {
     "cats": [
-      19
+      58
     ],
     "description": "Whatfix is a SaaS based platform which provides in-app guidance and performance support for web applications and software products.",
-    "icon": "Whatfix.png",
+    "icon": "Whatfix.svg",
     "js": {
       "_wfx_add_logger": "",
       "_wfx_settings": "",
@@ -878,7 +891,7 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "whatfix\\.com",
+    "scriptSrc": "\\.whatfix\\.com/",
     "website": "https://whatfix.com"
   },
   "WhatsApp Business Chat": {
@@ -1104,6 +1117,25 @@
     "saas": true,
     "scriptSrc": "loader\\.wisepops\\.com/get-loader\\.js",
     "website": "https://wisepops.com"
+  },
+  "Wishlist King": {
+    "cats": [
+      100
+    ],
+    "description": "Wishlist King is a Shopify app which helps you to add your favorite products or share the wishlist with your friends built by Appmate.",
+    "icon": "Wishlist King.png",
+    "js": {
+      "Appmate.version": "([\\d\\.]+)\\;version:\\1\\;confidence:1",
+      "Appmate.wk": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "website": "https://appmate.io"
   },
   "Wistia": {
     "cats": [
@@ -1609,6 +1641,10 @@
       32
     ],
     "description": "Wunderkind (Formerly BounceX) is a software for behavioural marketing technologies, created to de-anonymise site visitors, analyse their digital behaviour and create relevant digital experiences regardless of channel or device.",
+    "dom": "link[href*='.smarterhq.io']",
+    "headers": {
+      "Content-Security-Policy": "\\.smarterhq\\.io"
+    },
     "icon": "Wunderkind.svg",
     "js": {
       "bouncex": ""
@@ -1617,7 +1653,10 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.bounceexchange\\.com",
+    "scriptSrc": [
+      "\\.bounceexchange\\.com",
+      "\\.smarterhq\\.io/"
+    ],
     "website": "https://www.wunderkind.co"
   },
   "Wurfl": {

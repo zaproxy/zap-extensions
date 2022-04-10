@@ -23,8 +23,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.IOException;
-import java.security.KeyStoreException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -32,11 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
@@ -54,6 +52,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     private JButton saveButton;
     private ZapTextField hostPortField;
     private JButton copyButton;
+    private ExtensionNetwork extensionNetwork;
 
     public DefaultExplorePanel(ExtensionQuickStart extension, QuickStartPanel qsp) {
         super(extension, qsp);
@@ -137,7 +136,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                                 == JFileChooser.APPROVE_OPTION) {
                             final File f = fc.getSelectedFile();
                             try {
-                                writePubCertificateToFile(f);
+                                getExtensionNetwork().writeRootCaCertAsPem(f.toPath());
                             } catch (final Exception e) {
                                 View.getSingleton()
                                         .showWarningDialog(
@@ -152,30 +151,32 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
         return saveButton;
     }
 
-    private void writePubCertificateToFile(File f) throws IOException, KeyStoreException {
-        ExtensionNetwork extensionNetwork =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
-        if (extensionNetwork != null) {
-            extensionNetwork.writeRootCaCertAsPem(f.toPath());
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
         }
+        return extensionNetwork;
     }
 
     private ZapTextField getHostPortField() {
         if (hostPortField == null) {
             hostPortField = new ZapTextField();
             hostPortField.setEditable(false);
-            OptionsParam options = Model.getSingleton().getOptionsParam();
-            hostPortField.setText(this.getProxyString(options.getProxyParam()));
+            hostPortField.setText(getProxyString());
         }
         return hostPortField;
     }
 
-    private String getProxyString(ProxyParam params) {
-        StringBuilder sb = new StringBuilder();
+    private String getProxyString() {
+        ServerInfo serverInfo = getExtensionNetwork().getMainProxyServerInfo();
+        StringBuilder sb = new StringBuilder(25);
         sb.append("http://");
-        sb.append(params.getProxyIp());
-        sb.append(":");
-        sb.append(params.getProxyPort());
+        sb.append(serverInfo.getAddress());
+        sb.append(':');
+        sb.append(serverInfo.getPort());
         return sb.toString();
     }
 
@@ -194,8 +195,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                     e -> {
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         OptionsParam options = Model.getSingleton().getOptionsParam();
-                        clipboard.setContents(
-                                new StringSelection(getProxyString(options.getProxyParam())), null);
+                        clipboard.setContents(new StringSelection(getProxyString()), null);
                     });
         }
         return copyButton;
@@ -215,7 +215,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
         return panel;
     }
 
-    public void optionsChanged(OptionsParam optionsParam) {
-        this.getHostPortField().setText(this.getProxyString(optionsParam.getProxyParam()));
+    public void optionsChanged() {
+        this.getHostPortField().setText(getProxyString());
     }
 }

@@ -155,6 +155,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
 
+    private ExtensionNetwork extensionNetwork;
+
     public ExtensionZest() {
         super(NAME);
         this.setOrder(73); // Almost looks like ZE ;)
@@ -1604,10 +1606,22 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             logger.error("Failed to find engine Mozilla Zest");
         } else if (script instanceof ZestScriptWrapper) {
             this.getZestScriptEngineFactory()
-                    .setRunner(new ZestZapRunner(this, (ZestScriptWrapper) script));
+                    .setRunner(
+                            new ZestZapRunner(
+                                    this, getExtensionNetwork(), (ZestScriptWrapper) script));
             clearResults();
             this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
         }
+    }
+
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
+        }
+        return extensionNetwork;
     }
 
     public void clearResults() {

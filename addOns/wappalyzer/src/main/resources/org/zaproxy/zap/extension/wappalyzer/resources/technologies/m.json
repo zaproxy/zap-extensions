@@ -136,6 +136,22 @@
     "scriptSrc": "service(?:2)?\\.mtcaptcha\\.com/",
     "website": "https://www.mtcaptcha.com"
   },
+  "MUI": {
+    "cats": [
+      66
+    ],
+    "css": "\\.MuiPaper-root",
+    "description": "MUI(formerly Material UI) is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
+    "dom": "style[data-meta='MuiPaper']",
+    "icon": "MUI.svg",
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://mui.com"
+  },
   "Macaron": {
     "cats": [
       18
@@ -206,6 +222,23 @@
       "static/_requirejs\\;confidence:50\\;version:2"
     ],
     "website": "https://magento.com"
+  },
+  "Magisto": {
+    "cats": [
+      14
+    ],
+    "description": "Magisto is a video management solution designed to help marketing professionals, agencies, and businesses of all sizes.",
+    "icon": "Magisto.png",
+    "js": {
+      "MagistoPlayerFrame": "",
+      "magisto_server": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "\\.magisto\\.com/",
+    "website": "https://www.magisto.com"
   },
   "MailChimp": {
     "cats": [
@@ -1172,6 +1205,23 @@
     "icon": "Microsoft.svg",
     "scriptSrc": "ajax\\.aspnetcdn\\.com/ajax/",
     "website": "https://docs.microsoft.com/en-us/aspnet/ajax/cdn/overview"
+  },
+  "Microsoft Application Insights": {
+    "cats": [
+      78
+    ],
+    "description": "Microsoft Application Insights is a feature of Azure Monitor that provides extensible application performance management (APM) and monitoring for live web apps.",
+    "icon": "Microsoft.svg",
+    "js": {
+      "appInsights.SeverityLevel": "",
+      "appInsights.addTelemetryInitializer": "",
+      "appInsightsSDK": "appInsights"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview"
   },
   "Microsoft Clarity": {
     "cats": [

@@ -54,13 +54,11 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
     private ZestScriptWrapper script = null;
     private AuthenticationHelper helper;
-    private final ExtensionNetwork extensionNetwork;
 
     public ZestAuthenticationRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
-        super(extension, script);
+        super(extension, extensionNetwork, script);
         this.script = script;
-        this.extensionNetwork = extensionNetwork;
     }
 
     @Override
@@ -109,8 +107,10 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
         try {
             if (hasClientStatements()) {
                 proxyServer =
-                        extensionNetwork.createHttpProxy(
-                                helper.getHttpSender(), new ZestMessageHandler(this, helper));
+                        getExtensionNetwork()
+                                .createHttpProxy(
+                                        helper.getHttpSender(),
+                                        new ZestMessageHandler(this, helper));
                 int port = proxyServer.start(PROXY_ADDRESS, Server.ANY_PORT);
                 this.setProxy(PROXY_ADDRESS, port);
             }

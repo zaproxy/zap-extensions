@@ -10,10 +10,22 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/plug-n-hack/")
+
+        dependencies {
+            addOns {
+                register("network") {
+                    version.set(">= 0.2.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
         api.set("org.zaproxy.zap.extension.plugnhack.PlugNHackAPI")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/plugnhack/resources/Messages.properties"))
     }
+}
+
+dependencies {
+    compileOnly(parent!!.childProjects.get("network")!!)
 }

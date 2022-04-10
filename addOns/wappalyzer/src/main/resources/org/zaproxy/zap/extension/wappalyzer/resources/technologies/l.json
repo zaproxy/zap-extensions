@@ -499,6 +499,24 @@
     "scriptSrc": "\\.limechat\\.ai/",
     "website": "https://www.limechat.ai"
   },
+  "LimeSpot": {
+    "cats": [
+      76
+    ],
+    "description": "LimeSpot is an AI-powered personalisation platform for marketers and ecommerce professionals.",
+    "icon": "LimeSpot.png",
+    "js": {
+      "LimeSpot.CartItems": "",
+      "LimeSpot.Recommendations": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.personalizer\\.io/",
+    "website": "https://www.limespot.com"
+  },
   "Limit Login Attempts Reloaded": {
     "cats": [
       87,
@@ -646,6 +664,24 @@
       "LITHIUM": ""
     },
     "website": "https://www.lithium.com"
+  },
+  "Littledata": {
+    "cats": [
+      10
+    ],
+    "description": "Littledata provides a seamless connection between your Shopify site, marketing channels, and Google Analytics.",
+    "icon": "Littledata.svg",
+    "js": {
+      "LittledataLayer": "",
+      "LittledataLayer.version": "v([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "website": "https://www.littledata.io"
   },
   "Live Story": {
     "cats": [
@@ -834,6 +870,22 @@
     "icon": "Liveinternet.png",
     "website": "http://liveinternet.ru/rating/"
   },
+  "Livescale": {
+    "cats": [
+      100,
+      103
+    ],
+    "description": "Livescale is a video platform that enables teams to transform content and ecommerce into a live shopping experience that reaches engages and monetizes audiences with LiveShopping.",
+    "icon": "Livescale.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.livescale\\.tv/",
+    "website": "https://www.livescale.tv"
+  },
   "Livewire": {
     "cats": [
       18,
@@ -985,7 +1037,6 @@
   },
   "LoginRadius": {
     "cats": [
-      5,
       69
     ],
     "description": "LoginRadius is a cloud based SaaS Customer Identity Access Management platform based in Canada.",
@@ -1086,6 +1137,23 @@
     "saas": true,
     "scriptSrc": "loja2\\.com\\.br",
     "website": "https://www.loja2.com.br"
+  },
+  "Loop Returns": {
+    "cats": [
+      102
+    ],
+    "description": "Loop Returns is a return portal that automated all the returns and refunds of products.",
+    "dom": "a[href*='.loopreturns.com/']",
+    "icon": "Loop.svg",
+    "js": {
+      "Loop.config.variantParam": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.loopreturns.com"
   },
   "Loop54": {
     "cats": [
@@ -1291,6 +1359,39 @@
     "saas": true,
     "scriptSrc": "\\.lytics\\.io/",
     "website": "https://www.lytics.com"
+  },
+  "langify": {
+    "cats": [
+      89
+    ],
+    "description": "langify translate your shop into multiple languages. langify comes with a visual configurator that allows you to add language switchers that integrate seamlessly into your existing design.",
+    "icon": "langify.png",
+    "js": {
+      "Langify": "",
+      "langify": "",
+      "langify.settings.switcher.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "website": "https://langify-app.com"
+  },
+  "libphonenumber": {
+    "cats": [
+      59
+    ],
+    "description": "libphonenumber is a JavaScript library for parsing, formatting, and validating international phone numbers.",
+    "icon": "default.svg",
+    "js": {
+      "libphonenumber.AsYouType": "",
+      "libphonenumber.DIGITS": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:/([\\d\\.]+))?/libphonenumber(?:-js\\.min)?\\.js\\;version:\\1",
+    "website": "https://github.com/google/libphonenumber"
   },
   "libwww-perl-daemon": {
     "cats": [

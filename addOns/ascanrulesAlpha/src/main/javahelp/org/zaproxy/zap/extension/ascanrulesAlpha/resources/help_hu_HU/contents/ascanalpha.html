@@ -31,7 +31,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <h2>NoSQL Injection - MongoDB</h2>
 This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
 It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
-
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
 
 <h2>CORS Header</h2>
@@ -48,25 +48,33 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>Java Spring Actuators</h2>
 This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
-
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 
 <h2>Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
 This rule attempts to discover the Log4Shell (<a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a> and <a href="https://www.cve.org/CVERecord?id=CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
 We recommend that this scan rule is used with header injection enabled for maximum coverage.
-
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
 
 <h2>Out of Band XSS</h2>
 This rule attempts to discover Out-of-band XSS vulnerabilities.
-
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/OutOfBandXssScanRule.java">OutOfBandXssScanRule.java</a>
 
 <h2>Exponential Entity Expansion (Billion Laughs Attack)</h2>
 This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
-
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
+
+<h2>Spring4Shell (CVE-2022-22965)</h2>
+This rule attempts to discover the Spring4Shell (<a href="https://tanzu.vmware.com/security/cve-2022-22965">CVE-2022-22965</a> vulnerability.
+It uses a payload of <code>class.module.classLoader.DefaultAssertionStatus=nonsense</code> on all nodes and raises an alert if this payload results in a 400 response.
+It will not raise an alert if a similar but safe payload also results in a 400 response.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Spring4ShellScanRule.java">Spring4ShellScanRule.java</a>
+
 
 </body>
 </html>

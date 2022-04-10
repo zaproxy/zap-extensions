@@ -21,16 +21,39 @@ package org.zaproxy.addon.exim.har;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import edu.umass.cs.benchlab.har.HarEntries;
 import edu.umass.cs.benchlab.har.HarLog;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.utils.HarUtils;
+import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link HarImporter}. */
 class HarImporterUnitTest {
+
+    @BeforeAll
+    static void setup() {
+        Constant.messages = mock(I18N.class);
+        given(Constant.messages.getString(any())).willReturn("");
+    }
+
+    @AfterAll
+    static void cleanup() {
+        Constant.messages = null;
+    }
 
     @Test
     void serializedAndDeserializedShouldMatch() throws Exception {
@@ -53,5 +76,27 @@ class HarImporterUnitTest {
         // Then
         assertThat(deserialized.size(), equalTo(1));
         assertThat(deserialized.get(0), equalTo(httpMessage));
+    }
+
+    @Test
+    void shouldBeFailureIfFileNotFound(@TempDir Path dir) throws Exception {
+        // Given
+        File file = dir.resolve("missing.har").toFile();
+        // When
+        HarImporter importer = new HarImporter(file);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(false));
+    }
+
+    @Test
+    void shouldCompleteListenerIfFileNotFound(@TempDir Path dir) throws Exception {
+        // Given
+        File file = dir.resolve("missing.har").toFile();
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        HarImporter importer = new HarImporter(file, listener);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(false));
+        verify(listener).completed();
     }
 }

@@ -276,7 +276,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     }
 
     public void optionsChanged(OptionsParam optionsParam) {
-        this.getDefaultExplorePanel().optionsChanged(optionsParam);
+        this.getDefaultExplorePanel().optionsChanged();
         this.getAttackPanel().optionsChanged(optionsParam);
     }
 

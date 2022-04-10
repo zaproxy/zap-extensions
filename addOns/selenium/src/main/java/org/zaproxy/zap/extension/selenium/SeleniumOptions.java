@@ -44,6 +44,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  * <p>It allows to change, programmatically, the following options:
  *
  * <ul>
+ *   <li>The path to Chrome binary;
  *   <li>The path to ChromeDriver;
  *   <li>The path to Firefox binary;
  *   <li>The path to Firefox driver (geckodriver);
@@ -52,6 +53,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  */
 public class SeleniumOptions extends VersionedAbstractParam {
 
+    public static final String CHROME_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.chrome.bin";
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY =
             ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY =
@@ -92,6 +94,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
      */
     private static final String CONFIG_VERSION_KEY = SELENIUM_BASE_KEY + VERSION_ATTRIBUTE;
 
+    /** The configuration key to read/write the path Chrome binary. */
+    private static final String CHROME_BINARY_KEY = SELENIUM_BASE_KEY + ".chromeBinary";
+
     /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
 
@@ -107,6 +112,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private static final String DISABLED_EXTENSIONS_KEY = SELENIUM_BASE_KEY + ".disabledExts";
 
     private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
+
+    /** The path to Chrome binary. */
+    private String chromeBinaryPath = "";
 
     /** The path to ChromeDriver. */
     private String chromeDriverPath = "";
@@ -144,6 +152,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
             LOGGER.error("Failed to create the extensions directory:", e);
         }
 
+        chromeBinaryPath =
+                readSystemPropertyWithOptionFallback(
+                        CHROME_BINARY_SYSTEM_PROPERTY, CHROME_BINARY_KEY);
         chromeDriverPath =
                 getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath =
@@ -225,6 +236,32 @@ public class SeleniumOptions extends VersionedAbstractParam {
             case 1:
                 getConfig().clearProperty("selenium.ieDriver");
                 break;
+        }
+    }
+
+    /**
+     * Gets the path to Chrome binary.
+     *
+     * @return the path to Chrome binary, or empty if not set.
+     */
+    public String getChromeBinaryPath() {
+        return chromeBinaryPath;
+    }
+
+    /**
+     * Sets the path to Chrome binary.
+     *
+     * @param chromeBinaryPath the path to Chrome binary, or empty if not known.
+     * @throws IllegalArgumentException if {@code chromeBinaryPath} is {@code null}.
+     */
+    public void setChromeBinaryPath(String chromeBinaryPath) {
+        Validate.notNull(chromeBinaryPath, "Parameter chromeBinaryPath must not be null.");
+
+        if (!this.chromeBinaryPath.equals(chromeBinaryPath)) {
+            this.chromeBinaryPath = chromeBinaryPath;
+
+            saveAndSetSystemProperty(
+                    CHROME_BINARY_KEY, CHROME_BINARY_SYSTEM_PROPERTY, chromeBinaryPath);
         }
     }
 

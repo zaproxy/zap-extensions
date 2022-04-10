@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -393,8 +394,17 @@ public class SwaggerConverter implements Converter {
             String url = server.getUrl();
             if (server.getVariables() != null) {
                 for (Map.Entry<String, ServerVariable> entry : server.getVariables().entrySet()) {
-                    // default is always set
-                    url = url.replace("{" + entry.getKey() + "}", entry.getValue().getDefault());
+                    // TODO: Remove the null check in the code below.
+                    // The following code is a workaround for a bug in Swagger-Parser where empty
+                    // strings were converted to null values.
+                    // It was fixed in Swagger-Parser version 2.0.29, but a different bug was
+                    // introduced where malformed schemas (e.g. in our unit tests) end up throwing
+                    // NPEs instead of returning a list of errors.
+                    // See https://github.com/swagger-api/swagger-parser/issues/1685.
+                    url =
+                            url.replace(
+                                    "{" + entry.getKey() + "}",
+                                    ObjectUtils.firstNonNull(entry.getValue().getDefault(), ""));
                 }
             }
             try {
