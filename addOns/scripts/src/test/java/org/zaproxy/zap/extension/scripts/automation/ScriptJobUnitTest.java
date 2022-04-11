@@ -266,6 +266,57 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldFailToRunTargetedScriptIfNoEngineFound() {
+        // Given
+        given(extScript.getEngineWrapper(null)).willReturn(null);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: run",
+                        "  type: \"targeted\"",
+                        "  name: NotExisting",
+                        "  target: https://testurl.com");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(
+                progress.getErrors(), contains("!scripts.automation.error.scriptEngineNotFound!"));
+    }
+
+    @Test
+    void shouldFailToRunTargetedScriptIfTargetIsNull() {
+        // Given
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: run",
+                        "  type: \"targeted\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptTargetIsNull!"));
+    }
+
+    @Test
     void shouldFailToRemoveIfScriptNotFound() {
         // Given
         ScriptJob job = new ScriptJob();
@@ -712,6 +763,210 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 generatedTemplate,
                 stringContainsInOrder("- type: script", "action:", "type:", "name:"));
+    }
+
+    @Test
+    void shouldFailToEnableIfScriptNameIsNull() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: enable");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameIsNull!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToEnableIfScriptNotFound() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join("\n", "parameters:", "  action: enable", "  name: NotExisting");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToEnableIfScriptIsNotEnableable() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: enable", "  name: myScript");
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+        when(scriptWrapper.getType()).thenReturn(new ScriptType("standalone", null, null, false));
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains("!scripts.automation.error.scriptTypeNotEnableable!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnIfEnableFileSpecified() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: enable",
+                        "  name: myScript",
+                        "  file: notNeeded");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), equalTo(1));
+        assertThat(progress.getWarnings(), contains("!scripts.automation.warn.fileNotNeeded!"));
+    }
+
+    @Test
+    void shouldExecuteIfEnableScriptFound() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: enable", "  name: myScript");
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+        when(scriptWrapper.getType()).thenReturn(new ScriptType("httpsender", null, null, true));
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extScript).setEnabled(scriptWrapper, true);
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToDisableIfScriptNameIsNull() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: disable");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameIsNull!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToDisableIfScriptNotFound() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join("\n", "parameters:", "  action: disable", "  name: NotExisting");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.scriptNameNotFound!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToDisableIfScriptIsNotEnableable() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: disable", "  name: myScript");
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+        when(scriptWrapper.getType()).thenReturn(new ScriptType("standalone", null, null, false));
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains("!scripts.automation.error.scriptTypeNotEnableable!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnIfDisableFileSpecified() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: disable",
+                        "  name: myScript",
+                        "  file: notNeeded");
+        setJobData(job, yamlStr);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), equalTo(1));
+        assertThat(progress.getWarnings(), contains("!scripts.automation.warn.fileNotNeeded!"));
+    }
+
+    @Test
+    void shouldExecuteIfDisableScriptFound() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        String yamlStr = String.join("\n", "parameters:", "  action: disable", "  name: myScript");
+        setJobData(job, yamlStr);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        when(extScript.getScript("myScript")).thenReturn(scriptWrapper);
+        when(scriptWrapper.getType()).thenReturn(new ScriptType("httpsender", null, null, true));
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extScript).setEnabled(scriptWrapper, false);
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     private ScriptJob setJobData(ScriptJob job, String yamlStr) {

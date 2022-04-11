@@ -97,6 +97,14 @@ public abstract class ScriptAction {
                 .collect(Collectors.toList());
     }
 
+    public static List<String> getEnableableScriptTypes() {
+        return getExtScript().getScriptTypes().stream()
+                .filter(ScriptType::isEnableable)
+                .map(ScriptType::getName)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
     public static List<String> getScriptingEngines() {
         return getExtScript().getScriptingEngines().stream().sorted().collect(Collectors.toList());
     }

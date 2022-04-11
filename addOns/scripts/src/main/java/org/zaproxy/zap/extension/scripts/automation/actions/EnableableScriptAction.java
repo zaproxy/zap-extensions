@@ -26,32 +26,36 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
 
-public class RemoveScriptAction extends ScriptAction {
+public class EnableableScriptAction extends ScriptAction {
 
-    public static final String NAME = "remove";
+    private final String name;
+    private final boolean enabled;
     private static final List<String> DISABLED_FIELDS =
             Arrays.asList(
                     ScriptJobDialog.SCRIPT_ENGINE_PARAM,
                     ScriptJobDialog.SCRIPT_FILE_PARAM,
                     ScriptJobDialog.SCRIPT_TARGET_PARAM);
 
-    public RemoveScriptAction(ScriptJobParameters parameters) {
+    public EnableableScriptAction(String name, boolean enabled, ScriptJobParameters parameters) {
         super(parameters);
+        this.name = name;
+        this.enabled = enabled;
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return name;
     }
 
     @Override
     public String getSummary() {
         return Constant.messages.getString(
-                "scripts.automation.dialog.summary.remove", parameters.getName());
+                "scripts.automation.dialog.summary." + name, parameters.getName());
     }
 
     @Override
@@ -86,7 +90,7 @@ public class RemoveScriptAction extends ScriptAction {
 
     @Override
     public List<String> getSupportedScriptTypes() {
-        return getAllScriptTypes();
+        return getEnableableScriptTypes();
     }
 
     @Override
@@ -105,6 +109,16 @@ public class RemoveScriptAction extends ScriptAction {
                             parameters.getName()));
             return;
         }
-        extScript.removeScript(script);
+
+        ScriptType scriptType = script.getType();
+        if (!scriptType.isEnableable()) {
+            progress.error(
+                    Constant.messages.getString(
+                            "scripts.automation.error.scriptTypeNotEnableable",
+                            jobName,
+                            parameters.getType()));
+            return;
+        }
+        extScript.setEnabled(script, enabled);
     }
 }

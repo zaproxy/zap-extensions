@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +33,13 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.automation.ui.ScriptJobDialog;
 
 public class AddScriptAction extends ScriptAction {
 
     public static final String NAME = "add";
+    private static final List<String> DISABLED_FIELDS =
+            Arrays.asList(ScriptJobDialog.SCRIPT_TARGET_PARAM);
 
     public AddScriptAction(ScriptJobParameters parameters) {
         super(parameters);
@@ -136,7 +139,7 @@ public class AddScriptAction extends ScriptAction {
 
     @Override
     public List<String> getDisabledFields() {
-        return Collections.emptyList();
+        return DISABLED_FIELDS;
     }
 
     private ScriptEngineWrapper getEngineWrapper(ScriptJobParameters params) {

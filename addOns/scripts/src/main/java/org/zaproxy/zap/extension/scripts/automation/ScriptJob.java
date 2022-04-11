@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,6 +33,8 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.scripts.automation.actions.AddScriptAction;
+import org.zaproxy.zap.extension.scripts.automation.actions.DisableScriptAction;
+import org.zaproxy.zap.extension.scripts.automation.actions.EnableScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RemoveScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
@@ -50,6 +53,10 @@ public class ScriptJob extends AutomationJob {
                     put(AddScriptAction.NAME.toLowerCase(), AddScriptAction::new);
                     put(RemoveScriptAction.NAME.toLowerCase(), RemoveScriptAction::new);
                     put(RunScriptAction.NAME.toLowerCase(), RunScriptAction::new);
+                    put(EnableScriptAction.NAME.toLowerCase(Locale.ROOT), EnableScriptAction::new);
+                    put(
+                            DisableScriptAction.NAME.toLowerCase(Locale.ROOT),
+                            DisableScriptAction::new);
                 }
             };
 

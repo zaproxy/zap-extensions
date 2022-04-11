@@ -19,16 +19,20 @@
  */
 package org.zaproxy.zap.extension.scripts.automation.ui;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJob;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
+import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -44,6 +48,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     public static final String SCRIPT_ENGINE_PARAM = "scripts.automation.dialog.scriptEngine";
     public static final String SCRIPT_NAME_PARAM = "scripts.automation.dialog.scriptName";
     public static final String SCRIPT_FILE_PARAM = "scripts.automation.dialog.scriptFile";
+    public static final String SCRIPT_TARGET_PARAM = "scripts.automation.dialog.target";
 
     private static final String[] ALL_FIELDS = {
         NAME_PARAM,
@@ -51,13 +56,14 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         SCRIPT_TYPE_PARAM,
         SCRIPT_ENGINE_PARAM,
         SCRIPT_NAME_PARAM,
-        SCRIPT_FILE_PARAM
+        SCRIPT_FILE_PARAM,
+        SCRIPT_TARGET_PARAM
     };
 
     private ScriptJob job;
 
     public ScriptJobDialog(ScriptJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(400, 250));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(400, 325));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -94,6 +100,14 @@ public class ScriptJobDialog extends StandardFieldsDialog {
             f = new File(fileName);
         }
         this.addFileSelectField(SCRIPT_FILE_PARAM, f, JFileChooser.FILES_ONLY, null);
+        // Cannot select the node as it might not be present in the Sites tree
+        this.addNodeSelectField(SCRIPT_TARGET_PARAM, null, true, false);
+        Component scriptTargetField = this.getField(SCRIPT_TARGET_PARAM);
+        if (scriptTargetField instanceof JTextField) {
+            ((JTextField) scriptTargetField)
+                    .setText(this.job.getData().getParameters().getTarget());
+        }
+
         this.addPadding();
 
         onScriptActionChanged();
@@ -124,10 +138,15 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                 this.getField(fieldName).setEnabled(true);
             }
         }
+
+        onScriptTypeChanged();
     }
 
     private void onScriptTypeChanged() {
         String scriptType = this.getStringValue(SCRIPT_TYPE_PARAM);
+
+        onScriptTypeTarget(scriptType);
+
         List<String> scripts = ScriptAction.getAvailableScriptNames(scriptType);
         // Always have a blank option at the start
         scripts.add(0, "");
@@ -153,6 +172,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         this.job.getData().getParameters().setType(this.getStringValue(SCRIPT_TYPE_PARAM));
         this.job.getData().getParameters().setEngine(this.getStringValue(SCRIPT_ENGINE_PARAM));
         this.job.getData().getParameters().setName(this.getStringValue(SCRIPT_NAME_PARAM));
+        this.job.getData().getParameters().setTarget(this.getStringValue(SCRIPT_TARGET_PARAM));
 
         ScriptAction sa = getScriptAction();
         if (sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)) {
@@ -179,7 +199,8 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                         this.getStringValue(SCRIPT_TYPE_PARAM),
                         this.getStringValue(SCRIPT_ENGINE_PARAM),
                         this.getStringValue(SCRIPT_NAME_PARAM),
-                        this.getStringValue(SCRIPT_FILE_PARAM));
+                        this.getStringValue(SCRIPT_FILE_PARAM),
+                        this.getStringValue(SCRIPT_TARGET_PARAM));
         sa = ScriptJob.createScriptAction(params, null);
         List<String> issues = sa.verifyParameters(this.getStringValue(NAME_PARAM), params, null);
         if (issues.isEmpty()) {
@@ -187,5 +208,19 @@ public class ScriptJobDialog extends StandardFieldsDialog {
             return null;
         }
         return issues.stream().collect(Collectors.joining("\n"));
+    }
+
+    private void onScriptTypeTarget(String scriptType) {
+        if (RunScriptAction.NAME.equals(getScriptAction().getName())) {
+            if (ExtensionScript.TYPE_TARGETED.equals(scriptType)) {
+                this.getField(SCRIPT_TARGET_PARAM).setEnabled(true);
+                this.getField(SCRIPT_ENGINE_PARAM).setEnabled(true);
+            } else {
+                this.getField(SCRIPT_TARGET_PARAM).setEnabled(false);
+                this.setFieldValue(SCRIPT_TARGET_PARAM, "");
+                this.getField(SCRIPT_ENGINE_PARAM).setEnabled(false);
+                this.setFieldValue(SCRIPT_ENGINE_PARAM, "");
+            }
+        }
     }
 }
