@@ -1753,9 +1753,62 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         rule.scan();
 
         // Then
-        if (alertsRaised.size() > 0) {
-            System.out.println(alertsRaised.get(0).toPluginXML(""));
-        }
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldAlertXssUsingHeaderSplitting() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/escapetextarea";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String text = getFirstParamValue(session, "text");
+                        Response response = newFixedLengthResponse("<html></html>");
+                        response.addHeader("X-test", text);
+                        return response;
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?text=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("<scrIpt>alert(1);</scRipt>")));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo("test\n\r\n\r<scrIpt>alert(1);</scRipt>")));
+    }
+
+    @Test
+    void shouldNotAlertXssInEscapedHeader() throws HttpMalformedHeaderException {
+        // Given
+        String path = "/user/escapetextarea";
+        nano.addHandler(
+                new NanoServerHandler(path) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String text = getFirstParamValue(session, "text");
+                        Response response = newFixedLengthResponse("<html></html>");
+                        response.addHeader("X-test", text.replace("\n", "").replace("\r", ""));
+                        return response;
+                    }
+                });
+
+        HttpMessage msg = getHttpMessage(path + "?text=test");
+        rule.init(msg, parent);
+
+        // When
+        rule.scan();
+
+        // Then
         assertThat(alertsRaised, hasSize(0));
     }
 
