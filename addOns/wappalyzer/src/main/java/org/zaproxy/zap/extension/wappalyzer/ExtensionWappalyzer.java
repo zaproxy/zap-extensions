@@ -74,7 +74,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     private ExtensionSearch extSearch = null;
 
-    private Map<String, TechTableModel> siteTechMap = new HashMap<>();
+    private Map<String, TechTableModel> siteTechMap = Collections.synchronizedMap(new HashMap<>());
     private boolean enabled;
     private WappalyzerParam wappalyzerParam;
 
@@ -240,14 +240,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public TechTableModel getTechModelForSite(String site) {
-        TechTableModel model = this.siteTechMap.get(site);
-        if (model == null) {
-            model = new TechTableModel();
-            this.siteTechMap.put(site, model);
-            if (getView() != null) {
-                // Add to site pulldown
-                this.getTechPanel().addSite(site);
-            }
+        TechTableModel model = this.siteTechMap.computeIfAbsent(site, s -> new TechTableModel());
+        if (getView() != null) {
+            // Add to site pulldown
+            this.getTechPanel().addSite(site);
         }
         return model;
     }

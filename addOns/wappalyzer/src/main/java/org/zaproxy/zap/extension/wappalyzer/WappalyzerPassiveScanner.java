@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
     private static final Logger LOGGER = LogManager.getLogger(WappalyzerPassiveScanner.class);
     private WappalyzerApplicationHolder applicationHolder;
-    private Set<String> visitedSiteIdentifiers = new HashSet<>();
-    private ApplicationMatch appMatch;
-    private Application currentApp;
+    private Set<String> visitedSiteIdentifiers = Collections.synchronizedSet(new HashSet<>());
     private volatile boolean enabled = true;
 
     public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
@@ -71,15 +70,12 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
         long startTime = System.currentTimeMillis();
         for (Application app : this.getApps()) {
-            this.currentApp = app;
-            checkAppMatches(msg, source);
+            ApplicationMatch appMatch = checkAppMatches(null, app, msg, source);
             if (appMatch != null) {
                 String site = ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI());
                 LOGGER.debug("Adding {} to {}", app.getName(), site);
                 addApplicationsToSite(site, appMatch);
-                this.appMatch = null;
             }
-            this.currentApp = null;
         }
 
         LOGGER.debug("Analysis took {} ms", System.currentTimeMillis() - startTime);
@@ -112,45 +108,59 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         }
     }
 
-    private void checkAppMatches(HttpMessage msg, Source source) {
-        checkUrlMatches(msg);
-        checkHeadersMatches(msg);
-        checkCookieMatches(msg);
+    private ApplicationMatch checkAppMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+        appMatch = checkUrlMatches(appMatch, currentApp, msg);
+        appMatch = checkHeadersMatches(appMatch, currentApp, msg);
+        appMatch = checkCookieMatches(appMatch, currentApp, msg);
         if (!msg.getResponseHeader().isText()) {
-            return; // Don't check body if not text'ish
+            return appMatch; // Don't check body if not text'ish
         }
-        checkBodyMatches(msg);
-        checkMetaElementsMatches(source);
-        checkScriptElementsMatches(source);
-        checkCssElementsMatches(msg, source);
-        checkSimpleDomMatches(msg);
-        checkDomElementMatches(msg);
+        appMatch = checkBodyMatches(appMatch, currentApp, msg);
+        appMatch = checkMetaElementsMatches(appMatch, currentApp, source);
+        appMatch = checkScriptElementsMatches(appMatch, currentApp, source);
+        appMatch = checkCssElementsMatches(appMatch, currentApp, msg, source);
+        appMatch = checkSimpleDomMatches(appMatch, currentApp, msg);
+        appMatch = checkDomElementMatches(appMatch, currentApp, msg);
+        return appMatch;
     }
 
-    private void checkCssElementsMatches(HttpMessage msg, Source source) {
+    private ApplicationMatch checkCssElementsMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         for (AppPattern appPattern : currentApp.getCss()) {
             if (ResourceIdentificationUtils.isCss(msg)) {
-                addIfMatches(appPattern, msg.getResponseBody().toString());
+                appMatch =
+                        addIfMatches(
+                                appMatch, currentApp, appPattern, msg.getResponseBody().toString());
             } else {
                 for (Element styleElement : source.getAllElements(HTMLElementName.STYLE)) {
-                    addIfMatches(appPattern, styleElement.getSource().toString());
+                    appMatch =
+                            addIfMatches(
+                                    appMatch,
+                                    currentApp,
+                                    appPattern,
+                                    styleElement.getSource().toString());
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkScriptElementsMatches(Source source) {
+    private ApplicationMatch checkScriptElementsMatches(
+            ApplicationMatch appMatch, Application currentApp, Source source) {
         for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
             for (AppPattern appPattern : currentApp.getScript()) {
                 String src = scriptElement.getAttributeValue("src");
                 if (src != null && !src.isEmpty()) {
-                    addIfMatches(appPattern, src);
+                    appMatch = addIfMatches(appMatch, currentApp, appPattern, src);
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkMetaElementsMatches(Source source) {
+    private ApplicationMatch checkMetaElementsMatches(
+            ApplicationMatch appMatch, Application currentApp, Source source) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
         for (Element metaElement : metaElements) {
             for (Map<String, AppPattern> sp : currentApp.getMetas()) {
@@ -159,16 +169,18 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                     String content = metaElement.getAttributeValue("content");
                     if (name != null && content != null && name.equals(entry.getKey())) {
                         AppPattern p = entry.getValue();
-                        addIfMatches(p, content);
+                        appMatch = addIfMatches(appMatch, currentApp, p, content);
                     }
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkDomElementMatches(HttpMessage message) {
+    private ApplicationMatch checkDomElementMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage message) {
         if (!message.getResponseHeader().isHtml()) {
-            return;
+            return appMatch;
         }
         Document doc = Jsoup.parse(message.getResponseBody().toString());
         for (Map<String, Map<String, Map<String, AppPattern>>> domSelectorMap :
@@ -183,12 +195,19 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                         for (org.jsoup.nodes.Element selectedElement : selectedElements) {
                             if (Objects.equals(value.getKey(), "text")) {
                                 AppPattern ap = value.getValue();
-                                addIfMatches(ap, selectedElement.text());
+                                appMatch =
+                                        addIfMatches(
+                                                appMatch, currentApp, ap, selectedElement.text());
                             }
                             if (Objects.equals(nodeSelectorMap.getKey(), "attributes")) {
                                 AppPattern ap = value.getValue();
                                 if (selectedElement.hasAttr(value.getKey())) {
-                                    addIfMatches(ap, selectedElement.attr(value.getKey()));
+                                    appMatch =
+                                            addIfMatches(
+                                                    appMatch,
+                                                    currentApp,
+                                                    ap,
+                                                    selectedElement.attr(value.getKey()));
                                 }
                             }
                         }
@@ -196,79 +215,97 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkSimpleDomMatches(HttpMessage msg) {
+    private ApplicationMatch checkSimpleDomMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
         String body = msg.getResponseBody().toString();
         for (String selector : currentApp.getSimpleDom()) {
-            addIfDomMatches(selector, body);
+            appMatch = addIfDomMatches(appMatch, currentApp, selector, body);
         }
+        return appMatch;
     }
 
-    private void checkBodyMatches(HttpMessage msg) {
+    private ApplicationMatch checkBodyMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
         String body = msg.getResponseBody().toString();
         for (AppPattern p : currentApp.getHtml()) {
-            addIfMatches(p, body);
+            appMatch = addIfMatches(appMatch, currentApp, p, body);
         }
+        return appMatch;
     }
 
-    private void checkHeadersMatches(HttpMessage msg) {
+    private ApplicationMatch checkHeadersMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
         for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 String header = msg.getResponseHeader().getHeader(entry.getKey());
                 if (header != null) {
                     AppPattern p = entry.getValue();
-                    addIfMatches(p, header);
+                    appMatch = addIfMatches(appMatch, currentApp, p, header);
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkCookieMatches(HttpMessage msg) {
+    private ApplicationMatch checkCookieMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
         for (Map<String, AppPattern> sp : currentApp.getCookies()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 for (HtmlParameter cookie : msg.getCookieParams()) {
                     if (entry.getKey().equals(cookie.getName())) {
                         AppPattern p = entry.getValue();
-                        addIfMatches(p, cookie.getValue());
+                        appMatch = addIfMatches(appMatch, currentApp, p, cookie.getValue());
                     }
                 }
             }
         }
+        return appMatch;
     }
 
-    private void checkUrlMatches(HttpMessage msg) {
+    private ApplicationMatch checkUrlMatches(
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
         String url = msg.getRequestHeader().getURI().toString();
         for (AppPattern p : currentApp.getUrl()) {
-            addIfMatches(p, url);
+            appMatch = addIfMatches(appMatch, currentApp, p, url);
         }
+        return appMatch;
     }
 
-    private void addIfDomMatches(String selector, String content) {
+    private ApplicationMatch addIfDomMatches(
+            ApplicationMatch appMatch, Application currentApp, String selector, String content) {
         Document doc = Jsoup.parse(content);
         Elements elements = doc.select(selector);
         if (!elements.isEmpty()) {
-            this.appMatch = getAppMatch();
+            appMatch = getAppMatch(appMatch, currentApp);
         }
+        return appMatch;
     }
 
-    private void addIfMatches(AppPattern appPattern, String content) {
+    private ApplicationMatch addIfMatches(
+            ApplicationMatch appMatch,
+            Application currentApp,
+            AppPattern appPattern,
+            String content) {
         List<String> results = appPattern.findInString(content);
         if (results != null) {
-            this.appMatch = getAppMatch();
+            appMatch = getAppMatch(appMatch, currentApp);
             // TODO may need to account for the wappalyzer spec in dealing with version info:
             // https://www.wappalyzer.com/docs/specification
             results.forEach(appMatch::addVersion);
             LOGGER.debug(
                     "{} matched {}", appPattern.getType(), appMatch.getApplication().getName());
         }
+        return appMatch;
     }
 
     private List<Application> getApps() {
         return applicationHolder.getApplications();
     }
 
-    private ApplicationMatch getAppMatch() {
+    private ApplicationMatch getAppMatch(ApplicationMatch appMatch, Application currentApp) {
         if (appMatch == null) {
             appMatch = new ApplicationMatch(currentApp);
         }
