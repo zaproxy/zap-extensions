@@ -295,7 +295,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         return new AutomationPlan(this, f);
     }
 
-    public AutomationPlan loadPlan(InputStream in) throws AutomationJobException {
+    public AutomationPlan loadPlan_IsUnused(InputStream in) throws AutomationJobException {
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(in);
         LinkedHashMap<?, ?> envData = (LinkedHashMap<?, ?>) data.get("env");

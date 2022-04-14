@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -84,9 +85,9 @@ public class AutomationPlan {
                             Constant.messages.getString("automation.error.job.data", jobObj));
                     continue;
                 }
-                LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) jobObj;
+                LinkedHashMap<?, ?> rawJobData = (LinkedHashMap<?, ?>) jobObj;
 
-                Object jobType = jobData.get("type");
+                Object jobType = rawJobData.get("type");
                 if (jobType == null) {
                     progress.error(
                             Constant.messages.getString("automation.error.job.notype", jobType));
@@ -96,6 +97,8 @@ public class AutomationPlan {
                 if (job != null) {
                     try {
                         job = job.newJob();
+                        Map<?, ?> jobData = env.replaceMapVarsRecursive(rawJobData);
+
                         Object jobName = jobData.get("name");
                         if (jobName != null) {
                             if (jobName instanceof String) {

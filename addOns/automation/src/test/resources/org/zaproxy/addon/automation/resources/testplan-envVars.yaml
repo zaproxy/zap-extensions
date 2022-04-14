@@ -1,0 +1,19 @@
+env:
+  contexts:
+    - name: example
+      urls: 
+      - https://www.example.com/
+
+  vars:
+    myPath: foo/bar
+
+jobs:
+  - type: job1
+    name: job1Name
+    parameters:
+      url: ${myEnvVar}
+
+  - type: job2
+    name: job-${secondEnvVar}
+    parameters:
+      url: https://example.com/${myPath}

@@ -193,7 +193,7 @@ class AutomationEnvironmentUnitTest {
     @Test
     void shouldFailAtRunTimeIfBadContextUrl() {
         // Given
-        // Note that URLs containing env vrs are not checked on load
+        // Note that URLs containing env vars are not checked on load
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -828,7 +828,7 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
-    void shouldReplaceEnvVarsInJobs() {
+    void shouldReplaceEnvVarsInEnv() {
         // Given
         String contextStr =
                 "env:\n"
