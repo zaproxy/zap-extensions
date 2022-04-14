@@ -174,7 +174,7 @@ public class AutomationEnvironment {
         return map2;
     }
 
-    public Map<?, ?>  replaceMapVarsRecursive(Map<?, ?> map) {
+    public Map<?, ?> replaceMapVarsRecursive(Map<?, ?> map) {
         Map<Object, Object> map2 = new LinkedHashMap<>();
         for (Entry<?, ?> entry : map.entrySet()) {
             if (entry.getValue() instanceof String) {
