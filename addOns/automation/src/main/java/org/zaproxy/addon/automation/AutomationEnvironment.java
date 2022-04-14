@@ -167,7 +167,7 @@ public class AutomationEnvironment {
     }
 
     public Map<String, String> replaceMapVars(Map<String, String> map) {
-        Map<String, String> map2 = new LinkedHashMap<>();
+        Map<String, String> map2 = new HashMap<>();
         for (Entry<String, String> entry : map.entrySet()) {
             map2.put(entry.getKey(), replaceVars(entry.getValue()));
         }
