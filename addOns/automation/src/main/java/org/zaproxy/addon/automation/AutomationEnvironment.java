@@ -174,22 +174,6 @@ public class AutomationEnvironment {
         return map2;
     }
 
-    public Map<?, ?> replaceMapVarsRecursive(Map<?, ?> map) {
-        Map<Object, Object> map2 = new LinkedHashMap<>();
-        for (Entry<?, ?> entry : map.entrySet()) {
-            if (entry.getValue() instanceof String) {
-                String value = (String) entry.getValue();
-                map2.put(entry.getKey(), replaceVars(value));
-            } else if (entry.getValue() instanceof Map) {
-                Map<?, ?> value = (Map<?, ?>) entry.getValue();
-                map2.put(entry.getKey(), replaceMapVarsRecursive(value));
-            } else {
-                map2.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return map2;
-    }
-
     protected void setProgress(AutomationProgress progress) {
         this.progress = progress;
         this.progress.setOutputToStdout(this.getData().getParameters().getProgressToStdout());
