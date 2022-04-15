@@ -36,6 +36,7 @@ import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.automation.tests.UrlPresenceTest;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.users.User;
 
@@ -409,6 +410,17 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             } else if ("alert".equals(testType)) {
                 try {
                     test = new AutomationAlertTest(testData, this, progress);
+                } catch (IllegalArgumentException e) {
+                    progress.warn(e.getMessage());
+                    continue;
+                }
+                addTest(test);
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.tests.add", getType(), testType, test.getName()));
+            } else if ("url".equals(testType)) {
+                try {
+                    test = new UrlPresenceTest(testData, this, progress);
                 } catch (IllegalArgumentException e) {
                     progress.warn(e.getMessage());
                     continue;

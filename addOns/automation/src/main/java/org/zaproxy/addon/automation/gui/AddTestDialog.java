@@ -30,6 +30,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.automation.tests.UrlPresenceTest;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -41,6 +42,7 @@ public class AddTestDialog extends StandardFieldsDialog {
     private static final String TEST_PARAM = "automation.dialog.addtest.test";
     private static final String ALERT_TEST_NAME = "automation.dialog.test.alert.name";
     private static final String STATS_TEST_NAME = "automation.dialog.test.statistic.name";
+    private static final String URL_PRESENCE_TEST_NAME = "automation.dialog.test.urlpresence.name";
 
     private AutomationJob job;
 
@@ -50,6 +52,7 @@ public class AddTestDialog extends StandardFieldsDialog {
 
         List<String> testNames = new ArrayList<>();
         testNames.add(Constant.messages.getString(STATS_TEST_NAME));
+        testNames.add(Constant.messages.getString(URL_PRESENCE_TEST_NAME));
 
         if (job instanceof PassiveScanWaitJob || job instanceof ActiveScanJob) {
             testNames.add(Constant.messages.getString(ALERT_TEST_NAME));
@@ -65,6 +68,8 @@ public class AddTestDialog extends StandardFieldsDialog {
         AbstractAutomationTest test;
         if (testName.equals(Constant.messages.getString(STATS_TEST_NAME))) {
             test = new AutomationStatisticTest(job, job.getPlan().getProgress());
+        } else if (testName.equals(Constant.messages.getString(URL_PRESENCE_TEST_NAME))) {
+            test = new UrlPresenceTest(job, job.getPlan().getProgress());
         } else {
             test = new AutomationAlertTest(job, job.getPlan().getProgress());
         }
