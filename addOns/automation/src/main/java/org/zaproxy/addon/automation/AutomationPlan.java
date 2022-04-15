@@ -85,9 +85,9 @@ public class AutomationPlan {
                             Constant.messages.getString("automation.error.job.data", jobObj));
                     continue;
                 }
-                LinkedHashMap<?, ?> rawJobData = (LinkedHashMap<?, ?>) jobObj;
+                LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) jobObj;
 
-                Object jobType = rawJobData.get("type");
+                Object jobType = jobData.get("type");
                 if (jobType == null) {
                     progress.error(
                             Constant.messages.getString("automation.error.job.notype", jobType));
@@ -97,7 +97,6 @@ public class AutomationPlan {
                 if (job != null) {
                     try {
                         job = job.newJob();
-                        Map<?, ?> jobData = env.replaceMapVarsRecursive(rawJobData);
 
                         Object jobName = jobData.get("name");
                         if (jobName != null) {

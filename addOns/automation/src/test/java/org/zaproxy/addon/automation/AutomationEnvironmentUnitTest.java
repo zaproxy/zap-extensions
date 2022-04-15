@@ -43,6 +43,7 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 

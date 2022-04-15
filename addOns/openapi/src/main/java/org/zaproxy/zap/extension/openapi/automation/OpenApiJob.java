@@ -83,8 +83,17 @@ public class OpenApiJob extends AutomationJob {
     }
 
     @Override
-    public void applyParameters(AutomationProgress progress) {
-        // Nothing to do
+    public boolean applyCustomParameter(String name, String value) {
+        switch (name) {
+            case PARAM_API_URL:
+                this.parameters.apiUrl = value;
+                return true;
+            case PARAM_API_FILE:
+                this.parameters.apiFile = value;
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

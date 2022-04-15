@@ -23,30 +23,56 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
-import java.util.LinkedHashMap;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.LinkedHashMap;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
 class OpenApiJobUnitTest {
 
     private ExtensionOpenApi extOpenApi;
+
+    private Session session;
+
+    private static MockedStatic<CommandLine> mockedCmdLine;
+
+    @BeforeAll
+    static void start() throws Exception {
+        mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+    }
+
+    @AfterAll
+    static void close() throws Exception {
+        mockedCmdLine.close();
+    }
 
     @BeforeEach
     void setUp() {
@@ -59,6 +85,11 @@ class OpenApiJobUnitTest {
         given(extensionLoader.getExtension(ExtensionOpenApi.class)).willReturn(extOpenApi);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        session = mock(Session.class);
+        Context context = mock(Context.class);
+        given(session.getNewContext(any())).willReturn(context);
+
     }
 
     @Test
@@ -122,6 +153,48 @@ class OpenApiJobUnitTest {
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldSubstituteEnvironmentVariables() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      url: https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    myEnvVar: myEnvValue\n"
+                        + "jobs:\n"
+                        + "  - type: openapi\n"
+                        + "    parameters:\n"
+                        + "      apiUrl: ${myEnvVar}\n";
+
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+
+        // Then
+        List<?> jobs = (List<?>) data.get("jobs");
+        Map<?, ?> openapiData = (Map<?, ?>) jobs.get(0);
+        OpenApiJob job = new OpenApiJob();
+        job.setJobData(openapiData);
+        job.setEnv(env);
+
+        // When
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+
+        // Then
+        assertThat(((Map<String, Object>) job.getJobData().get("parameters")).get("apiUrl"), is(equalTo("${myEnvVar}")));
+        assertThat(job.getParameters().getApiUrl(), is(equalTo("myEnvValue")));
     }
 
     @Test
