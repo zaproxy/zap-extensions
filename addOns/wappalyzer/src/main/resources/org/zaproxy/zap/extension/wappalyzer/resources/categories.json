@@ -546,21 +546,21 @@
       15
     ],
     "name": "WordPress themes",
-    "priority": 9
+    "priority": 7
   },
   "81": {
     "groups": [
       15
     ],
     "name": "Shopify themes",
-    "priority": 9
+    "priority": 7
   },
   "82": {
     "groups": [
       15
     ],
     "name": "Drupal themes",
-    "priority": 9
+    "priority": 7
   },
   "83": {
     "groups": [
@@ -595,7 +595,7 @@
       15
     ],
     "name": "WordPress plugins",
-    "priority": 9
+    "priority": 8
   },
   "88": {
     "groups": [
@@ -690,7 +690,7 @@
       15
     ],
     "name": "Shopify apps",
-    "priority": 9
+    "priority": 8
   },
   "101": {
     "groups": [
@@ -709,16 +709,31 @@
   },
   "103": {
     "groups": [
-      1
+      1,
+      10
     ],
     "name": "Livestreaming",
     "priority": 9
   },
   "104": {
     "groups": [
-      1
+      14
     ],
     "name": "Ticket booking",
     "priority": 9
+  },
+  "105": {
+    "groups": [
+      10
+    ],
+    "name": "Augmented reality",
+    "priority": 9
+  },
+  "106": {
+    "groups": [
+      1
+    ],
+    "name": "Cross border ecommerce",
+    "priority": 6
   }
 }

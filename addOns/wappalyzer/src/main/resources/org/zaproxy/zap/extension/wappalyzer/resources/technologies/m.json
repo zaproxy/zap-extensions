@@ -142,7 +142,7 @@
     ],
     "css": "\\.MuiPaper-root",
     "description": "MUI(formerly Material UI) is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
-    "dom": "style[data-meta='MuiPaper']",
+    "dom": "style[data-meta='MuiPaper'], div.MuiBox-root",
     "icon": "MUI.svg",
     "oss": true,
     "pricing": [
@@ -1635,6 +1635,27 @@
       "([\\d.]+)?/modernizr(?:\\.([\\d.]+))?.*\\.js\\;version:\\1?\\1:\\2"
     ],
     "website": "https://modernizr.com"
+  },
+  "ModiFace": {
+    "cats": [
+      105
+    ],
+    "description": "ModiFace is a provider of Augmented Reality technology for the beauty industry.",
+    "dom": "iframe[src*='.modiface.com/']",
+    "headers": {
+      "content-security-policy": "\\.modiface\\.com"
+    },
+    "icon": "ModiFace.svg",
+    "js": {
+      "initModiface": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.modiface\\.com/",
+    "website": "https://modiface.com"
   },
   "Modified": {
     "cats": [

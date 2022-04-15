@@ -21,6 +21,24 @@
     },
     "website": "https://www.kissmetrics.com"
   },
+  "KMK": {
+    "cats": [
+      6
+    ],
+    "description": "KMK is a company that offers ecommerce software technology in C2C, B2B, B2C areas.",
+    "dns": {
+      "NS": "ns\\d\\.kmkhosting\\.net",
+      "SOA": "ns\\d\\.kmkhosting\\.net"
+    },
+    "dom": "a[href*='.kmk.net.tr/'][target='_blank'], div#kmkCopyright",
+    "icon": "KMK.svg",
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.kmk.net.tr"
+  },
   "KQS.store": {
     "cats": [
       6

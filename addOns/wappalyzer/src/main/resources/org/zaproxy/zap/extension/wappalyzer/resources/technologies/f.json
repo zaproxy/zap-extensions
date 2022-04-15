@@ -446,8 +446,8 @@
     "icon": "Fenicio.svg",
     "js": {
       "_FN.validadorTelefono": "",
-      "fneCommerce.miCompraVisto": "",
-      "fnWishlist.cargarInfoArticulos": ""
+      "fnWishlist.cargarInfoArticulos": "",
+      "fneCommerce.miCompraVisto": ""
     },
     "pricing": [
       "mid",
@@ -563,12 +563,12 @@
     ],
     "description": "FintechOS is a low-code platform for banking and insurance.",
     "icon": "FintechOS.svg",
-    "meta": {
-      "ftos-app-version": "\\sv([\\d\\.]+)\\s\\;version:\\1"
-    },
     "js": {
       "FtosChat": "",
       "ftos.core.getB2CCulture": ""
+    },
+    "meta": {
+      "ftos-app-version": "\\sv([\\d\\.]+)\\s\\;version:\\1"
     },
     "pricing": [
       "poa"
@@ -778,7 +778,7 @@
   },
   "Flow": {
     "cats": [
-      6
+      106
     ],
     "description": "Flow is an ecommerce platform that enables brands and retailers to sell their merchandise to customers internationally by creating localized shopping experiences.",
     "icon": "Flow.png",
@@ -907,6 +907,21 @@
       "\\.fontawesome\\.com/([0-9a-z]+).js"
     ],
     "website": "https://fontawesome.com/"
+  },
+  "Fontify": {
+    "cats": [
+      100
+    ],
+    "description": "Fontify allows you to utilise any font without having to alter code.",
+    "icon": "Fontify.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "fontify\\.nitroapps\\.co/",
+    "website": "https://apps.shopify.com/fontify-change-customize-font-for-your-store"
   },
   "FooPlugins FooGallery": {
     "cats": [
@@ -1262,6 +1277,22 @@
     ],
     "website": "https://www.laposte.fr/entreprise/produit-entreprise/frequenceo"
   },
+  "Frequently Bought Together": {
+    "cats": [
+      100
+    ],
+    "description": "Frequently Bought Together is a Shopify app which add Amazon-like 'Customers Who Bought This Item Also Bought' product recommendations to your store.",
+    "icon": "Frequently Bought Together.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.codeblackbelt\\.com/js/modules/frequently-bought-together/",
+    "website": "https://www.codeblackbelt.com"
+  },
   "Fresco": {
     "cats": [
       59
@@ -1380,12 +1411,15 @@
       24
     ],
     "description": "Froala Editor is a WYSIWYG HTML Editor written in Javascript that enables rich text editing capabilities for applications.",
-    "html": "<[^>]+class=\"[^\"]*(?:fr-view|fr-box)",
+    "dom": ".fr-view, .fr-box, .fr-popup, .froala-box",
     "icon": "Froala.svg",
     "implies": [
       "jQuery",
       "Font Awesome"
     ],
+    "js": {
+      "FroalaEditor.VERSION": "([\\d\\.]+)\\;version:\\1"
+    },
     "website": "http://froala.com/wysiwyg-editor"
   },
   "FrontPage": {

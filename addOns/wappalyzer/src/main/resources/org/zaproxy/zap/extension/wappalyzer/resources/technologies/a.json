@@ -307,6 +307,24 @@
     "saas": true,
     "website": "https://abicart.com/"
   },
+  "Absorb": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "_absorb_ui_session": ""
+    },
+    "description": "Absorb is a cloud-based learning management system.",
+    "icon": "Absorb.svg",
+    "js": {
+      "AbsorbLMS": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.absorblms.com"
+  },
   "Accentuate Custom Fields": {
     "cats": [
       100
@@ -450,6 +468,23 @@
     },
     "oss": true,
     "website": "https://ackee.electerious.com"
+  },
+  "Acoustic Experience Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Acoustic Experience Analytics (Tealeaf), formerly known as IBM Tealeaf Customer Experience on Cloud, is a SaaS-based analytics solution that delivers Tealeaf core capabilities in an managed cloud environment. Tealeaf captures and manages each visitor interaction on your website and mobile applications.",
+    "icon": "Acoustic.svg",
+    "js": {
+      "TLT.config.core.modules.TLCookie": "",
+      "TLT_VERSION": "",
+      "TeaLeaf": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://acoustic.com/tealeaf"
   },
   "Acquia Campaign Factory": {
     "cats": [
@@ -1610,6 +1645,7 @@
     "icon": "afterpay.png",
     "js": {
       "Afterpay": "",
+      "Afterpay.version": "([\\d\\.]+)\\;version:\\1",
       "AfterpayAttractWidget": "",
       "AfterpayGenericErrorHtml": "",
       "AfterpayWidgetHtml": "",
@@ -2225,12 +2261,26 @@
       19
     ],
     "description": "Amazon S3 or Amazon Simple Storage Service is a service offered by Amazon Web Services (AWS) that provides object storage through a web service interface.",
+    "dom": {
+      "[src*='amazonaws.com']": {
+        "attributes": {
+          "src": "s3\\.[^ ]*amazonaws\\.com"
+        }
+      },
+      "[srcset*='amazonaws.com']": {
+        "attributes": {
+          "srcset": "s3\\.[^ ]*amazonaws\\.com"
+        }
+      }
+    },
     "headers": {
+      "Content-Security-Policy": "s3\\.[^ ]*amazonaws\\.com",
       "server": "^AmazonS3$"
     },
     "icon": "aws-s3.svg",
     "implies": "Amazon Web Services",
     "saas": true,
+    "scriptSrc": "s3\\.[^ ]*amazonaws\\.com",
     "website": "http://aws.amazon.com/s3/"
   },
   "Amazon SES": {
@@ -2920,11 +2970,14 @@
     "description": "Apple Pay is a mobile payment and digital wallet service by Apple that allows users to make payments in person, in iOS apps, and on the web.",
     "dom": [
       "[aria-labelledby='pi-apple_pay']",
-      "script#apple-pay"
+      "script#apple-pay",
+      "script#apple-pay-shop-capabilities",
+      "input#applePayMerchantId"
     ],
     "icon": "Apple.svg",
     "js": {
       "ApplePay": "",
+      "applePayButtonClicked": "",
       "braintree.applePay": "",
       "checkout.enabledpayments.applepay": "^true$",
       "dw.applepay": "",
@@ -3301,6 +3354,11 @@
       "[class^='astro-']": {
         "attributes": {
           "class": "astro-[\\d\\w]{8,}"
+        }
+      },
+      "astro-root": {
+        "attributes": {
+          "uid": ""
         }
       },
       "link[href*='/_astro/']": {

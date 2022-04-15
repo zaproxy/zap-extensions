@@ -202,6 +202,21 @@
     "scriptSrc": "/octopress\\.js",
     "website": "http://octopress.org"
   },
+  "Ocuco FitMix": {
+    "cats": [
+      105
+    ],
+    "description": "Ocuco is now offering its customers FittingBox's FitMix, a virtual frame try-on tool.",
+    "icon": "Ocuco.png",
+    "js": {
+      "FitMix.WIDGET_BASE_URL": "static\\.fittingbox\\.com"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.ocuco.com/fitmix"
+  },
   "Odoo": {
     "cats": [
       1,
@@ -291,11 +306,15 @@
     ],
     "description": "Olark is a cloud-based live chat solution.",
     "icon": "Olark.png",
+    "js": {
+      "olark": "",
+      "olarkUserData": ""
+    },
     "pricing": [
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.olark\\.com",
+    "scriptSrc": "\\.olark\\.com/",
     "website": "https://www.olark.com/"
   },
   "Ometria": {
@@ -378,6 +397,24 @@
     "saas": true,
     "scriptSrc": "omnisrc\\.com",
     "website": "https://www.omnisend.com"
+  },
+  "OnShop": {
+    "cats": [
+      6
+    ],
+    "description": "OnShop is an ecommerce platform for online merchants.",
+    "dom": "link[href*='cdn.onshop.asia/']",
+    "excludes": "OpenCart",
+    "icon": "Onshop.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Onshop Ecommerce"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://onshop.asia"
   },
   "OnUniverse": {
     "cats": [
@@ -528,16 +565,16 @@
     ],
     "description": "Oney is an app that gives consumers back the power over their spending and makes split payments universal.",
     "icon": "Oney.svg",
-    "requiresCategory": 6,
     "js": {
-      "isOneyActive": "",
       "OneyMarketplace": "",
+      "isOneyActive": "",
       "openOneyLayer": ""
     },
-    "scriptSrc": "/modules/oney(?:/)?/views/js/front\\.js",
     "pricing": [
       "payg"
     ],
+    "requiresCategory": 6,
+    "scriptSrc": "/modules/oney(?:/)?/views/js/front\\.js",
     "website": "https://www.oney.com"
   },
   "Onfido": {
@@ -558,20 +595,6 @@
     ],
     "saas": true,
     "website": "https://onfido.com"
-  },
-  "Onshop": {
-    "cats": [
-      6
-    ],
-    "description": "OpenCartfree open-source ecommerce platform for online merchants.",
-    "excludes": "OpenCart",
-    "icon": "Onshop.svg",
-    "implies": "PHP",
-    "meta": {
-      "generator": "Onshop Ecommerce"
-    },
-    "scriptSrc": "/opencart_custom\\.js",
-    "website": "https://onshop.asia"
   },
   "Ookla Speedtest Custom": {
     "cats": [

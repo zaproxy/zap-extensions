@@ -644,10 +644,11 @@
     ],
     "description": "LiteSpeed Cache is an all-in-one site acceleration plugin for WordPress.",
     "headers": {
-      "x-litespeed-cache": ""
+      "x-litespeed-cache": "",
+      "x-turbo-charged-by": "LiteSpeed"
     },
     "icon": "litespeed-cache.png",
-    "requires": "LiteSpeed",
+    "requires": "WordPress",
     "website": "https://wordpress.org/plugins/litespeed-cache/"
   },
   "Lithium": {
@@ -927,7 +928,7 @@
   },
   "Localised": {
     "cats": [
-      6
+      106
     ],
     "description": "Localised is local-first ecommerce platform.",
     "dom": {
@@ -1146,12 +1147,14 @@
     "dom": "a[href*='.loopreturns.com/']",
     "icon": "Loop.svg",
     "js": {
-      "Loop.config.variantParam": ""
+      "Loop.config.variantParam": "",
+      "LoopOnstore": ""
     },
     "pricing": [
       "low",
       "recurring"
     ],
+    "requiresCategory": 6,
     "saas": true,
     "website": "https://www.loopreturns.com"
   },
@@ -1324,6 +1327,29 @@
       "Luigis": ""
     },
     "website": "https://www.luigisbox.com"
+  },
+  "Luna": {
+    "cats": [
+      105
+    ],
+    "description": "Luna is a company that sells software that aids eyewear companies sell their products online using virtual fitting.",
+    "dom": "link[href*='bsdk.api.ditto.com']",
+    "headers": {
+      "Content-Security-Policy": "bsdk\\.api\\.ditto.com"
+    },
+    "icon": "Luna.svg",
+    "js": {
+      "Ditto.__esModule": "",
+      "dittoIdLifetime": "",
+      "globalDittoKey": "",
+      "globalDittoServer": "",
+      "jstextmap.DittoSdkUrl": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://luna.io"
   },
   "LyraThemes Kale": {
     "cats": [

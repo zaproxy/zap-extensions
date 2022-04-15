@@ -1589,11 +1589,13 @@
     "cats": [
       12
     ],
+    "description": "RxJS is a reactive library used to implement reactive programming to deal with async implementation, callbacks, and event-based programs.",
     "icon": "RxJS.png",
     "js": {
       "Rx.CompositeDisposable": "",
       "Rx.Symbol": ""
     },
+    "oss": true,
     "scriptSrc": "rx(?:\\.\\w+)?(?:\\.compat|\\.global)?(?:\\.min)?\\.js",
     "website": "http://reactivex.io"
   },

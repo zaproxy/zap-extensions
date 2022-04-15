@@ -1723,6 +1723,21 @@
     },
     "website": "http://codemirror.net"
   },
+  "Coin Currency Converter": {
+    "cats": [
+      100
+    ],
+    "description": "Coin Currency Converter is an automatic currency conversion app for Shopify.",
+    "icon": "Coin Currency Converter.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "/apps/coin/coin\\.js.+\\.myshopify\\.com",
+    "website": "https://apps.shopify.com/coin"
+  },
   "CoinHive": {
     "cats": [
       56
@@ -2127,6 +2142,25 @@
     "saas": true,
     "scriptSrc": "app\\.conjured\\.co/",
     "website": "https://conjured.co"
+  },
+  "Connectif": {
+    "cats": [
+      76,
+      32
+    ],
+    "description": "Connectif is a marketing automation and personalisation data-first action platform, powered by AI.",
+    "icon": "Connectif.svg",
+    "js": {
+      "connectif.version": "^([\\d\\.]+)$\\;version:\\1",
+      "connectifInfo.store": ""
+    },
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.connectif\\.cloud/",
+    "website": "https://connectif.ai"
   },
   "Constant Contact": {
     "cats": [
@@ -3237,7 +3271,9 @@
       31
     ],
     "description": "cdnjs is a free distributed JS library delivery service.",
+    "dom": "link[href*='cdnjs.cloudflare.com/']",
     "icon": "cdnjs.svg",
+    "implies": "Cloudflare",
     "oss": true,
     "scriptSrc": "cdnjs\\.cloudflare\\.com",
     "website": "https://cdnjs.com"
