@@ -135,6 +135,17 @@
     "website": "https://8base.com",
     "xhr": "api\\.8base\\.com"
   },
+  "<model-viewer>": {
+    "cats": [
+      105
+    ],
+    "description": "<model-viewer> is an open-source web component developed by Google and maintained through GitHub. <model-viewer> aims at putting 3D content on the web easily with a few lines of HTML code. This was first introduced with Chrome 72 in July 2019 and enables users to view 3D in the browser and mobile devices.",
+    "dom": "model-viewer",
+    "icon": "model-viewer.svg",
+    "oss": true,
+    "scriptSrc": "/model-viewer/dist/model-viewer\\.min\\.js",
+    "website": "https://modelviewer.dev"
+  },
   "@sulu/web": {
     "cats": [
       59

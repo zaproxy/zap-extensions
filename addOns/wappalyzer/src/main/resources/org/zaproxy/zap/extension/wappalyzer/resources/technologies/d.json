@@ -1294,6 +1294,33 @@
     "saas": true,
     "website": "https://www.duda.co/website-builder"
   },
+  "Duel": {
+    "cats": [
+      71
+    ],
+    "cookies": {
+      "_duelcsrf": ""
+    },
+    "description": "Duel is a customer advocacy marketing platform.",
+    "icon": "Duel.svg",
+    "implies": [
+      "Node.js",
+      "Angular",
+      "MongoDB"
+    ],
+    "js": {
+      "DUEL.apiURL": "api\\.duel\\.me"
+    },
+    "pricing": [
+      "poa",
+      "high",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.duel\\.me/",
+    "website": "https://www.duel.tech"
+  },
   "Dukaan": {
     "cats": [
       6

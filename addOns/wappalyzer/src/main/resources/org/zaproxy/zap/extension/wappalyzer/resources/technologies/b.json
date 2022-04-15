@@ -801,6 +801,9 @@
       "NS": "\\.bluehost\\.com",
       "SOA": "\\.bluehost\\.com"
     },
+    "headers": {
+      "host-header": "c2hhcmVkLmJsdWVob3N0LmNvbQ=="
+    },
     "icon": "Bluehost.svg",
     "pricing": [
       "payg",
@@ -1159,7 +1162,7 @@
   },
   "Borderfree": {
     "cats": [
-      6
+      106
     ],
     "cookies": {
       "bfx.apiKey:": "^[\\w\\d-]+$\\;confidence:25",

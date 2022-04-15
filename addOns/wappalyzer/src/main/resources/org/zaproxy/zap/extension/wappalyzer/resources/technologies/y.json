@@ -408,6 +408,24 @@
     "scriptSrc": "cdn\\.yottaa\\.\\w+/",
     "website": "https://www.yottaa.com"
   },
+  "YouCam Makeup": {
+    "cats": [
+      105
+    ],
+    "description": "YouCam Makeup is a cross-platform virtual makeup solution for omnichannel ecommerce.",
+    "icon": "YouCam Makeup.png",
+    "js": {
+      "YMK.applyMakeupByLook": "",
+      "YMK.calDeltaE": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "plugins-media\\.(?:perfectcorp|makeupar)\\.com/",
+    "website": "https://www.perfectcorp.com/business/products/virtual-makeup"
+  },
   "YouCan": {
     "cats": [
       6

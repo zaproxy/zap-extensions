@@ -119,6 +119,28 @@
     "scriptSrc": "cdn\\.quantummetric\\.com",
     "website": "https://www.quantummetric.com/"
   },
+  "Quasar": {
+    "cats": [
+      12
+    ],
+    "description": "Quasar is an open-source Vue.js based framework.",
+    "dom": {
+      "div#q-app": {
+        "attributes": {
+          "id": "\\;confidence:50"
+        }
+      },
+      "div.q-page-container": {
+        "attributes": {
+          "class": "\\;confidence:50"
+        }
+      }
+    },
+    "icon": "Quasar.svg",
+    "oss": true,
+    "requires": "Vue.js",
+    "website": "https://quasar.dev"
+  },
   "Qubit": {
     "cats": [
       74,

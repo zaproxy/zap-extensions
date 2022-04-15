@@ -480,6 +480,33 @@
     "saas": true,
     "website": "https://webshopmanager.com"
   },
+  "Web Stories": {
+    "cats": [
+      5
+    ],
+    "description": "Web Stories is a format for visual storytelling for the open web.",
+    "dom": "amp-story",
+    "icon": "Web-Stories.svg",
+    "implies": "AMP",
+    "oss": true,
+    "website": "https://amp.dev/about/stories/"
+  },
+  "Web Stories for WordPress": {
+    "cats": [
+      20,
+      87
+    ],
+    "description": "Web Stories for WordPress is a visual editor for creating Web Stories.",
+    "icon": "Web-Stories.svg",
+    "implies": "Web Stories",
+    "meta": {
+      "amp-story-generator-name": "^Web Stories for WordPress$",
+      "amp-story-generator-version": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wp.stories.google"
+  },
   "Web2py": {
     "cats": [
       18
@@ -497,16 +524,6 @@
     },
     "scriptSrc": "web2py\\.js",
     "website": "http://web2py.com"
-  },
-  "WebAR": {
-    "cats": [
-      19
-    ],
-    "html": [
-      "<model-viewer"
-    ],
-    "icon": "webAR.svg",
-    "website": "https://modelviewer.dev/"
   },
   "WebAssembly": {
     "cats": [
@@ -1157,6 +1174,19 @@
     "scriptSrc": "\\.wistia\\.com",
     "website": "https://wistia.com"
   },
+  "With Reach": {
+    "cats": [
+      106
+    ],
+    "description": "With Reach is a fintech/payments service provider that helps retailers connect with customers around the world.",
+    "icon": "With Reach.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.rch\\.io/",
+    "website": "https://www.withreach.com"
+  },
   "Wix": {
     "cats": [
       1,
@@ -1599,7 +1629,7 @@
   },
   "WorldShopping": {
     "cats": [
-      6
+      106
     ],
     "description": "WorldShopping makes online purchases in Japan easier for international visitors.",
     "icon": "worldshopping.png",

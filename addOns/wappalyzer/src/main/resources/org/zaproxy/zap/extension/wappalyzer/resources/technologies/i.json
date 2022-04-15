@@ -536,6 +536,22 @@
     "scriptSrc": "/rokoInstabot\\.js",
     "website": "https://instabot.io/"
   },
+  "Instafeed": {
+    "cats": [
+      100
+    ],
+    "description": "Instafeed is an official Instagram app.",
+    "icon": "Instafeed.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "instafeed\\.nfcube\\.com/",
+    "website": "https://apps.shopify.com/instafeed"
+  },
   "Instana": {
     "cats": [
       10,

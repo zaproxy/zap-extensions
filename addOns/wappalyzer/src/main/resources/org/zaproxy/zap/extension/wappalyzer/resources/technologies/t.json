@@ -305,7 +305,7 @@
     "cats": [
       66
     ],
-    "css": "\\--tw*\\;confidence:75",
+    "css": "--tw-",
     "description": "Tailwind is a utility-first CSS framework.",
     "dom": {
       "link[rel='stylesheet'][href*='tailwind']": {
@@ -463,16 +463,6 @@
     "scriptSrc": "teads\\.tv",
     "website": "https://www.teads.com",
     "xhr": "\\.teads\\.tv"
-  },
-  "Tealeaf": {
-    "cats": [
-      10
-    ],
-    "icon": "Tealeaf.png",
-    "js": {
-      "TeaLeaf": ""
-    },
-    "website": "http://www.tealeaf.com"
   },
   "Tealium": {
     "cats": [
@@ -1350,7 +1340,7 @@
   },
   "Threekit": {
     "cats": [
-      76,
+      105,
       95
     ],
     "description": "Threekit is a visual customer experience solution that enables brands to create, manage and scale photorealistic images and 3D product visuals, all from a single design file.",

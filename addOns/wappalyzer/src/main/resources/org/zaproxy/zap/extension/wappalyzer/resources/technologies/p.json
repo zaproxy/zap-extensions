@@ -1951,6 +1951,7 @@
     },
     "cpe": "cpe:/a:prestashop:prestashop",
     "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
+    "dom": "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
     "headers": {
       "Powered-By": "^Prestashop$"
     },
@@ -2291,6 +2292,19 @@
     "scriptSrc": "https?://[^/]*\\.pubmatic\\.com",
     "website": "http://www.pubmatic.com/",
     "xhr": "\\.pubmatic\\.com"
+  },
+  "PubSubJS": {
+    "cats": [
+      59
+    ],
+    "description": "PubSubJS is a topic-based publish/subscribe library written in JavaScript.",
+    "icon": "pubsub-js.png",
+    "js": {
+      "PubSub": "",
+      "PubSub.version": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/mroderick/PubSubJS"
   },
   "Public CMS": {
     "cats": [

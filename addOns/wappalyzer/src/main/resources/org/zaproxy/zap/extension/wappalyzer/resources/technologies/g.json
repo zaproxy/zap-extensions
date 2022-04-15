@@ -132,6 +132,23 @@
     "requires": "WordPress",
     "website": "https://gtranslate.io"
   },
+  "GTranslate app": {
+    "cats": [
+      100,
+      89
+    ],
+    "description": "GTranslate app is a website translator which can translate any website to any language automatically.",
+    "dom": "img[src*='gtranslate.io/shopify']",
+    "icon": "GTranslate.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "scriptSrc": "gtranslate\\.io/shopify/",
+    "website": "https://apps.shopify.com/multilingual-shop-by-gtranslate"
+  },
   "GX WebManager": {
     "cats": [
       1
@@ -527,6 +544,22 @@
     },
     "website": "http://ghost.org"
   },
+  "Gist Giftship": {
+    "cats": [
+      100
+    ],
+    "description": "Gist Giftship is a gifting app on Shopify that allows your customers to complete all of their gift shopping at once.",
+    "icon": "Gist.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "assets/js/giftship\\.([\\d\\.]+)\\.js\\;version:\\1",
+    "website": "https://gist-apps.com/giftship"
+  },
   "GitBook": {
     "cats": [
       4
@@ -694,7 +727,7 @@
   },
   "Global-e": {
     "cats": [
-      6
+      106
     ],
     "cookies": {
       "GlobalE_CT_Data": "",
@@ -713,6 +746,55 @@
     "saas": true,
     "scriptSrc": "\\.global-e\\.com",
     "website": "https://www.global-e.com"
+  },
+  "GlobalShopex": {
+    "cats": [
+      106
+    ],
+    "description": "GlobalShopex offers a logistics ecommerce solution easy to integrate, which helps online businesses to sell in over 200 countries.",
+    "icon": "GlobalShopex.png",
+    "js": {
+      "GSXMiniCheckout": "",
+      "GSXPreviewCheckout": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//globalshopex\\.com/",
+    "website": "http://www.globalshopex.com"
+  },
+  "Globo Also Bought": {
+    "cats": [
+      100
+    ],
+    "description": "Also Bought is a conversion Shopify app by Globo.",
+    "icon": "Also Bought.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "assets/globo\\.alsobought\\.js",
+    "website": "https://apps.shopify.com/globo-related-products"
+  },
+  "Glopal": {
+    "cats": [
+      106
+    ],
+    "description": "Glopal provides advanced international marketing solutions for ecommerce retailers and brands seeking to grow their businesses' globally.",
+    "icon": "Glopal.png",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.glopal\\.com/",
+    "website": "https://www.glopal.com"
   },
   "GloriaFood": {
     "cats": [
@@ -1447,8 +1529,12 @@
       41,
       91
     ],
-    "description": "Grab Pay Later is a Buy now pay later solution offered by Grab.",
+    "description": "Grab Pay Later is a buy now pay later solution offered by Grab.",
     "icon": "Grab.svg",
+    "js": {
+      "GrabWidget": "",
+      "grab_widget_money_format": ""
+    },
     "saas": true,
     "scriptSrc": "grab-paylater\\.js",
     "website": "https://www.grab.com/sg/finance/pay-later/"
@@ -1464,11 +1550,11 @@
       "Macaron"
     ],
     "js": {
-      "__grafana_public_path__": "",
-      "grafanaBootData.settings.buildInfo['version']": "([\\d.]+)\\;version:\\1"
+      "__grafana_public_path__": ""
     },
     "oss": true,
     "scriptSrc": "grafana\\..+\\.com/public/build/",
+    "scripts": ".+latestVersion\":\"[\\d\\.\\w\\-]+\"\\,\"version\":\"([\\d\\.]+)\\;version:\\1\\;confidence:75",
     "website": "https://grafana.com"
   },
   "Graffiti CMS": {

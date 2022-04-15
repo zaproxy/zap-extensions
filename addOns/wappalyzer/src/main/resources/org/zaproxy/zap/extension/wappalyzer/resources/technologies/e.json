@@ -590,6 +590,20 @@
     "scriptSrc": "cdn\\.enable\\.co\\.il/",
     "website": "https://www.enable.co.il"
   },
+  "Endurance Page Cache": {
+    "cats": [
+      87,
+      23
+    ],
+    "description": "Endurance Page Cache adds basic file-based caching to WordPress.",
+    "headers": {
+      "x-endurance-cache-level": ""
+    },
+    "icon": "endurance-cache.png",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://github.com/bluehost/endurance-page-cache"
+  },
   "Engagio": {
     "cats": [
       10
@@ -1003,6 +1017,26 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/google-analytics-dashboard-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.exactmetrics.com"
+  },
+  "Exemptify": {
+    "cats": [
+      106,
+      100
+    ],
+    "description": "Exemptify allows you to conduct proper EU B2B transactions by validating EU VAT IDs.",
+    "icon": "Exemptify.png",
+    "js": {
+      "ExemptifyTriggerUpdate": "",
+      "m4u_ex_vat_postfix_txt": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.modules4u\\.biz/shopify/exemptify",
+    "website": "http://modules4u.biz/exemptify"
   },
   "Exhibit": {
     "cats": [

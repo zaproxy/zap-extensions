@@ -331,6 +331,23 @@
     "saas": true,
     "website": "https://verloop.io/"
   },
+  "ViaBill": {
+    "cats": [
+      91
+    ],
+    "description": "ViaBill is a cloud-based payment management solution designed to help small to midsize retailers and webshops.",
+    "icon": "ViaBill.png",
+    "js": {
+      "viabillOptions.state.subscriptions": "",
+      "viabillPricetagInternal.conf.productsByLocale": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.viabill\\.com/",
+    "website": "https://viabill.com"
+  },
   "Vidazoo": {
     "cats": [
       36
@@ -550,6 +567,21 @@
       "recurring"
     ],
     "website": "https://visualcomposer.com"
+  },
+  "Visual Quiz Builder": {
+    "cats": [
+      100
+    ],
+    "description": "Visual Quiz Builder is a Shopify app built by AskWhai.",
+    "icon": "Visual Quiz Builder.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "//whai-cdn\\.nyc\\d\\.cdn\\.digitaloceanspaces\\.com/",
+    "website": "https://apps.shopify.com/product-recommendation-quiz"
   },
   "Visualsoft": {
     "cats": [
