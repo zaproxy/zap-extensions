@@ -91,6 +91,9 @@ public class OpenApiJob extends AutomationJob {
             case PARAM_API_FILE:
                 this.parameters.apiFile = value;
                 return true;
+            case PARAM_TARGET_URL:
+                this.parameters.targetUrl = value;
+                return true;
             default:
                 return false;
         }

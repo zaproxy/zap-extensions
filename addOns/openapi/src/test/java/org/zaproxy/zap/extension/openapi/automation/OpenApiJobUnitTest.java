@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.openapi.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -65,12 +66,12 @@ class OpenApiJobUnitTest {
     private static MockedStatic<CommandLine> mockedCmdLine;
 
     @BeforeAll
-    static void start() throws Exception {
+    static void start() {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
     }
 
     @AfterAll
-    static void close() throws Exception {
+    static void close() {
         mockedCmdLine.close();
     }
 
@@ -89,7 +90,6 @@ class OpenApiJobUnitTest {
         session = mock(Session.class);
         Context context = mock(Context.class);
         given(session.getNewContext(any())).willReturn(context);
-
     }
 
     @Test
@@ -151,8 +151,8 @@ class OpenApiJobUnitTest {
         assertThat(job.getParameters().getApiFile(), is(equalTo(apiFile)));
         assertThat(job.getParameters().getApiUrl(), is(equalTo(apiUrl)));
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors(), is(empty()));
+        assertThat(progress.getWarnings(), is(empty()));
     }
 
     @Test
@@ -177,18 +177,18 @@ class OpenApiJobUnitTest {
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
         AutomationProgress progress = new AutomationProgress();
 
+        List<?> jobs = (List<?>) data.get("jobs");
+        Map<?, ?> openapiData = (Map<?, ?>) jobs.get(0);
+
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
         env.create(session, progress);
 
-        // Then
-        List<?> jobs = (List<?>) data.get("jobs");
-        Map<?, ?> openapiData = (Map<?, ?>) jobs.get(0);
         OpenApiJob job = new OpenApiJob();
         job.setJobData(openapiData);
         job.setEnv(env);
 
-        // When
+
         job.verifyParameters(progress);
         job.applyParameters(progress);
 

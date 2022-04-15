@@ -96,7 +96,6 @@ public class AutomationPlan {
                 if (job != null) {
                     try {
                         job = job.newJob();
-
                         Object jobName = jobData.get("name");
                         if (jobName != null) {
                             if (jobName instanceof String) {
