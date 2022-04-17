@@ -62,6 +62,11 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("oast.scripts.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("oast.scripts.desc");
     }

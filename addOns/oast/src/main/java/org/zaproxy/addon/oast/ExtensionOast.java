@@ -321,6 +321,16 @@ public class ExtensionOast extends ExtensionAdaptor {
         unregisterOastService(interactshService);
     }
 
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("oast.ext.name");
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("oast.ext.description");
+    }
+
     private class OastSessionChangedListener implements SessionChangedListener {
         @Override
         public void sessionChanged(Session session) {
