@@ -9,6 +9,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 - Maintenance changes.
 
+### Added
+- Extension description and UI name.
+
 ## [0.10.0] - 2022-02-18
 ### Added
 - The following two statistics for each OAST service:
