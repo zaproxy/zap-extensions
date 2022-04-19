@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Test type to check for presence of a URL.
 
 ### Fixed
+- Use correct authentication verification method for `request`.
 - Exceptions when using the GUI.
 
 ## [0.14.0] - 2022-04-05

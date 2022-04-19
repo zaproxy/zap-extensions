@@ -191,7 +191,7 @@ public class VerificationData extends AutomationData {
                 authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
                 break;
             case METHOD_REQUEST:
-                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_REQ);
                 break;
             case METHOD_POLL:
             default:
