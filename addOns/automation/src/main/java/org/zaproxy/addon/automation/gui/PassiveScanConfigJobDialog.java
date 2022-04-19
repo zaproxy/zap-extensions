@@ -130,6 +130,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
         if (this.modifyButton == null) {
             this.modifyButton =
                     new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+            modifyButton.setEnabled(false);
             this.modifyButton.addActionListener(
                     e -> {
                         int row = getRulesTable().getSelectedRow();
@@ -194,6 +195,9 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
                         public void mouseClicked(MouseEvent me) {
                             if (me.getClickCount() == 2) {
                                 int row = getRulesTable().getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
                                 AddPscanRuleDialog dialog =
                                         new AddPscanRuleDialog(
                                                 getRulesModel(),

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Test type to check for presence of a URL.
 
+### Fixed
+- Exceptions when using the GUI.
+
 ## [0.14.0] - 2022-04-05
 ### Added
 - Import Job profile (Issue 7078).

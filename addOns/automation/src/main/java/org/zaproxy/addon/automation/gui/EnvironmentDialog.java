@@ -138,6 +138,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
         if (this.modifyContextButton == null) {
             this.modifyContextButton =
                     new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+            modifyContextButton.setEnabled(false);
             this.modifyContextButton.addActionListener(
                     e -> {
                         int row = getContextsTable().getSelectedRow();
@@ -190,6 +191,9 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                         public void mouseClicked(MouseEvent me) {
                             if (me.getClickCount() == 2) {
                                 int row = contextsTable.getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
                                 ContextDialog dialog =
                                         new ContextDialog(
                                                 EnvironmentDialog.this,
@@ -231,6 +235,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
         if (this.modifyEnvVarButton == null) {
             this.modifyEnvVarButton =
                     new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+            modifyEnvVarButton.setEnabled(false);
             this.modifyEnvVarButton.addActionListener(
                     e -> {
                         int row = getEnvVarsTable().getSelectedRow();
@@ -282,6 +287,9 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                         public void mouseClicked(MouseEvent me) {
                             if (me.getClickCount() == 2) {
                                 int row = envVarTable.getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
                                 EnvVarDialog dialog =
                                         new EnvVarDialog(
                                                 EnvironmentDialog.this,

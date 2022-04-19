@@ -174,6 +174,9 @@ public class RequestorJobDialog extends StandardFieldsDialog {
                         public void mouseClicked(MouseEvent me) {
                             if (me.getClickCount() == 2) {
                                 int row = getRulesTable().getSelectedRow();
+                                if (row == -1) {
+                                    return;
+                                }
                                 AddRequestDialog dialog =
                                         new AddRequestDialog(
                                                 getRulesModel(),
