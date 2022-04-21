@@ -2,26 +2,26 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework
+Automatisierungsframework
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework</H1>
-This add-on provides a framework that allows ZAP to be automated in an easy and flexible way.
+<H1>Automatisierungsframework</H1>
+Diese Erweiterung liefert ein Framework, welches es erlaubt ZAP einfach und flexibel zu automatisieren.
 <p>
-It provides the following command line options:
+Es enthält die folgenden Kommandozeilenoptionen:
 <ul>
-<li>-autorun &lt;filename&gt;		Run the automation jobs specified in the file.
+<li>-autorun &lt;filename&gt;		Starte die Automationsjobs aus der angegebenen Datei.
 <li>-autogenmin &lt;filename&gt;	Generate template automation file with the key parameters.
 <li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
 <li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
 </ul>
 
-If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> option then the ZAP exit value will be set as follows: 
+Wenn die <code>-autorun</code>-Option mit der ZAP <code>-cmd</code>-Option verwendet wird, setzt ZAP den Exit Code wie folgt: 
 <ul>
-<li>0 - The plan completed successfully with no errors or warnings
-<li>1 - The plan reported one or more errors
-<li>2 - The plan reported no errors but one or more warnings
+<li>0 - Der Plan konnte erfolgreich und ohne Fehler abgeschlossen werden
+<li>1 - Der Plan hatte einen oder mehrere Fehler
+<li>2 - Der Plan hatte keine Fehler aber eine oder mehrere Warnungen
 </ul>
 Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
 <p>
