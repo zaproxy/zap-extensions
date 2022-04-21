@@ -56,6 +56,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
@@ -256,6 +257,12 @@ public class ExtensionCallHome extends ExtensionAdaptor
         try {
             return getCheckForUpdatesData();
         } catch (Exception e) {
+            if (e.getMessage().contains("PKIX path building failed")) {
+                String message = Constant.messages.getString("callhome.pkix.fail.message");
+                LOGGER.warn(message);
+                updateOutput(message);
+                return null;
+            }
             LOGGER.error(e.getMessage(), e);
         }
         return null;
@@ -563,5 +570,13 @@ public class ExtensionCallHome extends ExtensionAdaptor
     public List<String> getHandledExtensions() {
         // Not supported
         return null;
+    }
+
+    private static void updateOutput(String message) {
+        if (View.isInitialised()) {
+            StringBuilder sb = new StringBuilder(message.length() + 1);
+            sb.append(message).append('\n');
+            View.getSingleton().getOutputPanel().append(sb.toString());
+        }
     }
 }
