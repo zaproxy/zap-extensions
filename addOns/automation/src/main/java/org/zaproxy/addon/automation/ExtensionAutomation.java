@@ -554,4 +554,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public String getAuthor() {
         return Constant.ZAP_TEAM;
     }
+
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("automation.name");
+    }
 }

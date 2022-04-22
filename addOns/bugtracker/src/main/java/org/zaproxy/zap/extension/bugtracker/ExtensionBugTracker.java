@@ -104,6 +104,11 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("bugtracker.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
     }

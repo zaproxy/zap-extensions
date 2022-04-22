@@ -97,6 +97,11 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString(PREFIX + ".name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
     }

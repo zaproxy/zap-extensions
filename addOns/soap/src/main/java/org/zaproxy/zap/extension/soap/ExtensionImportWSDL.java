@@ -246,6 +246,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("soap.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("soap.desc");
     }

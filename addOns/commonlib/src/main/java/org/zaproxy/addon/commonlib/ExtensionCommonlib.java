@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -53,6 +54,16 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public boolean supportsDb(String type) {
         return true;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("commonlib.desc");
+    }
+
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("commonlib.name");
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {

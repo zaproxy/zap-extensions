@@ -35,6 +35,11 @@ public class ExtensionAscanRules extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("ascanrules.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("ascanrules.desc");
     }

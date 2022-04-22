@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "The beta quality Active Scanner rules"
+description = "The beta status Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules (beta)")

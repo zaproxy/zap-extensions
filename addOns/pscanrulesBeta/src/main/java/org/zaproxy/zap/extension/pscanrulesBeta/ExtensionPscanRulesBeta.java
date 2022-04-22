@@ -35,6 +35,11 @@ public class ExtensionPscanRulesBeta extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("pscanbeta.name");
+    }
+
+    @Override
     public String getName() {
         return "ExtensionPscanRulesBeta";
     }

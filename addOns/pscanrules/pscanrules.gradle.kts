@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "The release quality Passive Scanner rules"
+description = "The release status Passive Scanner rules"
 
 zapAddOn {
     addOnName.set("Passive scanner rules")
