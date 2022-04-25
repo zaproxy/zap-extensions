@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.15.0] - 2022-04-25
 ### Added
 - Test type to check for presence of a URL.
 
@@ -156,6 +156,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.12.0
