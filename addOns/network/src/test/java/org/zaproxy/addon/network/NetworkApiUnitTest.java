@@ -37,6 +37,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
@@ -50,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -140,7 +142,49 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(networkApi.getApiActions(), hasSize(12));
         assertThat(networkApi.getApiViews(), hasSize(5));
-        assertThat(networkApi.getApiOthers(), hasSize(1));
+        assertThat(networkApi.getApiOthers(), hasSize(2));
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"unknown", "something"})
+    void shouldThrowApiExceptionForUnknownShortcut(String path) throws Exception {
+        // Given
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        HttpMessage message = new HttpMessage(new URI("http://zap/" + path, true));
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
+    }
+
+    @Test
+    void shouldReturnProxyPacFromShortcutIfHandlingLocalServers() throws Exception {
+        // Given
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        String proxyPacContent = "Proxy PAC Content";
+        given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
+        HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
+        // When
+        HttpMessage response = networkApi.handleShortcut(message);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo(proxyPacContent)));
+        verify(extensionNetwork).getProxyPacContent("zap");
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenGettingProxyPacFromShortcutIfNotHandlingLocalServers()
+            throws Exception {
+        // Given
+        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
+        HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
+        verify(extensionNetwork, times(0)).getProxyPacContent(any());
     }
 
     @ParameterizedTest
@@ -317,6 +361,38 @@ class NetworkApiUnitTest extends TestUtils {
                         ApiException.class, () -> networkApi.handleApiOther(message, name, params));
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
+    }
+
+    @Test
+    void shouldReturnProxyPacIfHandlingLocalServers() throws Exception {
+        // Given
+        String name = "proxy.pac";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        String proxyPacContent = "Proxy PAC Content";
+        given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
+        HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
+        // When
+        HttpMessage response = networkApi.handleApiOther(message, name, params);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo(proxyPacContent)));
+        verify(extensionNetwork).getProxyPacContent("zap");
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenGettingProxyPacIfNotHandlingLocalServers() throws Exception {
+        // Given
+        String name = "proxy.pac";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
+        HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
+        // When
+        ApiException exception =
+                assertThrows(
+                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
+        verify(extensionNetwork, times(0)).getProxyPacContent(any());
     }
 
     @Test

@@ -1352,4 +1352,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
         return "";
     }
+
+    String getProxyPacContent(String hostname) {
+        LocalServerConfig serverConfig = localServersOptions.getMainProxy();
+        int port = serverConfig.getPort();
+        String domain = null;
+        if (serverConfig.isAnyLocalAddress()) {
+            String localDomain = hostname;
+            if (!API.API_DOMAIN.equals(localDomain)) {
+                domain = localDomain;
+            }
+        }
+        if (domain == null) {
+            domain = serverConfig.getAddress();
+        }
+
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("function FindProxyForURL(url, host) {\n");
+        sb.append("  return \"PROXY ").append(domain).append(':').append(port).append("\";\n");
+        sb.append("} // End of function\n");
+        return sb.toString();
+    }
 }
