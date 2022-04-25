@@ -1068,6 +1068,61 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThrows(NullPointerException.class, () -> extension.createHttpServer(handler));
     }
 
+    @Test
+    void shouldGetProxyPacContent() {
+        // Given
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(mock(ExtensionHook.class));
+        String domain = "X";
+        // When
+        String proxyPacContent = extension.getProxyPacContent(domain);
+        // Then
+        assertThat(
+                proxyPacContent,
+                is(
+                        equalTo(
+                                "function FindProxyForURL(url, host) {\n  return \"PROXY localhost:8080\";\n} // End of function\n")));
+    }
+
+    @Test
+    void shouldGetProxyPacContentWithAccessedDomainIfProxyAnyAddressAndNotZapDomain() {
+        // Given
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(mock(ExtensionHook.class));
+        extension.getLocalServersOptions().load(new ZapXmlConfiguration());
+        extension.getLocalServersOptions().getMainProxy().setAddress("0.0.0.0");
+        String domain = "127.0.0.1";
+        // When
+        String proxyPacContent = extension.getProxyPacContent(domain);
+        // Then
+        assertThat(
+                proxyPacContent,
+                is(
+                        equalTo(
+                                "function FindProxyForURL(url, host) {\n  return \"PROXY 127.0.0.1:8080\";\n} // End of function\n")));
+    }
+
+    @Test
+    void shouldGetProxyPacContentWithAnyAddressIfNoAddressKnown() {
+        // Given
+        extension.handleServerCerts = true;
+        extension.handleLocalServers = true;
+        extension.hook(mock(ExtensionHook.class));
+        extension.getLocalServersOptions().load(new ZapXmlConfiguration());
+        extension.getLocalServersOptions().getMainProxy().setAddress("0.0.0.0");
+        String domain = "zap";
+        // When
+        String proxyPacContent = extension.getProxyPacContent(domain);
+        // Then
+        assertThat(
+                proxyPacContent,
+                is(
+                        equalTo(
+                                "function FindProxyForURL(url, host) {\n  return \"PROXY 0.0.0.0:8080\";\n} // End of function\n")));
+    }
+
     private void mockRootCaKeyStore() throws Exception {
         KeyStore keyStore =
                 SslCertificateUtils.string2Keystore(NetworkTestUtils.FISH_CERT_BASE64_STR);

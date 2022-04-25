@@ -78,6 +78,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
     private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
 
+    private static final String OTHER_PROXY_PAC = "proxy.pac";
     private static final String OTHER_ROOT_CA_CERT = "rootCaCert";
 
     private static final String PARAM_ADDRESS = "address";
@@ -154,6 +155,9 @@ public class NetworkApi extends ApiImplementor {
             this.addApiView(new ApiView(VIEW_GET_ALIASES));
             this.addApiView(new ApiView(VIEW_GET_LOCAL_SERVERS));
             this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
+
+            this.addApiOthers(new ApiOther(OTHER_PROXY_PAC, false));
+            this.addApiShortcut(OTHER_PROXY_PAC);
         }
 
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
@@ -474,6 +478,22 @@ public class NetworkApi extends ApiImplementor {
     public HttpMessage handleApiOther(HttpMessage msg, String name, JSONObject params)
             throws ApiException {
         switch (name) {
+            case OTHER_PROXY_PAC:
+                if (!isHandleLocalServers(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_OTHER);
+                }
+                try {
+                    String response =
+                            extensionNetwork.getProxyPacContent(
+                                    msg.getRequestHeader().getHostName());
+                    msg.setResponseHeader(
+                            API.getDefaultResponseHeader("text/html", response.length()));
+                    msg.setResponseBody(response);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                return msg;
+
             case OTHER_ROOT_CA_CERT:
                 KeyStore keyStore = extensionNetwork.getRootCaKeyStore();
                 if (keyStore == null) {
@@ -500,5 +520,19 @@ public class NetworkApi extends ApiImplementor {
             default:
                 throw new ApiException(ApiException.Type.BAD_OTHER);
         }
+    }
+
+    @Override
+    public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
+        if (isHandleLocalServers(extensionNetwork)
+                && msg.getRequestHeader()
+                        .getURI()
+                        .getEscapedPath()
+                        .startsWith("/" + OTHER_PROXY_PAC)) {
+            return handleApiOther(msg, OTHER_PROXY_PAC, new JSONObject());
+        }
+
+        throw new ApiException(
+                ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
     }
 }
