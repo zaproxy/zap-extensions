@@ -121,12 +121,12 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("quickstart.launch.desc");
+        return Constant.messages.getString("quickstart.hud.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("quickstart.launch.name");
+        return Constant.messages.getString("quickstart.hud.name");
     }
 
     public ExtensionQuickStart getExtQuickStart() {

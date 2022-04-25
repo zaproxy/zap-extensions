@@ -40,6 +40,11 @@ public class ExtensionAscanRulesAlpha extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("ascanalpha.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("ascanalpha.desc");
     }

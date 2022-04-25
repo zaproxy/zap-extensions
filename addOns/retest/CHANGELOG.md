@@ -8,6 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Scan Rule ID values are no longer displayed with commas.
+- Maintenance changes.
 
 ### Fixed
 - The Retest dialog now properly resets between ZAP sessions (Issue 7147).

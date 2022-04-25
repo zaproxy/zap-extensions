@@ -123,6 +123,11 @@ public class ExtensionRetest extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("retest.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("retest.desc");
     }

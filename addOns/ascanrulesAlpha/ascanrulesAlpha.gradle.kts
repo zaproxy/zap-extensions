@@ -1,4 +1,4 @@
-description = "The alpha quality Active Scanner rules"
+description = "The alpha status Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules (alpha)")

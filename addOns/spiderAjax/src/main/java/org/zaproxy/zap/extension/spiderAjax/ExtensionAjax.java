@@ -396,6 +396,11 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return this.getMessages().getString("spiderajax.desc");
     }
 
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("spiderajax.name");
+    }
+
     public SpiderThread createSpiderThread(
             String displayName, AjaxSpiderTarget target, SpiderListener spiderListener) {
         SpiderThread spiderThread =

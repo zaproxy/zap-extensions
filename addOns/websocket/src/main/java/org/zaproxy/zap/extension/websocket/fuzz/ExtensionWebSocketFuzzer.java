@@ -74,6 +74,11 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("websocket.fuzzer.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("websocket.fuzzer.description");
     }

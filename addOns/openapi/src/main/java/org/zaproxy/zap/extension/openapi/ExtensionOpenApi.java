@@ -477,6 +477,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("openapi.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("openapi.desc");
     }
