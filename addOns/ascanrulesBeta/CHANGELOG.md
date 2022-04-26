@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Improved description, solution, and references for the Integer Overflow scan rule.
 
 ### Added
 - New User Agent strings to the User Agent fuzz scan rule.
