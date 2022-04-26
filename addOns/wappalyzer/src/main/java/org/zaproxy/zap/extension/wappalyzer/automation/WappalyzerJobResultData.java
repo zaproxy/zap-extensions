@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.wappalyzer.automation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,10 @@ public class WappalyzerJobResultData extends JobResultData {
     public List<TechnologyData> getTechnologyForSite(String site) {
         List<TechnologyData> data = this.siteTechMap.get(site);
         if (data == null) {
-            return Collections.emptyList();
+            // XXX Do not use Collections.emptyList() breaks when running with Java 17, i.e.:
+            // Unable to make public int java.util.Collections$EmptyList.size() accessible:
+            // module java.base does not "opens java.util" to unnamed module @556150d9
+            return new ArrayList<>(0);
         }
         return data;
     }
