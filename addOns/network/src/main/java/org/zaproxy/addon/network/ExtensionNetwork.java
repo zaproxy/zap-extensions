@@ -55,12 +55,14 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
@@ -68,7 +70,9 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.SSLConnector;
@@ -422,6 +426,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addApiImplementor(new NetworkApi(this));
+        extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
@@ -1372,5 +1377,22 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         sb.append("  return \"PROXY ").append(domain).append(':').append(port).append("\";\n");
         sb.append("} // End of function\n");
         return sb.toString();
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            getModel().getOptionsParam().getConnectionParam().setHttpState(new HttpState());
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {}
+
+        @Override
+        public void sessionScopeChanged(Session session) {}
+
+        @Override
+        public void sessionModeChanged(Mode mode) {}
     }
 }

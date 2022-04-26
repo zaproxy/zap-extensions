@@ -63,6 +63,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -83,6 +84,7 @@ import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.ConnectionParam;
@@ -210,6 +212,37 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ArgumentCaptor<ApiImplementor> argument = ArgumentCaptor.forClass(ApiImplementor.class);
         verify(extensionHook).addApiImplementor(argument.capture());
         assertThat(argument.getAllValues(), contains(instanceOf(NetworkApi.class)));
+    }
+
+    @Test
+    void shouldAddSessionChangedListenerOnHook() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<SessionChangedListener> argument =
+                ArgumentCaptor.forClass(SessionChangedListener.class);
+        verify(extensionHook).addSessionListener(argument.capture());
+        assertThat(argument.getValue(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldResetHttpStateIfSessionChanged() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.hook(extensionHook);
+        ArgumentCaptor<SessionChangedListener> argument =
+                ArgumentCaptor.forClass(SessionChangedListener.class);
+        verify(extensionHook).addSessionListener(argument.capture());
+        SessionChangedListener sessionChangedListener = argument.getValue();
+        ConnectionParam connectionParam = mock(ConnectionParam.class);
+        given(optionsParam.getConnectionParam()).willReturn(connectionParam);
+        extension.initModel(model);
+        // When
+        sessionChangedListener.sessionChanged(null);
+        // Then
+        verify(connectionParam).setHttpState(any(HttpState.class));
     }
 
     @Test
