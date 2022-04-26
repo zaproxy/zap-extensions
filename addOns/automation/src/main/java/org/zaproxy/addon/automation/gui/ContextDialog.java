@@ -64,7 +64,7 @@ public class ContextDialog extends StandardFieldsDialog {
         this.context = context;
 
         this.addTextField(0, NAME_PARAM, context.getName());
-        this.addMultilineField(0, URLS_PARAM, StringUtils.join(context.getUrls().toArray()));
+        this.addMultilineField(0, URLS_PARAM, listToString(context.getUrls()));
 
         this.addMultilineField(1, INCLUDE_PARAM, listToString(context.getIncludePaths()));
 
