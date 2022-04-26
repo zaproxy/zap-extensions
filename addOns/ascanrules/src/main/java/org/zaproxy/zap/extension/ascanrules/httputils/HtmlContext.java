@@ -20,7 +20,9 @@
 package org.zaproxy.zap.extension.ascanrules.httputils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class HtmlContext {
@@ -40,10 +42,14 @@ public class HtmlContext {
     private int end = 0;
     private List<String> parentTags = new ArrayList<>();
     private String tagAttribute = null;
+    private Map<String, String> tagAttributes = new HashMap<>();
     private boolean inScriptAttribute = false;
     private boolean inUrlAttribute = false;
     private boolean inTagWithSrc = false;
+    private boolean inAttributeName = false;
     private String surroundingQuote = "";
+    private String elementName = null;
+    private boolean inElementName = false;
     private boolean htmlComment = false;
 
     public HtmlContext(HttpMessage msg, String target, int start, int end) {
@@ -186,6 +192,30 @@ public class HtmlContext {
         this.inTagWithSrc = inTagWithSrc;
     }
 
+    public boolean isInAttributeName() {
+        return inAttributeName;
+    }
+
+    public void setInAttributeName(boolean inAttributeName) {
+        this.inAttributeName = inAttributeName;
+    }
+
+    public String getElementName() {
+        return elementName;
+    }
+
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
+    }
+
+    public boolean isInElementName() {
+        return inElementName;
+    }
+
+    public void setInElementName(boolean inElementName) {
+        this.inElementName = inElementName;
+    }
+
     public boolean matches(HtmlContext context, int ignoreFlags) {
 
         if (context == null) {
@@ -247,5 +277,17 @@ public class HtmlContext {
             return false;
         }
         return true;
+    }
+
+    public void setTagAttributes(String name, String value) {
+        this.tagAttributes.put(name, value);
+    }
+
+    public Map<String, String> getTagAttributes() {
+        return this.tagAttributes;
+    }
+
+    public boolean hasAttribute(String name, String value) {
+        return value.equals(this.tagAttributes.get(name));
     }
 }
