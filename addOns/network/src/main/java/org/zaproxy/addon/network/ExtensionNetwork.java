@@ -72,6 +72,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
@@ -112,6 +113,7 @@ import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
+import org.zaproxy.zap.view.ProxyDialog;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
@@ -558,6 +560,18 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         stopAdditionalLocalServer(server);
         return true;
+    }
+
+    @Override
+    public void optionsLoaded() {
+        if (hasView()) {
+            OptionsParam options = getModel().getOptionsParam();
+            if (options.getConnectionParam().isProxyChainPrompt()) {
+                ProxyDialog dialog = new ProxyDialog(null, true);
+                dialog.init(options);
+                dialog.setVisible(true);
+            }
+        }
     }
 
     @Override
