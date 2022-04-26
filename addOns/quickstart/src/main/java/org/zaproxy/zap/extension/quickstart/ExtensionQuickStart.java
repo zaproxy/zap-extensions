@@ -164,7 +164,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         if (View.isInitialised()) {
             getQuickStartPanel().optionsLoaded(this.getQuickStartParam());
         }
+    }
 
+    @Override
+    public void postInit() {
         if (Constant.isSilent()) {
             LOGGER.info("Shh! No check-for-news - silent mode enabled");
             return;
