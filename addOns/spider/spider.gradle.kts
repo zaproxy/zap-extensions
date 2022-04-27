@@ -13,3 +13,9 @@ zapAddOn {
 dependencies {
     testImplementation(project(":testutils"))
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf(
+        "src/**/URLCanonicalizer.java",
+        "src/**/URLResolver.java"))
+}
