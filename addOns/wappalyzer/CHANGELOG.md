@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated the pattern parser to deal with Confidence or Version fields extending DOM patterns (for the time being they're ignored).
 - Updated the passive scan rule to be thread safe.
 
+### Fixed
+- Address error when generating the report with Java 17 (Issue 6880).
+
 ## [21.9.0] - 2022-02-03
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
