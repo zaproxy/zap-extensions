@@ -34,6 +34,7 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -63,9 +64,13 @@ public class ViewstateScanRule extends PluginPassiveScanner {
         // consider it as valid.
         if (!v.isValid()) return;
 
-        if (!v.hasMACtest1() || !v.hasMACtest2())
-            if (!v.hasMACtest1() && !v.hasMACtest2()) alertNoMACforSure().raise();
-            else alertNoMACUnsure().raise();
+        if (!v.hasMACtest1() || !v.hasMACtest2()) {
+            if (!v.hasMACtest1() && !v.hasMACtest2()) {
+                alertNoMACforSure().raise();
+            } else if (AlertThreshold.LOW.equals(getAlertThreshold())) {
+                alertNoMACUnsure().raise();
+            }
+        }
 
         if (!v.isLatestAspNetVersion()) alertOldAspVersion().raise();
 

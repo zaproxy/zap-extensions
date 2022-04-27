@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The "Viewstate without MAC Signature (Unsure)" alert will now only be raised at Low Alert Threshold (Issue 7230).
 
 ## [40] - 2022-04-05
 ### Changed
