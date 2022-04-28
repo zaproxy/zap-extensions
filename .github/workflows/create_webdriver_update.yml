@@ -2,7 +2,7 @@ name: Create Webdriver Update PR
 
 on:
   schedule:
-    - cron:  '0 0 * * *'
+    - cron:  '0 23 * * *'
   workflow_dispatch:
     inputs:
       chrome_version:
@@ -55,9 +55,9 @@ jobs:
         # If there are changes update changelog, and commit
         if ! git diff-index --quiet HEAD --; then
           IS_UPDT=1
-         ./gradlew :addOns:webdriverlinux:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
-         ./gradlew :addOns:webdrivermacos:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
-         ./gradlew :addOns:webdriverwindows:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+         ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+         ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
+         ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update ChromeDriver to $CHROME_VERS."
           git add .
           git commit -m "Webdriver Update" -m "ChromeDriver update to $CHROME_VERS" --signoff
         fi
@@ -70,9 +70,9 @@ jobs:
         # If there are changes update changelog, and commit
         if ! git diff-index --quiet HEAD --; then
           IS_UPDT=1
-          ./gradlew :addOns:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
-          ./gradlew :addOns:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
-          ./gradlew :addOns:webdriverwindows:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
           git add .
           git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
         fi
