@@ -27,8 +27,10 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.net.ProxySelector;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -88,6 +90,8 @@ import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
+import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
@@ -118,6 +122,13 @@ import org.zaproxy.zap.view.ProxyDialog;
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
+
+    static {
+        if (isDeprecated(org.zaproxy.zap.network.ZapAuthenticator.class)) {
+            ProxySelector.setDefault(ZapProxySelector.getSingleton());
+            Authenticator.setDefault(ZapAuthenticator.getSingleton());
+        }
+    }
 
     private static final int NO_PORT_OVERRIDE = -1;
     private static final int INVALID_PORT = -2;
@@ -190,7 +201,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void init() {
         localServers = Collections.synchronizedMap(new HashMap<>());
 
-        handleServerCerts = ExtensionDynSSL.class.getAnnotation(Deprecated.class) != null;
+        handleServerCerts = isDeprecated(ExtensionDynSSL.class);
         setSslCertificateService =
                 new Consumer<SslCertificateService>() {
 
@@ -212,7 +223,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         }
                     }
                 };
-        handleLocalServers = ProxyServer.class.getAnnotation(Deprecated.class) != null;
+        handleLocalServers = isDeprecated(ProxyServer.class);
 
         if (handleLocalServers) {
             extensionBreak =
@@ -238,6 +249,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (!handleServerCerts) {
             sslCertificateService = new LegacySslCertificateServiceImpl();
         }
+    }
+
+    private static boolean isDeprecated(Class<?> clazz) {
+        return clazz.getAnnotation(Deprecated.class) != null;
     }
 
     @Override
