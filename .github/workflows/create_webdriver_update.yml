@@ -7,11 +7,11 @@ on:
     inputs:
       chrome_version:
         description: 'ChromeDriver version?'
-        required: true
+        required: false
         default: 'cxx'
       gecko_version:
         description: 'geckodriver version?'
-        required: true
+        required: false
         default: 'gxx'
 
 jobs:
@@ -33,16 +33,29 @@ jobs:
         # Setup env vars for later
         BRANCH="webdriver-update"
         export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
-        if [ "${{ github.event.inputs.chrome_version }}" == "cxx" ]; then
+        IS_UPDT=0
+        # Get ChromeDriver version
+        CHROME_INPUT="${{ github.event.inputs.chrome_version }}"
+        echo $CHROME_INPUT
+        CHROME_INPUT=${CHROME_INPUT:-"cxx" }
+        echo $CHROME_INPUT
+        if [ $CHROME_INPUT == "cxx" ]; then
           CHROME_VERS=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
         else
           CHROME_VERS=${{ github.event.inputs.chrome_version }}
         fi
-        if [ "${{ github.event.inputs.gecko_version }}" == "gxx" ]; then
+        echo $CHROME_VERS
+        # Get geckodriver version
+        GECKO_INPUT="${{ github.event.inputs.gecko_version }}"
+        echo $GECKO_INPUT
+        GECKO_INPUT=${GECKO_INPUT:-"gxx" }
+        echo $GECKO_INPUT
+        if [ $GECKO_INPUT == "gxx" ]; then
           GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
         else
           GECKO_VERS=${{ github.event.inputs.gecko_version }}
         fi
+        echo $GECKO_VERS
         # Build the feature branch
         git checkout -b $BRANCH
         git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
