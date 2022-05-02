@@ -102,11 +102,12 @@ class ExtentionAutomationUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldRegisterBuiltInJobs() {
+    void shouldRegisterBuiltInJobsOnInit() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
 
         // When
+        extAuto.init();
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
@@ -125,49 +126,38 @@ class ExtentionAutomationUnitTest extends TestUtils {
     void shouldRegisterNewJob() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
-        String jobName = "testjob";
-
-        AutomationJob job =
-                new AutomationJobImpl() {
-                    @Override
-                    public String getType() {
-                        return jobName;
-                    }
-
-                    @Override
-                    public Order getOrder() {
-                        return Order.REPORT;
-                    }
-                };
+        AutomationJob job = new AutomationJobImpl("testjob");
 
         // When
         extAuto.registerAutomationJob(job);
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(9)));
-        assertThat(jobs.containsKey(jobName), is(equalTo(true)));
+        assertThat(jobs.size(), is(equalTo(1)));
+        assertThat(jobs.containsKey(job.getType()), is(equalTo(true)));
     }
 
     @Test
     void shouldUnregisterExistingJob() {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
+        AutomationJob job = new AutomationJobImpl("testjob");
+        extAuto.registerAutomationJob(job);
 
         // When
-        Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
-        int origSize = jobs.size();
-        extAuto.unregisterAutomationJob(jobs.get(SpiderJob.JOB_NAME));
+        extAuto.unregisterAutomationJob(job);
 
         // Then
-        assertThat(jobs.size(), is(equalTo(origSize - 1)));
-        assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(false)));
+        Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
+        assertThat(jobs.size(), is(equalTo(0)));
+        assertThat(jobs.containsKey(job.getType()), is(equalTo(false)));
     }
 
     @Test
     void shouldCreateMinTemplateFile() throws Exception {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
+        extAuto.init();
         Path filePath = getResourcePath("resources/template-min.yaml");
         String expectedTemplate = new String(Files.readAllBytes(filePath));
 
@@ -187,6 +177,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
     void shouldCreateMaxTemplateFile() throws Exception {
         // Given
         ExtensionAutomation extAuto = new ExtensionAutomation();
+        extAuto.init();
         Path filePath = getResourcePath("resources/template-max.yaml");
         String expectedTemplate = new String(Files.readAllBytes(filePath));
 
@@ -219,6 +210,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         ExtensionAutomation extAuto = new ExtensionAutomation();
+        extAuto.init();
         Path filePath = getResourcePath("resources/template-config.yaml");
         String expectedTemplate = new String(Files.readAllBytes(filePath));
 
@@ -853,6 +845,10 @@ class ExtentionAutomationUnitTest extends TestUtils {
         private boolean testsLogError = false;
 
         public AutomationJobImpl() {}
+
+        public AutomationJobImpl(String type) {
+            this.type = type;
+        }
 
         public AutomationJobImpl(Object paramMethodObject) {
             this.paramMethodObject = paramMethodObject;
