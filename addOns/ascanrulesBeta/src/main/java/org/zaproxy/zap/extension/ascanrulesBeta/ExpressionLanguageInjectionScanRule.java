@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Random;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -150,10 +149,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
             try {
                 // Send the request and retrieve the response
                 sendAndReceive(msg);
-            } catch (InvalidRedirectLocationException
-                    | URIException
-                    | UnknownHostException
-                    | IllegalArgumentException ex) {
+            } catch (URIException | UnknownHostException | IllegalArgumentException ex) {
                 LOG.debug(
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -332,8 +331,6 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             } // for each time based SQL index
             // end of check for time based SQL Injection
 
-        } catch (InvalidRedirectLocationException e) {
-            // Not an error, just means we probably attacked the redirect location
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.

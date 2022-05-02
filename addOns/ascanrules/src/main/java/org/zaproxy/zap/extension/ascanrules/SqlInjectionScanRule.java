@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1698,8 +1697,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 } // not a login page
             } // no sql Injection Found For Url
 
-        } catch (InvalidRedirectLocationException e) {
-            // Not an error, just means we probably attacked the redirect location
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.

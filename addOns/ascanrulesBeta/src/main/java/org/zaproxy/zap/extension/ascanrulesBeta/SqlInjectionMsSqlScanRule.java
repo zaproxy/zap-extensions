@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -274,8 +273,6 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 }
             }
             // end of check for time based SQL Injection
-        } catch (InvalidRedirectLocationException e) {
-            log.debug("Probably, we hit the redirection location");
         } catch (Exception e) {
             log.error("An error occurred checking a url for MsSQL Injection vulnerabilities", e);
         }
