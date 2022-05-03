@@ -101,16 +101,22 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         super(NAME);
         setI18nPrefix(PREFIX);
 
-        this.registerAutomationJob(new AddOnJob());
-        this.registerAutomationJob(new PassiveScanConfigJob());
-        this.registerAutomationJob(new RequestorJob());
-        this.registerAutomationJob(new PassiveScanWaitJob());
-        this.registerAutomationJob(new SpiderJob());
-        this.registerAutomationJob(new DelayJob());
-        this.registerAutomationJob(new ActiveScanJob());
-        this.registerAutomationJob(new ParamsJob());
         // Instantiate early so its visible to potential consumers
         AutomationEventPublisher.getPublisher();
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        registerAutomationJob(new AddOnJob());
+        registerAutomationJob(new PassiveScanConfigJob());
+        registerAutomationJob(new RequestorJob());
+        registerAutomationJob(new PassiveScanWaitJob());
+        registerAutomationJob(new SpiderJob());
+        registerAutomationJob(new DelayJob());
+        registerAutomationJob(new ActiveScanJob());
+        registerAutomationJob(new ParamsJob());
     }
 
     @Override
