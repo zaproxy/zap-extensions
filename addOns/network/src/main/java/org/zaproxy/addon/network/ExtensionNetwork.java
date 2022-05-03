@@ -733,13 +733,17 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         } catch (Exception e) {
 
             if (!install && (daemonMode || commandLineMode)) {
-                LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
-
-                String message = "Terminating ZAP, unable to start the main proxy.";
-                if (daemonMode) {
-                    throw new Error(message);
+                String message =
+                        "Failed to start the main proxy: "
+                                + e.getClass().getName()
+                                + " "
+                                + e.getMessage();
+                LOGGER.warn(message);
+                if (commandLineMode) {
+                    System.err.println(message);
                 }
-                throw new IllegalStateException(message + " Cause: " + e.getMessage());
+
+                shutdownZap("Terminating ZAP, unable to start the main proxy.");
             }
 
             String detailedError = null;
@@ -1027,11 +1031,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             try {
                 mainProxyPort = Server.validatePort(Integer.parseInt(argValue));
             } catch (IllegalArgumentException e) {
-                LOGGER.warn(
-                        "The main proxy will not be started, invalid -port value: {}", argValue);
+                String message =
+                        "The main proxy will not be started, invalid -port value: " + argValue;
+                LOGGER.warn(message);
+                boolean commandLineMode = ZAP.getProcessType() == ZAP.ProcessType.cmdline;
+                if (commandLineMode) {
+                    System.err.println(message);
+                }
 
-                if (ZAP.getProcessType() == ZAP.ProcessType.daemon) {
-                    throw new Error("Terminating ZAP, unable to start the main proxy.");
+                if (ZAP.getProcessType() == ZAP.ProcessType.daemon || commandLineMode) {
+                    shutdownZap("Terminating ZAP, unable to start the main proxy.");
                 }
 
                 mainProxyPort = INVALID_PORT;
@@ -1045,6 +1054,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         startLocalServers(mainProxyAddress, mainProxyPort, false);
+    }
+
+    private static void shutdownZap(String error) throws RuntimeException {
+        CommandLine.error(error);
+        RuntimeException exception;
+        try {
+            exception =
+                    (RuntimeException)
+                            Class.forName("org.zaproxy.zap.ShutdownRequestedException")
+                                    .getDeclaredConstructor()
+                                    .newInstance();
+        } catch (Exception ignore) {
+            if (ZAP.getProcessType() == ZAP.ProcessType.daemon) {
+                Control.getSingleton().shutdown(false);
+                throw new Error(error);
+            }
+            throw new IllegalStateException(error);
+        }
+        throw exception;
     }
 
     private static void writeCert(String path, CertWriter writer) {
