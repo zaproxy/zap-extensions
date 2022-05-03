@@ -47,7 +47,6 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.ScanPanel;
@@ -74,7 +73,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     private ExtensionSearch extSearch = null;
 
-    private Map<String, TechTableModel> siteTechMap = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, TechTableModel> siteTechMap;
     private boolean enabled;
     private WappalyzerParam wappalyzerParam;
 
@@ -106,6 +105,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void init() {
         super.init();
 
+        recreateSiteTreeMap();
         List<String> technologyFiles = new ArrayList<>();
         try (ZipFile zip = new ZipFile(getAddOn().getFile())) {
             zip.stream()
@@ -146,7 +146,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         extensionHook.addSessionListener(this);
         extensionHook.addSiteMapListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getTechPanel());
@@ -180,7 +180,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         wappalyzerParam.setEnabled(enabled);
         getPassiveScanner().setEnabled(enabled);
 
-        if (View.isInitialised()) {
+        if (hasView()) {
             getTechPanel().getEnableToggleButton().setSelected(enabled);
         }
     }
@@ -241,7 +241,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     public TechTableModel getTechModelForSite(String site) {
         TechTableModel model = this.siteTechMap.computeIfAbsent(site, s -> new TechTableModel());
-        if (getView() != null) {
+        if (hasView()) {
             // Add to site pulldown
             this.getTechPanel().addSite(site);
         }
@@ -251,11 +251,16 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
 
-        this.getTechModelForSite(site).addApplication(applicationMatch);
+        if (!hasView() || EventQueue.isDispatchThread()) {
+            this.getTechModelForSite(site).addApplication(applicationMatch);
+        } else {
+            EventQueue.invokeLater(
+                    () -> this.getTechModelForSite(site).addApplication(applicationMatch));
+        }
     }
 
     public Application getSelectedApp() {
-        if (View.isInitialised()) {
+        if (hasView()) {
             String appName = this.getTechPanel().getSelectedApplicationName();
             if (appName != null) {
                 return this.getApplication(appName);
@@ -265,7 +270,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public String getSelectedSite() {
-        if (View.isInitialised()) {
+        if (hasView()) {
             return this.getTechPanel().getCurrentSite();
         }
         return null;
@@ -349,23 +354,29 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
     }
 
+    private void recreateSiteTreeMap() {
+        siteTechMap = Collections.synchronizedMap(new HashMap<>());
+    }
+
     private void sessionChangedEventHandler(Session session) {
         // Clear all scans
-        siteTechMap = new HashMap<>();
-        this.getTechPanel().reset();
-        if (session == null) {
-            // Closedown
-            return;
-        }
+        recreateSiteTreeMap();
+        if (hasView()) {
+            this.getTechPanel().reset();
+            if (session == null) {
+                // Closedown
+                return;
+            }
 
-        // TODO Repopulate
-        SiteNode root = session.getSiteTree().getRoot();
-        @SuppressWarnings("unchecked")
-        Enumeration<TreeNode> en = root.children();
-        while (en.hasMoreElements()) {
-            String site =
-                    normalizeSite(((SiteNode) en.nextElement()).getHistoryReference().getURI());
-            this.getTechPanel().addSite(site);
+            // Repopulate
+            SiteNode root = session.getSiteTree().getRoot();
+            @SuppressWarnings("unchecked")
+            Enumeration<TreeNode> en = root.children();
+            while (en.hasMoreElements()) {
+                String site =
+                        normalizeSite(((SiteNode) en.nextElement()).getHistoryReference().getURI());
+                this.getTechPanel().addSite(site);
+            }
         }
     }
 
@@ -382,7 +393,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public void postInstall() {
         super.postInstall();
-        if (getView() != null) {
+        if (hasView()) {
             EventQueue.invokeLater(this::focusTab);
         }
     }
