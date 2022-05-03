@@ -85,7 +85,6 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
         if (fuzzerOptions.isFollowRedirects()) {
             httpSender.setFollowRedirect(fuzzerOptions.isFollowRedirects());
             httpSender.setMaxRedirects(fuzzerOptions.getMaximumRedirects());
-            httpSender.setAllowCircularRedirects(fuzzerOptions.isAllowCircularRedirects());
         }
 
         httpSender.setRemoveUserDefinedAuthHeaders(true);
