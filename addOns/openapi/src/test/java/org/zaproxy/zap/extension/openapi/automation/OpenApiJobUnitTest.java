@@ -32,11 +32,10 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.LinkedHashMap;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -188,12 +187,13 @@ class OpenApiJobUnitTest {
         job.setJobData(openapiData);
         job.setEnv(env);
 
-
         job.verifyParameters(progress);
         job.applyParameters(progress);
 
         // Then
-        assertThat(((Map<String, Object>) job.getJobData().get("parameters")).get("apiUrl"), is(equalTo("${myEnvVar}")));
+        assertThat(
+                ((Map<String, Object>) job.getJobData().get("parameters")).get("apiUrl"),
+                is(equalTo("${myEnvVar}")));
         assertThat(job.getParameters().getApiUrl(), is(equalTo("myEnvValue")));
     }
 
