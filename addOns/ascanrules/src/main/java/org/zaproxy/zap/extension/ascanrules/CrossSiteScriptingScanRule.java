@@ -25,7 +25,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -206,7 +205,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         } catch (URIException e) {
             log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
             return null;
-        } catch (InvalidRedirectLocationException | UnknownHostException e) {
+        } catch (UnknownHostException e) {
             // Not an error, just means we probably attacked the redirect
             // location
             return null;
@@ -695,7 +694,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             } catch (URIException e) {
                 log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                 return;
-            } catch (InvalidRedirectLocationException | UnknownHostException e) {
+            } catch (UnknownHostException e) {
                 // Not an error, just means we probably attacked the redirect
                 // location
                 // Try the second eye catcher
@@ -726,7 +725,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 } catch (URIException e) {
                     log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                     return;
-                } catch (InvalidRedirectLocationException | UnknownHostException e) {
+                } catch (UnknownHostException e) {
                     // Second eyecatcher failed for some reason, no need to
                     // continue
                     return;

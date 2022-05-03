@@ -28,7 +28,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -461,7 +460,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                         | IllegalStateException
                         | UnknownHostException
                         | IllegalArgumentException
-                        | InvalidRedirectLocationException
                         | URIException ex) {
                     log.debug(
                             "Caught {} {} when accessing: {}",
@@ -508,7 +506,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                                 | IllegalStateException
                                 | UnknownHostException
                                 | IllegalArgumentException
-                                | InvalidRedirectLocationException
                                 | URIException ex) {
                             log.debug(
                                     "Caught {} {} when accessing: {}",
@@ -608,7 +605,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                 | IllegalStateException
                 | UnknownHostException
                 | IllegalArgumentException
-                | InvalidRedirectLocationException
                 | URIException ex) {
             log.debug(
                     "Caught {} {} when accessing: {}",

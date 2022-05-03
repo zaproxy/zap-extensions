@@ -42,7 +42,6 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Map;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -144,7 +143,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             setParameter(testMsg, param, initialMessage);
             try {
                 sendAndReceive(testMsg);
-            } catch (InvalidRedirectLocationException | UnknownHostException ex) {
+            } catch (UnknownHostException ex) {
                 log.debug(
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
@@ -180,7 +179,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             setParameter(intialAttackMsg, param, initialAttackPayload);
             try {
                 sendAndReceive(intialAttackMsg);
-            } catch (InvalidRedirectLocationException | UnknownHostException ex) {
+            } catch (UnknownHostException ex) {
                 log.debug(
                         "Caught {} {} when accessing: {}.\nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
@@ -201,7 +200,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 setParameter(verificationMsg, param, secondAttackPayload);
                 try {
                     sendAndReceive(verificationMsg);
-                } catch (InvalidRedirectLocationException | UnknownHostException ex) {
+                } catch (UnknownHostException ex) {
                     log.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
@@ -256,7 +255,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             setParameter(microsoftTestMsg, param, microsoftAttackMessage);
             try {
                 sendAndReceive(microsoftTestMsg);
-            } catch (InvalidRedirectLocationException | UnknownHostException ex) {
+            } catch (UnknownHostException ex) {
                 log.debug(
                         "Caught {} {} when accessing: {}. \nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),

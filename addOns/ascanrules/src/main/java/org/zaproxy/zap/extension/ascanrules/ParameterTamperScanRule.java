@@ -35,7 +35,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,8 +123,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
 
         try {
             sendAndReceive(normalMsg);
-        } catch (InvalidRedirectLocationException
-                | SocketException
+        } catch (SocketException
                 | IllegalStateException
                 | IllegalArgumentException
                 | URIException
@@ -159,8 +157,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
             try {
                 try {
                     sendAndReceive(testMsg);
-                } catch (InvalidRedirectLocationException
-                        | SocketException
+                } catch (SocketException
                         | IllegalStateException
                         | IllegalArgumentException
                         | URIException

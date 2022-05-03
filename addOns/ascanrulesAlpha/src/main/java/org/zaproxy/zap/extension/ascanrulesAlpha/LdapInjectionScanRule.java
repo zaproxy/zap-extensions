@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -511,7 +510,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             // the response.
             // but that's a task for another day.
 
-        } catch (InvalidRedirectLocationException | UnknownHostException | URIException e) {
+        } catch (UnknownHostException | URIException e) {
             log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..

@@ -23,7 +23,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -760,7 +759,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                 }
             } // end of doUnionBased
 
-        } catch (InvalidRedirectLocationException | UnknownHostException | URIException e) {
+        } catch (UnknownHostException | URIException e) {
             log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
