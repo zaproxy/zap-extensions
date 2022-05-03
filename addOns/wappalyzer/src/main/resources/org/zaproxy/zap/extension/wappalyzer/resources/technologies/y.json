@@ -247,6 +247,23 @@
     "scriptSrc": "/yett@([\\d\\.]+)/dist/yett\\.min\\.js\\;version:\\1",
     "website": "https://github.com/elbywan/yett"
   },
+  "Yext": {
+    "cats": [
+      29
+    ],
+    "description": "Yext is a hosted search-as-a-service platform.",
+    "dom": "form.yxt-SearchBar-form",
+    "icon": "Yext.svg",
+    "js": {
+      "ANSWERS._analyticsReporterService._baseUrl": "\\.yext-pixel\\.com"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.yext.com"
+  },
   "Yieldify": {
     "cats": [
       76
@@ -351,6 +368,21 @@
       "\\bYodel\\b"
     ],
     "website": "https://www.yodel.co.uk/"
+  },
+  "Yola": {
+    "cats": [
+      51
+    ],
+    "description": "Yola is a website builder and website hosting company headquartered in San Francisco.",
+    "icon": "Yola.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.yola(?:cdn)?\\.(?:net|com)/",
+    "website": "https://www.yola.com"
   },
   "YooMoney": {
     "cats": [

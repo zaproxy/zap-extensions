@@ -241,7 +241,8 @@
   },
   "Okendo": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Okendo is a customer marketing platform with product ratings and reviews, customer photos and videos to help personalise experiences.",
     "dom": {
@@ -252,6 +253,7 @@
       }
     },
     "icon": "Okendo.svg",
+    "implies": "Shopify",
     "js": {
       "okeReviewsWidgetOnInit": "",
       "okeWidgetControlInit": "",
@@ -1245,6 +1247,25 @@
     ],
     "saas": true,
     "website": "https://orderyoyo.com"
+  },
+  "Ordersify Product Alerts": {
+    "cats": [
+      100
+    ],
+    "description": "Ordersify Product Alerts is a Shopify app which detects automatically product stock and send email alerts to contact immediately after your products are restocked.",
+    "icon": "Ordersify.svg",
+    "implies": "Shopify",
+    "js": {
+      "ORDERSIFY_BIS.stockRemainingSetting": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.ordersify\\.com/sdk/productalerts-shopify\\.js",
+    "website": "https://ordersify.com/products/product-alerts"
   },
   "Oribi": {
     "cats": [

@@ -327,6 +327,21 @@
     "scriptSrc": "vendor-cdn\\.imweb\\.me/",
     "website": "https://imweb.me"
   },
+  "In Cart Upsell & Cross-Sell": {
+    "cats": [
+      100
+    ],
+    "description": "In Cart Upsell & Cross-Sell is a Shopify app built by InCart Upsell, provides targeted upsells and cross-sells directly in your cart and product page.",
+    "icon": "In Cart Upsell & Cross-Sell.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.incartupsell\\.com/",
+    "website": "https://incartupsell.com"
+  },
   "InMoment": {
     "cats": [
       10,
@@ -1184,10 +1199,19 @@
     "cats": [
       67
     ],
-    "icon": "iubenda.png",
-    "scriptSrc": [
-      "iubenda\\.com/cookie-solution/confs/js/"
+    "description": "iubenda is a compliance software used by businesses for their websites and apps.",
+    "icon": "iubenda.svg",
+    "js": {
+      "_iub": "",
+      "addIubendaCs": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
     ],
-    "website": "https://www.iubenda.com/"
+    "saas": true,
+    "scriptSrc": "iubenda\\.com/",
+    "website": "https://www.iubenda.com"
   }
 }

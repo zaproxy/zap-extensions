@@ -507,6 +507,19 @@
     "url": "/sparql",
     "website": "https://virtuoso.openlinksw.com/"
   },
+  "Virtusize": {
+    "cats": [
+      76
+    ],
+    "description": "Virtusize is a personalisation service that provides size and product recommendations specific to a user's size and trend preferences.",
+    "icon": "Virtusize.svg",
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.virtusize\\.jp/",
+    "website": "https://www.virtusize.com"
+  },
   "Visa": {
     "cats": [
       41
@@ -714,6 +727,21 @@
     "saas": true,
     "website": "https://www.voracio.co.uk"
   },
+  "VuFind": {
+    "cats": [
+      29
+    ],
+    "description": "VuFind is a library resource portal designed and developed by Villanova University library.",
+    "icon": "VuFind.png",
+    "js": {
+      "VuFind.defaultSearchBackend": ""
+    },
+    "meta": {
+      "generator": "^VuFind\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://vufind.org"
+  },
   "Vue Storefront": {
     "cats": [
       6,
@@ -751,11 +779,13 @@
     "cats": [
       12
     ],
+    "css": "\\.vue-notification-group",
     "description": "Vue.js is an open-source model–view–viewmodel JavaScript framework for building user interfaces and single-page applications.",
     "html": "<[^>]+\\sdata-v(?:ue)?-",
     "icon": "vue.svg",
     "js": {
-      "Vue.version": "^(.+)$\\;version:\\1"
+      "Vue.version": "^(.+)$\\;version:\\1",
+      "__VUE_HOT_MAP__": ""
     },
     "scriptSrc": [
       "vue[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",

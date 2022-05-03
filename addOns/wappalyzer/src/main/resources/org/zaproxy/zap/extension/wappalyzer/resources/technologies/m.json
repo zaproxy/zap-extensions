@@ -74,6 +74,22 @@
     "scriptSrc": "\\.mgpanel\\.org/",
     "website": "https://mgpanel.org"
   },
+  "MIYN Online Appointment": {
+    "cats": [
+      72
+    ],
+    "description": "MIYN Online Appointment is an advanced cloud-based online appointment scheduling software.",
+    "icon": "MIYN.svg",
+    "js": {
+      "MIYNLive.settings": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://miyn.app/online-appointment"
+  },
   "MODX": {
     "cats": [
       1
@@ -142,8 +158,9 @@
     ],
     "css": "\\.MuiPaper-root",
     "description": "MUI(formerly Material UI) is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
-    "dom": "style[data-meta='MuiPaper'], div.MuiBox-root",
+    "dom": "style[data-meta='MuiPaper'], div.MuiBox-root, div.MuiPaper-root",
     "icon": "MUI.svg",
+    "implies": "React",
     "oss": true,
     "pricing": [
       "freemium",
@@ -193,6 +210,7 @@
       6
     ],
     "cookies": {
+      "X-Magento-Vary": "",
       "frontend": "\\;confidence:50"
     },
     "cpe": "cpe:/a:magento:magento",
@@ -456,6 +474,31 @@
     },
     "scriptSrc": "mapbox-gl.js",
     "website": "https://github.com/mapbox/mapbox-gl-js"
+  },
+  "Mapp": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Mapp is designed specifically to help consumer-facing brands run highly personalised, cross-channel marketing campaigns powered by real-time customer data and generated insights.",
+    "icon": "Mapp.svg",
+    "js": {
+      "WebtrekkV3": "",
+      "webtrekk": "",
+      "webtrekkConfig": "",
+      "webtrekkHeatmapObjects": "",
+      "webtrekkLinktrackObjects": "",
+      "webtrekkUnloadObjects": "",
+      "webtrekkV3": "",
+      "wtSmart": "",
+      "wt_tt": "",
+      "wt_ttv2": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://mapp.com"
   },
   "Mapplic": {
     "cats": [
@@ -767,7 +810,8 @@
     "saas": true,
     "scriptSrc": [
       "(?:device|js)\\.maxmind\\.com/",
-      "geoip\\.maxmind\\.min\\.js"
+      "geoip\\.maxmind\\.min\\.js",
+      "geoip-js\\.com/.+/v([\\d\\.]+)/\\;version:\\1"
     ],
     "website": "https://www.maxmind.com",
     "xhr": "\\.maxmind\\.com"
@@ -1171,7 +1215,6 @@
     },
     "html": "<input[^>]+name=\"__VIEWSTATE",
     "icon": "Microsoft ASP.NET.svg",
-    "implies": "IIS\\;confidence:50",
     "url": "\\.aspx?(?:$|\\?)",
     "website": "https://www.asp.net"
   },
@@ -1373,6 +1416,24 @@
     ],
     "icon": "Milligram.png",
     "website": "https://milligram.io"
+  },
+  "MinMaxify": {
+    "cats": [
+      100
+    ],
+    "description": "MinMaxify is an app that allows Shopify store owners to set minimum and maximum values for customer orders built by Intillium.",
+    "icon": "MinMaxify.png",
+    "implies": "Shopify",
+    "js": {
+      "minMaxify.checkLimits": "",
+      "minMaxify.shop": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/order-limits-minmaxify"
   },
   "MindBody": {
     "cats": [
@@ -1666,6 +1727,22 @@
       "generator": "\\(c\\) by modified eCommerce Shopsoftware ------ http://www\\.modified-shop\\.org"
     },
     "website": "http://www.modified-shop.org/"
+  },
+  "Module Federation": {
+    "cats": [
+      19
+    ],
+    "description": "Module Federation is a webpack technology for dynamically loading parts of other independently deployed builds.",
+    "icon": "Module Federation.png",
+    "implies": [
+      "webpack"
+    ],
+    "scripts": [
+      "data-webpack\\;confidence:50",
+      "Container missing\\;confidence:50",
+      "Initialization of sharing external failed\\;confidence:50"
+    ],
+    "website": "https://webpack.js.org/concepts/module-federation/"
   },
   "Moguta.CMS": {
     "cats": [

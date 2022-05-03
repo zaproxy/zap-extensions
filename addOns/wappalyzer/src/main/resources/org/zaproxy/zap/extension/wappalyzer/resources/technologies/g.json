@@ -593,7 +593,6 @@
       "X-GitHub-Request-Id": ""
     },
     "icon": "GitHub.svg",
-    "implies": "Ruby on Rails",
     "url": "^https?://[^/]+\\.github\\.io",
     "website": "https://pages.github.com/"
   },
@@ -769,16 +768,46 @@
       100
     ],
     "description": "Also Bought is a conversion Shopify app by Globo.",
-    "icon": "Also Bought.png",
+    "icon": "Globo apps.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "assets/globo\\.alsobought\\.js",
     "website": "https://apps.shopify.com/globo-related-products"
+  },
+  "Globo Color Swatch": {
+    "cats": [
+      100
+    ],
+    "description": "Globo Color Swatch app gives you an easy-to-use tool to display product variants on both collection page, homepage and product page creatively as a means to enhance customers' experience and stimulate them to purchase.",
+    "icon": "Globo apps.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "assets/globo\\.swatch\\.data\\.js",
+    "website": "https://apps.shopify.com/globo-related-products"
+  },
+  "Globo Form Builder": {
+    "cats": [
+      100
+    ],
+    "description": "Form Builder is a Shopify form builder app for contact form built by Globo.",
+    "icon": "Globo apps.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/assets/globo\\.formbuilder\\.init\\.js",
+    "website": "https://apps.shopify.com/form-builder-contact-form"
   },
   "Glopal": {
     "cats": [

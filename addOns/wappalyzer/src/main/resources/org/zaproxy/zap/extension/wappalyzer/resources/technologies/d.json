@@ -1031,6 +1031,22 @@
     "scriptSrc": "js/_dmptv([\\d.]+)\\.js\\;version:\\1",
     "website": "https://dotdigital.com"
   },
+  "Dotdigital Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Dotdigital Chat is a smart, customisable widget that makes it easy for shoppers to communicate in real-time with members of your team.",
+    "icon": "Dotdigital.svg",
+    "implies": "Dotdigital",
+    "js": {
+      "_ddgChatConfig.urlBase": "\\.dotdigital\\.com"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://dotdigital.com"
+  },
   "DoubleClick Ad Exchange (AdX)": {
     "cats": [
       36

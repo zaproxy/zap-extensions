@@ -489,7 +489,7 @@
       "a[href*='/order']",
       "a[href*='/basket']",
       "a[href*='/trolley']",
-      "a[href*='/bag']",
+      "a[href*='/bag/']",
       "a[href*='/shoppingbag']",
       "a[href*='/checkout']",
       "a[href*='/winkelwagen']",
@@ -519,6 +519,20 @@
     "requires": "Shopify",
     "scriptSrc": "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1",
     "website": "https://cartjs.org"
+  },
+  "CartKit": {
+    "cats": [
+      32
+    ],
+    "description": "CartKit build apps from fuss-free multi-channel marketing automation and campaigns to social proof popups and user session recording.",
+    "icon": "CartKit.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.cartkitcdn\\.com/",
+    "website": "https://www.cartkit.com"
   },
   "CartStack": {
     "cats": [

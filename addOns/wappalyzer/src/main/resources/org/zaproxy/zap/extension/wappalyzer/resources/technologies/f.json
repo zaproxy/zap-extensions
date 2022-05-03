@@ -315,6 +315,7 @@
       "Vary": "Fastly-SSL",
       "X-Fastly-Request-ID": "",
       "x-fastly-origin": "",
+      "x-served-by": "^cache-",
       "x-via-fastly:": ""
     },
     "icon": "Fastly.svg",
@@ -385,6 +386,21 @@
       "fbits": ""
     },
     "website": "https://www.traycorp.com.br"
+  },
+  "FeatherX": {
+    "cats": [
+      90
+    ],
+    "description": "FeatherX captures content from all major reviews and social media channels.",
+    "icon": "FeatherX.svg",
+    "js": {
+      "featherx.clientId": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://featherx.ai"
   },
   "FedEx": {
     "cats": [
@@ -602,18 +618,23 @@
   },
   "Firepush": {
     "cats": [
-      32
+      32,
+      100
     ],
     "description": "Firepush is an omnichannel marketing app that helps Shopify stores to drive sales with automated web push, email and SMS campaigns.",
     "dom": "link[href*='cdn.firepush.net']",
     "icon": "Firepush.svg",
+    "implies": "Shopify",
     "pricing": [
       "low",
       "freemium",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.firepush\\.\\w+",
+    "scriptSrc": [
+      "cdn\\.firepush\\.\\w+",
+      "fpcdn\\.me/.+shopify"
+    ],
     "website": "https://getfirepush.com"
   },
   "FirstHive": {

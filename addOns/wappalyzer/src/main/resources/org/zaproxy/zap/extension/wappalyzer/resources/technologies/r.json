@@ -576,9 +576,10 @@
     ],
     "saas": true,
     "scriptSrc": [
-      "rechargeassets-bootstrapheroes-rechargeapps\\.netdna-ssl\\.com"
+      "rechargeassets-bootstrapheroes-rechargeapps\\.netdna-ssl\\.com",
+      "\\.rechargecdn\\.com/"
     ],
-    "website": "https://rechargepayments.com/"
+    "website": "https://rechargepayments.com"
   },
   "Recite Me": {
     "cats": [
@@ -750,6 +751,22 @@
     ],
     "website": "https://redux.js.org/"
   },
+  "RedwoodJS": {
+    "cats": [
+      12,
+      18
+    ],
+    "description": "RedwoodJS is a full-stack serverless web application framework built by Tom Preston Werner (co-founder of Github) et al.",
+    "dom": "div#redwood-app",
+    "icon": "RedwoodJS.svg",
+    "implies": [
+      "React",
+      "GraphQL",
+      "TypeScript"
+    ],
+    "oss": true,
+    "website": "https://redwoodjs.com"
+  },
   "Reevoo": {
     "cats": [
       90
@@ -757,11 +774,17 @@
     "description": "Reevoo is a provider of UGC solutions like reviews.",
     "icon": "Reevoo.svg",
     "js": {
-      "ReevooApi": ""
+      "ReevooApi": "",
+      "reevooAccessCode": "",
+      "reevooLoader.tracking": "",
+      "reevooUrl": "\\.reevoo\\.com/"
     },
+    "pricing": [
+      "poa"
+    ],
     "saas": true,
-    "scriptSrc": "mark\\.reevoo\\.com",
-    "website": "https://www.reevoo.com/"
+    "scriptSrc": "\\.reevoo\\.com/",
+    "website": "https://www.reevoo.com"
   },
   "ReferralCandy": {
     "cats": [
@@ -875,6 +898,23 @@
     },
     "oss": true,
     "website": "https://remix.run/"
+  },
+  "Reputon": {
+    "cats": [
+      90,
+      100
+    ],
+    "description": "Reputon is an customer reviews Shopify app.",
+    "icon": "Reputon.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.reputon\\.com/",
+    "website": "https://reputon.com"
   },
   "RequireJS": {
     "cats": [
@@ -1058,6 +1098,24 @@
     "scriptSrc": "cdn\\.retailrocket\\.net",
     "website": "https://retailrocket.net"
   },
+  "ReturnGO": {
+    "cats": [
+      102
+    ],
+    "description": "ReturnGO's AI-driven returns management platform significantly improves customer lifetime value and post-purchase experience.",
+    "icon": "ReturnGO.png",
+    "js": {
+      "returnGoCanBeRun": "",
+      "returnGoIntegrationData": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.returngo\\.ai/",
+    "website": "https://returngo.ai"
+  },
   "RevJet": {
     "cats": [
       36
@@ -1162,6 +1220,27 @@
     "requires": "WordPress",
     "scriptSrc": "/revslider/[/\\w-]+/js",
     "website": "https://revolution.themepunch.com/"
+  },
+  "Revy": {
+    "cats": [
+      100
+    ],
+    "description": "Revy is dedicated to build Shopify Apps to generate more sales for merchants.",
+    "icon": "Revy.png",
+    "js": {
+      "RevyApp": "",
+      "RevyBundle": "",
+      "RevyUpsell": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "api\\.revy\\.io/",
+    "website": "https://revy.io"
   },
   "Rewardful": {
     "cats": [

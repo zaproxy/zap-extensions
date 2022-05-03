@@ -535,6 +535,17 @@
     "saas": true,
     "website": "https://www.acquia.com/"
   },
+  "Acquia Cloud Platform CDN": {
+    "cats": [
+      31
+    ],
+    "headers": {
+      "via": "Acquia Platform CDN (.+)\\;version:\\1"
+    },
+    "icon": "acquia-cloud-platform.svg",
+    "saas": true,
+    "website": "https://docs.acquia.com/cloud-platform/platformcdn/"
+  },
   "Acquia Cloud Site Factory": {
     "cats": [
       88
@@ -1634,6 +1645,37 @@
     "scriptSrc": "\\.afterbuy\\.de/",
     "website": "http://www.afterbuy.de"
   },
+  "AfterShip": {
+    "cats": [
+      19
+    ],
+    "description": "AfterShip provides automated shipment tracking as a service.",
+    "icon": "AfterShip.svg",
+    "js": {
+      "aftership.__VERSION__": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.aftership.com"
+  },
+  "AfterShip Returns Center": {
+    "cats": [
+      102
+    ],
+    "description": "AfterShip Returns Center is an interactive self-service return solution.",
+    "dom": "a[href*='.returnscenter.com']",
+    "icon": "AfterShip Returns Center.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "url": "https.+\\.returnscenter\\.com",
+    "website": "https://www.aftership.com/returns"
+  },
   "Afterpay": {
     "cats": [
       41,
@@ -1978,6 +2020,7 @@
     "icon": "Algolia.svg",
     "js": {
       "AlgoliaSearch": "",
+      "__GLOBAL__.algolia": "",
       "__algolia": "",
       "algoliasearch.version": "^(.+)$\\;version:\\1"
     },
@@ -2159,6 +2202,24 @@
     "scriptSrc": "\\.associates-amazon\\.com",
     "website": "https://affiliate-program.amazon.com"
   },
+  "Amazon CloudWatch RUM": {
+    "cats": [
+      78
+    ],
+    "description": "Amazon CloudWatch RUM is a real-user monitoring capability that helps you identify and debug issues in the client-side on web applications and enhance end user's digital experience.",
+    "icon": "aws.svg",
+    "js": {
+      "AwsRum": "",
+      "AwsRumClient": "",
+      "AwsRumClient.v": "([\\d\\.]+)\\;version:\\1",
+      "AwsRumConfig": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html"
+  },
   "Amazon Cloudfront": {
     "cats": [
       31
@@ -2261,18 +2322,6 @@
       19
     ],
     "description": "Amazon S3 or Amazon Simple Storage Service is a service offered by Amazon Web Services (AWS) that provides object storage through a web service interface.",
-    "dom": {
-      "[src*='amazonaws.com']": {
-        "attributes": {
-          "src": "s3\\.[^ ]*amazonaws\\.com"
-        }
-      },
-      "[srcset*='amazonaws.com']": {
-        "attributes": {
-          "srcset": "s3\\.[^ ]*amazonaws\\.com"
-        }
-      }
-    },
     "headers": {
       "Content-Security-Policy": "s3\\.[^ ]*amazonaws\\.com",
       "server": "^AmazonS3$"
@@ -2628,6 +2677,23 @@
       "\\bangular.{0,32}\\.js"
     ],
     "website": "https://angularjs.org"
+  },
+  "AnswerDash": {
+    "cats": [
+      5
+    ],
+    "description": "AnswerDash is a question and answer platform that serves business customers thereby reducing support costs and revealing customer needs.",
+    "icon": "AnswerDash.png",
+    "js": {
+      "AnswerDash": "",
+      "AnswerDash.__plugin": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.answerdash\\.com/",
+    "website": "https://www.answerdash.com"
   },
   "Ant Design": {
     "cats": [
@@ -3636,8 +3702,14 @@
     ],
     "description": "Automizely creates and manages enterprise-level marketing automation systems including contact and CRM mappings, lead funnels, email nurture, lead-generating pages, and blog posts, and website integrations.",
     "icon": "Automizely.svg",
+    "js": {
+      "AM_CONSENT_SDK.product": "automizely",
+      "amStorefrontKit.hRequestEventTarget": "",
+      "automizelyConversions": ""
+    },
     "pricing": [
-      "freemium"
+      "freemium",
+      "payg"
     ],
     "scriptSrc": "\\.automizely\\.com/",
     "website": "https://www.automizely.com/marketing"
