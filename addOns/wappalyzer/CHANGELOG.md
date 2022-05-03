@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.10.0] - 2022-05-03
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Updated the pattern parser to deal with Confidence or Version fields extending DOM patterns (for the time being they're ignored).
@@ -222,6 +222,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.10.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.10.0
 [21.9.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.9.0
 [21.8.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.8.0
 [21.7.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.7.0
