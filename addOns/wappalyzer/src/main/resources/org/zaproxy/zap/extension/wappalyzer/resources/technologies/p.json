@@ -159,6 +159,21 @@
     "scriptSrc": "pay\\.pacenow\\.co",
     "website": "https://pacenow.co/"
   },
+  "Packlink PRO": {
+    "cats": [
+      100,
+      99
+    ],
+    "description": "Packlink PRO is a multicarrier shipping solutions for ecommerce and marketplaces.",
+    "icon": "Packlink.png",
+    "implies": "Shopify",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "packlink-spf-pro\\.appspot\\.com/.+myshopify\\.com",
+    "website": "https://apps.shopify.com/packlink-pro"
+  },
   "Paddle": {
     "cats": [
       41
@@ -805,6 +820,26 @@
     },
     "website": "http://percussion.com"
   },
+  "PerfectApps Swift": {
+    "cats": [
+      100,
+      92
+    ],
+    "description": "Swift is a page speed solution for ecommerce store owners built by PerfectApps.",
+    "icon": "PerfectApps Swift.png",
+    "js": {
+      "ps_apiURI": "swift-api\\.perfectapps\\.io/",
+      "ps_storeUrl": "swift\\.perfectapps\\.io"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "swift\\.perfectapps\\.io/",
+    "website": "https://apps.shopify.com/swift"
+  },
   "Perfex CRM": {
     "cats": [
       53
@@ -918,6 +953,23 @@
     "saas": true,
     "scriptSrc": "\\.cdn\\.personio\\.",
     "website": "https://www.personio.com"
+  },
+  "Personizely": {
+    "cats": [
+      76
+    ],
+    "description": "Personizely is a conversion marketing toolkit which helps websites and ecommerce stores better engage with visitors using website widgets and personalisation.",
+    "icon": "Personizely.svg",
+    "js": {
+      "Personizely": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "static\\.personizely\\.net/",
+    "website": "https://www.personizely.net"
   },
   "Perzonalization": {
     "cats": [
@@ -1073,7 +1125,7 @@
     "description": "Phusion Passenger is a free web server and application server with support for Ruby, Python and Node.js.",
     "headers": {
       "Server": "Phusion Passenger ([\\d.]+)\\;version:\\1",
-      "X-Powered-By": "Phusion Passenger ?([\\d.]+)?\\;version:\\1"
+      "X-Powered-By": "Phusion Passenger(?:\\(R\\))? ?([\\d.]+)?\\;version:\\1"
     },
     "icon": "Phusion Passenger.png",
     "website": "https://phusionpassenger.com"
@@ -2108,6 +2160,22 @@
     "scriptSrc": "\\.privy\\.com/",
     "website": "https://www.privy.com"
   },
+  "Product Personalizer": {
+    "cats": [
+      100,
+      76
+    ],
+    "description": "Product Personalizer apps can help you to customise your products and offer a more personalised experience for your customers.",
+    "icon": "Product Personalizer.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/product-personalizer/pplr_common\\.js",
+    "website": "https://productpersonalizer.com"
+  },
   "ProfilePress": {
     "cats": [
       87
@@ -2378,6 +2446,26 @@
     "saas": true,
     "website": "https://www.purecars.com"
   },
+  "PushDaddy Whatsapp Chat": {
+    "cats": [
+      100,
+      98
+    ],
+    "description": "Whatsapp Chat is an live chat and abondoned cart solution built by PushDaddy.",
+    "dom": "div.pushdaddy-chats",
+    "icon": "PushDaddy.png",
+    "implies": [
+      "WhatsApp Business Chat",
+      "Shopify"
+    ],
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.shopify\\.com/.+/pushdaddy_v([\\d\\.]+).*\\.js\\;version:\\1",
+    "website": "https://apps.shopify.com/whatsapp-chat-for-support"
+  },
   "PushEngage": {
     "cats": [
       32
@@ -2397,7 +2485,7 @@
     "cats": [
       32
     ],
-    "description": " PushOwl is a push notification platform for ecommerce stores.",
+    "description": "PushOwl is a push notification platform for ecommerce stores.",
     "icon": "PushOwl.svg",
     "pricing": [
       "low",

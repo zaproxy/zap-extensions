@@ -794,24 +794,6 @@
     "icon": "websocket.png",
     "website": "https://en.wikipedia.org/wiki/WebSocket"
   },
-  "Webtrekk": {
-    "cats": [
-      10
-    ],
-    "icon": "Webtrekk.png",
-    "js": {
-      "WebtrekkV3": "",
-      "webtrekk": "",
-      "webtrekkConfig": "",
-      "webtrekkHeatmapObjects": "",
-      "webtrekkLinktrackObjects": "",
-      "webtrekkUnloadObjects": "",
-      "webtrekkV3": "",
-      "wt_tt": "",
-      "wt_ttv2": ""
-    },
-    "website": "http://www.webtrekk.com"
-  },
   "Webtrends": {
     "cats": [
       10
@@ -1250,6 +1232,27 @@
     ],
     "saas": true,
     "website": "https://www.wix.com/freesitebuilder/tae-store"
+  },
+  "WiziShop": {
+    "cats": [
+      6
+    ],
+    "description": "WiziShop is an ecommerce solution provider.",
+    "headers": {
+      "Server": "^WiziServer$"
+    },
+    "icon": "WiziShop.png",
+    "js": {
+      "WIZIBLOCK_ARRAY": "",
+      "wiziblocks_list": "",
+      "wsCfg.bNavAjust": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wizishop.com"
   },
   "Wizpay": {
     "cats": [

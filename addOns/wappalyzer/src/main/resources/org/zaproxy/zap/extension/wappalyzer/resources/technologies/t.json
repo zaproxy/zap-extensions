@@ -7,6 +7,21 @@
     "icon": "Tsoft.png",
     "website": "https://www.tsoft.com.tr/"
   },
+  "THG Ingenuity": {
+    "cats": [
+      6
+    ],
+    "description": "THG Ingenuity is completely unique in that it's both a peer-to-peer ecommerce retailer and a service provider to global cross-border commerce operations.",
+    "icon": "THG Ingenuity.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "THEHUT-.*\\.js"
+    ],
+    "website": "https://www.thgingenuity.com"
+  },
   "TN Express Web": {
     "cats": [
       1
@@ -221,6 +236,25 @@
     "website": "https://www.taboola.com",
     "xhr": "\\.taboola\\.com"
   },
+  "Tachyons": {
+    "cats": [
+      66
+    ],
+    "description": "Tachyons is a functional CSS framework.",
+    "dom": {
+      "link[href*='tachyons.min.css']": {
+        "attributes": {
+          "href": "(?:([\\d\\.]+)(?:/css)?/)?tachyons\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "icon": "default.svg",
+    "js": {
+      "webpackChunkgatsby_starter_blog_tachyons": ""
+    },
+    "oss": true,
+    "website": "https://tachyons.io"
+  },
   "TagPro": {
     "cats": [
       42
@@ -305,7 +339,7 @@
     "cats": [
       66
     ],
-    "css": "--tw-",
+    "css": "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)",
     "description": "Tailwind is a utility-first CSS framework.",
     "dom": {
       "link[rel='stylesheet'][href*='tailwind']": {
@@ -698,16 +732,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
     "website": "https://theeventscalendar.com"
-  },
-  "The Hut Group": {
-    "cats": [
-      6
-    ],
-    "icon": "TheHutGroup.png",
-    "scriptSrc": [
-      "THEHUT-.*\\.js"
-    ],
-    "website": "https://www.thg.com/"
   },
   "The Theme Foundry Make": {
     "cats": [
@@ -1414,7 +1438,6 @@
   },
   "Tidio": {
     "cats": [
-      5,
       52
     ],
     "description": "Tidio is a customer communication product. It provides multi-channel support so users can communicate with customers on the go. Live chat, messenger, or email are all supported.",

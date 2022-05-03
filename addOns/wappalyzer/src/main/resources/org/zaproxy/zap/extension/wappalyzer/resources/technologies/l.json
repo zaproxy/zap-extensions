@@ -246,8 +246,23 @@
       "L.PosAnimation": "",
       "L.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
-    "scriptSrc": "leaflet.{0,32}\\.js",
+    "scriptSrc": "leaflet.{0,32}\\.js(?!.+shopify)",
     "website": "http://leafletjs.com"
+  },
+  "Leaflet platform": {
+    "cats": [
+      100,
+      74
+    ],
+    "description": "Leaflet is the price testing platform for Shopify.",
+    "icon": "Leaflet platform.png",
+    "pricing": [
+      "payg"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "scripts\\.leaflet\\.co/",
+    "website": "https://join.leaflet.co"
   },
   "Leanplum": {
     "cats": [
@@ -265,6 +280,24 @@
     "saas": true,
     "scriptSrc": "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1",
     "website": "https://www.leanplum.com"
+  },
+  "LearnWorlds": {
+    "cats": [
+      21
+    ],
+    "description": "LearnWorlds is a powerful yet lightweight, user-friendly, white-labeled cloud-based LMS ideal for versatile employee training.",
+    "icon": "LearnWorlds.svg",
+    "js": {
+      "LWClient.ebooks": "",
+      "LWSettings.deactive_components": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.mycourse\\.app/v([\\d\\.]+)/\\;version:\\1",
+    "website": "https://www.learnworlds.com"
   },
   "Leaseweb": {
     "cats": [
@@ -570,6 +603,40 @@
     },
     "scriptSrc": "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1",
     "website": "https://www.linkedin.com/developers"
+  },
+  "Linx Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Linx Commerce is an ecommerce platform, which provides seamless and personalised cross-channel solution that enables a true omni-channel shopping experience.",
+    "icon": "Linx.png",
+    "js": {
+      "linxImpulse.config.integrationFlags.platformProvider": "linxCommerce"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.linx.com.br/linx-commerce"
+  },
+  "Linx Impulse": {
+    "cats": [
+      77,
+      76
+    ],
+    "description": "Linx Impulse is a personalisation, media and retargeting solutions built by Linx.",
+    "dom": "link[href*='.linximpulse.net']",
+    "icon": "Linx.png",
+    "js": {
+      "linx.banner": "",
+      "linxImpulse.config": "",
+      "linxImpulseInitialized": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.linx.com.br/linx-impulse"
   },
   "Liquid Web": {
     "cats": [
@@ -1275,6 +1342,20 @@
     "saas": true,
     "scriptSrc": "sdk\\.loyaltylion\\.net/",
     "website": "https://loyaltylion.com"
+  },
+  "Lozad.js": {
+    "cats": [
+      59,
+      92
+    ],
+    "description": "Lozad.js is a lightweight lazy-loading library that's just 535 bytes minified & gzipped.",
+    "icon": "default.svg",
+    "js": {
+      "lozad": ""
+    },
+    "oss": true,
+    "scripts": "/lozad\\.min\\.js",
+    "website": "https://apoorv.pro/lozad.js/"
   },
   "Lua": {
     "cats": [

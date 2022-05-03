@@ -492,10 +492,12 @@
   },
   "Judge.me": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "Judge.me powers product reviews on ecommerce stores.",
     "icon": "Judge.svg",
+    "implies": "Shopify",
     "js": {
       "judgeme": ""
     },

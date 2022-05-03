@@ -151,6 +151,24 @@
     "saas": true,
     "website": "https://corp.narvar.com"
   },
+  "NationBuilder": {
+    "cats": [
+      1,
+      53
+    ],
+    "description": "NationBuilder is a Los Angeles based technology start-up that develops content management and customer relationship management (CRM) software.",
+    "icon": "NationBuilder.svg",
+    "js": {
+      "NB.FBAppId": "",
+      "NB.Liquid": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://nationbuilder.com"
+  },
   "Nativo": {
     "cats": [
       36
@@ -419,6 +437,18 @@
       "recurring"
     ],
     "website": "https://newspack.pub/"
+  },
+  "Nexcess": {
+    "cats": [
+      62,
+      88
+    ],
+    "description": "Nexcess is a web hosting service.",
+    "headers": {
+      "x-hostname": "nxcli\\.net$"
+    },
+    "icon": "nexcess.png",
+    "website": "https://www.nexcess.net"
   },
   "Nexive": {
     "cats": [
@@ -782,5 +812,22 @@
     },
     "oss": true,
     "website": "http://www.nopcommerce.com"
+  },
+  "novomind iSHOP": {
+    "cats": [
+      6
+    ],
+    "description": "novomind iSHOP can be introduced rapidly, is highly scalable, has open APIs headless ecommerce and GDPR-compliant in the novomind Cloud.",
+    "icon": "novomind.svg",
+    "js": {
+      "_ishopevents": "",
+      "_ishopevents_url": "/ishop-api/events/",
+      "iShop.config.baseUrl": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.novomind.com/en/shopsystem/novomind-ishop-software"
   }
 }

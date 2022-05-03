@@ -745,5 +745,16 @@
       "UserEngage": ""
     },
     "website": "https://user.com"
+  },
+  "utterances": {
+    "cats": [
+      15
+    ],
+    "description": "Utterances is a lightweight comments widget built on GitHub issues.",
+    "dom": "iframe[src*='utteranc.es/client.js']",
+    "icon": "utterances.png",
+    "oss": true,
+    "website": "https://github.com/utterance/utterances",
+    "xhr": "\\.utteranc\\.es"
   }
 }

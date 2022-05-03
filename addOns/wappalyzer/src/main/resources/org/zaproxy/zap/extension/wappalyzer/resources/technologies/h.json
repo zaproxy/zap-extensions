@@ -193,6 +193,25 @@
     "scriptSrc": "\\.happyfoxchat\\.com/",
     "website": "https://www.happyfox.com/live-chat"
   },
+  "Haptik": {
+    "cats": [
+      52
+    ],
+    "description": "Haptik is an Indian enterprise conversational AI platform founded in August 2013, and acquired by Reliance Industries Limited in 2019.",
+    "icon": "Haptik.png",
+    "js": {
+      "HaptikSDK": "",
+      "haptik": "",
+      "haptikInitSettings": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.haptikapi\\.com/",
+    "website": "https://www.haptik.ai"
+  },
   "Haravan": {
     "cats": [
       6
@@ -518,6 +537,22 @@
       "generator": "Hexo(?: v?([\\d.]+))?\\;version:\\1"
     },
     "website": "https://hexo.io"
+  },
+  "Hextom Free Shipping Bar": {
+    "cats": [
+      100
+    ],
+    "description": "Free Shipping Bar is a Shopify app built by Hextom. Free Shipping Bar help promote free shipping with progressive messages to motivate customers to buy more.",
+    "icon": "Hextom.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.hextom\\.com/js/freeshippingbar\\.js",
+    "website": "https://hextom.com/case_study/free-shipping-bar"
   },
   "Hiawatha": {
     "cats": [
@@ -1033,7 +1068,8 @@
   },
   "HulkApps Form Builder": {
     "cats": [
-      73
+      73,
+      100
     ],
     "description": "HulkApps Form Builder is an application that creates customizable, job-specific forms for unit needs.",
     "icon": "HulkApps.svg",
@@ -1049,7 +1085,8 @@
   },
   "HulkApps GDPR/CCPA Compliance Manager": {
     "cats": [
-      67
+      67,
+      100
     ],
     "description": "HulkApps GDPR/CCPA Compliance Manager is a consent management solution.",
     "icon": "HulkApps.svg",
@@ -1067,7 +1104,8 @@
   },
   "HulkApps Infinite Product Options": {
     "cats": [
-      76
+      76,
+      100
     ],
     "description": "HulkApps Infinite Product Options is a unlimited custom options for products. Display variant options as buttons, color and image swatches, and more.",
     "icon": "HulkApps.svg",
@@ -1085,7 +1123,8 @@
   },
   "HulkApps Product Reviews": {
     "cats": [
-      90
+      90,
+      100
     ],
     "description": "HulkApps Product Reviews is a customer product reviews app for building social proof for store.",
     "dom": "link[href*='reviews.hulkapps.com/']",
@@ -1168,11 +1207,15 @@
   },
   "Hyperspeed": {
     "cats": [
-      92
+      92,
+      100
     ],
-    "description": "Fasterize is a website accelerator service.",
+    "description": "Hyperspeed is the most advanced speed booster for Shopify.",
     "icon": "Hyperspeed.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify",
+      "Instant.Page"
+    ],
     "js": {
       "hyperscripts": ""
     },
@@ -1181,7 +1224,8 @@
       "recurring"
     ],
     "saas": true,
-    "website": "https://www.hyperspeed.me/"
+    "scriptSrc": "cdn\\.shopify\\.com/.+/assets/hs-(?:instantload|lazysizes)\\.min\\.js",
+    "website": "https://www.hyperspeed.me"
   },
   "Hypervisual Page Builder": {
     "cats": [
@@ -1206,10 +1250,24 @@
     "cats": [
       16
     ],
-    "html": "<style[^>]+[^<]+#cf-hcaptcha-container[^<]+</style>",
+    "css": "#cf-hcaptcha-container",
+    "description": "hCaptcha is an anti-bot solution that protects user privacy and rewards websites.",
+    "dom": "link[href*='hcaptcha.com']",
+    "headers": {
+      "content-security-policy": "(?:\\.|//)hcaptcha\\.com"
+    },
     "icon": "hCaptcha.svg",
-    "scriptSrc": "https://hcaptcha.com/([\\d]+?)/api.js\\;version:\\1",
-    "website": "https://www.hcaptcha.com/"
+    "js": {
+      "hcaptcha.getRespKey": "",
+      "hcaptchaOnLoad": ""
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "hcaptcha\\.com/([\\d]+?)/api\\.js\\;version:\\1",
+    "website": "https://www.hcaptcha.com"
   },
   "hantana": {
     "cats": [

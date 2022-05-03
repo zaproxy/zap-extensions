@@ -210,6 +210,28 @@
     ],
     "website": "http://www.easylog.com.br"
   },
+  "Ebasnet": {
+    "cats": [
+      1
+    ],
+    "description": "Ebasnet is a web project creation and management platform in the cloud. It allows anyone to set up an online store or corporate website without prior IT knowledge.",
+    "icon": "Ebasnet.svg",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Varnish",
+      "Symfony"
+    ],
+    "meta": {
+      "author": "^Ebasnet Web Solutions$"
+    },
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdnebasnet\\.com/",
+    "website": "https://ebasnet.com"
+  },
   "Ecovium": {
     "cats": [
       99
@@ -614,6 +636,18 @@
       "web-analytics\\.engagio\\.com/api/"
     ],
     "website": "https://www.engagio.com/"
+  },
+  "Engintron": {
+    "cats": [
+      33
+    ],
+    "description": "Engintron is a plugin that integrates Nginx to cPanel/WHM server.",
+    "headers": {
+      "X-Server-Powered-By": "^Engintron$"
+    },
+    "icon": "engintron.png",
+    "requires": "Nginx",
+    "website": "https://github.com/engintron/engintron"
   },
   "Enigma": {
     "cats": [
@@ -1127,7 +1161,7 @@
     "cpe": "cpe:/a:expressjs:express",
     "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
     "headers": {
-      "X-Powered-By": "^Express$"
+      "X-Powered-By": "^Express(?:$|,)"
     },
     "icon": "Express.png",
     "implies": "Node.js",

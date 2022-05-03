@@ -102,6 +102,22 @@
     "scriptSrc": "www\\.semrush\\.com",
     "website": "https://www.semrush.com"
   },
+  "SEOmatic": {
+    "cats": [
+      54
+    ],
+    "description": "SEOmatic facilitates modern SEO best practices & implementation for Craft CMS 3.",
+    "icon": "SEOmatic.svg",
+    "implies": "Craft CMS",
+    "meta": {
+      "generator": "^SEOmatic$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://plugins.craftcms.com/seomatic"
+  },
   "SEUR": {
     "cats": [
       99
@@ -699,6 +715,7 @@
       }
     },
     "headers": {
+      "content-security-policy": "cdn\\.sanity\\.io",
       "x-sanity-shard": ""
     },
     "icon": "Sanity.svg",
@@ -897,6 +914,23 @@
     },
     "scriptSrc": "cdn.cxc.scorpion.direct",
     "website": "https://www.scorpion.co/"
+  },
+  "ScrollMagic": {
+    "cats": [
+      59
+    ],
+    "description": "ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.",
+    "icon": "ScrollMagic.png",
+    "implies": [
+      "jQuery",
+      "GSAP"
+    ],
+    "js": {
+      "ScrollMagic": "",
+      "ScrollMagic.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://scrollmagic.io"
   },
   "SeQura": {
     "cats": [
@@ -1719,6 +1753,22 @@
     "icon": "ShopGold.svg",
     "website": "https://www.shopgold.pl"
   },
+  "ShopPad Infinite Options": {
+    "cats": [
+      100
+    ],
+    "description": "ShopPad Infinite Options allows you to create as many custom option fields for your product pages as you need.",
+    "icon": "ShopPad.svg",
+    "js": {
+      "Shoppad.apps.infiniteoptions": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "website": "https://apps.shopify.com/custom-options"
+  },
   "Shopaholic": {
     "cats": [
       6
@@ -1838,9 +1888,9 @@
     },
     "description": "Shopify is a subscription-based software that allows anyone to set up an online store and sell their products. Shopify store owners can also sell in physical locations using Shopify POS, a point-of-sale app and accompanying hardware.",
     "dom": {
-      "link[href*='cdn.shopify.com']": {
+      "link[href*='shopify.com']": {
         "attributes": {
-          "href": "cdn\\.shopify\\.com\\;confidence:50"
+          "href": "(?:cdn\\.|\\.my)shopify\\.com\\;confidence:50"
         }
       }
     },
@@ -1851,7 +1901,8 @@
     "icon": "Shopify.svg",
     "js": {
       "Shopify": "\\;confidence:25",
-      "ShopifyAPI": ""
+      "ShopifyAPI": "",
+      "ShopifyCustomer": ""
     },
     "meta": {
       "shopify-checkout-api-token": "",
@@ -1871,7 +1922,8 @@
   },
   "Shopify Chat": {
     "cats": [
-      52
+      52,
+      100
     ],
     "description": "Shopify Chat is Shopify's native live chat function that allows you to have real-time conversations with customers visiting your Shopify store.",
     "icon": "Shopify.svg",
@@ -3319,6 +3371,19 @@
     "scriptSrc": "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://social9.com"
   },
+  "SocialLadder": {
+    "cats": [
+      32
+    ],
+    "description": "SocialLadder is a complete end-to-end creator management solution for brands looking to maximize and scale their brand ambassador, influencer, and affiliate marketing efforts.",
+    "icon": "SocialLadder.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "socialladder\\.rkiapps\\.com/",
+    "website": "https://socialladderapp.com"
+  },
   "Socket.io": {
     "cats": [
       12
@@ -3673,6 +3738,22 @@
     "scriptSrc": "/wp-content/themes/spicepress(?:-pro)?/",
     "website": "https://spicethemes.com/spicepress-wordpress-theme"
   },
+  "Spin-a-Sale": {
+    "cats": [
+      100,
+      5
+    ],
+    "description": "Spin-a-Sale adds the intensity of gamification to your site. Spin-a-Sale overlay displays a special prize wheel for visitors that you can fully configure.",
+    "icon": "Spin-a-Sale.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "client\\.spinasale\\.com/",
+    "website": "https://spinasale.com"
+  },
   "Spinnakr": {
     "cats": [
       10
@@ -3944,6 +4025,7 @@
     ],
     "description": "SpurIT is a team of certified Shopify experts which provide ecommerce software solutions.",
     "icon": "SpurIT.svg",
+    "implies": "Shopify",
     "js": {
       "Spurit.global.version": "(.+)\\;version:\\1"
     },
@@ -3952,17 +4034,18 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "cdn-spurit\\.com/shopify-apps/",
     "website": "https://spur-i-t.com"
   },
   "SpurIT Abandoned Cart Reminder": {
     "cats": [
-      98
+      98,
+      100
     ],
     "description": "SpurIT Abandoned Cart Reminder bring back your Shopify store visitors who moved to another tab by blinking your store tab.",
     "icon": "SpurIT.svg",
+    "implies": "Shopify",
     "js": {
       "ACR_SPURIT_Params.folderCss": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/"
     },
@@ -3970,7 +4053,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/",
     "website": "https://spur-i-t.com/shopify-apps/abandoned-cart-reminder/"
@@ -3978,10 +4060,12 @@
   "SpurIT Loyalty App": {
     "cats": [
       84,
-      94
+      94,
+      100
     ],
     "description": "SpurIT Loyalty App is a turnkey solution allowing you to reward existing customers in a number of ways.",
     "icon": "SpurIT.svg",
+    "implies": "Shopify",
     "js": {
       "Spurit.Loyaltypoints": ""
     },
@@ -3989,32 +4073,34 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "cdn-spurit\\.com/shopify-apps/loyaltypoints/",
     "website": "https://spur-i-t.com/shopify-apps/loyalty-points-manager"
   },
   "SpurIT Partial Payments App": {
     "cats": [
-      41
+      41,
+      100
     ],
     "description": "SpurIT Partial Payments App allow your customers to pay for the order in several ways or to share a payment with other people.",
     "icon": "SpurIT.svg",
+    "implies": "Shopify",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "cdn-spurit\\.com/shopify-apps/split-payments/",
     "website": "https://spur-i-t.com/shopify-apps/split-partial-payments/"
   },
   "SpurIT Recurring Payments App": {
     "cats": [
-      41
+      41,
+      100
     ],
     "description": "SpurIT Recurring Payments App is a simple way to create a system of bill payment,subscriptions and invoicing.",
     "icon": "SpurIT.svg",
+    "implies": "Shopify",
     "js": {
       "Spurit.recurringInvoices": ""
     },
@@ -4022,7 +4108,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "cdn-spurit\\.com/shopify-apps/recurring-invoices/",
     "website": "https://spur-i-t.com/shopify-apps/recurring-order-subscription"
@@ -4448,10 +4533,12 @@
     "cats": [
       1
     ],
+    "description": "Strapi is an open-source headless CMS used for building fast and easily manageable APIs written in JavaScript.",
     "headers": {
       "X-Powered-By": "^Strapi"
     },
-    "icon": "Strapi.png",
+    "icon": "Strapi.svg",
+    "oss": true,
     "website": "https://strapi.io"
   },
   "Strato": {
@@ -4829,7 +4916,13 @@
       12
     ],
     "description": "Svelte is a free and open-source front end compiler created by Rich Harris and maintained by the Svelte core team members.",
-    "html": "<[^>]+class=\\\"[^\\\"]+\\ssvelte-[\\w]*\\\"",
+    "dom": {
+      "*": {
+        "attributes": {
+          "class": "svelte-\\w+"
+        }
+      }
+    },
     "icon": "Svelte.svg",
     "oss": true,
     "website": "https://svelte.dev"
@@ -4994,14 +5087,13 @@
       "sf_redirect": ""
     },
     "description": "Symfony is a PHP web application framework and a set of reusable PHP components/libraries.",
-    "html": [
-      "<div id=\"sfwdt[^\"]+\" class=\"[^\"]*sf-toolbar"
-    ],
+    "dom": "div.sf-toolbar-block, div.sf-toolbar",
     "icon": "Symfony.svg",
     "implies": "PHP",
     "js": {
       "Sfjs": ""
     },
+    "oss": true,
     "website": "https://symfony.com"
   },
   "Sympa": {

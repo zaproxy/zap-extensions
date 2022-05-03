@@ -32,6 +32,24 @@
     "oss": true,
     "website": "https://github.com/bigace"
   },
+  "BON Loyalty": {
+    "cats": [
+      84,
+      100
+    ],
+    "description": "BON Loyalty is a free rewards and referrals app that helps merchants increase customer engagement with captivating points, rewards & referral program.",
+    "icon": "BON Loyalty.svg",
+    "js": {
+      "bonShopInfo.appearance": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "app\\.bonloyalty\\.com/",
+    "website": "https://bonloyalty.com"
+  },
   "BOOM": {
     "cats": [
       1
@@ -230,10 +248,12 @@
     "description": "Base is a hosted ecommerce platform that allows business owners to set up an online store and sell their products online.",
     "icon": "Base.svg",
     "js": {
+      "BASE_API.shop_id": "",
       "Base.App.open_nav": ""
     },
     "meta": {
-      "base-theme-name": "\\d+"
+      "base-theme-name": "\\;confidence:50",
+      "base-theme-version": "\\d+\\;confidence:50"
     },
     "scriptSrc": "thebase\\.in/js",
     "website": "https://thebase.in"
@@ -338,6 +358,23 @@
     "scriptSrc": "\\.getbento\\.com/",
     "website": "https://getbento.com"
   },
+  "Betty Blocks": {
+    "cats": [
+      47,
+      62
+    ],
+    "description": "Betty Blocks is a cloud-based application development solution featuring a no-code, drag-and-drop interface for developing business applications.",
+    "icon": "Betty Blocks.svg",
+    "implies": "React",
+    "meta": {
+      "description": "^Made with Betty Blocks$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bettyblocks.com"
+  },
   "Beyable": {
     "cats": [
       76
@@ -402,6 +439,7 @@
     ],
     "saas": true,
     "scriptSrc": "(?:\\.|plugins/)?bigcommerce(?:\\.com)?/(?:assets)?",
+    "scripts": "bigcommerceProductId",
     "url": "mybigcommerce\\.com",
     "website": "http://www.bigcommerce.com"
   },
@@ -978,6 +1016,24 @@
     "scriptSrc": "bookdinners\\.nl/widget\\.js",
     "website": "https://www.bookdinners.nl"
   },
+  "BookThatApp": {
+    "cats": [
+      100,
+      72
+    ],
+    "description": "BookThatApp is a Shopify appointment booking, product rental and class booking app.",
+    "icon": "BookThatApp.png",
+    "implies": "Shopify",
+    "js": {
+      "BookThatApp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "\\.bookthatapp\\.com/",
+    "website": "https://www.bookthatapp.com"
+  },
   "Bookatable": {
     "cats": [
       93
@@ -1091,6 +1147,20 @@
     "requires": "Shopify",
     "saas": true,
     "website": "https://boostcommerce.net"
+  },
+  "Booster Page Speed Optimizer": {
+    "cats": [
+      100,
+      92
+    ],
+    "description": "The Page Speed Optimizer is a Shopify app built by BoosterApps.",
+    "icon": "BoosterApps.png",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "scriptSrc": "/assets/booster-page-speed-optimizer\\.js",
+    "website": "https://apps.shopify.com/page-speed-optimizer"
   },
   "Bootstrap": {
     "cats": [
@@ -1406,6 +1476,26 @@
     ],
     "saas": true,
     "website": "https://home.breinify.ai"
+  },
+  "Bricksite": {
+    "cats": [
+      51
+    ],
+    "description": "Bricksite is a free website online tool where clients can create free accounts with various themes and features.",
+    "icon": "Bricksite.svg",
+    "js": {
+      "brickSite.common.apiUrls.base": "\\.bricksite\\.com"
+    },
+    "meta": {
+      "generator": "^Bricksite$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bricksite.io"
   },
   "BrightEdge": {
     "cats": [
@@ -1733,8 +1823,16 @@
     "cats": [
       66
     ],
-    "html": "<link[^>]+?href=\"[^\"]+bulma(?:\\.min)?\\.css",
+    "description": "Bulma is a free class-based framework for CSS.",
+    "dom": {
+      "link[href*='bulma.min.css']": {
+        "attributes": {
+          "href": "(?:([\\d\\.]+)/css/)?bulma\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
     "icon": "Bulma.svg",
+    "oss": true,
     "website": "http://bulma.io"
   },
   "Bump": {
