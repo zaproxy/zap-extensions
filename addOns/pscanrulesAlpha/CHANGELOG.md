@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - False positive condition from Sub Resource Integrity Attribute Missing scan rule when rel=canonical is used (Issue 7040).
+- Threading issue in Dangerous JS Functions rule - only reproducible with currently unreleased core changes.
 
 ## [35] - 2021-12-01
 ### Changed

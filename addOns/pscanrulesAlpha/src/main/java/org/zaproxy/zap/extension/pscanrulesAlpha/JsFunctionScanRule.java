@@ -65,7 +65,40 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
                     CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC);
 
     private static List<Pattern> defaultPatterns = null;
-    private static List<Pattern> patterns = null;
+    private List<Pattern> patterns = null;
+
+    static {
+        defaultPatterns = new ArrayList<>();
+        try {
+            File f =
+                    new File(
+                            Constant.getZapHome()
+                                    + File.separator
+                                    + FUNC_LIST_DIR
+                                    + File.separator
+                                    + FUNC_LIST_FILE);
+            if (!f.exists()) {
+                throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
+            }
+            try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.startsWith("#") && line.length() > 0) {
+                        addPattern(line, defaultPatterns);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error(
+                    "Error on opening/reading js functions file: {}{}{}{} Error: {}",
+                    File.separator,
+                    FUNC_LIST_DIR,
+                    File.separator,
+                    FUNC_LIST_FILE,
+                    e.getMessage());
+        }
+    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -73,9 +106,6 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
                 || (!msg.getResponseHeader().isHtml()
                         && !ResourceIdentificationUtils.isJavaScript(msg))) {
             return;
-        }
-        if (defaultPatterns == null) {
-            createDefaultPatterns();
         }
         loadPayload();
         StringBuilder evidence = new StringBuilder();
@@ -123,40 +153,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
                 .raise();
     }
 
-    private static void createDefaultPatterns() {
-        defaultPatterns = new ArrayList<>();
-        try {
-            File f =
-                    new File(
-                            Constant.getZapHome()
-                                    + File.separator
-                                    + FUNC_LIST_DIR
-                                    + File.separator
-                                    + FUNC_LIST_FILE);
-            if (!f.exists()) {
-                throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
-            }
-            try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-                    if (!line.startsWith("#") && line.length() > 0) {
-                        addPattern(line, defaultPatterns);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error(
-                    "Error on opening/reading js functions file: {}{}{}{} Error: {}",
-                    File.separator,
-                    FUNC_LIST_DIR,
-                    File.separator,
-                    FUNC_LIST_FILE,
-                    e.getMessage());
-        }
-    }
-
-    private static void loadPayload() {
+    private void loadPayload() {
         patterns = new ArrayList<>(defaultPatterns);
         for (String line : getJsFunctionPayloads().get()) {
             addPattern(line, patterns);
