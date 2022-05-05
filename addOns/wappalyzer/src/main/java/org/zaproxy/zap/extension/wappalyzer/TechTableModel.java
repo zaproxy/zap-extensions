@@ -31,7 +31,7 @@ public class TechTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private final Vector<String> columnNames;
-    private List<ApplicationMatch> apps = new ArrayList<>();
+    private List<ApplicationMatch> apps;
 
     private int lastAddedRow;
     private int lastEditedRow;
