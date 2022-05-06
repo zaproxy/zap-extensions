@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use Network add-on to obtain main proxy address/port.
 
+### Fixed
+- Restore usage of bundled ChromeDriver ([Issue #7272](https://github.com/zaproxy/zaproxy/issues/7272)).
+
 ## [15.8.0] - 2022-03-29
 ### Added
 - Support aarch64/arm64 WebDrivers.
