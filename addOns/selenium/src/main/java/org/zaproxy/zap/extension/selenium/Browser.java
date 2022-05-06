@@ -203,7 +203,16 @@ public enum Browser {
 
         Path basePath = getWebDriversDir().resolve(osDirName);
         String archDir = getArchDir();
-        Path driver = basePath.resolve(archDir).resolve(driverName);
+        String driverPath = process(basePath.resolve(archDir).resolve(driverName));
+        if (driverPath != null) {
+            return driverPath;
+        }
+
+        // Fallback to 32 in case the WebDriver does not have a 64 specific.
+        return process(basePath.resolve("32").resolve(driverName));
+    }
+
+    private static String process(Path driver) {
         if (Files.exists(driver)) {
             try {
                 setExecutable(driver);
