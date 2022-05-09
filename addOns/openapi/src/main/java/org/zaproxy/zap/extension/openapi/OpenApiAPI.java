@@ -97,13 +97,7 @@ public class OpenApiAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA, PARAM_FILE);
             }
 
-            ApiResponseList result = new ApiResponseList(name);
-            for (String error : errors) {
-                result.addItem(new ApiResponseElement("warning", error));
-            }
-
-            return result;
-
+            return createResponse(name, errors);
         } else if (ACTION_IMPORT_URL.equals(name)) {
 
             try {
@@ -120,13 +114,7 @@ public class OpenApiAPI extends ApiImplementor {
                     throw new ApiException(
                             ApiException.Type.ILLEGAL_PARAMETER, "Failed to access the target.");
                 }
-
-                ApiResponseList result = new ApiResponseList(name);
-                for (String error : errors) {
-                    result.addItem(new ApiResponseElement("warning", error));
-                }
-
-                return result;
+                return createResponse(name, errors);
             } catch (URIException e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             } catch (InvalidUrlException e) {
@@ -136,6 +124,19 @@ public class OpenApiAPI extends ApiImplementor {
         } else {
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }
+    }
+
+    private static ApiResponseList createResponse(String name, List<String> errors)
+            throws ApiException {
+        if (!errors.isEmpty()) {
+            throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA, String.join(",", errors));
+        }
+
+        ApiResponseList result = new ApiResponseList(name);
+        if (errors.isEmpty()) {
+            result.addItem(ApiResponseElement.OK);
+        }
+        return result;
     }
 
     private static int getContextId(JSONObject params) throws ApiException {
