@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Dependency updates.
+- When no errors are encountered during import the API will now respond with content indicating things are okay (Issue 3951).
+    - When errors are encountered a 'Bad External Data' response is provided listing the issues.
 
 ## [38] - 2023-10-23
 ### Changed
