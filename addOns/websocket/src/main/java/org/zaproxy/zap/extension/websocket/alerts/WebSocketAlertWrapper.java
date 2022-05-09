@@ -197,7 +197,7 @@ public class WebSocketAlertWrapper {
                         webSocketMessageDTO.getChannel().getHandshakeReference().getHttpMessage();
             } catch (Exception e) {
                 LOGGER.info(
-                        "Couldn't get the Handshake Http Message for this specific channel. Channel ID: {}",
+                        "Couldn't get the Handshake HTTP Message for this specific channel. Channel ID: {}",
                         webSocketMessageDTO.getChannel().getId(),
                         e);
                 return this;
