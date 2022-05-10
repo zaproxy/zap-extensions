@@ -39,6 +39,8 @@ import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.nio.file.Path;
@@ -59,6 +61,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.server.http.Alias;
@@ -82,10 +87,17 @@ class NetworkApiUnitTest extends TestUtils {
     private ServerCertificatesOptions serverCertificatesOptions;
     private LocalServersOptions localServersOptions;
     private ExtensionNetwork extensionNetwork;
+    private ConnectionParam connectionParam;
 
     @BeforeEach
     void setUp() {
         mockMessages(new ExtensionNetwork());
+        Model model = mock(Model.class, withSettings().lenient());
+        Model.setSingletonForTesting(model);
+        OptionsParam optionsParam = mock(OptionsParam.class, withSettings().lenient());
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        connectionParam = mock(ConnectionParam.class);
+        given(optionsParam.getConnectionParam()).willReturn(connectionParam);
         extensionNetwork = mock(ExtensionNetwork.class, withSettings().lenient());
         serverCertificatesOptions = mock(ServerCertificatesOptions.class, withSettings().lenient());
         given(extensionNetwork.getServerCertificatesOptions())
@@ -145,12 +157,27 @@ class NetworkApiUnitTest extends TestUtils {
         assertThat(networkApi.getApiOthers(), hasSize(2));
     }
 
+    @Test
+    void shouldAddAdditionalApiElementsWhenHandlingConnection() {
+        // Given
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        // When
+        networkApi = new NetworkApi(extensionNetwork);
+        // Then
+        assertThat(networkApi.getApiActions(), hasSize(12));
+        assertThat(networkApi.getApiViews(), hasSize(5));
+        assertThat(networkApi.getApiOthers(), hasSize(3));
+    }
+
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"unknown", "something"})
     void shouldThrowApiExceptionForUnknownShortcut(String path) throws Exception {
         // Given
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
         HttpMessage message = new HttpMessage(new URI("http://zap/" + path, true));
         // When
         ApiException exception =
@@ -185,6 +212,36 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
         verify(extensionNetwork, times(0)).getProxyPacContent(any());
+    }
+
+    @Test
+    void shouldSetProxyWithShortcutIfHandlingConnection() throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage(new URI("http://zap/setproxy", true));
+        message.setRequestBody(
+                "{\"type\":1,\"http\":{\"host\":\"proxy.example.org\",\"port\":8090}}");
+        // When
+        HttpMessage response = networkApi.handleShortcut(message);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo("OK")));
+        verify(connectionParam).setProxyChainName("proxy.example.org");
+        verify(connectionParam).setProxyChainPort(8090);
+        verifyNoMoreInteractions(connectionParam);
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenSettingProxyWithShortcutIfNotHandlingConnection()
+            throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(false);
+        HttpMessage message = new HttpMessage(new URI("http://zap/setproxy", true));
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
+        verifyNoInteractions(connectionParam);
     }
 
     @ParameterizedTest
@@ -454,6 +511,110 @@ class NetworkApiUnitTest extends TestUtils {
                         ApiException.class, () -> networkApi.handleApiOther(message, name, params));
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.INTERNAL_ERROR)));
+    }
+
+    @Test
+    void shouldSetProxyWithOtherEndpointIfHandlingConnection() throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        params.put("proxy", "{\"type\":1,\"http\":{\"host\":\"proxy.example.org\",\"port\":8090}}");
+        // When
+        HttpMessage response = networkApi.handleApiOther(message, name, params);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo("OK")));
+        verify(connectionParam).setProxyChainName("proxy.example.org");
+        verify(connectionParam).setProxyChainPort(8090);
+        verifyNoMoreInteractions(connectionParam);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"null", "\"a\"", "[]"})
+    void shouldNotSetProxyWithOtherEndpointIfTypeNotSupported(String type) throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        params.put(
+                "proxy",
+                "{\"type\":" + type + ",\"http\":{\"host\":\"proxy.example.org\",\"port\":8090}}");
+        // When
+        HttpMessage response = networkApi.handleApiOther(message, name, params);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo("OK")));
+        verifyNoInteractions(connectionParam);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"\"host\":\"\",", ""})
+    void shouldNotSetProxyWithOtherEndpointIfHostNotValid(String host) throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        params.put("proxy", "{\"type\":1,\"http\":{" + host + "\"port\":8080}}");
+        // When
+        HttpMessage response = networkApi.handleApiOther(message, name, params);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo("OK")));
+        verifyNoInteractions(connectionParam);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"null", "\"a\"", "[]"})
+    void shouldNotSetProxyWithOtherEndpointIfPortNotValid(String port) throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        params.put(
+                "proxy",
+                "{\"type\":1,\"http\":{\"host\":\"proxy.example.org\",\"port\":" + port + "}}");
+        // When
+        HttpMessage response = networkApi.handleApiOther(message, name, params);
+        // Then
+        assertThat(response.getResponseBody().toString(), is(equalTo("OK")));
+        verifyNoInteractions(connectionParam);
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenSettingProxyWithOtherEndpointIfMalformedJson()
+            throws Exception {
+        // Given
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        params.put("proxy", "...");
+        // When
+        ApiException exception =
+                assertThrows(
+                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        verifyNoInteractions(connectionParam);
+    }
+
+    @Test
+    void shouldThrowApiExceptionWhenSettingProxyWithOtherEndpointIfNotHandlingConnection()
+            throws Exception {
+        // Given
+        HttpMessage message = new HttpMessage();
+        String name = "setProxy";
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleConnection()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(
+                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
+        verifyNoInteractions(connectionParam);
     }
 
     @ParameterizedTest
@@ -992,6 +1153,7 @@ class NetworkApiUnitTest extends TestUtils {
     void shouldHaveDescriptionsForAllApiElements() {
         given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(extensionNetwork.isHandleConnection()).willReturn(true);
         networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);
