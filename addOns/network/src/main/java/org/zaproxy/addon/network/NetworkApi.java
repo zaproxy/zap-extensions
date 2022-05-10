@@ -32,9 +32,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
@@ -80,6 +82,9 @@ public class NetworkApi extends ApiImplementor {
 
     private static final String OTHER_PROXY_PAC = "proxy.pac";
     private static final String OTHER_ROOT_CA_CERT = "rootCaCert";
+    private static final String OTHER_SET_PROXY = "setProxy";
+
+    private static final String SHORTCUT_SET_PROXY = "setproxy";
 
     private static final String PARAM_ADDRESS = "address";
     private static final String PARAM_API = "api";
@@ -160,6 +165,11 @@ public class NetworkApi extends ApiImplementor {
             this.addApiShortcut(OTHER_PROXY_PAC);
         }
 
+        if (isHandleConnection(extensionNetwork)) {
+            this.addApiOthers(new ApiOther(OTHER_SET_PROXY, Arrays.asList(PARAM_PROXY)));
+            this.addApiShortcut(SHORTCUT_SET_PROXY);
+        }
+
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
     }
 
@@ -169,6 +179,10 @@ public class NetworkApi extends ApiImplementor {
 
     private static boolean isHandleLocalServers(ExtensionNetwork extensionNetwork) {
         return extensionNetwork == null || extensionNetwork.isHandleLocalServers();
+    }
+
+    private static boolean isHandleConnection(ExtensionNetwork extensionNetwork) {
+        return extensionNetwork == null || extensionNetwork.isHandleConnection();
     }
 
     @Override
@@ -517,6 +531,54 @@ public class NetworkApi extends ApiImplementor {
                 msg.setResponseBody(pem);
                 return msg;
 
+            case OTHER_SET_PROXY:
+                if (!isHandleConnection(extensionNetwork)) {
+                    throw new ApiException(ApiException.Type.BAD_OTHER);
+                }
+
+                /* JSON string:
+                 *  {"type":1,
+                 *  "http":	{"host":"proxy.corp.com","port":80},
+                 *  "ssl":	{"host":"proxy.corp.com","port":80},
+                 *  "ftp":{"host":"proxy.corp.com","port":80},
+                 *  "socks":{"host":"proxy.corp.com","port":80},
+                 *  "shareSettings":true,"socksVersion":5,
+                 *  "proxyExcludes":"localhost, 127.0.0.1"}
+                 */
+                try {
+                    JSONObject json = JSONObject.fromObject(params.getString(PARAM_PROXY));
+
+                    if (json.optInt("type", -1) == 1) {
+                        JSONObject httpJson = JSONObject.fromObject(json.get("http"));
+                        String host = httpJson.optString("host", null);
+                        int port = httpJson.optInt("port", -1);
+
+                        if (port > 0 && host != null && !host.isEmpty()) {
+                            Model.getSingleton()
+                                    .getOptionsParam()
+                                    .getConnectionParam()
+                                    .setProxyChainName(host);
+                            Model.getSingleton()
+                                    .getOptionsParam()
+                                    .getConnectionParam()
+                                    .setProxyChainPort(port);
+                        }
+                    }
+
+                    String response = "OK";
+                    msg.setResponseHeader(
+                            API.getDefaultResponseHeader("text/html", response.length()));
+
+                    msg.setResponseBody(response);
+
+                } catch (JSONException e) {
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_PROXY);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+
+                return msg;
+
             default:
                 throw new ApiException(ApiException.Type.BAD_OTHER);
         }
@@ -530,6 +592,16 @@ public class NetworkApi extends ApiImplementor {
                         .getEscapedPath()
                         .startsWith("/" + OTHER_PROXY_PAC)) {
             return handleApiOther(msg, OTHER_PROXY_PAC, new JSONObject());
+        }
+
+        if (isHandleConnection(extensionNetwork)
+                && msg.getRequestHeader()
+                        .getURI()
+                        .getEscapedPath()
+                        .startsWith("/" + SHORTCUT_SET_PROXY)) {
+            JSONObject params = new JSONObject();
+            params.put(PARAM_PROXY, msg.getRequestBody().toString());
+            return this.handleApiOther(msg, OTHER_SET_PROXY, params);
         }
 
         throw new ApiException(

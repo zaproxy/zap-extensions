@@ -145,6 +145,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
     boolean handleLocalServers;
+    boolean handleConnection;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
@@ -191,6 +192,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean isHandleLocalServers() {
         return handleLocalServers;
+    }
+
+    boolean isHandleConnection() {
+        return handleConnection;
     }
 
     AliasChecker getAliasChecker() {
@@ -442,6 +447,17 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void hook(ExtensionHook extensionHook) {
+        try {
+            handleConnection =
+                    API.getInstance()
+                            .getImplementors()
+                            .get("core")
+                            .getApiOther("setproxy")
+                            .isDeprecated();
+        } catch (Exception e) {
+            LOGGER.debug("An error occurred while checking for connection handling:", e);
+        }
+
         extensionHook.addApiImplementor(new NetworkApi(this));
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
