@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [6] - 2022-05-10
 ### Added
 - Support for renaming tabs.
 - More help.
@@ -48,5 +48,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[6]: https://github.com/zaproxy/zap-extensions/releases/requester-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/requester-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/requester-v4
