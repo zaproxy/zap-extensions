@@ -113,6 +113,7 @@ import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
@@ -146,6 +147,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     boolean handleServerCerts;
     boolean handleLocalServers;
     boolean handleConnection;
+    private ConnectionParam legacyConnectionOptions;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
@@ -184,6 +186,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         // Force initialisation.
         TlsUtils.getSupportedProtocols();
+
+        legacyConnectionOptions = new LegacyConnectionParam();
     }
 
     boolean isHandleServerCerts() {
@@ -447,13 +451,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void hook(ExtensionHook extensionHook) {
+        ApiImplementor coreApi = null;
         try {
-            handleConnection =
-                    API.getInstance()
-                            .getImplementors()
-                            .get("core")
-                            .getApiOther("setproxy")
-                            .isDeprecated();
+            coreApi = API.getInstance().getImplementors().get("core");
+            handleConnection = coreApi.getApiOther("setproxy").isDeprecated();
         } catch (Exception e) {
             LOGGER.debug("An error occurred while checking for connection handling:", e);
         }
@@ -497,6 +498,47 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     };
 
             extensionHook.addApiImplementor(new LegacyProxiesApi(this));
+        }
+
+        if (handleConnection && coreApi != null) {
+            List<String> views =
+                    Arrays.asList(
+                            "optionDefaultUserAgent",
+                            "optionDnsTtlSuccessfulQueries",
+                            "optionHttpState",
+                            "optionHttpStateEnabled",
+                            "optionProxyChainName",
+                            "optionProxyChainPassword",
+                            "optionProxyChainPort",
+                            "optionProxyChainPrompt",
+                            "optionProxyChainRealm",
+                            "optionProxyChainUserName",
+                            "optionSingleCookieRequestHeader",
+                            "optionTimeoutInSecs",
+                            "optionUseProxyChain",
+                            "optionUseProxyChainAuth",
+                            "optionUseSocksProxy");
+            coreApi.getApiViews().removeIf(view -> views.contains(view.getName()));
+
+            List<String> actions =
+                    Arrays.asList(
+                            "setOptionDefaultUserAgent",
+                            "setOptionDnsTtlSuccessfulQueries",
+                            "setOptionHttpStateEnabled",
+                            "setOptionProxyChainName",
+                            "setOptionProxyChainPassword",
+                            "setOptionProxyChainPort",
+                            "setOptionProxyChainPrompt",
+                            "setOptionProxyChainRealm",
+                            "setOptionProxyChainUserName",
+                            "setOptionSingleCookieRequestHeader",
+                            "setOptionTimeoutInSecs",
+                            "setOptionUseProxyChain",
+                            "setOptionUseProxyChainAuth",
+                            "setOptionUseSocksProxy");
+            coreApi.getApiActions().removeIf(action -> actions.contains(action.getName()));
+
+            coreApi.addApiOptions(legacyConnectionOptions);
         }
 
         if (hasView()) {
