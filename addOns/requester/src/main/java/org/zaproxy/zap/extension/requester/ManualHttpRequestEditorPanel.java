@@ -49,6 +49,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
+import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -146,6 +147,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         if (responsePanel == null) {
             responsePanel = new HttpPanelResponse(false, configurationKey);
             responsePanel.setEnableViewSelect(true);
+
             responsePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
         }
         return responsePanel;
@@ -162,7 +164,8 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
             helpButton.setIcon(ExtensionHelp.getHelpIcon());
             helpButton.setToolTipText(Constant.messages.getString("help.dialog.button.tooltip"));
             helpButton.addActionListener(e -> ExtensionHelp.showHelp(HELP_KEY));
-            requestResponsePanel.addToolbarButton(helpButton);
+            requestResponsePanel.addResponseToolbarButton(
+                    helpButton, HttpPanel.OptionsLocation.END);
 
             requestResponsePanel.addEndButton(getBtnSend());
             requestResponsePanel.addSeparator();
@@ -482,6 +485,10 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 
         public void addToolbarButton(JButton button) {
             requestPanel.addOptions(button, HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        }
+
+        public void addResponseToolbarButton(JButton button, OptionsLocation location) {
+            responsePanel.addOptions(button, location);
         }
 
         public void addSeparator() {

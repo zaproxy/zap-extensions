@@ -32,7 +32,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
 
     private static final long serialVersionUID = 1L;
 
-    private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null;
+    private RequesterNumberedRenamableTabbedPane requesterNumberedTabbedPane = null;
 
     public RequesterPanel(ExtensionRequester extension) {
         super();
@@ -46,11 +46,11 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
                         .getMenuShortcutKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
         this.setShowByDefault(true);
-        requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();
+        requesterNumberedTabbedPane = new RequesterNumberedRenamableTabbedPane();
         this.add(requesterNumberedTabbedPane);
     }
 
-    public RequesterNumberedTabbedPane getRequesterNumberedTabbedPane() {
+    public RequesterNumberedRenamableTabbedPane getRequesterNumberedTabbedPane() {
         return requesterNumberedTabbedPane;
     }
 
