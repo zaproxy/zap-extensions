@@ -27,14 +27,14 @@ public class CloseActionHandler implements ActionListener {
 
     private String tabName;
 
-    private NumberedTabbedPane numberedTabbedPane;
+    private NumberedRenamableTabbedPane numberedTabbedPane;
 
-    public CloseActionHandler(NumberedTabbedPane numberedTabbedPane, String tabName) {
+    public CloseActionHandler(NumberedRenamableTabbedPane numberedTabbedPane, String tabName) {
         this.numberedTabbedPane = numberedTabbedPane;
         this.tabName = tabName;
     }
 
-    public NumberedTabbedPane getNumberedTabbedPane() {
+    public NumberedRenamableTabbedPane getNumberedTabbedPane() {
         return numberedTabbedPane;
     }
 

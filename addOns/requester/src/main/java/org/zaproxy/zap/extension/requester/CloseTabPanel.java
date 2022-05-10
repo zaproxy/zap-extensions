@@ -38,13 +38,14 @@ public class CloseTabPanel extends JPanel {
             new ImageIcon(
                     CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-red.png"));
 
-    private NumberedTabbedPane ntp;
+    private NumberedRenamableTabbedPane ntp;
+    private JLabel lblTitle;
 
-    public CloseTabPanel(String tabName, NumberedTabbedPane ntp) {
+    public CloseTabPanel(String tabName, NumberedRenamableTabbedPane ntp) {
         super();
         this.ntp = ntp;
         this.setOpaque(false);
-        JLabel lblTitle = new JLabel(tabName);
+        lblTitle = new JLabel(tabName);
         JButton btnClose = new JButton();
         btnClose.setOpaque(false);
 
@@ -73,5 +74,21 @@ public class CloseTabPanel extends JPanel {
         this.add(btnClose, gbc);
 
         btnClose.addActionListener(new CloseActionHandler(this.ntp, tabName));
+    }
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        if (lblTitle != null) {
+            lblTitle.setText(name);
+        }
+    }
+
+    @Override
+    public String getName() {
+        if (lblTitle != null) {
+            return lblTitle.getText();
+        }
+        return super.getName();
     }
 }

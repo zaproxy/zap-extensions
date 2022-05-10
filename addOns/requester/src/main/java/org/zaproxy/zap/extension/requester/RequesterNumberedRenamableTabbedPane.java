@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.requester;
 
-public class RequesterNumberedTabbedPane extends NumberedTabbedPane {
+public class RequesterNumberedRenamableTabbedPane extends NumberedRenamableTabbedPane {
 
     private static final long serialVersionUID = 1L;
 
-    public RequesterNumberedTabbedPane() {
+    public RequesterNumberedRenamableTabbedPane() {
         super();
     }
 

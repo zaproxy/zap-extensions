@@ -20,16 +20,21 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.commons.lang3.StringUtils;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 
-public abstract class NumberedTabbedPane extends JTabbedPane {
+public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
 
     private static final long serialVersionUID = 1L;
     private Integer nextTabNumber = 1;
@@ -37,7 +42,7 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
     private static final Icon PLUS_ICON =
             new ImageIcon(ExtensionRequester.class.getResource("/resource/icon/fugue/plus.png"));
 
-    public NumberedTabbedPane() {
+    public NumberedRenamableTabbedPane() {
         super();
         this.addChangeListener(
                 new ChangeListener() {
@@ -47,12 +52,36 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
 
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        NumberedTabbedPane ntp = (NumberedTabbedPane) e.getSource();
+                        NumberedRenamableTabbedPane ntp =
+                                (NumberedRenamableTabbedPane) e.getSource();
                         if (!adding && ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
                             // Clicked on plus tab or changed to it
                             adding = true;
                             ntp.addDefaultTab();
                             adding = false;
+                        }
+                    }
+                });
+
+        this.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent evt) {
+                        if (evt.getClickCount() == 2) {
+                            int index = indexAtLocation(evt.getX(), evt.getY());
+                            if (index > -1) {
+                                Component comp = getTabComponentAt(index);
+                                if (comp != null) {
+                                    String newName =
+                                            JOptionPane.showInputDialog(
+                                                    Constant.messages.getString(
+                                                            "requester.tab.rename"),
+                                                    comp.getName());
+                                    if (!StringUtils.isEmpty(newName)) {
+                                        comp.setName(newName);
+                                    }
+                                }
+                            }
                         }
                     }
                 });
