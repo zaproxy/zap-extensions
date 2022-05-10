@@ -9,7 +9,7 @@
 <H1>Automation Framework - requestor Job</H1>
 
 This job sends specifically crafted requests to a target url, with a custom request method and body. The user can also specify
-an expected response code, against which the actual response is compared, and the user is warned in case it does not match.
+an expected response code, against which the actual response is compared, and the user is warned in case it does not match. The user can add additional headers to the request e.g. Authorization Tokens, etc.
 
 <H2>YAML</H2>
 
@@ -22,6 +22,8 @@ an expected response code, against which the actual response is compared, and th
         method:                        # String: A non-empty request method, default: GET
         data:                          # String: Optional data to send in the request body
         responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
+        headers:                       # An optional list of additional headers to include in the request
+            header1: "value1"
 </pre>
 
 </BODY>

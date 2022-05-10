@@ -49,6 +49,8 @@ public class RequestorJob extends AutomationJob {
     public static final String JOB_NAME = "requestor";
     private static final String REQUESTS = "requests";
 
+    private static final String HEADERS = "headers";
+
     private Parameters parameters = new Parameters();
     private Data data;
 
@@ -76,20 +78,23 @@ public class RequestorJob extends AutomationJob {
 
         this.verifyUser(this.getParameters().getUser(), progress);
 
-        Object o = jobData.get(REQUESTS);
-        if (o == null) {
-            return;
-        }
-        if (!(o instanceof ArrayList<?>)) {
-            progress.error(Constant.messages.getString("automation.error.requestor.badlist", o));
+        Object requestsList = jobData.get(REQUESTS);
+        if (requestsList == null) {
             return;
         }
 
-        ArrayList<?> requests = (ArrayList<?>) o;
+        if (!(requestsList instanceof ArrayList<?>)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.requestor.badlist", requestsList));
+            return;
+        }
+
+        ArrayList<?> requests = (ArrayList<?>) requestsList;
         for (Object request : requests) {
             if (request instanceof LinkedHashMap<?, ?>) {
                 Request req = new Request();
-                JobUtils.applyParamsToObject(
+                JobUtils.applyParamsToObject( // Here request needs to be mapped to req object
                         (LinkedHashMap<?, ?>) request, req, this.getName(), null, progress);
                 if (req.getUrl() == null) {
                     progress.error(
@@ -121,6 +126,10 @@ public class RequestorJob extends AutomationJob {
                                     request));
                 }
                 this.getData().addRequest(req);
+                /**
+                 * The req object contains the Request object and its being passed to the requests
+                 * arraylist which is being maintained in this class
+                 */
             }
         }
     }
@@ -128,6 +137,10 @@ public class RequestorJob extends AutomationJob {
     @Override
     public void applyParameters(AutomationProgress progress) {}
 
+    /**
+     * This method sets the headers plus other required components of an HTTP message and then sends
+     * the HTTP request.
+     */
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
@@ -136,6 +149,14 @@ public class RequestorJob extends AutomationJob {
             String method = req.getMethod();
             if (method == null || method.isEmpty()) {
                 method = "GET";
+            }
+            /** Adding custom headers to the HTTP message */
+            Map<?, ?> customHeaders = req.getHeaders();
+            if (customHeaders != null) {
+                for (Map.Entry<?, ?> header : customHeaders.entrySet()) {
+                    msg.getRequestHeader()
+                            .setHeader((String) header.getKey(), (String) header.getValue());
+                }
             }
             msg.getRequestHeader().setMethod(method);
             String url = env.replaceVars(req.getUrl());
@@ -316,6 +337,7 @@ public class RequestorJob extends AutomationJob {
         private String method;
         private String data;
         private Integer responseCode;
+        private Map<?, ?> headers;
 
         public Request() {}
 
@@ -327,8 +349,23 @@ public class RequestorJob extends AutomationJob {
             this.responseCode = responseCode;
         }
 
+        public Request(
+                String url,
+                String name,
+                String method,
+                String data,
+                Integer responseCode,
+                Map<?, ?> headers) {
+            this.url = url;
+            this.name = name;
+            this.method = method;
+            this.data = data;
+            this.responseCode = responseCode;
+            this.headers = headers;
+        }
+
         public Request copy() {
-            return new Request(url, name, method, data, responseCode);
+            return new Request(url, name, method, data, responseCode, headers);
         }
 
         public String getUrl() {
@@ -369,6 +406,14 @@ public class RequestorJob extends AutomationJob {
 
         public void setResponseCode(Integer responseCode) {
             this.responseCode = responseCode;
+        }
+
+        public Map<?, ?> getHeaders() {
+            return headers;
+        }
+
+        public void setHeaders(Map<?, ?> headers) {
+            this.headers = headers;
         }
     }
 }

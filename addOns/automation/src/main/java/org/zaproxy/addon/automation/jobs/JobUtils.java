@@ -51,6 +51,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
+/** This class contains different helper functions to perform tasks like object mapping. */
 public class JobUtils {
 
     private static final String THRESHOLD_I18N_PREFIX = "ascan.options.level.";
@@ -250,7 +251,7 @@ public class JobUtils {
             if (ignoreList.contains(key)) {
                 continue;
             }
-
+            /** Mapping the setters of all the corresponding parameters of job */
             String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
             Method optMethod = methodMap.get(paramMethodName);
             if (optMethod != null) {
@@ -288,6 +289,10 @@ public class JobUtils {
                     if (value != null) {
                         try {
                             optMethod.invoke(object, value);
+                            /**
+                             * Calling the setter with the value provided to set the parameter value
+                             * in object
+                             */
                             progress.info(
                                     Constant.messages.getString(
                                             "automation.info.setparam",

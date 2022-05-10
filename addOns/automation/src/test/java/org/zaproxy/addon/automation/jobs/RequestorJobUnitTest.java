@@ -369,6 +369,58 @@ class RequestorJobUnitTest {
     }
 
     @Test
+    void shouldSendHeadersWithSetValues() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  headers:\n"
+                        + "    header1: value1";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(
+                argument.getValue().getRequestHeader().getHeader("header1"), is(equalTo("value1")));
+    }
+
+    @Test
+    void shouldNotFailIfBadHeadersList() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr = "requests:\n" + "- url: https://www.example.com\n" + "  headers:";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldHandleUrlsWithEnvVarValues() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();

@@ -7,3 +7,5 @@
         method:                        # String: A non-empty request method, default: GET
         data:                          # String: Optional data to send in the request body, supports vars
         responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
+        headers:                       # An optional list of headers
+            header1: "value1"
