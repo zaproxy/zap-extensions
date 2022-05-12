@@ -207,6 +207,12 @@
       "source":"snallygaster"
     },
     {
+      "path":"vb_test.php",
+      "content":["<title>vBulletin Test Script"],
+      "type":"vb_test",
+      "source":"snallygaster"
+    },
+    {
       "path":"CHANGELOG.txt",
       "content":["Drupal "],
       "type":"drupal",
@@ -243,6 +249,34 @@
       "links":["https://twitter.com/jae_hak99/status/1286605139042643974","https://httpd.apache.org/docs/current/mod/mod_info.html"],
       "type":"apache_server_info",
       "source":"twitter"	
+    },
+    {
+      "path":"phpinfo.php",
+      "content":["phpinfo()"],
+	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "type":"phpinfo",
+      "source":"snallygaster"
+    },
+    {
+      "path":"info.php",
+      "content":["phpinfo()"],
+	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "type":"phpinfo",
+      "source":"snallygaster"
+    },
+    {
+      "path":"i.php",
+      "content":["phpinfo()"],
+	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "type":"phpinfo",
+      "source":"snallygaster"
+    },
+    {
+      "path":"test.php",
+      "content":["phpinfo()"],
+	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "type":"phpinfo",
+      "source":"snallygaster"
     }
   ]
 } 
