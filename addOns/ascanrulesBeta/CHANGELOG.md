@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
-- hidden-files add-on → Hidden File Finder scan rule.
+- Adding more checks to Hidden File Finder scan rule.
 
 ## [40] - 2022-03-15
 ### Changed
