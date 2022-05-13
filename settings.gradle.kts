@@ -53,6 +53,7 @@ var addOns = listOf(
     "onlineMenu",
     "openapi",
     "packpentester",
+    "packscanrules",
     "plugnhack",
     "portscan",
     "pscanrules",
