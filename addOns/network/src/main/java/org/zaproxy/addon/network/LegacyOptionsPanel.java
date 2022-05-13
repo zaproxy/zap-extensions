@@ -30,7 +30,7 @@ class LegacyOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
-    LegacyOptionsPanel(String sourceKey, String newPanelName) {
+    LegacyOptionsPanel(String sourceKey, AbstractParamPanel newPanel) {
         setName(Constant.messages.getString("network.ui.options.legacy." + sourceKey));
 
         JLabel label =
@@ -40,7 +40,7 @@ class LegacyOptionsPanel extends AbstractParamPanel {
         JButton button =
                 new JButton(Constant.messages.getString("network.ui.options.legacy.opennew"));
         button.addActionListener(
-                e -> View.getSingleton().getOptionsDialog(null).showParamPanel(newPanelName));
+                e -> View.getSingleton().getOptionsDialog(null).showParamPanel(newPanel, ""));
 
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
