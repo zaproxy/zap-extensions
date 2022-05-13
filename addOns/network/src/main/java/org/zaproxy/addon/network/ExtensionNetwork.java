@@ -557,9 +557,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
                 ExtensionHookView hookView = extensionHook.getHookView();
                 hookView.addOptionPanel(
-                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel.getName()));
+                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
                 hookView.addOptionPanel(
-                        new LegacyOptionsPanel("proxies", localServersOptionsPanel.getName()));
+                        new LegacyOptionsPanel("proxies", localServersOptionsPanel));
             }
         }
     }
