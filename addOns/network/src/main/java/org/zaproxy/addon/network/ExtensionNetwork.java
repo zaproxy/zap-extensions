@@ -530,6 +530,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             "setOptionProxyChainPort",
                             "setOptionProxyChainPrompt",
                             "setOptionProxyChainRealm",
+                            "setOptionProxyChainSkipName",
                             "setOptionProxyChainUserName",
                             "setOptionSingleCookieRequestHeader",
                             "setOptionTimeoutInSecs",
