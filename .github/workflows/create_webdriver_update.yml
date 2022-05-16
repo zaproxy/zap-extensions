@@ -50,12 +50,10 @@ jobs:
         echo $GECKO_INPUT
         GECKO_INPUT=${GECKO_INPUT:-"gxx" }
         echo $GECKO_INPUT
-        if [ ${{ github.event_name }} != 'schedule' ]; then
-          if [ $GECKO_INPUT == "gxx" ]; then
-            GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
-          else
-            GECKO_VERS=${{ github.event.inputs.gecko_version }}
-          fi
+        if [ $GECKO_INPUT == "gxx" ]; then
+          GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .name)
+        else
+          GECKO_VERS=${{ github.event.inputs.gecko_version }}
         fi
         echo $GECKO_VERS
         # Build the feature branch
@@ -77,21 +75,19 @@ jobs:
           git commit -m "Webdriver Update" -m "ChromeDriver update to $CHROME_VERS" --signoff
         fi
         # Update geckodriver version strings in help and build file
-        if [ ${{ github.event_name }} != 'schedule' ]; then
-          sed -i -e 's|val geckodriverVersion = "[0-9\.]*"|val geckodriverVersion = "'"$GECKO_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
-          sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
-          sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
-          sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
-          git update-index -q --refresh
-          # If there are changes update changelog, and commit
-          if ! git diff-index --quiet HEAD --; then
-            IS_UPDT=1
-            ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
-            ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
-            ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
-            git add .
-            git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
-          fi
+        sed -i -e 's|val geckodriverVersion = "[0-9\.]*"|val geckodriverVersion = "'"$GECKO_VERS"'"|g' addOns/webdrivers/webdrivers.gradle.kts
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverlinux/src/main/javahelp/org/zaproxy/zap/extension/webdriverlinux/resources/help/contents/webdriverlinux.html
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdrivermacos/src/main/javahelp/org/zaproxy/zap/extension/webdrivermacos/resources/help/contents/webdrivermacos.html
+        sed -i -e "s|Firefox - geckodriver [0-9\.]*</li>|Firefox - geckodriver $GECKO_VERS</li>|g" addOns/webdrivers/webdriverwindows/src/main/javahelp/org/zaproxy/zap/extension/webdriverwindows/resources/help/contents/webdriverwindows.html
+        git update-index -q --refresh
+        # If there are changes update changelog, and commit
+        if ! git diff-index --quiet HEAD --; then
+          IS_UPDT=1
+          ./gradlew :addOn:webdrivers:webdriverlinux:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdrivermacos:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          ./gradlew :addOn:webdrivers:webdriverwindows:updateChangelog --change="- Update geckodriver to $GECKO_VERS."
+          git add .
+          git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
         fi
         ## If there are changes: push and PR
         if [ $IS_UPDT -eq 1 ]; then
