@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.retire;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -70,5 +71,12 @@ public class Result {
 
     public boolean hasOtherInfo() {
         return otherinfo != null && !otherinfo.isEmpty();
+    }
+
+    public Set<String> getCves() {
+        if (information.isEmpty() || !information.containsKey(CVE)) {
+            return Collections.emptySet();
+        }
+        return information.get(CVE);
     }
 }
