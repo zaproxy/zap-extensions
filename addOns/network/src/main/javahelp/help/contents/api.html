@@ -22,6 +22,20 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
+			addLocalServer (address* port* api proxy behindNat decodeResponse removeAcceptEncoding): Adds a local server/proxy.
+			<ul>
+				<li>address: The address of the local server/proxy.</li>
+				<li>port: The port of the local server/proxy.</li>
+				<li>api: If the ZAP API is available, true or false.</li>
+				<li>proxy: If the local server should proxy, true or false.</li>
+				<li>behindNat: If the local server is behind NAT, true or false.</li>
+				<li>decodeResponse: If the response should be decoded, true or false.</li>
+				<li>removeAcceptEncoding: If the request header Accept-Encoding should be removed, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
 			addPassThrough (authority* enabled): Adds an authority to pass-through the local proxies.
 			<ul>
 				<li>authority: The value of the authority, can be a regular expression.</li>
@@ -40,6 +54,15 @@
 			removeAlias (name*): Removes an alias.
 			<ul>
 				<li>name: The name of the alias.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			removeLocalServer (address* port*): Removes a local server/proxy.
+			<ul>
+				<li>address: The address of the local server/proxy.</li>
+				<li>port: The port of the local server/proxy.</li>
 			</ul>
 		</li>
 		<li>
@@ -90,6 +113,7 @@
 	<strong>Note:</strong> These endpoints are only available in weekly releases and versions after 2.11.
 	<ul>
 		<li>getAliases: Gets the aliases used to identify the local servers/proxies.</li>
+		<li>getLocalServers: Gets the local servers/proxies.</li>
 		<li>getPassThroughs: Gets the authorities that will pass-through the local proxies.</li>
 		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
 		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
