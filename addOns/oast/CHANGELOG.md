@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Maintenance changes.
 
 ### Added
+- Default services notes in the help documents.
 - Extension description and UI name.
 
 ## [0.10.0] - 2022-02-18
