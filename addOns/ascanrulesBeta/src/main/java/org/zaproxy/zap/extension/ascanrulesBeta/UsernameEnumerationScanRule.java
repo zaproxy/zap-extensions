@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
@@ -59,11 +60,7 @@ import org.zaproxy.zap.utils.HirshbergMatcher;
  */
 public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
-    /** for logging. */
-    private static Logger log = LogManager.getLogger(UsernameEnumerationScanRule.class);
-
-    /** The characters used to generate the random username. */
-    private static final char[] RANDOM_USERNAME_CHARS = "abcdefghijklmnopqrstuvwyxz".toCharArray();
+    private static final Logger LOG = LogManager.getLogger(UsernameEnumerationScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -94,7 +91,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
     @Override
     public int getCategory() {
-        return Category.INFO_GATHER; // allows information (usernames) to be gathered
+        return Category.INFO_GATHER;
     }
 
     @Override
@@ -109,14 +106,12 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOG.debug("Initialising");
 
         if (!shouldContinue(extAuth.getModel().getSession().getContexts())) {
-            log.info(
+            LOG.info(
                     "There does not appear to be any configured contexts using Form-based Authentication. Further attempts during the current scan will be skipped.");
-            this.getParent()
-                    .pluginSkipped(this); // If there's no context we should just skip this rule
-            return; // No need to continue
+            this.getParent().pluginSkipped(this);
         }
     }
 
@@ -147,44 +142,37 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
             // Are we dealing with a login url in any of the contexts of which this uri is part
             URI requestUri = getBaseMsg().getRequestHeader().getURI();
 
-            // using the session, get the list of contexts for the url
             List<Context> contextList =
                     extAuth.getModel().getSession().getContextsForUrl(requestUri.toString());
 
             // now loop, and see if the url is a login url in each of the contexts in turn...
             for (Context context : contextList) {
                 URI loginUri = extAuth.getLoginRequestURIForContext(context);
-                if (loginUri != null) {
-                    if (requestUri.getScheme().equals(loginUri.getScheme())
-                            && requestUri.getHost().equals(loginUri.getHost())
-                            && requestUri.getPort() == loginUri.getPort()
-                            && requestUri.getPath().equals(loginUri.getPath())) {
-                        // we got this far.. only the method (GET/POST), user details, query params,
-                        // fragment, and POST params
-                        // are possibly different from the login page.
-                        loginUrl = true;
-                        log.info(
-                                "{} falls within a context, and is the defined Login URL. Scanning for possible Username Enumeration vulnerability.",
-                                requestUri.toString());
-                        break; // Stop checking
-                    }
+                if (loginUri != null
+                        && requestUri.getScheme().equals(loginUri.getScheme())
+                        && requestUri.getHost().equals(loginUri.getHost())
+                        && requestUri.getPort() == loginUri.getPort()
+                        && requestUri.getPath().equals(loginUri.getPath())) {
+                    // we got this far.. only the method (GET/POST), user details, query params,
+                    // fragment, and POST params are possibly different from the login page.
+                    loginUrl = true;
+                    LOG.info(
+                            "{} falls within a context, and is the defined Login URL. Scanning for possible Username Enumeration vulnerability.",
+                            requestUri);
+                    break;
                 }
             }
 
-            // the Username Enumeration scan rule will only run for logon pages
-            if (loginUrl == false) {
-                log.debug("{} is not a defined Login URL.", requestUri.toString());
+            if (!loginUrl) {
+                LOG.debug("{} is not a defined Login URL.", requestUri);
                 return; // No need to continue for this URL
             }
 
             // find all params set in the request (GET/POST/Cookie)
             TreeSet<HtmlParameter> htmlParams = new TreeSet<>();
-            htmlParams.addAll(
-                    getBaseMsg()
-                            .getRequestHeader()
-                            .getCookieParams()); // request cookies only. no response cookies
-            htmlParams.addAll(getBaseMsg().getFormParams()); // add in the POST params
-            htmlParams.addAll(getBaseMsg().getUrlParams()); // add in the GET params
+            htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());
+            htmlParams.addAll(getBaseMsg().getFormParams());
+            htmlParams.addAll(getBaseMsg().getUrlParams());
 
             int numberOfRequests = 0;
             if (this.getAttackStrength() == AttackStrength.INSANE) {
@@ -209,8 +197,6 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
             for (int i = 0; i < numberOfRequests; i++) {
 
-                // initialise the storage for this iteration
-                // baseResponses[i]= new StringBuilder(250);
                 responseA = new StringBuilder(250);
 
                 HttpMessage msgCpy = getNewMsg(); // clone the request, but not the response
@@ -226,7 +212,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 while (HttpStatusCode.isRedirection(msgCpy.getResponseHeader().getStatusCode())) {
                     redirectCount++;
 
-                    log.debug(
+                    LOG.debug(
                             "Following redirect {} for message {} of {} iterations of the original query",
                             redirectCount,
                             i,
@@ -262,7 +248,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                         msgCpy.getResponseHeader().getHeader(HttpHeader.LOCATION),
                                         true);
                         // try again, except this time, if it fails, don't try to handle it
-                        log.debug(
+                        LOG.debug(
                                 "The Location [{}] specified in a redirect was not valid (not absolute?). Trying absolute workaround url [{}]",
                                 newLocation,
                                 newLocationWorkaround);
@@ -274,14 +260,14 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     msgRedirect
                             .getRequestHeader()
                             .setContentLength(0); // since we send a GET, the body will be 0 long
-                    if (cookies.size() > 0) {
+                    if (!cookies.isEmpty()) {
                         // if a previous request sent back a cookie that has not since been
                         // invalidated, we need to set that cookie when following redirects, as a
                         // browser would
                         msgRedirect.getRequestHeader().setCookieParams(cookies);
                     }
 
-                    log.debug("DEBUG: Following redirect to [{}]", newLocation);
+                    LOG.debug("DEBUG: Following redirect to [{}]", newLocation);
                     sendAndReceive(msgRedirect, false, false); // do NOT redirect.. handle it here
 
                     // handle scenario where a cookie is unset in a subsequent iteration, or where
@@ -320,7 +306,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 // success or not?  Successful or Failed Logins would normally both return an OK
                 // HTTP status
                 if (!HttpStatusCode.isSuccess(msgCpy.getResponseHeader().getStatusCode())) {
-                    log.warn(
+                    LOG.debug(
                             "The original URL [{}] returned a non-OK HTTP status {} (after {} of {} steps). Could be indicative of SQL Injection, or some other error. The URL is not stable enough to look at Username Enumeration",
                             getBaseMsg().getRequestHeader().getURI(),
                             msgCpy.getResponseHeader().getStatusCode(),
@@ -330,7 +316,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // abort straight out of the method
                 }
 
-                log.debug("Done following redirects!");
+                LOG.debug("Done following redirects!");
 
                 // append the response to the responses so far for this particular instance
                 // this will give us a complete picture of the full set of actual traffic associated
@@ -356,7 +342,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 if (longestCommonSubstringA.length() == 0) {
                     // this might occur if the output returned for the URL changed mid-way. Perhaps
                     // a CAPTCHA has fired, or a WAF has kicked in.  Let's abort now so.
-                    log.warn(
+                    LOG.debug(
                             "The original URL [{}] does not produce stable output (at {} of {} steps).  There is no static element in the output that can be used as a basis of comparison for the result of requesting URLs with the parameter values modified. Perhaps a CAPTCHA or WAF has kicked in!!",
                             getBaseMsg().getRequestHeader().getURI(),
                             i + 1,
@@ -381,7 +367,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     longestCommonSubstringA.replaceAll(
                             "(?<=(&amp;|\\?)[^\\?\"=&;]+=)[^\\?\"=&;]+(?=(&amp;|\"))", "YYYY");
 
-            log.debug("The LCS of A is [{}]", longestCommonSubstringA);
+            LOG.debug("The LCS of A is [{}]", longestCommonSubstringA);
 
             // 3) for each parameter in the original URL (ie, for URL params, form params, and
             // cookie params)
@@ -390,7 +376,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 HttpMessage msgModifiedParam = getNewMsg();
                 HtmlParameter currentHtmlParameter = iter.next();
 
-                log.debug(
+                LOG.debug(
                         "Handling [{}] parameter [{}], with value [{}]",
                         currentHtmlParameter.getType(),
                         currentHtmlParameter.getName(),
@@ -402,9 +388,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
                 // get a random user name the same length as the original!
                 String invalidUsername =
-                        RandomStringUtils.random(
-                                currentHtmlParameter.getValue().length(), RANDOM_USERNAME_CHARS);
-                log.debug("The invalid username chosen was [{}]", invalidUsername);
+                        RandomStringUtils.randomAlphabetic(currentHtmlParameter.getValue().length())
+                                .toLowerCase(Locale.ROOT);
+
+                LOG.debug("The invalid username chosen was [{}]", invalidUsername);
 
                 TreeSet<HtmlParameter> requestParams = null;
                 if (currentHtmlParameter.getType().equals(HtmlParameter.Type.cookie)) {
@@ -414,7 +401,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             new HtmlParameter(
                                     currentHtmlParameter.getType(),
                                     currentHtmlParameter.getName(),
-                                    invalidUsername.toString())); // add in the invalid username
+                                    invalidUsername));
                     msgModifiedParam.setCookieParams(requestParams);
                 } else if (currentHtmlParameter.getType().equals(HtmlParameter.Type.url)) {
                     requestParams = msgModifiedParam.getUrlParams();
@@ -423,7 +410,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             new HtmlParameter(
                                     currentHtmlParameter.getType(),
                                     currentHtmlParameter.getName(),
-                                    invalidUsername.toString())); // add in the invalid username
+                                    invalidUsername));
                     msgModifiedParam.setGetParams(requestParams);
                 } else if (currentHtmlParameter.getType().equals(HtmlParameter.Type.form)) {
                     requestParams = msgModifiedParam.getFormParams();
@@ -432,29 +419,23 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             new HtmlParameter(
                                     currentHtmlParameter.getType(),
                                     currentHtmlParameter.getName(),
-                                    invalidUsername.toString())); // add in the invalid username
+                                    invalidUsername));
                     msgModifiedParam.setFormParams(requestParams);
                 }
 
-                log.debug(
+                LOG.debug(
                         "About to loop for {} iterations with an incorrect user of the same length",
                         numberOfRequests);
 
                 boolean continueForParameter = true;
                 for (int i = 0; i < numberOfRequests && continueForParameter; i++) {
 
-                    // initialise the storage for this iteration
                     responseB = new StringBuilder(250);
 
-                    HttpMessage msgCpy =
-                            msgModifiedParam; // use the message we already set up, with the
-                    // modified parameter value
+                    HttpMessage msgCpy = msgModifiedParam;
 
-                    sendAndReceive(
-                            msgCpy, false,
-                            false); // request the URL, but do not automatically follow redirects.
+                    sendAndReceive(msgCpy, false, false);
 
-                    // get all cookies set in the response
                     TreeSet<HtmlParameter> cookies = msgCpy.getResponseHeader().getCookieParams();
 
                     int redirectCount = 0;
@@ -462,7 +443,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             msgCpy.getResponseHeader().getStatusCode())) {
                         redirectCount++;
 
-                        log.debug(
+                        LOG.debug(
                                 "Following redirect {} for message {} of {} iterations of the modified query.",
                                 redirectCount,
                                 i,
@@ -499,21 +480,18 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                                     .getHeader(HttpHeader.LOCATION),
                                             true);
                             // try again, except this time, if it fails, don't try to handle it
-                            log.debug(
+                            LOG.debug(
                                     "The Location [{}] specified in a redirect was not valid (not absolute?). Trying absolute workaround url [{}]",
                                     newLocation,
                                     newLocationWorkaround);
                             msgRedirect.getRequestHeader().setURI(newLocationWorkaround);
                         }
-                        msgRedirect
-                                .getRequestHeader()
-                                .setMethod(
-                                        HttpRequestHeader.GET); // it's always a GET for a redirect
+                        msgRedirect.getRequestHeader().setMethod(HttpRequestHeader.GET);
                         msgRedirect
                                 .getRequestHeader()
                                 .setContentLength(
                                         0); // since we send a GET, the body will be 0 long
-                        if (cookies.size() > 0) {
+                        if (!cookies.isEmpty()) {
                             // if a previous request sent back a cookie that has not since been
                             // invalidated, we need to set that cookie when following redirects, as
                             // a browser would
@@ -561,7 +539,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // success or not?  Successful or Failed Logins would normally both return an OK
                     // HTTP status
                     if (!HttpStatusCode.isSuccess(msgCpy.getResponseHeader().getStatusCode())) {
-                        log.warn(
+                        LOG.debug(
                                 "The modified URL [{}] returned a non-OK HTTP status {} (after {} of {} steps for [{}] parameter {}). Could be indicative of SQL Injection, or some other error. The URL is not stable enough to look at Username Enumeration",
                                 msgModifiedParam.getRequestHeader().getURI(),
                                 msgCpy.getResponseHeader().getStatusCode(),
@@ -570,11 +548,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName());
                         continueForParameter = false;
-                        continue; // skip directly to the next parameter. Do not pass Go. Do not
-                        // collect $200.
+                        continue; // skip directly to the next parameter
                     }
 
-                    log.debug("Done following redirects!");
+                    LOG.debug("Done following redirects!");
 
                     // append the response to the responses so far for this particular instance
                     // this will give us a complete picture of the full set of actual traffic
@@ -600,7 +577,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     if (longestCommonSubstringB.length() == 0) {
                         // this might occur if the output returned for the URL changed mid-way.
                         // Perhaps a CAPTCHA has fired, or a WAF has kicked in.  Let's abort now so.
-                        log.warn(
+                        LOG.debug(
                                 "The modified URL [{}] (for [{}] parameter {}) does not produce stable output (after {} of {} steps). There is no static element in the output that can be used as a basis of comparison with the static output of the original questy. Perhaps a CAPTCHA or WAF has kicked in!!",
                                 msgModifiedParam.getRequestHeader().getURI(),
                                 currentHtmlParameter.getType(),
@@ -608,8 +585,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                 i + 1,
                                 numberOfRequests);
                         continueForParameter = false;
-                        continue; // skip directly to the next parameter. Do not pass Go. Do not
-                        // collect $200.
+                        continue; // skip directly to the next parameter.
                         // Note: if a CAPTCHA or WAF really has fired, the results of subsequent
                         // iterations will likely not be accurate..
                     }
@@ -619,7 +595,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 // the output when changing the parm is stable),
                 // check if the parameter might be vulnerable by comparins its LCS with the original
                 // LCS for a valid login
-                if (longestCommonSubstringB != null && continueForParameter == true) {
+                if (longestCommonSubstringB != null && continueForParameter) {
                     // get rid of any remnants of cookie setting and Date headers in the responses,
                     // as these cause false positives, and can be safely ignored
                     // replace the content length with a non-variable placeholder
@@ -639,7 +615,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                     "(?<=(&amp;|\\?)[^\\?\"=&;]+=)[^\\?\"=&;]+(?=(&amp;|\"))",
                                     "YYYY");
 
-                    log.debug("The LCS of B is [{}]", longestCommonSubstringB);
+                    LOG.debug("The LCS of B is [{}]", longestCommonSubstringB);
 
                     // 6) If LCS_A <> LCS_B, then there is a Username Enumeration issue on the
                     // current parameter
@@ -658,8 +634,6 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
                         int numberofDifferences = diffpatch.getDeltas().size();
 
-                        // and convert the list of patches to a String, joining using a newline
-                        // String diffAB = StringUtils.join(diffpatch.getDeltas(), "\n");
                         StringBuilder tempDiff = new StringBuilder(250);
                         for (Delta<String> delta : diffpatch.getDeltas()) {
                             String changeType = null;
@@ -687,9 +661,9 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                         currentHtmlParameter.getType(),
                                         currentHtmlParameter.getName(),
                                         currentHtmlParameter.getValue(), // original value
-                                        invalidUsername.toString(), // new value
+                                        invalidUsername, // new value
                                         diffAB, // the differences between the two sets of output
-                                        numberofDifferences); // the number of differences
+                                        numberofDifferences);
                         String attack =
                                 Constant.messages.getString(
                                         "ascanbeta.usernameenumeration.alert.attack",
@@ -702,7 +676,6 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         String vulnsoln =
                                 Constant.messages.getString("ascanbeta.usernameenumeration.soln");
 
-                        // call bingo with some extra info, indicating that the alert is
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_LOW)
                                 .setName(vulnname)
@@ -715,7 +688,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                 .raise();
 
                     } else {
-                        log.debug(
+                        LOG.debug(
                                 "[{}] parameter [{}] looks ok (Invalid Usernames cannot be distinguished from Valid usernames)",
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName());
@@ -726,13 +699,13 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error("An error occurred checking a url for Username Enumeration issues", e);
+            LOG.error("An error occurred checking a url for Username Enumeration issues", e);
         }
     }
 
     @Override
     public int getRisk() {
-        return Alert.RISK_INFO; // may change later.. when false positives are better handled
+        return Alert.RISK_INFO;
     }
 
     /**
@@ -753,7 +726,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
         for (Context context : contextList) {
             if (context.getAuthenticationMethod() instanceof FormBasedAuthenticationMethod) {
                 hasAuth = true;
-                break; // No need to loop further
+                break;
             }
         }
         return hasAuth;
