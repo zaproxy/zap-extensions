@@ -19,13 +19,12 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan.scripts;
 
-import java.util.Optional;
-import java.util.function.Consumer;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.script.ScriptsCache;
+import org.zaproxy.zap.extension.script.ScriptsCache.Configuration;
+import org.zaproxy.zap.extension.script.ScriptsCache.InterfaceProvider;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertRaiser;
@@ -41,58 +40,42 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
     public static final String PLUGIN_NAME = "WS.ScriptPassiveScan";
     public static final int PLUGIN_ID = 110000;
 
-    private ExtensionScript extensionScript;
+    private final ScriptsCache<WebSocketPassiveScript> scripts;
 
-    private ExtensionScript getExtension() {
-        if (extensionScript == null) {
-            extensionScript =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        }
-        return extensionScript;
+    public ScriptsWebSocketPassiveScanner(ExtensionScript extensionScript) {
+        InterfaceProvider<WebSocketPassiveScript> interfaceProvider =
+                (scriptWrapper, targetInterface) -> {
+                    WebSocketPassiveScript s =
+                            extensionScript.getInterface(scriptWrapper, targetInterface);
+                    if (s != null) {
+                        return new WebSocketPassiveScriptDecorator(s, scriptWrapper);
+                    }
+                    extensionScript.handleFailedScriptInterface(
+                            scriptWrapper,
+                            Constant.messages.getString(
+                                    "websocket.pscan.scripts.interface.passive.error",
+                                    scriptWrapper.getName()));
+                    return null;
+                };
+        scripts =
+                extensionScript.createScriptsCache(
+                        Configuration.<WebSocketPassiveScript>builder()
+                                .setScriptType(ExtensionWebSocket.SCRIPT_TYPE_WEBSOCKET_PASSIVE)
+                                .setTargetInterface(WebSocketPassiveScript.class)
+                                .setInterfaceProvider(interfaceProvider)
+                                .build());
     }
 
     @Override
     public void scanMessage(WebSocketScanHelper helper, WebSocketMessageDTO webSocketMessage) {
-
-        run(
-                scriptDecorator ->
-                        scriptDecorator.scan(
+        scripts.refreshAndExecute(
+                (sw, script) ->
+                        script.scan(
                                 () ->
                                         WebSocketAlertRaiser.WebSocketAlertScriptRaiser
                                                 .getWebSocketAlertRaiser(
-                                                        helper.newAlert(), scriptDecorator.getId()),
+                                                        helper.newAlert(), script.getId()),
                                 webSocketMessage));
-    }
-
-    private void run(Consumer<WebSocketPassiveScriptDecorator> action) {
-        if (getExtension() != null) {
-            extensionScript.getScripts(ExtensionWebSocket.SCRIPT_TYPE_WEBSOCKET_PASSIVE).stream()
-                    .filter(ScriptWrapper::isEnabled)
-                    .map(this::getInterface)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(action);
-        }
-    }
-
-    private Optional<WebSocketPassiveScriptDecorator> getInterface(ScriptWrapper scriptWrapper) {
-        try {
-            WebSocketPassiveScript webSocketPassiveScript =
-                    extensionScript.getInterface(scriptWrapper, WebSocketPassiveScript.class);
-            if (webSocketPassiveScript != null) {
-                return Optional.of(
-                        new WebSocketPassiveScriptDecorator(webSocketPassiveScript, scriptWrapper));
-            } else {
-                extensionScript.handleFailedScriptInterface(
-                        scriptWrapper,
-                        Constant.messages.getString(
-                                "websocket.pscan.scripts.interface.passive.error",
-                                scriptWrapper.getName()));
-            }
-        } catch (Exception e) {
-            extensionScript.handleScriptException(scriptWrapper, e);
-        }
-        return Optional.empty();
     }
 
     @Override
