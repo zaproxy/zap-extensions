@@ -33,6 +33,7 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
     private static final long serialVersionUID = 8080417865825721164L;
 
     public enum MessageComponent {
+        ALL,
         REQUEST,
         REQUEST_HEADER,
         REQUEST_BODY,
@@ -52,6 +53,11 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
         String popupMenuResponse = Constant.messages.getString("exim.popup.option.response");
 
         setButtonStateOverriddenByChildren(false);
+
+        SaveMessagePopupMenuItem all =
+                new SaveMessagePopupMenuItem(
+                        popupMenuAll, MessageComponent.ALL, fileExtension, writer);
+        add(all);
 
         JMenu request = new SaveMessagePopupMenu(popupMenuRequest, MessageComponent.REQUEST);
         SaveMessagePopupMenuItem requestHeader =
@@ -108,7 +114,8 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
 
             setButtonStateOverriddenByChildren(false);
 
-            if (!(messageComponent == MessageComponent.REQUEST
+            if (!(messageComponent == MessageComponent.ALL
+                    || messageComponent == MessageComponent.REQUEST
                     || messageComponent == MessageComponent.RESPONSE)) {
                 throw new IllegalArgumentException("Parameter messageComponent is not supported.");
             }
@@ -119,7 +126,9 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
         @Override
         protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage httpMessage) {
             boolean enabled = false;
-            if (MessageComponent.REQUEST == messageComponent) {
+            if (MessageComponent.ALL == messageComponent) {
+                enabled = true;
+            } else if (MessageComponent.REQUEST == messageComponent) {
                 enabled = !httpMessage.getRequestHeader().isEmpty();
             } else if (MessageComponent.RESPONSE == messageComponent) {
                 enabled = !httpMessage.getResponseHeader().isEmpty();
@@ -161,6 +170,9 @@ abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContaine
         public boolean isButtonEnabledForSelectedHttpMessage(HttpMessage httpMessage) {
             boolean enabled = false;
             switch (messageComponent) {
+                case ALL:
+                    enabled = true;
+                    break;
                 case REQUEST_HEADER:
                     enabled = !httpMessage.getRequestHeader().isEmpty();
                     break;

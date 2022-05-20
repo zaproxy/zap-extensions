@@ -45,12 +45,22 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
 
     private static void writeOutput(
             MessageComponent messageComponent, HttpMessage httpMessage, File file) {
+        writeOutput(messageComponent, httpMessage, file, false);
+    }
+
+    private static void writeOutput(
+            MessageComponent messageComponent, HttpMessage httpMessage, File file, boolean append) {
+        boolean shouldAppend = append;
         byte[] bytes = new byte[0];
 
         byte[] bytesHeader;
         byte[] bytesBody;
 
         switch (messageComponent) {
+            case ALL:
+                writeOutput(MessageComponent.REQUEST, httpMessage, file);
+                writeOutput(MessageComponent.RESPONSE, httpMessage, file, true);
+                return;
             case REQUEST_HEADER:
                 bytes = httpMessage.getRequestHeader().toString().getBytes();
                 break;
@@ -78,11 +88,12 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
                 System.arraycopy(bytesBody, 0, bytes, bytesHeader.length, bytesBody.length);
                 break;
         }
-        writeToFile(file, bytes, messageComponent);
+        writeToFile(file, bytes, messageComponent, shouldAppend);
     }
 
-    private static void writeToFile(File file, byte[] bytes, MessageComponent messageComponent) {
-        try (OutputStream fw = new BufferedOutputStream(new FileOutputStream(file))) {
+    private static void writeToFile(
+            File file, byte[] bytes, MessageComponent messageComponent, boolean append) {
+        try (OutputStream fw = new BufferedOutputStream(new FileOutputStream(file, append))) {
             fw.write(bytes);
             Stats.incCounter(
                     ExtensionExim.STATS_PREFIX
