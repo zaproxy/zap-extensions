@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Cache WebSocket Passive Rules scripts for better performance with all script engines.
+
+### Fixed
+- Handle errors caused by WebSocket Passive Rules scripts, which would break the passive scan.
 
 ## [25] - 2022-03-14
 ### Changed

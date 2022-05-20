@@ -454,7 +454,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                             getView() != null ? getScriptPassiveScanIcon() : null,
                             true);
             this.extensionScript.registerScriptType(websocketPassiveScanScriptType);
-            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner();
+            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner(extensionScript);
 
             webSocketPassiveScannerManager.add(webSocketScriptPassiveScanner);
             webSocketPassiveScannerManager.setAllEnable(true);
