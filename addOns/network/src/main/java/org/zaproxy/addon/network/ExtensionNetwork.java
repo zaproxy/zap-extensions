@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
 import java.net.ServerSocket;
 import java.net.SocketException;
@@ -52,6 +53,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
@@ -72,6 +74,7 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -90,6 +93,7 @@ import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
@@ -108,11 +112,13 @@ import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
+import org.zaproxy.addon.network.internal.ui.PromptHttpProxyPasswordDialog;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
@@ -146,7 +152,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
     boolean handleLocalServers;
-    boolean handleConnection;
+    static Boolean handleConnection;
     private ConnectionParam legacyConnectionOptions;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
@@ -162,6 +168,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private LocalServersOptions localServersOptions;
     private LocalServersOptionsPanel localServersOptionsPanel;
 
+    private ConnectionOptions connectionOptions;
+    private ConnectionOptionsPanel connectionOptionsPanel;
+
     private HttpSender proxyHttpSender;
     private HttpSenderHandler httpSenderHandler;
     private PassThroughHandler passThroughHandler;
@@ -176,6 +185,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private LocalServerInfoLabel localServerInfoLabel;
 
+    private HttpState globalHttpState;
+
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
 
@@ -187,7 +198,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         // Force initialisation.
         TlsUtils.getSupportedProtocols();
 
-        legacyConnectionOptions = new LegacyConnectionParam();
+        if (isHandleConnection()) {
+            connectionOptions = new ConnectionOptions();
+            legacyConnectionOptions =
+                    new LegacyConnectionParam(() -> globalHttpState, connectionOptions);
+            Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
+        }
+    }
+
+    /**
+     * Gets the global HTTP state.
+     *
+     * @return the global HTTP state, might be {@code null}.
+     */
+    HttpState getGlobalHttpState() {
+        return globalHttpState;
+    }
+
+    ConnectionOptions getConnectionOptions() {
+        return connectionOptions;
     }
 
     boolean isHandleServerCerts() {
@@ -198,7 +227,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return handleLocalServers;
     }
 
-    boolean isHandleConnection() {
+    static boolean isHandleConnection() {
+        if (handleConnection != null) {
+            return handleConnection;
+        }
+        handleConnection = isDeprecated(ConnectionParam.class);
         return handleConnection;
     }
 
@@ -451,14 +484,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        ApiImplementor coreApi = null;
-        try {
-            coreApi = API.getInstance().getImplementors().get("core");
-            handleConnection = coreApi.getApiOther("setproxy").isDeprecated();
-        } catch (Exception e) {
-            LOGGER.debug("An error occurred while checking for connection handling:", e);
-        }
-
         extensionHook.addApiImplementor(new NetworkApi(this));
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
@@ -500,49 +525,18 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             extensionHook.addApiImplementor(new LegacyProxiesApi(this));
         }
 
+        ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
         if (handleConnection && coreApi != null) {
-            List<String> views =
-                    Arrays.asList(
-                            "optionDefaultUserAgent",
-                            "optionDnsTtlSuccessfulQueries",
-                            "optionHttpState",
-                            "optionHttpStateEnabled",
-                            "optionProxyChainName",
-                            "optionProxyChainPassword",
-                            "optionProxyChainPort",
-                            "optionProxyChainPrompt",
-                            "optionProxyChainRealm",
-                            "optionProxyChainUserName",
-                            "optionSingleCookieRequestHeader",
-                            "optionTimeoutInSecs",
-                            "optionUseProxyChain",
-                            "optionUseProxyChainAuth",
-                            "optionUseSocksProxy");
-            coreApi.getApiViews().removeIf(view -> views.contains(view.getName()));
+            updateOldCoreApiEndpoints(coreApi, legacyConnectionOptions);
+        }
 
-            List<String> actions =
-                    Arrays.asList(
-                            "setOptionDefaultUserAgent",
-                            "setOptionDnsTtlSuccessfulQueries",
-                            "setOptionHttpStateEnabled",
-                            "setOptionProxyChainName",
-                            "setOptionProxyChainPassword",
-                            "setOptionProxyChainPort",
-                            "setOptionProxyChainPrompt",
-                            "setOptionProxyChainRealm",
-                            "setOptionProxyChainSkipName",
-                            "setOptionProxyChainUserName",
-                            "setOptionSingleCookieRequestHeader",
-                            "setOptionTimeoutInSecs",
-                            "setOptionUseProxyChain",
-                            "setOptionUseProxyChainAuth",
-                            "setOptionUseSocksProxy");
-            coreApi.getApiActions().removeIf(action -> actions.contains(action.getName()));
-
-            coreApi.addApiOptions(legacyConnectionOptions);
+        if (handleConnection) {
+            extensionHook.addOptionsParamSet(connectionOptions);
+            extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
         }
 
         if (hasView()) {
+            ExtensionHookView hookView = extensionHook.getHookView();
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             String[] networkNode = {Constant.messages.getString("network.ui.options.name")};
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
@@ -556,13 +550,83 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         new LocalServerInfoLabel(
                                 getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-                ExtensionHookView hookView = extensionHook.getHookView();
                 hookView.addOptionPanel(
                         new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
                 hookView.addOptionPanel(
                         new LegacyOptionsPanel("proxies", localServersOptionsPanel));
             }
+
+            if (handleConnection) {
+                connectionOptionsPanel = new ConnectionOptionsPanel();
+                optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("connection", connectionOptionsPanel));
+            }
         }
+    }
+
+    private static void updateOldCoreApiEndpoints(
+            ApiImplementor coreApi, ConnectionParam connectionParam) {
+        List<String> views =
+                Arrays.asList(
+                        "optionDefaultUserAgent",
+                        "optionDnsTtlSuccessfulQueries",
+                        "optionHttpState",
+                        "optionHttpStateEnabled",
+                        "optionProxyChainName",
+                        "optionProxyChainPassword",
+                        "optionProxyChainPort",
+                        "optionProxyChainPrompt",
+                        "optionProxyChainRealm",
+                        "optionProxyChainUserName",
+                        "optionSingleCookieRequestHeader",
+                        "optionTimeoutInSecs",
+                        "optionUseProxyChain",
+                        "optionUseProxyChainAuth",
+                        "optionUseSocksProxy");
+        coreApi.getApiViews().removeIf(view -> views.contains(view.getName()));
+
+        List<String> actions =
+                Arrays.asList(
+                        "setOptionDefaultUserAgent",
+                        "setOptionDnsTtlSuccessfulQueries",
+                        "setOptionHttpStateEnabled",
+                        "setOptionProxyChainName",
+                        "setOptionProxyChainPassword",
+                        "setOptionProxyChainPort",
+                        "setOptionProxyChainPrompt",
+                        "setOptionProxyChainRealm",
+                        "setOptionProxyChainSkipName",
+                        "setOptionProxyChainUserName",
+                        "setOptionSingleCookieRequestHeader",
+                        "setOptionTimeoutInSecs",
+                        "setOptionUseProxyChain",
+                        "setOptionUseProxyChainAuth",
+                        "setOptionUseSocksProxy");
+        coreApi.getApiActions().removeIf(action -> actions.contains(action.getName()));
+
+        coreApi.addApiOptions(connectionParam);
+
+        deprecateApiElements(views, coreApi::getApiView);
+        deprecateApiElements(actions, coreApi::getApiAction);
+
+        coreApi.getApiView("optionSingleCookieRequestHeader")
+                .setDeprecatedDescription(
+                        Constant.messages.getString("api.deprecated.option.endpoint"));
+        coreApi.getApiAction("setOptionSingleCookieRequestHeader")
+                .setDeprecatedDescription(
+                        Constant.messages.getString("api.deprecated.option.endpoint"));
+    }
+
+    private static <T extends ApiElement> void deprecateApiElements(
+            List<String> names, Function<String, T> method) {
+        names.forEach(
+                name -> {
+                    T element = method.apply(name);
+                    element.setDeprecated(true);
+                    element.setDeprecatedDescription(
+                            Constant.messages.getString("network.api.legacy.deprecated.network"));
+                });
     }
 
     private class ServersChangedListenerImpl implements ServersChangedListener {
@@ -639,6 +703,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void optionsLoaded() {
         if (hasView()) {
+            if (handleConnection) {
+                if (!connectionOptions.isStoreHttpProxyPass()) {
+                    char[] password = new PromptHttpProxyPasswordDialog().getPassword();
+                    if (password.length != 0) {
+                        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+                        HttpProxy httpProxy =
+                                new HttpProxy(
+                                        oldProxy.getHost(),
+                                        oldProxy.getPort(),
+                                        oldProxy.getRealm(),
+                                        new PasswordAuthentication(
+                                                oldProxy.getPasswordAuthentication().getUserName(),
+                                                password));
+                        connectionOptions.setHttpProxy(httpProxy);
+                    }
+                }
+                return;
+            }
+
             OptionsParam options = getModel().getOptionsParam();
             if (options.getConnectionParam().isProxyChainPrompt()) {
                 ProxyDialog dialog = new ProxyDialog(null, true);
@@ -1320,6 +1403,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
 
+        if (handleConnection) {
+            ConnectionParam connectionParam = new ConnectionParam();
+            ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
+            if (coreApi != null) {
+                updateOldCoreApiEndpoints(coreApi, connectionParam);
+            }
+            getModel().getOptionsParam().setConnectionParam(connectionParam);
+            connectionParam.load(getModel().getOptionsParam().getConfig());
+        }
+
         if (!handleServerCerts) {
             return;
         }
@@ -1499,7 +1592,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionChanged(Session session) {
-            getModel().getOptionsParam().getConnectionParam().setHttpState(new HttpState());
+            globalHttpState = new HttpState();
+            getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
         }
 
         @Override
@@ -1510,5 +1604,19 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionModeChanged(Mode mode) {}
+    }
+
+    private class OptionsChangedListenerImpl implements OptionsChangedListener {
+
+        @Override
+        public void optionsChanged(OptionsParam optionsParam) {
+            if (connectionOptions.isUseGlobalHttpState()) {
+                if (globalHttpState == null) {
+                    globalHttpState = new HttpState();
+                }
+            } else {
+                globalHttpState = null;
+            }
+        }
     }
 }

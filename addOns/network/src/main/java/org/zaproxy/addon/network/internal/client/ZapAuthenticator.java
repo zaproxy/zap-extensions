@@ -24,8 +24,7 @@ import java.net.PasswordAuthentication;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
-import org.zaproxy.zap.network.SocksProxy;
+import org.zaproxy.addon.network.ConnectionOptions;
 
 /**
  * ZAP's {@link Authenticator}.
@@ -38,7 +37,7 @@ public class ZapAuthenticator extends Authenticator {
 
     private static final Logger logger = LogManager.getLogger(ZapAuthenticator.class);
 
-    private static ConnectionParam connectionOptions;
+    private static ConnectionOptions connectionOptions;
 
     private ZapAuthenticator() {}
 
@@ -79,13 +78,11 @@ public class ZapAuthenticator extends Authenticator {
 
     private PasswordAuthentication getPasswordAuthenticationImpl() {
         if (isForSocksProxy()) {
-            return getConnectionOptions().getSocksProxyPasswordAuth();
+            return getConnectionOptions().getSocksProxy().getPasswordAuthentication();
         }
 
         if (isForHttpProxy()) {
-            return new PasswordAuthentication(
-                    getConnectionOptions().getProxyChainUserName(),
-                    getConnectionOptions().getProxyChainPassword().toCharArray());
+            return getConnectionOptions().getHttpProxy().getPasswordAuthentication();
         }
 
         return null;
@@ -97,7 +94,7 @@ public class ZapAuthenticator extends Authenticator {
      * @return {@code true} if the request is for the SOCKS proxy, {@code false} otherwise.
      */
     private boolean isForSocksProxy() {
-        if (!getConnectionOptions().isUseSocksProxy()) {
+        if (!getConnectionOptions().isSocksProxyEnabled()) {
             return false;
         }
 
@@ -116,16 +113,22 @@ public class ZapAuthenticator extends Authenticator {
      * @return {@code true} if the request is for the outgoing HTTP proxy, {@code false} otherwise.
      */
     private boolean isForHttpProxy() {
+        if (!getConnectionOptions().isHttpProxyEnabled()) {
+            return false;
+        }
+
+        HttpProxy httpProxy = getConnectionOptions().getHttpProxy();
         return getRequestorType() == RequestorType.PROXY
                 && getRequestingURL() != null
-                && getConnectionOptions().isUseProxy(getRequestingURL().getHost())
-                && getConnectionOptions().getProxyChainPort() == getRequestingPort()
-                && getConnectionOptions().getProxyChainName().equals(getRequestingHost());
+                && getConnectionOptions().isUseHttpProxy(getRequestingURL().getHost())
+                && httpProxy.getPort() == getRequestingPort()
+                && httpProxy.getHost().equals(getRequestingHost());
     }
 
-    private static ConnectionParam getConnectionOptions() {
+    private static ConnectionOptions getConnectionOptions() {
         if (connectionOptions == null) {
-            connectionOptions = Model.getSingleton().getOptionsParam().getConnectionParam();
+            connectionOptions =
+                    Model.getSingleton().getOptionsParam().getParamSet(ConnectionOptions.class);
         }
         return connectionOptions;
     }
