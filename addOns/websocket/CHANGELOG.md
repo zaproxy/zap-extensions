@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [26] - 2022-05-20
 ### Changed
 - Maintenance changes.
 - Cache WebSocket Passive Rules scripts for better performance with all script engines.
@@ -191,6 +191,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/websocket-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/websocket-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/websocket-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/websocket-v23
