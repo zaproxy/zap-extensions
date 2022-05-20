@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Adding more checks to Hidden File Finder scan rule.
+- The Cloud Metadata scan rule will now be attempted with a second payload.
 
 ## [40] - 2022-03-15
 ### Changed

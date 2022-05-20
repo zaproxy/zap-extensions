@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.HttpMethod;
@@ -55,7 +57,8 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
 
     private static final int PLUGIN_ID = 90034;
     private static final String METADATA_PATH = "/latest/meta-data/";
-    private static final String METADATA_HOST = "169.154.169.254";
+    private static final List<String> METADATA_HOSTS =
+            Arrays.asList("169.154.169.254", "aws.zaproxy.org");
 
     private static final Logger LOG = LogManager.getLogger(CloudMetadataScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
@@ -103,10 +106,10 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
         return ALERT_TAGS;
     }
 
-    public void raiseAlert(HttpMessage newRequest) {
+    public void raiseAlert(HttpMessage newRequest, String host) {
         newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setAttack(METADATA_HOST)
+                .setAttack(host)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
                 .setMessage(newRequest)
                 .raise();
@@ -115,15 +118,17 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     @Override
     public void scan() {
         HttpMessage newRequest = getNewMsg();
-        try {
-            newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
-            this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
-            if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
-                this.raiseAlert(newRequest);
+        for (String host : METADATA_HOSTS) {
+            try {
+                newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
+                this.sendMessageWithCustomHostHeader(newRequest, host);
+                if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
+                    this.raiseAlert(newRequest, host);
+                    return;
+                }
+            } catch (Exception e) {
+                LOG.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             }
-        } catch (Exception e) {
-            LOG.error("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
-            return;
         }
     }
 
