@@ -124,6 +124,14 @@ public class SecurityProtocolsPanel extends JPanel {
     }
 
     public boolean validateSecurityProtocols() {
+        return validateSecurityProtocolsImpl(false);
+    }
+
+    public void validateSecurityProtocolsWithException() {
+        validateSecurityProtocolsImpl(true);
+    }
+
+    private boolean validateSecurityProtocolsImpl(boolean exception) {
         int protocolsSelected = 0;
         JCheckBox checkBoxEnabledProtocol = null;
         for (Entry<String, JCheckBox> entry : checkBoxesSslTlsProtocols.entrySet()) {
@@ -143,14 +151,14 @@ public class SecurityProtocolsPanel extends JPanel {
 
         if (checkBoxEnabledProtocol != null) {
             if (protocolsSelected == 0) {
-                showMessage("noprotocolsselected");
+                handleValidationError("noprotocolsselected", exception);
                 checkBoxEnabledProtocol.requestFocusInWindow();
                 return false;
             }
 
             if (protocolsSelected == 1
                     && checkBoxesSslTlsProtocols.get(TlsUtils.SSL_V2_HELLO).isSelected()) {
-                showMessage("justsslv2helloselected");
+                handleValidationError("justsslv2helloselected", exception);
                 checkBoxEnabledProtocol.requestFocusInWindow();
                 return false;
             }
@@ -158,10 +166,15 @@ public class SecurityProtocolsPanel extends JPanel {
         return true;
     }
 
-    private void showMessage(String key) {
+    private void handleValidationError(String key, boolean exception) {
+        String message =
+                Constant.messages.getString("network.ui.options.securityprotocols.error." + key);
+        if (exception) {
+            throw new IllegalArgumentException(message);
+        }
         JOptionPane.showMessageDialog(
                 this,
-                Constant.messages.getString("network.ui.options.securityprotocols.error." + key),
+                message,
                 Constant.messages.getString("network.ui.options.securityprotocols.error.title"),
                 JOptionPane.INFORMATION_MESSAGE);
     }

@@ -19,19 +19,29 @@
  */
 package org.zaproxy.addon.network;
 
+import java.net.PasswordAuthentication;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.httpclient.HttpState;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
+import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.network.DomainMatcher;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class LegacyConnectionParam extends ConnectionParam {
 
-    private final ConnectionParam connectionOptions;
+    private final Supplier<HttpState> httpStateSupplier;
+    private final ConnectionOptions connectionOptions;
 
-    LegacyConnectionParam() {
-        this.connectionOptions = Model.getSingleton().getOptionsParam().getConnectionParam();
+    LegacyConnectionParam(
+            Supplier<HttpState> httpStateSupplier, ConnectionOptions connectionOptions) {
+        this.httpStateSupplier = httpStateSupplier;
+        this.connectionOptions = connectionOptions;
         super.load(new ZapXmlConfiguration());
     }
 
@@ -67,77 +77,129 @@ public class LegacyConnectionParam extends ConnectionParam {
 
     @Override
     public HttpState getHttpState() {
-        return connectionOptions.getHttpState();
+        return httpStateSupplier.get();
+    }
+
+    @Override
+    public void setHttpState(HttpState httpState) {
+        // Nothing to do, state is now kept in the extension.
     }
 
     @Override
     public boolean isHttpStateEnabled() {
-        return connectionOptions.isHttpStateEnabled();
+        return connectionOptions.isUseGlobalHttpState();
     }
 
     @Override
     public void setHttpStateEnabled(boolean httpStateEnabled) {
-        connectionOptions.setHttpStateEnabled(httpStateEnabled);
+        connectionOptions.setUseGlobalHttpState(httpStateEnabled);
     }
 
     @Override
     public String getProxyChainName() {
-        return connectionOptions.getProxyChainUserName();
+        return connectionOptions.getHttpProxy().getHost();
     }
 
     @Override
     public void setProxyChainName(String proxyChainName) {
-        connectionOptions.setProxyChainName(proxyChainName);
+        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+        HttpProxy httpProxy =
+                new HttpProxy(
+                        proxyChainName,
+                        oldProxy.getPort(),
+                        oldProxy.getRealm(),
+                        oldProxy.getPasswordAuthentication());
+        connectionOptions.setHttpProxy(httpProxy);
     }
 
     @Override
     public String getProxyChainPassword() {
-        return connectionOptions.getProxyChainPassword();
+        return new String(
+                connectionOptions.getHttpProxy().getPasswordAuthentication().getPassword());
     }
 
     @Override
     public void setProxyChainPassword(String proxyChainPassword) {
-        connectionOptions.setProxyChainPassword(proxyChainPassword);
+        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+        HttpProxy httpProxy =
+                new HttpProxy(
+                        oldProxy.getHost(),
+                        oldProxy.getPort(),
+                        oldProxy.getRealm(),
+                        new PasswordAuthentication(
+                                oldProxy.getPasswordAuthentication().getUserName(),
+                                proxyChainPassword.toCharArray()));
+        connectionOptions.setHttpProxy(httpProxy);
+    }
+
+    @Override
+    @Deprecated
+    public void setProxyChainSkipName(String proxyChainSkipName) {
+        // Overridden to expose in the ZAP API.
+        super.setProxyChainSkipName(proxyChainSkipName);
     }
 
     @Override
     public int getProxyChainPort() {
-        return connectionOptions.getProxyChainPort();
+        return connectionOptions.getHttpProxy().getPort();
     }
 
     @Override
     public void setProxyChainPort(int proxyChainPort) {
-        connectionOptions.setProxyChainPort(proxyChainPort);
+        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+        HttpProxy httpProxy =
+                new HttpProxy(
+                        oldProxy.getHost(),
+                        proxyChainPort,
+                        oldProxy.getRealm(),
+                        oldProxy.getPasswordAuthentication());
+        connectionOptions.setHttpProxy(httpProxy);
     }
 
     @Override
     public boolean isProxyChainPrompt() {
-        return connectionOptions.isProxyChainPrompt();
+        return !connectionOptions.isStoreHttpProxyPass();
     }
 
     @Override
     public void setProxyChainPrompt(boolean proxyPrompt) {
-        connectionOptions.setProxyChainPrompt(proxyPrompt);
+        connectionOptions.setStoreHttpProxyPass(!proxyPrompt);
     }
 
     @Override
     public String getProxyChainRealm() {
-        return connectionOptions.getProxyChainRealm();
+        return connectionOptions.getHttpProxy().getRealm();
     }
 
     @Override
     public void setProxyChainRealm(String proxyChainRealm) {
-        connectionOptions.setProxyChainRealm(proxyChainRealm);
+        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+        HttpProxy httpProxy =
+                new HttpProxy(
+                        oldProxy.getHost(),
+                        oldProxy.getPort(),
+                        proxyChainRealm,
+                        oldProxy.getPasswordAuthentication());
+        connectionOptions.setHttpProxy(httpProxy);
     }
 
     @Override
     public String getProxyChainUserName() {
-        return connectionOptions.getProxyChainUserName();
+        return connectionOptions.getHttpProxy().getPasswordAuthentication().getUserName();
     }
 
     @Override
     public void setProxyChainUserName(String proxyChainUserName) {
-        connectionOptions.setProxyChainUserName(proxyChainUserName);
+        HttpProxy oldProxy = connectionOptions.getHttpProxy();
+        HttpProxy httpProxy =
+                new HttpProxy(
+                        oldProxy.getHost(),
+                        oldProxy.getPort(),
+                        oldProxy.getRealm(),
+                        new PasswordAuthentication(
+                                proxyChainUserName,
+                                oldProxy.getPasswordAuthentication().getPassword()));
+        connectionOptions.setHttpProxy(httpProxy);
     }
 
     @Override
@@ -149,7 +211,7 @@ public class LegacyConnectionParam extends ConnectionParam {
     @Override
     @Deprecated
     public void setSingleCookieRequestHeader(boolean singleCookieRequestHeader) {
-        // Nothing to do, the opiton is always enabled.
+        // Nothing to do, the option is always enabled.
     }
 
     @Override
@@ -164,37 +226,70 @@ public class LegacyConnectionParam extends ConnectionParam {
 
     @Override
     public boolean isUseProxyChain() {
-        return connectionOptions.isUseProxyChain();
+        return connectionOptions.isHttpProxyEnabled();
     }
 
     @Override
     public void setUseProxyChain(boolean useProxyChain) {
-        connectionOptions.setUseProxyChain(useProxyChain);
+        connectionOptions.setHttpProxyEnabled(useProxyChain);
     }
 
     @Override
     public boolean isUseProxyChainAuth() {
-        return connectionOptions.isUseProxyChainAuth();
+        return connectionOptions.isHttpProxyAuthEnabled();
     }
 
     @Override
     public void setUseProxyChainAuth(boolean useProxyChainAuth) {
-        connectionOptions.setUseProxyChainAuth(useProxyChainAuth);
+        connectionOptions.setHttpProxyAuthEnabled(useProxyChainAuth);
     }
 
     @Override
     public boolean isUseSocksProxy() {
-        return connectionOptions.isUseSocksProxy();
+        return connectionOptions.isSocksProxyEnabled();
     }
 
     @Override
     public void setUseSocksProxy(boolean useSocksProxy) {
-        connectionOptions.setUseSocksProxy(useSocksProxy);
+        connectionOptions.setSocksProxyEnabled(useSocksProxy);
+    }
+
+    @Override
+    public boolean isUseProxy(String hostName) {
+        return connectionOptions.isUseHttpProxy(hostName);
     }
 
     @Override
     @ZapApiIgnore
     public boolean shouldResolveRemoteHostname(String hostname) {
         return connectionOptions.shouldResolveRemoteHostname(hostname);
+    }
+
+    @Override
+    @ZapApiIgnore
+    public List<DomainMatcher> getProxyExcludedDomains() {
+        return connectionOptions.getHttpProxyExclusions().stream()
+                .map(LegacyConnectionParam::exclusionToDomainMatcher)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setProxyExcludedDomains(List<DomainMatcher> domains) {
+        connectionOptions.setHttpProxyExclusions(
+                domains.stream()
+                        .map(LegacyConnectionParam::domainMatcherToExclusion)
+                        .collect(Collectors.toList()));
+    }
+
+    private static DomainMatcher exclusionToDomainMatcher(HttpProxyExclusion exclusion) {
+        DomainMatcher domainMatcher = new DomainMatcher(exclusion.getHost());
+        domainMatcher.setEnabled(exclusion.isEnabled());
+        return domainMatcher;
+    }
+
+    private static HttpProxyExclusion domainMatcherToExclusion(DomainMatcher matcher) {
+        String host = matcher.isRegex() ? matcher.getValue() : Pattern.quote(matcher.getValue());
+        Pattern pattern = HttpProxyExclusion.createHostPattern(host);
+        return new HttpProxyExclusion(pattern, matcher.isEnabled());
     }
 }

@@ -33,6 +33,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import io.netty.channel.Channel;
@@ -84,6 +86,7 @@ import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -107,7 +110,10 @@ import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.addon.network.testutils.TestClient;
 import org.zaproxy.addon.network.testutils.TextTestClient;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.extension.api.CoreAPI;
 import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
@@ -128,6 +134,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @SuppressWarnings("unchecked")
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
+        ExtensionNetwork.handleConnection = false;
         extension = new ExtensionNetwork();
         extension.init();
         mockMessages(extension);
@@ -157,6 +164,11 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
         zap.close();
         extension.stop();
+        extension.destroy();
+        try {
+            API.getInstance().removeApiImplementor(new CoreApiTest());
+        } catch (Exception e) {
+        }
     }
 
     @Test
@@ -172,6 +184,28 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldHaveDescription() {
         assertThat(extension.getDescription(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldAddLegacyConnectionOptionsOnInstantiationIfHandlingConnection() {
+        // Given
+        ExtensionNetwork.handleConnection = true;
+        // When
+        new ExtensionNetwork();
+        // Then
+        ArgumentCaptor<ConnectionParam> argument = ArgumentCaptor.forClass(ConnectionParam.class);
+        verify(optionsParam).setConnectionParam(argument.capture());
+        assertThat(argument.getValue(), is(instanceOf(LegacyConnectionParam.class)));
+    }
+
+    @Test
+    void shouldNotAddLegacyConnectionOptionsOnInstantiationIfNotHandlingConnection() {
+        // Given
+        ExtensionNetwork.handleConnection = false;
+        // When
+        new ExtensionNetwork();
+        // Then
+        verifyNoInteractions(optionsParam);
     }
 
     @Test
@@ -477,6 +511,168 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddConnectionOptionsOnHookIfHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = true;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(ConnectionOptions.class)));
+    }
+
+    @Test
+    void shouldNotAddConnectionOptionsOnHookIfNotHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = false;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(1)).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), not(hasItem(instanceOf(ConnectionOptions.class))));
+    }
+
+    @Test
+    void shouldAddOptionsChangedListenerOnHookIfHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = true;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        verify(extensionHook).addOptionsChangedListener(any());
+    }
+
+    @Test
+    void shouldNotAddOptionsChangedListenerOnHookIfNotHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = false;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        verify(extensionHook, times(0)).addOptionsChangedListener(any());
+    }
+
+    @Test
+    void shouldCreateGlobalHttpStateOnOptionsChangedIfUsingGlobalHttpState() {
+        // Given
+        OptionsChangedListener optionsChangedListener = setupOptionsChangedListener();
+        extension.getConnectionOptions().setUseGlobalHttpState(true);
+        // When
+        optionsChangedListener.optionsChanged(null);
+        // Then
+        assertThat(extension.getGlobalHttpState(), is(notNullValue()));
+    }
+
+    private OptionsChangedListener setupOptionsChangedListener() {
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = true;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        extension.hook(extensionHook);
+        extension.getConnectionOptions().load(new ZapXmlConfiguration());
+        ArgumentCaptor<OptionsChangedListener> argument =
+                ArgumentCaptor.forClass(OptionsChangedListener.class);
+        verify(extensionHook).addOptionsChangedListener(argument.capture());
+        return argument.getValue();
+    }
+
+    @Test
+    void shouldKeepSameGlobalHttpStateOnOptionsChangedIfStillUsingGlobalHttpState() {
+        // Given
+        OptionsChangedListener optionsChangedListener = setupOptionsChangedListener();
+        extension.getConnectionOptions().setUseGlobalHttpState(true);
+        optionsChangedListener.optionsChanged(null);
+        HttpState httpState = extension.getGlobalHttpState();
+        // When
+        optionsChangedListener.optionsChanged(null);
+        // Then
+        assertThat(extension.getGlobalHttpState(), is(sameInstance(httpState)));
+    }
+
+    @Test
+    void shouldNotCreateGlobalHttpStateOnOptionsChangedIfNotUsingGlobalHttpState() {
+        // Given
+        OptionsChangedListener optionsChangedListener = setupOptionsChangedListener();
+        extension.getConnectionOptions().setUseGlobalHttpState(false);
+        // When
+        optionsChangedListener.optionsChanged(null);
+        // Then
+        assertThat(extension.getGlobalHttpState(), is(nullValue()));
+    }
+
+    @Test
+    void shouldAddLegacyConnectionParamToCoreApiOnHookIfHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = true;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        CoreApiTest coreApi = new CoreApiTest();
+        API.getInstance().registerApiImplementor(coreApi);
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(coreApi.getLastAddedParam(), is(instanceOf(LegacyConnectionParam.class)));
+        assertThat(
+                coreApi.getApiViews().stream()
+                        .map(ApiElement::getName)
+                        .sorted()
+                        .filter(e -> e.startsWith("option"))
+                        .count(),
+                is(equalTo(21L)));
+        assertThat(
+                coreApi.getApiActions().stream()
+                        .map(ApiElement::getName)
+                        .sorted()
+                        .filter(e -> e.startsWith("setOption"))
+                        .count(),
+                is(equalTo(18L)));
+    }
+
+    @Test
+    void shouldNotAddLegacyConnectionParamToCoreApiOnHookIfNotHandlingConnection() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        ExtensionNetwork.handleConnection = false;
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        CoreApiTest coreApi = new CoreApiTest();
+        API.getInstance().registerApiImplementor(coreApi);
+        // When
+        extension.hook(extensionHook);
+        // Then
+        assertThat(coreApi.getLastAddedParam(), is(not(instanceOf(LegacyConnectionParam.class))));
+        assertThat(
+                coreApi.getApiViews().stream()
+                        .map(ApiElement::getName)
+                        .sorted()
+                        .filter(e -> e.startsWith("option"))
+                        .count(),
+                is(equalTo(21L)));
+        assertThat(
+                coreApi.getApiActions().stream()
+                        .map(ApiElement::getName)
+                        .sorted()
+                        .filter(e -> e.startsWith("setOption"))
+                        .count(),
+                is(equalTo(18L)));
+    }
+
+    @Test
     void shouldNotExecuteCommandLineArgsIfNotHandlingCerts() throws Exception {
         // Given
         CommandLineArgument[] args = mockedCmdLineArgs(3);
@@ -761,6 +957,35 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Then
         verify(extensionLoader).removeProxyServer(handler);
         assertThat(extension.getLegacyProxyListenerHandler(), is(nullValue()));
+    }
+
+    @Test
+    void shouldUnloadLegacyConnectionParamIfHandlingConnection() {
+        // Given
+        ExtensionNetwork.handleConnection = true;
+        extension = new ExtensionNetwork();
+        extension.initModel(model);
+        CoreApiTest coreApi = new CoreApiTest();
+        API.getInstance().registerApiImplementor(coreApi);
+        // When
+        extension.unload();
+        // Then
+        ArgumentCaptor<ConnectionParam> argument = ArgumentCaptor.forClass(ConnectionParam.class);
+        verify(optionsParam, times(2)).setConnectionParam(argument.capture());
+        assertThat(argument.getValue(), not(instanceOf(LegacyConnectionParam.class)));
+        assertThat(coreApi.getLastAddedParam(), is(not(instanceOf(LegacyConnectionParam.class))));
+    }
+
+    @Test
+    void shouldNotUnloadLegacyConnectionParamIfNotHandlingConnection() {
+        // Given
+        ExtensionNetwork.handleConnection = false;
+        extension = new ExtensionNetwork();
+        extension.initModel(model);
+        // When
+        extension.unload();
+        // Then
+        verifyNoInteractions(optionsParam);
     }
 
     @ParameterizedTest
@@ -1204,5 +1429,24 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 Files.readAttributes(file, PosixFileAttributes.class).permissions();
         perms.remove(PosixFilePermission.OWNER_WRITE);
         Files.setPosixFilePermissions(file, perms);
+    }
+
+    private static class CoreApiTest extends CoreAPI {
+
+        private AbstractParam param;
+
+        CoreApiTest() {
+            super(new ConnectionParam());
+        }
+
+        AbstractParam getLastAddedParam() {
+            return param;
+        }
+
+        @Override
+        public void addApiOptions(AbstractParam param) {
+            this.param = param;
+            super.addApiOptions(param);
+        }
     }
 }

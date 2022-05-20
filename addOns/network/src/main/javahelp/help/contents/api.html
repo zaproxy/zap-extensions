@@ -22,6 +22,15 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
+			addHttpProxyExclusion (host* enabled): Adds a host to be excluded from the HTTP proxy.
+			<ul>
+				<li>host: The value of the host, a regular expression.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
 			addLocalServer (address* port* api proxy behindNat decodeResponse removeAcceptEncoding): Adds a local server/proxy.
 			<ul>
 				<li>address: The address of the local server/proxy.</li>
@@ -59,6 +68,14 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
+			removeHttpProxyExclusion (host*): Removes a HTTP proxy exclusion.
+			<ul>
+				<li>host: The value of the host.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
 			removeLocalServer (address* port*): Removes a local server/proxy.
 			<ul>
 				<li>address: The address of the local server/proxy.</li>
@@ -79,6 +96,67 @@
 			setAliasEnabled (name* enabled): Sets whether or not an alias is enabled.
 			<ul>
 				<li>name: The name of the alias.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setConnectionTimeout (timeout*): Sets the timeout, for reads and connects.
+			<ul>
+				<li>timeout: The timeout, in seconds.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setDefaultUserAgent (userAgent*): Sets the default user-agent.
+			<ul>
+				<li>userAgent: The default user-agent.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setDnsTtlSuccessfulQueries (ttl*): Sets the TTL of successful DNS queries.
+			<ul>
+				<li>ttl: The TTL, in seconds. Negative number, cache forever. Zero, disables caching. Positive number, the number of seconds the successful DNS queries will be cached.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setHttpProxy (host* port* realm username password): Sets the HTTP proxy configuration.
+			<ul>
+				<li>host: The host, name or address.</li>
+				<li>port: The port.</li>
+				<li>realm: The authentication realm.</li>
+				<li>username: The user name.</li>
+				<li>password: The password.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setHttpProxyAuthEnabled (enabled*): Sets whether or not the HTTP proxy authentication is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setHttpProxyEnabled (enabled*): Sets whether or not the HTTP proxy is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setHttpProxyExclusionEnabled (host* enabled*): Sets whether or not a HTTP proxy exclusion is enabled.
+			<ul>
+				<li>host: The value of the host.</li>
 				<li>enabled: The enabled state, true or false.</li>
 			</ul>
 		</li>
@@ -107,16 +185,55 @@
 				<li>validity: The number of days that the generated server certificates will be valid for.</li>
 			</ul>
 		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setSocksProxy (host* port* version useDns username password): Sets the SOCKS proxy configuration.
+			<ul>
+				<li>host: The host, name or address.</li>
+				<li>port: The port.</li>
+				<li>version: The SOCKS version.</li>
+				<li>useDns: If the names should be resolved by the SOCKS proxy, true or false.</li>
+				<li>username: The user name.</li>
+				<li>password: The password.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setSocksProxyEnabled (enabled*): Sets whether or not the SOCKS proxy is enabled.
+			<ul>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setUseGlobalHttpState (use*): Sets whether or not to use the global HTTP state.
+			<ul>
+				<li>use: The use state, true or false.</li>
+			</ul>
+		</li>
 	</ul>
 
 	<h3>Views</h3>
 	<strong>Note:</strong> These endpoints are only available in weekly releases and versions after 2.11.
 	<ul>
 		<li>getAliases: Gets the aliases used to identify the local servers/proxies.</li>
+		<li>getConnectionTimeout: Gets the connection timeout, in seconds.</li>
+		<li>getDefaultUserAgent: Gets the default user-agent.</li>
+		<li>getDnsTtlSuccessfulQueries: Gets the TTL (in seconds) of successful DNS queries.</li>
+		<li>getHttpProxy: Gets the HTTP proxy.</li>
+		<li>getHttpProxyExclusions: Gets the HTTP proxy exclusions.</li>
 		<li>getLocalServers: Gets the local servers/proxies.</li>
 		<li>getPassThroughs: Gets the authorities that will pass-through the local proxies.</li>
 		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
 		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
+		<li>getSocksProxy: Gets the SOCKS proxy.</li>
+		<li>isHttpProxyAuthEnabled: Tells whether or not the HTTP proxy authentication is enabled.</li>
+		<li>isHttpProxyEnabled: Tells whether or not the HTTP proxy is enabled.</li>
+		<li>isSocksProxyEnabled: Tells whether or not the SOCKS proxy is enabled.</li>
+		<li>isUseGlobalHttpState: Tells whether or not to use global HTTP state.</li>
 	</ul>
 
 	<h3>Other</h3>
@@ -130,9 +247,9 @@
 		<li>
 			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
 			<br>
-			setProxy (proxy*): Sets the outgoing proxy configuration.
+			setProxy (proxy*): Sets the HTTP proxy configuration.
 			<ul>
-				<li>proxy: The JSON object containing the outgoing proxy configuration.</li>
+				<li>proxy: The JSON object containing the HTTP proxy configuration.</li>
 			</ul>
 		</li>
 	</ul>
@@ -142,9 +259,9 @@
 	<ul>
 		<li>proxy.pac: Provides a PAC file, proxying through the main proxy.</li>
 		<li>
-			setproxy: Sets the outgoing proxy configuration.
+			setproxy: Sets the HTTP proxy configuration.
 			<ul>
-				<li>Request body: The JSON object containing the outgoing proxy configuration.</li>
+				<li>Request body: The JSON object containing the HTTP proxy configuration.</li>
 			</ul>
 		</li>
 	</ul>
