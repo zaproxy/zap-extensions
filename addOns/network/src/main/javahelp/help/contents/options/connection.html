@@ -46,6 +46,12 @@
 	<br>The option SSLv2Hello must be selected in conjunction with at least one SSL/TLS version.
 	<br>Default: All protocols supported.
 
+	<H3>Enable unsafe SSL/TLS renegotiation</H3>
+	Allows unsafe SSL/TLS renegotiations (<a href="https://www.cve.org/CVERecord?id=CVE-2009-3555">CVE-2009-3555</a>) for
+	compatibility with older servers.<br/>
+	<strong>Note:</strong> The option must be set before establishing any HTTPS connection, a ZAP restart might be required.
+	<br>Default: <code>unselected</code>.
+
 	<H2>HTTP Proxy</H2>
 	This tab allows you to configure an outgoing HTTP proxy. This is often required in a corporate environment.
 	<H3>Enabled</H3>

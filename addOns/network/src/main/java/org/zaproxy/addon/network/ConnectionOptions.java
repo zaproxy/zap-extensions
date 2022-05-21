@@ -82,6 +82,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
     private static final String TLS_PROTOCOLS_KEY = BASE_KEY + ".tlsProtocols";
     private static final String TLS_PROTOCOL_KEY = TLS_PROTOCOLS_KEY + ".protocol";
+    private static final String TLS_ALLOW_UNSAFE_RENEGOTIATION =
+            TLS_PROTOCOLS_KEY + ".allowUnsafeRenegotiation";
 
     private static final String HTTP_PROXY_BASE_KEY = BASE_KEY + ".httpProxy.";
     private static final String HTTP_PROXY_ENABLED_KEY = HTTP_PROXY_BASE_KEY + "enabled";
@@ -144,6 +146,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     private boolean useGlobalHttpState;
     private int dnsTtlSuccessfulQueries = DNS_DEFAULT_TTL_SUCCESSFUL_QUERIES;
     private List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+    private boolean allowUnsafeRenegotiation;
 
     private boolean httpProxyEnabled;
     private HttpProxy httpProxy = DEFAULT_HTTP_PROXY;
@@ -201,6 +204,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
         }
         tlsProtocols = protocols;
         applyTlsProtocols();
+        allowUnsafeRenegotiation = getBoolean(TLS_ALLOW_UNSAFE_RENEGOTIATION, false);
+        setAllowUnsafeRenegotiationSystemProperty(allowUnsafeRenegotiation);
 
         parseHttpProxyOptions();
         parseSocksProxyOptions();
@@ -225,6 +230,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
         } catch (Exception e) {
             LOGGER.warn("An error occurred while migrating old TLS protocols configuration:", e);
         }
+        migrateConfig("certificate.allowUnsafeSslRenegotiation", TLS_ALLOW_UNSAFE_RENEGOTIATION);
 
         migrateConfig("connection.proxyChain.enabled", HTTP_PROXY_ENABLED_KEY);
         migrateConfig("connection.proxyChain.hostName", HTTP_PROXY_HOST_KEY);
@@ -282,6 +288,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
         Object oldValue = getConfig().getProperty(oldConfig);
         if (oldValue != null) {
             getConfig().setProperty(newConfig, oldValue);
+            getConfig().clearProperty(oldConfig);
         }
     }
 
@@ -422,6 +429,59 @@ public class ConnectionOptions extends VersionedAbstractParam {
      */
     public List<String> getTlsProtocols() {
         return tlsProtocols;
+    }
+
+    /**
+     * Tells whether or not the unsafe SSL/TLS renegotiation is enabled.
+     *
+     * @return {@code true} if the unsafe SSL/TLS renegotiation is enabled, {@code false} otherwise.
+     */
+    public boolean isAllowUnsafeRenegotiation() {
+        return allowUnsafeRenegotiation;
+    }
+
+    /**
+     * Sets whether or not the unsafe SSL renegotiation is enabled.
+     *
+     * <p>Calling this method changes the system property
+     * "sun.security.ssl.allowUnsafeRenegotiation" and "com.ibm.jsse2.renegotiate". It must be set
+     * before establishing any SSL/TLS connection. Further changes after establishing a connection
+     * will have no effect on the renegotiation but the value will be saved and restored next time
+     * ZAP is restarted.
+     *
+     * @param allow {@code true} if the unsafe SSL/TLS renegotiation should be enabled, {@code
+     *     false} otherwise.
+     */
+    public void setAllowUnsafeRenegotiation(boolean allow) {
+        if (allowUnsafeRenegotiation != allow) {
+            allowUnsafeRenegotiation = allow;
+
+            setAllowUnsafeRenegotiationSystemProperty(allowUnsafeRenegotiation);
+            getConfig().setProperty(TLS_ALLOW_UNSAFE_RENEGOTIATION, allowUnsafeRenegotiation);
+        }
+    }
+
+    /**
+     * Sets the given value to system property "sun.security.ssl.allowUnsafeRenegotiation" and sets
+     * the appropriate value to system property "com.ibm.jsse2.renegotiate", which enables or not
+     * the unsafe SSL/TLS renegotiation.
+     *
+     * <p>It must be set before establishing any SSL connection. Further changes after establishing
+     * a SSL connection will have no effect.
+     *
+     * @param allow the value to set to the property
+     */
+    private static void setAllowUnsafeRenegotiationSystemProperty(boolean allow) {
+        String ibmSystemPropertyValue;
+        if (allow) {
+            LOGGER.info("Unsafe SSL/TLS renegotiation enabled.");
+            ibmSystemPropertyValue = "ALL";
+        } else {
+            LOGGER.info("Unsafe SSL/TLS renegotiation disabled.");
+            ibmSystemPropertyValue = "NONE";
+        }
+        System.setProperty("com.ibm.jsse2.renegotiate", ibmSystemPropertyValue);
+        System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", String.valueOf(allow));
     }
 
     private void parseHttpProxyOptions() {
@@ -624,7 +684,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     private void persistHttpProxyExclusions() {
-        ((HierarchicalConfiguration) getConfig()).clearTree(HTTP_PROXY_EXCLUSIONS_KEY);
+        ((HierarchicalConfiguration) getConfig()).clearTree(HTTP_PROXY_EXCLUSION_KEY);
 
         for (int i = 0, size = httpProxyExclusions.size(); i < size; ++i) {
             String elementBaseKey = HTTP_PROXY_EXCLUSION_KEY + "(" + i + ").";
