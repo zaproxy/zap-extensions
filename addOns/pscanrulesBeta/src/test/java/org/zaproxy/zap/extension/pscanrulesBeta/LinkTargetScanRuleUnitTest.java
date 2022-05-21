@@ -38,6 +38,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -142,8 +143,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         rule.getConfig()
-                .setProperty(
-                        LinkTargetScanRule.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+                .setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" rel=\"opener\" target=\"_blank\">link</a></html>");
@@ -159,8 +159,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         rule.getConfig()
-                .setProperty(
-                        LinkTargetScanRule.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+                .setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example3.com/page1\" rel=\"opener\" target=\"_blank\">link</a></html>");
@@ -465,7 +464,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        rule.getConfig().setProperty(LinkTargetScanRule.TRUSTED_DOMAINS_PROPERTY, "[");
+        rule.getConfig().setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "[");
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Reverse Tabnabbing scan rule now leverages the Common Library Trusted Domains implementation.
 
 ## [29] - 2022-04-05
 ### Changed

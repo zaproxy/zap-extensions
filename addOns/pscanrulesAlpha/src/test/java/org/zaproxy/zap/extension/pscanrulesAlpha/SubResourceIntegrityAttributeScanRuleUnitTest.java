@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -107,6 +109,39 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
+    void shouldNotIndicateElementGivenElementIsServedByTrustedDomains()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.example.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+        rule.getConfig().setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "some.cdn.example.com");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldIndicateElementGivenElementIsServedByTrustedDomainsWhenPatternMismatches()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.example.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+        rule.getConfig()
+                .setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "https://some.cdn.example.com");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
     void shouldNotRaiseAlertGivenCanonicalAttributeIsPresentInLinkElement()
             throws HttpMalformedHeaderException {
         // Given
@@ -132,10 +167,8 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
                         "<html><head><script src=\"https://analytics-r-us.example.com/v1.0/include.js\"\n"
                                 + "        integrity=\"sha384-c2hhMzg0LU1CTzVJRGZZYUU2YzZBYW85NG9acklPaUM2Q0dpU04ybjRRVWJITlBoems1WGhtMGRqWkxRcVRwTDBIelRVeGs=\"\n"
                                 + "        ></script></head><body></body></html>");
-
         // When
         scanHttpResponseReceive(msg);
-
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
