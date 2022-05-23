@@ -67,6 +67,8 @@ class ConnectionOptionsUnitTest {
             "network.connection.dnsTtlSuccessfulQueries";
 
     private static final String TLS_PROTOCOL_KEY = "network.connection.tlsProtocols.protocol";
+    private static final String TLS_ALLOW_UNSAFE_RENEGOTIATION =
+            "network.connection.tlsProtocols.allowUnsafeRenegotiation";
 
     private static final String HTTP_PROXY_KEY = "network.connection.httpProxy";
     private static final String HTTP_PROXY_PASSWORD_KEY = HTTP_PROXY_KEY + ".password";
@@ -129,6 +131,7 @@ class ConnectionOptionsUnitTest {
                 options.getDnsTtlSuccessfulQueries(),
                 is(equalTo(ConnectionOptions.DNS_DEFAULT_TTL_SUCCESSFUL_QUERIES)));
         assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(false)));
 
         HttpProxy httpProxy = options.getHttpProxy();
         assertThat(options.isHttpProxyEnabled(), is(equalTo(false)));
@@ -363,6 +366,51 @@ class ConnectionOptionsUnitTest {
         // When / Then
         assertThrows(IllegalArgumentException.class, () -> options.setTlsProtocols(tlsProtocols));
         assertThat(config.getString(TLS_PROTOCOL_KEY + "(0)"), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadConfigWithAllowUnsafeRenegotiation(boolean allow) {
+        // Given
+        config.setProperty(TLS_ALLOW_UNSAFE_RENEGOTIATION, allow);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(allow)));
+        assertAllowUnsafeRenegotiationProperties(allow);
+    }
+
+    @Test
+    void shouldUseDefaultWithInvalidAllowUnsafeRenegotiation() {
+        // Given
+        config.setProperty(TLS_ALLOW_UNSAFE_RENEGOTIATION, "not a boolean");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(false)));
+        assertAllowUnsafeRenegotiationProperties(false);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetAndPersistAllowUnsafeRenegotiation(boolean allow) throws Exception {
+        // Given
+        options.setAllowUnsafeRenegotiation(!allow);
+        // When
+        options.setAllowUnsafeRenegotiation(allow);
+        // Then
+        assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(allow)));
+        assertThat(config.getBoolean(TLS_ALLOW_UNSAFE_RENEGOTIATION), is(equalTo(allow)));
+        assertAllowUnsafeRenegotiationProperties(allow);
+    }
+
+    private static void assertAllowUnsafeRenegotiationProperties(boolean allow) {
+        assertThat(
+                System.getProperty("sun.security.ssl.allowUnsafeRenegotiation"),
+                is(equalTo(String.valueOf(allow))));
+        assertThat(
+                System.getProperty("com.ibm.jsse2.renegotiate"),
+                is(equalTo(allow ? "ALL" : "NONE")));
     }
 
     @Test
@@ -1349,7 +1397,10 @@ class ConnectionOptionsUnitTest {
                                 + "    <protocol>TLSv1.2</protocol>\n"
                                 + "    <protocol>TLSv1.3</protocol>\n"
                                 + "  </securityProtocolsEnabled>\n"
-                                + "</connection>");
+                                + "</connection>"
+                                + "<certificate>\n"
+                                + "  <allowUnsafeSslRenegotiation>true</allowUnsafeSslRenegotiation>\n"
+                                + "</certificate>");
         // When
         options.load(config);
         // Then
@@ -1358,7 +1409,9 @@ class ConnectionOptionsUnitTest {
         assertThat(options.isUseGlobalHttpState(), is(equalTo(true)));
         assertThat(options.getDnsTtlSuccessfulQueries(), is(equalTo(321)));
         assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(true)));
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
+        assertThat(config.getKeys("certificate").hasNext(), is(equalTo(false)));
     }
 
     @Test

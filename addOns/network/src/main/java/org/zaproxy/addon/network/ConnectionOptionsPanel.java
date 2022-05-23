@@ -129,6 +129,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
         private final JCheckBox globalHttpStateCheckBox;
         private final ZapNumberSpinner dnsTtlSuccessfulNumberSpinner;
         private final SecurityProtocolsPanel securityProtocolsPanel;
+        private final JCheckBox allowUnsafeRenegotiationCheckBox;
         private final JPanel panel;
 
         GeneralPanel() {
@@ -214,6 +215,13 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
                             .addComponent(dnsTtlSuccessfulNumberSpinner));
 
             securityProtocolsPanel = new SecurityProtocolsPanel();
+            allowUnsafeRenegotiationCheckBox =
+                    new JCheckBox(
+                            Constant.messages.getString(
+                                    "network.ui.options.connection.general.unsaferenegotiation"));
+            allowUnsafeRenegotiationCheckBox.setToolTipText(
+                    Constant.messages.getString(
+                            "network.ui.options.connection.general.unsaferenegotiation.tooltip"));
 
             Component spacer = Box.createHorizontalGlue();
 
@@ -241,7 +249,8 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
                             .addComponent(globalHttpStateCheckBox)
                             .addComponent(spacer)
                             .addComponent(dnsPanel)
-                            .addComponent(securityProtocolsPanel));
+                            .addComponent(securityProtocolsPanel)
+                            .addComponent(allowUnsafeRenegotiationCheckBox));
 
             layout.setVerticalGroup(
                     layout.createSequentialGroup()
@@ -261,7 +270,8 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
                             .addComponent(globalHttpStateCheckBox)
                             .addComponent(spacer)
                             .addComponent(dnsPanel)
-                            .addComponent(securityProtocolsPanel));
+                            .addComponent(securityProtocolsPanel)
+                            .addComponent(allowUnsafeRenegotiationCheckBox));
         }
 
         private void updateUserAgentsComboBox() {
@@ -281,6 +291,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             globalHttpStateCheckBox.setSelected(options.isUseGlobalHttpState());
             dnsTtlSuccessfulNumberSpinner.setValue(options.getDnsTtlSuccessfulQueries());
             securityProtocolsPanel.setSecurityProtocolsEnabled(options.getTlsProtocols());
+            allowUnsafeRenegotiationCheckBox.setSelected(options.isAllowUnsafeRenegotiation());
         }
 
         void validate() throws Exception {
@@ -293,6 +304,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             options.setUseGlobalHttpState(globalHttpStateCheckBox.isSelected());
             options.setDnsTtlSuccessfulQueries(dnsTtlSuccessfulNumberSpinner.getValue());
             options.setTlsProtocols(securityProtocolsPanel.getSelectedProtocols());
+            options.setAllowUnsafeRenegotiation(allowUnsafeRenegotiationCheckBox.isSelected());
         }
     }
 
