@@ -22,6 +22,7 @@ package org.zaproxy.addon.retire;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +102,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                         Constant.messages.getString(
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
                 .setOtherInfo(otherInfo)
+                .setTags(getAllAlertTags(result))
                 .setReference(getDetails(Result.INFO, result.getInformation()))
                 .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
                 .setEvidence(result.getEvidence().trim())
@@ -125,6 +127,13 @@ public class RetireScanRule extends PluginPassiveScanner {
             sb.append(item).append('\n');
         }
         return sb.toString();
+    }
+
+    private Map<String, String> getAllAlertTags(Result result) {
+        Map<String, String> alertTags = new HashMap<>();
+        result.getCves().forEach(value -> alertTags.put(value, ""));
+        alertTags.putAll(getAlertTags());
+        return alertTags;
     }
 
     @Override
