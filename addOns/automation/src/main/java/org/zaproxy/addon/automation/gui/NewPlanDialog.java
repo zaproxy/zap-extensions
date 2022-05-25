@@ -235,7 +235,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
                     .showWarningDialog(
                             thisDialog,
                             Constant.messages.getString(
-                                    "automation.dialog.error.misc ", e.getMessage()));
+                                    "automation.dialog.error.misc", e.getMessage()));
         }
     }
 
