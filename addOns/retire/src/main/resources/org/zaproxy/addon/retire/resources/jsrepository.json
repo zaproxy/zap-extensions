@@ -2025,11 +2025,161 @@
 
 		],
 		"extractors" : {
-			
+			"uri" : [
+			],
+			"filename" : [
+			],
+			"filecontent" : [
+			],
+			"func"     : []
 		}
 	},
 
+	"axios" : {
+		"vulnerabilities" : [
+			{
+				"below" : "0.21.3",
+				"severity": "high",
+				"identifiers": {
+					"summary": "Axios is vulnerable to Inefficient Regular Expression Complexity",
+					"CVE": [ "CVE-2021-3749" ]
+				},
+				"info" : [ "https://security.snyk.io/vuln/SNYK-JS-AXIOS-1579269", "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3749"]
+			},
+      		{
+				"below" : "0.21.1",
+				"severity": "medium",
+				"identifiers": {
+					"summary": "Axios NPM package 0.21.0 contains a Server-Side Request Forgery (SSRF) vulnerability",
+					"CVE": [ "CVE-2020-28168" ]
+				},
+				"info" : [ "https://security.snyk.io/vuln/SNYK-JS-AXIOS-1038255", "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-28168"]
+			},
+      		{
+				"below" : "0.18.1",
+				"severity": "medium",
+				"identifiers": {
+					"summary": "Axios up to and including 0.18.0 allows attackers to cause a denial of service (application crash) by continuing to accepting content after maxContentLength is exceeded",
+					"CVE": [ "CVE-2019-10742" ]
+				},
+				"info" : [ "https://security.snyk.io/vuln/SNYK-JS-AXIOS-174505", "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-10742"]
+			}
+		],
+		"extractors" : {
+			"uri" : [
+				"/axios/(§§version§§)/.*\\.js"
+			],
+			"filename" : [
+				"axios-(§§version§§)(\\.min)?\\.js"
+			],
+			"filecontent" : [
+				"/\\* *axios v(§§version§§) "
+			],
+			"func" : [
+				"axios && axios.VERSION"
+			]
+		}
+	},
+	"markdown-it": {
+		"vulnerabilities": [
+			{
+				"below": "12.3.2",
+				"severity": "medium",
+				"identifiers": {
+					"summary": "Regular Expression Denial of Service (ReDoS)",
+					"CVE": [ "CVE-2022-21670" ]
+				},
+				"info": [ "https://security.snyk.io/vuln/SNYK-JS-MARKDOWNIT-2331914", "https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md", "https://nvd.nist.gov/vuln/detail/CVE-2022-21670" ]
+			},
+			{
+				"below": "10.0.0",
+				"severity": "medium",
+				"identifiers": {
+					"summary": "Regular Expression Denial of Service (ReDoS)"
+				},
+				"info": [ "https://security.snyk.io/vuln/SNYK-JS-MARKDOWNIT-459438", "https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md" ]
+			},
+			{
+				"below": "4.3.1",
+				"atOrAbove": "4.0.0",
+				"severity":"medium",
+				"identifiers": {
+					"summary": "Cross-site Scripting (XSS)"
+				},
+				"info": [ "https://security.snyk.io/vuln/npm:markdown-it:20150702", "https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md" ]
+			},
+			{
+				"below": "4.1.0",
+				"severity":"medium",
+				"identifiers": {
+					"summary": "Cross-site Scripting (XSS)",
+					"CVE": [ "CVE-2015-3295" ]
+				},
+				"info": [ "https://security.snyk.io/vuln/npm:markdown-it:20160912", "https://cve.mitre.org/cgi-bin/cvename.cgi?name=2015-3295", "https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md" ]
+			}
+		],
+		"extractors": {
+			"uri": [
+				"/markdown-it[/@](§§version§§)/?.*\\.js"
+			],
+			"filename": [
+				"markdown-it-(§§version§§)(\\.min)?\\.js"
+			],
+			"filecontent": [
+				"/\\*! markdown-it(?:-ins)? (§§version§§)"
+			],
+			"func": [
+			]
+		}
+	},
+	"jszip": {
+		"vulnerabilities": [
+			{
+				"below": "3.7.0",
+				"severity": "medium",
+				"identifiers": {
+					"summary": "Denial of Service (DoS)",
+					"CVE": [ "CVE-2021-23413" ]
+				},
+				"info": [ "https://security.snyk.io/vuln/SNYK-JS-JSZIP-1251497", "https://nvd.nist.gov/vuln/detail/CVE-2021-23413" ]
+			}
+		],
+		"extractors": {
+			"uri": [
+				"/jszip[/@](§§version§§)/.*\\.js"
+			],
+			"filename": [
+				"jszip-(§§version§§)(\\.min)?\\.js"
+			],
+			"filecontent": [
+				"/\\*![ \n]+JSZip v(§§version§§) "
+			],
+			"func": [
+				"JSZip && JSZip.version"
+			]
+		}
+	},
 
+	"AlaSQL": {
+		"vulnerabilities" : [
+			{
+				"below" : "0.7.0",
+				"severity" : "high",
+				"identifiers" : {
+					"CVE" : [ "CVE-XXXX-XXXX" ],
+					"bug" : "SNYK-JS-ALASQL-1082932",
+					"summary" : "An arbitrary code execution exists as AlaSQL doesn't sanitize input when characters are placed between square brackets [] or preceded with a backtik (accent grave) ` character. Versions older that 0.7.0 were deprecated in March of 2021 and should no longer be used."
+				},
+				"info" : [ "https://security.snyk.io/vuln/SNYK-JS-ALASQL-1082932" ]
+			}
+		],
+		"extractors" : {
+			"uri": [ "/alasql[/@](§§version§§)/.*\\.js" ],
+			"filename" : [ "alasql-(§§version§§)(\\.min)?\\.js" ],
+			"filecontent"	: [ "/\\*!?[ \n]*AlaSQL v(§§version§§)" ],
+			"func" : [ "alasql && alasql.version" ]
+		}
+	},
 
 
 	"dont check" : {
