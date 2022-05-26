@@ -45,14 +45,14 @@ class CloseOnRecursiveRequestHandlerUnitTest {
     }
 
     @Test
-    void shouldNotHandleExcludedMessage() throws Exception {
+    void shouldCloseRecursiveExcludedMessage() throws Exception {
         // Given
         given(ctx.isRecursive()).willReturn(true);
         given(ctx.isExcluded()).willReturn(true);
         // When
         handler.handleMessage(ctx, message);
         // Then
-        verify(ctx, times(0)).close();
+        verify(ctx).close();
     }
 
     @Test
