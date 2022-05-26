@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with upstream retire.js pattern changes.
 - Relevant CVEs will now be added as Alert Tags when available.
 
 ## [0.11.0] - 2022-05-03
