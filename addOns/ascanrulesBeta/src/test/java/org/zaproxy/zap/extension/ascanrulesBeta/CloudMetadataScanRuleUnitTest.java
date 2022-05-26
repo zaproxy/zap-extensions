@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -63,11 +65,17 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
-        assertEquals(2, httpMessagesSent.size());
+        assertThat(httpMessagesSent, is(not(empty())));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"169.154.169.254", "aws.zaproxy.org"})
+    @ValueSource(
+            strings = {
+                "169.154.169.254",
+                "aws.zaproxy.org",
+                "100.100.100.200",
+                "alibaba.zaproxy.org"
+            })
     void shouldAlertIfResponseIs200Ok(String host) throws Exception {
         // Given
         String path = "/latest/meta-data/";

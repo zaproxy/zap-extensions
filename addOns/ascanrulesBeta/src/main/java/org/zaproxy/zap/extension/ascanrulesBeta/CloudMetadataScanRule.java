@@ -58,7 +58,8 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     private static final int PLUGIN_ID = 90034;
     private static final String METADATA_PATH = "/latest/meta-data/";
     private static final List<String> METADATA_HOSTS =
-            Arrays.asList("169.154.169.254", "aws.zaproxy.org");
+            Arrays.asList(
+                    "169.154.169.254", "aws.zaproxy.org", "100.100.100.200", "alibaba.zaproxy.org");
 
     private static final Logger LOG = LogManager.getLogger(CloudMetadataScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
