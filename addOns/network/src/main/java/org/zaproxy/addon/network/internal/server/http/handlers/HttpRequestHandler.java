@@ -20,10 +20,9 @@
 package org.zaproxy.addon.network.internal.server.http.handlers;
 
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-/** A {@link HttpMessageHandler} that's interested only in HTTP requests. */
+/** A {@link HttpIncludedMessageHandler} that's interested only in HTTP requests. */
 public abstract class HttpRequestHandler extends HttpIncludedMessageHandler {
 
     @Override
