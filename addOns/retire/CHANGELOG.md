@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.12.0] - 2022-05-26
 ### Changed
 - Updated with upstream retire.js pattern changes.
 - Relevant CVEs will now be added as Alert Tags when available.
@@ -73,6 +73,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.9.0
