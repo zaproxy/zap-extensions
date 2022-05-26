@@ -86,6 +86,10 @@ public class HtmlContextAnalyser {
     public HtmlContextAnalyser(HttpMessage msg) {
         this.msg = msg;
         this.htmlPage = msg.getResponseBody().toString();
+        
+        System.err.println("msg:" + this.msg);
+        System.err.println("html:" + this.htmlPage);
+
         src = new Source(htmlPage);
         src.fullSequentialParse();
     }

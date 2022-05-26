@@ -25,6 +25,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.text.TabableView;
+
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
@@ -42,8 +45,20 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
+import org.zaproxy.zap.extension.ascanrules.httputils.ScriptContextAnalyser;
+import org.zaproxy.zap.extension.ascanrules.httputils.ScriptContext;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
+
+
+// parser 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
 
@@ -57,6 +72,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS);
 
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
+    protected static final String ENCODED_ALERT = "\\u003c\\u0069\\u006d\\u0067\\u0020\\u0073\\u0072\\u0063\\u003d\\u0031\\u0020\\u006f\\u006e\\u0065\\u0072\\u0072\\u006f\\u0072\\u003d\\u0061\\u006c\\u0065\\u0072\\u0074\\u0028\\u0031\\u0029\\u003e";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
     protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
     protected static final String SVG_ONLOAD_ALERT = "<svg onload=alert(1)>";
@@ -72,7 +88,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
 
     private static final List<String> GENERIC_SCRIPT_ALERT_LIST =
             Arrays.asList(
-                    GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT);
+                    GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT, GENERIC_ONERROR_ALERT, ENCODED_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
@@ -91,6 +107,58 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
+
+
+	private static final String POST_URL = "https://paserjs.herokuapp.com/parse";
+
+
+    // private static String get(String response, String match) {
+	// 	JSONArray jsonArr = new JSONArray(response);
+
+	// 		for (int i=0; i<jsonArr.length(); i++){
+	// 			JSONObject jsonObj = jsonArr.getJSONObject(i);
+
+	// 			if (jsonObj.getString("value").equals(match)){
+	// 				return (jsonObj.getString("type"));
+	// 			}
+	// 		}
+	// }
+
+
+	private static String sendPOST(String params) throws IOException {
+		URL obj = new URL(POST_URL);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("POST");
+
+		// For POST only - START
+		con.setDoOutput(true);
+		OutputStream os = con.getOutputStream();
+		os.write(params.getBytes());
+		os.flush();
+		os.close();
+		// For POST only - END
+
+		int responseCode = con.getResponseCode();
+		System.out.println("POST Response Code :: " + responseCode);
+
+		if (responseCode == HttpURLConnection.HTTP_OK) { //success
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			return response.toString();
+
+		
+		} else {
+			return null;
+		}
+	}
 
     @Override
     public int getId() {
@@ -199,6 +267,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             return null;
         }
 
+        System.err.println("Performing final attack");
+
         HttpMessage msg2 = msg.cloneRequest();
         setParameter(msg2, param, attack);
         try {
@@ -227,7 +297,24 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
             evidence = attack;
         }
-        HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
+
+        // additional replace for enc2
+        // attack = attack.replaceFirst("\"", "\\\"");
+        // evidence = attack;
+
+        System.err.println("printing attack text: " + attack);
+        System.err.println("printing evidence text: " + evidence);
+
+
+        System.err.println("printing msg2: " + msg2.getResponseBody());
+
+         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
+        System.err.println("final return value: " + hca.getHtmlContexts(
+            findDecoded ? getURLDecode(evidence) : evidence,
+            targetContext,
+            ignoreFlags,
+            ignoreSafeParents));
+
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
             // High level, so check all results are in the expected context
             return hca.getHtmlContexts(
@@ -239,6 +326,141 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         return hca.getHtmlContexts(
                 findDecoded ? getURLDecode(evidence) : evidence, null, 0, ignoreSafeParents);
     }
+
+    // private String performAttackForScript(
+    //         HttpMessage msg,
+    //         String param,
+    //         String attack,
+    //         HtmlContext targetContext,
+    //         String evidence,
+    //         int ignoreFlags,
+    //         boolean findDecoded,
+    //         boolean isNullByteSpecialHandling,
+    //         boolean ignoreSafeParents) {
+    //     if (isStop()) {
+    //         return null;
+    //     }
+
+    //     System.err.println("Performing final attack");
+
+    //     HttpMessage msg2 = msg.cloneRequest();
+    //     setParameter(msg2, param, attack);
+    //     try {
+    //         sendAndReceive(msg2);
+    //     } catch (URIException e) {
+    //         log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+    //         return null;
+    //     } catch (InvalidRedirectLocationException | UnknownHostException e) {
+    //         // Not an error, just means we probably attacked the redirect
+    //         // location
+    //         return null;
+    //     } catch (Exception e) {
+    //         log.error(e.getMessage(), e);
+    //     }
+
+    //     if (isStop()) {
+    //         return null;
+    //     }
+    //     if (isNullByteSpecialHandling) {
+    //         /* Special handling for case where Attack Vector is reflected outside of html tag.
+    //          * Removing Null Byte as parser tries to find the enclosing tag on attack vector (e.g.
+    //          * \0<script>alert(1);</script>) starting from first character
+    //          * and as null byte is not starting any tag and there is no enclosing tag for null byte
+    //          * so parent context is null.
+    //          */
+    //         attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
+    //         evidence = attack;
+    //     }
+
+    //     // additional replace for enc2
+    //     // attack = attack.replaceFirst("\"", "\\\"");
+    //     // evidence = attack;
+
+    //     System.err.println("printing attack text: " + attack);
+    //     System.err.println("printing evidence text: " + evidence);
+
+
+    //     System.err.println("printing msg2: " + msg2.getResponseBody());
+
+    //     // for script
+
+    //     String responseCode = msg2.getResponseBody().toString();
+    //     System.err.println("printing response code: " + responseCode);
+
+
+    //     String result;
+
+    //     try {
+    //         result = sendPOST("code=" + responseCode + "&target=" + "alert");
+    //         System.err.println("printing result end: " + result);
+
+            
+    //     } catch (IOException e) {
+    //         //TODO: handle exception
+    //         return null;
+    //     }
+
+    //     return result;
+
+    // }
+
+    private String performAttackForScript(
+            HttpMessage msg,
+            String param,
+            String attack) {
+
+        if (isStop()) {
+            return null;
+        }
+
+        System.err.println("attack payload " + attack);
+
+        HttpMessage msg2 = msg.cloneRequest();
+        setParameter(msg2, param, attack);
+        try {
+            sendAndReceive(msg2);
+        } catch (URIException e) {
+            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            return null;
+        } catch (InvalidRedirectLocationException | UnknownHostException e) {
+            // Not an error, just means we probably attacked the redirect
+            // location
+            return null;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        if (isStop()) {
+            return null;
+        }
+
+        // additional replace for enc2
+        // attack = attack.replaceFirst("\"", "\\\"");
+        // evidence = attack;
+
+        // System.err.println("printing msg2: " + msg2.getResponseBody());
+
+        // for script
+
+        String responseCode = msg2.getResponseBody().toString();
+        System.err.println("printing response code: " + responseCode);
+
+
+        String result;
+
+        try {
+            result = sendPOST("code=" + responseCode + "&target=" + "alert");
+            System.err.println("printing result end: " + result);
+            
+        } catch (IOException e) {
+            //TODO: handle exception
+            return null;
+        }
+
+        return result;
+
+    }
+
 
     private boolean performDirectAttack(HttpMessage msg, String param, String value) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
@@ -558,33 +780,213 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         return false;
     }
 
-    private boolean performScriptAttack(HtmlContext context, HttpMessage msg, String param) {
-        List<HtmlContext> contexts2 =
-                performAttack(
-                        msg,
-                        param,
-                        context.getSurroundingQuote()
-                                + ";alert(1);"
-                                + context.getSurroundingQuote(),
-                        context,
-                        0);
-        if (contexts2 == null) {
+    // private boolean performScriptAttack(HtmlContext context, HttpMessage msg, String param) {
+    //     System.err.println("performing script attack");
+
+    //     System.err.println("printing variables: " + msg + param + context.getSurroundingQuote() + context);
+        
+
+        // List<HtmlContext> contexts2 =
+        //         performAttack(
+        //                 msg,
+        //                 param,
+        //                 "\\" + context.getSurroundingQuote()
+        //                         + ";alert(1);//"
+        //                         + context.getSurroundingQuote(),
+        //                 context,
+        //                 0);
+
+        // List<HtmlContext> contexts2 =
+        // performAttack(
+        //         msg,
+        //         param,
+        //         "\"alert(1);",
+        //         context,
+        //         0);
+
+        // List<HtmlContext> contexts2 =
+        // performAttack(
+        //         msg,
+        //         param,
+        //         "'alert(1);//",
+        //         context,
+        //         0);
+
+
+        // finding context in js
+
+        // System.out.println(context.getClass());
+
+        // String contexts2 = "Empty";
+
+        // contexts2 =
+        // performAttackForScript(
+        //         msg,
+        //         param,
+        //         "',x:alert(1),y:'",
+        //         context,
+        //         "',x:alert(1),y:'", 0, false, false, false);
+
+        // if (!contexts2.equals("Empty")){
+        //     return true;
+        // }
+
+        // contexts2 =
+        // performAttackForScript(
+        //         msg,
+        //         param,
+        //         "\",x:alert(1),y:\"",
+        //         context,
+        //         "\",x:alert(1),y:\"", 0, false, false, false);
+
+        // if (!contexts2.equals("Empty")){
+        //     return true;
+        // }
+        
+        // contexts2 =
+        // performAttackForScript(
+        //         msg,
+        //         param,
+        //         "\\\";alert(1);//",
+        //         context,
+        //         "\\\";alert(1);//", 0, false, false, false);
+
+        
+        // if (!contexts2.equals("Empty")){
+        //     return true;
+        // }
+        
+        // return false;
+        
+
+        // System.err.println("performing context2: " + contexts2);
+
+
+        // for (HtmlContext ctx : contexts2) {
+        //     if (context.getSurroundingQuote().isEmpty() || !ctx.getSurroundingQuote().isEmpty()) {
+        //         // Yep, its vulnerable
+        //         newAlert()
+        //                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
+        //                 .setParam(param)
+        //                 .setAttack(ctx.getTarget())
+        //                 .setEvidence(ctx.getTarget())
+        //                 .setMessage(ctx.getMsg())
+        //                 .raise();
+        //         return true;
+        //     }
+        // }
+        // return false;
+    // }
+
+    private boolean performScriptAttack(HtmlContext context, HttpMessage msg, String param){
+        // get context
+        ScriptContextAnalyser sca = new ScriptContextAnalyser(msg);
+        String scriptContext = sca.getScriptContexts(context.getTarget()).getSurroundingQuote();
+        String alertStatus = "Empty";
+        String attack = "default";
+
+
+        // 1. direct attacks - context unaware
+
+        // simple direct attack in double quotes
+        attack = "\";alert(1);//";
+        alertStatus = performAttackForScript(msg, param, attack);
+
+        if (!alertStatus.equals("Empty")){
+            newAlert()
+            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+            .setParam(param)
+            .setAttack(attack)
+            .setEvidence(context.getTarget())
+            .setMessage(context.getMsg())
+            .raise();
+
+            return true;
+        }
+
+
+        // simple direct attack in single quotes
+        attack = "';alert(1);//";
+        alertStatus = performAttackForScript(msg, param, attack);
+
+        if (!alertStatus.equals("Empty")){
+            newAlert()
+            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+            .setParam(param)
+            .setAttack(attack)
+            .setEvidence(context.getTarget())
+            .setMessage(context.getMsg())
+            .raise();
+
+            return true;
+        }
+
+        // escape backslash direct attack in doublequotes
+        attack = "\\\";alert(1);//";
+        alertStatus = performAttackForScript(msg, param, attack);
+
+        if (!alertStatus.equals("Empty")){
+            newAlert()
+            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+            .setParam(param)
+            .setAttack(attack)
+            .setEvidence(context.getTarget())
+            .setMessage(context.getMsg())
+            .raise();
+
+            return true;
+        }
+
+        // escape backslash direct attack in doublequotes
+        attack = "\';alert(1);//";
+        alertStatus = performAttackForScript(msg, param, attack);
+
+        if (!alertStatus.equals("Empty")){
+            newAlert()
+            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+            .setParam(param)
+            .setAttack(attack)
+            .setEvidence(context.getTarget())
+            .setMessage(context.getMsg())
+            .raise();
+
+            return true;
+        }
+
+        // 2. context aware attacks
+
+        if (scriptContext.equals("")){
+            // no quotes payload
+            attack = "1,x:alert(1),y:1";
+            alertStatus = performAttackForScript(msg, param, attack);
+        }
+        else if (scriptContext.equals("'")){
+            // single quotes payload
+
+            // for object context
+            attack = "',x:alert(1),y:'";
+            alertStatus = performAttackForScript(msg, param, attack);
+        }
+        else if (scriptContext.equals("\"")){
+            // double quote payload
+            attack = "\",x:alert(1),y:\"";
+            alertStatus = performAttackForScript(msg, param, attack);
+        }
+
+        if (alertStatus.equals("Empty")){
             return false;
         }
-        for (HtmlContext ctx : contexts2) {
-            if (context.getSurroundingQuote().isEmpty() || !ctx.getSurroundingQuote().isEmpty()) {
-                // Yep, its vulnerable
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(param)
-                        .setAttack(ctx.getTarget())
-                        .setEvidence(ctx.getTarget())
-                        .setMessage(ctx.getMsg())
-                        .raise();
-                return true;
-            }
-        }
-        return false;
+
+        newAlert()
+            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+            .setParam(param)
+            .setAttack(attack)
+            .setEvidence(context.getTarget())
+            .setMessage(context.getMsg())
+            .raise();
+
+        return true;
+
     }
 
     private boolean performOutsideTagsAttack(HtmlContext context, HttpMessage msg, String param) {
@@ -689,7 +1091,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             boolean attackWorked = false;
             boolean appendedValue = false;
             HttpMessage msg2 = getNewMsg();
-            setParameter(msg2, param, Constant.getEyeCatcher());
+            setParameter(msg2, param, "EYE_CATCHER");
             try {
                 sendAndReceive(msg2);
             } catch (URIException e) {
@@ -706,20 +1108,20 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             }
 
             HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
-            List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
+            List<HtmlContext> contexts = hca.getHtmlContexts("eyeCatcher", null, 0);
             if (contexts.isEmpty()) {
                 // Lower case?
-                contexts = hca.getHtmlContexts(Constant.getEyeCatcher().toLowerCase(), null, 0);
+                contexts = hca.getHtmlContexts("eyeCatcher".toLowerCase(), null, 0);
             }
             if (contexts.isEmpty()) {
                 // Upper case?
-                contexts = hca.getHtmlContexts(Constant.getEyeCatcher().toUpperCase(), null, 0);
+                contexts = hca.getHtmlContexts("eyeCatcher".toUpperCase(), null, 0);
             }
             if (contexts.isEmpty()) {
                 // No luck - try again, appending the eyecatcher to the original
                 // value
                 msg2 = getNewMsg();
-                setParameter(msg2, param, value + Constant.getEyeCatcher());
+                setParameter(msg2, param, value + "eyeCatcher");
                 appendedValue = true;
                 try {
                     sendAndReceive(msg2);
@@ -732,12 +1134,13 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     return;
                 }
                 hca = new HtmlContextAnalyser(msg2);
-                contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
+                contexts = hca.getHtmlContexts(value + "eyeCatcher", null, 0);
             }
             if (contexts.isEmpty()) {
                 attackWorked = performDirectAttack(msg, param, value);
             }
 
+            System.err.println("context list: " + contexts);
             for (HtmlContext context : contexts) {
                 // Loop through the returned contexts and launch targeted
                 // attacks
@@ -745,19 +1148,27 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     break;
                 }
                 if (context.getTagAttribute() != null) {
+                    System.err.println("tag attr : " + context);
+
                     // its in a tag attribute - lots of attack vectors possible
                     attackWorked = performTagAttack(context, msg, param, value);
 
                 } else if (context.isHtmlComment()) {
+                    System.err.println("comment : " + context);
+                    
                     // Try breaking out of the comment
                     attackWorked = performCommentAttack(context, msg, param);
                 } else {
                     // its not in a tag attribute
                     if ("body".equalsIgnoreCase(context.getParentTag())) {
+                        System.err.println("just after body: " + context);
+
                         // Immediately under a body tag
                         attackWorked = performBodyAttack(context, msg, param);
 
                     } else if (context.getParentTag() != null) {
+                        System.err.println("not just after body : " + context);
+
                         // Its not immediately under a body tag, try to close
                         // the tag
                         attackWorked = performCloseTagAttack(context, msg, param);
@@ -766,21 +1177,27 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             break;
                         } else if ("script".equalsIgnoreCase(context.getParentTag())) {
                             // its in a script tag...
-                            attackWorked = performScriptAttack(context, msg, param);
+                            System.err.println("in a script tag : " + context);
+
+                            attackWorked = performScriptAttack(context, msg2, param);
                         } else {
                             // Try an img tag
+                            System.err.println(" image tag: " + context);
+                            
                             attackWorked = performImageTagAttack(context, msg, param);
                         }
                     } else {
                         // Last chance - is the payload reflected outside of any
                         // tags
+                        System.err.println(" outside of tags : " + context);
+
                         attackWorked = performOutsideTagsAttack(context, msg, param);
                     }
                 }
             }
             // Always attack the header if the eyecatcher is reflected in it - this will be
             // different to any alert raised above
-            if (msg2.getResponseHeader().toString().contains(Constant.getEyeCatcher())) {
+            if (msg2.getResponseHeader().toString().contains("eyeCatcher")) {
                 attackHeader(msg, param, appendedValue ? value : "");
             }
 
