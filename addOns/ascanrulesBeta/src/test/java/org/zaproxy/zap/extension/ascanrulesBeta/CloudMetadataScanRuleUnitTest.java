@@ -31,6 +31,8 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -48,23 +50,25 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
     void shouldNotAlertIfResponseIsNot200Ok() throws Exception {
         // Given
         String path = "/latest/meta-data/";
-        String body = "<html><head></head><H>404 - Not Found</H1><html>";
+        String body = "<html><head></head><H>401 - Unauthorized</H1><html>";
         this.nano.addHandler(
                 createHandler(
                         path,
                         newFixedLengthResponse(
-                                Response.Status.UNAUTHORIZED, NanoHTTPD.MIME_HTML, body)));
+                                Response.Status.UNAUTHORIZED, NanoHTTPD.MIME_HTML, body),
+                        ""));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
-        assertEquals(1, httpMessagesSent.size());
+        assertEquals(2, httpMessagesSent.size());
     }
 
-    @Test
-    void shouldAlertIfResponseIs200Ok() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"169.154.169.254", "aws.zaproxy.org"})
+    void shouldAlertIfResponseIs200Ok(String host) throws Exception {
         // Given
         String path = "/latest/meta-data/";
         // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
@@ -72,7 +76,8 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         this.nano.addHandler(
                 createHandler(
                         path,
-                        newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, body)));
+                        newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, body),
+                        host));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
@@ -82,8 +87,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         Alert alert = alertsRaised.get(0);
         assertEquals(Alert.RISK_HIGH, alert.getRisk());
         assertEquals(Alert.CONFIDENCE_LOW, alert.getConfidence());
-        assertEquals("169.154.169.254", alert.getAttack());
-        assertEquals(1, httpMessagesSent.size());
+        assertEquals(host, alert.getAttack());
     }
 
     @Test
@@ -106,11 +110,14 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
-    private static NanoServerHandler createHandler(String path, Response response) {
+    private static NanoServerHandler createHandler(String path, Response response, String host) {
         return new NanoServerHandler(path) {
             @Override
             protected Response serve(IHTTPSession session) {
-                return response;
+                if (session.getHeaders().get("host").startsWith(host) || host.isEmpty()) {
+                    return response;
+                }
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "");
             }
         };
     }
