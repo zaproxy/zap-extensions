@@ -76,6 +76,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.option.OptionsParamCertificate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
@@ -151,6 +152,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
+    boolean handleClientCerts;
     boolean handleLocalServers;
     static Boolean handleConnection;
     private ConnectionParam legacyConnectionOptions;
@@ -159,6 +161,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private boolean groupsInitiated;
     private NioEventLoopGroup mainEventLoopGroup;
     private EventExecutorGroup mainEventExecutorGroup;
+
+    private ClientCertificatesOptions clientCertificatesOptions;
+    private ClientCertificatesOptionsPanel clientCertificatesOptionsPanel;
 
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
@@ -219,8 +224,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return connectionOptions;
     }
 
+    ClientCertificatesOptions getClientCertificatesOptions() {
+        return clientCertificatesOptions;
+    }
+
     boolean isHandleServerCerts() {
         return handleServerCerts;
+    }
+
+    boolean isHandleClientCerts() {
+        return handleClientCerts;
     }
 
     boolean isHandleLocalServers() {
@@ -291,6 +304,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (!handleServerCerts) {
             sslCertificateService = new LegacySslCertificateServiceImpl();
         }
+
+        handleClientCerts = isDeprecated(OptionsParamCertificate.class);
     }
 
     private static boolean isDeprecated(Class<?> clazz) {
@@ -535,6 +550,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
         }
 
+        if (handleClientCerts) {
+            clientCertificatesOptions = new ClientCertificatesOptions();
+            extensionHook.addOptionsParamSet(clientCertificatesOptions);
+        }
+
         if (hasView()) {
             ExtensionHookView hookView = extensionHook.getHookView();
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
@@ -561,6 +581,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
                 hookView.addOptionPanel(
                         new LegacyOptionsPanel("connection", connectionOptionsPanel));
+            }
+
+            if (handleClientCerts) {
+                clientCertificatesOptionsPanel =
+                        new ClientCertificatesOptionsPanel(View.getSingleton());
+                optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
             }
         }
     }

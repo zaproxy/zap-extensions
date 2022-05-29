@@ -114,7 +114,11 @@ public abstract class TestUtils {
         Files.createFile(xmlDir.resolve("log4j2.properties"));
 
         zapInstallDir = installDir.toAbsolutePath().toString();
-        zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
+        createHomeDirectory();
+    }
+
+    private static void createHomeDirectory() throws Exception {
+        zapHomeDir = Files.createTempDirectory(tempDir, "home").toAbsolutePath().toString();
     }
 
     /**
@@ -126,6 +130,7 @@ public abstract class TestUtils {
      */
     protected void setUpZap() throws Exception {
         Constant.setZapInstall(zapInstallDir);
+        createHomeDirectory();
         Constant.setZapHome(zapHomeDir);
 
         Control control = mock(Control.class, withSettings().lenient());

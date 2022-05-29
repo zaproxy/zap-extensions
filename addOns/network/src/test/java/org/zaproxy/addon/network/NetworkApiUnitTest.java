@@ -91,6 +91,7 @@ class NetworkApiUnitTest extends TestUtils {
     private ServerCertificatesOptions serverCertificatesOptions;
     private LocalServersOptions localServersOptions;
     private ConnectionOptions connectionOptions;
+    private ClientCertificatesOptions clientCertificatesOptions;
     private ExtensionNetwork extensionNetwork;
 
     @BeforeEach
@@ -110,6 +111,9 @@ class NetworkApiUnitTest extends TestUtils {
         connectionOptions = mock(ConnectionOptions.class, withSettings().lenient());
         given(connectionOptions.getHttpProxy()).willReturn(ConnectionOptions.DEFAULT_HTTP_PROXY);
         given(extensionNetwork.getConnectionOptions()).willReturn(connectionOptions);
+        clientCertificatesOptions = mock(ClientCertificatesOptions.class);
+        given(extensionNetwork.getClientCertificatesOptions())
+                .willReturn(clientCertificatesOptions);
         networkApi = new NetworkApi(extensionNetwork);
     }
 
@@ -174,6 +178,21 @@ class NetworkApiUnitTest extends TestUtils {
         networkApi = new NetworkApi(extensionNetwork);
         // Then
         assertThat(networkApi.getApiActions(), hasSize(24));
+        assertThat(networkApi.getApiViews(), hasSize(15));
+        assertThat(networkApi.getApiOthers(), hasSize(3));
+    }
+
+    @Test
+    void shouldAddAdditionalApiElementsWhenHandlingClientCertificates() {
+        // Given
+        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
+        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
+        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
+        ExtensionNetwork.handleConnection = true;
+        // When
+        networkApi = new NetworkApi(extensionNetwork);
+        // Then
+        assertThat(networkApi.getApiActions(), hasSize(26));
         assertThat(networkApi.getApiViews(), hasSize(15));
         assertThat(networkApi.getApiOthers(), hasSize(3));
     }
@@ -1703,10 +1722,89 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddPkcs12ClientCertificate() throws Exception {
+        // Given
+        String name = "addPkcs12ClientCertificate";
+        JSONObject params = new JSONObject();
+        String file = "/path/to/file";
+        params.put("filePath", file);
+        String password = "password";
+        params.put("password", password);
+        int index = 1234;
+        params.put("index", index);
+        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
+        given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(clientCertificatesOptions).setPkcs12File(file);
+        verify(clientCertificatesOptions).setPkcs12Password(password);
+        verify(clientCertificatesOptions).setPkcs12Index(index);
+        verify(clientCertificatesOptions).addPkcs12Certificate();
+        verify(clientCertificatesOptions).setUseCertificate(true);
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfNotAbleToAddPkcs12ClientCertificate() throws Exception {
+        // Given
+        String name = "addPkcs12ClientCertificate";
+        JSONObject params = new JSONObject();
+        String file = "/path/to/file";
+        params.put("filePath", file);
+        String password = "password";
+        params.put("password", password);
+        int index = 1234;
+        params.put("index", index);
+        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
+        given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_EXTERNAL_DATA)));
+        verify(clientCertificatesOptions).setPkcs12File(file);
+        verify(clientCertificatesOptions).setPkcs12Password(password);
+        verify(clientCertificatesOptions).setPkcs12Index(index);
+        verify(clientCertificatesOptions).addPkcs12Certificate();
+        verify(clientCertificatesOptions, times(0)).setUseCertificate(true);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetUseClientCertificate(boolean use) throws Exception {
+        // Given
+        String name = "setUseClientCertificate";
+        JSONObject params = new JSONObject();
+        params.put("use", use);
+        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(clientCertificatesOptions).setUseCertificate(use);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"addPkcs12ClientCertificate", "setUseClientCertificate"})
+    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingClientCertificates(String name)
+            throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        given(extensionNetwork.isHandleClientCerts()).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
+    }
+
+    @Test
     void shouldHaveDescriptionsForAllApiElements() {
         given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
+        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);

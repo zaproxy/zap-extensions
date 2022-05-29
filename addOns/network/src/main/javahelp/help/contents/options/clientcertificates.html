@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Client Certificates</TITLE>
+</HEAD>
+<BODY>
+	<H1>Client Certificates</H1>
+	<strong>Note:</strong> This feature is only available in weekly releases and versions after 2.11.
+	<br>
+	This screen allows you to add a client certificate to use when testing applications protected using mutual SSL.<br>
+	After adding the certificate it can be set as active in the KeyStore tab.<br>
+	Unlike other options screens, the changes done to the keystore are not undone if the Options dialogue is cancelled.
+
+	<H3>Use Certificate</H3>
+	Allows to add and use the active certificate.
+
+	<H2>PKCS#12</H2>
+	This tab allows you to add a PKCS#12 certificate to the keystore.
+
+	<H3>File</H3>
+	The file system path to the PKCS#12 file.
+
+	<H3>Password</H3>
+	The password to unlock the certificates. PKCS#12 files with empty passwords are not supported.
+
+	<H3>Store Configuration</H3>
+	Allows the PKCS#12 configuration to be stored in the configuration file. If stored ZAP will load the
+	certificates automatically and set the first certificate available as active.
+
+	<H2>PKCS#11</H2>
+	This tab allows you to add a PKCS#11 certificate to the keystore.
+
+	<H3>Driver</H3>
+	The driver to access the PKCS#11 certificate.
+
+	<H3>Manage...</H3>
+	Allows to add, modify, and remove the available drivers.
+
+	<H3>Use Slot List Index</H3>
+	Indicates that it should be used the configured Slot List Index of the driver instead of the Slot.
+
+	<H2>KeyStore</H2>
+	This tab allows you to view the added keystores and their certificates, and activate them.
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="../network.html">Network</a></td>
+			<td>the introduction to Network add-on</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

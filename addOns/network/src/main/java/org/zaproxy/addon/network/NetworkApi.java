@@ -70,6 +70,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String ACTION_ADD_HTTP_PROXY_EXCLUSION = "addHttpProxyExclusion";
     private static final String ACTION_ADD_LOCAL_SERVER = "addLocalServer";
     private static final String ACTION_ADD_PASS_THROUGH = "addPassThrough";
+    private static final String ACTION_ADD_PKCS12_CLIENT_CERTIFICATE = "addPkcs12ClientCertificate";
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
     private static final String ACTION_REMOVE_ALIAS = "removeAlias";
@@ -91,6 +92,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
     private static final String ACTION_SET_SOCKS_PROXY = "setSocksProxy";
     private static final String ACTION_SET_SOCKS_PROXY_ENABLED = "setSocksProxyEnabled";
+    private static final String ACTION_SET_USE_CLIENT_CERTIFICATE = "setUseClientCertificate";
     private static final String ACTION_SET_USE_GLOBAL_HTTP_STATE = "setUseGlobalHttpState";
 
     private static final String VIEW_GET_ALIASES = "getAliases";
@@ -123,6 +125,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String PARAM_ENABLED = "enabled";
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String PARAM_HOST = "host";
+    private static final String PARAM_INDEX = "index";
     private static final String PARAM_NAME = "name";
     private static final String PARAM_PASSWORD = "password";
     private static final String PARAM_PORT = "port";
@@ -258,6 +261,16 @@ public class NetworkApi extends ApiImplementor {
             this.addApiView(new ApiView(VIEW_IS_USE_GLOBAL_HTTP_STATE));
         }
 
+        if (isHandleClientCerts(extensionNetwork)) {
+            addApiAction(
+                    new ApiAction(
+                            ACTION_ADD_PKCS12_CLIENT_CERTIFICATE,
+                            Arrays.asList(PARAM_FILE_PATH, PARAM_PASSWORD),
+                            Arrays.asList(PARAM_INDEX)));
+            addApiAction(
+                    new ApiAction(ACTION_SET_USE_CLIENT_CERTIFICATE, Arrays.asList(PARAM_USE)));
+        }
+
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
     }
 
@@ -271,6 +284,10 @@ public class NetworkApi extends ApiImplementor {
 
     private static boolean isHandleConnection(ExtensionNetwork extensionNetwork) {
         return extensionNetwork == null || ExtensionNetwork.isHandleConnection();
+    }
+
+    private static boolean isHandleClientCerts(ExtensionNetwork extensionNetwork) {
+        return extensionNetwork == null || extensionNetwork.isHandleClientCerts();
     }
 
     @Override
@@ -339,6 +356,27 @@ public class NetworkApi extends ApiImplementor {
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     PassThrough passThrough = new PassThrough(authority, enabled);
                     extensionNetwork.getLocalServersOptions().addPassThrough(passThrough);
+                    return ApiResponseElement.OK;
+                }
+            case ACTION_ADD_PKCS12_CLIENT_CERTIFICATE:
+                {
+                    if (!isHandleClientCerts(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    String file = params.getString(PARAM_FILE_PATH);
+                    String password = params.getString(PARAM_PASSWORD);
+                    int index = ApiUtils.getIntParam(params, PARAM_INDEX);
+                    ClientCertificatesOptions options =
+                            extensionNetwork.getClientCertificatesOptions();
+                    options.setPkcs12File(file);
+                    options.setPkcs12Password(password);
+                    options.setPkcs12Index(index);
+                    if (!options.addPkcs12Certificate()) {
+                        throw new ApiException(
+                                ApiException.Type.BAD_EXTERNAL_DATA,
+                                "Failed to add the certificate.");
+                    }
+                    options.setUseCertificate(true);
                     return ApiResponseElement.OK;
                 }
 
@@ -600,6 +638,15 @@ public class NetworkApi extends ApiImplementor {
                     }
                     boolean use = getParam(params, PARAM_USE, false);
                     extensionNetwork.getConnectionOptions().setUseGlobalHttpState(use);
+                    return ApiResponseElement.OK;
+                }
+            case ACTION_SET_USE_CLIENT_CERTIFICATE:
+                {
+                    if (!isHandleClientCerts(extensionNetwork)) {
+                        throw new ApiException(ApiException.Type.BAD_ACTION);
+                    }
+                    boolean use = getParam(params, PARAM_USE, false);
+                    extensionNetwork.getClientCertificatesOptions().setUseCertificate(use);
                     return ApiResponseElement.OK;
                 }
 

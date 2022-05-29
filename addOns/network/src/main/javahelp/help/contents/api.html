@@ -51,6 +51,16 @@
 				<li>enabled: The enabled state, true or false.</li>
 			</ul>
 		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			addPkcs12ClientCertificate (filePath* password* index): Adds a client certificate contained in a PKCS#12 file, the certificate is automatically set as active and used.
+			<ul>
+				<li>filePath: The file path.</li>
+				<li>password: The password for the file.</li>
+				<li>index: The index of the certificate in the file, defaults to 0.</li>
+			</ul>
+		</li>
 		<li>generateRootCaCert: Generates a new Root CA certificate, used to issue server certificates.</li>
 		<li>importRootCaCert (filePath*): Imports a Root CA certificate to be used to issue server certificates.
 			<ul>
@@ -204,6 +214,14 @@
 			setSocksProxyEnabled (enabled*): Sets whether or not the SOCKS proxy is enabled.
 			<ul>
 				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
+			<strong>Note:</strong> This endpoint is only available in weekly releases and versions after 2.11.
+			<br>
+			setUseClientCertificate (use*): Sets whether or not to use the active client certificate.
+			<ul>
+				<li>use: The use state, true or false.</li>
 			</ul>
 		</li>
 		<li>

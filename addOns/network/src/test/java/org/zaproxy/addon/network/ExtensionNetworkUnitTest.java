@@ -567,6 +567,39 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAddClientCertificatesOptionsOnHookIfHandlingClientCerts() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        extension.handleClientCerts = true;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(ClientCertificatesOptions.class)));
+        assertThat(extension.getClientCertificatesOptions(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldNotAddClientCertificatesOptionsOnHookIfNotHandlingClientCerts() {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension = new ExtensionNetwork();
+        extension.handleServerCerts = true;
+        extension.handleClientCerts = false;
+        // When
+        extension.hook(extensionHook);
+        // Then
+        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
+        verify(extensionHook, times(1)).addOptionsParamSet(argument.capture());
+        assertThat(
+                argument.getAllValues(), not(hasItem(instanceOf(ClientCertificatesOptions.class))));
+        assertThat(extension.getClientCertificatesOptions(), is(nullValue()));
+    }
+
+    @Test
     void shouldCreateGlobalHttpStateOnOptionsChangedIfUsingGlobalHttpState() {
         // Given
         OptionsChangedListener optionsChangedListener = setupOptionsChangedListener();
