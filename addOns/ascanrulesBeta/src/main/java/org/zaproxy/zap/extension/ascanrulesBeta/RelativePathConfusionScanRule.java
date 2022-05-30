@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.CircularRedirectException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -250,11 +249,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 } catch (Exception e) {
                     log.warn("Could not set the cookies from the base request: {}", e);
                 }
-                try {
-                    sendAndReceive(hackedMessage, true); // follow redirects
-                } catch (CircularRedirectException e) {
-                    log.warn("Ignoring a CircularRedirectException {}", e);
-                }
+                sendAndReceive(hackedMessage, true); // follow redirects
 
                 // get ready to parse the HTML
                 Document doc = Jsoup.parse(new String(hackedMessage.getResponseBody().getBytes()));
