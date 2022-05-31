@@ -52,6 +52,10 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScriptingScanRule> {
 
+    private static String htmlEscape(String value) {
+        return value.replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;");
+    }
+
     @Override
     protected CrossSiteScriptingScanRule createScanner() {
         return new CrossSiteScriptingScanRule();
@@ -810,6 +814,74 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReportXssInHtmlEscapedAttributeName() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInHtmlEscapedAttributeName/test";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        String response;
+                        if (q != null) {
+                            q = htmlEscape(q);
+                            response = getHtml("AttributeName.html", new String[][] {{"q", q}});
+                        } else {
+                            response = getHtml("AttributeName.html", new String[][] {{"q", ""}});
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?q=sample");
+
+        this.rule.init(msg, parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(), equalTo("accesskey='x' onclick='alert(1)' b"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("accesskey='x' onclick='alert(1)' b"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("q"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInHtmlEscapedTagName() throws HttpMalformedHeaderException {
+        String test = "/shouldReportXssInHtmlEscapedTagName/test";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String q = getFirstParamValue(session, "q");
+                        String response;
+                        if (q != null) {
+                            q = htmlEscape(q);
+                            response = getHtml("TagName.html", new String[][] {{"q", q}});
+                        } else {
+                            response = getHtml("TagName.html", new String[][] {{"q", ""}});
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?q=sample");
+
+        this.rule.init(msg, parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("tag accesskey='x' onclick='alert(1)' b"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
     @Test

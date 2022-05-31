@@ -60,6 +60,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
     protected static final String SVG_ONLOAD_ALERT = "<svg onload=alert(1)>";
     protected static final String B_MOUSE_ALERT = "<b onMouseOver=alert(1);>test</b>";
+    protected static final String ACCESSKEY_ATTRIBUTE_ALERT = "accesskey='x' onclick='alert(1)' b";
+    protected static final String TAG_ONCLICK_ALERT = "button onclick='alert(1)'/";
 
     /**
      * Null byte injection payload. C/C++ languages treat Null byte or \0 as special character which
@@ -237,6 +239,17 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         }
         return hca.getHtmlContexts(
                 findDecoded ? getURLDecode(evidence) : evidence, null, 0, ignoreSafeParents);
+    }
+
+    private void raiseAlert(int confidence, String param, HtmlContext ctx, String otherInfo) {
+        newAlert()
+                .setConfidence(confidence)
+                .setParam(param)
+                .setAttack(ctx.getTarget())
+                .setEvidence(ctx.getTarget())
+                .setMessage(ctx.getMsg())
+                .setOtherInfo(otherInfo)
+                .raise();
     }
 
     private boolean performDirectAttack(HttpMessage msg, String param, String value) {
@@ -676,6 +689,57 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         return false;
     }
 
+    private void raiseAccessKeyAlert(String param, HtmlContext ctx) {
+        raiseAlert(
+                Alert.CONFIDENCE_MEDIUM,
+                param,
+                ctx,
+                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.accesskey"));
+    }
+
+    private boolean performAttributeAttack(HtmlContext context, HttpMessage msg, String param) {
+        List<HtmlContext> context2 =
+                performAttack(msg, param, ACCESSKEY_ATTRIBUTE_ALERT, context, 0);
+        if (context2 == null) {
+            return false;
+        }
+        for (HtmlContext ctx : context2) {
+            if (ctx.hasAttribute("onclick", "alert(1)") && ctx.hasAttribute("accesskey", "x")) {
+                // Yep, its vulnerable
+                raiseAccessKeyAlert(param, ctx);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean performElementAttack(HtmlContext context, HttpMessage msg, String param) {
+        String attackString1 = "tag " + ACCESSKEY_ATTRIBUTE_ALERT;
+        List<HtmlContext> context2 = performAttack(msg, param, attackString1, context, 0);
+        if (context2 == null) {
+            context2 = performAttack(msg, param, TAG_ONCLICK_ALERT, context, 0);
+            if (context2 == null) {
+                return false;
+            }
+            for (HtmlContext ctx : context2) {
+                if (ctx.hasAttribute("onclick", "alert(1)")) {
+                    // Yep, its vulnerable
+                    raiseAlert(Alert.CONFIDENCE_MEDIUM, param, ctx, "");
+                    return true;
+                }
+            }
+        }
+
+        for (HtmlContext ctx : context2) {
+            if (ctx.hasAttribute("accesskey", "x") && ctx.hasAttribute("onclick", "alert(1)")) {
+                // Yep, its vulnerable
+                raiseAccessKeyAlert(param, ctx);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         if (!AlertThreshold.LOW.equals(getAlertThreshold())
@@ -747,6 +811,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     // its in a tag attribute - lots of attack vectors possible
                     attackWorked = performTagAttack(context, msg, param, value);
 
+                } else if (context.isInAttributeName()) {
+
+                    attackWorked = performAttributeAttack(context, msg, param);
+
                 } else if (context.isHtmlComment()) {
                     // Try breaking out of the comment
                     attackWorked = performCommentAttack(context, msg, param);
@@ -775,6 +843,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         // tags
                         attackWorked = performOutsideTagsAttack(context, msg, param);
                     }
+                }
+                if (context.isInElementName()) {
+
+                    attackWorked = performElementAttack(context, msg, param);
                 }
             }
             // Always attack the header if the eyecatcher is reflected in it - this will be
