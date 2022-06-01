@@ -36,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.domains.TrustedDomains;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
@@ -47,7 +48,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
 
     private static final String REL_ATTRIBUTE = "rel";
     private static final String TARGET_ATTRIBUTE = "target";
-    private static final String _BLANK = "_blank";
+    private static final String BLANK = "_blank";
     private static final String OPENER = "opener";
     private static final String NOOPENER = "noopener";
     private static final Map<String, String> ALERT_TAGS =
@@ -55,8 +56,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    private String trustedConfig = "";
-    private List<String> trustedDomainRegexes = new ArrayList<>();
+    private final TrustedDomains trustedDomains = new TrustedDomains();
 
     private Model model = null;
 
@@ -94,7 +94,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
             URI linkURI = new URI(link, true);
             String linkURIStr = linkURI.toString();
             String linkHost = linkURI.getHost();
-            if (linkHost != null && !linkHost.toLowerCase().equals(host.toLowerCase())) {
+            if (linkHost != null && !linkHost.equalsIgnoreCase(host)) {
                 otherDomain = true;
             }
             if (otherDomain && !Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
@@ -109,60 +109,36 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
         } catch (URIException e) {
             // Ignore
         }
-        if (otherDomain) {
-            // check the trusted domains
-            for (String regex : this.trustedDomainRegexes) {
-                try {
-                    if (link.matches(regex)) {
-                        return false;
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Invalid regex in rule {} : {}", TRUSTED_DOMAINS_PROPERTY, regex, e);
-                }
-            }
-        }
-        return otherDomain;
+        return otherDomain && !trustedDomains.isIncluded(link);
     }
 
-    private void checkIgnoreList() {
-        String trustedConf = getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "");
-        if (!trustedConf.equals(this.trustedConfig)) {
-            // Its changed
-            trustedDomainRegexes.clear();
-            this.trustedConfig = trustedConf;
-            for (String regex : trustedConf.split(",")) {
-                String regexTrim = regex.trim();
-                if (regexTrim.length() > 0) {
-                    trustedDomainRegexes.add(regexTrim);
-                }
-            }
-        }
-    }
-
-    private boolean checkElement(Element link, HttpMessage msg, int id) {
+    private boolean checkElement(Element link) {
         // get target, check if its _blank
         String target = link.getAttributeValue(TARGET_ATTRIBUTE);
-        if (target != null) {
-            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())
-                    && !_BLANK.equalsIgnoreCase(target)) {
-                // Only report _blank link targets at a high threshold
-                return false;
-            }
-            // Not looking good,
-            String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
-            if (relAtt != null) {
-                relAtt = relAtt.toLowerCase();
-                if (relAtt.contains(OPENER) && !relAtt.contains(NOOPENER)) {
-                    newAlert()
-                            .setRisk(Alert.RISK_MEDIUM)
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(getDescription())
-                            .setSolution(getSolution())
-                            .setReference(getReference())
-                            .setEvidence(link.toString())
-                            .raise();
-                    return true;
-                }
+
+        if (target == null) {
+            return false;
+        }
+
+        if (AlertThreshold.HIGH.equals(this.getAlertThreshold())
+                && !BLANK.equalsIgnoreCase(target)) {
+            // Only report _blank link targets at a high threshold
+            return false;
+        }
+        // Not looking good,
+        String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
+        if (relAtt != null) {
+            relAtt = relAtt.toLowerCase();
+            if (relAtt.contains(OPENER) && !relAtt.contains(NOOPENER)) {
+                newAlert()
+                        .setRisk(Alert.RISK_MEDIUM)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(getDescription())
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(link.toString())
+                        .raise();
+                return true;
             }
         }
         return false;
@@ -175,7 +151,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
             return;
         }
         // Check to see if the configs have changed
-        checkIgnoreList();
+        trustedDomains.update(getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
 
         String host = msg.getRequestHeader().getHostName();
         List<Context> contextList =
@@ -183,18 +159,12 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
                         .getSession()
                         .getContextsForUrl(msg.getRequestHeader().getURI().toString());
 
-        for (Element link : source.getAllElements(HTMLElementName.A)) {
-            if (this.isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)) {
-                if (this.checkElement(link, msg, id)) {
-                    return;
-                }
-            }
-        }
-        for (Element link : source.getAllElements(HTMLElementName.AREA)) {
-            if (this.isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)) {
-                if (this.checkElement(link, msg, id)) {
-                    return;
-                }
+        List<Element> elements = new ArrayList<>(source.getAllElements(HTMLElementName.A));
+        elements.addAll(source.getAllElements(HTMLElementName.AREA));
+        for (Element link : elements) {
+            if (isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)
+                    && checkElement(link)) {
+                return;
             }
         }
     }

@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -41,7 +42,10 @@ import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.domains.RegexTrust;
+import org.zaproxy.addon.commonlib.http.domains.TrustedDomains;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner {
@@ -105,28 +109,36 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
+    private final TrustedDomains trustedDomains = new TrustedDomains();
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        trustedDomains.update(getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
+        trustedDomains.add(new RegexTrust(msg.getRequestHeader().getHostName()));
 
         SiteMap tree = Model.getSingleton().getSession().getSiteTree();
         List<Element> sourceElements = source.getAllElements();
-        sourceElements.stream()
-                .filter(element -> SupportedElements.contains(element.getName()))
-                .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
-                .forEach(
-                        element ->
-                                newAlert()
-                                        .setRisk(Alert.RISK_MEDIUM)
-                                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                                        .setDescription(getString("desc"))
-                                        .setSolution(getString("soln"))
-                                        .setReference(getString("refs"))
-                                        .setEvidence(element.toString())
-                                        .setCweId(345) // CWE-345: Insufficient Verification of Data
-                                        // Authenticity
-                                        .setWascId(15) // Application Misconfiguration
-                                        .setOtherInfo(getOtherInfo(msg, element, tree))
-                                        .raise());
+        List<Element> impactedElements =
+                sourceElements.stream()
+                        .filter(element -> SupportedElements.contains(element.getName()))
+                        .filter(isNotTrusted(trustedDomains, msg.getRequestHeader().getHostName()))
+                        .collect(Collectors.toList());
+        if (!impactedElements.isEmpty()) {
+            impactedElements.forEach(
+                    element ->
+                            newAlert()
+                                    .setRisk(Alert.RISK_MEDIUM)
+                                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                                    .setDescription(getString("desc"))
+                                    .setSolution(getString("soln"))
+                                    .setReference(getString("refs"))
+                                    .setEvidence(element.toString())
+                                    .setCweId(345) // CWE-345: Insufficient Verification of Data
+                                    // Authenticity
+                                    .setWascId(15) // Application Misconfiguration
+                                    .setOtherInfo(getOtherInfo(msg, element, tree))
+                                    .raise());
+        }
     }
 
     private String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
@@ -164,12 +176,12 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", integrityHash);
     }
 
-    private static Predicate<Element> unsafeSubResource(String origin) {
+    private static Predicate<Element> isNotTrusted(TrustedDomains trustedDomains, String origin) {
         return element -> {
-            Optional<String> maybeHostname = SupportedElements.getHost(element, origin);
+            Optional<String> maybeResourceUri = SupportedElements.getHost(element, origin);
             return element.getAttributeValue("integrity") == null
                     && !"canonical".equalsIgnoreCase(element.getAttributeValue("rel"))
-                    && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
+                    && !maybeResourceUri.map(trustedDomains::isIncluded).orElse(false);
         };
     }
 
