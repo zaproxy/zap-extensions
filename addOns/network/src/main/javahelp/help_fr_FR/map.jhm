@@ -9,6 +9,7 @@
     <mapID target="addon.network.api" url="contents/api.html" />
     <mapID target="addon.network.cmdline" url="contents/cmdline.html" />
     <mapID target="addon.network.options" url="contents/options/options.html" />
+    <mapID target="addon.network.options.clientcertificates" url="contents/options/clientcertificates.html" />
     <mapID target="addon.network.options.connection" url="contents/options/connection.html" />
     <mapID target="addon.network.options.servercertificates" url="contents/options/servercertificates.html" />
     <mapID target="addon.network.options.localservers" url="contents/options/localservers.html" />
