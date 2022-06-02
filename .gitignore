@@ -42,3 +42,7 @@
 # --------
 .nb-gradle
 .nb-gradle-properties
+
+# VS Code
+# -------
+.vscode
