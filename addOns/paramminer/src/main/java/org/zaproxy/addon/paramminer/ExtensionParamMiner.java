@@ -19,18 +19,12 @@
  */
 package org.zaproxy.addon.paramminer;
 
-import java.awt.CardLayout;
-import java.awt.Font;
 import javax.swing.ImageIcon;
-import javax.swing.JTextPane;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.addon.paramminer.gui.ParamMinerPanel;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionParamMiner extends ExtensionAdaptor {
@@ -38,21 +32,22 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     public static final String NAME = "ExtensionParamMiner";
     protected static final String PREFIX = "paramminer";
     private static final String RESOURCES = "resources";
+    private static ImageIcon icon;
 
-    private ImageIcon getIcon() {
-        return new ImageIcon(ExtensionParamMiner.class.getResource(RESOURCES + "/pickaxe.png"));
-    }
-
+    private ParamMinerPanel paramMinerPanel;
     private ZapMenuItem menu;
-    private AbstractPanel statusPanel;
-
     private ParamMinerAPI api;
-
-    private static final Logger LOGGER = LogManager.getLogger(ExtensionParamMiner.class);
 
     public ExtensionParamMiner() {
         super(NAME);
         setI18nPrefix(PREFIX);
+    }
+
+    public static ImageIcon getIcon() {
+        if (icon == null) {
+            icon = new ImageIcon(ExtensionParamMiner.class.getResource(RESOURCES + "/pickaxe.png"));
+        }
+        return icon;
     }
 
     @Override
@@ -64,7 +59,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
 
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
-            extensionHook.getHookView().addStatusPanel(getStatusPanel());
+            extensionHook.getHookView().addStatusPanel(getParamMinerPanel());
         }
     }
 
@@ -78,20 +73,11 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
         super.unload();
     }
 
-    private AbstractPanel getStatusPanel() {
-        if (statusPanel == null) {
-            statusPanel = new AbstractPanel();
-            statusPanel.setLayout(new CardLayout());
-            statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-            statusPanel.setIcon(getIcon());
-            JTextPane pane = new JTextPane();
-            pane.setEditable(false);
-            pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
-            pane.setContentType("text/html");
-            pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
-            statusPanel.add(pane);
+    private ParamMinerPanel getParamMinerPanel() {
+        if (paramMinerPanel == null) {
+            paramMinerPanel = new ParamMinerPanel(this);
         }
-        return statusPanel;
+        return paramMinerPanel;
     }
 
     private ZapMenuItem getMenu() {
