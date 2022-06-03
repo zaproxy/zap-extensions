@@ -257,7 +257,7 @@
     ],
     "description": "LazySizes unveilhooks plugin extends lazySizes to lazyload scripts/widgets, background images, styles and video/audio elements.",
     "icon": "default.svg",
-    "scriptSrc": "ls.\\unveilhooks(?:\\.min)?\\.js",
+    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "oss": true,
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
