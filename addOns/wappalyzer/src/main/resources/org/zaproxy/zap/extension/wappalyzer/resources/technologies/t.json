@@ -407,6 +407,19 @@
     "scriptSrc": "cdn\\.tamara\\.co",
     "website": "https://tamara.co/"
   },
+  "Tapad": {
+    "cats": [
+      36
+    ],
+    "description": "Tapad is a venture-funded startup company that develops and markets software and services for cross-device advertising and content delivery.",
+    "icon": "Tapad.svg",
+    "dom": "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.tapad.com"
+  },
   "Tapcart": {
     "cats": [
       19
@@ -724,6 +737,10 @@
     "description": "The Events Calendar is a free event management plugin for WordPress.",
     "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
     "icon": "The Events Calendar.png",
+    "js": {
+      "tribe_l10n_datatables": "",
+      "TribeCalendar": ""
+    },
     "pricing": [
       "freemium",
       "low",
@@ -798,6 +815,28 @@
     ],
     "saas": true,
     "website": "https://www.thefork.com"
+  },
+  "The Hotels Network": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "The Hotels Network provides a SaaS software that enhances hotelier websites with predictive marketing personalisation and user behavior analytics.",
+    "icon": "The Hotels Network.svg",
+    "saas": true,
+    "headers": {
+      "content-security-policy": "\\.thehotelsnetwork\\.com",
+      "content-security-policy-report-only": "\\.thehotelsnetwork\\.com"
+    },
+    "js": {
+      "thn.data.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "scriptSrc": "\\.thehotelsnetwork\\.com/",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "website": "https://thehotelsnetwork.com"
   },
   "Thelia": {
     "cats": [
@@ -1707,6 +1746,22 @@
     "implies": "Python",
     "website": "http://trac.edgewall.org"
   },
+  "Trackify X": {
+    "cats": [
+      100,
+      10
+    ],
+    "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
+    "icon": "Trackify X.png",
+    "implies": "Shopify",
+    "scriptSrc": "trackifyx\\.redretarget\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://trackifyapp.com"
+  },
   "TrackJs": {
     "cats": [
       10
@@ -1750,6 +1805,21 @@
     "saas": true,
     "scriptSrc": "\\.tsyndicate\\.com/",
     "website": "https://trafficstars.com"
+  },
+ "Transcend": {
+    "cats": [
+      67
+    ],
+    "description": "Transcend is data privacy management compliance platform.",
+    "icon": "Transcend.svg",
+    "js": {
+      "transcend": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "http://www.transcend.io"
   },
   "Transcy": {
     "cats": [

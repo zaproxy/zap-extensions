@@ -69,6 +69,25 @@
     "implies": "PHP",
     "website": "https://www.oxid-esales.com"
   },
+  "Obsidian Incentivize": {
+    "cats": [
+      100
+    ],
+    "description": "Obsidian Incentivize is designed to increase your average order size through in-cart upsells, cross sells and personalised product recommendations.",
+    "icon": "Obsidian.png",
+    "requires": "Shopify",
+    "js": {
+      "Obsidian.IncentiveApi": ""
+    },
+    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "website": "https://obsidianapps.co"
+  },
   "Obviyo": {
     "cats": [
       100,
@@ -432,6 +451,25 @@
     ],
     "saas": true,
     "website": "https://onuniverse.com"
+  },
+  "Omurga Sistemi": {
+    "cats": [
+      1
+    ],
+    "icon": "Omurga Sistemi.svg",
+    "implies": [
+      "MySQL",
+      "PHP"
+    ],
+    "meta": {
+      "generator": "^OS-Omurga Sistemi"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.os.com.tr"
   },
   "One.com": {
     "cats": [

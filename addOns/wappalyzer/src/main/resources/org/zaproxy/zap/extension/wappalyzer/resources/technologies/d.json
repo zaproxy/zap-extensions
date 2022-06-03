@@ -464,6 +464,25 @@
     ],
     "website": "https://mydelivengo.laposte.fr/"
   },
+  "Deliverr": {
+    "cats": [
+      19
+    ],
+    "description": "Deliverr is a fulfilment service that facilitates shipping services for ecommerce businesses.",
+    "icon": "Deliverr.svg",
+    "implies": [
+      "Cart Functionality"
+    ],
+    "js": {
+      "deliverrScript": ""
+    },
+    "scriptSrc": "fast-tags\\.deliverr\\.com",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://deliverr.com"
+  },
   "Demandbase": {
     "cats": [
       10,
@@ -711,6 +730,22 @@
     ],
     "scriptSrc": "disqus_url",
     "website": "https://disqus.com"
+  },
+  "Distributor": {
+    "cats": [
+      87
+    ],
+    "description": "Distributor is a WordPress plugin that helps distribute and reuse content across your websites.",
+    "headers": {
+      "x-distributor": "yes"
+    },
+    "icon": "distributor.svg",
+    "oss": true,
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": "/wp-content/plugins/distributor",
+    "website": "https://distributorplugin.com"
   },
   "District M": {
     "cats": [
@@ -1441,6 +1476,24 @@
     "saas": true,
     "scriptSrc": "/ruxitagentjs_(?:.+)_(?:.+)\\.js",
     "website": "https://www.dynatrace.com/platform/real-user-monitoring"
+  },
+  "Dyte": {
+    "cats": [
+      103
+    ],
+    "description": "Dyte is a developer-friendly, real-time audio and video communication software development kit (SDK).",
+    "icon": "Dyte.svg",
+    "implies": "WebRTC",
+    "css": "\\.dyte-client-selfVideo",
+    "js": {
+      "triggerDyteRecording": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "xhr": "cdn\\.dyte\\.in/",
+    "website": "https://dyte.io"
   },
   "db-ip": {
     "cats": [

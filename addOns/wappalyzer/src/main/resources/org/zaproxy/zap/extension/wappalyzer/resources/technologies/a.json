@@ -1798,6 +1798,20 @@
     "scriptSrc": "urbanairship\\.\\w+/notify/v([\\d.]+)\\;version:\\1",
     "website": "https://www.airship.com"
   },
+  "AiSpeed": {
+    "cats": [
+      92,    
+      100
+    ],
+    "description": "AiSpeed is a shopify app focused on improving site speed.",
+    "icon": "AiSpeed.png",
+    "implies": "Shopify",
+    "js": {
+      "aispeed_init": ""
+    },      
+    "scriptSrc": "aispeed\\.js",
+    "website": "https://apps.shopify.com/aispeed"
+  },     
   "Akamai": {
     "cats": [
       31
@@ -3990,6 +4004,22 @@
     "icon": "azure.svg",
     "implies": "Azure",
     "website": "https://azure.microsoft.com/en-us/services/cdn/"
+  },
+  "Azure Front Door": {
+    "cats": [
+      65
+    ],
+    "headers": {
+      "X-Azure-Ref": ""
+    },
+    "cookies": {
+      "ASLBSA": "",
+      "ASLBSACORS": ""
+    },
+    "description": "Azure Front Door is a scalable and secure entry point for fast delivery of your global web applications.",
+    "icon": "azure.svg",
+    "implies": "Azure",
+    "website": "https://docs.microsoft.com/en-us/azure/frontdoor/"
   },
   "Azure Monitor": {
     "cats": [

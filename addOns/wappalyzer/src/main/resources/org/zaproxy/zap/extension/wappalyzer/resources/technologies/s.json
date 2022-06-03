@@ -85,6 +85,23 @@
     "icon": "SDL Tridion.svg",
     "website": "http://www.sdl.com/products/tridion"
   },
+  "Semplice": {
+    "cats": [
+      80,
+      51
+    ],
+    "description": "Semplice is a Wordpress-based website builder made by designers for designers.",
+    "icon": "Semplice.svg",
+    "js": {
+      "semplice.template_dir": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/semplice(?:\\d+)?(?:-child)?(?:-theme)?/",
+    "website": "https://www.semplice.com"
+  },
   "SEMrush": {
     "cats": [
       32
@@ -170,17 +187,6 @@
     },
     "website": "http://www.simplemachines.org"
   },
-  "SMSBump": {
-    "cats": [
-      32
-    ],
-    "description": "SMS Bump is a SMS marketing and automations app.",
-    "icon": "Smsbump.png",
-    "js": {
-      "SMSBumpForm": ""
-    },
-    "website": "https://smsbump.com/"
-  },
   "SOBI 2": {
     "cats": [
       19
@@ -258,6 +264,19 @@
     "scriptSrc": "embed\\.sendtonews\\.com/",
     "scripts": "embed\\.sendtonews\\.com/",
     "website": "https://www.stnvideo.com"
+  },
+  "Strattic": {
+    "cats": [
+      88
+    ],
+    "description": "Strattic offers static and headless hosting for WordPress sites.",
+    "headers": {
+      "x-powered-by": "Strattic"
+    },
+    "pricing": [ "recurring", "low" ],
+    "requires": "WordPress",
+    "icon": "strattic-icon.png",
+    "website": "https://www.strattic.com/"
   },
   "STUDIO": {
     "cats": [
@@ -1011,7 +1030,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "cdn\\.secomapp\\.com/",
     "website": "https://www.secomapp.com"
@@ -1024,6 +1043,17 @@
     "description": "Sectigo provides SSL certificate and computer security products.",
     "icon": "Sectigo.svg",
     "website": "https://sectigo.com/"
+  },
+  "Sections.design Shopify App Optimization": {
+    "cats": [
+      92
+    ],
+    "description": "Sections.design Shopify App Optimization is a Shopify section written in liquid for the purpose of improving performance of Shopify stores by optimizing how Shopify app loads.",
+    "dom": "div#shopify-section-app-optimization",
+    "icon": "Sections-Design.png",
+    "implies": "Shopify",
+    "oss": true,
+    "website": "https://github.com/mirceapiturca/Sections/tree/master/App%20Optimization"
   },
   "Section.io": {
     "cats": [
@@ -1263,20 +1293,6 @@
     "saas": true,
     "scriptSrc": "embed\\.selly\\.(?:gg|io)",
     "website": "https://selly.io/"
-  },
-  "Selz": {
-    "cats": [
-      6
-    ],
-    "description": "Selz is ecommerce platform with built-in payment processing.",
-    "dom": "img[src*='img.selzstatic.com']",
-    "icon": "Selz.png",
-    "pricing": [
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://selz.com/"
   },
   "Semantic UI": {
     "cats": [
@@ -1691,6 +1707,21 @@
     "scriptSrc": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
     "website": "http://shinystat.com"
   },
+  "ShipTection": {
+    "cats": [
+      100
+    ],
+    "description": "ShipTection is the easiest way to offer shipping protection on your Shopify site.",
+    "icon": "ShipTection.png",
+    "implies": "Shopify",
+    "scriptSrc": "app\\.shiptection\\.com/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://wamapps.io/pages/shiptection-protection"
+  },
   "Shogun": {
     "cats": [
       51
@@ -1766,7 +1797,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "website": "https://apps.shopify.com/custom-options"
   },
   "Shopaholic": {
@@ -1800,7 +1831,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "cdn\\.myshopapps\\.com/",
     "website": "http://www.shopapps.in"
@@ -1920,6 +1951,23 @@
     "url": "^https?//.+\\.myshopify\\.com",
     "website": "http://shopify.com"
   },
+  "Shopify Buy Button": {
+    "cats": [
+      100
+    ],
+    "description": "Shopify Buy Button is an app from Shopify which allows merchant to embed buy functionality for any product or collection into another website or blog.",
+    "icon": "Shopify.svg",
+    "js": {
+      "ShopifyBuy": ""
+    },
+    "scriptSrc": [
+      "sdk\\. shopifycdn\\.com/buy-button/latest/"
+    ],
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://apps.shopify.com/buy-button"
+  },
   "Shopify Chat": {
     "cats": [
       52,
@@ -1927,6 +1975,7 @@
     ],
     "description": "Shopify Chat is Shopify's native live chat function that allows you to have real-time conversations with customers visiting your Shopify store.",
     "icon": "Shopify.svg",
+    "implies": "Shopify",
     "scriptSrc": [
       "cdn\\.shopify\\.com/shopifycloud/shopify_chat/"
     ],
@@ -1939,7 +1988,7 @@
     ],
     "description": "Shopify Consent Management let's you create a tracking consent banner for EU customers.",
     "icon": "Shopify.svg",
-    "requires": "Shopify",
+    "implies": "Shopify",
     "scriptSrc": [
       "cookie_consent_shopify\\.js"
     ],
@@ -1952,7 +2001,7 @@
     ],
     "description": "Shopify Geolocation App makes language and country recommendations to your customers based on their geographic location and browser or device language.",
     "icon": "Shopify Geolocation App.png",
-    "requires": "Shopify",
+    "implies": "Shopify",
     "scriptSrc": "geolocation-recommendations\\.shopifycloud\\.com/",
     "website": "https://apps.shopify.com/geolocation"
   },
@@ -1966,7 +2015,7 @@
     "js": {
       "SPR": ""
     },
-    "requires": "Shopify",
+    "implies": "Shopify",
     "scriptSrc": [
       "productreviews\\.shopifycdn\\.com"
     ],
@@ -2073,6 +2122,24 @@
     ],
     "saas": true,
     "website": "https://sfdr.co"
+  },
+  "ShoppingGives": {
+    "cats": [
+      5
+    ],
+    "description": "ShoppingGives is a B2B social ecommerce platform that allows companies of all sizes to make charitable donations through their customers' purchases.",
+    "icon": "ShoppingGives.png",
+    "js": {
+      "sgObservables.getCharities": ""
+    },
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.shoppinggives\\.com/",
+    "website": "https://shoppinggives.com"
   },
   "Shoppy": {
     "cats": [
@@ -2290,6 +2357,22 @@
     "scriptSrc": "\\.signifyd\\.com",
     "website": "https://www.signifyd.com"
   },
+  "siimple": {
+    "cats": [
+      66
+    ],
+    "description": "siimple is a minimal CSS toolkit for building flat, clean and responsive web designs.",
+    "icon": "siimple.svg",
+    "dom": {
+      "link[href*='siimple.min.css']": {
+        "attributes": {
+          "href": "/npm/siimple@([\\d\\.]+)/dist/siimple\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "oss": true,
+    "website": "https://siimple.xyz"
+  },
   "SilverStripe": {
     "cats": [
       1
@@ -2329,6 +2412,19 @@
       "static\\.simonsignal\\.com"
     ],
     "website": "https://www.simondata.com/"
+  },
+  "Simpl": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Simpl is a fintech company that offers a cardless payment network with multiple solutions for merchants and consumers.",
+    "icon": "Simpl.svg",
+    "js": {
+      "simplSettings": ""
+    },
+    "saas": true,
+    "website": "https://getsimpl.com"
   },
   "Simple Analytics": {
     "cats": [
@@ -4461,6 +4557,26 @@
     ],
     "saas": true,
     "website": "https://www.storehippo.com"
+  },
+  "stores.jp": {
+    "cats": [
+      6
+    ],
+    "description": "stores.jp is an ecommerce platform which allows users to create their own ecommerce website.",
+    "icon": "stores.jp.svg",
+    "implies": [
+      "Visa",
+      "Mastercard"
+    ],
+    "js": {
+      "STORES_JP": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://stores.jp/ec/"
   },
   "Storeden": {
     "cats": [

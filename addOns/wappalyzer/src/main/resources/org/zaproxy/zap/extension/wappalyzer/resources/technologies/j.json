@@ -333,17 +333,21 @@
       1
     ],
     "description": "Jimdo is a website-builder and all-in-one hosting solution, designed to enable users to build their own websites.",
+    "icon": "Jimdo.svg",
     "headers": {
       "X-Jimdo-Instance": "",
       "X-Jimdo-Wid": ""
     },
-    "icon": "jimdo.png",
+    "js": {
+      "jimdoDolphinData": ""
+    },
     "pricing": [
       "low",
-      "freemium"
+      "freemium",
+      "recurring"
     ],
     "saas": true,
-    "url": "\\.jimdo\\.com/",
+    "url": "\\.jimdo(?:site)?\\.com/",
     "website": "https://www.jimdo.com"
   },
   "Jirafe": {
@@ -399,6 +403,20 @@
     "saas": true,
     "scriptSrc": "\\.jivosite\\.com",
     "website": "https://www.jivosite.com"
+  },
+  "Jivox": {
+    "cats": [
+      76
+    ],
+    "description": "Jivox is a cloud-based, data-driven platform for delivering personalised digital advertising and marketing experiences at scale.",
+    "icon": "Jivox.svg",
+    "dom": "link[href*='.jivox.com']",
+    "scriptSrc": "\\.jivox\\.com/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://jivox.com"
   },
   "JobAdder": {
     "cats": [
@@ -466,6 +484,24 @@
     ],
     "scriptSrc": "/components/com_jshopping/",
     "website": "https://www.webdesigner-profi.de/joomla-webdesign/joomla-shop"
+  },
+  "JouwWeb": {
+    "cats": [
+      51
+    ],
+    "description": "JouwWeb is an online website builder that allows internet users to create own website.",
+    "icon": "JouwWeb.svg",
+    "js": {
+      "JOUWWEB": ""
+    },
+    "scriptSrc": "(?:cdn)?\\.(?:jwwb|jouwweb)\\.nl/",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.jouwweb.nl"
   },
   "Joomla": {
     "cats": [

@@ -71,6 +71,22 @@
     },
     "website": "https://nacelle.com/"
   },
+  "NagaCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "NagaCommerce is an ecommerce platform provided as a service.",
+    "icon": "NagaCommerce.svg",
+    "meta": {
+      "generator": "^NagaCommerce$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.nagacommerce.com"
+  },
   "Nagich": {
     "cats": [
       68

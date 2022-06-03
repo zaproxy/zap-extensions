@@ -98,6 +98,19 @@
     },
     "website": "http://www.eprints.org"
   },
+  "ESW": {
+    "cats": [
+      106
+    ],
+    "description": "eShopWorld is a company providing payments, shipping, and delivery services focusing on cross-border commerce.",
+    "icon": "ESW.png",
+    "js": {
+      "eshopworld": "",
+      "eswRetailerDisplayConfiguration": ""
+    },
+    "scriptSrc": "Eswhooks\\.js",
+    "website": "http://esw.com/"
+  },
   "EWWW Image Optimizer": {
     "cats": [
       87,
@@ -140,12 +153,12 @@
     ],
     "description": "Easy Redirects is a Shopify app built by Eastside, and part of the best Shopify Apps collection.",
     "icon": "Easy Redirects.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "easy-redirects\\..+/redirect-app\\.js",
     "website": "https://apps.shopify.com/easyredirects"
@@ -180,6 +193,21 @@
     "icon": "EasyEngine.png",
     "implies": "Docker",
     "website": "https://easyengine.io"
+  },
+  "Easy Hide PayPal": {
+    "cats": [
+     100
+    ],
+    "description": "Easy Hide PayPal hides PayPal button from product page, cart and checkout but keep PayPal as payment option in checkout.",
+    "icon": "Easy Hide PayPal.png",
+    "implies": "Shopify",
+    "scriptSrc": "easyhide\\.herculesapps\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://apps.shopify.com/easyhide"
   },
   "EasyStore": {
     "cats": [
@@ -596,6 +624,24 @@
     "icon": "Emotion.png",
     "website": "http://emotion.sh"
   },
+  "Emotive": {
+    "cats": [
+      32
+    ],
+    "description": "Emotive is a computer software company that provides SaaS, Mobile Marketing, NLP, machine learning, and B2B.",
+    "icon": "Emotive.svg",
+    "js": {
+      "emotivePopupInitializing": ""
+    },
+    "scriptSrc": "emotivecdn\\.io/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "website": "https://emotive.io"
+  },
   "Enable": {
     "cats": [
       68
@@ -838,6 +884,54 @@
     "scriptSrc": "cdn\\.equalweb\\.com.*\\.js",
     "website": "https://www.equalweb.com/"
   },
+  "EraofEcom Cartroids": {
+    "cats": [
+      100
+    ],
+    "description": "EraofEcom Cartroids makes it easy for you to create highly targeted upsells, cross-sells and bundle offers.",
+    "icon": "EraofEcom.png",
+    "implies": "Shopify",
+    "js": {
+      "cartroids.appBase": "cartroids\\.eraofecom\\.org"
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://eraofecom.org/collections/tech/products/cartroids"
+  },
+  "EraofEcom MTL": {
+    "cats": [
+      100
+    ],
+    "description": "EraofEcom MTL is a Shopify pop up app that enables you to catch your website visitors.",
+    "icon": "EraofEcom.png",
+    "implies": "Shopify",
+    "scriptSrc": "mtl\\.eraofecom\\.org",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://eraofecom.org/collections/tech/products/milk-the-leads"
+  },
+  "EraofEcom WinAds": {
+    "cats": [
+      100
+    ],
+    "description": "EraofEcom WinAds is an all-in-one Facebook pixel app for Shopify.",
+    "icon": "EraofEcom.png",
+    "implies": "Shopify",
+    "dom": "link[href*='winads.eraofecom.org']",
+    "js": {
+      "win_ads.baseURL": "winads\\.eraofecom\\.org"
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://eraofecom.org/collections/tech/products/win-ads-manager"
+  },
   "Erlang": {
     "cats": [
       27
@@ -998,6 +1092,20 @@
     "scriptSrc": "\\.etracker\\.com",
     "website": "https://www.etracker.com"
   },
+  "Everflow": {
+    "cats": [
+      10
+    ],
+    "description": "Everflow is a partner marketing analytics platform.",
+    "icon": "Everflow.png",
+    "scriptSrc": "everflow\\.js",
+    "saas": true,
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://www.everflow.io"
+  },
   "Eveve": {
     "cats": [
       5,
@@ -1059,6 +1167,7 @@
     ],
     "description": "Exemptify allows you to conduct proper EU B2B transactions by validating EU VAT IDs.",
     "icon": "Exemptify.png",
+    "implies": "Shopify",
     "js": {
       "ExemptifyTriggerUpdate": "",
       "m4u_ex_vat_postfix_txt": ""
@@ -1067,7 +1176,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "\\.modules4u\\.biz/shopify/exemptify",
     "website": "http://modules4u.biz/exemptify"

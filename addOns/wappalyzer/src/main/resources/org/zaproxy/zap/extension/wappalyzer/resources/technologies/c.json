@@ -423,7 +423,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "app\\.carecart\\.io/api/abandoned-cart/",
     "website": "https://carecart.io/abandoned-cart-recovery-app"
@@ -438,7 +438,7 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "sales-pop\\.carecart\\.io/",
     "website": "https://carecart.io/sales-pop-up-app"
@@ -471,7 +471,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": [
       "\\.getcarro\\.com/",
@@ -516,7 +516,7 @@
     "description": "Cart.js is a very small open-source Javascript library that makes the addition of powerful Ajax cart functionality to your Shopify theme a breeze.",
     "icon": "Cart.js.png",
     "oss": true,
-    "requires": "Shopify",
+    "implies": "Shopify",
     "scriptSrc": "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1",
     "website": "https://cartjs.org"
   },
@@ -598,6 +598,17 @@
       "catberry.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://catberry.github.io/"
+  },
+  "Catch": {
+    "cats": [
+      41
+    ],
+    "description": "Catch is a payment solution which allows merchants to use payments via bank payments instead of credit/debit cards.",
+    "icon": "Catch.svg",
+    "js": {
+      "Catch": ""
+    },
+    "website": "https://www.getcatch.com/"
   },
   "Catch Themes Catch Box": {
     "cats": [
@@ -1747,7 +1758,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "/apps/coin/coin\\.js.+\\.myshopify\\.com",
     "website": "https://apps.shopify.com/coin"
@@ -2800,6 +2811,23 @@
     },
     "icon": "Cowboy.png",
     "website": "http://ninenines.eu"
+  },
+  "Cozy AntiTheft": {
+    "cats": [
+      100
+    ],
+    "description": "Cozy AntiTheft helps you to protect your store content, images and texts from being stolen with a few simple clicks.",
+    "icon": "Cozy AntiTheft.png",
+    "implies": "Shopify",
+    "js": {
+      "cozyEcoAdnsUa": ""
+    },
+    "scriptSrc": "cdncozyantitheft\\.addons\\.business/",
+    "saas": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://apps.shopify.com/cozy-antitheft-for-images-and-more"
   },
   "CppCMS": {
     "cats": [

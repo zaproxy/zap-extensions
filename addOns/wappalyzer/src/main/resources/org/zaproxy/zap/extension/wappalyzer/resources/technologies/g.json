@@ -809,6 +809,24 @@
     "scriptSrc": "/assets/globo\\.formbuilder\\.init\\.js",
     "website": "https://apps.shopify.com/form-builder-contact-form"
   },
+  "Globo Pre-Order": {
+    "cats": [
+      100
+    ],
+    "description": "Globo Pre-Order is a Shopify app for building pre-order functionality on Shopify stores.",
+    "icon": "Globo apps.png",
+    "implies": "Shopify",
+    "js": {
+      "GloboPreorderParams": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/pre-order-pro"
+  },
   "Glopal": {
     "cats": [
       106
@@ -1007,6 +1025,17 @@
     "icon": "GoDaddy.svg",
     "requires": "WordPress",
     "website": "https://github.com/godaddy-wordpress/primer-child-lyrical"
+  },
+  "GoDaddy Online Store": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "via": "^1\\.1 mysimplestore\\.com$"
+    },
+    "icon": "GoDaddy.svg",
+    "saas": true,
+    "website": "https://www.godaddy.com/en-uk/websites/online-store"
   },
   "GoDaddy Primer": {
     "cats": [
@@ -1411,18 +1440,6 @@
       "securepubads\\.g\\.doubleclick\\.net/gpt"
     ],
     "website": "https://developers.google.com/publisher-tag/guides/get-started"
-  },
-  "Google Remarketing Tag": {
-    "cats": [
-      77
-    ],
-    "description": "Google Remarketing Tag is a web tagging library for Google's site measurement, conversion tracking and remarketing products.",
-    "icon": "Google Tag Manager.svg",
-    "js": {
-      "gtag": ""
-    },
-    "saas": true,
-    "website": "https://support.google.com/google-ads/answer/2476688"
   },
   "Google Sign-in": {
     "cats": [
@@ -1902,6 +1919,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.gumlet\\.com",
     "website": "https://www.gumlet.com/"
+  },
+  "Gumroad": {
+    "cats": [
+      6
+    ],
+    "description": "Gumroad is a self-publishing digital marketplace platform to sell digital services such as books, memberships, courses and other digital services.",
+    "icon": "Gumroad.svg",
+    "js": {
+      "GumroadOverlay": "",
+      "createGumroadOverlay": ""
+    },
+    "saas": true,
+    "scriptSrc": "gumroad\\.com/js/gumroad\\.js",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://gumroad.com"
   },
   "Gumstack": {
     "cats": [

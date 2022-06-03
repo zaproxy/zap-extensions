@@ -1,4 +1,15 @@
-{
+{ 
+  "h5ai": {
+    "cats": [
+      19
+    ],
+    "description": "h5ai is a modern HTTP web server index for Apache httpd, lighttpd, and nginx.",
+    "icon": "default.svg",
+    "implies": "PHP",
+    "scriptSrc": "/_h5ai/(?:public|client)/js/scripts\\.js",
+    "oss": true,
+    "website": "https://github.com/lrsjng/h5ai"
+  },
   "HCL Commerce": {
     "cats": [
       6
@@ -310,9 +321,17 @@
     ],
     "description": "Helhost is a web hosting provider and internet domain registrar from Democratic Republic of Congo.",
     "dns": {
-      "NS": "ns\\d\\.helhost\\.com",
-      "SOA": "ns\\d\\.helhost\\.com"
+      "NS": "\\.helhost\\.com",
+      "SOA": "\\.helhost\\.com"
     },
+    "headers": {
+      "x-powered-by": "Helhost"
+    },
+    "implies": [
+      "Nginx",
+      "AlmaLinux",
+      "Apache"
+    ],
     "icon": "Helhost.svg",
     "pricing": [
       "low",
@@ -320,6 +339,25 @@
       "payg"
     ],
     "website": "https://www.helhost.com"
+  },
+  "Helixo UFE": {
+    "cats": [
+      100
+    ],
+    "description": "Helixo UFE is a lightweight Shopify upsell sales funnel app.",
+    "icon": "Helixo.svg",
+    "implies": "Shopify",
+    "js": {
+      "ufe.funnelData": "",
+      "ufeStore.cartTotal": ""
+    },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://helixo.co/upsell-funnel-engine/"
   },
   "Helix Ultimate": {
     "cats": [
@@ -398,6 +436,34 @@
     "saas": true,
     "scriptSrc": "\\.helpscout\\.net/",
     "website": "https://www.helpscout.com"
+  },
+   "HeliumWeb": {
+    "cats": [
+      18
+    ],
+  
+    "description": "HeliumWeb is a server-side (backend) web framework written in PHP & JavaScript",
+  
+
+    "implies": "PHP",
+     
+     "headers": {
+    "X-Powered-By": "Adrikikicp Development"
+  },
+     
+  
+    "js": {
+      "helium.js": ""
+
+    },
+      "pricing": [
+     "freemium"
+    ],
+   
+     "oss": true,
+     "saas":true,
+    "scriptSrc": ["helium/src/helium.js/helium_web.js", "http://maven.enriquitomcfh.ml/helium.js/helium_web.js", "http://maven.enriquitomcfh.ml/helium.js/helium_web.min.js"],
+    "website": "https://heliumweb.adrikikicp-development.ml"
   },
   "HelpDocs": {
     "cats": [
@@ -889,7 +955,7 @@
   },
   "Hotjar Incoming Feedback": {
     "cats": [
-      5
+      73
     ],
     "description": "Hotjar Incoming Feedback is a widget that sits at the edge of a page.",
     "dom": "a[href*='hotjar.com/incoming-feedback'][target='_blank']",

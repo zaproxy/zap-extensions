@@ -615,10 +615,7 @@
     "meta": {
       "generator": "Zozo Ecommerce"
     },
-    "scriptSrc": [
-      "catalog/view/theme/[^\"]+/javascript/common\\.js",
-      "zozo-main\\.min\\.js"
-    ],
+    "scriptSrc": "zozo-main\\.min\\.js",
     "website": "https://zozo.vn"
   },
   "Zuppler": {
