@@ -252,6 +252,21 @@
     "scriptSrc": "fareharbor\\.com/embeds/api/",
     "website": "https://fareharbor.com"
   },
+  "FARFETCH Black & White": {
+    "cats": [
+      6
+    ],
+    "description": "Farfetch Platform Solutions is a full service platform and agency providing end-to-end, multichannel e-commerce solutions for luxury fashion brands under the name Farfetch Black & White.",
+    "icon": "Farfetch.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn-static\\.farfetch-contents.com\\.js"
+    ],
+    "website": "https://www.farfetchplatformsolutions.com/"
+  },
   "Fast Checkout": {
     "cats": [
       6
@@ -1432,7 +1447,14 @@
       24
     ],
     "description": "Froala Editor is a WYSIWYG HTML Editor written in Javascript that enables rich text editing capabilities for applications.",
-    "dom": ".fr-view, .fr-box, .fr-popup, .froala-box",
+    "dom": {
+      ".froala-box": {
+        "exists": "\\;version:1"
+      },
+      ".fr-view, .fr-box, .fr-popup": {
+        "exists": "\\;version:2+"
+      }
+    },
     "icon": "Froala.svg",
     "implies": [
       "jQuery",
@@ -1515,6 +1537,23 @@
     "saas": true,
     "scriptSrc": "frosmo\\.easy\\.js",
     "website": "https://frosmo.com"
+  },
+  "FullContact": {
+    "cats": [
+      10
+    ],
+    "description": "FullContact is a privacy-safe Identity Resolution company building trust between people and brands.",
+    "icon": "FullContact.svg",
+    "js": {
+      "Fullcontact": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "tags\\.fullcontact\\.com/",
+    "website": "https://www.fullcontact.com"
   },
   "FullStory": {
     "cats": [

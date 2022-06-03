@@ -163,6 +163,31 @@
     "scriptSrc": "\\.kakao\\.com/",
     "website": "https://developers.kakao.com/product"
   },
+  "Kaltura": {
+    "cats": [
+      14,
+      103
+    ],
+    "description": "Kaltura is a video content management platform that allows users to upload, manage, share, publish, and stream videos.",
+    "icon": "Kaltura.svg",
+    "dom": "link[href*='.kaltura.com']",
+    "js": {
+      "kalturaIframeEmbed": "",
+      "kGetKalturaEmbedSettings": "",
+      "kGetKalturaPlayerList": "",
+      "restoreKalturaKDPCallback": "",
+      "Kplayer": ""
+    },
+    "scripts": "kalturaPlayer",
+    "scriptSrc": "api\\.kaltura\\.(?:nordu\\.net|com)/",
+    "pricing": [
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://corp.kaltura.com"
+  },
   "Kameleoon": {
     "cats": [
       74

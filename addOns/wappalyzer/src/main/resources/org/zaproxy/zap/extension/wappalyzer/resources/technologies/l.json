@@ -204,9 +204,42 @@
     "scriptSrc": "/__layer0__/cache-manifest\\.js",
     "website": "https://www.layer0.co"
   },
+  "LayoutHub": {
+    "cats": [
+      100,
+      51
+    ],
+    "description": "LayoutHub is an easy page builder that helps merchants quickly set up an online store with any kind of page type by using our library of pre-designed layouts and blocks.",
+    "icon": "LayoutHub.png",
+    "implies": "Shopify",
+    "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://layouthub.com"
+  },
+  "Lazada": {
+    "cats": [
+      6
+    ],
+    "description": "Lazada is a B2B2C marketplace model in which so-called merchants sell goods on their platform.",
+    "icon": "Lazada.svg",
+    "meta": {
+      "aplus-auto-exp": "lzdhome\\.desktop\\."
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.lazada.com"
+  },
   "LazySizes": {
     "cats": [
-      59
+      59,
+      92
     ],
     "description": "LazySizes is a JavaScript library used to delay the loading of images (iframes, scripts, etc) until they come into view.",
     "icon": "default.svg",
@@ -216,6 +249,17 @@
     },
     "oss": true,
     "website": "https://github.com/aFarkas/lazysizes"
+  },
+  "LazySizes unveilhooks plugin": {
+    "cats": [
+      59,
+      92
+    ],
+    "description": "LazySizes unveilhooks plugin extends lazySizes to lazyload scripts/widgets, background images, styles and video/audio elements.",
+    "icon": "default.svg",
+    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
+    "oss": true,
+    "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
   "Leadinfo": {
     "cats": [
@@ -259,7 +303,7 @@
     "pricing": [
       "payg"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "scripts\\.leaflet\\.co/",
     "website": "https://join.leaflet.co"
@@ -363,6 +407,24 @@
     "html": "<link[^>]+ rel=\"stylesheet/less\"",
     "icon": "Less.png",
     "website": "http://lesscss.org"
+  },
+  "Letro": {
+    "cats": [
+      90,
+      96
+    ],
+    "description": "Letro is a UGC and review tool for ecommerce platforms.",
+    "icon": "Letro.svg",
+    "js": {
+      "__letroUgcGadget": "",
+      "letroUgcSet": ""
+    },
+    "scriptSrc": "letro\\.jp/tags",
+    "saas": true,
+    "pricing": [
+      "recurring"
+    ],
+    "website": "https://service.aainc.co.jp/product/letro/"
   },
   "Let's Encrypt": {
     "cats": [
@@ -735,10 +797,11 @@
   },
   "Littledata": {
     "cats": [
-      10
+      100
     ],
     "description": "Littledata provides a seamless connection between your Shopify site, marketing channels, and Google Analytics.",
     "icon": "Littledata.svg",
+    "implies": "Shopify",
     "js": {
       "LittledataLayer": "",
       "LittledataLayer.version": "v([\\d\\.]+)\\;version:\\1"
@@ -949,7 +1012,7 @@
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "\\.livescale\\.tv/",
     "website": "https://www.livescale.tv"
@@ -981,6 +1044,17 @@
     "oss": true,
     "website": "https://github.com/gregberge/loadable-components"
   },
+  "Loadify": {
+    "cats": [
+      92,    
+      100
+    ],
+    "description": "Loadify is a shopify app which helps merchants deploy performance techniques like loading screen, transitions & lazy Load.",
+    "icon": "Loadify.png",
+    "implies": "Shopify",
+    "scriptSrc": "\\.loadifyapp\\.ninety9\\.dev",
+    "website": "https://apps.shopify.com/loadify"
+  },    
   "LocalFocus": {
     "cats": [
       25
@@ -1017,6 +1091,23 @@
     "saas": true,
     "website": "https://www.localised.com",
     "xhr": "api\\.localised\\.com"
+  },
+  "Locksmith": {
+    "cats": [
+      100
+    ],
+    "description": "Locksmith is a shopify app for adding access control capability on shopify stores.",
+    "icon": "Locksmith.png",
+    "implies": "Shopify",
+    "js": {
+      "Locksmith": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/locksmith"
   },
   "LocomotiveCMS": {
     "cats": [
@@ -1279,7 +1370,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "loox\\.io/widget",
     "website": "https://loox.app"
@@ -1546,5 +1637,15 @@
     },
     "oss": true,
     "website": "https://lit.dev"
+  },
+  "lite-youtube-embed": {
+    "cats": [
+      59
+    ],
+    "description": "The lite-youtube-embed technique renders the YouTube video inside the IFRAME tag only when the play button in clicked thus improving the core web vitals score of your website.",
+    "dom": "lite-youtube",
+    "website": "https://github.com/paulirish/lite-youtube-embed",
+    "oss": true, 
+    "implies": "YouTube"
   }
 }

@@ -205,6 +205,21 @@
     "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
     "website": "http://madadsmedia.com"
   },
+  "Magazord": {
+    "cats": [
+      6
+    ],
+    "description": "Magazord is an all-in-one ecommerce platform.",
+    "icon": "Magazord.svg",
+    "meta": {
+      "web-author": "^Magazord$"
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.magazord.com.br"
+  },
   "Magento": {
     "cats": [
       6
@@ -592,6 +607,23 @@
     "scriptSrc": "/marked(?:\\.min)?\\.js",
     "website": "https://marked.js.org"
   },
+  "Marker": {
+    "cats": [
+      13
+    ],
+    "description": "Marker.io is an issue tracker solution for Project Managers, QA Testers and Agency Clients to report feedback & bugs to developers.",
+    "icon": "Marker.svg",
+    "js": {
+      "markerConfig": ""
+    },
+    "scriptSrc": "edge\\.marker\\.io",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://marker.io"
+  },
   "Marketo": {
     "cats": [
       32
@@ -838,6 +870,19 @@
       "Mxm.Tracker": ""
     },
     "website": "https://maxemail.xtremepush.com"
+  },
+  "Measured": {
+    "cats": [
+      10
+    ],
+    "description": "Measured is an analytics platform to measure efficiency of marketing channels.",
+    "icon": "Measured.svg",
+    "scriptSrc": "tag\\.measured\\.com",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.measured.com"
   },
   "Medallia": {
     "cats": [
@@ -1453,6 +1498,24 @@
     "scriptSrc": "\\w+\\.healcode\\.com",
     "website": "https://www.mindbodyonline.com"
   },
+  "Mindbox": {
+    "cats": [
+      32
+    ],
+    "description": "Mindbox is a marketing automation platform.",
+    "icon":"Mindbox.png",
+    "js": {
+      "mindbox": "",
+      "MindboxEndpointSettings": "",
+      "mindboxBatchedModulesInitialized": ""
+    },
+    "saas": true,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://mindbox.ru"
+  },
   "Minero.cc": {
     "cats": [
       56
@@ -1784,6 +1847,17 @@
     "implies": "Perl",
     "website": "http://mojolicio.us"
   },
+  "Mokka": {
+    "cats": [
+      41,
+      91
+    ],
+    "description": "Mokka is a Buy Now Pay Later solution that connects target customer acquisition and settlement costs through marketing and promotion..",
+    "icon": "Mokka.svg",
+    "saas": true,
+    "scriptSrc": "revoiframe\\.js",
+    "website": "https://mokka.ro"
+  },
   "Mollom": {
     "cats": [
       16
@@ -1852,6 +1926,41 @@
       "generator": "Mondo Shop"
     },
     "website": "http://mondo-media.de"
+  },
+  "Moneris": {
+    "cats": [
+      41
+    ],
+    "description": "Moneris (formerly Moneris Solutions) is Canada's largest financial technology company that specialises in payment processing.",
+    "icon": "Moneris.svg",
+    "headers": {
+      "content-security-policy": "\\.moneris\\.com"
+    },
+    "js": {
+      "initialServerData.monerisConfiguration": ""
+    },
+    "saas": true,
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.moneris.com"
+  },
+  "Moneris Payment Gateway": {
+    "cats": [
+      87
+    ],
+    "description": "Moneris is Canada’s leading processor of Debit and credit card payments. This WooCommerce extension automatically adds moneris payment gateway to your woocommerce website and allows you to keep the customer on your site for the checkout process.",
+    "icon": "Moneris.svg",
+    "implies": [
+      "Moneris",
+      "WooCommerce"
+    ],
+    "js": {
+      "wc_moneris_hosted_tokenization_params": ""
+    },
+    "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/wc-moneris-payment-gateway"
   },
   "MongoDB": {
     "cats": [

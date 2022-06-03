@@ -1,4 +1,18 @@
 {
+  "iAdvize": {
+    "cats": [
+      52
+    ],
+    "description": "iAdvize is a conversational marketing platform that connects customers in need of advice with experts who are available 24/7 via messaging.",
+    "icon": "iAdvize.svg",
+    "dom": "link[href*='.iadvize.com']",
+    "scriptSrc": "\\.iadvize\\.com/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.iadvize.com"
+  },
   "IBM Coremetrics": {
     "cats": [
       10
@@ -187,6 +201,21 @@
     "saas": true,
     "scriptSrc": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
+  },
+  "ImageEngine": {
+    "cats": [
+      31,
+      92
+    ],
+    "description": "ImageEngine is an intelligent image content delivery network. ImageEngine will resize your image content tailored to the end users device.",
+    "icon": "ImageEngine.svg",
+    "dom": "link[href*='.imgeng.in/'], img[src*='.imgeng.in/'], img[data-src*='.imgeng.in/'], source[srcset*='.imgeng.in/']",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://imageengine.io"
   },
   "Image Relay": {
     "cats": [
@@ -652,6 +681,19 @@
       "heatmap-events-collector\\.instapage\\.com"
     ],
     "website": "https://instapage.com"
+  },
+  "InSyncai": {
+    "cats": [
+      52
+    ],
+    "description": "InSyncai offers a conversational platform for enterprises to design and build chatbots having applications in customer support and services.",
+    "dom": "iframe[src*='insync_iframe_webchat_js_prod'], iframe#insync-iframe",
+    "icon": "InSyncai.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.insyncai.com"
   },
   "Integral Ad Science": {
     "cats": [

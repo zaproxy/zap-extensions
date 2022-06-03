@@ -407,6 +407,9 @@
     },
     "html": "<[^>]+data-react",
     "icon": "React.svg",
+    "meta": {
+      "description": "^Web site created using create-react-app$"
+    },
     "js": {
       "React.version": "^(.+)$\\;version:\\1",
       "ReactOnRails": "",
@@ -467,6 +470,27 @@
       "/react-router(@|/)([\\d.]+)(?:/[a-z]+)?/react-router(?:.min)?\\.js\\;version:\\2"
     ],
     "website": "https://reactrouter.com/"
+  },
+  "Reactive": {
+    "cats": [
+      1,
+      6
+    ],
+    "description": "Reactive is a subscription-based software that allows you to set up an online store and website. It has a CMS and has been created to support retail, coffee bars, restaurants owners and accomodation properties such as hotels or villas. With Reactive one can sell products or accept reservations and online orders.",
+    "icon": "Reactive.svg",
+    "implies": [
+      "Ruby on Rails"
+    ],
+    "meta": {
+      "generator": "Reactive"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "url": "^https?//.+\\.reactiveonline\\.io",
+    "website": "https://reactiveonline.io"
   },
   "Really Simple CAPTCHA": {
     "cats": [
@@ -590,13 +614,46 @@
     "scriptSrc": "api\\.reciteme\\.com/asset/js",
     "website": "https://reciteme.com/"
   },
+  "Recomify": {
+    "cats": [
+      100
+    ],
+    "description": "Recomify is a 1-click install, cost-effective smart product recommendation engine.",
+    "icon": "Recomify.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.recomify\\.com/",
+    "website": "https://www.recomify.com"
+  },
+  "ReConvert": {
+    "cats": [
+      100
+    ],
+    "description": "ReConvert is a post-purchase upsell & thank you page.",
+    "icon": "ReConvert.svg",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "payg",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.stilyoapps\\.com/reconvert/assets/js/store_reconvert_node\\.js",
+    "website": "https://www.reconvert.io"
+  },
   "RecoverMyCart": {
     "cats": [
       76,
       100
     ],
-    "description": "RecoverMyCart is a shopify app for abandoned basket recovery.",
+    "description": "RecoverMyCart is a Shopify app for abandoned basket recovery.",
     "icon": "RecoverMyCart.png",
+    "implies": "Shopify",
     "pricing": [
       "low",
       "freemium",
@@ -882,6 +939,21 @@
       "\\bRelais Colis\\b"
     ],
     "website": "https://www.relaiscolis.com"
+  },
+  "Remarkable Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Remarkable Commerce is a technology and services company which provides a ecommerce platform for mid-sized retailers.",
+    "icon": "Remarkable.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "js": {
+      "Remarkable": ""
+    },
+    "website": "https://remarkable.net/"
   },
   "Remix": {
     "cats": [
