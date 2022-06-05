@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Performance improvements (Issue 6959).
+- Add Retire.js reference to Alert and Rule name to make it more obvious in reports and the options panel.
 
 ## [0.12.0] - 2022-05-26
 ### Changed

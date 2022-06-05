@@ -71,7 +71,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 LOGGER.error("\tThe Retire.js repository was null.");
                 return;
             }
-            Result result = scanRepo.scanJS(msg);
+            Result result = scanRepo.scanJS(msg, source);
             if (result == null) {
                 LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);
             } else {
