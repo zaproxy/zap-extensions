@@ -28,7 +28,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
 import org.zaproxy.zap.view.LayoutHelper;
-import org.zaproxy.zap.view.ZapTable;
 
 public class ParamMinerPanel extends AbstractPanel {
 
@@ -44,9 +43,7 @@ public class ParamMinerPanel extends AbstractPanel {
         this.setIcon(ExtensionParamMiner.getIcon());
         this.setLayout(new GridBagLayout());
 
-        historyTable = new ZapTable();
-        historyTable.setModel(new ParamMinerHistoryTableModel());
-
+        historyTable = new ParamMinerResultsTable(new ParamMinerHistoryTableModel());
         outputArea = new JTextPane();
         outputArea.setEditable(false);
 

@@ -23,8 +23,13 @@ import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.view.View;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.paramminer.gui.ParamMinerDialog;
 import org.zaproxy.addon.paramminer.gui.ParamMinerPanel;
+import org.zaproxy.addon.paramminer.gui.PopupMenuParamMiner;
+import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionParamMiner extends ExtensionAdaptor {
@@ -35,8 +40,10 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     private static ImageIcon icon;
 
     private ParamMinerPanel paramMinerPanel;
+    private ExtensionPopupMenuItem paramMinerDialogPopMenu;
     private ZapMenuItem menu;
     private ParamMinerAPI api;
+    private ParamMinerDialog paramMinerDialog;
 
     public ExtensionParamMiner() {
         super(NAME);
@@ -60,7 +67,17 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
             extensionHook.getHookView().addStatusPanel(getParamMinerPanel());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMsg());
         }
+    }
+
+    private ExtensionPopupMenuItem getPopupMsg() {
+        if (paramMinerDialogPopMenu == null) {
+            paramMinerDialogPopMenu =
+                    new PopupMenuParamMiner(
+                            this, Constant.messages.getString(PREFIX + ".popup.title"));
+        }
+        return paramMinerDialogPopMenu;
     }
 
     @Override
@@ -86,12 +103,22 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
 
             menu.addActionListener(
                     e -> {
-                        View.getSingleton()
-                                .showMessageDialog(
-                                        Constant.messages.getString(PREFIX + ".topmenu.tools.msg"));
+                        showParamMinerDialog(null);
                     });
         }
         return menu;
+    }
+
+    public void showParamMinerDialog(SiteNode node) {
+        if (paramMinerDialog == null) {
+            paramMinerDialog =
+                    new ParamMinerDialog(
+                            this,
+                            getView().getMainFrame(),
+                            DisplayUtils.getScaledDimension(700, 500));
+        }
+        paramMinerDialog.init(new Target(node));
+        paramMinerDialog.setVisible(true);
     }
 
     @Override
