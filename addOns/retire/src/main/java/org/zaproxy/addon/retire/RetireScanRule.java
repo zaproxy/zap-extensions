@@ -98,6 +98,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(getAlertName())
                 .setDescription(
                         Constant.messages.getString(
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
@@ -116,6 +117,10 @@ public class RetireScanRule extends PluginPassiveScanner {
                 buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), null), "")
                         .build());
         return alerts;
+    }
+
+    private static String getAlertName() {
+        return Constant.messages.getString("retire.alert.name");
     }
 
     private String getDetails(String key, Map<String, Set<String>> info) {
