@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -66,6 +67,17 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+
+    private static boolean useHttpSender;
+
+    static {
+        try {
+            Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
+            useHttpSender = true;
+        } catch (Exception e) {
+            useHttpSender = false;
+        }
+    }
 
     @Override
     public int getId() {
@@ -134,6 +146,12 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     }
 
     void sendMessageWithCustomHostHeader(HttpMessage message, String host) throws IOException {
+        if (useHttpSender) {
+            message.setUserObject(Collections.singletonMap("host", host));
+            sendAndReceive(message, false);
+            return;
+        }
+
         HttpMethodParams params = new HttpMethodParams();
         params.setVirtualHost(host);
         HttpMethod method =
