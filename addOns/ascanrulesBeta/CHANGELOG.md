@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Adding more checks to Hidden File Finder scan rule.
 - The Cloud Metadata scan rule will now be attempted with additional payloads (using DNS not just IPs), and supporting Alibaba.
 
+### Fixed
+- False Positive in XSLT Injection where "Microsoft-Azure-Application-Gateway" can be returned in a 403 if the gateway detects an attack.
+
 ## [40] - 2022-03-15
 ### Changed
 - Hidden File Finder scan rule, content checking has been added for .svn/entries as well as detection for wc.db.

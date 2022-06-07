@@ -101,6 +101,46 @@ class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanR
     }
 
     @Test
+    void shouldNotAlertIfResponseContainsAllowedVendorString() throws Exception {
+        // Given
+        String path = "/shouldNotReportAllowedVendor";
+        String okVendorString = "Microsoft-Azure-Application-Gateway/v2";
+
+        this.nano.addHandler(
+                new StaticContentServerHandler(path, "<html>" + okVendorString + "<html>"));
+
+        HttpMessage msg = this.getHttpMessage(path + "?name=test");
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldAlertIfResponseContainsIrrelevantAllowedVendorString() throws Exception {
+        // Given
+        String path = "/shouldReportIrrelevantAllowedVendor";
+        String okVendorString = "Microsoft-Azure-Application-Gateway/v2";
+        String vendorString = "Apache";
+
+        this.nano.addHandler(
+                new StaticContentServerHandler(
+                        path, "<html>" + okVendorString + "<br>" + vendorString + "<html>"));
+
+        HttpMessage msg = this.getHttpMessage(path + "?name=test");
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(alertsRaised.get(0).getName(), "XSLT Injection");
+        assertThat(alertsRaised.get(0).getEvidence(), is("Apache"));
+        assertEquals(alertsRaised.get(0).getRisk(), Alert.RISK_MEDIUM);
+        assertThat(alertsRaised.get(0).getParam(), is("name"));
+    }
+
+    @Test
     void shouldReturnExpectedMappings() {
         // Given / When
         int cwe = rule.getCweId();

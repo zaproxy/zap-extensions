@@ -47,6 +47,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         ERROR(
                 new String[] {"<"},
                 new String[] {"compilation error", "XSLT compile error", "SAXParseException"},
+                new String[] {},
                 "error"),
         VENDOR(
                 new String[] {
@@ -58,6 +59,10 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                 new String[] {
                     "libxslt", "Microsoft", "Saxonica", "Apache", "Xalan", "SAXON", "Transformiix"
                 },
+                new String[] {
+                    "Microsoft-Azure-Application-Gateway" // Can be returned in a 403 if the gateway
+                    // detects a possible attack
+                },
                 "vendor"),
         PORTSCAN(
                 new String[] {},
@@ -68,6 +73,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     "No connection could be made because the target machine actively refused it",
                     "Can not load requested doc"
                 },
+                new String[] {},
                 "portscan"),
         COMMAND_EXEC(
                 new String[] {
@@ -80,15 +86,22 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                 new String[] {
                     "Cannot run program", "erroneous_command: not found",
                 },
+                new String[] {},
                 "command");
 
         private String[] payloads;
         private String[] evidences;
+        private String[] allowed;
         private String resourceIdentifier;
 
-        XSLTInjectionType(String[] payloads, String[] responses, String resourceIdentifier) {
+        XSLTInjectionType(
+                String[] payloads,
+                String[] responses,
+                String[] allowed,
+                String resourceIdentifier) {
             this.payloads = payloads;
             this.evidences = responses;
+            this.allowed = allowed;
             this.resourceIdentifier = resourceIdentifier;
         }
 
@@ -98,6 +111,10 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
 
         private String[] getEvidences() {
             return evidences;
+        }
+
+        private String[] getAllowed() {
+            return allowed;
         }
 
         private String getResourceIdentifier() {
@@ -135,7 +152,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    private Boolean tryInjection(String param, XSLTInjectionType checkType) {
+    private boolean tryInjection(String param, XSLTInjectionType checkType) {
         Predicate<String> filterEvidence =
                 ((Predicate<String>) (getBaseMsg().getResponseBody().toString()::contains))
                         .negate();
@@ -151,15 +168,29 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     LOG.debug("Scan rule {} stopping.", getName());
                     return true;
                 }
-
                 HttpMessage msg = sendRequest(param, payload);
+                String body = msg.getResponseBody().toString();
 
                 for (String evidence : relevantEvidence) {
-                    if (msg.getResponseBody().toString().contains(evidence)) {
+                    if (body.contains(evidence)) {
                         // found a possible injection
-                        raiseAlert(
-                                msg, param, payload, evidence, checkType.getResourceIdentifier());
-                        return true;
+                        boolean raiseAlert = true;
+                        for (String allow : checkType.getAllowed()) {
+                            if (allow.contains(evidence) && body.contains(allow)) {
+                                raiseAlert = false;
+                                break;
+                            }
+                        }
+
+                        if (raiseAlert) {
+                            raiseAlert(
+                                    msg,
+                                    param,
+                                    payload,
+                                    evidence,
+                                    checkType.getResourceIdentifier());
+                            return true;
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -170,7 +201,6 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                         getName(),
                         e.getClass().getName(),
                         e.getMessage());
-                continue;
             }
         }
         return false;
