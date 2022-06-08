@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [41] - 2022-06-08
 ### Changed
 - Maintenance changes.
 - Adding more checks to Hidden File Finder scan rule.
@@ -351,6 +351,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v38
