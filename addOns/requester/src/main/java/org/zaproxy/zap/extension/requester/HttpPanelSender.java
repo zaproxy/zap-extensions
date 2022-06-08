@@ -130,7 +130,17 @@ public class HttpPanelSender implements MessageSender {
                         }
                     });
 
-            ZapGetMethod method = (ZapGetMethod) httpMessage.getUserObject();
+            Object userObject = httpMessage.getUserObject();
+            if (userObject instanceof Socket) {
+                closeSilently((Socket) userObject);
+                return;
+            }
+
+            if (!(userObject instanceof ZapGetMethod)) {
+                return;
+            }
+
+            ZapGetMethod method = (ZapGetMethod) userObject;
             notifyPersistentConnectionListener(httpMessage, null, method);
 
         } catch (final HttpMalformedHeaderException mhe) {
@@ -148,6 +158,14 @@ public class HttpPanelSender implements MessageSender {
 
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    private static void closeSilently(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException ignore) {
+            // Nothing to do.
         }
     }
 
