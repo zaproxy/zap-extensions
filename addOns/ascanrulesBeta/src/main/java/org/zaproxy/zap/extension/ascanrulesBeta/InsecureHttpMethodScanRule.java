@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +52,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -98,6 +100,17 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS);
+
+    private static boolean useHttpSender;
+
+    static {
+        try {
+            Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
+            useHttpSender = true;
+        } catch (Exception e) {
+            useHttpSender = false;
+        }
+    }
 
     @Override
     public int getId() {
@@ -407,35 +420,86 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         String connecthost = baseMsg.getRequestHeader().getURI().getHost();
         int connectport = baseMsg.getRequestHeader().getURI().getPort();
 
-        // this cannot currently be done using the existing HttpSender class, so
-        // do it natively using HttpClient,
-        // in as simple as possible a manner.
-        ByteArrayOutputStream bos = null;
+        if (useHttpSender) {
+            HttpRequestHeader requestHeader = baseMsg.getRequestHeader();
+            HttpMessage connectMessage = baseMsg.cloneRequest();
+            connectMessage
+                    .getRequestHeader()
+                    .setMessage(
+                            HttpRequestHeader.CONNECT
+                                    + " "
+                                    + thirdpartyHost
+                                    + ":"
+                                    + thirdpartyPort
+                                    + " "
+                                    + requestHeader.getVersion()
+                                    + "\r\n"
+                                    + requestHeader.getHeadersAsString());
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("target.host", connecthost);
+            metadata.put("target.port", connectport);
+            connectMessage.setUserObject(metadata);
+
+            try {
+                sendAndReceive(connectMessage, false);
+            } catch (IOException ex) {
+                log.debug(
+                        "Could not establish a client connection to a third party using the CONNECT HTTP method",
+                        ex);
+                return;
+            }
+
+            Object userObject = connectMessage.getUserObject();
+            if (!(userObject instanceof Socket)) {
+                return;
+            }
+
+            HttpResponseHeader responseHeader = connectMessage.getResponseHeader();
+            log.debug("The status line returned: {}", responseHeader.getPrimeHeader());
+            handleConnectResponse(
+                    thirdpartyHost,
+                    thirdpartyPort,
+                    thirdPartyContentPattern,
+                    responseHeader.getStatusCode(),
+                    (Socket) userObject);
+            return;
+        }
+
         ProxyClient client = new ProxyClient();
         ConnectResponse connectResponse = null;
         client.getHostConfiguration().setProxy(connecthost, connectport);
         client.getHostConfiguration().setHost(thirdpartyHost, thirdpartyPort);
         try {
             connectResponse = client.connect();
+            StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
+            log.debug("The status line returned: {}", statusLine);
+            handleConnectResponse(
+                    thirdpartyHost,
+                    thirdpartyPort,
+                    thirdPartyContentPattern,
+                    statusLine.getStatusCode(),
+                    connectResponse.getSocket());
         } catch (IOException ex) {
             log.debug(
                     "Could not establish a client connection to a third party using the CONNECT HTTP method",
                     ex);
-            return;
         }
+    }
 
-        Socket socket = connectResponse.getSocket();
+    private void handleConnectResponse(
+            String thirdpartyHost,
+            int thirdpartyPort,
+            Pattern thirdPartyContentPattern,
+            int statusCode,
+            Socket socket)
+            throws IOException {
         if (socket == null) {
             return;
         }
+
         try (OutputStream os = socket.getOutputStream();
                 InputStream is = socket.getInputStream()) {
-
-            StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
-
-            log.debug("The status line returned: {}", statusLine);
-
-            int statusCode = statusLine.getStatusCode();
 
             if (statusCode == HttpStatusCode.OK) {
                 // we have a socket and a 200 status.
@@ -451,10 +515,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 pw.write("GET http://" + thirdpartyHost + ":" + thirdpartyPort + "/ HTTP/1.1\n");
                 pw.write("Host: " + thirdpartyHost + "\n\n");
                 pw.flush();
-                pw.close();
 
                 // read the response via a 4k buffer
-                bos = new ByteArrayOutputStream();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[4096];
                 int bytesRead = is.read(buffer);
                 int totalBytesRead = 0;
@@ -489,7 +552,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                             .setEvidence(response)
                             .setMessage(this.getBaseMsg())
                             .raise();
-                    return;
                 } else {
                     log.debug("Response does *not* match expected third party pattern");
                 }
@@ -497,7 +559,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             } else {
                 log.debug(
                         "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
-                log.debug("The status line returned: {}", statusLine);
             }
         } catch (Exception e) {
             log.debug(
