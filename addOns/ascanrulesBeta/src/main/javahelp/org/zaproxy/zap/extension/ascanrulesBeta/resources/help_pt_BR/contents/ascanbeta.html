@@ -8,7 +8,7 @@ Regras de verificação ativa - Beta
 </head>
 <body>
 <h1>Active Scan Rules - Beta</h1>
-The following beta quality active scan rules are included in this add-on:
+The following beta status active scan rules are included in this add-on:
 
 <h2>Backup File Disclosure</h2>
 Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
@@ -16,8 +16,8 @@ Scans for commonly-named backup copies of files on the web server, which may rev
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java">BackupFileDisclosureScanRule.java</a>
 
 <h2>Cloud Metadata Attack</h2>
-Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP and Azure.<br>
-All of these providers provide metadata via an internal unroutable IP address '169.254.169.254' - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
+Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP, Azure, and Alibaba.<br>
+Most of these services provide metadata via an internal unroutable IP address '169.254.169.254' ('100.100.100.200' for Alibaba) - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CloudMetadataScanRule.java">CloudMetadataScanRule.java</a>
 
