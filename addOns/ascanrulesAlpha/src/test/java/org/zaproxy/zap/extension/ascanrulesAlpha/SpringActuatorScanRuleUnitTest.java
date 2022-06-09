@@ -109,6 +109,27 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
     }
 
     @Test
+    void shouldScanResponseWithoutContentType() throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "";
+        String alertPath = REQ_PATH;
+        this.nano.addHandler(
+                new NanoServerHandler("/" + alertPath) {
+                    @Override
+                    protected Response serve(NanoHTTPD.IHTTPSession session) {
+                        return newFixedLengthResponse(Response.Status.OK, null, RELEVANT_BODY);
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(servePath);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(2));
+    }
+
+    @Test
     void shouldHandleNetworkErrors() throws HttpMalformedHeaderException {
         // Given
         String path = "/";

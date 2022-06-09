@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Fix an exception in Spring Actuator Information Leak scan rule when scanning responses without Content-Type header.
+
 ## [38] - 2022-04-08
 ### Added
 - Scan rules for Server Side Template Injection ([Issue 2332](https://github.com/zaproxy/zaproxy/issues/2332)).
