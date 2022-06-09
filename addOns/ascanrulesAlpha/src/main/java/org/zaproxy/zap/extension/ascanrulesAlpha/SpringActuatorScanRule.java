@@ -134,7 +134,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
                     continue;
                 }
                 String contentType = testMsg.getResponseHeader().getNormalisedContentTypeValue();
-                if (isPage200(testMsg)) {
+                if (contentType != null && isPage200(testMsg)) {
                     String responseBody = testMsg.getResponseBody().toString();
                     boolean matches =
                             CONTENT_TYPE.matcher(contentType).find()
