@@ -54,6 +54,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -106,7 +107,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     static {
         try {
             Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
-            useHttpSender = true;
+            useHttpSender = SSLConnector.class.getAnnotation(Deprecated.class) != null;
         } catch (Exception e) {
             useHttpSender = false;
         }
