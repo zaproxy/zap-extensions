@@ -20,6 +20,7 @@
 package org.zaproxy.addon.network.internal.client;
 
 import java.util.Objects;
+import org.zaproxy.addon.network.internal.client.Pkcs11Configuration.Pkcs11ConfigurationBuilder;
 
 /**
  * A PKCS#11 driver.
@@ -92,6 +93,24 @@ public class Pkcs11Driver {
      */
     public int getSlotListIndex() {
         return slotListIndex;
+    }
+
+    /**
+     * Gets the configuration to use with a PKCS#11 provider.
+     *
+     * @param useSlotListIndex {@code true} to use the slot list index, {@code false} to use the
+     *     slot.
+     * @return the configuration.
+     */
+    public String getConfiguration(boolean useSlotListIndex) {
+        Pkcs11ConfigurationBuilder confBuilder =
+                Pkcs11Configuration.builder().setName(getName()).setLibrary(getLibrary());
+        if (useSlotListIndex) {
+            confBuilder.setSlotListIndex(getSlotListIndex());
+        } else {
+            confBuilder.setSlotId(getSlot());
+        }
+        return confBuilder.build().toString();
     }
 
     @Override

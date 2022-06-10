@@ -20,8 +20,10 @@
 package org.zaproxy.addon.network.internal.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ class Pkcs11DriverUnitTest {
     private static final String NAME = "Card 1";
     private static final String LIBRARY = "/path/to/library";
     private static final int SLOT = 0;
-    private static final int SLOT_LIST_INDEX = 0;
+    private static final int SLOT_LIST_INDEX = 1;
 
     @Test
     void shouldNotCreatePkcs11DriverWithNullName() {
@@ -209,5 +211,49 @@ class Pkcs11DriverUnitTest {
         String representation = pkcs11Driver.toString();
         // Then
         assertThat(representation, is(equalTo(name)));
+    }
+
+    @Test
+    void shouldGetConfigurationWithSlotListIndex() {
+        // Given
+        boolean useSlotListIndex = true;
+        Pkcs11Driver pkcs11Driver = new Pkcs11Driver(NAME, LIBRARY, SLOT, SLOT_LIST_INDEX);
+        // When
+        String configuration = pkcs11Driver.getConfiguration(useSlotListIndex);
+        // Then
+        assertThat(configuration, containsString("slotListIndex = " + SLOT_LIST_INDEX));
+        assertThat(configuration, not(containsString("slot = ")));
+    }
+
+    @Test
+    void shouldGetConfigurationWithSlot() {
+        // Given
+        boolean useSlotListIndex = false;
+        Pkcs11Driver pkcs11Driver = new Pkcs11Driver(NAME, LIBRARY, SLOT, SLOT_LIST_INDEX);
+        // When
+        String configuration = pkcs11Driver.getConfiguration(useSlotListIndex);
+        // Then
+        assertThat(configuration, containsString("slot = " + SLOT));
+        assertThat(configuration, not(containsString("slotListIndex = ")));
+    }
+
+    @Test
+    void shouldGetConfigurationWithNameQuoted() {
+        // Given
+        Pkcs11Driver pkcs11Driver = new Pkcs11Driver(NAME, LIBRARY, SLOT, SLOT_LIST_INDEX);
+        // When
+        String configuration = pkcs11Driver.getConfiguration(false);
+        // Then
+        assertThat(configuration, containsString("name = \"" + NAME + "\""));
+    }
+
+    @Test
+    void shouldGetConfigurationWithLibrary() {
+        // Given
+        Pkcs11Driver pkcs11Driver = new Pkcs11Driver(NAME, LIBRARY, SLOT, SLOT_LIST_INDEX);
+        // When
+        String configuration = pkcs11Driver.getConfiguration(false);
+        // Then
+        assertThat(configuration, containsString("library = " + LIBRARY));
     }
 }
