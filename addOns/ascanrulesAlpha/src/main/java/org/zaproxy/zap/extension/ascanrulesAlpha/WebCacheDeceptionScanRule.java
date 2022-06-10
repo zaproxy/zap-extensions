@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -82,9 +83,10 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
                 URI uri = authorisedMessage.getRequestHeader().getURI();
                 ArrayList<String> extensions = new ArrayList<>();
                 String path = uri.getPath();
+                String basePath = getBasePath(path);
                 // checks whether the page with appended path gets cached or not
                 for (String ext : TEST_EXTENSIONS) {
-                    String newPath = path + "/test." + ext;
+                    String newPath = basePath + "/test." + ext;
                     uri.setPath(newPath);
                     authorisedMessage.getRequestHeader().setURI(uri);
                     sendAndReceive(authorisedMessage);
@@ -122,6 +124,13 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
         }
     }
 
+    private static String getBasePath(String path) throws URIException {
+        if (path != null && !"/".equals(path)) {
+            return path;
+        }
+        return "";
+    }
+
     private HttpMessage makeUnauthorisedRequest(URI uri, String method) throws IOException {
 
         HttpMessage unauthorisedMessage = new HttpMessage(uri);
@@ -148,7 +157,7 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
                 return false;
             }
             String path = uri.getPath();
-            String newPath = path + "/test";
+            String newPath = getBasePath(path) + "/test";
             uri.setPath(newPath);
             authorisedMessage.getRequestHeader().setURI(uri);
             sendAndReceive(authorisedMessage);
