@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,6 +71,22 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
     @Override
     protected WebCacheDeceptionScanRule createScanner() {
         return new WebCacheDeceptionScanRule();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "/"})
+    void shouldSendRequestsWithExpectedPath(String basePath) throws Exception {
+        // Given
+        HttpMessage message = this.getHttpMessage(basePath);
+        HttpRequestHeader headers = message.getRequestHeader();
+        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        message.setRequestHeader(headers);
+        nano.addHandler(new CachedTestResponse(basePath, "authorization"));
+        rule.init(message, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(nano.getRequestedUris(), hasItems("/", "/test", "/test.css"));
     }
 
     @Test

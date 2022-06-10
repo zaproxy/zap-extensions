@@ -26,6 +26,7 @@ import java.util.List;
 public class HTTPDTestServer extends NanoHTTPD {
 
     private List<NanoServerHandler> handlers = new ArrayList<>();
+    private List<String> requestedUris = new ArrayList<>();
 
     private NanoServerHandler handler404 =
             new NanoServerHandler("") {
@@ -43,9 +44,15 @@ public class HTTPDTestServer extends NanoHTTPD {
         super(port);
     }
 
+    public List<String> getRequestedUris() {
+        return requestedUris;
+    }
+
     @Override
     public Response serve(IHTTPSession session) {
         String uri = session.getUri();
+        requestedUris.add(uri);
+
         for (NanoServerHandler handler : handlers) {
             if (uri.startsWith(handler.getName())) {
                 return handler.serve(session);
