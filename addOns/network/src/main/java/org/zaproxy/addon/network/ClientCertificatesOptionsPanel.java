@@ -19,10 +19,6 @@
  */
 package org.zaproxy.addon.network;
 
-import ch.csnc.extension.httpclient.AliasCertificate;
-import ch.csnc.extension.httpclient.PKCS11Configuration;
-import ch.csnc.extension.httpclient.PKCS11Configuration.PCKS11ConfigurationBuilder;
-import ch.csnc.extension.httpclient.SSLContextManager;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +48,13 @@ import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXHyperlink;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.internal.client.CertificateEntry;
+import org.zaproxy.addon.network.internal.client.KeyStoreEntry;
+import org.zaproxy.addon.network.internal.client.KeyStoreEntry.Type;
+import org.zaproxy.addon.network.internal.client.KeyStores;
+import org.zaproxy.addon.network.internal.client.KeyStoresException;
 import org.zaproxy.addon.network.internal.client.Pkcs11Driver;
 import org.zaproxy.addon.network.internal.ui.CertificateDialog;
 import org.zaproxy.addon.network.internal.ui.CertificatesTableModel;
@@ -145,7 +145,7 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
 
         pkcs12Panel.init(options);
         pkcs11Panel.init(options);
-        keyStorePanel.init();
+        keyStorePanel.init(options);
 
         useCertificate.setSelected(options.isUseCertificate());
     }
@@ -461,6 +461,8 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
         private boolean firstInit;
         private Runnable selectOwnTab;
 
+        private KeyStores keyStores;
+
         private boolean retry;
         private int loginAttempts;
 
@@ -504,12 +506,8 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                                 }
 
                                 try {
-                                    SSLContextManager contextManager =
-                                            HttpSender.getSSLConnector().getSSLContextManager();
-                                    certificatesTableModel.clear();
-                                    contextManager.getAliases(index).stream()
-                                            .map(AliasCertificate::getName)
-                                            .forEach(certificatesTableModel::addCertificate);
+                                    KeyStoreEntry entry = keyStores.get(index);
+                                    certificatesTableModel.setCertificates(entry.getCertificates());
                                     boolean hasEntries = certificatesTableModel.getRowCount() != 0;
                                     if (hasEntries) {
                                         certificatesTable.setRowSelectionInterval(0, 0);
@@ -528,11 +526,7 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                                     "network.ui.options.clientcertificates.keystore.view"));
             viewActiveCertificateButton.setEnabled(false);
             viewActiveCertificateButton.addActionListener(
-                    e -> {
-                        SSLContextManager contextManager =
-                                HttpSender.getSSLConnector().getSSLContextManager();
-                        showCertificate(contextManager.getDefaultCertificate());
-                    });
+                    e -> showCertificate(keyStores.getActiveCertificate().getCertificate()));
 
             JLabel activeCertificateLabel =
                     new JLabel(
@@ -555,8 +549,7 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                             return;
                         }
 
-                        HttpSender.getSSLConnector().getSSLContextManager().removeKeyStore(index);
-                        keyStoresTableModel.remove(index);
+                        keyStores.remove(index);
                         certificatesTableModel.clear();
                         activateCertificateButton.setEnabled(false);
                         viewCertificateButton.setEnabled(false);
@@ -647,22 +640,18 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
             activateCertificateButton.setEnabled(aliases);
             viewCertificateButton.setEnabled(aliases);
             activeCertificateField.setEnabled(enabled);
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
             viewActiveCertificateButton.setEnabled(
-                    enabled && contextManager.getDefaultCertificate() != null);
+                    enabled && keyStores != null && keyStores.getActiveCertificate() != null);
         }
 
         void setTabSelector(Runnable selectOwnTab) {
             this.selectOwnTab = selectOwnTab;
         }
 
-        void init() {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
+        void init(ClientCertificatesOptions options) {
+            keyStores = options.getKeyStores();
 
-            keyStoresTableModel.clear();
-            for (int i = 0; i < contextManager.getKeyStoreCount(); i++) {
-                keyStoresTableModel.add(contextManager.getKeyStoreDescription(i));
-            }
+            keyStoresTableModel.setKeyStores(keyStores);
             if (keyStoresTableModel.getRowCount() != 0) {
                 keyStoresTable.setRowSelectionInterval(0, 0);
             }
@@ -677,26 +666,27 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
         }
 
         private void updateActiveCertificate() {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
-            String key = "";
-            if (contextManager.getDefaultCertificate() != null) {
-                key = contextManager.getDefaultKey();
+            CertificateEntry certificate = keyStores.getActiveCertificate();
+            String key = null;
+            if (certificate != null) {
+                key = certificate.getName();
             }
             activeCertificateField.setText(key);
-            viewActiveCertificateButton.setEnabled(!key.isEmpty());
+            viewActiveCertificateButton.setEnabled(certificate != null);
         }
 
         void save(ClientCertificatesOptions options) {
-            // TODO set the correct index, once the certs are fully managed by the add-on.
-            // options.setPkcs12Index(0);
+            CertificateEntry activeCertificate = keyStores.getActiveCertificate();
+            if (activeCertificate != null
+                    && activeCertificate.getParent().getType() == Type.PKCS12) {
+                options.setPkcs12Index(activeCertificate.getIndex());
+            }
         }
 
         void addPkcs12KeyStore(String file, String password) {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
             try {
-                int index = contextManager.loadPKCS12Certificate(file, password);
-                keyStoresTableModel.add(index, contextManager.getKeyStoreDescription(index));
-
+                keyStores.addPkcs12KeyStore(file, password);
+                int index = keyStores.size() - 1;
                 keyStoreAdded(index);
 
             } catch (Exception e) {
@@ -709,46 +699,48 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
         }
 
         void addPkcs11KeyStore(Pkcs11Driver driver, String pin, boolean useSlotListIndex) {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
-
             String name = driver.getName();
             String password = pin.isEmpty() ? null : pin;
+            Throwable cause;
             try {
-                PCKS11ConfigurationBuilder confBuilder = PKCS11Configuration.builder();
-                confBuilder.setName(driver.getName()).setLibrary(driver.getLibrary());
-                if (useSlotListIndex) {
-                    confBuilder.setSlotListIndex(driver.getSlotListIndex());
-                } else {
-                    confBuilder.setSlotId(driver.getSlot());
-                }
+                KeyStoreEntry keyStoreEntry =
+                        keyStores.addPkcs11KeyStore(
+                                driver.getName(),
+                                driver.getConfiguration(useSlotListIndex),
+                                password);
 
-                int index = contextManager.initPKCS11(confBuilder.build(), password);
-
-                if (index == -1) {
+                if (keyStoreEntry == null) {
                     LOGGER.error(
                             "The required PKCS#11 provider is not available ({} or {}).",
-                            SSLContextManager.SUN_PKCS11_CANONICAL_CLASS_NAME,
-                            SSLContextManager.IBM_PKCS11_CANONICAL_CLASS_NAME);
+                            KeyStores.SUN_PKCS11_CANONICAL_CLASS_NAME,
+                            KeyStores.IBM_PKCS11_CANONICAL_CLASS_NAME);
                     showErrorMessageSunPkcs11ProviderNotAvailable(view);
                     return;
                 }
 
-                keyStoresTableModel.add(index, contextManager.getKeyStoreDescription(index));
+                int index = keyStores.size() - 1;
                 keyStoreAdded(index);
 
                 loginAttempts = 0;
                 retry = true;
+                return;
+            } catch (KeyStoresException e) {
+                cause = e.getCause();
+            }
 
-            } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof ProviderException) {
-                    if ("Error parsing configuration".equals(e.getCause().getMessage())) {
+            if (cause instanceof InvocationTargetException) {
+                if (cause.getCause() instanceof ProviderException) {
+                    if ("Error parsing configuration".equals(cause.getCause().getMessage())) {
                         // There was a problem with the configuration provided:
                         //   - Missing library.
                         //   - Malformed configuration.
                         //   - ...
                         logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(
-                                view, false, name, pin, e);
-                    } else if ("Initialization failed".equals(e.getCause().getMessage())) {
+                                view, false, name, pin, cause);
+                        return;
+                    }
+
+                    if ("Initialization failed".equals(cause.getCause().getMessage())) {
                         // The initialisation may fail because of:
                         //   - no smart card reader or smart card detected.
                         //   - smart card is in use by other application.
@@ -757,24 +749,28 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                         if (retry) {
                             retry = false;
                             addPkcs11KeyStore(driver, pin, useSlotListIndex);
-                        } else {
-                            showClientCertError(
-                                    view,
-                                    Constant.messages.getString(
-                                            "network.ui.options.clientcertificates.error.pkcs11.lib"));
-                            retry = true;
-                            LOGGER.warn("Couldn't add key from {}", name, e);
+                            return;
                         }
-                    } else {
-                        logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(
-                                view, false, name, pin, e);
+                        showClientCertError(
+                                view,
+                                Constant.messages.getString(
+                                        "network.ui.options.clientcertificates.error.pkcs11.lib"));
+                        retry = true;
+                        LOGGER.warn("Couldn't add key from {}", name, cause);
+                        return;
                     }
-                } else {
-                    logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, e);
+                    logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(
+                            view, false, name, pin, cause);
+                    return;
                 }
-            } catch (IOException e) {
-                if (e.getMessage().equals("load failed")
-                        && e.getCause()
+                logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, cause);
+
+                return;
+            }
+
+            if (cause instanceof IOException) {
+                if (cause.getMessage().equals("load failed")
+                        && cause.getCause()
                                 .getClass()
                                 .getName()
                                 .equals("javax.security.auth.login.FailedLoginException")) {
@@ -794,22 +790,26 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                                 "PKCS#11: Incorrect PIN or password{}: {} *LAST TRY BEFORE BLOCKING*",
                                 attempts,
                                 name);
-                    } else {
-                        showClientCertError(
-                                view,
-                                Constant.messages.getString(
-                                        "network.ui.options.clientcertificates.error.pkcs11.wrongpassword"),
-                                attempts);
-                        LOGGER.warn("PKCS#11: Incorrect PIN or password{}: {}", attempts, name);
+                        return;
                     }
-                } else {
-                    logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, e);
+                    showClientCertError(
+                            view,
+                            Constant.messages.getString(
+                                    "network.ui.options.clientcertificates.error.pkcs11.wrongpassword"),
+                            attempts);
+                    LOGGER.warn("PKCS#11: Incorrect PIN or password{}: {}", attempts, name);
+                    return;
                 }
-            } catch (KeyStoreException e) {
-                logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, e);
-            } catch (Exception e) {
-                logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, true, name, pin, e);
+                logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, cause);
+                return;
             }
+
+            if (cause instanceof KeyStoreException) {
+                logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, false, name, pin, cause);
+                return;
+            }
+
+            logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(view, true, name, pin, cause);
         }
 
         private static void showErrorMessageSunPkcs11ProviderNotAvailable(View view) {
@@ -860,7 +860,7 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
         }
 
         private static void logAndShowGenericErrorMessagePkcs11CouldNotBeAdded(
-                View view, boolean isErrorLevel, String name, String pin, Exception e) {
+                View view, boolean isErrorLevel, String name, String pin, Throwable e) {
             if (pin.length() == 0) {
                 showClientCertError(
                         view,
@@ -912,33 +912,22 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
 
             certificatesTable.setRowSelectionInterval(0, 0);
 
-            if (certificatesTable.getRowCount() == 1 && !isAnyCertificateActive()) {
+            if (certificatesTable.getRowCount() == 1 && keyStores.getActiveCertificate() == null) {
                 activateSelectedCertificate();
             }
         }
 
-        private static boolean isAnyCertificateActive() {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
-            String currentKey = contextManager.getDefaultKey();
-            return currentKey != null && !currentKey.isEmpty();
-        }
-
         private void activateSelectedCertificate() {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
-            int keyStore = getSelectedRow(keyStoresTable);
             int alias = getSelectedRow(certificatesTable);
-            if (keyStore == -1 || alias == -1) {
+            if (alias == -1) {
                 return;
             }
 
-            if (!contextManager.isKeyUnlocked(keyStore, alias)) {
+            CertificateEntry certificateEntry = certificatesTableModel.getCertificateEntry(alias);
+            if (!certificateEntry.isUnlocked()) {
                 try {
-                    if (!contextManager.unlockKeyWithDefaultPassword(keyStore, alias)) {
-                        String password = getPassword();
-
-                        if (!contextManager.unlockKey(keyStore, alias, password)) {
-                            showKeyStoreCertError(view, "");
-                        }
+                    if (!certificateEntry.unlock(getPassword())) {
+                        showKeyStoreCertError(view, "");
                     }
                 } catch (Exception e) {
                     showKeyStoreCertError(view, e.toString());
@@ -947,39 +936,18 @@ class ClientCertificatesOptionsPanel extends AbstractParamPanel {
                 }
             }
 
-            Certificate cert = contextManager.getCertificate(keyStore, alias);
-            try {
-                contextManager.getFingerPrint(cert);
-            } catch (KeyStoreException kse) {
-                showCertError(
-                        view,
-                        "network.ui.options.clientcertificates.error.fingerprint",
-                        kse.toString());
-            }
-
-            try {
-                contextManager.setDefaultKey(keyStore, alias);
-                HttpSender.getSSLConnector().setActiveCertificate();
-            } catch (KeyStoreException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            keyStores.setActiveCertificate(certificateEntry);
 
             updateActiveCertificate();
         }
 
         private void viewSelectedCertificate() {
-            SSLContextManager contextManager = HttpSender.getSSLConnector().getSSLContextManager();
-            int keystore = getSelectedRow(keyStoresTable);
-            if (keystore == -1) {
+            int row = getSelectedRow(certificatesTable);
+            if (row == -1) {
                 return;
             }
 
-            int alias = getSelectedRow(certificatesTable);
-            if (alias == -1) {
-                return;
-            }
-
-            showCertificate(contextManager.getCertificate(keystore, alias));
+            showCertificate(certificatesTableModel.getCertificateEntry(row).getCertificate());
         }
 
         private void showCertificate(Certificate certificate) {

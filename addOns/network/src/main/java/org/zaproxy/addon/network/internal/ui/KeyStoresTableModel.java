@@ -19,10 +19,10 @@
  */
 package org.zaproxy.addon.network.internal.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.network.internal.client.KeyStores;
 
 /** A table model for KeyStores. */
 public class KeyStoresTableModel extends AbstractTableModel {
@@ -36,31 +36,24 @@ public class KeyStoresTableModel extends AbstractTableModel {
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
-    private final List<String> keyStores;
+    private KeyStores keyStores;
 
-    public KeyStoresTableModel() {
-        keyStores = new ArrayList<>();
-    }
+    public void setKeyStores(KeyStores keyStores) {
+        if (this.keyStores != null) {
+            this.keyStores.removeChangeListener(this::keyStoresChanged);
+        }
 
-    public void clear() {
-        keyStores.clear();
+        this.keyStores = keyStores;
+
+        if (keyStores != null) {
+            keyStores.addChangeListener(this::keyStoresChanged);
+        }
+
         fireTableDataChanged();
     }
 
-    public void add(String name) {
-        keyStores.add(name);
-        int index = keyStores.size() - 1;
-        fireTableRowsInserted(index, index);
-    }
-
-    public void add(int index, String name) {
-        keyStores.add(index, name);
-        fireTableRowsInserted(index, index);
-    }
-
-    public void remove(int index) {
-        keyStores.remove(index);
-        fireTableRowsDeleted(index, index);
+    private void keyStoresChanged(ChangeEvent e) {
+        fireTableDataChanged();
     }
 
     @Override
@@ -80,11 +73,17 @@ public class KeyStoresTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
+        if (keyStores == null) {
+            return 0;
+        }
         return keyStores.size();
     }
 
     @Override
-    public String getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (keyStores == null) {
+            return null;
+        }
         return keyStores.get(rowIndex);
     }
 }

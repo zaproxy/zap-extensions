@@ -22,27 +22,25 @@ package org.zaproxy.addon.network;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-import ch.csnc.extension.httpclient.SSLContextManager;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.MockedStatic;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.SSLConnector;
+import org.zaproxy.addon.network.internal.client.CertificateEntry;
+import org.zaproxy.addon.network.internal.client.KeyStoreEntry;
+import org.zaproxy.addon.network.internal.client.KeyStores;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ClientCertificatesOptions}. */
@@ -55,29 +53,17 @@ class ClientCertificatesOptionsUnitTest {
     private static final String PKCS12_STORE_KEY = "network.clientCertificates.pkcs12.store";
     private static final String PKCS11_USE_SLI_KEY = "network.clientCertificates.pkcs11.useSli";
 
-    private MockedStatic<HttpSender> httpSenderStatic;
-    private SSLConnector sslConnector;
+    private KeyStores keyStores;
     private ZapXmlConfiguration config;
     private ClientCertificatesOptions options;
 
     @BeforeEach
     void setUp() {
-        cleanUp();
+        keyStores = mock(KeyStores.class);
 
-        sslConnector = mock(SSLConnector.class);
-        httpSenderStatic = mockStatic(HttpSender.class);
-        httpSenderStatic.when(() -> HttpSender.getSSLConnector()).thenReturn(sslConnector);
-
-        options = new ClientCertificatesOptions();
+        options = new ClientCertificatesOptions(keyStores);
         config = new ZapXmlConfiguration();
         options.load(config);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        if (httpSenderStatic != null) {
-            httpSenderStatic.close();
-        }
     }
 
     @Test
@@ -101,6 +87,7 @@ class ClientCertificatesOptionsUnitTest {
         assertThat(options.getPkcs12Index(), is(equalTo(0)));
         assertThat(options.isPkcs12Store(), is(equalTo(false)));
         assertThat(options.isPkcs11UseSlotListIndex(), is(equalTo(false)));
+        assertThat(options.getKeyStores(), is(notNullValue()));
     }
 
     @Test
@@ -142,34 +129,6 @@ class ClientCertificatesOptionsUnitTest {
         // Then
         assertThat(options.isUseCertificate(), is(equalTo(use)));
         assertThat(config.getBoolean(USE_CERTIFICATE), is(equalTo(use)));
-    }
-
-    @Test
-    void shouldChangeCertificateUsage() throws Exception {
-        // Given / When
-        options.setUseCertificate(true);
-        options.setUseCertificate(false);
-        // Then
-        verify(sslConnector).setEnableClientCert(true);
-        verify(sslConnector).setEnableClientCert(false);
-    }
-
-    @Test
-    void shouldNotChangeCertificateUsageIfAlreadyEnabled() throws Exception {
-        // Given
-        options.setUseCertificate(true);
-        // When
-        options.setUseCertificate(true);
-        // Then
-        verify(sslConnector).setEnableClientCert(anyBoolean());
-    }
-
-    @Test
-    void shouldNotChangeCertificateUsageIfAlreadyDisabled() throws Exception {
-        // Given / When
-        options.setUseCertificate(false);
-        // Then
-        verify(sslConnector, times(0)).setEnableClientCert(anyBoolean());
     }
 
     @Test
@@ -405,7 +364,7 @@ class ClientCertificatesOptionsUnitTest {
     }
 
     @Test
-    void shouldLoadPkcs12CertificateIfDataPresent() throws Exception {
+    void shouldAddPkcs12CertificateIfDataPresent() throws Exception {
         // Given
         String file = "/path/to/file";
         config.setProperty(PKCS12_FILE_KEY, file);
@@ -413,41 +372,63 @@ class ClientCertificatesOptionsUnitTest {
         config.setProperty(PKCS12_PASSWORD_KEY, password);
         int index = 1234;
         config.setProperty(PKCS12_INDEX_KEY, index);
-        SSLContextManager sslContextManager = mock(SSLContextManager.class);
-        given(sslConnector.getSSLContextManager()).willReturn(sslContextManager);
-        int keyStoreIndex = 4321;
-        given(sslContextManager.loadPKCS12Certificate(any(), any())).willReturn(keyStoreIndex);
+        KeyStoreEntry keyStoreEntry = mock(KeyStoreEntry.class);
+        given(keyStores.addPkcs12KeyStore(file, password)).willReturn(keyStoreEntry);
+        CertificateEntry certificateEntry = mock(CertificateEntry.class);
+        given(keyStoreEntry.getCertificate(index)).willReturn(certificateEntry);
         // When
         options.load(config);
         // Then
-        verify(sslContextManager).loadPKCS12Certificate(file, password);
-        verify(sslContextManager).unlockKey(keyStoreIndex, index, password);
-        verify(sslContextManager).setDefaultKey(keyStoreIndex, index);
-        verify(sslConnector, times(0)).setEnableClientCert(anyBoolean());
+        verify(keyStores).addPkcs12KeyStore(file, password);
+        verify(keyStores).setActiveCertificate(certificateEntry);
     }
 
     @Test
-    void shouldEnablePkcs12CertificateIfUsingCertificate() throws Exception {
+    void shouldNotAddPkcs12CertificateIfFileNotPresent() throws Exception {
         // Given
-        boolean useCertificate = true;
-        config.setProperty(USE_CERTIFICATE, useCertificate);
+        String file = null;
+        config.setProperty(PKCS12_FILE_KEY, file);
+        String password = "password";
+        config.setProperty(PKCS12_PASSWORD_KEY, password);
+        int index = 0;
+        config.setProperty(PKCS12_INDEX_KEY, index);
+        // When
+        options.load(config);
+        // Then
+        verifyNoInteractions(keyStores);
+    }
+
+    @Test
+    void shouldNotAddPkcs12CertificateIfPasswordNotPresent() throws Exception {
+        // Given
+        String file = "/path/to/file";
+        config.setProperty(PKCS12_FILE_KEY, file);
+        String password = null;
+        config.setProperty(PKCS12_PASSWORD_KEY, password);
+        int index = 0;
+        config.setProperty(PKCS12_INDEX_KEY, index);
+        // When
+        options.load(config);
+        // Then
+        verifyNoInteractions(keyStores);
+    }
+
+    @Test
+    void shouldNotSetActivePkcsCertificateIfIndexNotValid() throws Exception {
+        // Given
         String file = "/path/to/file";
         config.setProperty(PKCS12_FILE_KEY, file);
         String password = "password";
         config.setProperty(PKCS12_PASSWORD_KEY, password);
         int index = 1234;
         config.setProperty(PKCS12_INDEX_KEY, index);
-        SSLContextManager sslContextManager = mock(SSLContextManager.class);
-        given(sslConnector.getSSLContextManager()).willReturn(sslContextManager);
-        int keyStoreIndex = 4321;
-        given(sslContextManager.loadPKCS12Certificate(any(), any())).willReturn(keyStoreIndex);
+        KeyStoreEntry keyStoreEntry = mock(KeyStoreEntry.class);
+        given(keyStores.addPkcs12KeyStore(file, password)).willReturn(keyStoreEntry);
         // When
         options.load(config);
         // Then
-        verify(sslContextManager).loadPKCS12Certificate(file, password);
-        verify(sslContextManager).unlockKey(keyStoreIndex, index, password);
-        verify(sslContextManager).setDefaultKey(keyStoreIndex, index);
-        verify(sslConnector).setEnableClientCert(useCertificate);
+        verify(keyStores).addPkcs12KeyStore(file, password);
+        verify(keyStores, times(0)).setActiveCertificate(any());
     }
 
     private static ZapXmlConfiguration configWith(String value) {

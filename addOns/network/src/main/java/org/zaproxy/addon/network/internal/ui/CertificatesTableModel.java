@@ -19,10 +19,11 @@
  */
 package org.zaproxy.addon.network.internal.ui;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.network.internal.client.CertificateEntry;
 
 public class CertificatesTableModel extends AbstractTableModel {
 
@@ -35,21 +36,24 @@ public class CertificatesTableModel extends AbstractTableModel {
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
-    private final List<String> certificates;
+    private List<CertificateEntry> certificates;
 
     public CertificatesTableModel() {
-        certificates = new ArrayList<>();
+        certificates = Collections.emptyList();
     }
 
-    public void addCertificate(String certificate) {
-        certificates.add(certificate);
-        int index = certificates.size() - 1;
-        fireTableRowsInserted(index, index);
+    public void setCertificates(List<CertificateEntry> certificates) {
+        this.certificates = certificates;
+        fireTableDataChanged();
     }
 
     public void clear() {
-        certificates.clear();
+        certificates = Collections.emptyList();
         fireTableDataChanged();
+    }
+
+    public CertificateEntry getCertificateEntry(int rowIndex) {
+        return certificates.get(rowIndex);
     }
 
     @Override
@@ -74,6 +78,6 @@ public class CertificatesTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return certificates.get(rowIndex);
+        return certificates.get(rowIndex).getName();
     }
 }
