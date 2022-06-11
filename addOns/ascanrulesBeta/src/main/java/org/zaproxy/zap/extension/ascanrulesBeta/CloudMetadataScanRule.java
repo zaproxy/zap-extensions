@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpMethodHelper;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.users.User;
@@ -73,7 +74,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     static {
         try {
             Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
-            useHttpSender = true;
+            useHttpSender = SSLConnector.class.getAnnotation(Deprecated.class) != null;
         } catch (Exception e) {
             useHttpSender = false;
         }
