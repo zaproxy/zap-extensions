@@ -27,19 +27,23 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookMenu;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.requester.PopupMenuResendMessage;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 public class ExtensionRequester extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionRequester";
 
-    private static final String RESOURCE = "/org/zaproxy/zap/extension/requester/resources";
+    private static final String RESOURCES_DIR = "resources/";
 
-    public static final ImageIcon REQUESTER_ICON =
-            new ImageIcon(ExtensionRequester.class.getResource(RESOURCE + "/requester.png"));
+    private static ImageIcon requesterIcon;
+
+    private static ImageIcon manualIcon;
 
     private RequesterPanel requesterPanel = null;
     private RightClickMsgMenuRequester popupMsgMenuRequester = null;
@@ -47,9 +51,30 @@ public class ExtensionRequester extends ExtensionAdaptor {
     private RequesterParam requesterParams;
     private RequesterOptionsPanel requesterOptionsPanel;
 
+    private ManualHttpRequestEditorDialog resendDialog;
+
     public ExtensionRequester() {
         super(NAME);
         this.setOrder(211);
+    }
+
+    public static final ImageIcon getManualIcon() {
+        if (manualIcon == null) {
+            manualIcon = createIcon("hand.png");
+        }
+        return manualIcon;
+    }
+
+    private static ImageIcon createIcon(String relativePath) {
+        return DisplayUtils.getScaledIcon(
+                ExtensionRequester.class.getResource(RESOURCES_DIR + relativePath));
+    }
+
+    public static ImageIcon getRequesterIcon() {
+        if (requesterIcon == null) {
+            requesterIcon = createIcon("requester.png");
+        }
+        return requesterIcon;
     }
 
     @Override
@@ -67,7 +92,28 @@ public class ExtensionRequester extends ExtensionAdaptor {
             menu.addPopupMenuItem(getPopupMsgMenuRequester());
             // ToolsMenuItem
             menu.addToolsMenuItem(new ToolsMenuItemRequester(this));
+
+            if (isDeprecated(org.zaproxy.zap.extension.stdmenus.PopupMenuResendMessage.class)) {
+                resendDialog =
+                        new ManualHttpRequestEditorDialog(true, "resend", "ui.dialogs.manreq");
+                resendDialog.setTitle(Constant.messages.getString("requester.resend.dialog.title"));
+                extensionHook.addOptionsChangedListener(resendDialog);
+
+                PopupMenuResendMessage popupMenuResendMessage =
+                        new PopupMenuResendMessage(
+                                Constant.messages.getString("requester.resend.popup"),
+                                getManualIcon(),
+                                msg -> {
+                                    resendDialog.setMessage(msg);
+                                    resendDialog.setVisible(true);
+                                });
+                menu.addPopupMenuItem(popupMenuResendMessage);
+            }
         }
+    }
+
+    private static boolean isDeprecated(Class<?> clazz) {
+        return clazz.getAnnotation(Deprecated.class) != null;
     }
 
     private RequesterParam getOptionsParam() {
@@ -142,6 +188,10 @@ public class ExtensionRequester extends ExtensionAdaptor {
     public void unload() {
         if (getView() != null) {
             getRequesterPanel().unload();
+
+            if (resendDialog != null) {
+                resendDialog.dispose();
+            }
         }
     }
 

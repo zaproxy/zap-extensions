@@ -39,7 +39,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
         this.setLayout(new GridLayout(1, 1));
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("requester.panel.title"));
-        this.setIcon(ExtensionRequester.REQUESTER_ICON);
+        this.setIcon(ExtensionRequester.getRequesterIcon());
         this.setDefaultAccelerator(
                 extension
                         .getView()
