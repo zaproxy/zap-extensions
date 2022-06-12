@@ -505,7 +505,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
      */
     @Override
     public String getHelpIndex() {
-        return "ui.dialogs.options.spider";
+        return "addon.spider.options";
     }
 
     private static class DomainsAlwaysInScopeMultipleOptionsPanel

@@ -212,7 +212,7 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     @Override
     public String getHelpIndex() {
-        return "ui.dialogs.spider";
+        return "addon.spider.dialog";
     }
 
     @Override
