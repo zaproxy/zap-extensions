@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Added
+- New User Agent strings to the User Agent fuzz scan rule.
+
 ## [41] - 2022-06-08
 ### Changed
 - Maintenance changes.

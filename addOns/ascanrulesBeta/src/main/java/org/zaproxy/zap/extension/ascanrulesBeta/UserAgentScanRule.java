@@ -51,6 +51,13 @@ public class UserAgentScanRule extends AbstractAppPlugin {
             "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)";
     private static final String INTERNET_EXPLORER_6 =
             "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
+    // 2022-06-15 "Latest" IE UA according to:
+    // https://www.whatismybrowser.com/guides/the-latest-user-agent/internet-explorer
+    private static final String INTERNET_EXPLORER_11 =
+            "Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko";
+    // First release of Edge Chromium, per: https://superuser.com/a/1552859
+    private static final String EDGE_CHROMIUM =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3739.0 Safari/537.36 Edg/75.0.109.0";
     private static final String GOOGLE_BOT_2_1 =
             "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
     private static final String MSN_BOT_1_1 = "msnbot/1.1 (+http://search.msn.com/msnbot.htm)";
@@ -58,16 +65,35 @@ public class UserAgentScanRule extends AbstractAppPlugin {
             "Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)";
     private static final String I_PHONE_3 =
             "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16";
+    // 2022-06-15 iPhone 6 is now EOL (https://endoflife.date/iphone), latest UA per:
+    // https://www.quora.com/What-is-the-iPhone-6-and-iPhone-6-plus-user-agent
+    private static final String I_PHONE_6 =
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12A366 Safari/600.1.4";
+    // 2022-06-15 I looked up the ESR and it's currently 91, UA per:
+    // https://whatmyuseragent.com/browser/ff/firefox/firefox-91
+    private static final String FF_91_WIN10 =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/91.0";
+    // 2022-16-15 I couldn't find a good source of EOL info for Chrome, so I'm going v91 like
+    // Firefox, per:
+    // https://developers.whatismybrowser.com/useragents/parse/86857789chrome-windows-blink
+    private static final String CHROME_91_WIN10 =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 
     private static final List<String> USER_AGENTS =
             Arrays.asList(
                     INTERNET_EXPLORER_8,
                     INTERNET_EXPLORER_7,
                     INTERNET_EXPLORER_6,
+                    INTERNET_EXPLORER_11,
+                    EDGE_CHROMIUM,
                     GOOGLE_BOT_2_1,
                     MSN_BOT_1_1,
                     YAHOO_SLURP,
-                    I_PHONE_3);
+                    I_PHONE_3,
+                    I_PHONE_6,
+                    FF_91_WIN10,
+                    CHROME_91_WIN10);
+
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> USER_AGENTS;
     public static final String USER_AGENT_PAYLOAD_CATEGORY = "User-Agent";
 
