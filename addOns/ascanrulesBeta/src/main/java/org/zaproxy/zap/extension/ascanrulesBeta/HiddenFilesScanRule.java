@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,14 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                     CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
     static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
 
-    private static final List<String> HIDDEN_FILES = new ArrayList<>();
+    private static final List<String> HIDDEN_FILES =
+            Arrays.asList(
+                    // Source Control paths to look for, per:
+                    // https://twitter.com/intigriti/status/1533050946212839424
+                    ".hg", // Mercurial
+                    ".bzr", // Bazaar
+                    "._darcs", // Darcs
+                    "BitKeeper");
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> HIDDEN_FILES;
     public static final String HIDDEN_FILE_PAYLOAD_CATEGORY = "Hidden-File";
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
