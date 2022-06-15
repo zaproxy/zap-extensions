@@ -60,6 +60,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -95,8 +97,11 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
+import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
+import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
@@ -152,6 +157,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     Consumer<SslCertificateService> setSslCertificateService;
     boolean handleServerCerts;
+    boolean handleClient;
+    private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
     boolean handleClientCerts;
     boolean handleLocalServers;
     static Boolean handleConnection;
@@ -190,6 +197,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private LocalServerInfoLabel localServerInfoLabel;
 
+    private CookieStore globalCookieStore;
     private HttpState globalHttpState;
 
     public ExtensionNetwork() {
@@ -206,9 +214,42 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         if (isHandleConnection()) {
             connectionOptions = new ConnectionOptions();
             legacyConnectionOptions =
-                    new LegacyConnectionParam(() -> globalHttpState, connectionOptions);
+                    new LegacyConnectionParam(
+                            () -> {
+                                if (handleClient) {
+                                    LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
+                                }
+                                return globalHttpState;
+                            },
+                            connectionOptions);
             Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
+
+            handleClient = isDeprecated(SSLConnector.class);
+            if (handleClient) {
+                clientCertificatesOptions = new ClientCertificatesOptions();
+
+                try {
+                    httpSenderNetwork =
+                            new HttpSenderNetwork<>(
+                                    connectionOptions,
+                                    new HttpSenderApache(
+                                            this::getGlobalCookieStore,
+                                            connectionOptions,
+                                            clientCertificatesOptions));
+                } catch (Exception e) {
+                    LOGGER.error("An error occurred while creating the sender:", e);
+                }
+            }
         }
+    }
+
+    /**
+     * Gets the global cookie store.
+     *
+     * @return the global cookie store, might be {@code null}.
+     */
+    CookieStore getGlobalCookieStore() {
+        return globalCookieStore;
     }
 
     /**
@@ -551,7 +592,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         if (handleClientCerts) {
-            clientCertificatesOptions = new ClientCertificatesOptions();
+            if (!handleClient) {
+                clientCertificatesOptions = new ClientCertificatesOptions();
+            }
             extensionHook.addOptionsParamSet(clientCertificatesOptions);
         }
 
@@ -1314,6 +1357,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void destroy() {
         shutdownEventGroups();
+
+        if (httpSenderNetwork != null) {
+            httpSenderNetwork.close();
+        }
     }
 
     private void setSslCertificateService(SslCertificateService sslCertificateService) {
@@ -1439,6 +1486,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
             getModel().getOptionsParam().setConnectionParam(connectionParam);
             connectionParam.load(getModel().getOptionsParam().getConfig());
+        }
+
+        if (httpSenderNetwork != null) {
+            httpSenderNetwork.unload();
         }
 
         if (!handleServerCerts) {
@@ -1620,6 +1671,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionChanged(Session session) {
+            if (handleClient) {
+                globalCookieStore = new BasicCookieStore();
+            }
             globalHttpState = new HttpState();
             getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
         }
@@ -1639,10 +1693,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         @Override
         public void optionsChanged(OptionsParam optionsParam) {
             if (connectionOptions.isUseGlobalHttpState()) {
+                if (handleClient && globalCookieStore == null) {
+                    globalCookieStore = new BasicCookieStore();
+                }
                 if (globalHttpState == null) {
                     globalHttpState = new HttpState();
                 }
             } else {
+                if (handleClient) {
+                    globalCookieStore = null;
+                }
                 globalHttpState = null;
             }
         }

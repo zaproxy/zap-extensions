@@ -19,13 +19,13 @@
  */
 package org.zaproxy.addon.network;
 
-import ch.csnc.extension.httpclient.SSLContextManager;
 import java.util.Objects;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.SSLConnector;
+import org.zaproxy.addon.network.internal.client.CertificateEntry;
+import org.zaproxy.addon.network.internal.client.KeyStoreEntry;
+import org.zaproxy.addon.network.internal.client.KeyStores;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /** The options related to client certificates. */
@@ -65,6 +65,8 @@ public class ClientCertificatesOptions extends VersionedAbstractParam {
     private static final String PKCS11_BASE_KEY = BASE_KEY + ".pkcs11.";
     private static final String PKCS11_USE_SLI_KEY = PKCS11_BASE_KEY + "useSli";
 
+    private final KeyStores keyStores;
+
     private boolean useCertificate;
 
     private String pkcs12File = "";
@@ -73,6 +75,14 @@ public class ClientCertificatesOptions extends VersionedAbstractParam {
     private boolean pkcs12Store;
 
     private boolean pkcs11UseSlotListIndex;
+
+    ClientCertificatesOptions() {
+        this(new KeyStores());
+    }
+
+    ClientCertificatesOptions(KeyStores keyStores) {
+        this.keyStores = keyStores;
+    }
 
     @Override
     protected int getCurrentVersion() {
@@ -98,31 +108,37 @@ public class ClientCertificatesOptions extends VersionedAbstractParam {
 
         useCertificate = getBoolean(USE_CERTIFICATE_KEY, false);
 
-        if (!pkcs12File.isEmpty()
-                && !pkcs12Password.isEmpty()
-                && addPkcs12Certificate()
-                && useCertificate) {
-            updateCertificateUsage();
+        if (!pkcs12File.isEmpty() && !pkcs12Password.isEmpty()) {
+            addPkcs12Certificate();
         }
+    }
+
+    /**
+     * Gets the {@code KeyStore}s available, their certificates, and the active certificate.
+     *
+     * @return the KeyStores.
+     */
+    public KeyStores getKeyStores() {
+        return keyStores;
     }
 
     boolean addPkcs12Certificate() {
         try {
-            SSLConnector sslConnector = HttpSender.getSSLConnector();
-            SSLContextManager contextManager = sslConnector.getSSLContextManager();
-            int keyStoreIndex = contextManager.loadPKCS12Certificate(pkcs12File, pkcs12Password);
-            contextManager.unlockKey(keyStoreIndex, pkcs12Index, pkcs12Password);
-            contextManager.setDefaultKey(keyStoreIndex, pkcs12Index);
-            sslConnector.setActiveCertificate();
+            KeyStoreEntry keyStoreEntry = keyStores.addPkcs12KeyStore(pkcs12File, pkcs12Password);
+            CertificateEntry certificateEntry = keyStoreEntry.getCertificate(pkcs12Index);
+            if (certificateEntry == null) {
+                LOGGER.warn(
+                        "Certificate not found in the keystore, using index {}, total certificates: {}",
+                        pkcs12Index,
+                        keyStoreEntry.getCertificates().size());
+                return false;
+            }
+            keyStores.setActiveCertificate(certificateEntry);
             return true;
         } catch (Exception e) {
-            LOGGER.warn("An error occurred while enabling the certificate:", e);
+            LOGGER.warn("An error occurred while setting the active certificate:", e);
             return false;
         }
-    }
-
-    private void updateCertificateUsage() {
-        HttpSender.getSSLConnector().setEnableClientCert(useCertificate);
     }
 
     private void migrateCoreConfigs() {
@@ -164,14 +180,8 @@ public class ClientCertificatesOptions extends VersionedAbstractParam {
      * @param use {@code true} to use a client certificate, {@code false} otherwise.
      */
     public void setUseCertificate(boolean use) {
-        boolean changed = useCertificate != use;
-
         useCertificate = use;
         getConfig().setProperty(USE_CERTIFICATE_KEY, useCertificate);
-
-        if (changed) {
-            updateCertificateUsage();
-        }
     }
 
     /**

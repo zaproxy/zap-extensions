@@ -141,6 +141,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
     private static final boolean DEFAULT_STORE_HTTP_PROXY_PASS = true;
 
+    private List<ChangesListener> changesListeners = new ArrayList<>();
+
     private int timeoutInSecs = DEFAULT_TIMEOUT;
     private String defaultUserAgent = DEFAULT_DEFAULT_USER_AGENT;
     private boolean useGlobalHttpState;
@@ -209,6 +211,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
         parseHttpProxyOptions();
         parseSocksProxyOptions();
+
+        notifyChangesListeners();
     }
 
     private void migrateCoreConfigs() {
@@ -300,6 +304,12 @@ public class ConnectionOptions extends VersionedAbstractParam {
     public void setTimeoutInSecs(int timeoutInSecs) {
         setTimeoutInSecsImpl(timeoutInSecs);
         getConfig().setProperty(TIMEOUT_KEY, this.timeoutInSecs);
+
+        notifyChangesListeners();
+    }
+
+    private void notifyChangesListeners() {
+        changesListeners.forEach(ChangesListener::optionsChanged);
     }
 
     private void setTimeoutInSecsImpl(int timeoutInSecs) {
@@ -398,6 +408,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
         this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
         persistTlsProtocols(tlsProtocols);
         applyTlsProtocols();
+
+        notifyChangesListeners();
     }
 
     private void persistTlsProtocols(List<String> tlsProtocols) {
@@ -928,5 +940,15 @@ public class ConnectionOptions extends VersionedAbstractParam {
         if (socksProxyEnabled) {
             applySocksProxy();
         }
+    }
+
+    public void addChangesListener(ChangesListener listener) {
+        Objects.requireNonNull(listener);
+        changesListeners.add(listener);
+    }
+
+    public interface ChangesListener {
+
+        void optionsChanged();
     }
 }
