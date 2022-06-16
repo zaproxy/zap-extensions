@@ -1,0 +1,28 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /first:
+    get:
+      parameters:
+      - "$ref": "#/components/parameters/p_one"
+      - "$ref": "#/components/parameters/p_one"
+      - "$ref": "#/components/parameters/p_one"
+      responses:
+        200:
+          description: ok
+components:
+  parameters:
+    p_one:
+      in: query
+      schema:
+        "$ref": "#/components/schemas/NestedObject"
+      style: deepObject
+  schemas:
+    NestedObject:
+      additionalProperties:
+        oneOf:
+        - "$ref": "#/components/schemas/NestedObject"
+        - not:
+            type: object
+      type: object
