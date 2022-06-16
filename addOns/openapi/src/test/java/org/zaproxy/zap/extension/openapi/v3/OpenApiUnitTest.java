@@ -319,6 +319,40 @@ class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
+    void shouldFailToParseDefinitionWithSchemaComponentRecursion() throws Exception {
+        // Given
+        String test = "/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "schema_component_recursion.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                new RequesterListener() {
+
+                    @Override
+                    public void handleMessage(HttpMessage message, int initiator) {
+                        accessedUrls.put(
+                                message.getRequestHeader().getMethod()
+                                        + " "
+                                        + message.getRequestHeader().getURI().toString(),
+                                message.getRequestBody().toString());
+                    }
+                };
+        requestor.addListener(listener);
+
+        // When / Then
+        assertThrows(StackOverflowError.class, () -> converter.getRequestModels());
+    }
+
+    @Test
     void shouldUseValueGenerator() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
