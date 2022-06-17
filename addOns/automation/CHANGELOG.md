@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Show each context URL in its own line when editing in the GUI (Issue 7241).
 - Correct error messages.
 - Wrong API end point reference in help
+- Fix exception when alerts found during active scan no longer exist when creating the data for the report.
 
 ## [0.15.0] - 2022-04-25
 ### Added

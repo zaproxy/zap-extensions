@@ -29,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
@@ -60,8 +61,10 @@ public class ActiveScanJobResultData extends JobResultData {
         List<Integer> alertIds = activeScan.getAlertsIds();
         for (int id : alertIds) {
             try {
-                alertDataMap.put(
-                        id, new Alert(Model.getSingleton().getDb().getTableAlert().read(id)));
+                RecordAlert recordAlert = Model.getSingleton().getDb().getTableAlert().read(id);
+                if (recordAlert != null) {
+                    alertDataMap.put(id, new Alert(recordAlert));
+                }
             } catch (DatabaseException e) {
                 LOG.error("Could not read alert with id {} from the database : {}", id, e);
             }
