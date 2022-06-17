@@ -164,15 +164,19 @@
 				</th:block>
 			</th:block>
 			<th:block
-				th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
-				<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
-					<td><a
-						th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
-						th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert Name</a></td>
-					<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
-					<td align="center" th:text="${pscan.threshold}">Threshold</td>
-					<td align="center">-</td>
-				</tr>
+				th:if="${reportData.reportObjects.get('passiveScanData') != null}">
+				<th:block
+					th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
+					<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
+						<td><a
+							th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
+							th:if="${pscan.id &gt;= 0}" th:text="${pscan.name}">Alert
+								Name</a></td>
+						<td th:text="#{report.template.pass.type.passive}" align="center">Passive</td>
+						<td align="center" th:text="${pscan.threshold}">Threshold</td>
+						<td align="center">-</td>
+					</tr>
+				</th:block>
 			</th:block>
 		</table>
 		<div class="spacer-lg"></div>
