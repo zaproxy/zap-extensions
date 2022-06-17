@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Cross Site Scripting header splitting attacks.
+- The External Redirect scan rule now includes alert references on Alerts, and has example alert functionality for documentation generation purposes.
 
 ### Changed
 - Maintenance changes.
+- Updated the External Redirect scan rule to be more accurate.
 
 ### Fixed
 - The Remote File Inclusion scan rule no longer follows redirects before checking the response for content indicating a vulnerability (Issue 5887).
