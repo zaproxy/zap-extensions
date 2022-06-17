@@ -13,6 +13,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Default services notes in the help documents.
 - Extension description and UI name.
 
+### Fixed
+- Synchronized alerts cache access to avoid locks
+
 ## [0.10.0] - 2022-02-18
 ### Added
 - The following two statistics for each OAST service:

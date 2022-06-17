@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.oast;
 
+import static java.util.Collections.synchronizedMap;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,8 +73,11 @@ public class ExtensionOast extends ExtensionAdaptor {
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
 
     private final Map<String, OastService> services = new HashMap<>();
-    private final ReferenceMap alertCache =
-            new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT);
+
+    @SuppressWarnings("unchecked")
+    private final Map<String, Alert> alertCache =
+            synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT));
+
     private OastOptionsPanel oastOptionsPanel;
     private OastPanel oastPanel;
     private OastParam oastParam;
@@ -252,15 +257,14 @@ public class ExtensionOast extends ExtensionAdaptor {
         try {
             HttpMessage oastReceivedMsg = request.getHistoryReference().getHttpMessage();
             String uri = oastReceivedMsg.getRequestHeader().getURI().toString();
-            if (alertCache.keySet().stream().noneMatch(k -> uri.contains(k.toString()))) {
-                return;
-            }
-            Alert alert = null;
-            for (Object k : alertCache.keySet()) {
-                String key = k.toString();
-                if (uri.contains(key)) {
-                    alert = (Alert) alertCache.get(key);
-                }
+            Alert alert;
+            synchronized (alertCache) {
+                alert =
+                        alertCache.entrySet().stream()
+                                .filter(it -> uri.contains(it.getKey()))
+                                .findAny()
+                                .map(it -> it.getValue())
+                                .orElse(null);
             }
             if (alert == null) {
                 LOGGER.warn(
@@ -268,6 +272,7 @@ public class ExtensionOast extends ExtensionAdaptor {
                         uri);
                 return;
             }
+
             alert.setOtherInfo(
                     alert.getOtherInfo()
                             + '\n'
