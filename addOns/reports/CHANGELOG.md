@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Exceptions when generating some reports without the Automation add-on being installed.
+
 ## [0.13.0] - 2022-04-05
 ### Changed
 - Dependency updates.
