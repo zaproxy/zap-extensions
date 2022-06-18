@@ -28,9 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpMessage;
 
 /** A utility class for URL bruteforce related operations for the paramminer add-on. */
 public class UrlUtils {
@@ -138,5 +141,96 @@ public class UrlUtils {
             }
         }
         return paramGroups;
+    }
+
+    /**
+     * Removes all html tags from a given content string.
+     *
+     * @param str the content string to be stripped.
+     * @return a string without html tags.
+     */
+    public static String removeTags(String str) {
+        return str.replaceAll("(?s)<.*?>", "");
+    }
+
+    /**
+     * Returns a list of lines that are comon between two content Strings.
+     *
+     * @param body1 the first content string.
+     * @param body2 the second content string.
+     * @return a list of lines that are comon between two content Strings.
+     */
+    public static List<String> diffMap(String body1, String body2) {
+        List<String> diff = new ArrayList<>();
+        String[] body1Lines = StringUtils.split(body1, "\n");
+        String[] body2Lines = StringUtils.split(body2, "\n");
+        for (int i = 0; i < body1Lines.length; i++) {
+            if (body1Lines[i].equalsIgnoreCase(body2Lines[i])) {
+                diff.add(StringUtils.strip(body1Lines[i]));
+            }
+        }
+        return diff;
+    }
+
+    public static Factors defineAnomaly(
+            HttpMessage msg1, HttpMessage msg2, String param, String value, List<String> wordlist) {
+        Factors factors = new Factors();
+
+        String body1 = msg1.getResponseBody().toString();
+        String body2 = msg2.getResponseBody().toString();
+
+        if (msg1.getResponseHeader().getStatusCode() == msg2.getResponseHeader().getStatusCode()) {
+            factors.setSameCode(true);
+        }
+
+        if (msg1.getResponseHeader().getHeaders().equals(msg2.getResponseHeader().getHeaders())) {
+            factors.setHeaders(msg1.getResponseHeader().getHeaders());
+        }
+
+        if (body1.equalsIgnoreCase(body2)) {
+            factors.setSameBody(true);
+        } else if (StringUtils.countMatches(body1, '\n') == StringUtils.countMatches(body2, '\n')) {
+            factors.setLinesNumValue(StringUtils.countMatches(body1, '\n'));
+        } else if (removeTags(body1).equalsIgnoreCase(removeTags(body2))) {
+            factors.setPlainText(removeTags(body1));
+        } else if (!body1.isEmpty()
+                && !body2.isEmpty()
+                && (StringUtils.countMatches("\\n", body1)
+                        == StringUtils.countMatches("\\n", body2))) {
+            factors.setDiffMapLines(diffMap(body1, body2));
+        }
+
+        URI uri1 = msg1.getRequestHeader().getURI();
+        URI uri2 = msg2.getRequestHeader().getURI();
+        String path1 = "", path2 = "";
+        try {
+            path1 = uri1.getPath();
+        } catch (URIException e) {
+            logger.error("Invalid URL: " + uri1.toString(), e);
+        }
+        try {
+            path2 = uri2.getPath();
+        } catch (URIException e) {
+            logger.error("Invalid URL: " + uri2.toString(), e);
+        }
+
+        if (path1.equalsIgnoreCase(path2)) {
+            factors.setSameRedirectPath(path1);
+        }
+
+        if (!body2.contains(param)) {
+            List<String> missing = new ArrayList<>();
+            for (String word : wordlist) {
+                if (body1.contains(word)) {
+                    missing.add(word);
+                }
+            }
+            factors.setMissingParams(missing);
+        }
+
+        if (!body2.contains(value)) {
+            factors.setValueMissing(true);
+        }
+        return factors;
     }
 }

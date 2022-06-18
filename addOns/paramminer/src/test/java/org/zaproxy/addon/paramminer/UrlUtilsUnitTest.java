@@ -33,9 +33,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class UrlUtilsUnitTest extends TestUtils {
@@ -124,5 +129,67 @@ class UrlUtilsUnitTest extends TestUtils {
         assertEquals(params.get(0).get("admin"), "true");
         assertEquals(usableParams.size(), 1);
         assertEquals(usableParams.get(0).get("id"), "test");
+    }
+
+    @Test
+    void shouldGetPlainTextWithoutErrors() {
+        // Given
+        String response =
+                "HTTP/1.1 200 OK\r\n"
+                        + "Content-Type: text/html; charset=UTF-8\r\n"
+                        + "Content-Length: 5\r\n"
+                        + "\r\n"
+                        + "test"
+                        + "<html> \n<body> Hello world </body>\n</html>";
+        String plainText = UrlUtils.removeTags(response);
+        boolean hasHtml = plainText.contains("<html>");
+        assertEquals(hasHtml, false);
+    }
+
+    @Test
+    void shouldGetProperAnomalyFactors() throws URIException, NullPointerException {
+        // Given
+        HttpMessage msg1 = new HttpMessage();
+        HttpMessage msg2 = new HttpMessage();
+        String url1 = "http://www.test.com/test?id=1";
+        String url2 = "http://www.test.com/test?admin=76";
+
+        HttpRequestHeader headers = new HttpRequestHeader();
+        headers.setURI(new URI(url1, true));
+        headers.setMethod("GET");
+        headers.setHeader("X-forwarded-host", "test.com");
+
+        HttpResponseHeader resp = new HttpResponseHeader();
+        resp.setStatusCode(200);
+        resp.setHeader("Content-Type", "text/html; charset=UTF-8");
+        resp.setHeader("Content-Length", "5");
+
+        msg1.setRequestHeader(headers);
+        msg1.setResponseHeader(resp);
+        msg1.setRequestBody("test");
+        msg1.setResponseBody("<html> \n <body> Hello world </body> \n </html>");
+
+        headers.setURI(new URI(url2, true));
+        msg2.setRequestHeader(headers);
+        msg2.setResponseHeader(resp);
+        msg2.setRequestBody("test");
+        msg2.setResponseBody("<html> \n <body> Bye \n world!! </body> \n </html>");
+
+        // When
+        List<String> params = UrlUtils.read(this.file);
+
+        // Then
+        Factors factors = UrlUtils.defineAnomaly(msg1, msg2, "admin", "76", params);
+        assertThat(factors.getHeaders(), hasSize(2));
+        assertThat(factors.getHeaders().get(0).getName(), equalTo("Content-Type"));
+        assertThat(factors.getHeaders().get(0).getValue(), equalTo("text/html; charset=UTF-8"));
+        assertThat(factors.getHeaders().get(1).getName(), equalTo("Content-Length"));
+        assertThat(factors.getHeaders().get(1).getValue(), equalTo("5"));
+
+        assertThat(factors.isLinesNum(), equalTo(false));
+        assertThat(factors.getLinesNumValue(), equalTo(0l));
+        assertThat(factors.isLinesDiff(), equalTo(true));
+        assertThat(factors.getDiffMapLines(), hasSize(1));
+        assertEquals(factors.getDiffMapLines().get(0), "<html>");
     }
 }
