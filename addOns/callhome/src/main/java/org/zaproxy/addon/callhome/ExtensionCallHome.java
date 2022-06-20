@@ -134,6 +134,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
     public ExtensionCallHome() {
         super(NAME);
         setI18nPrefix(PREFIX);
+        // Just before the Network extension.
+        setOrder(Integer.MAX_VALUE - 1);
     }
 
     @Override
