@@ -19,15 +19,22 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
 public class UrlParamGuesser {
 
     private static final Logger logger = LogManager.getLogger(UrlParamGuesser.class);
 
+    // TODO - use the actual core initiator once targeting >= 2.12
     private HttpSender httpSender =
             new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
+
+    public HttpMessage requester(HttpMessage msg, Map<String, String> params) {
+        return msg;
+    }
 }

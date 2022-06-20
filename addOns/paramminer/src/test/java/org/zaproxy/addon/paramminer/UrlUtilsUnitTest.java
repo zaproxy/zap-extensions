@@ -141,8 +141,11 @@ class UrlUtilsUnitTest extends TestUtils {
                         + "\r\n"
                         + "test"
                         + "<html> \n<body> Hello world </body>\n</html>";
+        // When
         String plainText = UrlUtils.removeTags(response);
         boolean hasHtml = plainText.contains("<html>");
+
+        // Then
         assertEquals(hasHtml, false);
     }
 
@@ -179,7 +182,7 @@ class UrlUtilsUnitTest extends TestUtils {
         List<String> params = UrlUtils.read(this.file);
 
         // Then
-        Factors factors = UrlUtils.defineAnomaly(msg1, msg2, "admin", "76", params);
+        Factors factors = UrlUtils.defineFactors(msg1, msg2, "admin", "76", params);
         assertThat(factors.getHeaders(), hasSize(2));
         assertThat(factors.getHeaders().get(0).getName(), equalTo("Content-Type"));
         assertThat(factors.getHeaders().get(0).getValue(), equalTo("text/html; charset=UTF-8"));

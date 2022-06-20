@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.httpclient.URI;
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -150,7 +150,8 @@ public class UrlUtils {
      * @return a string without html tags.
      */
     public static String removeTags(String str) {
-        return str.replaceAll("(?s)<.*?>", "");
+        Source source = new Source(str);
+        return source.getTextExtractor().setIncludeAttributes(true).toString();
     }
 
     /**
@@ -172,7 +173,31 @@ public class UrlUtils {
         return diff;
     }
 
-    public static Factors defineAnomaly(
+    public static String getPath(HttpMessage msg) {
+        String path = "";
+        try {
+            path = msg.getRequestHeader().getURI().getPath();
+        } catch (URIException e) {
+            logger.warn(
+                    "Invalid URL: {} Exception raised: {}",
+                    msg.getRequestHeader().getURI().toString(),
+                    e);
+        }
+        return path;
+    }
+
+    /**
+     * Decides some factors based on which requests can be compared and vulnberable paramteres can
+     * be decided.
+     *
+     * @param msg1 the first HttpMessage.
+     * @param msg2 the second HttpMessage.
+     * @param param the parameter to be used.
+     * @param value the value of the parameter.
+     * @param wordlist the wordlist to be used.
+     * @return a Factors object.
+     */
+    public static Factors defineFactors(
             HttpMessage msg1, HttpMessage msg2, String param, String value, List<String> wordlist) {
         Factors factors = new Factors();
 
@@ -200,20 +225,8 @@ public class UrlUtils {
             factors.setDiffMapLines(diffMap(body1, body2));
         }
 
-        URI uri1 = msg1.getRequestHeader().getURI();
-        URI uri2 = msg2.getRequestHeader().getURI();
-        String path1 = "", path2 = "";
-        try {
-            path1 = uri1.getPath();
-        } catch (URIException e) {
-            logger.error("Invalid URL: " + uri1.toString(), e);
-        }
-        try {
-            path2 = uri2.getPath();
-        } catch (URIException e) {
-            logger.error("Invalid URL: " + uri2.toString(), e);
-        }
-
+        String path1 = getPath(msg1);
+        String path2 = getPath(msg2);
         if (path1.equalsIgnoreCase(path2)) {
             factors.setSameRedirectPath(path1);
         }
