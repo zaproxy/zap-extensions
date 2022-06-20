@@ -41,6 +41,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
@@ -48,6 +52,8 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -67,6 +73,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -404,6 +411,37 @@ class HttpSenderImplUnitTest {
             assertThat(server.getReceivedMessages(), hasSize(1));
             assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
             assertThat(message.getResponseBody().toString(), is(equalTo(responseBody)));
+        }
+
+        @Test
+        void shouldBeDownloadedToFile(@TempDir Path dir) throws Exception {
+            // Given
+            Path file = Files.createTempDirectory(dir, "downloads").resolve("download");
+            long size = 64_000_000L;
+            server.setRawHandler(
+                    (ctx, msg) -> {
+                        ByteBuf out = ctx.alloc().buffer();
+                        ByteBufUtil.writeAscii(
+                                out, "HTTP/1.1 200 OK\r\nContent-Length: " + size + "\r\n\r\n");
+                        ctx.write(out);
+
+                        out = ctx.alloc().buffer(10);
+                        ByteBufUtil.writeAscii(out, "0123456789");
+                        long totalWrites = size / 10;
+                        for (int i = 0; i < totalWrites; i++) {
+                            ctx.write(out.retainedDuplicate());
+                            if (i % 100 == 0) {
+                                ctx.flush();
+                            }
+                        }
+                        out.release();
+                        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                                .addListener(ChannelFutureListener.CLOSE);
+                    });
+            // When
+            httpSender.sendAndReceive(message, file);
+            // Then
+            assertThat(Files.size(file), is(equalTo(size)));
         }
 
         @ParameterizedTest

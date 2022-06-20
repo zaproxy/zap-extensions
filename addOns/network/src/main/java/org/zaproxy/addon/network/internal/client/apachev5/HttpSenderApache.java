@@ -565,5 +565,14 @@ public class HttpSenderApache
             Header header = it.next();
             to.addHeader(header.getName(), header.getValue());
         }
+
+        String contentLength = to.getHeader(HttpHeader.CONTENT_LENGTH);
+        if (contentLength != null) {
+            try {
+                to.setContentLength(Integer.parseInt(contentLength));
+            } catch (NumberFormatException e) {
+                LOGGER.debug("Invalid content-length value: {}", contentLength);
+            }
+        }
     }
 }

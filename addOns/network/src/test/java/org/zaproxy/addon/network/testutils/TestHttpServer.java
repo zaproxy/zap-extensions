@@ -21,6 +21,7 @@ package org.zaproxy.addon.network.testutils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.FixedLengthFrameDecoder;
@@ -46,6 +47,7 @@ public class TestHttpServer extends HttpServer {
     private final List<HttpMessage> receivedMessages;
     private HttpMessageHandler handler;
     private Integer fixedLengthMessage;
+    private RawHandler rawHandler;
 
     /**
      * Constructs a {@code TestHttpServer} with the given properties.
@@ -91,6 +93,22 @@ public class TestHttpServer extends HttpServer {
                                 }
                             });
         }
+
+        if (rawHandler != null) {
+            ch.pipeline()
+                    .addAfter(
+                            "http.recursive",
+                            "raw.handler",
+                            new SimpleChannelInboundHandler<HttpMessage>() {
+
+                                @Override
+                                protected void channelRead0(
+                                        ChannelHandlerContext ctx, HttpMessage msg)
+                                        throws Exception {
+                                    rawHandler.handleMessage(ctx, msg);
+                                }
+                            });
+        }
     }
 
     /**
@@ -130,6 +148,15 @@ public class TestHttpServer extends HttpServer {
         this.handler = new TestHttpMessageHandlerImpl(handler);
     }
 
+    /**
+     * Sets the handler to provide custom raw responses.
+     *
+     * @param handler the handler.
+     */
+    public void setRawHandler(RawHandler handler) {
+        this.rawHandler = handler;
+    }
+
     /** The handler of received messages. */
     public interface TestHttpMessageHandler {
 
@@ -141,6 +168,19 @@ public class TestHttpServer extends HttpServer {
          * @throws Exception if an error occurred.
          */
         void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) throws Exception;
+    }
+
+    /** The handler for raw responses. */
+    public interface RawHandler {
+
+        /**
+         * Called when a message is received.
+         *
+         * @param ctx the channel handler context.
+         * @param msg the message.
+         * @throws Exception if an error occurred.
+         */
+        void handleMessage(ChannelHandlerContext ctx, HttpMessage msg) throws Exception;
     }
 
     private static class TestHttpMessageHandlerImpl implements HttpMessageHandler {
