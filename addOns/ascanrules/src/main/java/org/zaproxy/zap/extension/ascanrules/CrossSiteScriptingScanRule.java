@@ -800,63 +800,79 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             if (contexts.isEmpty()) {
                 attackWorked = performDirectAttack(msg, param, value);
             }
-
-            for (HtmlContext context : contexts) {
-                // Loop through the returned contexts and launch targeted
-                // attacks
-                if (attackWorked || isStop()) {
-                    break;
-                }
-                if (context.getTagAttribute() != null) {
-                    // its in a tag attribute - lots of attack vectors possible
-                    attackWorked = performTagAttack(context, msg, param, value);
-
-                } else if (context.isInAttributeName()) {
-
-                    attackWorked = performAttributeAttack(context, msg, param);
-
-                } else if (context.isHtmlComment()) {
-                    // Try breaking out of the comment
-                    attackWorked = performCommentAttack(context, msg, param);
-                } else {
-                    // its not in a tag attribute
-                    if ("body".equalsIgnoreCase(context.getParentTag())) {
-                        // Immediately under a body tag
-                        attackWorked = performBodyAttack(context, msg, param);
-
-                    } else if (context.getParentTag() != null) {
-                        // Its not immediately under a body tag, try to close
-                        // the tag
-                        attackWorked = performCloseTagAttack(context, msg, param);
-
-                        if (attackWorked) {
-                            break;
-                        } else if ("script".equalsIgnoreCase(context.getParentTag())) {
-                            // its in a script tag...
-                            attackWorked = performScriptAttack(context, msg, param);
-                        } else {
-                            // Try an img tag
-                            attackWorked = performImageTagAttack(context, msg, param);
-                        }
-                    } else {
-                        // Last chance - is the payload reflected outside of any
-                        // tags
-                        attackWorked = performOutsideTagsAttack(context, msg, param);
-                    }
-                }
-                if (context.isInElementName()) {
-
-                    attackWorked = performElementAttack(context, msg, param);
-                }
+            if (attackWorked || isStop()) {
+                return;
             }
-            // Always attack the header if the eyecatcher is reflected in it - this will be
-            // different to any alert raised above
-            if (eyeCatcherMsg.getResponseHeader().toString().contains(Constant.getEyeCatcher())) {
-                attackHeader(msg, param, appendedValue ? value : "");
-            }
+
+            testContexts(contexts, msg, eyeCatcherMsg, appendedValue, param, value);
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+    private void testContexts(
+            List<HtmlContext> contexts,
+            HttpMessage msg,
+            HttpMessage eyeCatcherMsg,
+            boolean appendedValue,
+            String param,
+            String value) {
+
+        boolean attackWorked = false;
+
+        for (HtmlContext context : contexts) {
+            // Loop through the returned contexts and launch targeted
+            // attacks
+            if (attackWorked || isStop()) {
+                break;
+            }
+            if (context.getTagAttribute() != null) {
+                // its in a tag attribute - lots of attack vectors possible
+                attackWorked = performTagAttack(context, msg, param, value);
+
+            } else if (context.isInAttributeName()) {
+
+                attackWorked = performAttributeAttack(context, msg, param);
+
+            } else if (context.isHtmlComment()) {
+                // Try breaking out of the comment
+                attackWorked = performCommentAttack(context, msg, param);
+            } else {
+                // its not in a tag attribute
+                if ("body".equalsIgnoreCase(context.getParentTag())) {
+                    // Immediately under a body tag
+                    attackWorked = performBodyAttack(context, msg, param);
+
+                } else if (context.getParentTag() != null) {
+                    // Its not immediately under a body tag, try to close
+                    // the tag
+                    attackWorked = performCloseTagAttack(context, msg, param);
+
+                    if (attackWorked) {
+                        break;
+                    } else if ("script".equalsIgnoreCase(context.getParentTag())) {
+                        // its in a script tag...
+                        attackWorked = performScriptAttack(context, msg, param);
+                    } else {
+                        // Try an img tag
+                        attackWorked = performImageTagAttack(context, msg, param);
+                    }
+                } else {
+                    // Last chance - is the payload reflected outside of any
+                    // tags
+                    attackWorked = performOutsideTagsAttack(context, msg, param);
+                }
+            }
+            if (context.isInElementName()) {
+
+                attackWorked = performElementAttack(context, msg, param);
+            }
+        }
+        // Always attack the header if the eyecatcher is reflected in it - this will be
+        // different to any alert raised above
+        if (eyeCatcherMsg.getResponseHeader().toString().contains(Constant.getEyeCatcher())) {
+            attackHeader(msg, param, appendedValue ? value : "");
         }
     }
 
