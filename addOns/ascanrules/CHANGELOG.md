@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Maintenance changes.
+- Use XSS detection logic from CrossSiteScriptingScanRule on PersistentXssScanRule
 
 ### Fixed
 - The Remote File Inclusion scan rule no longer follows redirects before checking the response for content indicating a vulnerability (Issue 5887).
