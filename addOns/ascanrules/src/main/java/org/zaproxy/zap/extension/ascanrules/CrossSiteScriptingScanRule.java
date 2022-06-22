@@ -751,10 +751,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             // Inject the 'safe' eyecatcher and see where it appears
             boolean attackWorked = false;
             boolean appendedValue = false;
-            HttpMessage msg2 = getNewMsg();
-            setParameter(msg2, param, Constant.getEyeCatcher());
+            HttpMessage eyeCatcherMsg = getNewMsg();
+            setParameter(eyeCatcherMsg, param, Constant.getEyeCatcher());
             try {
-                sendAndReceive(msg2);
+                sendAndReceive(eyeCatcherMsg);
             } catch (URIException e) {
                 log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                 return;
@@ -768,7 +768,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 return;
             }
 
-            HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
+            HtmlContextAnalyser hca = new HtmlContextAnalyser(eyeCatcherMsg);
             List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
             if (contexts.isEmpty()) {
                 // Lower case?
@@ -781,11 +781,11 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             if (contexts.isEmpty()) {
                 // No luck - try again, appending the eyecatcher to the original
                 // value
-                msg2 = getNewMsg();
-                setParameter(msg2, param, value + Constant.getEyeCatcher());
+                eyeCatcherMsg = getNewMsg();
+                setParameter(eyeCatcherMsg, param, value + Constant.getEyeCatcher());
                 appendedValue = true;
                 try {
-                    sendAndReceive(msg2);
+                    sendAndReceive(eyeCatcherMsg);
                 } catch (URIException e) {
                     log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                     return;
@@ -794,7 +794,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     // continue
                     return;
                 }
-                hca = new HtmlContextAnalyser(msg2);
+                hca = new HtmlContextAnalyser(eyeCatcherMsg);
                 contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
             if (contexts.isEmpty()) {
@@ -851,7 +851,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             }
             // Always attack the header if the eyecatcher is reflected in it - this will be
             // different to any alert raised above
-            if (msg2.getResponseHeader().toString().contains(Constant.getEyeCatcher())) {
+            if (eyeCatcherMsg.getResponseHeader().toString().contains(Constant.getEyeCatcher())) {
                 attackHeader(msg, param, appendedValue ? value : "");
             }
 
