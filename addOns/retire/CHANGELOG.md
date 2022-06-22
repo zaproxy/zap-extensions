@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with upstream retire.js pattern changes.
 - Performance improvements (Issue 6959).
 - Add Retire.js reference to the Rule name to make it more obvious in the options panel.
 
