@@ -377,6 +377,50 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-6"));
     }
 
+    @Test
+    void shouldRaiseAlertOnUnsafeHashesInScriptSrc() {
+        // Given
+        String policy =
+                "default-src 'self'; script-src 'unsafe-hashes' 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY='";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(2));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-hashes"));
+        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(1).getEvidence(), equalTo(policy));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-7"));
+    }
+
+    @Test
+    void shouldRaiseAlertOnUnsafeHashesInStyleSrc() {
+        // Given
+        String policy =
+                "default-src 'self'; style-src 'unsafe-hashes' 'sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ='";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(2));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-hashes"));
+        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(1).getEvidence(), equalTo(policy));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-8"));
+    }
+
     private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
         return createHttpMessage(cspHeaderName, REASONABLE_POLICY);
     }
