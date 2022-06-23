@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Automation ScriptJob - Enable or Disable any script and run a targeted script (Issue 7025).
 
+### Changed
+- Maintenance changes.
 
 ## [30] - 2022-02-25
 ### Added

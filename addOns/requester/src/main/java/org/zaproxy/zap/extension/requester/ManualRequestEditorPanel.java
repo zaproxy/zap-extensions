@@ -35,11 +35,10 @@ import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** Send custom crafted messages via HTTP or other TCP based protocols. */
-public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
+public abstract class ManualRequestEditorPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LogManager.getLogger(ManualRequestEditorPanel.class);
