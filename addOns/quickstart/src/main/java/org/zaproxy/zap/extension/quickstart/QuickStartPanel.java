@@ -44,14 +44,13 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.view.LayoutHelper;
 
-public class QuickStartPanel extends AbstractPanel implements Tab {
+public class QuickStartPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 

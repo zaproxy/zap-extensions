@@ -41,9 +41,8 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.zaproxy.zap.extension.tab.Tab;
 
-public class TodoList extends AbstractPanel implements Tab {
+public class TodoList extends AbstractPanel {
 
     private static final Logger logger = LogManager.getLogger(TodoList.class);
 
