@@ -128,6 +128,8 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         assertThat(alertsRaised.size(), equalTo(1));
         Alert alert = alertsRaised.get(0);
         assertEquals("Cookie with SameSite Attribute None", alert.getName());
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
 
     @Test

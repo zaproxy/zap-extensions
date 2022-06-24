@@ -81,7 +81,7 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
                     && !AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
                 this.raiseAlert(
                         msg,
-                        cookieHeader,
+                        cookie,
                         Constant.messages.getString(MESSAGE_PREFIX + "none.name"),
                         Constant.messages.getString(MESSAGE_PREFIX + "none.desc"));
             } else if (!(sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_STRICT)

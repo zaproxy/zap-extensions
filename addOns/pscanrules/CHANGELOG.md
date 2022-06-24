@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The "Viewstate without MAC Signature (Unsure)" alert will now only be raised at Low Alert Threshold (Issue 7230).
 - The Content Security Policy scan rule will now alert when "unsafe-hashes" are allowed.
 
+### Fixed
+-  Correct parameter and evidence for Cookie without SameSite Attribute when SAMESITE was set to None (Issue 7358).
+
 ## [40] - 2022-04-05
 ### Changed
 - Clarify the alert solution for the Cache Control scan rule.
