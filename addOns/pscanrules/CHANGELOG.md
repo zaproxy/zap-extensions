@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [41] - 2022-06-24
 ### Changed
 - Maintenance changes.
 - The "Viewstate without MAC Signature (Unsure)" alert will now only be raised at Low Alert Threshold (Issue 7230).
@@ -308,6 +308,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v38
