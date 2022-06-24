@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import com.shapesecurity.salvation2.Directives.SourceExpressionDirective;
+import com.shapesecurity.salvation2.FetchDirectiveKind;
 import com.shapesecurity.salvation2.Policy;
 import com.shapesecurity.salvation2.Policy.PolicyErrorConsumer;
 import com.shapesecurity.salvation2.PolicyInOrigin;
@@ -223,10 +225,48 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             csp,
                             "6");
                 }
+
+                if (allowsUnsafeHashes(policy, FetchDirectiveKind.ScriptSrc)) {
+                    raiseAlert(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.name"),
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.otherinfo"),
+                            "",
+                            Alert.RISK_MEDIUM,
+                            csp,
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.refs"),
+                            "7");
+                    ;
+                }
+
+                if (allowsUnsafeHashes(policy, FetchDirectiveKind.StyleSrc)) {
+                    raiseAlert(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "stylesrc.unsafe.hashes.name"),
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "stylesrc.unsafe.hashes.otherinfo"),
+                            "",
+                            Alert.RISK_MEDIUM,
+                            csp,
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"),
+                            "8");
+                }
             }
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    private static boolean allowsUnsafeHashes(Policy policy, FetchDirectiveKind source) {
+        Optional<SourceExpressionDirective> fetchDirective = policy.getFetchDirective(source);
+        if (fetchDirective.isPresent()) {
+            SourceExpressionDirective kind = fetchDirective.get();
+            return kind.unsafeHashes();
+        }
+        return false;
     }
 
     private String getCspNoticesString(List<PolicyError> notices) {
@@ -417,6 +457,17 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             int risk,
             String evidence,
             String alertRef) {
+        raiseAlert(name, otherInfo, param, risk, evidence, getReference(), alertRef);
+    }
+
+    private void raiseAlert(
+            String name,
+            String otherInfo,
+            String param,
+            int risk,
+            String evidence,
+            String refs,
+            String alertRef) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
 
         newAlert()
@@ -427,7 +478,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 .setOtherInfo(otherInfo)
                 .setParam(param)
                 .setSolution(getSolution())
-                .setReference(getReference())
+                .setReference(refs)
                 .setEvidence(evidence)
                 .setAlertRef(PLUGIN_ID + "-" + alertRef)
                 .setCweId(getCweId())
