@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>Правила Пассивного Сканирования</h1>
-В это дополнение включены следующие правила пассивного сканирования релизного качества: 
+The following release status passive scan rules are included in this add-on:
 
 <h2>Заголовок против кликджекинга </h2>
 Это правило сканирования проверяет наличие и действительность заголовка X-Frame-Options или директивы Content-Security-Policy 'frame-ancestors'. <br> 
@@ -248,6 +248,7 @@ measures such as:
 	<li>Split VIEWSTATE.</li>
 	<li>VIEWSTATE containing email or IP patterns.</li>
 </ul>
+The "Viewstate without MAC Signature (Unsure)" alert will only be raised at LOW threshold.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ViewstateScanRule.java">ViewstateScanRule.java</a>
 
