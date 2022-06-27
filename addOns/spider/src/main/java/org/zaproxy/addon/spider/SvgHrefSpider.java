@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
-import org.zaproxy.zap.spider.parser.SpiderParser;
+import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class SvgHrefSpider extends SpiderParser {

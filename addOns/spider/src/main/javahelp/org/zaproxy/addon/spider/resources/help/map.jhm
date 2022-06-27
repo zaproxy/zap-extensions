@@ -4,5 +4,10 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-    <mapID target="spider" url="contents/intro.html" />
+	<mapID target="addon.spider.icon" url="contents/images/spider.png"/>
+
+    <mapID target="addon.spider" url="contents/spider.html"/>
+    <mapID target="addon.spider.dialog" url="contents/dialog.html"/>
+    <mapID target="addon.spider.tab" url="contents/tab.html"/>
+    <mapID target="addon.spider.options" url="contents/options.html"/>
 </map>
