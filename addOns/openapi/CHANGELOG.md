@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - JSON body examples specified under `schema` were being enclosed in quotes.
+- Error message when `apiFile` field is not accessible was outputting the `targetUrl` and not the incorrect filename (Issue 7370).
 
 ### Changed
 - Maintenance changes.
