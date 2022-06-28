@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.network.internal.client;
 
+import java.time.Instant;
 import java.util.Date;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpState;
@@ -41,7 +42,10 @@ public final class LegacyUtils {
             c.setDomain(cookie.getDomain());
             c.setPath(cookie.getPath());
             c.setSecure(cookie.getSecure());
-            c.setExpiryDate(cookie.getExpiryDate().toInstant());
+            Date expiryDate = cookie.getExpiryDate();
+            if (expiryDate != null) {
+                c.setExpiryDate(expiryDate.toInstant());
+            }
             cookieStore.addCookie(c);
         }
         return cookieStore;
@@ -60,8 +64,16 @@ public final class LegacyUtils {
                             cookie.getName(),
                             cookie.getValue(),
                             cookie.getPath(),
-                            new Date(cookie.getExpiryInstant().toEpochMilli()),
+                            getExpiryDate(cookie),
                             cookie.isSecure()));
         }
+    }
+
+    private static Date getExpiryDate(org.apache.hc.client5.http.cookie.Cookie cookie) {
+        Instant expiry = cookie.getExpiryInstant();
+        if (expiry != null) {
+            return new Date(expiry.toEpochMilli());
+        }
+        return null;
     }
 }
