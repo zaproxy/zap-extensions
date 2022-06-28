@@ -5,5 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ### Added
 - Functionality to parse URLs from href attributes in SVG files (Issue 4984).
+
+### Changed
+- Promoted to Release status, with the migration of the core Spider (Issue 3113).

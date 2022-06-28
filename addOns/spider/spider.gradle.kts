@@ -1,7 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Add supplemental parsing functionality to the spider."
 
 zapAddOn {
     addOnName.set("Spider")
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.11.1")
 
     manifest {
