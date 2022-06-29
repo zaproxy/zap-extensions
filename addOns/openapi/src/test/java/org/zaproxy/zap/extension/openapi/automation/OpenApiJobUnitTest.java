@@ -42,9 +42,10 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-class OpenApiJobUnitTest {
+class OpenApiJobUnitTest extends TestUtils {
 
     private ExtensionOpenApi extOpenApi;
 
@@ -150,7 +151,7 @@ class OpenApiJobUnitTest {
     @Test
     void shouldFailIfInvalidFile() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionOpenApi());
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
@@ -167,6 +168,8 @@ class OpenApiJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!openapi.automation.error.file!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Job openapi cannot read file: Invalid file path")));
     }
 }

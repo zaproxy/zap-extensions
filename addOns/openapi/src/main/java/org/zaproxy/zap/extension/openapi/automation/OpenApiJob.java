@@ -131,10 +131,7 @@ public class OpenApiJob extends AutomationJob {
             } else {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.file",
-                                this.getName(),
-                                targetUrl,
-                                apiFile));
+                                "openapi.automation.error.file", this.getName(), apiFile));
             }
         }
         if (!StringUtils.isEmpty(apiStr)) {
