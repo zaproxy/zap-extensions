@@ -166,10 +166,7 @@ public class HtmlContextAnalyser {
                 break;
             }
             tagEnd = input.indexOf('>');
-            if (tagEnd == -1) {
-                break;
-            }
-            if (tagStart + 1 > tagEnd) {
+            if (tagEnd == -1 || tagStart + 1 > tagEnd) {
                 break;
             }
             tagString = StringUtils.strip(input.substring(tagStart + 1, tagEnd));
