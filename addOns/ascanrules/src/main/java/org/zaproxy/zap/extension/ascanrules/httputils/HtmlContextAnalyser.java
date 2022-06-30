@@ -169,6 +169,9 @@ public class HtmlContextAnalyser {
             if (tagEnd == -1) {
                 break;
             }
+            if (tagStart + 1 > tagEnd) {
+                break;
+            }
             tagString = StringUtils.strip(input.substring(tagStart + 1, tagEnd));
             /** Check if tag string is comment or not. If it is a comment then don't parse it. */
             if (tagString.startsWith("!--")) {

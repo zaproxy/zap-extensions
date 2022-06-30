@@ -164,4 +164,14 @@ public class HtmlContextAnalyserUnitTest extends TestUtils {
         tagMap = HtmlContextAnalyser.parseTag(tag);
         assertThat(tagMap.size(), is(equalTo(3)));
     }
+
+    @Test
+    void shouldNotRaiseStringIndexOutOfBoundsException() {
+        String tag = "<html> <body> <span>></span> </body> </html>";
+        Map<String, Map<String, String>> tagMap = HtmlContextAnalyser.parseTag(tag);
+        assertThat(tagMap.size(), is(equalTo(3)));
+        assertThat(tagMap.get("html").size(), is(equalTo(0)));
+        assertThat(tagMap.get("body").size(), is(equalTo(0)));
+        assertThat(tagMap.get("span").size(), is(equalTo(0)));
+    }
 }
