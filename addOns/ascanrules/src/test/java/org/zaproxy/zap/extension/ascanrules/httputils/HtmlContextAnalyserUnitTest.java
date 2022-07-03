@@ -164,4 +164,15 @@ public class HtmlContextAnalyserUnitTest extends TestUtils {
         tagMap = HtmlContextAnalyser.parseTag(tag);
         assertThat(tagMap.size(), is(equalTo(3)));
     }
+
+    @Test
+    void shouldParseWithUnescapedTagEndChar() {
+        String tag = "<html> <body> <span>></span> <a></a> </body> </html>";
+        Map<String, Map<String, String>> tagMap = HtmlContextAnalyser.parseTag(tag);
+        assertThat(tagMap.size(), is(equalTo(4)));
+        assertThat(tagMap.get("html").size(), is(equalTo(0)));
+        assertThat(tagMap.get("body").size(), is(equalTo(0)));
+        assertThat(tagMap.get("span").size(), is(equalTo(0)));
+        assertThat(tagMap.get("a").size(), is(equalTo(0)));
+    }
 }
