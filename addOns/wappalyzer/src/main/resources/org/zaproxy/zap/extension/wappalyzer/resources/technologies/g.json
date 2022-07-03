@@ -190,16 +190,34 @@
     "scriptSrc": "gm_javascript\\.js\\.php",
     "website": "http://gambio.de"
   },
+  "Gameball": {
+    "cats": [
+      84
+    ],
+    "description": "Gameball is a loyalty & retention platform that offers gamified customer engagement tools for customers such as rewards, points, and referrals.",
+    "icon": "Gameball.svg",
+    "js": {
+      "GbSdk.settings.shop": "",
+      "gbReferralCodeInput": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "assets\\.gameball\\.co/",
+    "website": "https://www.gameball.co"
+  },
   "Gatsby": {
     "cats": [
       57,
       12
     ],
     "description": "Gatsby is a React-based open-source framework with performance, scalability and security built-in.",
-    "html": [
-      "<div id=\"___gatsby\">",
-      "<style id=\"gatsby-inlined-css\">"
-    ],
+    "dom": "div#___gatsby, style#gatsby-inlined-css",
     "icon": "Gatsby.svg",
     "implies": [
       "React",
@@ -209,6 +227,21 @@
       "generator": "^Gatsby(?: ([0-9.]+))?$\\;version:\\1"
     },
     "website": "https://www.gatsbyjs.org/"
+  },
+  "Gatsby Cloud Image CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Image CDN is a new feature of hosting on Gatsby Cloud. Instead of processing images at build time, Image CDN defers and offloads image processing to the edge.",
+    "dom": "img[srcset*='/_gatsby/image/'], source[srcset*='/_gatsby/image/']",
+    "icon": "Gatsby.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.gatsbyjs.com/products/cloud/image-cdn"
   },
   "Gauges": {
     "cats": [
@@ -393,6 +426,22 @@
       "GSFN": ""
     },
     "website": "https://getsatisfaction.com/corp/"
+  },
+  "GetButton": {
+    "cats": [
+      5,
+      52
+    ],
+    "description": "The chat button by GetButton takes website visitor directly to the messaging app such as Facebook Messenger or WhatsApp and allows them to initiate a conversation with you.",
+    "icon": "GetButton.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.getbutton\\.io/",
+    "website": "https://getbutton.io"
   },
   "GetFeedback": {
     "cats": [
@@ -960,6 +1009,24 @@
     "icon": "GoCache.png",
     "website": "https://www.gocache.com.br/"
   },
+  "GoCertify": {
+    "cats": [
+      5
+    ],
+    "cookies": {
+      "_gocertify_session": ""
+    },
+    "description": "GoCertify is a conversion-focused and cost-effective way to verify students, key workers, under-26s, over-60s, military and more for exclusive discounts.",
+    "dom": "a[href*='secure.gocertify.me']",
+    "icon": "GoCertify.png",
+    "pricing": [
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "assets\\.gocertify\\.me/",
+    "website": "https://www.gocertify.me"
+  },
   "GoDaddy": {
     "cats": [
       88
@@ -1165,6 +1232,7 @@
       "Goog_AdSense_": "",
       "Goog_AdSense_OsdAdapter": "",
       "__google_ad_urls": "",
+      "adsbygoogle": "",
       "google_ad_": ""
     },
     "saas": true,
@@ -1174,7 +1242,7 @@
       "2mdn\\.net",
       "ad\\.ca\\.doubleclick\\.net"
     ],
-    "website": "https://www.google.fr/adsense/start/"
+    "website": "https://www.google.com/adsense/start/"
   },
   "Google Ads": {
     "cats": [
@@ -1570,6 +1638,23 @@
     "saas": true,
     "website": "https://www.gorgias.com/"
   },
+  "GotiPath": {
+    "cats": [
+      31
+    ],
+    "description": "GotiPath is a content delivery network (CDN) provider that is associated with telecom giant Telekom Malaysia Berhad.",
+    "dom": "img[src*='.gotipath.com/'], link[href*='.gpcdn.net/']",
+    "headers": {
+      "X-Cache": "\\.swiftserve\\.com"
+    },
+    "icon": "GotiPath.png",
+    "pricing": [
+      "recurring",
+      "poa",
+      "payg"
+    ],
+    "website": "https://gotipath.com"
+  },
   "Grab Pay Later": {
     "cats": [
       41,
@@ -1930,11 +2015,11 @@
       "GumroadOverlay": "",
       "createGumroadOverlay": ""
     },
-    "saas": true,
-    "scriptSrc": "gumroad\\.com/js/gumroad\\.js",
     "pricing": [
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "gumroad\\.com/js/gumroad\\.js",
     "website": "https://gumroad.com"
   },
   "Gumstack": {

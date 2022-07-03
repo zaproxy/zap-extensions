@@ -76,6 +76,26 @@
     ],
     "website": "https://www.brt.it"
   },
+  "BSmart": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "bsmartstate": ""
+    },
+    "description": "BSmart is an ecommerce platform, programmed by Microline.",
+    "icon": "BSmart.png",
+    "js": {
+      "BSmartConfirmWindow": "",
+      "bsGetBSmartStock": "",
+      "bsmartPriceList": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bsmart.co.il"
+  },
   "Babel": {
     "cats": [
       19
@@ -293,6 +313,23 @@
     "oss": true,
     "website": "https://batflat.org"
   },
+  "Bazaarvoice Curation": {
+    "cats": [
+      96
+    ],
+    "description": "Bazaarvoice Curation is a content curation service Bazaarvoice provides post it's acquisition of Curalate.",
+    "icon": "Bazaarvoice.png",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "edge\\.curalate\\.com",
+      "cdn\\.curalate\\.com"
+    ],
+    "website": "https://www.bazaarvoice.com/products/visual-and-social-content/"
+  },
   "Bazaarvoice Reviews": {
     "cats": [
       90
@@ -312,23 +349,6 @@
     ],
     "website": "https://www.bazaarvoice.com/products/ratings-and-reviews/"
   },
-  "Bazaarvoice Curation": {
-    "cats": [
-      96
-    ],
-    "description": "Bazaarvoice Curation is a content curation service Bazaarvoice provides post it's acquisition of Curalate.",
-    "icon": "Bazaarvoice.png",
-    "pricing": [
-      "high",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": [
-      "edge\\.curalate\\.com",
-      "cdn\\.curalate\\.com"
-    ],
-    "website": "https://www.bazaarvoice.com/products/visual-and-social-content/"
-  },
   "Beam AfterSell": {
     "cats": [
       100
@@ -339,13 +359,13 @@
     "js": {
       "aftersell.hooks": ""
     },
-    "scriptSrc": "\\.aftersell\\.app/", 
     "pricing": [
       "freemium",
       "recurring",
       "low"
     ],
     "saas": true,
+    "scriptSrc": "\\.aftersell\\.app/",
     "website": "https://www.aftersell.com"
   },
   "Beam OutSell": {
@@ -356,14 +376,14 @@
     "icon": "Beam.svg",
     "implies": "Shopify",
     "js": {
-      "outsellApp": "",
-      "outsellAiRecommendationsIsEnabled": ""
+      "outsellAiRecommendationsIsEnabled": "",
+      "outsellApp": ""
     },
-    "scriptSrc": "//outsellapp\\.com/", 
     "pricing": [
       "freemium"
     ],
     "saas": true,
+    "scriptSrc": "//outsellapp\\.com/",
     "website": "https://apps.shopify.com/outsell"
   },
   "Beans": {
@@ -1000,38 +1020,6 @@
     "saas": true,
     "website": "https://www.bokun.io"
   },
-  "Bold Chat": {
-    "cats": [
-      52
-    ],
-    "description": "BoldChat is a live chat platform.",
-    "icon": "BoldChat.png",
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "^https?://vmss\\.boldchat\\.com/aid/\\d{18}/bc\\.vms4/vms\\.js",
-    "website": "https://www.boldchat.com/"
-  },
-  "Bold Commerce": {
-    "cats": [
-      76
-    ],
-    "description": "Bold Commerce is a software company that specialises in ecommerce websites and app development.",
-    "icon": "Bold.svg",
-    "pricing": [
-      "recurring",
-      "payg",
-      "low",
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": [
-      "\\.boldapps\\.net/",
-      "\\.boldcommerce\\.com"
-    ],
-    "website": "https://boldcommerce.com"
-  },
   "Bold Brain": {
     "cats": [
       100
@@ -1074,6 +1062,38 @@
     "saas": true,
     "scriptSrc": "bundles\\.boldapps\\.net/",
     "website": "https://boldcommerce.com/bundles"
+  },
+  "Bold Chat": {
+    "cats": [
+      52
+    ],
+    "description": "BoldChat is a live chat platform.",
+    "icon": "BoldChat.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "^https?://vmss\\.boldchat\\.com/aid/\\d{18}/bc\\.vms4/vms\\.js",
+    "website": "https://www.boldchat.com/"
+  },
+  "Bold Commerce": {
+    "cats": [
+      76
+    ],
+    "description": "Bold Commerce is a software company that specialises in ecommerce websites and app development.",
+    "icon": "Bold.svg",
+    "pricing": [
+      "recurring",
+      "payg",
+      "low",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.boldapps\\.net/",
+      "\\.boldcommerce\\.com"
+    ],
+    "website": "https://boldcommerce.com"
   },
   "Bold Custom Pricing": {
     "cats": [
@@ -1534,15 +1554,15 @@
     ],
     "description": "Boutiq is a personal video shopping solution.",
     "icon": "Boutiq.svg",
-    "requires": "Shopify",
     "js": {
       "caazamApp": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "requires": "Shopify",
+    "saas": true,
     "website": "https://www.getboutiq.com"
   },
   "BowNow": {
@@ -2086,6 +2106,9 @@
       }
     },
     "icon": "Bulma.svg",
+    "js": {
+      "Bulma.VERSION": "([\\d\\.]+)\\;version:\\1"
+    },
     "oss": true,
     "website": "http://bulma.io"
   },
@@ -2214,6 +2237,21 @@
     ],
     "saas": true,
     "website": "https://www.bynder.com"
+  },
+  "bSecure": {
+    "cats": [
+      41
+    ],
+    "description": "bSecure is a one-click checkout solution for selling your products all across the globe instantly.",
+    "icon": "bSecure.svg",
+    "js": {
+      "bsecure_js_object": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.bsecure.pk"
   },
   "basket.js": {
     "cats": [

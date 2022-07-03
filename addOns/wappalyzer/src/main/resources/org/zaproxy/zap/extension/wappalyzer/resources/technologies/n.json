@@ -261,6 +261,22 @@
     "scriptSrc": "rua-api\\.ncloud\\.com/",
     "website": "https://analytics.naver.com"
   },
+  "Neat A/B testing": {
+    "cats": [
+      74,
+      100
+    ],
+    "description": "Neat A/B Testing is a Shopify app built by NeatShift.",
+    "icon": "Neat.png",
+    "implies": "Shopify",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.neatab\\.com/",
+    "website": "https://neatab.com"
+  },
   "Neos CMS": {
     "cats": [
       1
@@ -705,6 +721,40 @@
     "scriptSrc": "connect\\.nosto\\.\\w+/",
     "website": "https://www.nosto.com"
   },
+  "Nosto Visual UGC": {
+    "cats": [
+      96
+    ],
+    "description": "Nosto Visual UGC (Earlier known as Stackla) is a cloud-based content marketing platform that helps discover, curate, display and engage with user-generated content across all digital marketing platforms.",
+    "icon": "Nosto.svg",
+    "js": {
+      "Stackla": "",
+      "stacklaWidgetJsonp": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.stackla\\.com/",
+    "website": "https://www.nosto.com/products/visual-ugc/"
+  },
+  "Notion": {
+    "cats": [
+      51
+    ],
+    "description": "Notion is a collaboration platform with modified Markdown support that integrates kanban boards, tasks, wikis, and database.",
+    "dom": "html.notion-html",
+    "icon": "Notion.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://notion.so"
+  },
   "Nudgify": {
     "cats": [
       32
@@ -828,6 +878,19 @@
     },
     "oss": true,
     "website": "http://www.nopcommerce.com"
+  },
+  "nopStation": {
+    "cats": [
+      19
+    ],
+    "description": "nopStation is a one stop ecommerce solution with custom integrations and custom built plugins based on custom tailored requirements on top of nopCommerce.",
+    "dom": "a[href*='.nop-station.com/']",
+    "icon": "nopStation.png",
+    "implies": "Microsoft ASP.NET",
+    "requires": [
+      "nopCommerce"
+    ],
+    "website": "http://www.nop-station.com"
   },
   "novomind iSHOP": {
     "cats": [

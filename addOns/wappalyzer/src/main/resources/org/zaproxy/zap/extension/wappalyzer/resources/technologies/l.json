@@ -60,6 +60,28 @@
     "icon": "Lagoon.png",
     "website": "https://www.amazee.io/hosting"
   },
+  "LangShop": {
+    "cats": [
+      100,
+      89
+    ],
+    "description": "LangShop is an app for translating Shopify stores.",
+    "icon": "LangShop.svg",
+    "implies": "Shopify",
+    "js": {
+      "LangShop": "",
+      "LangShopConfig": "",
+      "LangShopSDK": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.langshop\\.app/",
+    "website": "https://langshop.io"
+  },
   "Laravel": {
     "cats": [
       18
@@ -175,35 +197,6 @@
     ],
     "website": "https://www.laybuy.com"
   },
-  "Layer0": {
-    "cats": [
-      31,
-      62
-    ],
-    "cookies": {
-      "layer0_bucket": "",
-      "layer0_destination": "",
-      "layer0_eid": ""
-    },
-    "description": "Layer0 is an all-in-one Jamstack platform to develop, deploy, preview, split test, and monitor the company's frontend.",
-    "headers": {
-      "x-0-status": "",
-      "x-0-t": "",
-      "x-0-version": "^\\d+ ([\\d.]+) \\;version:\\1"
-    },
-    "icon": "Layer0.svg",
-    "js": {
-      "Layer0.Metrics": ""
-    },
-    "pricing": [
-      "freemium",
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "/__layer0__/cache-manifest\\.js",
-    "website": "https://www.layer0.co"
-  },
   "LayoutHub": {
     "cats": [
       100,
@@ -212,13 +205,13 @@
     "description": "LayoutHub is an easy page builder that helps merchants quickly set up an online store with any kind of page type by using our library of pre-designed layouts and blocks.",
     "icon": "LayoutHub.png",
     "implies": "Shopify",
-    "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
     "website": "https://layouthub.com"
   },
   "Lazada": {
@@ -230,10 +223,10 @@
     "meta": {
       "aplus-auto-exp": "lzdhome\\.desktop\\."
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://www.lazada.com"
   },
   "LazySizes": {
@@ -257,8 +250,8 @@
     ],
     "description": "LazySizes unveilhooks plugin extends lazySizes to lazyload scripts/widgets, background images, styles and video/audio elements.",
     "icon": "default.svg",
-    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "oss": true,
+    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
   "Leadinfo": {
@@ -300,10 +293,10 @@
     ],
     "description": "Leaflet is the price testing platform for Shopify.",
     "icon": "Leaflet platform.png",
+    "implies": "Shopify",
     "pricing": [
       "payg"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "scripts\\.leaflet\\.co/",
     "website": "https://join.leaflet.co"
@@ -408,6 +401,15 @@
     "icon": "Less.png",
     "website": "http://lesscss.org"
   },
+  "Let's Encrypt": {
+    "cats": [
+      70
+    ],
+    "certIssuer": "Let's Encrypt",
+    "description": "Let's Encrypt is a free, automated, and open certificate authority.",
+    "icon": "Lets Encrypt.svg",
+    "website": "https://letsencrypt.org/"
+  },
   "Letro": {
     "cats": [
       90,
@@ -419,21 +421,12 @@
       "__letroUgcGadget": "",
       "letroUgcSet": ""
     },
-    "scriptSrc": "letro\\.jp/tags",
-    "saas": true,
     "pricing": [
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "letro\\.jp/tags",
     "website": "https://service.aainc.co.jp/product/letro/"
-  },
-  "Let's Encrypt": {
-    "cats": [
-      70
-    ],
-    "certIssuer": "Let's Encrypt",
-    "description": "Let's Encrypt is a free, automated, and open certificate authority.",
-    "icon": "Lets Encrypt.svg",
-    "website": "https://letsencrypt.org/"
   },
   "Level 5": {
     "cats": [
@@ -648,9 +641,11 @@
     "dom": "noscript > img[src*='dc.ads.linkedin.com']",
     "icon": "Linkedin.svg",
     "js": {
-      "_linkedin_data_partner_id": ""
+      "_linkedin_data_partner_id": "",
+      "_linkedin_partner_id": ""
     },
     "scriptSrc": "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+    "scripts": "_linkedin_partner_id",
     "website": "https://business.linkedin.com/marketing-solutions/insight-tag"
   },
   "Linkedin Sign-in": {
@@ -673,6 +668,8 @@
     "description": "Linx Commerce is an ecommerce platform, which provides seamless and personalised cross-channel solution that enables a true omni-channel shopping experience.",
     "icon": "Linx.png",
     "js": {
+      "EzGaCfg.Config.Store": "",
+      "EzGaCfg.Shopper": "",
       "linxImpulse.config.integrationFlags.platformProvider": "linxCommerce"
     },
     "pricing": [
@@ -939,6 +936,23 @@
     "scriptSrc": "gdpr\\.privacymanager\\.io",
     "website": "https://liveramp.com/our-platform/preference-consent-management"
   },
+  "LiveSession": {
+    "cats": [
+      10
+    ],
+    "description": "LiveSession helps increase conversion rates using session replays, and event-based product analytics.",
+    "icon": "LiveSession.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.livesession\\.io"
+    ],
+    "website": "https://livesession.io/"
+  },
   "LiveStreet CMS": {
     "cats": [
       1
@@ -1008,11 +1022,11 @@
     ],
     "description": "Livescale is a video platform that enables teams to transform content and ecommerce into a live shopping experience that reaches engages and monetizes audiences with LiveShopping.",
     "icon": "Livescale.png",
+    "implies": "Shopify",
     "pricing": [
       "mid",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "\\.livescale\\.tv/",
     "website": "https://www.livescale.tv"
@@ -1046,7 +1060,7 @@
   },
   "Loadify": {
     "cats": [
-      92,    
+      92,
       100
     ],
     "description": "Loadify is a shopify app which helps merchants deploy performance techniques like loading screen, transitions & lazy Load.",
@@ -1054,7 +1068,7 @@
     "implies": "Shopify",
     "scriptSrc": "\\.loadifyapp\\.ninety9\\.dev",
     "website": "https://apps.shopify.com/loadify"
-  },    
+  },
   "LocalFocus": {
     "cats": [
       25
@@ -1363,6 +1377,7 @@
     ],
     "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
     "icon": "Loox.svg",
+    "implies": "Shopify",
     "js": {
       "loox_global_hash": ""
     },
@@ -1370,7 +1385,6 @@
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "loox\\.io/widget",
     "website": "https://loox.app"
@@ -1644,8 +1658,8 @@
     ],
     "description": "The lite-youtube-embed technique renders the YouTube video inside the IFRAME tag only when the play button in clicked thus improving the core web vitals score of your website.",
     "dom": "lite-youtube",
-    "website": "https://github.com/paulirish/lite-youtube-embed",
-    "oss": true, 
-    "implies": "YouTube"
+    "implies": "YouTube",
+    "oss": true,
+    "website": "https://github.com/paulirish/lite-youtube-embed"
   }
 }

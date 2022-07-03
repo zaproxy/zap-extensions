@@ -419,6 +419,23 @@
     "scriptSrc": "stats\\.uptimerobot\\.com/",
     "website": "https://uptimerobot.com"
   },
+  "Uptrends": {
+    "cats": [
+      78,
+      13
+    ],
+    "description": "Uptrends is a website and web performance monitoring solution.",
+    "icon": "Uptrends.svg",
+    "js": {
+      "UTBOOMR.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.uptrendsdata\\.com/",
+    "website": "https://www.uptrends.com"
+  },
   "Upvoty": {
     "cats": [
       47

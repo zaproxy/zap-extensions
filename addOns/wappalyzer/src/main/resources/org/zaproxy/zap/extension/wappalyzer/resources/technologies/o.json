@@ -75,17 +75,17 @@
     ],
     "description": "Obsidian Incentivize is designed to increase your average order size through in-cart upsells, cross sells and personalised product recommendations.",
     "icon": "Obsidian.png",
-    "requires": "Shopify",
     "js": {
       "Obsidian.IncentiveApi": ""
     },
-    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
-    "saas": true,
     "pricing": [
       "low",
       "recurring",
       "freemium"
     ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
     "website": "https://obsidianapps.co"
   },
   "Obviyo": {
@@ -172,6 +172,24 @@
     "scriptSrc": "ocnk-min\\.js",
     "website": "https://www.ocnk.com"
   },
+  "Oct8ne": {
+    "cats": [
+      52
+    ],
+    "description": "Oct8ne is a visual customer service software.",
+    "icon": "Oct8ne.png",
+    "js": {
+      "oct8ne.agentsAvailable": "",
+      "oct8neApi": "",
+      "oct8neVars.pluginVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.oct8ne\\.com/",
+    "website": "https://oct8ne.com"
+  },
   "Octane AI": {
     "cats": [
       5,
@@ -180,15 +198,14 @@
     "description": "Octane AI provides an all-in-one platform for engaging quizzes, data collection, and personalised Facebook Messenger and SMS automation.",
     "icon": "Octane AI.svg",
     "js": {
-      "OctaneConfig": "",
-      "oct8neApi": ""
+      "OctaneConfig": ""
     },
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.(?:octaneai|oct8ne)\\.com/",
+    "scriptSrc": "\\.octaneai\\.com/",
     "website": "https://www.octaneai.com"
   },
   "October CMS": {
@@ -257,6 +274,23 @@
     "oss": true,
     "scriptSrc": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
     "website": "http://odoo.com"
+  },
+  "Oh Dear": {
+    "cats": [
+      13
+    ],
+    "description": "The all-in-one monitoring tool for your entire website. Oh Dear monitors uptime, SSL certificates, broken links, scheduled tasks, application health, DNS, domain expiry and more.",
+    "icon": "Oh Dear.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.config.userAgent": "OhDear\\.app"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.ohdear\\.app/",
+    "website": "https://ohdear.app"
   },
   "Okendo": {
     "cats": [
@@ -419,6 +453,25 @@
     "scriptSrc": "omnisrc\\.com",
     "website": "https://www.omnisend.com"
   },
+  "Omurga Sistemi": {
+    "cats": [
+      1
+    ],
+    "icon": "Omurga Sistemi.svg",
+    "implies": [
+      "MySQL",
+      "PHP"
+    ],
+    "meta": {
+      "generator": "^OS-Omurga Sistemi"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.os.com.tr"
+  },
   "OnShop": {
     "cats": [
       6
@@ -451,25 +504,6 @@
     ],
     "saas": true,
     "website": "https://onuniverse.com"
-  },
-  "Omurga Sistemi": {
-    "cats": [
-      1
-    ],
-    "icon": "Omurga Sistemi.svg",
-    "implies": [
-      "MySQL",
-      "PHP"
-    ],
-    "meta": {
-      "generator": "^OS-Omurga Sistemi"
-    },
-    "pricing": [
-      "poa",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://www.os.com.tr"
   },
   "One.com": {
     "cats": [
@@ -1250,12 +1284,30 @@
     "saas": true,
     "website": "https://www.orckestra.com"
   },
+  "Order Deadline": {
+    "cats": [
+      100
+    ],
+    "description": "Order Deadline is an estimated delivery, countdown timer, shipping date Shopify app.",
+    "icon": "Order Deadline.png",
+    "implies": "Shopify",
+    "js": {
+      "orderDeadlineAppByEESL": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/order-deadline"
+  },
   "OrderLogic app": {
     "cats": [
       100
     ],
     "description": "OrderLogic app allows you to define minimum and maximum product quantities for all products in your Shopify store.",
     "icon": "OrderLogic app.png",
+    "implies": "Shopify",
     "js": {
       "OrderLogic.ALERTS_KEY": "",
       "OrderLogic.DEFAULT_MONEY_FORMAT": "",
@@ -1265,7 +1317,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "website": "https://apps.shopify.com/orderlogic"
   },

@@ -476,11 +476,11 @@
     "js": {
       "deliverrScript": ""
     },
-    "scriptSrc": "fast-tags\\.deliverr\\.com",
     "pricing": [
       "payg",
       "recurring"
     ],
+    "scriptSrc": "fast-tags\\.deliverr\\.com",
     "website": "https://deliverr.com"
   },
   "Demandbase": {
@@ -501,6 +501,34 @@
     "saas": true,
     "scriptSrc": "tag.demandbase.com",
     "website": "https://www.demandbase.com"
+  },
+  "Deno": {
+    "cats": [
+      22
+    ],
+    "description": "A modern runtime for JavaScript and TypeScript.",
+    "icon": "Deno.svg",
+    "oss": true,
+    "website": "https://deno.land"
+  },
+  "Deno Deploy": {
+    "cats": [
+      62
+    ],
+    "description": "Deno Deploy is a distributed system that runs JavaScript, TypeScript, and WebAssembly at the edge, worldwide.",
+    "headers": {
+      "server": "^deno/*"
+    },
+    "icon": "deno.svg",
+    "implies": [
+      "Deno"
+    ],
+    "pricing": [
+      "freemium",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://deno.land/"
   },
   "Deta": {
     "cats": [
@@ -1139,6 +1167,18 @@
     "saas": true,
     "website": "https://doubleverify.com"
   },
+  "Dovetale": {
+    "cats": [
+      71
+    ],
+    "description": "Dovetale (Acquired by Shopify) helps e-commerce stores recruit, manage, & grow their sales with communities of people who love their products.",
+    "icon": "Dovetale.png",
+    "js": {
+      "Dovetale": ""
+    },
+    "scriptSrc": "dttrk\\.com",
+    "website": "https://dovetale.com/"
+  },
   "Doxygen": {
     "cats": [
       4
@@ -1273,6 +1313,50 @@
     },
     "icon": "Dropbox.svg",
     "website": "https://www.dropbox.com"
+  },
+  "Dropzone": {
+    "cats": [
+      59
+    ],
+    "description": "Dropzone is a JavaScript library that turns any HTML element into a dropzone.",
+    "icon": "Dropzone.svg",
+    "js": {
+      "Dropzone": "",
+      "Dropzone.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.dropzone.dev"
+  },
+  "Droxit": {
+    "cats": [
+      68
+    ],
+    "cookies": {
+      "droxit_a11y_state": ""
+    },
+    "description": "Droxit is an automated web accessibility solution.",
+    "icon": "Droxit.png",
+    "scriptSrc": "/droxit-a11y/js/activator\\.js",
+    "website": "https://www.droxit.com"
+  },
+  "Droz Bot": {
+    "cats": [
+      52
+    ],
+    "description": "Droz Bot is a multi-channel, customisable chatbot designed to help brands provide customer service across commonly used social apps.",
+    "icon": "Droz.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "chat-app\\.meudroz\\.com/",
+    "website": "https://meudroz.com/droz-bot/"
   },
   "Drupal": {
     "cats": [
@@ -1481,10 +1565,10 @@
     "cats": [
       103
     ],
+    "css": "\\.dyte-client-selfVideo",
     "description": "Dyte is a developer-friendly, real-time audio and video communication software development kit (SDK).",
     "icon": "Dyte.svg",
     "implies": "WebRTC",
-    "css": "\\.dyte-client-selfVideo",
     "js": {
       "triggerDyteRecording": ""
     },
@@ -1492,8 +1576,8 @@
       "payg"
     ],
     "saas": true,
-    "xhr": "cdn\\.dyte\\.in/",
-    "website": "https://dyte.io"
+    "website": "https://dyte.io",
+    "xhr": "cdn\\.dyte\\.in/"
   },
   "db-ip": {
     "cats": [

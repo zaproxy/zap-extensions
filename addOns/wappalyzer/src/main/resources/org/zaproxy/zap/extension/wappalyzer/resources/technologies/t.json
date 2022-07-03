@@ -7,6 +7,72 @@
     "icon": "Tsoft.png",
     "website": "https://www.tsoft.com.tr/"
   },
+  "T1 Comercios": {
+    "cats": [
+      19
+    ],
+    "description": "T1 Comercios is an integrator platform with marketplaces(https://www.claroshop.com/,https://www.sears.com.mx/,https://www.sanborns.com.mx/).",
+    "icon": "T1 Comercios.svg",
+    "meta": {
+      "generator": "^T1COMERCIOS$"
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.t1comercios.com"
+  },
+  "T1 Envios": {
+    "cats": [
+      99
+    ],
+    "description": "T1 Envios is a delivery solution, allows the business to select the best courier to send their packages.",
+    "icon": "T1 Envios.svg",
+    "meta": {
+      "generator": "^T1ENVIOS$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://t1envios.com"
+  },
+  "T1 Paginas": {
+    "cats": [
+      6
+    ],
+    "description": "T1 Paginas is an ecommerce platform.",
+    "icon": "T1 Paginas.svg",
+    "implies": [
+      "AngularJS",
+      "Node.js",
+      "MongoDB"
+    ],
+    "meta": {
+      "generator": "^T1PAGINAS$"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://t1paginas.com"
+  },
+  "T1 Pagos": {
+    "cats": [
+      41
+    ],
+    "description": "T1 Pagos is a payment processing platform.",
+    "icon": "T1 Pagos.svg",
+    "meta": {
+      "generator": "^T1PAGOS$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.t1pagos.com"
+  },
   "THG Ingenuity": {
     "cats": [
       6
@@ -349,6 +415,7 @@
       }
     },
     "icon": "tailwindcss.svg",
+    "scriptSrc": "\\.tailwindcss\\.com",
     "website": "https://tailwindcss.com/"
   },
   "TakeDrop": {
@@ -385,6 +452,36 @@
     "saas": true,
     "website": "https://www.talkable.com"
   },
+  "Tallentor": {
+    "cats": [
+      10
+    ],
+    "description": "Tallentor is a subscription-based software website analytics, heatmap, channel chat intergration.",
+    "icon": "Tallentor.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "tallentor\\.com/js/script_tracker\\.js",
+    "website": "https://tallentor.com"
+  },
+  "Tallentor Widget": {
+    "cats": [
+      52
+    ],
+    "cookies": {
+      "tallentor_widget": ""
+    },
+    "description": "Tallentor is a subscription-based software website analytics, heatmap, channel chat intergration.",
+    "icon": "Tallentor.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tallentor.com"
+  },
   "Tamago": {
     "cats": [
       5
@@ -407,17 +504,36 @@
     "scriptSrc": "cdn\\.tamara\\.co",
     "website": "https://tamara.co/"
   },
+  "Tangled Network": {
+    "cats": [
+      88
+    ],
+    "description": "Tangled Network provides a managed services in website devleopment, web and database hosting and domain registration, with a focus on everything managed for small and medium sized businesses.",
+    "dns": {
+      "NS": "\\.tanglednetwork\\.com",
+      "SOA": "\\.tanglednetwork\\.com"
+    },
+    "headers": {
+      "X-Hosting-Provider": "Tangled Network"
+    },
+    "icon": "atws.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://tanglednetwork.com"
+  },
   "Tapad": {
     "cats": [
       36
     ],
     "description": "Tapad is a venture-funded startup company that develops and markets software and services for cross-device advertising and content delivery.",
-    "icon": "Tapad.svg",
     "dom": "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']",
-    "saas": true,
+    "icon": "Tapad.svg",
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://www.tapad.com"
   },
   "Tapcart": {
@@ -575,6 +691,25 @@
       "application-name": "TeamCity"
     },
     "website": "https://www.jetbrains.com/teamcity/"
+  },
+  "Tebex": {
+    "cats": [
+      6
+    ],
+    "description": "Tebex specialises in providing gcommerce solutions for online games.",
+    "headers": {
+      "tb-cache-country": "\\;confidence:33",
+      "tb-cache-group": "\\;confidence:34",
+      "tb-node": "\\;confidence:33"
+    },
+    "icon": "Tebex.svg",
+    "implies": [
+      "MySQL",
+      "Sass"
+    ],
+    "requires": "Cart Functionality",
+    "saas": true,
+    "website": "https://www.tebex.io"
   },
   "Telescope": {
     "cats": [
@@ -738,8 +873,8 @@
     "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
     "icon": "The Events Calendar.png",
     "js": {
-      "tribe_l10n_datatables": "",
-      "TribeCalendar": ""
+      "TribeCalendar": "",
+      "tribe_l10n_datatables": ""
     },
     "pricing": [
       "freemium",
@@ -749,6 +884,45 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
     "website": "https://theeventscalendar.com"
+  },
+  "The Hotels Network": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "The Hotels Network provides a SaaS software that enhances hotelier websites with predictive marketing personalisation and user behavior analytics.",
+    "headers": {
+      "content-security-policy": "\\.thehotelsnetwork\\.com",
+      "content-security-policy-report-only": "\\.thehotelsnetwork\\.com"
+    },
+    "icon": "The Hotels Network.svg",
+    "js": {
+      "thn.data.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.thehotelsnetwork\\.com/",
+    "website": "https://thehotelsnetwork.com"
+  },
+  "The SEO Framework": {
+    "cats": [
+      54,
+      87
+    ],
+    "description": "The SEO Framework is the only WordPress plugin that can intelligently generate critical SEO meta tags by reading your WordPress environment.",
+    "html": "<!--[^>]+The SEO Framework by Sybre Waaijer",
+    "icon": "The SEO Framework.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "website": "https://theseoframework.com"
   },
   "The Theme Foundry Make": {
     "cats": [
@@ -815,28 +989,6 @@
     ],
     "saas": true,
     "website": "https://www.thefork.com"
-  },
-  "The Hotels Network": {
-    "cats": [
-      10,
-      76
-    ],
-    "description": "The Hotels Network provides a SaaS software that enhances hotelier websites with predictive marketing personalisation and user behavior analytics.",
-    "icon": "The Hotels Network.svg",
-    "saas": true,
-    "headers": {
-      "content-security-policy": "\\.thehotelsnetwork\\.com",
-      "content-security-policy-report-only": "\\.thehotelsnetwork\\.com"
-    },
-    "js": {
-      "thn.data.version": "([\\d\\.]+)\\;version:\\1"
-    },
-    "scriptSrc": "\\.thehotelsnetwork\\.com/",
-    "pricing": [
-      "freemium",
-      "poa"
-    ],
-    "website": "https://thehotelsnetwork.com"
   },
   "Thelia": {
     "cats": [
@@ -1599,6 +1751,20 @@
     "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
     "website": "http://tinymce.com"
   },
+  "Tippy.js": {
+    "cats": [
+      59
+    ],
+    "description": "Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper.",
+    "dom": "style[data-tippy-stylesheet]",
+    "icon": "Tippy.js.svg",
+    "js": {
+      "tippy.defaultProps": ""
+    },
+    "oss": true,
+    "scriptSrc": "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1",
+    "website": "https://atomiks.github.io/tippyjs"
+  },
   "Tipsa": {
     "cats": [
       99
@@ -1746,22 +1912,6 @@
     "implies": "Python",
     "website": "http://trac.edgewall.org"
   },
-  "Trackify X": {
-    "cats": [
-      100,
-      10
-    ],
-    "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
-    "icon": "Trackify X.png",
-    "implies": "Shopify",
-    "scriptSrc": "trackifyx\\.redretarget\\.com/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://trackifyapp.com"
-  },
   "TrackJs": {
     "cats": [
       10
@@ -1774,6 +1924,22 @@
     },
     "scriptSrc": "cdn\\.trackjs\\.com",
     "website": "http://trackjs.com"
+  },
+  "Trackify X": {
+    "cats": [
+      100,
+      10
+    ],
+    "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
+    "icon": "Trackify X.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "trackifyx\\.redretarget\\.com/",
+    "website": "https://trackifyapp.com"
   },
   "Tradedoubler": {
     "cats": [
@@ -1806,7 +1972,7 @@
     "scriptSrc": "\\.tsyndicate\\.com/",
     "website": "https://trafficstars.com"
   },
- "Transcend": {
+  "Transcend": {
     "cats": [
       67
     ],
@@ -1815,10 +1981,10 @@
     "js": {
       "transcend": ""
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "http://www.transcend.io"
   },
   "Transcy": {
@@ -1985,6 +2151,22 @@
     "saas": true,
     "website": "https://triplelift.com",
     "xhr": "\\.3lift\\.com"
+  },
+  "Tritac Katana Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Katana Commerce is Tritac's B2B and B2C ecommerce platform.",
+    "icon": "Tritac.svg",
+    "meta": {
+      "powered-by": "^Katana\\sCommerce$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.tritac.com/nl/producten/katana-commerce/"
   },
   "Trix": {
     "cats": [
@@ -2170,6 +2352,26 @@
     "saas": true,
     "scriptSrc": "trustspot\\.io",
     "website": "https://trustspot.io/"
+  },
+  "Trustvox": {
+    "cats": [
+      90
+    ],
+    "description": "Trustvox collects reviews from customers who purchased ecommerce products and publishes them on product pages with Sincerity Seals.",
+    "icon": "Trustvox.png",
+    "js": {
+      "TrustvoxCertificateWidget": "",
+      "TrustvoxRatesWidget": "",
+      "_trustvox": "",
+      "_trustvox_colt": "",
+      "_trustvox_shelf_rate": "",
+      "trustvox_id": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://site.trustvox.com.br"
   },
   "Tumblr": {
     "cats": [
@@ -2653,6 +2855,27 @@
     "saas": true,
     "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
     "website": "https://typof.com"
+  },
+  "Tyslo EasySell": {
+    "cats": [
+      100
+    ],
+    "description": "Tyslo EasySell replaces default Shopify checkout process by embedding (or popup) a simple order form on the product or cart page.",
+    "icon": "Tyslo EasySell.png",
+    "implies": "Shopify",
+    "js": {
+      "openTysloForm": "",
+      "tysloApplyDiscount": "",
+      "tysloConfigVersion": "",
+      "tysloEasysellConfig": ""
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tyslo.com"
   },
   "theTradeDesk": {
     "cats": [

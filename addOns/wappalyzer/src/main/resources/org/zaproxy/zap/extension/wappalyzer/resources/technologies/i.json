@@ -1,18 +1,4 @@
 {
-  "iAdvize": {
-    "cats": [
-      52
-    ],
-    "description": "iAdvize is a conversational marketing platform that connects customers in need of advice with experts who are available 24/7 via messaging.",
-    "icon": "iAdvize.svg",
-    "dom": "link[href*='.iadvize.com']",
-    "scriptSrc": "\\.iadvize\\.com/",
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.iadvize.com"
-  },
   "IBM Coremetrics": {
     "cats": [
       10
@@ -106,6 +92,25 @@
     },
     "scriptSrc": "jscripts/ips_",
     "website": "https://invisioncommunity.com/"
+  },
+  "IPFS": {
+    "cats": [
+      48
+    ],
+    "description": "IPFS is a peer-to-peer hypermedia protocol that provides a distributed hypermedia web.",
+    "headers": {
+      "x-cf-ipfs-cache-status": "",
+      "x-ipfs-datasize": "",
+      "x-ipfs-gateway-host": "",
+      "x-ipfs-lb-pop": "",
+      "x-ipfs-path": "",
+      "x-ipfs-pop": "",
+      "x-ipfs-root": "",
+      "x-ipfs-root-cid": "",
+      "x-ipfs-roots": ""
+    },
+    "icon": "IPFS.png",
+    "website": "https://ipfs.io/"
   },
   "IPInfoDB": {
     "cats": [
@@ -202,21 +207,6 @@
     "scriptSrc": "template-assets\\.iluria\\.com/commons/",
     "website": "https://www.iluria.com.br"
   },
-  "ImageEngine": {
-    "cats": [
-      31,
-      92
-    ],
-    "description": "ImageEngine is an intelligent image content delivery network. ImageEngine will resize your image content tailored to the end users device.",
-    "icon": "ImageEngine.svg",
-    "dom": "link[href*='.imgeng.in/'], img[src*='.imgeng.in/'], img[data-src*='.imgeng.in/'], source[srcset*='.imgeng.in/']",
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://imageengine.io"
-  },
   "Image Relay": {
     "cats": [
       95
@@ -233,6 +223,21 @@
     "saas": true,
     "scriptSrc": "static\\.imagerelay\\.com/",
     "website": "https://www.imagerelay.com"
+  },
+  "ImageEngine": {
+    "cats": [
+      31,
+      92
+    ],
+    "description": "ImageEngine is an intelligent image content delivery network. ImageEngine will resize your image content tailored to the end users device.",
+    "dom": "link[href*='.imgeng.in/'], img[src*='.imgeng.in/'], img[data-src*='.imgeng.in/'], source[srcset*='.imgeng.in/']",
+    "icon": "ImageEngine.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://imageengine.io"
   },
   "Imagely NextGEN Gallery": {
     "cats": [
@@ -388,6 +393,19 @@
     "saas": true,
     "scriptSrc": "\\.inmoment\\.com(?:\\.\\w+)?/",
     "website": "https://inmoment.com"
+  },
+  "InSyncai": {
+    "cats": [
+      52
+    ],
+    "description": "InSyncai offers a conversational platform for enterprises to design and build chatbots having applications in customer support and services.",
+    "dom": "iframe[src*='insync_iframe_webchat_js_prod'], iframe#insync-iframe",
+    "icon": "InSyncai.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.insyncai.com"
   },
   "Incapsula": {
     "cats": [
@@ -682,18 +700,20 @@
     ],
     "website": "https://instapage.com"
   },
-  "InSyncai": {
+  "Instatus": {
     "cats": [
-      52
+      13
     ],
-    "description": "InSyncai offers a conversational platform for enterprises to design and build chatbots having applications in customer support and services.",
-    "dom": "iframe[src*='insync_iframe_webchat_js_prod'], iframe#insync-iframe",
-    "icon": "InSyncai.png",
+    "description": "Instatus is a status and incident communication tool.",
+    "dom": "a[href*='instatus.com'][target='_blank']",
+    "icon": "Instatus.svg",
     "pricing": [
-      "poa"
+      "freemium",
+      "low",
+      "recurring"
     ],
     "saas": true,
-    "website": "https://www.insyncai.com"
+    "website": "https://instatus.com"
   },
   "Integral Ad Science": {
     "cats": [
@@ -1016,6 +1036,20 @@
     "icon": "30namaPlayer.png",
     "website": "https://30nama.com/"
   },
+  "iAdvize": {
+    "cats": [
+      52
+    ],
+    "description": "iAdvize is a conversational marketing platform that connects customers in need of advice with experts who are available 24/7 via messaging.",
+    "dom": "link[href*='.iadvize.com']",
+    "icon": "iAdvize.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.iadvize\\.com/",
+    "website": "https://www.iadvize.com"
+  },
   "iEXExchanger": {
     "cats": [
       1
@@ -1075,6 +1109,18 @@
       "generator": "^iWeb( [\\d.]+)?\\;version:\\1"
     },
     "website": "http://apple.com/ilife/iweb"
+  },
+  "idCloudHost": {
+    "cats": [
+      88
+    ],
+    "description": "idCloudHost is a local web service provider based in Indonesia that offer a wide range of services including domain name registration and cloud hosting.",
+    "dns": {
+      "NS": "ns\\d+\\.cloudhost\\.id",
+      "SOA": "ns\\d+\\.cloudhost\\.id"
+    },
+    "icon": "idCloudHost.png",
+    "website": "https://idcloudhost.com"
   },
   "ikiwiki": {
     "cats": [

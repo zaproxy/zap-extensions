@@ -419,11 +419,11 @@
     ],
     "description": "CareCart is a smart app to recover big value carts on all sizes of shopify stores.",
     "icon": "CareCart.png",
+    "implies": "Shopify",
     "pricing": [
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "app\\.carecart\\.io/api/abandoned-cart/",
     "website": "https://carecart.io/abandoned-cart-recovery-app"
@@ -435,10 +435,10 @@
     ],
     "description": "CareCart Sales Pop Up is a stock countdown timer, recent sales notifications, live sales pop up widget.",
     "icon": "CareCart.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "sales-pop\\.carecart\\.io/",
     "website": "https://carecart.io/sales-pop-up-app"
@@ -460,18 +460,34 @@
     "scriptSrc": "/cargo\\.",
     "website": "https://cargo.site"
   },
+  "Carrd": {
+    "cats": [
+      51
+    ],
+    "description": "Carrd is a platform for building simple, responsive, one-page sites.",
+    "icon": "Carrd.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Apache",
+    "saas": true,
+    "scripts": "\\(\\!section\\s\\|\\|\\ssection\\.tagName\\s\\!\\=\\s\\'SECTION\\'\\)",
+    "website": "https://carrd.co"
+  },
   "Carro": {
     "cats": [
       100
     ],
     "description": "Carro connects participating Shopify stores together to enable cross-store selling or the ability for like-minded partners to directly sell each other products without the need for inventory, managing returns, or minimum order quantities.",
     "icon": "Carro.svg",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": [
       "\\.getcarro\\.com/",
@@ -515,8 +531,8 @@
     ],
     "description": "Cart.js is a very small open-source Javascript library that makes the addition of powerful Ajax cart functionality to your Shopify theme a breeze.",
     "icon": "Cart.js.png",
-    "oss": true,
     "implies": "Shopify",
+    "oss": true,
     "scriptSrc": "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1",
     "website": "https://cartjs.org"
   },
@@ -1720,6 +1736,18 @@
     "icon": "CoconutSoftware.svg",
     "website": "https://www.coconutsoftware.com/"
   },
+  "Cocos2d": {
+    "cats": [
+      19
+    ],
+    "description": "Cocos2d is a mature open source cross-platform game development framework.",
+    "icon": "Cocos2d.png",
+    "js": {
+      "CocosEngine": "([\\d\\.]{2,})\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://www.cocos.com/en/cocos2dx"
+  },
   "CodeIgniter": {
     "cats": [
       18
@@ -1754,11 +1782,11 @@
     ],
     "description": "Coin Currency Converter is an automatic currency conversion app for Shopify.",
     "icon": "Coin Currency Converter.png",
+    "implies": "Shopify",
     "pricing": [
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "/apps/coin/coin\\.js.+\\.myshopify\\.com",
     "website": "https://apps.shopify.com/coin"
@@ -2292,23 +2320,6 @@
     },
     "website": "http://www.gocontentbox.org"
   },
-  "ContentSquare": {
-    "cats": [
-      10,
-      74
-    ],
-    "description": "ContentSquare is an enterprise-level UX optimisation platform.",
-    "icon": "ContentSquare.png",
-    "js": {
-      "CS_CONF.trackerDomain": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.contentsquare\\.net/",
-    "website": "https://contentsquare.com"
-  },
   "ContentStudio": {
     "cats": [
       96
@@ -2356,6 +2367,23 @@
     ],
     "saas": true,
     "website": "https://contently.com"
+  },
+  "Contentsquare": {
+    "cats": [
+      10,
+      74
+    ],
+    "description": "Contentsquare is an enterprise-level UX optimisation platform.",
+    "icon": "Contentsquare.svg",
+    "js": {
+      "CS_CONF.trackerDomain": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.contentsquare\\.net/",
+    "website": "https://contentsquare.com"
   },
   "Contentstack": {
     "cats": [
@@ -2822,11 +2850,11 @@
     "js": {
       "cozyEcoAdnsUa": ""
     },
-    "scriptSrc": "cdncozyantitheft\\.addons\\.business/",
-    "saas": true,
     "pricing": [
       "freemium"
     ],
+    "saas": true,
+    "scriptSrc": "cdncozyantitheft\\.addons\\.business/",
     "website": "https://apps.shopify.com/cozy-antitheft-for-images-and-more"
   },
   "CppCMS": {
@@ -2939,6 +2967,7 @@
     "description": "Crisp Live Chat is a live chat solution with free and paid options.",
     "icon": "Crisp Live Chat.svg",
     "js": {
+      "$__CRISP_INCLUDED": "",
       "$crisp": "",
       "CRISP_WEBSITE_ID": ""
     },
@@ -2948,6 +2977,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "client\\.crisp\\.chat/",
     "website": "https://crisp.chat/"
   },
   "Criteo": {

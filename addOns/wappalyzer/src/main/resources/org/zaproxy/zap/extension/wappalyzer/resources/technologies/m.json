@@ -30,6 +30,17 @@
     "saas": true,
     "website": "https://ma-jin.jp"
   },
+  "MATORI.NET": {
+    "cats": [
+      64
+    ],
+    "description": "MATORI.NET is a fully managed reverse proxy.",
+    "headers": {
+      "X-Powered-By": "MATORI.NET"
+    },
+    "implies": "OpenResty",
+    "website": "http://matori.net"
+  },
   "MDUI": {
     "cats": [
       66
@@ -158,7 +169,7 @@
     ],
     "css": "\\.MuiPaper-root",
     "description": "MUI(formerly Material UI) is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
-    "dom": "style[data-meta='MuiPaper'], div.MuiBox-root, div.MuiPaper-root",
+    "dom": "style[data-meta='MuiPaper'], div.MuiBox-root, div.MuiPaper-root, style[data-meta='MuiButton']",
     "icon": "MUI.svg",
     "implies": "React",
     "oss": true,
@@ -214,11 +225,23 @@
     "meta": {
       "web-author": "^Magazord$"
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://www.magazord.com.br"
+  },
+  "MageWorx Search Autocomplete": {
+    "cats": [
+      29
+    ],
+    "description": "MageWorx Search Autocomplete extension offers an AJAX-based popup window that displays and updates relevant search results while a customer forms his or her query.",
+    "dom": "link[href*='MageWorx_SearchSuiteAutocomplete']",
+    "icon": "MageWorx.svg",
+    "oss": true,
+    "requires": "Magento",
+    "scriptSrc": "MageWorx_SearchSuiteAutocomplete",
+    "website": "https://github.com/mageworx/search-suite-autocomplete"
   },
   "Magento": {
     "cats": [
@@ -340,6 +363,54 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.mc4wp.com"
+  },
+  "MailerLite": {
+    "cats": [
+      32
+    ],
+    "description": "MailerLite is an email marketing tool and website builder for businesses of all shapes and sizes.",
+    "dom": "link[href*='.mailerlite.com']",
+    "icon": "MailerLite.svg",
+    "js": {
+      "MailerLiteObject": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.mailerlite\\.com/",
+    "website": "https://www.mailerlite.com"
+  },
+  "MailerLite Website Builder": {
+    "cats": [
+      51
+    ],
+    "description": "MailerLite Website Builder is a free drag & drop website builder with interactive blocks and ecommerce integrations.",
+    "icon": "MailerLite.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "MailerLite",
+      "Go",
+      "Caddy"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.mailerlite\\.com/moment/moment\\.min\\.js",
+    "website": "https://www.mailerlite.com/features/website-builder"
+  },
+  "MailerLite plugin": {
+    "cats": [
+      87
+    ],
+    "description": "The official MailerLite signup forms plugin makes it easy to grow your newsletter subscriber list from your WordPress blog or website. The plugin automatically integrates your WordPress form with your MailerLite email marketing account.",
+    "icon": "MailerLite.svg",
+    "implies": "MailerLite",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/woo-mailerlite/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://ru.wordpress.org/plugins/official-mailerlite-sign-up-forms/"
   },
   "Mailgun": {
     "cats": [
@@ -483,11 +554,12 @@
     ],
     "description": "Mapbox GL JS is a JavaScript library that uses WebGL to render interactive maps from vector tiles and Mapbox styles.",
     "dom": "link[href*='mapbox-gl.css']",
-    "icon": "Mapbogljs.png",
+    "icon": "Mapbox.svg",
     "js": {
       "mapboxgl.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
-    "scriptSrc": "mapbox-gl.js",
+    "oss": true,
+    "scriptSrc": "mapbox-gl\\.js",
     "website": "https://github.com/mapbox/mapbox-gl-js"
   },
   "Mapp": {
@@ -532,6 +604,20 @@
       "/include/mapplic/mapplic\\.js"
     ],
     "website": "https://mapplic.com"
+  },
+  "Maptalks": {
+    "cats": [
+      35
+    ],
+    "description": "Maptalks is a light and plugable JavaScript library for integrated 2D/3D maps.",
+    "dom": "div.maptalks-wrapper",
+    "icon": "Maptalks.png",
+    "js": {
+      "map._eventMap": "",
+      "maptalks.GeoJSON": ""
+    },
+    "oss": true,
+    "website": "https://maptalks.org"
   },
   "Marchex": {
     "cats": [
@@ -616,12 +702,12 @@
     "js": {
       "markerConfig": ""
     },
-    "scriptSrc": "edge\\.marker\\.io",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "edge\\.marker\\.io",
     "website": "https://marker.io"
   },
   "Marketo": {
@@ -877,11 +963,11 @@
     ],
     "description": "Measured is an analytics platform to measure efficiency of marketing channels.",
     "icon": "Measured.svg",
-    "scriptSrc": "tag\\.measured\\.com",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "tag\\.measured\\.com",
     "website": "https://www.measured.com"
   },
   "Medallia": {
@@ -1256,7 +1342,8 @@
     "description": "ASP.NET is an open-source, server-side web-application framework designed for web development to produce dynamic web pages.",
     "headers": {
       "X-AspNet-Version": "(.+)\\;version:\\1",
-      "X-Powered-By": "^ASP\\.NET"
+      "X-Powered-By": "^ASP\\.NET",
+      "set-cookie": "\\.AspNetCore"
     },
     "html": "<input[^>]+name=\"__VIEWSTATE",
     "icon": "Microsoft ASP.NET.svg",
@@ -1310,6 +1397,21 @@
     ],
     "saas": true,
     "website": "https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview"
+  },
+  "Microsoft Authentication": {
+    "cats": [
+      69,
+      59
+    ],
+    "description": "The Microsoft Authentication Library for JavaScript enables both client-side and server-side JavaScript applications to authenticate users using Azure AD for work and school accounts (AAD), Microsoft personal accounts (MSA), and social identity providers like Facebook, Google, LinkedIn, Microsoft accounts, etc. through Azure AD B2C service.",
+    "icon": "Microsoft.svg",
+    "js": {
+      "Msal.Authority": "",
+      "msal.authorityInstance": "",
+      "msalConfig.auth": ""
+    },
+    "oss": true,
+    "website": "https://github.com/AzureAD/microsoft-authentication-library-for-js"
   },
   "Microsoft Clarity": {
     "cats": [
@@ -1503,17 +1605,17 @@
       32
     ],
     "description": "Mindbox is a marketing automation platform.",
-    "icon":"Mindbox.png",
+    "icon": "Mindbox.png",
     "js": {
-      "mindbox": "",
       "MindboxEndpointSettings": "",
+      "mindbox": "",
       "mindboxBatchedModulesInitialized": ""
     },
-    "saas": true,
     "pricing": [
       "payg",
       "recurring"
     ],
+    "saas": true,
     "website": "https://mindbox.ru"
   },
   "Minero.cc": {
@@ -1525,6 +1627,17 @@
       "//minero\\.cc/lib/minero(?:-miner|-hidden)?\\.min\\.js"
     ],
     "website": "http://minero.cc/"
+  },
+  "MiniServ": {
+    "cats": [
+      22
+    ],
+    "headers": {
+      "Server": "MiniServ/([\\d\\.]+)\\;version:\\1"
+    },
+    "implies": "Webmin",
+    "oss": true,
+    "website": "https://github.com/webmin/webmin/blob/master/miniserv.pl"
   },
   "Mint": {
     "cats": [
@@ -1932,17 +2045,17 @@
       41
     ],
     "description": "Moneris (formerly Moneris Solutions) is Canada's largest financial technology company that specialises in payment processing.",
-    "icon": "Moneris.svg",
     "headers": {
       "content-security-policy": "\\.moneris\\.com"
     },
+    "icon": "Moneris.svg",
     "js": {
       "initialServerData.monerisConfiguration": ""
     },
-    "saas": true,
     "pricing": [
       "payg"
     ],
+    "saas": true,
     "website": "https://www.moneris.com"
   },
   "Moneris Payment Gateway": {
@@ -1958,8 +2071,8 @@
     "js": {
       "wc_moneris_hosted_tokenization_params": ""
     },
-    "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
     "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
     "website": "https://wordpress.org/plugins/wc-moneris-payment-gateway"
   },
   "MongoDB": {
@@ -2397,6 +2510,18 @@
     "saas": true,
     "website": "https://www.ionos.com"
   },
+  "Myhkw player": {
+    "cats": [
+      5
+    ],
+    "description": "Myhkw player is a website music player.",
+    "icon": "Myhkw player.png",
+    "js": {
+      "myhk_player_songid": "",
+      "myhkplayerlist": ""
+    },
+    "website": "https://myhkw.cn"
+  },
   "Mynetcap": {
     "cats": [
       1
@@ -2491,6 +2616,20 @@
     "oss": true,
     "scripts": "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)",
     "website": "https://github.com/rust-lang/mdBook"
+  },
+  "metisMenu": {
+    "cats": [
+      59
+    ],
+    "description": "metisMenu is a collapsible jQuery menu plugin.",
+    "implies": "jQuery",
+    "js": {
+      "MetisMenu": "",
+      "metisMenu": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:/|\\.)metisMenu(?:js)?(?:\\.min)?\\.js(?:\\?([\\d\\.]+))?\\;version:\\1",
+    "website": "https://github.com/onokumus/metismenu"
   },
   "microCMS": {
     "cats": [

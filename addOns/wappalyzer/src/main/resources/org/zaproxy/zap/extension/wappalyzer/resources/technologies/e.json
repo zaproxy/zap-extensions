@@ -147,6 +147,21 @@
     "website": "https://ex.co",
     "xhr": "prd-collector-anon\\.ex\\.co"
   },
+  "Easy Hide PayPal": {
+    "cats": [
+      100
+    ],
+    "description": "Easy Hide PayPal hides PayPal button from product page, cart and checkout but keep PayPal as payment option in checkout.",
+    "icon": "Easy Hide PayPal.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "easyhide\\.herculesapps\\.com/",
+    "website": "https://apps.shopify.com/easyhide"
+  },
   "Easy Redirects": {
     "cats": [
       100
@@ -193,21 +208,6 @@
     "icon": "EasyEngine.png",
     "implies": "Docker",
     "website": "https://easyengine.io"
-  },
-  "Easy Hide PayPal": {
-    "cats": [
-     100
-    ],
-    "description": "Easy Hide PayPal hides PayPal button from product page, cart and checkout but keep PayPal as payment option in checkout.",
-    "icon": "Easy Hide PayPal.png",
-    "implies": "Shopify",
-    "scriptSrc": "easyhide\\.herculesapps\\.com/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://apps.shopify.com/easyhide"
   },
   "EasyStore": {
     "cats": [
@@ -307,6 +307,35 @@
     "url": "https?://(?:[^/]+\\.)?edgecastcdn\\.net/",
     "website": "http://www.edgecast.com"
   },
+  "Edgio App Platform": {
+    "cats": [
+      31,
+      62
+    ],
+    "cookies": {
+      "layer0_bucket": "",
+      "layer0_destination": "",
+      "layer0_eid": ""
+    },
+    "description": "Edgio App Platform is an integrated suite of Edge services, from Delivery to Compute.",
+    "headers": {
+      "x-0-status": "",
+      "x-0-t": "",
+      "x-0-version": "^\\d+ ([\\d.]+) \\;version:\\1"
+    },
+    "icon": "Edgio.svg",
+    "js": {
+      "Layer0.Metrics": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/__layer0__/cache-manifest\\.js",
+    "website": "https://edg.io"
+  },
   "Editor.js": {
     "cats": [
       24
@@ -318,6 +347,23 @@
     },
     "oss": true,
     "website": "https://editorjs.io"
+  },
+  "Eggplant": {
+    "cats": [
+      78
+    ],
+    "description": "Eggplant is a software testing and monitoring company.",
+    "headers": {
+      "content-security-policy": "\\.eggplant\\.cloud"
+    },
+    "icon": "Eggplant.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.eggplant\\.cloud/",
+    "website": "https://www.eggplantsoftware.com"
   },
   "Elastic APM": {
     "cats": [
@@ -482,6 +528,33 @@
     "saas": true,
     "website": "https://www.getelevar.com"
   },
+  "Eleventy": {
+    "cats": [
+      57
+    ],
+    "description": "Eleventy (11ty) a simpler static site generator.",
+    "icon": "Eleventy.svg",
+    "meta": {
+      "generator": "^Eleventy\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://www.11ty.dev"
+  },
+  "Elfsight": {
+    "cats": [
+      5
+    ],
+    "description": "Elfsight is an all-in-one platform offering 70+ customisable widgets for websites.",
+    "icon": "Elfsight.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.elfsight\\.com/",
+    "website": "https://elfsight.com"
+  },
   "Elm": {
     "cats": [
       27,
@@ -633,13 +706,13 @@
     "js": {
       "emotivePopupInitializing": ""
     },
-    "scriptSrc": "emotivecdn\\.io/",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring",
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "emotivecdn\\.io/",
     "website": "https://emotive.io"
   },
   "Enable": {
@@ -894,10 +967,10 @@
     "js": {
       "cartroids.appBase": "cartroids\\.eraofecom\\.org"
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://eraofecom.org/collections/tech/products/cartroids"
   },
   "EraofEcom MTL": {
@@ -907,11 +980,11 @@
     "description": "EraofEcom MTL is a Shopify pop up app that enables you to catch your website visitors.",
     "icon": "EraofEcom.png",
     "implies": "Shopify",
-    "scriptSrc": "mtl\\.eraofecom\\.org",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "mtl\\.eraofecom\\.org",
     "website": "https://eraofecom.org/collections/tech/products/milk-the-leads"
   },
   "EraofEcom WinAds": {
@@ -919,17 +992,17 @@
       100
     ],
     "description": "EraofEcom WinAds is an all-in-one Facebook pixel app for Shopify.",
+    "dom": "link[href*='winads.eraofecom.org']",
     "icon": "EraofEcom.png",
     "implies": "Shopify",
-    "dom": "link[href*='winads.eraofecom.org']",
     "js": {
       "win_ads.baseURL": "winads\\.eraofecom\\.org"
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://eraofecom.org/collections/tech/products/win-ads-manager"
   },
   "Erlang": {
@@ -1098,12 +1171,12 @@
     ],
     "description": "Everflow is a partner marketing analytics platform.",
     "icon": "Everflow.png",
-    "scriptSrc": "everflow\\.js",
-    "saas": true,
     "pricing": [
       "high",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "everflow\\.js",
     "website": "https://www.everflow.io"
   },
   "Eveve": {
@@ -1605,6 +1678,20 @@
     ],
     "saas": true,
     "website": "https://www.essentialaccessibility.com"
+  },
+  "eShopCRM": {
+    "cats": [
+      53
+    ],
+    "description": "eShopCRM is an ecommerce CRM for Shopify.",
+    "icon": "eShopCRM.png",
+    "implies": "Shopify",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "eshopcrm\\.com/",
+    "website": "https://eshopcrm.com"
   },
   "eSyndiCat": {
     "cats": [

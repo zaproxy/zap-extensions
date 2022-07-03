@@ -85,23 +85,6 @@
     "icon": "SDL Tridion.svg",
     "website": "http://www.sdl.com/products/tridion"
   },
-  "Semplice": {
-    "cats": [
-      80,
-      51
-    ],
-    "description": "Semplice is a Wordpress-based website builder made by designers for designers.",
-    "icon": "Semplice.svg",
-    "js": {
-      "semplice.template_dir": ""
-    },
-    "pricing": [
-      "onetime"
-    ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/semplice(?:\\d+)?(?:-child)?(?:-theme)?/",
-    "website": "https://www.semplice.com"
-  },
   "SEMrush": {
     "cats": [
       32
@@ -265,19 +248,6 @@
     "scripts": "embed\\.sendtonews\\.com/",
     "website": "https://www.stnvideo.com"
   },
-  "Strattic": {
-    "cats": [
-      88
-    ],
-    "description": "Strattic offers static and headless hosting for WordPress sites.",
-    "headers": {
-      "x-powered-by": "Strattic"
-    },
-    "pricing": [ "recurring", "low" ],
-    "requires": "WordPress",
-    "icon": "strattic-icon.png",
-    "website": "https://www.strattic.com/"
-  },
   "STUDIO": {
     "cats": [
       51
@@ -373,6 +343,23 @@
       "recurring"
     ],
     "website": "https://saba.host"
+  },
+  "SabaVision": {
+    "cats": [
+      36
+    ],
+    "description": "SabaVision, one of the core products of SabaIdea, is Iran's largest online advertising agency.",
+    "icon": "SabaVision.png",
+    "js": {
+      "SabavisionElement": "",
+      "__SABAVISION_GET_ADD_TIMEOUT": "",
+      "sabaVisionWebsiteID": "",
+      "sabaVisionWebsitePage": ""
+    },
+    "meta": {
+      "sabavision_zone": ""
+    },
+    "website": "https://www.sabavision.com"
   },
   "Saber": {
     "cats": [
@@ -795,6 +782,15 @@
     },
     "website": "http://sarka-spip.net"
   },
+  "Sass": {
+    "cats": [
+      27
+    ],
+    "description": "Sass is an extension of CSS that enables you to use things like variables, nested rules, inline imports and more.",
+    "dom": "link[href*='/index.scss']",
+    "icon": "Sass.svg",
+    "website": "https://sass-lang.com"
+  },
   "Satori": {
     "cats": [
       32
@@ -969,6 +965,27 @@
     "scriptSrc": "live\\.sequracdn\\.com/",
     "website": "https://www.sequra.es"
   },
+  "Seal Subscriptions": {
+    "cats": [
+      100
+    ],
+    "description": "Seal Subscriptions is a Shopify subscriptions app, packed with lots of features, such as automated product swaps, interval changes, payment calendar, Quick Checkout Wizard, and more.",
+    "icon": "Seal Subscriptions.png",
+    "implies": "Shopify",
+    "js": {
+      "SealSubs.checkout": "",
+      "sealsubscriptions_settings_updated": "",
+      "sealsubsloaded": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sealsubscriptions\\.com/",
+    "website": "https://www.sealsubscriptions.com"
+  },
   "SeamlessCMS": {
     "cats": [
       1
@@ -1022,6 +1039,7 @@
     ],
     "description": "Secomapp is a trusted Shopify Expert providing services through Shopify Apps.",
     "icon": "Secomapp.png",
+    "implies": "Shopify",
     "js": {
       "SECOMAPP": ""
     },
@@ -1030,7 +1048,6 @@
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "cdn\\.secomapp\\.com/",
     "website": "https://www.secomapp.com"
@@ -1044,17 +1061,6 @@
     "icon": "Sectigo.svg",
     "website": "https://sectigo.com/"
   },
-  "Sections.design Shopify App Optimization": {
-    "cats": [
-      92
-    ],
-    "description": "Sections.design Shopify App Optimization is a Shopify section written in liquid for the purpose of improving performance of Shopify stores by optimizing how Shopify app loads.",
-    "dom": "div#shopify-section-app-optimization",
-    "icon": "Sections-Design.png",
-    "implies": "Shopify",
-    "oss": true,
-    "website": "https://github.com/mirceapiturca/Sections/tree/master/App%20Optimization"
-  },
   "Section.io": {
     "cats": [
       31
@@ -1067,6 +1073,17 @@
     },
     "icon": "sectionio.svg",
     "website": "https://www.section.io"
+  },
+  "Sections.design Shopify App Optimization": {
+    "cats": [
+      92
+    ],
+    "description": "Sections.design Shopify App Optimization is a Shopify section written in liquid for the purpose of improving performance of Shopify stores by optimizing how Shopify app loads.",
+    "dom": "div#shopify-section-app-optimization",
+    "icon": "Sections-Design.png",
+    "implies": "Shopify",
+    "oss": true,
+    "website": "https://github.com/mirceapiturca/Sections/tree/master/App%20Optimization"
   },
   "SeedProd Coming Soon": {
     "cats": [
@@ -1319,6 +1336,23 @@
     "saas": true,
     "scriptSrc": "\\.sematext\\.com/experience\\.js",
     "website": "https://sematext.com/experience"
+  },
+  "Semplice": {
+    "cats": [
+      80,
+      51
+    ],
+    "description": "Semplice is a Wordpress-based website builder made by designers for designers.",
+    "icon": "Semplice.svg",
+    "js": {
+      "semplice.template_dir": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/semplice(?:\\d+)?(?:-child)?(?:-theme)?/",
+    "website": "https://www.semplice.com"
   },
   "Sencha Touch": {
     "cats": [
@@ -1714,12 +1748,12 @@
     "description": "ShipTection is the easiest way to offer shipping protection on your Shopify site.",
     "icon": "ShipTection.png",
     "implies": "Shopify",
-    "scriptSrc": "app\\.shiptection\\.com/",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "app\\.shiptection\\.com/",
     "website": "https://wamapps.io/pages/shiptection-protection"
   },
   "Shogun": {
@@ -1790,6 +1824,7 @@
     ],
     "description": "ShopPad Infinite Options allows you to create as many custom option fields for your product pages as you need.",
     "icon": "ShopPad.svg",
+    "implies": "Shopify",
     "js": {
       "Shoppad.apps.infiniteoptions": ""
     },
@@ -1797,7 +1832,6 @@
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "website": "https://apps.shopify.com/custom-options"
   },
   "Shopaholic": {
@@ -1823,6 +1857,7 @@
     ],
     "description": "Shopapps is a trusted Shopify Expert providing services through Shopify Apps.",
     "icon": "Shopapps.png",
+    "implies": "Shopify",
     "js": {
       "iStockUrl": "iwish\\.myshopapps\\.com/",
       "iWishUrl": "iwish\\.myshopapps\\.com/"
@@ -1831,7 +1866,6 @@
       "low",
       "recurring"
     ],
-    "implies": "Shopify",
     "saas": true,
     "scriptSrc": "cdn\\.myshopapps\\.com/",
     "website": "http://www.shopapps.in"
@@ -1960,11 +1994,11 @@
     "js": {
       "ShopifyBuy": ""
     },
-    "scriptSrc": [
-      "sdk\\. shopifycdn\\.com/buy-button/latest/"
-    ],
     "pricing": [
       "freemium"
+    ],
+    "scriptSrc": [
+      "sdk\\. shopifycdn\\.com/buy-button/latest/"
     ],
     "website": "https://apps.shopify.com/buy-button"
   },
@@ -2012,10 +2046,10 @@
     ],
     "description": "Shopify Product reviews allows you to add a customer review feature to your products.",
     "icon": "Shopify.svg",
+    "implies": "Shopify",
     "js": {
       "SPR": ""
     },
-    "implies": "Shopify",
     "scriptSrc": [
       "productreviews\\.shopifycdn\\.com"
     ],
@@ -2267,6 +2301,16 @@
     "scriptSrc": "/wp-content/plugins/shortcodes-ultimate/.+index\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://getshortcodes.com"
   },
+  "Shortly": {
+    "cats": [
+      100
+    ],
+    "description": "Shortly help create short URLs for influencer-marketing, social media posts & email-marketing campaigns with your own store domain.",
+    "icon": "Shortly.png",
+    "implies": "Shopify",
+    "scriptSrc": "//shortly\\.shop/",
+    "website": "https://apps.shopify.com/shortly"
+  },
   "ShoutOut": {
     "cats": [
       71
@@ -2356,22 +2400,6 @@
     "saas": true,
     "scriptSrc": "\\.signifyd\\.com",
     "website": "https://www.signifyd.com"
-  },
-  "siimple": {
-    "cats": [
-      66
-    ],
-    "description": "siimple is a minimal CSS toolkit for building flat, clean and responsive web designs.",
-    "icon": "siimple.svg",
-    "dom": {
-      "link[href*='siimple.min.css']": {
-        "attributes": {
-          "href": "/npm/siimple@([\\d\\.]+)/dist/siimple\\.min\\.css\\;version:\\1"
-        }
-      }
-    },
-    "oss": true,
-    "website": "https://siimple.xyz"
   },
   "SilverStripe": {
     "cats": [
@@ -2680,6 +2708,26 @@
     "saas": true,
     "scriptSrc": "biz\\.sitejabber\\.com",
     "website": "https://www.sitejabber.com/"
+  },
+  "SiteManager": {
+    "cats": [
+      1
+    ],
+    "description": "SiteManager is a collaborative no-code/low-code web design platform for agencies and marketing teams.",
+    "dom": "link[href*='.sitemn.gr/']",
+    "icon": "SiteManager.svg",
+    "js": {
+      "SM_CookiesModal": "\\;confidence:50",
+      "SM_Modal": "\\;confidence:50"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "PHP",
+    "saas": true,
+    "scriptSrc": "s\\d+\\.sitemn\\.gr/",
+    "website": "https://www.sitemanager.io"
   },
   "SiteMinder": {
     "cats": [
@@ -3150,6 +3198,25 @@
     "saas": true,
     "scriptSrc": "\\.smartling\\.com/",
     "website": "https://www.smartling.com"
+  },
+  "Smartlook": {
+    "cats": [
+      10
+    ],
+    "description": "Smartlook is a qualitative analytics solution for websites and mobile apps.",
+    "icon": "Smartlook.svg",
+    "js": {
+      "smartlook": "\\;confidence:50",
+      "smartlook_key": "\\;confidence:50"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.smartlook\\.com/",
+    "website": "https://www.smartlook.com"
   },
   "Smartstore": {
     "cats": [
@@ -4384,23 +4451,19 @@
     "icon": "StackPath.svg",
     "website": "https://www.stackpath.com"
   },
-  "Stackla": {
+  "Stackify": {
     "cats": [
-      96,
-      95
+      13,
+      78
     ],
-    "description": "Stackla is a cloud-based content marketing platform that helps discover, curate, display and engage with user-generated content across all digital marketing platforms.",
-    "icon": "Stackla.png",
-    "js": {
-      "Stackla": ""
-    },
+    "description": "Stackify offers the only solution that fully integrates application performance monitoring with errors and logs.",
+    "icon": "Stackify.svg",
     "pricing": [
-      "high",
-      "recurring"
+      "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.stackla\\.com/",
-    "website": "http://stackla.com/"
+    "scriptSrc": "\\.stackify\\.com/",
+    "website": "https://stackify.com"
   },
   "Stamped": {
     "cats": [
@@ -4558,26 +4621,6 @@
     "saas": true,
     "website": "https://www.storehippo.com"
   },
-  "stores.jp": {
-    "cats": [
-      6
-    ],
-    "description": "stores.jp is an ecommerce platform which allows users to create their own ecommerce website.",
-    "icon": "stores.jp.svg",
-    "implies": [
-      "Visa",
-      "Mastercard"
-    ],
-    "js": {
-      "STORES_JP": ""
-    },
-    "pricing": [
-      "freemium",
-      "payg"
-    ],
-    "saas": true,
-    "website": "https://stores.jp/ec/"
-  },
   "Storeden": {
     "cats": [
       6
@@ -4689,6 +4732,22 @@
     "scriptSrc": "strato-editor\\.com/",
     "website": "https://www.strato.de/homepage-baukasten"
   },
+  "Strattic": {
+    "cats": [
+      88
+    ],
+    "description": "Strattic offers static and headless hosting for WordPress sites.",
+    "headers": {
+      "x-powered-by": "Strattic"
+    },
+    "icon": "strattic-icon.png",
+    "implies": "WordPress",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://www.strattic.com/"
+  },
   "Strikingly": {
     "cats": [
       1
@@ -4713,6 +4772,7 @@
     "icon": "Stripe.svg",
     "js": {
       "Stripe.version": "^(.+)$\\;version:\\1",
+      "__NEXT_DATA__.props.pageProps.appSettings.STRIPE_API_PUBLIC_KEY": "",
       "checkout.enabledpayments.stripe": "^true$"
     },
     "pricing": [
@@ -4919,7 +4979,10 @@
     "description": "Super Builder is a new tool for creating sleek landing pages right in Notion.",
     "dom": "link[href*='super-static-assets.'], img[srcset*='super-static-assets.']",
     "icon": "Super Builder.svg",
-    "implies": "Next.js",
+    "implies": [
+      "Notion",
+      "Next.js"
+    ],
     "oss": false,
     "pricing": [
       "low",
@@ -5169,6 +5232,25 @@
     "scriptSrc": "swiper(?:\\.min)?\\.js",
     "website": "https://swiperjs.com"
   },
+  "Swym Wishlist Plus": {
+    "cats": [
+      100
+    ],
+    "description": "Swym Wishlist Plus enables your customers to bookmark their favorite products and pick up where they left off when they return.",
+    "icon": "Swym.png",
+    "implies": "Shopify",
+    "js": {
+      "swappName": "Wishlist",
+      "swymCart.attributes": "\\;confidence:50"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://swym.it/apps/wishlist/"
+  },
   "Sylius": {
     "cats": [
       6
@@ -5347,6 +5429,22 @@
     "scriptSrc": "shine(?:\\.min)?\\.js",
     "website": "https://bigspaceship.github.io/shine.js/"
   },
+  "siimple": {
+    "cats": [
+      66
+    ],
+    "description": "siimple is a minimal CSS toolkit for building flat, clean and responsive web designs.",
+    "dom": {
+      "link[href*='siimple.min.css']": {
+        "attributes": {
+          "href": "/npm/siimple@([\\d\\.]+)/dist/siimple\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "icon": "siimple.svg",
+    "oss": true,
+    "website": "https://siimple.xyz"
+  },
   "snigel AdConsent": {
     "cats": [
       67
@@ -5380,6 +5478,26 @@
       "adengine\\.snigelweb\\.com"
     ],
     "website": "https://www.snigel.com/adengine/"
+  },
+  "stores.jp": {
+    "cats": [
+      6
+    ],
+    "description": "stores.jp is an ecommerce platform which allows users to create their own ecommerce website.",
+    "icon": "stores.jp.svg",
+    "implies": [
+      "Visa",
+      "Mastercard"
+    ],
+    "js": {
+      "STORES_JP": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://stores.jp/ec/"
   },
   "styled-components": {
     "cats": [
