@@ -388,6 +388,38 @@
     ],
     "website": "https://www.zip.co/"
   },
+  "Zipify OCU": {
+    "cats": [
+      100
+    ],
+    "description": "Zipify OCU allows you to add upsells and cross-sells to your checkout sequence.",
+    "icon": "Zipify OCU.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/zipify-oneclickupsell-vendor\\.js",
+    "website": "https://zipify.com/apps/ocu/"
+  },
+  "Zipify Pages": {
+    "cats": [
+      100,
+      51
+    ],
+    "description": "Zipify Pages the first landing page builder uniquely designed for ecommerce.",
+    "icon": "Zipify Pages.svg",
+    "implies": "Shopify",
+    "js": {
+      "ZipifyPages": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://zipify.com/apps/pages/"
+  },
   "Zipkin": {
     "cats": [
       10

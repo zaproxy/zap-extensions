@@ -169,23 +169,23 @@
       103
     ],
     "description": "Kaltura is a video content management platform that allows users to upload, manage, share, publish, and stream videos.",
-    "icon": "Kaltura.svg",
     "dom": "link[href*='.kaltura.com']",
+    "icon": "Kaltura.svg",
     "js": {
-      "kalturaIframeEmbed": "",
+      "Kplayer": "",
       "kGetKalturaEmbedSettings": "",
       "kGetKalturaPlayerList": "",
-      "restoreKalturaKDPCallback": "",
-      "Kplayer": ""
+      "kalturaIframeEmbed": "",
+      "restoreKalturaKDPCallback": ""
     },
-    "scripts": "kalturaPlayer",
-    "scriptSrc": "api\\.kaltura\\.(?:nordu\\.net|com)/",
     "pricing": [
       "recurring",
       "payg",
       "poa"
     ],
     "saas": true,
+    "scriptSrc": "api\\.kaltura\\.(?:nordu\\.net|com)/",
+    "scripts": "kalturaPlayer",
     "website": "https://corp.kaltura.com"
   },
   "Kameleoon": {

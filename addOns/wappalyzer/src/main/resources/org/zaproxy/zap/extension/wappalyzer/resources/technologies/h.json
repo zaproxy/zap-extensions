@@ -1,15 +1,4 @@
-{ 
-  "h5ai": {
-    "cats": [
-      19
-    ],
-    "description": "h5ai is a modern HTTP web server index for Apache httpd, lighttpd, and nginx.",
-    "icon": "default.svg",
-    "implies": "PHP",
-    "scriptSrc": "/_h5ai/(?:public|client)/js/scripts\\.js",
-    "oss": true,
-    "website": "https://github.com/lrsjng/h5ai"
-  },
+{
   "HCL Commerce": {
     "cats": [
       6
@@ -280,6 +269,27 @@
     "scriptSrc": "head\\.(?:core|load)(?:\\.min)?\\.js",
     "website": "http://headjs.com"
   },
+  "Headless UI": {
+    "cats": [
+      66
+    ],
+    "description": "Headless UI is an unstyled component library for either React.js or Vue.js from the same people that created Tailwind CSS.",
+    "dom": {
+      "button": {
+        "attributes": {
+          "id": "headlessui-"
+        }
+      },
+      "div": {
+        "attributes": {
+          "id": "headlessui-"
+        }
+      }
+    },
+    "icon": "Headless UI.svg",
+    "oss": true,
+    "website": "https://headlessui.dev"
+  },
   "Heap": {
     "cats": [
       10
@@ -327,18 +337,53 @@
     "headers": {
       "x-powered-by": "Helhost"
     },
+    "icon": "Helhost.svg",
     "implies": [
       "Nginx",
       "AlmaLinux",
       "Apache"
     ],
-    "icon": "Helhost.svg",
     "pricing": [
       "low",
       "recurring",
       "payg"
     ],
     "website": "https://www.helhost.com"
+  },
+  "HeliumWeb": {
+    "cats": [
+      18
+    ],
+    "description": "HeliumWeb is a server-side (backend) web framework written in PHP & JavaScript",
+    "headers": {
+      "X-Powered-By": "Adrikikicp Development"
+    },
+    "implies": "PHP",
+    "js": {
+      "helium.js": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "helium/src/helium.js/helium_web.js",
+      "http://maven.enriquitomcfh.ml/helium.js/helium_web.js",
+      "http://maven.enriquitomcfh.ml/helium.js/helium_web.min.js"
+    ],
+    "website": "https://heliumweb.adrikikicp-development.ml"
+  },
+  "Helix Ultimate": {
+    "cats": [
+      18
+    ],
+    "description": "Helix Ultimate a free template framework for Joomla.",
+    "dom": "header#sp-header, body.helix-ultimate",
+    "icon": "HelixUltimate.svg",
+    "implies": "Joomla",
+    "oss": true,
+    "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
   },
   "Helixo UFE": {
     "cats": [
@@ -351,24 +396,13 @@
       "ufe.funnelData": "",
       "ufeStore.cartTotal": ""
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://helixo.co/upsell-funnel-engine/"
-  },
-  "Helix Ultimate": {
-    "cats": [
-      18
-    ],
-    "description": "Helix Ultimate a free template framework for Joomla.",
-    "dom": "header#sp-header, body.helix-ultimate",
-    "icon": "HelixUltimate.svg",
-    "implies": "Joomla",
-    "oss": true,
-    "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
   },
   "Hello Bar": {
     "cats": [
@@ -436,34 +470,6 @@
     "saas": true,
     "scriptSrc": "\\.helpscout\\.net/",
     "website": "https://www.helpscout.com"
-  },
-   "HeliumWeb": {
-    "cats": [
-      18
-    ],
-  
-    "description": "HeliumWeb is a server-side (backend) web framework written in PHP & JavaScript",
-  
-
-    "implies": "PHP",
-     
-     "headers": {
-    "X-Powered-By": "Adrikikicp Development"
-  },
-     
-  
-    "js": {
-      "helium.js": ""
-
-    },
-      "pricing": [
-     "freemium"
-    ],
-   
-     "oss": true,
-     "saas":true,
-    "scriptSrc": ["helium/src/helium.js/helium_web.js", "http://maven.enriquitomcfh.ml/helium.js/helium_web.js", "http://maven.enriquitomcfh.ml/helium.js/helium_web.min.js"],
-    "website": "https://heliumweb.adrikikicp-development.ml"
   },
   "HelpDocs": {
     "cats": [
@@ -610,15 +616,35 @@
     ],
     "description": "Free Shipping Bar is a Shopify app built by Hextom. Free Shipping Bar help promote free shipping with progressive messages to motivate customers to buy more.",
     "icon": "Hextom.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "\\.hextom\\.com/js/freeshippingbar\\.js",
     "website": "https://hextom.com/case_study/free-shipping-bar"
+  },
+  "Hextom Ultimate Sales Boost": {
+    "cats": [
+      100
+    ],
+    "description": "Ultimate Sales Boost by Hextom is an app designed to help you drive more sales by creating a sense of urgency, scarcity and trust.",
+    "icon": "Hextom.png",
+    "implies": "Shopify",
+    "js": {
+      "hextom_usb": "",
+      "ht_usb.isLoaded": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hextom\\.com/js/ultimatesalesboost\\.js",
+    "website": "https://hextom.com/case_study/ultimate-sales-boost"
   },
   "Hiawatha": {
     "cats": [
@@ -1110,11 +1136,19 @@
       57
     ],
     "description": "Hugo is an open-source static site generator written in Go.",
-    "html": "powered by <a [^>]*href=\"http://hugo\\.spf13\\.com",
-    "icon": "Hugo.png",
+    "dom": {
+      "a[href*='hugo.']": {
+        "attributes": {
+          "href": "(?:go)?hugo(?:\\..+)?\\.(?:com|io)\\;confidence:0"
+        },
+        "text": "Hugo\\;confidence:99"
+      }
+    },
+    "icon": "Hugo.svg",
     "meta": {
       "generator": "Hugo ([\\d.]+)?\\;version:\\1"
     },
+    "oss": true,
     "website": "http://gohugo.io"
   },
   "HulkApps Age Verification": {
@@ -1311,6 +1345,17 @@
     "saas": true,
     "scriptSrc": "cdn\\.gethypervisual\\.com/",
     "website": "https://gethypervisual.com"
+  },
+  "h5ai": {
+    "cats": [
+      19
+    ],
+    "description": "h5ai is a modern HTTP web server index for Apache httpd, lighttpd, and nginx.",
+    "icon": "default.svg",
+    "implies": "PHP",
+    "oss": true,
+    "scriptSrc": "/_h5ai/(?:public|client)/js/scripts\\.js",
+    "website": "https://github.com/lrsjng/h5ai"
   },
   "hCaptcha": {
     "cats": [

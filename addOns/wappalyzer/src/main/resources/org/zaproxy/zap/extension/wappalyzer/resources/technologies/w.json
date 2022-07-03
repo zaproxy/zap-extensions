@@ -149,6 +149,27 @@
     "scriptSrc": "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wpmapspro.com"
   },
+  "WP Job Openings": {
+    "cats": [
+      87,
+      101
+    ],
+    "description": "WP Job Openings is a job listing and recruitment plugin for WordPress websites.",
+    "icon": "WP Job Openings.svg",
+    "js": {
+      "awsmJobs": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/wp-job-openings/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpjobopenings.com"
+  },
   "WP Maintenance Mode": {
     "cats": [
       87
@@ -189,7 +210,17 @@
     },
     "html": "<!--[^>]+WP Rocket",
     "icon": "WP Rocket.png",
+    "js": {
+      "RocketPreloadLinksConfig": "",
+      "rocket_lazy": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
     "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/wp-rocket/",
     "website": "http://wp-rocket.me"
   },
   "WP-Optimize": {
@@ -647,6 +678,15 @@
     "saas": true,
     "website": "https://www.webnode.com"
   },
+  "WebRTC": {
+    "cats": [
+      19
+    ],
+    "description": "WebRTC is an open-source project that enables real-time voice, text and video communications capabilities between web browsers and devices.",
+    "icon": "WebRTC.svg",
+    "oss": true,
+    "website": "https://webrtc.org"
+  },
   "WebSite X5": {
     "cats": [
       20
@@ -657,6 +697,27 @@
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
     "website": "http://websitex5.com"
+  },
+  "WebZi": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "WebZi is a professional website builder.",
+    "icon": "Webzi.svg",
+    "js": {
+      "WebziCart": "",
+      "WebziValidate": ""
+    },
+    "meta": {
+      "generator": "^Webzi\\.ir\\sWebsite\\sBuilder$"
+    },
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//webzi\\.ir/",
+    "website": "https://webzi.ir"
   },
   "Webflow": {
     "cats": [
@@ -719,6 +780,16 @@
     "url": "\\.weblium\\.site",
     "website": "https://weblium.com"
   },
+  "Webmin": {
+    "cats": [
+      19
+    ],
+    "description": "Webmin is a free, open-source application for Linux server administration.",
+    "icon": "Webmin.png",
+    "implies": "Perl",
+    "oss": true,
+    "website": "https://www.webmin.com"
+  },
   "Webriti Busiprof": {
     "cats": [
       80
@@ -732,15 +803,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/busiprof(?:-pro)?/",
     "website": "https://webriti.com/busiprof-premium-wordpress-theme-1"
-  },
-  "WebRTC": {
-    "cats": [
-      19
-    ],
-    "description": "WebRTC is an open-source project that enables real-time voice, text and video communications capabilities between web browsers and devices.",
-    "icon": "WebRTC.svg",
-    "oss": true,
-    "website": "https://webrtc.org"
   },
   "WebsPlanet": {
     "cats": [
@@ -815,19 +877,23 @@
     },
     "website": "http://worldwide.webtrends.com"
   },
-  "Webzi": {
+  "Webzie": {
     "cats": [
-      1
+      1,
+      6,
+      51
     ],
-    "icon": "Webzi.svg",
-    "js": {
-      "Webzi": ""
-    },
+    "description": "Webzie is a website builder optimised for performance.",
+    "icon": "Webzie.svg",
     "meta": {
-      "generator": "^Webzi"
+      "generator": "^Webzie\\.com\\sWebsite\\sBuilder$"
     },
-    "scriptSrc": "cdn\\.6th\\.ir",
-    "website": "https://webzi.ir"
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webzie.com/"
   },
   "Weebly": {
     "cats": [
@@ -1175,7 +1241,10 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.rch\\.io/",
+    "scriptSrc": [
+      "\\.rch\\.io/",
+      "checkout\\.gointerpay\\.net"
+    ],
     "website": "https://www.withreach.com"
   },
   "Wix": {
@@ -1701,17 +1770,6 @@
     ],
     "website": "https://www.wunderkind.co"
   },
-  "WysiBB": {
-    "cats": [
-      24
-    ],
-    "description": "WysiBB very simple and functional open-source WYSIWYG BBCode editor based on jQuery.",
-    "icon": "WysiBB.svg",
-    "implies": "jQuery",
-    "scriptSrc": "/jquery\\.wysibb\\.min\\.js",
-    "oss": true,
-    "website": "http://wysibb.com"
-  },
   "Wurfl": {
     "cats": [
       59
@@ -1723,6 +1781,17 @@
     },
     "scriptSrc": "\\.wurfl\\.io",
     "website": "https://web.wurfl.io/"
+  },
+  "WysiBB": {
+    "cats": [
+      24
+    ],
+    "description": "WysiBB very simple and functional open-source WYSIWYG BBCode editor based on jQuery.",
+    "icon": "WysiBB.svg",
+    "implies": "jQuery",
+    "oss": true,
+    "scriptSrc": "/jquery\\.wysibb\\.min\\.js",
+    "website": "http://wysibb.com"
   },
   "web-vitals": {
     "cats": [
@@ -1758,8 +1827,8 @@
     "description": "Webpack is an open-source JavaScript module bundler.",
     "icon": "webpack.svg",
     "js": {
-      "webpackJsonp": "",
-      "webpackChunk": ""
+      "webpackChunk": "",
+      "webpackJsonp": ""
     },
     "website": "https://webpack.js.org/"
   },

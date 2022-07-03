@@ -131,6 +131,15 @@
     "scriptSrc": "www\\.powr\\.io/powr\\.js",
     "website": "https://www.powr.io"
   },
+  "PWA": {
+    "cats": [
+      19
+    ],
+    "description": "Progressive Web Apps (PWAs) are web apps built and enhanced with modern APIs to deliver enhanced capabilities, reliability, and installability while reaching anyone, anywhere, on any device, all with a single codebase.",
+    "dom": "link[rel='manifest']",
+    "icon": "PWA.svg",
+    "website": "https://web.dev/progressive-web-apps/"
+  },
   "PWA Studio": {
     "cats": [
       6
@@ -644,14 +653,14 @@
       91
     ],
     "description": "PayPal Credit is a reusable line of credit that lets you pay for online purchases over time.",
-    "icon": "PayPal.svg",
-    "requiresCategory": 6,
-    "implies": "PayPal",
     "dom": "img[alt*='PayPal Credit'], a[title*='PayPal Credit']",
+    "icon": "PayPal.svg",
+    "implies": "PayPal",
     "js": {
       "PaypalOffersObject": "",
       "payPalCreditPopover": ""
     },
+    "requiresCategory": 6,
     "scriptSrc": "\\.paypalobjects\\.com/.+/smart-credit-message@([\\d\\.]+)\\.js\\;version:\\1",
     "website": "https://www.paypal.com/uk/webapps/mpp/paypal-virtual-credit"
   },
@@ -732,11 +741,11 @@
     ],
     "description": "PebblePost provides marketers a way to transform recent online data into intelligent direct mail programs that perform.",
     "icon": "PebblePost.svg",
-    "scriptSrc": "cdn\\.pbbl\\.co/",
-    "saas": true,
     "pricing": [
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "cdn\\.pbbl\\.co/",
     "website": "https://www.pebblepost.com"
   },
   "Peek": {
@@ -760,12 +769,12 @@
     ],
     "description": "PeerBoard is a plug-and-play community solution, which helps groups, clubs, startups, marketplaces and businesses create discussion forums.",
     "icon": "PeerBoard.png",
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "scriptSrc": "\\.peerboard\\.com/",
     "website": "https://peerboard.com"
   },
@@ -1110,6 +1119,25 @@
     },
     "website": "https://github.com/Sazito/phoenix/"
   },
+  "Phoenix Site": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "phoenix_p_session": ""
+    },
+    "description": "Phoenix Site software has been developed by the Internet Marketing Union and is especially intended for entrepreneurs (without technical knowledge) who want to score better in Google (SEO) and get more leads and customers (conversion) from their website.",
+    "icon": "Phoenix Site.png",
+    "js": {
+      "phxsite.pages_version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://phoenixsite.nl"
+  },
   "Photo Gallery": {
     "cats": [
       87,
@@ -1381,8 +1409,8 @@
       10
     ],
     "description": "Piwik PRO Core is a free alternative to Google Analytics that is privacy & compliance focused.",
-    "icon": "Piwik PRO Core.svg",
     "excludes": "Matomo Analytics",
+    "icon": "Piwik PRO Core.svg",
     "pricing": [
       "freemium",
       "poa"
@@ -1390,6 +1418,20 @@
     "saas": true,
     "scriptSrc": "\\.piwik\\.pro/",
     "website": "https://piwik.pro"
+  },
+  "Pixc": {
+    "cats": [
+      19
+    ],
+    "description": "Pixc is human powered image editing platform.",
+    "icon": "Pixc.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//pixc\\.com/",
+    "website": "https://pixc.com"
   },
   "PixelFed": {
     "cats": [
@@ -1429,6 +1471,40 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/pixelyoursite/",
     "website": "https://www.pixelyoursite.com"
+  },
+  "Pixieset Store": {
+    "cats": [
+      6
+    ],
+    "description": "Pixieset Store lets you sell professional print products, digital downloads, and other items directly from your galleries.",
+    "icon": "Pixieset.svg",
+    "js": {
+      "PixiesetProductEditor": "",
+      "PixiesetProductOptionSelection": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://pixieset.com"
+  },
+  "Pixieset Website": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Pixieset Website is a space to create your own beautiful photography website.",
+    "icon": "Pixieset.svg",
+    "meta": {
+      "generator": "^Pixieset$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://pixieset.com"
   },
   "Pixlee": {
     "cats": [
@@ -1620,13 +1696,15 @@
     "cats": [
       14
     ],
-    "description": "Rlyr is a set of tools for splitting, applying and combining Data. ",
+    "css": "--plyr-progress",
+    "description": "Plyr is a simple, lightweight, accessible and customizable HTML5, YouTube and Vimeo media player that supports modern browsers.",
     "icon": "Plyr.png",
     "js": {
       "Plyr": ""
     },
-    "scriptSrc": "https://cdn\\.plyr\\.io/([0-9.]+)/.+\\.js\\;version:\\1",
-    "website": "https://plyr.io/"
+    "oss": true,
+    "scriptSrc": "cdn\\.plyr\\.io/([0-9.]+)/.+\\.js\\;version:\\1",
+    "website": "https://plyr.io"
   },
   "Po.st": {
     "cats": [
@@ -1658,6 +1736,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.podia\\.com",
     "website": "https://www.podia.com"
+  },
+  "Podigee": {
+    "cats": [
+      5
+    ],
+    "description": "Podigee is an independent company for podcast publishers. Podigee offers hosting, distribution, analytics and monetisation of podcasts.",
+    "dom": "iframe[src*='cdn.podigee.com/']",
+    "icon": "Podigee.svg",
+    "js": {
+      "podigeePodcastPlayers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.podigee.com"
   },
   "Podium": {
     "cats": [
@@ -1779,10 +1874,14 @@
     "icon": "Popper.svg",
     "js": {
       "Popper.Defaults": "",
+      "Popper.applyStyles": "",
       "createPopper": ""
     },
     "oss": true,
-    "scriptSrc": "/popper(?:\\.min)?\\.js(?:/([0-9.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/popper(?:\\.min)?\\.js(?:/([0-9.]+))?\\;version:\\1",
+      "popperjs(?:/|-)core(?:@|-)([\\d\\.]+)\\;version:\\1"
+    ],
     "website": "https://popper.js.org"
   },
   "PopularFX": {
@@ -1980,8 +2079,8 @@
     "icon": "Prebid.png",
     "js": {
       "PREBID_TIMEOUT": "",
-      "pbjs.version": "v([\\d\\.]+)\\;version:\\1",
-      "pbjs": ""
+      "pbjs": "",
+      "pbjs.version": "v([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
     "scriptSrc": [
@@ -2018,6 +2117,25 @@
     },
     "scriptSrc": "prefixfree\\.js",
     "website": "https://leaverou.github.io/prefixfree/"
+  },
+  "Premio Chaty": {
+    "cats": [
+      87
+    ],
+    "description": "Chat with your website visitors via their favorite channels with Chaty by Premio.",
+    "icon": "Premio.png",
+    "js": {
+      "chaty_settings.chaty_widgets": "",
+      "chaty_settings.object_settings": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/chaty/",
+    "website": "https://premio.io/downloads/chaty"
   },
   "Press Customizr": {
     "cats": [
@@ -2255,11 +2373,11 @@
       1
     ],
     "description": "ProcessWire is an open source content management system (CMS) and framework (CMF).",
-    "icon": "ProcessWire.svg",
-    "implies": "PHP",
     "headers": {
       "X-Powered-By": "ProcessWire CMS"
     },
+    "icon": "ProcessWire.svg",
+    "implies": "PHP",
     "js": {
       "ProcessWire": ""
     },
@@ -2286,11 +2404,11 @@
     "cats": [
       87
     ],
-    "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
-    "dom": "link[href*='/wp-content/plugins/wp-user-avatar/']",
     "cookies": {
       "ppwp_wp_session": ""
     },
+    "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
+    "dom": "link[href*='/wp-content/plugins/wp-user-avatar/']",
     "icon": "ProfilePress.svg",
     "pricing": [
       "low",
