@@ -220,7 +220,7 @@ public class Spider {
             host = uri.getHost();
             defaultFetchFilter.addScopeRegex(host);
         } catch (URIException e) {
-            log.error("There was an error while adding seed value: " + uri, e);
+            log.error("There was an error while adding seed value: {}", uri, e);
             return;
         }
         // Add the seed to the list -- it will be added to the task list only when the spider is
@@ -265,7 +265,7 @@ public class Spider {
         try {
             this.seedList.add(new URI(seed, true));
         } catch (Exception e) {
-            log.warn("Error while creating [" + fileName + "] seed: " + seed, e);
+            log.warn("Error while creating [{}] seed: {}", fileName, seed, e);
         }
     }
 
@@ -333,13 +333,10 @@ public class Spider {
             this.seedList.add(new URI(uri, true));
         } catch (Exception e) {
             log.warn(
-                    "Error while creating a seed URI for file ["
-                            + fileName
-                            + "] from ["
-                            + baseUri
-                            + "] using ["
-                            + uri
-                            + "]:",
+                    "Error while creating a seed URI for file [{}] from [{}] using [{}]:",
+                    fileName,
+                    baseUri,
+                    uri,
                     e);
         }
     }
@@ -377,7 +374,7 @@ public class Spider {
      * @param excludeList the new exclude list
      */
     public void setExcludeList(List<String> excludeList) {
-        log.debug("New Exclude list: " + excludeList);
+        log.debug("New Exclude list: {}", excludeList);
         defaultFetchFilter.setExcludeRegexes(excludeList);
     }
 
@@ -442,28 +439,22 @@ public class Spider {
      */
     protected synchronized void submitTask(SpiderTask task) {
         if (isStopped()) {
-            log.debug("Submitting task skipped (" + task + ") as the Spider process is stopped.");
+            log.debug("Submitting task skipped ({}) as the Spider process is stopped.", task);
             return;
         }
         if (isTerminated()) {
-            log.debug(
-                    "Submitting task skipped (" + task + ") as the Spider process is terminated.");
+            log.debug("Submitting task skipped ({}) as the Spider process is terminated.", task);
             return;
         }
         this.tasksTotalCount++;
         try {
             this.threadPool.execute(task);
         } catch (RejectedExecutionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Submitted task was rejected ("
-                                + task
-                                + "), spider state: [stopped="
-                                + isStopped()
-                                + ", terminated="
-                                + isTerminated()
-                                + "].");
-            }
+            log.debug(
+                    "Submitted task was rejected ({}), spider state: [stopped={}, terminated={}].",
+                    task,
+                    isStopped(),
+                    isTerminated());
         }
     }
 
@@ -498,7 +489,8 @@ public class Spider {
 
         if (scanUser != null)
             log.info(
-                    "Scan will be performed from the point of view of User: " + scanUser.getName());
+                    "Scan will be performed from the point of view of User: {}",
+                    scanUser.getName());
 
         this.controller.init();
         this.stopped = false;
@@ -525,9 +517,7 @@ public class Spider {
 
         // Add the seeds
         for (URI uri : seedList) {
-            if (log.isDebugEnabled()) {
-                log.debug("Adding seed for spider: " + uri);
-            }
+            log.debug("Adding seed for spider: {}", uri);
             controller.addSeed(uri, HttpRequestHeader.GET);
         }
         // Mark the process as completely initialized
@@ -552,9 +542,7 @@ public class Spider {
             for (FetchFilter filter : controller.getFetchFilters()) {
                 FetchStatus filterReason = filter.checkFilter(seed);
                 if (filterReason != FetchStatus.VALID) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Seed: " + seed + " was filtered with reason: " + filterReason);
-                    }
+                    log.debug("Seed: {} was filtered with reason: {}", seed, filterReason);
                     it.remove();
                     break;
                 }
@@ -745,9 +733,8 @@ public class Spider {
             if (TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - this.timeStarted)
                     > this.spiderParam.getMaxDuration()) {
                 log.info(
-                        "Spidering process has exceeded maxDuration of "
-                                + this.spiderParam.getMaxDuration()
-                                + " minute(s)");
+                        "Spidering process has exceeded maxDuration of {} minute(s)",
+                        this.spiderParam.getMaxDuration());
                 this.complete();
             }
         }

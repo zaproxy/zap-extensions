@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 
 /**
- * The URLCanonicalizer is used for the process of converting an URL into a canonical (normalized)
+ * The UrlCanonicalizer is used for the process of converting an URL into a canonical (normalized)
  * form. See <a href="http://en.wikipedia.org/wiki/URL_normalization">URL Normalization</a> for a
  * reference.
  *
@@ -44,10 +44,10 @@ import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
  *
  * <p>Added support for OData URLs
  */
-public final class URLCanonicalizer {
+public final class UrlCanonicalizer {
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(URLCanonicalizer.class);
+    private static final Logger log = LogManager.getLogger(UrlCanonicalizer.class);
 
     private static final String HTTP_SCHEME = "http";
     private static final int HTTP_DEFAULT_PORT = 80;
@@ -82,7 +82,7 @@ public final class URLCanonicalizer {
             Pattern.compile("([\\w%]*)=([\\w']*)");
 
     /** Private constructor to avoid initialization of object. */
-    private URLCanonicalizer() {}
+    private UrlCanonicalizer() {}
 
     /**
      * Gets the canonical url.
@@ -109,8 +109,8 @@ public final class URLCanonicalizer {
 
         try {
             /* Build the absolute URL, from the url and the baseURL */
-            String resolvedURL = URLResolver.resolveUrl(baseURL == null ? "" : baseURL, url);
-            log.debug("Resolved URL: " + resolvedURL);
+            String resolvedURL = UrlResolver.resolveUrl(baseURL == null ? "" : baseURL, url);
+            log.debug("Resolved URL: {}", resolvedURL);
             URI canonicalURI;
             try {
                 canonicalURI = new URI(resolvedURL);
@@ -121,30 +121,25 @@ public final class URLCanonicalizer {
             /* Some checking. */
             if (canonicalURI.getScheme() == null) {
                 log.warn(
-                        "Protocol could not be reliably evaluated from uri: "
-                                + canonicalURI
-                                + " and base url: "
-                                + baseURL);
+                        "Protocol could not be reliably evaluated from uri: {} and base url: {}",
+                        canonicalURI,
+                        baseURL);
                 return null;
             }
 
             if (canonicalURI.getRawAuthority() == null) {
                 log.debug(
-                        "Ignoring URI with no authority (host[\":\"port]): "
-                                + canonicalURI
-                                + " (on base "
-                                + baseURL
-                                + ")");
+                        "Ignoring URI with no authority (host[\":\"port]): {} (on base {})",
+                        canonicalURI,
+                        baseURL);
                 return null;
             }
 
             if (canonicalURI.getHost() == null) {
                 log.warn(
-                        "Host could not be reliably evaluated from: "
-                                + canonicalURI
-                                + " (on base "
-                                + baseURL
-                                + ")");
+                        "Host could not be reliably evaluated from: {} (on base {})",
+                        canonicalURI,
+                        baseURL);
                 return null;
             }
 
@@ -197,12 +192,10 @@ public final class URLCanonicalizer {
 
         } catch (Exception ex) {
             log.warn(
-                    "Error while Processing URL ["
-                            + url
-                            + "] in the spidering process (on base "
-                            + baseURL
-                            + "): "
-                            + ex.getMessage());
+                    "Error while Processing URL [{}] in the spidering process (on base {}): {}",
+                    url,
+                    baseURL,
+                    ex.getMessage());
             return null;
         }
     }

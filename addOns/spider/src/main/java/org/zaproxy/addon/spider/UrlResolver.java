@@ -19,10 +19,10 @@
 package org.zaproxy.addon.spider;
 
 /** The UrlResolve handles the process of resolving a relative URL against a base URL (context). */
-public final class URLResolver {
+public final class UrlResolver {
 
     /** Private constructor to avoid initialization of object. */
-    private URLResolver() {}
+    private UrlResolver() {}
 
     /**
      * Resolves a given relative URL against a base URL. See <a
