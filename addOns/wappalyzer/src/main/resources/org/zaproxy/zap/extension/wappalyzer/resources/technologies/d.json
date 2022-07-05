@@ -507,7 +507,7 @@
       22
     ],
     "description": "A modern runtime for JavaScript and TypeScript.",
-    "icon": "Deno.svg",
+    "icon": "deno.svg",
     "oss": true,
     "website": "https://deno.land"
   },
@@ -1313,6 +1313,21 @@
     },
     "icon": "Dropbox.svg",
     "website": "https://www.dropbox.com"
+  },
+  "DropInBlog": {
+    "cats": [
+      11
+    ],
+    "description": "DropInBlog is a remotely hosted, cloud based platform that is designed to embed a blog into your html site.",
+    "icon": "DropInBlog.png",
+    "dom": "link[href*='.dropinblog.com/']",
+    "scriptSrc": "\\.dropinblog\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://dropinblog.com"
   },
   "Dropzone": {
     "cats": [

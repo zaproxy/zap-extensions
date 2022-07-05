@@ -1412,6 +1412,26 @@
     "saas": true,
     "website": "https://www.rezgo.com"
   },
+  "Richpanel": {
+    "cats": [
+      53
+    ],
+    "description": "Richpanel is a purpose-built CRM and customer support platform for ecommerce and DTC brands.",
+    "icon": "Richpanel.svg",
+    "js": {
+      "Richpanel.PLUGIN_API_URL": "",
+      "richpanel_messenger_url": "",
+      "RichpanelAppProxy": ""
+    },
+    "scriptSrc": "\\.richpanel\\.com/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.richpanel.com"
+  },
   "RichRelevance": {
     "cats": [
       76

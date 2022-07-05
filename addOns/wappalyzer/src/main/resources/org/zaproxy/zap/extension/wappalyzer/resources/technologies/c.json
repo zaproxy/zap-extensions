@@ -756,7 +756,7 @@
       66
     ],
     "description": "Chakra UI is a simple, modular and accessible component library that gives you the building blocks you need to build your React applications.",
-    "dom": "html[style*='chakra-ui-color-mode']",
+    "dom": "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal",
     "icon": "Chakra UI.svg",
     "implies": "React",
     "oss": true,

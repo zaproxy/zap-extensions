@@ -1356,18 +1356,6 @@
     "scriptSrc": "cdn\\.ordersify\\.com/sdk/productalerts-shopify\\.js",
     "website": "https://ordersify.com/products/product-alerts"
   },
-  "Oribi": {
-    "cats": [
-      10
-    ],
-    "description": "Oribi is an all-in-one marketing analytics tool.",
-    "icon": "Oribi.svg",
-    "js": {
-      "ORIBI": ""
-    },
-    "scriptSrc": "cdn\\.oribi\\.io",
-    "website": "https://oribi.io/"
-  },
   "OroCommerce": {
     "cats": [
       6

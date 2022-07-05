@@ -302,6 +302,22 @@
     "website": "https://www.taboola.com",
     "xhr": "\\.taboola\\.com"
   },
+  "Tada": {
+    "cats": [
+      100
+    ],
+    "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
+    "icon": "Tada.png",
+    "implies": "Shopify",
+    "scriptSrc": "cdn\\.trytada\\.com/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "website": "https://trytada.com"
+  },
   "Tachyons": {
     "cats": [
       66

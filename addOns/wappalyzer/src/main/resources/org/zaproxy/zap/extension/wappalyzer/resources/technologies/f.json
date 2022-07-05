@@ -924,6 +924,23 @@
     "implies": "PHP",
     "website": "https://fluxbb.org"
   },
+  "Fly.io": {
+    "cats": [
+      22
+    ],
+    "description": "Fly is a platform for running full stack apps and databases.",
+    "cookies": {
+      "_fly": ""
+    },
+    "headers": {
+      "fly-request-id": "",
+      "server": "^Fly/[\\w]+\\s\\(.*\\)$",
+      "via": "^.*\\sfly\\.io$"
+    },
+    "pricing": ["freemium", "payg"],
+    "icon": "Fly.io.png",
+    "website": "https://fly.io"
+  },
   "Flyspray": {
     "cats": [
       13
