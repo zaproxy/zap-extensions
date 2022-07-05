@@ -1011,6 +1011,21 @@
     "icon": "Whooshkaa.svg",
     "website": "https://www.whooshkaa.com"
   },
+  "WideBundle": {
+    "cats": [
+      100
+    ],
+    "description": "WideBundle is a Shopify application that allows a merchant to set up bundles on his store.",
+    "icon": "WideBundle.png",
+    "implies": "Shopify",
+    "scriptSrc": "//widebundle\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://en.widebundle.com"
+  },
   "Widen": {
     "cats": [
       95

@@ -662,6 +662,19 @@
     "scriptSrc": "\\.juniphq\\.com/",
     "website": "https://junip.co"
   },
+  "Juo": {
+    "cats": [
+      74
+    ],
+    "description": "Juo is a centralised experimentation platform for innovative marketing and product teams.",
+    "icon": "Juo.svg",
+    "scriptSrc": "cdn\\.juo\\.io/",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://get.juo.io"
+  },
   "Justo": {
     "cats": [
       6

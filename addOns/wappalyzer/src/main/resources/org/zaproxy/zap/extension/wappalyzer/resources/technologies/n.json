@@ -64,12 +64,22 @@
     "cats": [
       6
     ],
-    "description": "Nacelle is a headless commerce platform",
+    "description": "Nacelle is a headless ecommerce platform.",
     "icon": "Nacelle.svg",
+    "dom": {
+      "[class*='nacelle']": {
+        "text": "\\;confidence:51"
+      }
+    },
     "js": {
       "nacelleEventData": ""
     },
-    "website": "https://nacelle.com/"
+    "saas": true,
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://nacelle.com"
   },
   "NagaCommerce": {
     "cats": [

@@ -642,9 +642,13 @@
     "icon": "Linkedin.svg",
     "js": {
       "_linkedin_data_partner_id": "",
-      "_linkedin_partner_id": ""
+      "_linkedin_partner_id": "",
+      "ORIBI": ""
     },
-    "scriptSrc": "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+    "scriptSrc": [
+      "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+      "cdn\\.oribi\\.io"
+    ],
     "scripts": "_linkedin_partner_id",
     "website": "https://business.linkedin.com/marketing-solutions/insight-tag"
   },

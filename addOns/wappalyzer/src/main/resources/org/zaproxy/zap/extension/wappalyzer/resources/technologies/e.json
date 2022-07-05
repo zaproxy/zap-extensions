@@ -102,14 +102,14 @@
     "cats": [
       106
     ],
-    "description": "eShopWorld is a company providing payments, shipping, and delivery services focusing on cross-border commerce.",
-    "icon": "ESW.png",
+    "description": "ESW (eShopWorld) is a company providing payments, shipping, and delivery services focusing on cross-border ecommerce.",
+    "icon": "ESW.svg",
     "js": {
       "eshopworld": "",
       "eswRetailerDisplayConfiguration": ""
     },
     "scriptSrc": "Eswhooks\\.js",
-    "website": "http://esw.com/"
+    "website": "http://esw.com"
   },
   "EWWW Image Optimizer": {
     "cats": [
