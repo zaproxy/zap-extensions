@@ -19,41 +19,162 @@
  */
 package org.zaproxy.addon.paramminer.gui;
 
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.EventQueue;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
-import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.addon.paramminer.GuesserProgressListener;
+import org.zaproxy.addon.paramminer.GuesserScan;
+import org.zaproxy.addon.paramminer.ParamGuesserScanController;
+import org.zaproxy.addon.paramminer.ParamMinerOptions;
+import org.zaproxy.zap.view.ScanPanel2;
 
-public class ParamMinerPanel extends AbstractPanel {
+public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
 
     private static final long serialVersionUID = 1L;
-    private final JTabbedPane tabbedPane;
-    private final JTextPane outputArea;
-    private final JTable historyTable;
-    private final ExtensionParamMiner ext;
 
-    public ParamMinerPanel(ExtensionParamMiner ext) {
-        this.ext = ext;
-        this.setName(Constant.messages.getString("paramminer.panel.title"));
-        this.setIcon(ExtensionParamMiner.getIcon());
-        this.setLayout(new GridBagLayout());
+    private final ParamMinerOptions options;
 
-        historyTable = new ParamMinerResultsTable(new ParamMinerHistoryTableModel());
-        outputArea = new JTextPane();
-        outputArea.setEditable(false);
+    private JTabbedPane tabbedPane;
+    private JTextPane outputArea;
+    private ParamMinerHistoryTableModel emptyTableModel;
+    private JTable historyTable;
 
-        tabbedPane = new JTabbedPane();
-        tabbedPane.addTab(
-                Constant.messages.getString("paramminer.panel.tab.history"),
-                new JScrollPane(historyTable));
-        tabbedPane.addTab(
-                Constant.messages.getString("paramminer.panel.tab.output"),
-                new JScrollPane(outputArea));
-        this.add(tabbedPane, LayoutHelper.getGBC(0, 0, 1, 1.0, 1.0));
+    private JButton startScanButton;
+
+    private JPanel mainPanel;
+
+    private ProgressListener progressListener;
+
+    public ParamMinerPanel(
+            ParamGuesserScanController scanController,
+            ParamMinerOptions options,
+            Runnable scanStartRunnable) {
+        super("paramminer", ExtensionParamMiner.getIcon(), scanController);
+
+        getNewScanButton().setText(Constant.messages.getString("paramminer.toolbar.button.new"));
+        getNewScanButton().setIcon(getIcon());
+        getNewScanButton().addActionListener(e -> scanStartRunnable.run());
+
+        this.options = options;
+    }
+
+    @Override
+    protected Component getWorkPanel() {
+        if (mainPanel == null) {
+            mainPanel = new JPanel(new BorderLayout());
+
+            emptyTableModel = new ParamMinerHistoryTableModel();
+            historyTable = new ParamMinerResultsTable(emptyTableModel);
+            outputArea = new JTextPane();
+            outputArea.setEditable(false);
+
+            tabbedPane = new JTabbedPane();
+            tabbedPane.addTab(
+                    Constant.messages.getString("paramminer.panel.tab.history"),
+                    new JScrollPane(historyTable));
+            tabbedPane.addTab(
+                    Constant.messages.getString("paramminer.panel.tab.output"),
+                    new JScrollPane(outputArea));
+            mainPanel.add(tabbedPane);
+        }
+        return mainPanel;
+    }
+
+    @Override
+    public void scannerStarted(GuesserScan scan) {
+        super.scannerStarted(scan);
+
+        scan.addProgressListener(getProgressListener());
+    }
+
+    @Override
+    protected void switchView(GuesserScan scan) {
+        if (scan != null) {
+            historyTable.setModel(scan.getTableModel());
+            outputArea.setText(scan.getOutput());
+        } else {
+            historyTable.setModel(emptyTableModel);
+            outputArea.setText("");
+        }
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    @Override
+    protected JButton getNewScanButton() {
+        if (startScanButton == null) {
+            startScanButton = new JButton();
+        }
+        return startScanButton;
+    }
+
+    @Override
+    protected int getNumberOfScansToShow() {
+        return options.getMaxFinishedScansInUi();
+    }
+
+    @Override
+    public void clearFinishedScans() {
+        if (options.isPromptToClearFinishedScans()) {
+            JCheckBox dontPromptCheckBox =
+                    new JCheckBox(
+                            Constant.messages.getString(
+                                    "paramminer.toolbar.confirm.clear.dontPrompt"));
+            Object[] messages = {
+                Constant.messages.getString("paramminer.toolbar.confirm.clear"),
+                "\n",
+                dontPromptCheckBox
+            };
+            int option =
+                    JOptionPane.showConfirmDialog(
+                            View.getSingleton().getMainFrame(),
+                            messages,
+                            Constant.messages.getString("paramminer.panel.title"),
+                            JOptionPane.YES_NO_OPTION);
+            if (dontPromptCheckBox.isSelected()) {
+                options.setPromptToClearFinishedScans(false);
+            }
+
+            if (option != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+        super.clearFinishedScans();
+    }
+
+    private ProgressListener getProgressListener() {
+        if (progressListener == null) {
+            progressListener = new ProgressListener();
+        }
+        return progressListener;
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+    }
+
+    private class ProgressListener implements GuesserProgressListener {
+
+        @Override
+        public void updateProgress(int id, String displayName, int paramsTried, int totalParams) {
+            EventQueue.invokeLater(() -> scanProgress(id, displayName, paramsTried, totalParams));
+        }
+
+        @Override
+        public void completed(int id, String displayName, boolean successfully) {
+            EventQueue.invokeLater(() -> scanFinshed(id, displayName));
+        }
     }
 }

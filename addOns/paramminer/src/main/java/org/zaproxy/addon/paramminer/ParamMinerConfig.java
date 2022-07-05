@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.users.User;
+
 public class ParamMinerConfig {
     private String url;
     private boolean addFcbzCacheBuster;
@@ -27,6 +30,12 @@ public class ParamMinerConfig {
     private boolean skipBoringHeaders;
     private int threadPoolSize;
     private String context;
+    private HttpRequestHeader presetHeaders;
+    private int totalcustomParams;
+    private int totalUrlParams;
+    private int totalCookieParams;
+    private int totalHeaderParams;
+    private User scanUser;
 
     public ParamMinerConfig() {
         this.url = "";
@@ -91,5 +100,53 @@ public class ParamMinerConfig {
 
     public void setContext(String stringValue) {
         this.context = stringValue;
+    }
+
+    public boolean getRedirectState() {
+        return false;
+    }
+
+    public HttpRequestHeader getPresetHeaders() {
+        return presetHeaders;
+    }
+
+    public void setPresetHeaders(HttpRequestHeader presetHeaders) {
+        this.presetHeaders = presetHeaders;
+    }
+
+    public int getTotalParams() {
+        return totalcustomParams + totalUrlParams + totalCookieParams + totalHeaderParams;
+    }
+
+    public int setTotalUrlParams(int totalUrlParams) {
+        return this.totalUrlParams = totalUrlParams;
+    }
+
+    public int getTotalUrlParams() {
+        return totalUrlParams;
+    }
+
+    public int setTotalCookieParams(int totalCookieParams) {
+        return this.totalCookieParams = totalCookieParams;
+    }
+
+    public int getTotalCookieParams() {
+        return totalCookieParams;
+    }
+
+    public int setTotalHeaderParams(int totalHeaderParams) {
+        return this.totalHeaderParams = totalHeaderParams;
+    }
+
+    public int getTotalHeaderParams() {
+        return totalHeaderParams;
+    }
+
+    public User getScanUser() {
+        return scanUser;
+    }
+
+    public void setScanUser(User scanUser) {
+        this.scanUser = scanUser;
     }
 }

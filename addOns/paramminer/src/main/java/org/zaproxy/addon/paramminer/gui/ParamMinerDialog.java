@@ -81,7 +81,9 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         config.setSkipBoringHeaders(this.getBoolValue(SKIP_BORING_HEADERS));
         config.setThreadpoolSize(this.getStringValue(THREADPOOL_SIZE));
         config.setContext(this.getStringValue(CONTEXT));
-        logger.info("config {}", this.config.getUrl());
+        logger.debug("config {}", this.config.getUrl());
+
+        extension.startScan(config);
     }
 
     @Override

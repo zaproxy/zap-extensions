@@ -39,15 +39,26 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     private static final String RESOURCES = "resources";
     private static ImageIcon icon;
 
+    private ParamMinerOptions options;
     private ParamMinerPanel paramMinerPanel;
     private ExtensionPopupMenuItem paramMinerDialogPopMenu;
     private ZapMenuItem menu;
     private ParamMinerAPI api;
     private ParamMinerDialog paramMinerDialog;
 
+    private ParamGuesserScanController scanController;
+
     public ExtensionParamMiner() {
         super(NAME);
         setI18nPrefix(PREFIX);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        options = new ParamMinerOptions();
+        scanController = new ParamGuesserScanController();
     }
 
     public static ImageIcon getIcon() {
@@ -60,6 +71,8 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        extensionHook.addOptionsParamSet(options);
 
         this.api = new ParamMinerAPI();
         extensionHook.addApiImplementor(this.api);
@@ -88,11 +101,22 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+
+        if (paramMinerPanel != null) {
+            paramMinerPanel.unload();
+        }
+    }
+
+    public void startScan(ParamMinerConfig config) {
+        // TODO change the display name based on the config.
+        scanController.startScan("Scan", config);
     }
 
     private ParamMinerPanel getParamMinerPanel() {
         if (paramMinerPanel == null) {
-            paramMinerPanel = new ParamMinerPanel(this);
+            paramMinerPanel =
+                    new ParamMinerPanel(scanController, options, () -> showParamMinerDialog(null));
+            scanController.setScansPanel(paramMinerPanel);
         }
         return paramMinerPanel;
     }
