@@ -77,6 +77,11 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final ImageIcon SAVE_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
+    private static final ImageIcon SAVE_AS_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "save-as.png")));
     private static final ImageIcon ADD_PLAN_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -138,6 +143,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton addPlanButton;
     private JButton runPlanButton;
     private JButton savePlanButton;
+    private JButton saveAsPlanButton;
     private JButton jobUpButton;
     private JButton jobDownButton;
     private JButton addJobButton;
@@ -174,6 +180,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getAddPlanButton());
             toolbar.add(getLoadPlanButton());
             toolbar.add(getSavePlanButton());
+            toolbar.add(getSaveAsPlanButton());
             toolbar.add(getRunPlanButton());
             toolbar.addSeparator();
             toolbar.add(getAddJobButton());
@@ -203,6 +210,57 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return runPlanButton;
     }
 
+    private void savePlan(boolean promptForFile) {
+        if (currentPlan == null) {
+            return;
+        }
+        try {
+            if (promptForFile) {
+                final JFileChooser chooser = new JFileChooser(ext.getParam().getPlanDirectory());
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.addChoosableFileFilter(
+                        new FileFilter() {
+
+                            @Override
+                            public boolean accept(File f) {
+                                String lcFileName = f.getName().toLowerCase();
+                                return (f.isDirectory()
+                                        || lcFileName.endsWith(".yaml")
+                                        || lcFileName.endsWith(".yml"));
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return Constant.messages.getString("automation.panel.load.yaml");
+                            }
+                        });
+                int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
+                if (rc == JFileChooser.APPROVE_OPTION) {
+                    ext.getParam()
+                            .setPlanDirectory(
+                                    chooser.getSelectedFile().getParentFile().getAbsolutePath());
+                    File f = chooser.getSelectedFile();
+                    String fileNameLc = f.getName().toLowerCase(Locale.ROOT);
+                    if (!f.exists()
+                            && !(fileNameLc.endsWith(".yaml") || fileNameLc.endsWith(".yml"))) {
+                        f = new File(f.getAbsolutePath() + ".yaml");
+                    }
+                    currentPlan.setFile(f);
+                } else {
+                    // they cancelled the dialog
+                    return;
+                }
+            }
+            currentPlan.save();
+        } catch (JsonProcessingException | FileNotFoundException e1) {
+            LOG.error(e1.getMessage(), e1);
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "automation.dialog.error.save", e1.getMessage()));
+        }
+    }
+
     private JButton getSavePlanButton() {
         if (savePlanButton == null) {
             savePlanButton = new JButton();
@@ -211,64 +269,21 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     Constant.messages.getString("automation.dialog.plan.save"));
             savePlanButton.setEnabled(false);
             savePlanButton.addActionListener(
-                    e -> {
-                        if (currentPlan == null) {
-                            return;
-                        }
-                        try {
-                            if (currentPlan.getFile() == null) {
-                                final JFileChooser chooser =
-                                        new JFileChooser(ext.getParam().getPlanDirectory());
-                                chooser.setAcceptAllFileFilterUsed(false);
-                                chooser.addChoosableFileFilter(
-                                        new FileFilter() {
-
-                                            @Override
-                                            public boolean accept(File f) {
-                                                String lcFileName = f.getName().toLowerCase();
-                                                return (f.isDirectory()
-                                                        || lcFileName.endsWith(".yaml")
-                                                        || lcFileName.endsWith(".yml"));
-                                            }
-
-                                            @Override
-                                            public String getDescription() {
-                                                return Constant.messages.getString(
-                                                        "automation.panel.load.yaml");
-                                            }
-                                        });
-                                int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
-                                if (rc == JFileChooser.APPROVE_OPTION) {
-                                    ext.getParam()
-                                            .setPlanDirectory(
-                                                    chooser.getSelectedFile()
-                                                            .getParentFile()
-                                                            .getAbsolutePath());
-                                    File f = chooser.getSelectedFile();
-                                    String fileNameLc = f.getName().toLowerCase(Locale.ROOT);
-                                    if (!f.exists()
-                                            && !(fileNameLc.endsWith(".yaml")
-                                                    || fileNameLc.endsWith(".yml"))) {
-                                        f = new File(f.getAbsolutePath() + ".yaml");
-                                    }
-                                    currentPlan.setFile(f);
-                                } else {
-                                    // they cancelled the dialog
-                                    return;
-                                }
-                            }
-                            currentPlan.save();
-                        } catch (JsonProcessingException | FileNotFoundException e1) {
-                            LOG.error(e1.getMessage(), e1);
-                            View.getSingleton()
-                                    .showWarningDialog(
-                                            Constant.messages.getString(
-                                                    "automation.dialog.error.save",
-                                                    e1.getMessage()));
-                        }
-                    });
+                    e -> savePlan(currentPlan != null && currentPlan.getFile() == null));
         }
         return savePlanButton;
+    }
+
+    private JButton getSaveAsPlanButton() {
+        if (saveAsPlanButton == null) {
+            saveAsPlanButton = new JButton();
+            saveAsPlanButton.setIcon(SAVE_AS_ICON);
+            saveAsPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.save-as"));
+            saveAsPlanButton.setEnabled(false);
+            saveAsPlanButton.addActionListener(e -> savePlan(true));
+        }
+        return saveAsPlanButton;
     }
 
     private JButton getLoadPlanButton() {
@@ -558,6 +573,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         getRunPlanButton().setEnabled(currentPlan != null);
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
+        getSaveAsPlanButton().setEnabled(currentPlan != null);
     }
 
     public List<String> getUnsavedPlans() {
