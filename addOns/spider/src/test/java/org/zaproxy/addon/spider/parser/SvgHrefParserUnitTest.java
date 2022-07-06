@@ -17,30 +17,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.spider;
+package org.zaproxy.addon.spider.parser;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-class SvgHrefSpiderUnitTest {
+class SvgHrefParserUnitTest extends SpiderParserTestUtils {
 
     private static final String SVG_CONTENT_TYPE = "image/svg+xml";
     private static final String XML_CONTENT_TYPE = "text/xml";
 
-    SvgHrefSpider shs;
+    SvgHrefParser parser;
 
     @BeforeEach
     void setup() {
-        shs = new SvgHrefSpider();
+        parser = new SvgHrefParser();
     }
 
     @Test
@@ -48,7 +54,7 @@ class SvgHrefSpiderUnitTest {
         // Given
         HttpMessage msg = createMessage("test.svg");
         // When
-        boolean canParse = shs.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(msg, "", false);
         // Then
         assertTrue(canParse);
     }
@@ -58,7 +64,7 @@ class SvgHrefSpiderUnitTest {
         // Given
         HttpMessage msg = createMessage("test.test");
         // When
-        boolean canParse = shs.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(msg, "", false);
         // Then
         assertFalse(canParse);
     }
@@ -69,7 +75,7 @@ class SvgHrefSpiderUnitTest {
         HttpMessage msg = createMessage("svgimage");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, SVG_CONTENT_TYPE);
         // When
-        boolean canParse = shs.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(msg, "", false);
         // Then
         assertTrue(canParse);
     }
@@ -80,7 +86,7 @@ class SvgHrefSpiderUnitTest {
         HttpMessage msg = createMessage("test.xml");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, XML_CONTENT_TYPE);
         // When
-        boolean canParse = shs.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(msg, "", false);
         // Then
         assertFalse(canParse);
     }
@@ -91,7 +97,7 @@ class SvgHrefSpiderUnitTest {
         HttpMessage msg = createMessage("test");
         msg.setResponseBody("Foo Bar");
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertFalse(parse);
     }
@@ -106,7 +112,7 @@ class SvgHrefSpiderUnitTest {
                         + "  <rect x=\".01\" y=\".01\" width=\"4.98\" height=\"2.98\" fill=\"none\" stroke=\"blue\" stroke-width=\".03\"/>\n"
                         + "</svg>");
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertFalse(parse);
     }
@@ -124,7 +130,7 @@ class SvgHrefSpiderUnitTest {
                         + "<text x=\"20\" y=\"35\" class=\"small\">Test & Text</text>"
                         + "</svg>");
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertFalse(parse);
     }
@@ -143,7 +149,7 @@ class SvgHrefSpiderUnitTest {
                         + "  </a>"
                         + "</svg>");
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertFalse(parse);
     }
@@ -164,14 +170,23 @@ class SvgHrefSpiderUnitTest {
                         + "  </a>"
                         + "</svg>");
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertTrue(parse);
     }
 
+    private static Stream<Arguments> createInputAndExpectedPairs() {
+        return Stream.of(
+                Arguments.of("http://www.example.org/", "http://www.example.org/"),
+                Arguments.of("test.html", "http://www.example.com/test.html"),
+                Arguments.of("test", "http://www.example.com/test"),
+                Arguments.of("/test", "http://www.example.com/test"),
+                Arguments.of("//www.example.com/foo", "http://www.example.com/foo"));
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"http://www.w3.org/", "test.html", "test", "/test"})
-    void shouldParseValidResourceWithVariousUrls(String url) {
+    @MethodSource("createInputAndExpectedPairs")
+    void shouldParseValidResourceWithVariousUrls(String url, String expectedUrl) {
         // Given
         HttpMessage msg = createMessage("test.svg");
         msg.setResponseBody(
@@ -184,10 +199,31 @@ class SvgHrefSpiderUnitTest {
                         + "    <ellipse cx=\"2.5\" cy=\"1.5\" rx=\"2\" ry=\"1\" fill=\"red\"/>\n"
                         + "  </a>"
                         + "</svg>");
+        TestSpiderParserListener listener = createTestSpiderParserListener();
+        parser.addSpiderParserListener(listener);
         // When
-        boolean parse = shs.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
         // Then
         assertTrue(parse);
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
+        assertThat(listener.getUrlsFound().get(0), is(equalTo(expectedUrl)));
+    }
+
+    @Test
+    void shouldParseUrlFromUseTag() {
+        // Given
+        HttpMessage msg = createMessage("test.svg");
+        msg.setResponseBody("<svg><use href=\"//example.org/use_element/upload.php#x\"/></svg>");
+        TestSpiderParserListener listener = createTestSpiderParserListener();
+        parser.addSpiderParserListener(listener);
+        // When
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        // Then
+        assertTrue(parse);
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
+        assertThat(
+                listener.getUrlsFound().get(0),
+                is(equalTo("http://example.org/use_element/upload.php")));
     }
 
     private HttpMessage createMessage(String path) {

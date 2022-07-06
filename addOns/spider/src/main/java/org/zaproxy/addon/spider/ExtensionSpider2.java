@@ -48,6 +48,7 @@ import org.zaproxy.addon.spider.filters.HttpPrefixFetchFilter;
 import org.zaproxy.addon.spider.filters.ParseFilter;
 import org.zaproxy.addon.spider.parser.AddOnToCoreSpiderParser;
 import org.zaproxy.addon.spider.parser.SpiderParser;
+import org.zaproxy.addon.spider.parser.SvgHrefParser;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Context;
@@ -70,7 +71,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor
 
     private static boolean coreSpiderDisabled;
 
-    private SvgHrefSpider svgHrefSpider;
+    private SvgHrefParser svgHrefParser;
 
     static {
         coreSpiderDisabled = ExtensionSpider.class.getAnnotation(Deprecated.class) != null;
@@ -146,8 +147,8 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     public void hook(ExtensionHook extensionHook) {
         if (!coreSpiderDisabled) {
             ExtensionSpider spider = getExtensionSpider();
-            svgHrefSpider = new SvgHrefSpider();
-            spider.addCustomParser(new AddOnToCoreSpiderParser(svgHrefSpider));
+            svgHrefParser = new SvgHrefParser();
+            spider.addCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
             LOGGER.debug("Added custom SVG HREF spider to core spider.");
             return;
         }
@@ -172,7 +173,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor
         spiderApi.addApiOptions(getSpiderParam());
         extensionHook.addApiImplementor(spiderApi);
 
-        this.addCustomParser(new SvgHrefSpider());
+        this.addCustomParser(new SvgHrefParser());
     }
 
     @Override
@@ -190,7 +191,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor
         if (coreSpiderDisabled) {
             SpiderEventPublisher.unload();
         } else {
-            getExtensionSpider().removeCustomParser(new AddOnToCoreSpiderParser(svgHrefSpider));
+            getExtensionSpider().removeCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
         }
     }
 
