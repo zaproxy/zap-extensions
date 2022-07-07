@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.spider;
+package org.zaproxy.addon.spider.parser;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
@@ -39,11 +39,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
-import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.utils.XmlUtils;
 
-public class SvgHrefSpider extends SpiderParser {
-    private static final Logger LOGGER = LogManager.getLogger(SvgHrefSpider.class);
+public class SvgHrefParser extends SpiderParser {
+    private static final Logger LOGGER = LogManager.getLogger(SvgHrefParser.class);
     private static final Pattern PATTERN_SVG_EXTENSION =
             Pattern.compile("\\.svg\\z", Pattern.CASE_INSENSITIVE);
     private static final String HREF_EXPRESSION = "//*[@href or @HREF]";
