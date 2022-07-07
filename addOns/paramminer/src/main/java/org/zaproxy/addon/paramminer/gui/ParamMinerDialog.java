@@ -36,8 +36,13 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     private static final String URL = "paramminer.dialog.url";
     private static final String CONTEXT = "paramminer.dialog.context";
     private static final String FCBZ_CACHE_BUSTER = "paramminer.dialog.fcbz_cache_buster";
-    private static final String BASIC_WORDLISTS = "paramminer.dialog.basic_wordlists";
-    private static final String CUSTOM_WORDLISTS = "paramminer.dialog.custom_wordlists";
+
+    private static final String PREDEFINED = "paramminer.dialog.predefined.";
+    private static final String CUSTOM = "paramminer.dialog.custom.";
+    private static final String URL_WORDLIST = "url_wordlists";
+    private static final String HEADER_WORDLIST = "header_wordlists";
+    private static final String COOKIE_WORDLIST = "cookie_wordlists";
+
     private static final String SKIP_BORING_HEADERS = "paramminer.dialog.skip_boring_headers";
     private static final String THREADPOOL_SIZE = "paramminer.dialog.threadpool_size";
 
@@ -64,8 +69,10 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         this.addTargetSelectField(URL, this.target, true, false);
         this.addComboField(CONTEXT, new String[] {}, "");
         this.addCheckBoxField(FCBZ_CACHE_BUSTER, false);
-        this.addCheckBoxField(BASIC_WORDLISTS, true);
-        this.addCheckBoxField(CUSTOM_WORDLISTS, false);
+        this.addCheckBoxField(PREDEFINED + URL_WORDLIST, true);
+        this.addCheckBoxField(PREDEFINED + HEADER_WORDLIST, false);
+        this.addCheckBoxField(PREDEFINED + COOKIE_WORDLIST, false);
+
         this.addCheckBoxField(SKIP_BORING_HEADERS, false);
         this.addTextField(THREADPOOL_SIZE, "4");
         this.addPadding();
@@ -76,10 +83,17 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     public void save() {
         config.setUrl(this.getStringValue(URL));
         config.setAddFcbzCacheBuster(this.getBoolValue(FCBZ_CACHE_BUSTER));
-        config.setUseBasicWordlists(this.getBoolValue(BASIC_WORDLISTS));
-        config.setUseCustomWordlists(this.getBoolValue(CUSTOM_WORDLISTS));
+
+        config.setUsePredefinedUrlWordlists(this.getBoolValue(PREDEFINED + URL_WORDLIST));
+        config.setUsePredefinedHeaderWordlists(this.getBoolValue(PREDEFINED + HEADER_WORDLIST));
+        config.setUsePredefinedCookieWordlists(this.getBoolValue(PREDEFINED + COOKIE_WORDLIST));
+
+        config.setUseCustomUrlWordlists(this.getBoolValue(CUSTOM + URL_WORDLIST));
+        config.setUseCustomHeaderWordlists(this.getBoolValue(CUSTOM + HEADER_WORDLIST));
+        config.setUseCustomCookieWordlists(this.getBoolValue(CUSTOM + COOKIE_WORDLIST));
+
         config.setSkipBoringHeaders(this.getBoolValue(SKIP_BORING_HEADERS));
-        config.setThreadpoolSize(this.getStringValue(THREADPOOL_SIZE));
+        config.setThreadCount(this.getStringValue(THREADPOOL_SIZE));
         config.setContext(this.getStringValue(CONTEXT));
         logger.debug("config {}", this.config.getUrl());
 

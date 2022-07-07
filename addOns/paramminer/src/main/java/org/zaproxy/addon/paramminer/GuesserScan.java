@@ -50,7 +50,7 @@ public class GuesserScan implements GenericScanner2 {
     private int tasksDoneCount;
     private int tasksTodoCount;
 
-    private final ExecutorService threadPool;
+    private final ExecutorService executor;
     private final List<GuesserProgressListener> listeners;
     private final ParamMinerHistoryTableModel tableModel;
     private String output;
@@ -66,9 +66,9 @@ public class GuesserScan implements GenericScanner2 {
         tableModel = new ParamMinerHistoryTableModel();
         output = "scanId: " + scanId;
 
-        this.threadPool =
+        this.executor =
                 Executors.newFixedThreadPool(
-                        config.getThreadpoolSize(),
+                        config.getThreadCount(),
                         new ParamGuesserThreadFactory("ZAP-ParamGuesser-" + scanId + "-thread-"));
     }
 
@@ -125,15 +125,20 @@ public class GuesserScan implements GenericScanner2 {
         try {
             if (state == State.NOT_STARTED) {
                 state = State.RUNNING;
-
-                // TODO start
+                startScan();
             }
         } finally {
             lock.unlock();
         }
     }
 
-    private void completed() {
+    private void startScan() {
+        ParamGuesser paramGuesser = new ParamGuesser(scanId, this.config, this, this.executor);
+        tasksTodoCount = config.getTotalParams();
+        this.executor.submit(paramGuesser);
+    }
+
+    void completed() {
         lock.lock();
         try {
             state = State.FINISHED;
@@ -149,7 +154,7 @@ public class GuesserScan implements GenericScanner2 {
         }
     }
 
-    private synchronized void notifyListenersProgress() {
+    synchronized void notifyListenersProgress() {
         tasksDoneCount++;
 
         for (GuesserProgressListener listener : listeners) {

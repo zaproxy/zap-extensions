@@ -20,26 +20,21 @@
 package org.zaproxy.addon.paramminer;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
-public class ParamGuesser {
-    private String id;
-    private ExtensionParamMiner extension;
+public class ParamGuesser implements Runnable {
+    private int id;
     private volatile boolean paused = false;
     private volatile boolean stopped = false;
     private ReentrantLock pauseLock = new ReentrantLock();
     private Condition pausedCondition = pauseLock.newCondition();
-    private ExecutorService threadPool;
+    private ExecutorService executor;
 
     private HttpSender httpSender;
     private static final Logger logger = LogManager.getLogger(ParamGuesser.class);
@@ -47,33 +42,33 @@ public class ParamGuesser {
     private UrlGuesser urlGuesser;
     private HeaderGuesser headerGuesser;
     private CookieGuesser cookieGuesser;
-    private ParamMinerConfig guesserConfig;
-    int tasksDoneCount;
-    int tasksTodoCount;
+
     private StopWatch stopWatch;
     private boolean stopWatchStarted;
-    private HttpMessage seed;
+    private GuesserScan scan;
 
     public ParamGuesser(
-            String id,
-            ExtensionParamMiner extension,
-            HttpMessage seed,
-            ParamMinerConfig guesserData) {
+            int id, ParamMinerConfig config, GuesserScan scan, ExecutorService executor) {
         this.id = id;
-        this.extension = extension;
-        this.seed = seed;
-        this.guesserConfig = guesserData;
+        this.scan = scan;
+        this.executor = executor;
+        // TODO - use the actual core initiator once targeting >= 2.12.0
+        httpSender =
+                new HttpSender(
+                        Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
+        if (config.doUrlGuess()) {
+            urlGuesser = new UrlGuesser(id, config, scan, httpSender);
+        }
+        if (config.doHeaderGuess()) {
+            headerGuesser = new HeaderGuesser(id, config, scan, httpSender);
+        }
+        if (config.doCookieGuess()) {
+            cookieGuesser = new CookieGuesser(id, config, scan, httpSender);
+        }
     }
 
-    public void setSeedHttpMessage(HttpMessage seed) {
-        this.seed = seed;
-    }
-
-    public HttpMessage getSeedHttpMessage() {
-        return seed;
-    }
-
-    public void start() {
+    @Override
+    public void run() {
         logger.debug("Starting param guesser ...");
         if (stopWatch == null) {
             stopWatch = new StopWatch();
@@ -82,17 +77,14 @@ public class ParamGuesser {
             stopWatch.start();
             stopWatchStarted = true;
         }
-        this.threadPool =
-                Executors.newFixedThreadPool(
-                        guesserConfig.getThreadpoolSize(),
-                        new ParamGuesserThreadFactory(
-                                "ZAP-ParamGuesserThreadPool-" + id + "-thread-"));
 
-        // TODO - use the actual core initiator once targeting >= 2.12.0
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
-        httpSender.setFollowRedirect(guesserConfig.getRedirectState());
+        this.executor.submit(urlGuesser);
+        this.executor.submit(headerGuesser);
+        this.executor.submit(cookieGuesser);
+
+        if (scan.getProgress() == scan.getMaximum()) {
+            scan.completed();
+        }
     }
 
     public void stop() {
@@ -108,11 +100,7 @@ public class ParamGuesser {
             this.resume();
         }
 
-        this.threadPool.shutdown();
-    }
-
-    public ExtensionParamMiner getExtensionParamMiner() {
-        return this.extension;
+        this.executor.shutdown();
     }
 
     public void resume() {
@@ -151,11 +139,11 @@ public class ParamGuesser {
                         new Runnable() {
                             @Override
                             public void run() {
-                                if (threadPool != null) {
-                                    threadPool.shutdown();
+                                if (executor != null) {
+                                    executor.shutdown();
                                 }
                                 reset();
-                                threadPool = null;
+                                executor = null;
                             }
                         },
                         "ZAP-ParamGuesserShutdownThread-" + id)
@@ -164,30 +152,5 @@ public class ParamGuesser {
 
     private void reset() {
         // TODO add reset code here
-    }
-
-    private static class ParamGuesserThreadFactory implements ThreadFactory {
-
-        private final AtomicInteger threadNumber;
-        private final String namePrefix;
-        private final ThreadGroup group;
-
-        public ParamGuesserThreadFactory(String namePrefix) {
-            threadNumber = new AtomicInteger(1);
-            this.namePrefix = namePrefix;
-            group = Thread.currentThread().getThreadGroup();
-        }
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-            return t;
-        }
     }
 }

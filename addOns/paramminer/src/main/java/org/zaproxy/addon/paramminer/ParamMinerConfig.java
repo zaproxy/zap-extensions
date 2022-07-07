@@ -25,10 +25,18 @@ import org.zaproxy.zap.users.User;
 public class ParamMinerConfig {
     private String url;
     private boolean addFcbzCacheBuster;
-    private boolean useBasicWordlists;
-    private boolean useCustomWordlists;
+
+    private boolean usePredefinedUrlWordlists;
+    private boolean usePredefinedHeaderWordlists;
+    private boolean usePredefinedCookieWordlists;
+
+    private boolean useCustomUrlWordlists;
+    private boolean useCustomHeaderWordlists;
+    private boolean useCustomCookieWordlists;
+
     private boolean skipBoringHeaders;
-    private int threadPoolSize;
+
+    private int threadCount;
     private String context;
     private HttpRequestHeader presetHeaders;
     private int totalcustomParams;
@@ -37,13 +45,31 @@ public class ParamMinerConfig {
     private int totalHeaderParams;
     private User scanUser;
 
+    private boolean doUrlGuess;
+    private boolean urlRedirect;
+    private boolean doCookieGuess;
+    private boolean cookieRedirect;
+    private boolean doHeaderGuess;
+    private boolean headerRedirect;
+
     public ParamMinerConfig() {
         this.url = "";
         this.addFcbzCacheBuster = false;
-        this.useBasicWordlists = true;
-        this.useCustomWordlists = false;
+        /** This would allow user to use separate wordlists. */
+        this.usePredefinedUrlWordlists = true;
+        this.usePredefinedHeaderWordlists = true;
+        this.usePredefinedCookieWordlists = true;
+
+        this.useCustomUrlWordlists = false;
+        this.useCustomHeaderWordlists = false;
+        this.useCustomCookieWordlists = false;
+
         this.skipBoringHeaders = false;
-        this.threadPoolSize = 4;
+        this.threadCount = 4;
+
+        this.doUrlGuess = true;
+        this.doCookieGuess = false;
+        this.doHeaderGuess = false;
     }
 
     public String getUrl() {
@@ -62,20 +88,76 @@ public class ParamMinerConfig {
         this.addFcbzCacheBuster = addFcbzCacheBuster;
     }
 
-    public boolean getUseBasicWordlists() {
-        return useBasicWordlists;
+    public boolean getUsePredefinedUrlWordlists() {
+        return usePredefinedUrlWordlists;
     }
 
-    public void setUseBasicWordlists(boolean useBasicWordlists) {
-        this.useBasicWordlists = useBasicWordlists;
+    public void setUsePredefinedUrlWordlists(boolean usePredefinedUrlWordlists) {
+        this.usePredefinedUrlWordlists = usePredefinedUrlWordlists;
     }
 
-    public boolean getUseCustomWordlists() {
-        return useCustomWordlists;
+    public boolean getUsePredefinedHeaderWordlists() {
+        return usePredefinedHeaderWordlists;
     }
 
-    public void setUseCustomWordlists(boolean useCustomWordlists) {
-        this.useCustomWordlists = useCustomWordlists;
+    public void setUsePredefinedHeaderWordlists(boolean usePredefinedHeaderWordlists) {
+        this.usePredefinedHeaderWordlists = usePredefinedHeaderWordlists;
+    }
+
+    public boolean getUsePredefinedCookieWordlists() {
+        return usePredefinedCookieWordlists;
+    }
+
+    public void setUsePredefinedCookieWordlists(boolean usePredefinedCookieWordlists) {
+        this.usePredefinedCookieWordlists = usePredefinedCookieWordlists;
+    }
+
+    public boolean getUseCustomUrlWordlists() {
+        return useCustomUrlWordlists;
+    }
+
+    public void setUseCustomUrlWordlists(boolean useCustomUrlWordlists) {
+        this.useCustomUrlWordlists = useCustomUrlWordlists;
+    }
+
+    public boolean getUseCustomHeaderWordlists() {
+        return useCustomHeaderWordlists;
+    }
+
+    public void setUseCustomHeaderWordlists(boolean useCustomHeaderWordlists) {
+        this.useCustomHeaderWordlists = useCustomHeaderWordlists;
+    }
+
+    public boolean getUseCustomCookieWordlists() {
+        return useCustomCookieWordlists;
+    }
+
+    public void setUseCustomCookieWordlists(boolean useCustomCookieWordlists) {
+        this.useCustomCookieWordlists = useCustomCookieWordlists;
+    }
+
+    public boolean doUrlGuess() {
+        return doUrlGuess;
+    }
+
+    public void setDoUrlGuess(boolean doUrlGuess) {
+        this.doUrlGuess = doUrlGuess;
+    }
+
+    public boolean doCookieGuess() {
+        return doCookieGuess;
+    }
+
+    public void setDoCookieGuess(boolean doCookieGuess) {
+        this.doCookieGuess = doCookieGuess;
+    }
+
+    public boolean doHeaderGuess() {
+        return doHeaderGuess;
+    }
+
+    public void setDoHeaderGuess(boolean doHeaderGuess) {
+        this.doHeaderGuess = doHeaderGuess;
     }
 
     public boolean getSkipBoringHeaders() {
@@ -86,12 +168,12 @@ public class ParamMinerConfig {
         this.skipBoringHeaders = skipBoringHeaders;
     }
 
-    public int getThreadpoolSize() {
-        return threadPoolSize;
+    public int getThreadCount() {
+        return threadCount;
     }
 
-    public void setThreadpoolSize(String string) {
-        threadPoolSize = Integer.parseInt(string);
+    public void setThreadCount(String string) {
+        threadCount = Integer.parseInt(string);
     }
 
     public String getContext() {
@@ -102,8 +184,28 @@ public class ParamMinerConfig {
         this.context = stringValue;
     }
 
-    public boolean getRedirectState() {
-        return false;
+    public boolean getUrlGuessRedirectState() {
+        return urlRedirect;
+    }
+
+    public void setUrlGuessRedirectState(boolean bool) {
+        this.urlRedirect = bool;
+    }
+
+    public boolean getCookieGuessRedirectState() {
+        return cookieRedirect;
+    }
+
+    public void setCookieGuessRedirectState(boolean bool) {
+        this.cookieRedirect = bool;
+    }
+
+    public boolean getHeaderGuessRedirectState() {
+        return headerRedirect;
+    }
+
+    public void setHeaderGuessRedirectState(boolean bool) {
+        this.headerRedirect = bool;
     }
 
     public HttpRequestHeader getPresetHeaders() {
