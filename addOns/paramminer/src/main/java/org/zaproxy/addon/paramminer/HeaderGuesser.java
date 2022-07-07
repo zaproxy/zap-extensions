@@ -19,4 +19,13 @@
  */
 package org.zaproxy.addon.paramminer;
 
-public class HeaderGuesser {}
+import org.parosproxy.paros.network.HttpSender;
+
+public class HeaderGuesser implements Runnable {
+
+    public HeaderGuesser(
+            int id, ParamMinerConfig config, GuesserScan scan, HttpSender httpSender) {}
+
+    @Override
+    public void run() {}
+}
