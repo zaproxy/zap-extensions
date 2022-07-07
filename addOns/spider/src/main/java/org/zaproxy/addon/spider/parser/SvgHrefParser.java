@@ -32,7 +32,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -42,7 +41,6 @@ import org.xml.sax.SAXParseException;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class SvgHrefParser extends SpiderParser {
-    private static final Logger LOGGER = LogManager.getLogger(SvgHrefParser.class);
     private static final Pattern PATTERN_SVG_EXTENSION =
             Pattern.compile("\\.svg\\z", Pattern.CASE_INSENSITIVE);
     private static final String HREF_EXPRESSION = "//*[@href or @HREF]";
@@ -55,7 +53,7 @@ public class SvgHrefParser extends SpiderParser {
             XPath xpath = XPathFactory.newInstance().newXPath();
             xpathHrefExpression = xpath.compile(HREF_EXPRESSION);
         } catch (XPathExpressionException e) {
-            LOGGER.error(e);
+            LogManager.getLogger(SvgHrefParser.class).error(e);
         }
     }
 
@@ -65,14 +63,15 @@ public class SvgHrefParser extends SpiderParser {
         try {
             documentBuilder = XmlUtils.newXxeDisabledDocumentBuilderFactory().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            LOGGER.warn("An error occurred while getting the DocumentBuilder", e);
+            LogManager.getLogger(SvgHrefParser.class)
+                    .warn("An error occurred while getting the DocumentBuilder", e);
         }
     }
 
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         String baseUrl = message.getRequestHeader().getURI().toString();
-        LOGGER.debug("SVG Spider attempting to parse {}", baseUrl);
+        getLogger().debug("SVG Spider attempting to parse {}", baseUrl);
 
         try {
             synchronized (documentBuilder) {
@@ -92,21 +91,26 @@ public class SvgHrefParser extends SpiderParser {
             }
         } catch (SAXParseException spe) {
             if (spe.getMessage().contains("DOCTYPE is disallowed")) {
-                LOGGER.debug(
-                        "Skipping {} due to XXE safety and DOCTYPE declaration present.", baseUrl);
+                getLogger()
+                        .debug(
+                                "Skipping {} due to XXE safety and DOCTYPE declaration present.",
+                                baseUrl);
             } else {
-                LOGGER.warn("An error occurred trying to parse {}", baseUrl, spe);
+                getLogger().warn("An error occurred trying to parse {}", baseUrl, spe);
             }
             return false;
         } catch (Exception e) {
-            LOGGER.warn("An error occurred trying to parse {}", baseUrl, e);
+            getLogger().warn("An error occurred trying to parse {}", baseUrl, e);
             return false;
         }
     }
 
     private void processNodeList(NodeList nodes, HttpMessage message, int depth, String baseUrl) {
-        LOGGER.debug(
-                "Identified {} nodes with href attribute from: {}", nodes.getLength(), baseUrl);
+        getLogger()
+                .debug(
+                        "Identified {} nodes with href attribute from: {}",
+                        nodes.getLength(),
+                        baseUrl);
         for (int i = 0; i < nodes.getLength(); i++) {
             String extractedUrl = extractUrl(nodes.item(i));
             if (!extractedUrl.isEmpty()) {
@@ -114,12 +118,13 @@ public class SvgHrefParser extends SpiderParser {
                 try {
                     newUri = new URI(baseUrl).resolve(extractedUrl);
                 } catch (URISyntaxException e) {
-                    LOGGER.warn(
-                            "Failed to resolve extracted URL: {} against base URL: {})",
-                            extractedUrl,
-                            baseUrl);
+                    getLogger()
+                            .warn(
+                                    "Failed to resolve extracted URL: {} against base URL: {}",
+                                    extractedUrl,
+                                    baseUrl);
                 }
-                LOGGER.debug("Resolved URL: {} from: {}", newUri, baseUrl);
+                getLogger().debug("Resolved URL: {} from: {}", newUri, baseUrl);
                 if (newUri != null && newUri.isAbsolute()) {
                     processURL(message, depth, extractedUrl, baseUrl);
                 }

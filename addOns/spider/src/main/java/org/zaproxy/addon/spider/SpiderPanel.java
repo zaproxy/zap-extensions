@@ -483,7 +483,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
                             }
                         });
             } catch (InvocationTargetException | InterruptedException e) {
-                log.error("Failed to switch view: " + e.getMessage(), e);
+                log.error("Failed to switch view: {}", e.getMessage(), e);
             }
             return;
         }

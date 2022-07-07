@@ -29,7 +29,7 @@ import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.StartTagType;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.SpiderParam;
-import org.zaproxy.addon.spider.URLCanonicalizer;
+import org.zaproxy.addon.spider.UrlCanonicalizer;
 
 /**
  * The Class SpiderHtmlParser is used for parsing of HTML files, gathering resource urls from them.
@@ -91,12 +91,10 @@ public class SpiderHtmlParser extends SpiderParser {
         // Try to see if there's any BASE tag that could change the base URL
         Element base = source.getFirstElement(HTMLElementName.BASE);
         if (base != null) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("Base tag was found in HTML: " + base.getDebugInfo());
-            }
+            getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseURL = URLCanonicalizer.getCanonicalURL(href, baseURL);
+                baseURL = UrlCanonicalizer.getCanonicalURL(href, baseURL);
             }
         }
 

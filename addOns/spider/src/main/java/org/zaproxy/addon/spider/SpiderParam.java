@@ -256,9 +256,8 @@ public class SpiderParam extends AbstractParam {
         } catch (ConversionException e) {
             // conversion issue from 1.4.1: convert the field from int to boolean
             log.info(
-                    "Warning while parsing config file: "
-                            + SPIDER_POST_FORM
-                            + " was not in the expected format due to an upgrade. Converting  it!");
+                    "Warning while parsing config file: {} was not in the expected format due to an upgrade. Converting it!",
+                    SPIDER_POST_FORM);
             this.postForm = !getConfig().getProperty(SPIDER_POST_FORM).toString().equals("0");
             getConfig().setProperty(SPIDER_POST_FORM, String.valueOf(postForm));
         }
@@ -331,7 +330,7 @@ public class SpiderParam extends AbstractParam {
                         Pattern pattern = Pattern.compile(domain, Pattern.CASE_INSENSITIVE);
                         domainsInScope.add(new DomainAlwaysInScopeMatcher(pattern));
                     } catch (IllegalArgumentException e) {
-                        log.error("Failed to migrate a domain always in scope, name: " + name, e);
+                        log.error("Failed to migrate a domain always in scope, name: {}", name, e);
                     }
                 } else {
                     domainsInScope.add(new DomainAlwaysInScopeMatcher(domain));
@@ -763,7 +762,8 @@ public class SpiderParam extends AbstractParam {
                     excludedDomain = new DomainAlwaysInScopeMatcher(pattern);
                 } catch (IllegalArgumentException e) {
                     log.error(
-                            "Failed to read an spider domain in scope entry with regex: " + value,
+                            "Failed to read an spider domain in scope entry with regex: {}",
+                            value,
                             e);
                 }
             } else {

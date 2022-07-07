@@ -117,8 +117,8 @@ public class SpiderScanController implements ScanController<SpiderScan> {
                         startUri = (URI) obj;
                     } else {
                         log.error(
-                                "Unexpected contextSpecificObject: "
-                                        + obj.getClass().getCanonicalName());
+                                "Unexpected contextSpecificObject: {}",
+                                obj.getClass().getCanonicalName());
                     }
                 }
             }

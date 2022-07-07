@@ -25,7 +25,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.URLCanonicalizer;
+import org.zaproxy.addon.spider.UrlCanonicalizer;
 
 /**
  * The Abstract Class SpiderParser is the base for parsers used by the spider. The main purpose of
@@ -87,7 +87,7 @@ public abstract class SpiderParser {
      */
     protected void processURL(HttpMessage message, int depth, String localURL, String baseURL) {
         // Build the absolute canonical URL
-        String fullURL = URLCanonicalizer.getCanonicalURL(localURL, baseURL);
+        String fullURL = UrlCanonicalizer.getCanonicalURL(localURL, baseURL);
         if (fullURL == null) {
             return;
         }

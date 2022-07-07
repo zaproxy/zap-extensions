@@ -44,8 +44,8 @@ import org.zaproxy.addon.spider.parser.SpiderParserListener;
 import org.zaproxy.addon.spider.parser.SpiderRedirectParser;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.addon.spider.parser.SpiderRobotstxtParser;
-import org.zaproxy.addon.spider.parser.SpiderSVNEntriesParser;
-import org.zaproxy.addon.spider.parser.SpiderSitemapXMLParser;
+import org.zaproxy.addon.spider.parser.SpiderSitemapXmlParser;
+import org.zaproxy.addon.spider.parser.SpiderSvnEntriesParser;
 import org.zaproxy.addon.spider.parser.SpiderTextParser;
 
 /**
@@ -110,16 +110,16 @@ public class SpiderController implements SpiderParserListener {
 
         // If parsing of sitemap.xml is enabled
         if (spider.getSpiderParam().isParseSitemapXml()) {
-            if (log.isDebugEnabled()) log.debug("Adding SpiderSitemapXMLParser");
-            parser = new SpiderSitemapXMLParser(spider.getSpiderParam());
+            log.debug("Adding SpiderSitemapXmlParser");
+            parser = new SpiderSitemapXmlParser(spider.getSpiderParam());
             parsers.add(parser);
         } else {
-            if (log.isDebugEnabled()) log.debug("NOT Adding SpiderSitemapXMLParser");
+            log.debug("NOT Adding SpiderSitemapXmlParser");
         }
 
         // If parsing of SVN entries is enabled
         if (spider.getSpiderParam().isParseSVNEntries()) {
-            parser = new SpiderSVNEntriesParser(spider.getSpiderParam());
+            parser = new SpiderSvnEntriesParser(spider.getSpiderParam());
             parsers.add(parser);
         }
 
@@ -177,7 +177,7 @@ public class SpiderController implements SpiderParserListener {
         }
         synchronized (visitedResources) {
             if (visitedResources.contains(resourceIdentifier)) {
-                log.debug("URI already visited: " + uri);
+                log.debug("URI already visited: {}", uri);
                 return;
             } else {
                 visitedResources.add(resourceIdentifier);
@@ -205,7 +205,7 @@ public class SpiderController implements SpiderParserListener {
      * @param filter the filter
      */
     public void addFetchFilter(FetchFilter filter) {
-        log.debug("Loading fetch filter: " + filter.getClass().getSimpleName());
+        log.debug("Loading fetch filter: {}", filter.getClass().getSimpleName());
         fetchFilters.add(filter);
     }
 
@@ -224,12 +224,12 @@ public class SpiderController implements SpiderParserListener {
      * @param filter the filter
      */
     public void addParseFilter(ParseFilter filter) {
-        log.debug("Loading parse filter: " + filter.getClass().getSimpleName());
+        log.debug("Loading parse filter: {}", filter.getClass().getSimpleName());
         parseFilters.add(filter);
     }
 
     protected void setDefaultParseFilter(ParseFilter filter) {
-        log.debug("Setting Default filter: " + filter.getClass().getSimpleName());
+        log.debug("Setting Default filter: {}", filter.getClass().getSimpleName());
         defaultParseFilter = filter;
     }
 
@@ -266,7 +266,7 @@ public class SpiderController implements SpiderParserListener {
             throws URIException {
         StringBuilder identifierBuilder = new StringBuilder(50);
         String visitedURI =
-                URLCanonicalizer.buildCleanedParametersURIRepresentation(
+                UrlCanonicalizer.buildCleanedParametersURIRepresentation(
                         uri,
                         spider.getSpiderParam().getHandleParameters(),
                         spider.getSpiderParam().isHandleODataParametersVisited());
@@ -310,7 +310,7 @@ public class SpiderController implements SpiderParserListener {
         for (FetchFilter f : fetchFilters) {
             FetchStatus s = f.checkFilter(uriV);
             if (s != FetchStatus.VALID) {
-                log.debug("URI: " + uriV + " was filtered by a filter with reason: " + s);
+                log.debug("URI: {} was filtered by a filter with reason: {}", uriV, s);
                 spider.notifyListenersFoundURI(
                         resourceFound.getUri(), resourceFound.getMethod(), s);
                 return;
@@ -319,10 +319,7 @@ public class SpiderController implements SpiderParserListener {
 
         // Check if resource should be ignored and not fetched
         if (resourceFound.isShouldIgnore()) {
-            log.debug(
-                    "URI: "
-                            + uriV
-                            + " is valid, but will not be fetched, by parser recommendation.");
+            log.debug("URI: {} is valid, but will not be fetched, by parser recommendation.", uriV);
             spider.notifyListenersFoundURI(
                     resourceFound.getUri(), resourceFound.getMethod(), FetchStatus.VALID);
             return;
@@ -374,12 +371,12 @@ public class SpiderController implements SpiderParserListener {
                 log.debug("Second try...");
                 uriV = new URI(uri, false);
             } catch (Exception ex) {
-                log.error("Error while converting to uri: " + uri, ex);
+                log.error("Error while converting to uri: {}", uri, ex);
                 return null;
             }
             // A non URIException occurred, so just ignore the URI
         } catch (Exception e) {
-            log.error("Error while converting to uri: " + uri, e);
+            log.error("Error while converting to uri: {}", uri, e);
             return null;
         }
         return uriV;
@@ -395,7 +392,7 @@ public class SpiderController implements SpiderParserListener {
     }
 
     public void addSpiderParser(SpiderParser parser) {
-        log.debug("Loading custom Spider Parser: " + parser.getClass().getSimpleName());
+        log.debug("Loading custom Spider Parser: {}", parser.getClass().getSimpleName());
         this.parsers.addFirst(parser);
     }
 }

@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * A {@code FetchFilter} that filters based on a HTTP or HTTPS {@code URI}.
@@ -35,8 +33,6 @@ import org.apache.logging.log4j.Logger;
  * @see #checkFilter(URI)
  */
 public class HttpPrefixFetchFilter extends FetchFilter {
-
-    private static final Logger LOGGER = LogManager.getLogger(HttpPrefixFetchFilter.class);
 
     /** The normalised form of HTTP scheme, that is, all letters lowercase. */
     private static final String HTTP_SCHEME = "http";
@@ -287,7 +283,7 @@ public class HttpPrefixFetchFilter extends FetchFilter {
         try {
             return host.equals(normalisedHost(uri));
         } catch (URIException e) {
-            LOGGER.warn("Failed to normalise host: " + Arrays.toString(uri.getRawHost()), e);
+            getLogger().warn("Failed to normalise host: {}", Arrays.toString(uri.getRawHost()), e);
         }
         return false;
     }
