@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Content Security Policy scan rule will now raise alerts at High confidence, all alerts now include the appropriate header as the "parameter" value, and has functionality to generate example alerts for documentation purposes.
+- The Content Security Policy scan rule will now raise an alert when the assessed policy contains non-ASCII characters (Issue 7379).
 
 ## [41] - 2022-06-24
 ### Changed

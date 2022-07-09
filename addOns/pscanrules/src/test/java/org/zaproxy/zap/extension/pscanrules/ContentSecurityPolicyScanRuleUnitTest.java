@@ -89,9 +89,9 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(8)));
+        assertThat(count, is(equalTo(9)));
         assertThat(countLows, is(equalTo(3L)));
-        assertThat(countMediums, is(equalTo(5L)));
+        assertThat(countMediums, is(equalTo(6L)));
     }
 
     @Test
@@ -437,6 +437,25 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(1).getEvidence(), equalTo(policy));
         assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-8"));
+    }
+
+    @Test
+    void shouldRaiseAlertWhenPolicyContainsNonasciiCharacters() {
+        // Given
+        String policy = "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Malformed Policy (Non-ASCII)"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "A non-ASCII character was encountered while attempting to parse the policy, thus rendering it invalid (no further evaluation occurred). The following invalid characters were collected: ‘’"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-9"));
     }
 
     private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
