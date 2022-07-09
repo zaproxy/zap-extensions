@@ -30,10 +30,13 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.lang.ArrayUtils;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuExportSelectedUrls extends PopupMenuExportUrls {
 
     private static final long serialVersionUID = -4426560452505908380L;
+    private static final String STATS_EXPORT_SELECTED_URLS =
+            ExtensionExim.STATS_PREFIX + "export.selected.urls";
 
     public PopupMenuExportSelectedUrls(String menuItem, Extension extension) {
         super(menuItem, extension);
@@ -48,7 +51,9 @@ public class PopupMenuExportSelectedUrls extends PopupMenuExportUrls {
 
         JTree siteTree = extension.getView().getSiteTreePanel().getTreeSite();
 
-        super.writeURLs(file, this.getOutputSet(siteTree.getSelectionPaths()));
+        SortedSet<String> urls = this.getOutputSet(siteTree.getSelectionPaths());
+        super.writeURLs(file, urls);
+        Stats.incCounter(STATS_EXPORT_SELECTED_URLS, urls.size());
     }
 
     private SortedSet<String> getOutputSet(TreePath[] startingPoints) {
