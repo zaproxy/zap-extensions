@@ -36,6 +36,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
@@ -44,6 +45,7 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
     protected final Extension extension;
     private static final String HTML_EXT = ".html";
     private static final Logger LOG = LogManager.getLogger(PopupMenuExportUrls.class);
+    private static final String STATS_EXPORT_URLS = ExtensionExim.STATS_PREFIX + "export.urls";
 
     /**
      * Constructs a {@code PopupMenuExportUrls} with the given label and extension.
@@ -78,8 +80,7 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
         if (file == null) {
             return;
         }
-        writeURLs(
-                file,
+        SortedSet<String> allUrls =
                 getOutputSet(
                         (SiteNode)
                                 extension
@@ -87,7 +88,9 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
                                         .getSiteTreePanel()
                                         .getTreeSite()
                                         .getModel()
-                                        .getRoot()));
+                                        .getRoot());
+        writeURLs(file, allUrls);
+        Stats.incCounter(STATS_EXPORT_URLS, allUrls.size());
     }
 
     protected SortedSet<String> getOutputSet(SiteNode startingPoint) {

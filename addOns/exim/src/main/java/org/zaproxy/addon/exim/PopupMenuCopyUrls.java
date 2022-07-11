@@ -26,12 +26,14 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
 import org.parosproxy.paros.model.HistoryReference;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
 public class PopupMenuCopyUrls extends PopupMenuItemHistoryReferenceContainer
         implements ClipboardOwner {
 
     private static final long serialVersionUID = 1L;
+    private static final String STATS_COPY_URL = ExtensionExim.STATS_PREFIX + "copy.url";
 
     public PopupMenuCopyUrls(String label) {
         super(label, true);
@@ -48,6 +50,7 @@ public class PopupMenuCopyUrls extends PopupMenuItemHistoryReferenceContainer
         for (HistoryReference href : hrefs) {
             sb.append(href.getURI().toString());
             sb.append('\n');
+            Stats.incCounter(STATS_COPY_URL);
         }
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

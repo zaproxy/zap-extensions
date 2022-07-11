@@ -31,10 +31,13 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.SiteMapPanel;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuExportContextUrls extends PopupMenuExportUrls {
 
     private static final long serialVersionUID = -4426560452505908380L;
+    private static final String STATS_EXPORT_CONTEXT_URLS =
+            ExtensionExim.STATS_PREFIX + "export.context.urls";
 
     private static final Logger LOG = LogManager.getLogger(PopupMenuExportContextUrls.class);
 
@@ -77,6 +80,7 @@ public class PopupMenuExportContextUrls extends PopupMenuExportUrls {
             this.getOutputSet(c, allUrls);
         }
         super.writeURLs(file, allUrls);
+        Stats.incCounter(STATS_EXPORT_CONTEXT_URLS, allUrls.size());
     }
 
     private void getOutputSet(Context ctx, SortedSet<String> outputSet) {

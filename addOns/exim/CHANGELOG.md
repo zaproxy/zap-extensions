@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Copy URLs, Export Context URLs, Export Selected URLs, Export Messages, and Export Responses functionality similar to what was previously offered via core functionality.
+- Stats for migrated core components.
 
 ### Changed
 - Save RAW functionality now includes an All option which saves the entire HTTP message.
