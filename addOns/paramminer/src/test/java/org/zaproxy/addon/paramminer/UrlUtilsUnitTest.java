@@ -125,4 +125,18 @@ class UrlUtilsUnitTest extends TestUtils {
         assertEquals(usableParams.size(), 1);
         assertEquals(usableParams.get(0).get("id"), "test");
     }
+
+    @Test
+    void shouldGetXmlStringWithoutErrors() {
+        // Given
+        Map<String, String> map = new HashMap<>();
+        map.put("q", "test");
+        map.put("admin", "true");
+
+        // When
+        String xmlString = UrlUtils.createXmlString(map);
+
+        // Then
+        assertEquals(xmlString, "<q>test</q><admin>true</admin>");
+    }
 }

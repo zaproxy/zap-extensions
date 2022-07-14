@@ -6,10 +6,21 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team and Arkaprabha Chakraborty")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.9.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }
 

@@ -51,6 +51,14 @@ public class ParamMinerConfig {
     private boolean cookieRedirect;
     private boolean doHeaderGuess;
     private boolean headerRedirect;
+    private String customUrlWordListPath;
+
+    private boolean urlXmlRequest;
+    private String urlXmlIncludeString;
+    private boolean urlJsonRequest;
+    private String urlJsonIncludeString;
+    private boolean urlPostRequest;
+    private boolean urlGetRequest;
 
     public ParamMinerConfig() {
         this.url = "";
@@ -250,5 +258,57 @@ public class ParamMinerConfig {
 
     public void setScanUser(User scanUser) {
         this.scanUser = scanUser;
+    }
+
+    public String getCustomUrlWordlistPath() {
+        return this.customUrlWordListPath;
+    }
+
+    public void setUrlJsonRequest(boolean urlJsonRequest) {
+        this.urlJsonRequest = urlJsonRequest;
+    }
+
+    public boolean getUrlJsonRequest() {
+        return urlJsonRequest;
+    }
+
+    public void setUrlJsonIncludeString(String urlJsonIncludeString) {
+        this.urlJsonIncludeString = urlJsonIncludeString;
+    }
+
+    public String getUrlJsonIncludeString() {
+        return urlJsonIncludeString;
+    }
+
+    public void setUrlXmlRequest(boolean urlXmlRequest) {
+        this.urlXmlRequest = urlXmlRequest;
+    }
+
+    public boolean getUrlXmlRequest() {
+        return urlXmlRequest;
+    }
+
+    public void setUrlXmlIncludeString(String urlXmlIncludeString) {
+        this.urlXmlIncludeString = urlXmlIncludeString;
+    }
+
+    public String getUrlXmlIncludeString() {
+        return urlXmlIncludeString;
+    }
+
+    public void setUrlPostRequest(boolean urlPostRequest) {
+        this.urlPostRequest = urlPostRequest;
+    }
+
+    public boolean getUrlPostRequest() {
+        return urlPostRequest;
+    }
+
+    public void setUrlGetRequest(boolean urlGetRequest) {
+        this.urlGetRequest = urlGetRequest;
+    }
+
+    public boolean getUrlGetRequest() {
+        return urlGetRequest;
     }
 }

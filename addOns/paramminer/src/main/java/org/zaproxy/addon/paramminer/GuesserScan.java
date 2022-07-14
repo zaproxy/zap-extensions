@@ -27,7 +27,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.swing.table.TableModel;
 import org.zaproxy.addon.paramminer.gui.ParamMinerHistoryTableModel;
 import org.zaproxy.zap.model.GenericScanner2;
 
@@ -76,7 +75,7 @@ public class GuesserScan implements GenericScanner2 {
         listeners.add(listener);
     }
 
-    public TableModel getTableModel() {
+    public ParamMinerHistoryTableModel getTableModel() {
         return tableModel;
     }
 

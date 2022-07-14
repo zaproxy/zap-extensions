@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,6 +121,26 @@ public class UrlUtils {
     }
 
     /**
+     * Returns an XML string from a given parameter map. The XML string is not encoded.
+     *
+     * @param map the Map of parameters to be used.
+     * @return an XML string from a given parameter map.
+     */
+    public static String createXmlString(Map<String, String> map) {
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, String> entry : map.entrySet()) {
+            sb.append('<');
+            sb.append(entry.getKey());
+            sb.append('>');
+            sb.append(entry.getValue());
+            sb.append("</");
+            sb.append(entry.getKey());
+            sb.append('>');
+        }
+        return sb.toString();
+    }
+
+    /**
      * Returns a List of parameter maps having more than one parameter, while setting the used up or
      * confirmed parameters.
      *
@@ -138,5 +159,11 @@ public class UrlUtils {
             }
         }
         return paramGroups;
+    }
+
+    public static String createJsonString(Map<String, String> params) {
+        JSONObject json = new JSONObject();
+        json.accumulateAll(params);
+        return json.toString();
     }
 }
