@@ -151,7 +151,25 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     };
 
             for (String csp : cspOptions) {
-                Policy policy = Policy.parseSerializedCSP(csp, consumer);
+                Policy policy;
+                try {
+                    policy = Policy.parseSerializedCSP(csp, consumer);
+                } catch (IllegalArgumentException iae) {
+                    boolean warn = true;
+                    if (iae.getMessage().contains("not ascii")) {
+                        buildMalformedAlert(
+                                        getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                                        csp,
+                                        getNonasciiCharacters(csp))
+                                .raise();
+                        warn = false;
+                    }
+
+                    if (warn) {
+                        LOGGER.warn("CSP Found but not fully parsed, in message {}.", id);
+                    }
+                    continue;
+                }
 
                 if (!observedErrors.isEmpty()) {
                     String cspNoticesString = getCspNoticesString(observedErrors);
@@ -383,6 +401,17 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 || predicate.test(HTTPS_URI, Optional.empty());
     }
 
+    private static String getNonasciiCharacters(String csp) {
+        return csp.codePoints()
+                .filter(c -> !isAsciiPrintable(c))
+                .mapToObj(c -> String.valueOf((char) c))
+                .collect(Collectors.joining());
+    }
+
+    private static boolean isAsciiPrintable(int ch) {
+        return ch >= 32 && ch < 127;
+    }
+
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
@@ -510,6 +539,16 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"));
     }
 
+    private AlertBuilder buildMalformedAlert(String param, String evidence, String badChars) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "malformed.name"), "9")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "malformed.otherinfo", badChars));
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
@@ -545,6 +584,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 buildStyleUnsafeHashAlert(
                                 HTTP_HEADER_CSP,
                                 "default-src 'self'; style-src 'unsafe-hashes' 'sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ='")
+                        .build());
+        alerts.add(
+                buildMalformedAlert(
+                                HTTP_HEADER_CSP,
+                                "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"",
+                                "‘’")
                         .build());
         return alerts;
     }
