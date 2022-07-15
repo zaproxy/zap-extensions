@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2022-07-15
 ### Changed
 - The Content Security Policy scan rule will now raise alerts at High confidence, all alerts now include the appropriate header as the "parameter" value, and has functionality to generate example alerts for documentation purposes.
 - The Content Security Policy scan rule will now raise an alert when the assessed policy contains non-ASCII characters (Issue 7379).
@@ -313,6 +313,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v39
