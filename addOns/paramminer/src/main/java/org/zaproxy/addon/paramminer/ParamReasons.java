@@ -19,18 +19,30 @@
  */
 package org.zaproxy.addon.paramminer;
 
-import java.util.concurrent.ExecutorService;
-import org.parosproxy.paros.network.HttpSender;
+import java.util.Map;
 
-public class HeaderGuesser implements Runnable {
+public class ParamReasons {
+    private String reason;
+    private Map<String, String> params;
 
-    public HeaderGuesser(
-            int id,
-            ParamMinerConfig config,
-            GuesserScan scan,
-            HttpSender httpSender,
-            ExecutorService executor) {}
+    public ParamReasons(String reason, Map<String, String> params) {
+        this.reason = reason;
+        this.params = params;
+    }
 
-    @Override
-    public void run() {}
+    public String getReason() {
+        return reason;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
 }

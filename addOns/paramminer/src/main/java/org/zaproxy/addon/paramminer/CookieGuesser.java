@@ -19,12 +19,17 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.util.concurrent.ExecutorService;
 import org.parosproxy.paros.network.HttpSender;
 
 public class CookieGuesser implements Runnable {
 
     public CookieGuesser(
-            int id, ParamMinerConfig config, GuesserScan scan, HttpSender httpSender) {}
+            int id,
+            ParamMinerConfig config,
+            GuesserScan scan,
+            HttpSender httpSender,
+            ExecutorService executor) {}
 
     @Override
     public void run() {}

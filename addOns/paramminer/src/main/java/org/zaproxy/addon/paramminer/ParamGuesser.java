@@ -46,24 +46,26 @@ public class ParamGuesser implements Runnable {
     private StopWatch stopWatch;
     private boolean stopWatchStarted;
     private GuesserScan scan;
+    private ParamMinerConfig config;
 
     public ParamGuesser(
             int id, ParamMinerConfig config, GuesserScan scan, ExecutorService executor) {
         this.id = id;
         this.scan = scan;
         this.executor = executor;
+        this.config = config;
         // TODO - use the actual core initiator once targeting >= 2.12.0
         httpSender =
                 new HttpSender(
                         Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
         if (config.doUrlGuess()) {
-            urlGuesser = new UrlGuesser(id, config, scan, httpSender);
+            urlGuesser = new UrlGuesser(id, config, scan, httpSender, executor);
         }
         if (config.doHeaderGuess()) {
-            headerGuesser = new HeaderGuesser(id, config, scan, httpSender);
+            headerGuesser = new HeaderGuesser(id, config, scan, httpSender, executor);
         }
         if (config.doCookieGuess()) {
-            cookieGuesser = new CookieGuesser(id, config, scan, httpSender);
+            cookieGuesser = new CookieGuesser(id, config, scan, httpSender, executor);
         }
     }
 
@@ -78,10 +80,15 @@ public class ParamGuesser implements Runnable {
             stopWatchStarted = true;
         }
 
-        this.executor.submit(urlGuesser);
-        this.executor.submit(headerGuesser);
-        this.executor.submit(cookieGuesser);
-
+        if (config.doUrlGuess()) {
+            this.executor.submit(urlGuesser);
+        }
+        if (config.doHeaderGuess()) {
+            this.executor.submit(headerGuesser);
+        }
+        if (config.doCookieGuess()) {
+            this.executor.submit(cookieGuesser);
+        }
         if (scan.getProgress() == scan.getMaximum()) {
             scan.completed();
         }
