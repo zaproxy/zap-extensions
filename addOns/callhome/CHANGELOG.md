@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Show a more user friendly log and Output tab message when Java's truststore may not contain the CA certificate(s) for intermediate proxy(ies) (Issue 1623).
 - Maintenance changes.
 
+### Fixed
+- HTTP Sender listeners could modify CFU and telemetry requests.
+
 ## [0.3.0] - 2022-01-21
 ### Added
 - More stats, in preparation for them being added to the respective add-ons
