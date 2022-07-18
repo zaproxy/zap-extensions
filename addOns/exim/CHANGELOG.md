@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Tweaked import functionality to mark import progress components completed when an exception occurs during import (thus allowing them to be cleared properly).
 - HAR imports will now use an indeterminate progress bar if the count of entries cannot be determined.
+- Correct import of HAR responses to allow them to be passively scanned.
 
 ### Added
 - Copy URLs, Export Context URLs, Export Selected URLs, Export Messages, and Export Responses functionality similar to what was previously offered via core functionality.

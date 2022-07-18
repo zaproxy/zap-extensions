@@ -112,6 +112,7 @@ public class HarImporter {
 
         HarContent harContent = harResponse.getContent();
         message.setResponseHeader(new HttpResponseHeader(strBuilderResHeader.toString()));
+        message.setResponseFromTargetHost(true);
         if (harContent != null) {
             message.setResponseBody(new HttpResponseBody(harContent.getText()));
         }
