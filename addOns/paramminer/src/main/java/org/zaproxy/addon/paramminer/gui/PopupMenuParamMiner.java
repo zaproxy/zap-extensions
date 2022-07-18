@@ -19,11 +19,11 @@
  */
 package org.zaproxy.addon.paramminer.gui;
 
-import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
-import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class PopupMenuParamMiner extends PopupMenuItemSiteNodeContainer {
+public class PopupMenuParamMiner extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
     private ExtensionParamMiner extension;
@@ -33,8 +33,14 @@ public class PopupMenuParamMiner extends PopupMenuItemSiteNodeContainer {
         this.extension = ext;
     }
 
+    // @Override
+    // protected void performAction(SiteNode node) {
+    //     extension.showParamMinerDialog(node);
+    // }
+
     @Override
-    protected void performAction(SiteNode node) {
-        extension.showParamMinerDialog(node);
+    protected void performAction(HttpMessage httpMessage) {
+        // TODO Auto-generated method stub
+        extension.showParamMinerDialog(httpMessage);
     }
 }

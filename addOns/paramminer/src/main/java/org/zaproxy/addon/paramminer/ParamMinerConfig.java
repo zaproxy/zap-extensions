@@ -76,6 +76,7 @@ public class ParamMinerConfig {
         this.threadCount = 4;
 
         this.doUrlGuess = true;
+        this.urlGetRequest = true;
         this.doCookieGuess = false;
         this.doHeaderGuess = false;
     }
