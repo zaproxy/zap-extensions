@@ -22,26 +22,33 @@ package org.zaproxy.addon.reports;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import net.sf.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.I18N;
 
 class ReportApiUnitTest {
 
@@ -50,6 +57,13 @@ class ReportApiUnitTest {
     private JSONObject params;
     private Template template;
     private ArgumentCaptor<ReportData> reportDataCaptor;
+
+    @BeforeAll
+    static void initModel() {
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        Model.setSingletonForTesting(model);
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -303,7 +317,7 @@ class ReportApiUnitTest {
         ReportData reportData = reportDataCaptor.getValue();
         assertAll(
                 () -> assertThat(reportData.getDescription(), is("")),
-                () -> assertThat(reportData.getContexts(), is(nullValue())),
+                () -> assertThat(reportData.getContexts().size(), is(0)),
                 () -> assertThat(reportData.getSites().size(), is(0)),
                 () -> assertThat(reportData.getSections(), is(template.getSections())),
                 () ->
@@ -370,7 +384,7 @@ class ReportApiUnitTest {
     @Test
     void shouldPopulateReportSectionsWithDelimiter() throws Exception {
         // Given
-        String sections = "cHaRt| aLeRtDeTaIlS";
+        String sections = "chart| alertdetails";
         params.put(ReportApi.PARAM_SECTIONS, sections);
 
         // When
@@ -381,6 +395,26 @@ class ReportApiUnitTest {
                 .generateReport(reportDataCaptor.capture(), any(), anyString(), anyBoolean());
         ReportData reportData = reportDataCaptor.getValue();
         assertThat(reportData.getSections(), is(Arrays.asList("chart", "alertdetails")));
+    }
+
+    @Test
+    void shouldErrorOnInvalidSections() throws Exception {
+        // Given
+        String sections = "chart|alertdetails|badone";
+        params.put(ReportApi.PARAM_SECTIONS, sections);
+
+        // When
+        ApiException exception =
+                assertThrows(
+                        ApiException.class,
+                        () -> reportApi.handleApiAction(ReportApi.ACTION_GENERATE, params));
+
+        // Then
+        assertThat(exception.getMessage(), is("illegal_parameter"));
+        assertThat(
+                exception.toString(true),
+                is(
+                        "Provided parameter has illegal or unrecognized value (illegal_parameter) : !reports.api.error.badSections!"));
     }
 
     @Test

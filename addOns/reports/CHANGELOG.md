@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- API problems:
+  - Mixed case sections could not be referenced
+  - Risk-confidence-html report failed if no context specified
+  - No theme is used if one was not specified, breaking theme links
 
 ## [0.14.0] - 2022-06-22
 ### Changed
