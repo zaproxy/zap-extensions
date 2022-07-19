@@ -12,3 +12,7 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/form-handler/")
     }
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}
