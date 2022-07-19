@@ -45,6 +45,10 @@ public class FormHandlerValueGenerator implements ValueGenerator {
             Map<String, String> envAttributes,
             Map<String, String> fieldAttributes) {
 
+        if (fieldId == null || fieldId.isEmpty()) {
+            return defaultValue != null ? defaultValue : "";
+        }
+
         // Check to see if there is an enabled field for the current field being processed, based on
         // field attribute 'name'
         String value = param.getEnabledFieldValue(fieldId.toLowerCase());

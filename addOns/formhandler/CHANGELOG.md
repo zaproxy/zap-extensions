@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
 
+### Fixed
+- Fix an exception when generating values for unidentified fields (Issue 7386).
+
 ## [4] - 2021-10-06
 ### Changed
 - Maintenance changes.
