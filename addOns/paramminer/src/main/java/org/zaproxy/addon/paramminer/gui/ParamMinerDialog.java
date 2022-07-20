@@ -21,12 +21,23 @@ package org.zaproxy.addon.paramminer.gui;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
 import org.zaproxy.addon.paramminer.ParamMinerConfig;
-import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.ZapTextField;
+import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.NodeSelectDialog;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ParamMinerDialog extends StandardFieldsDialog {
@@ -49,15 +60,16 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     private static final Logger logger = LogManager.getLogger(ParamMinerDialog.class);
 
     private ExtensionParamMiner extension;
-    private Target target;
+    private HttpMessage target;
     private ParamMinerConfig config;
+    private ZapTextField text;
 
     public ParamMinerDialog(ExtensionParamMiner extension, Frame owner, Dimension dim) {
         super(owner, "paramminer.panel.title", dim);
         this.extension = extension;
     }
 
-    public void init(Target target) {
+    public void init(HttpMessage target) {
         if (target != null) {
             this.target = target;
         }
@@ -66,22 +78,58 @@ public class ParamMinerDialog extends StandardFieldsDialog {
             config = new ParamMinerConfig();
         }
         this.removeAllFields();
-        this.addTargetSelectField(URL, this.target, true, false);
+        this.addUriSelectField(URL, this.target, true);
         this.addComboField(CONTEXT, new String[] {}, "");
         this.addCheckBoxField(FCBZ_CACHE_BUSTER, false);
         this.addCheckBoxField(PREDEFINED + URL_WORDLIST, true);
         this.addCheckBoxField(PREDEFINED + HEADER_WORDLIST, false);
         this.addCheckBoxField(PREDEFINED + COOKIE_WORDLIST, false);
 
+        this.addCheckBoxField(CUSTOM + URL_WORDLIST, false);
+        this.addCheckBoxField(CUSTOM + HEADER_WORDLIST, false);
+        this.addCheckBoxField(CUSTOM + COOKIE_WORDLIST, false);
+
         this.addCheckBoxField(SKIP_BORING_HEADERS, false);
-        this.addTextField(THREADPOOL_SIZE, "4");
+        this.addTextField(THREADPOOL_SIZE, "8");
         this.addPadding();
         this.pack();
     }
 
+    private void addUriSelectField(String fieldLabel, HttpMessage value, boolean editable) {
+        text = new ZapTextField();
+        if (value != null) {
+            text.setText(value.getRequestHeader().getURI().toString());
+        }
+
+        JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
+        selectButton.setIcon(
+                new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
+        selectButton.addActionListener(
+                e -> {
+                    NodeSelectDialog nsd = new NodeSelectDialog(ParamMinerDialog.this);
+                    SiteNode node =
+                            nsd.showDialog(value != null ? value.getHistoryRef().getURI() : null);
+                    if (node != null) {
+                        text.setText(node.getHistoryReference().getURI().toString());
+                    }
+                });
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.add(
+                text,
+                LayoutHelper.getGBC(
+                        0, 0, 1, 1.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
+        panel.add(
+                selectButton,
+                LayoutHelper.getGBC(
+                        1, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
+
+        this.addCustomComponent(fieldLabel, panel);
+    }
+
     @Override
     public void save() {
-        config.setUrl(this.getStringValue(URL));
+        config.setUrl(this.text.getText());
         config.setAddFcbzCacheBuster(this.getBoolValue(FCBZ_CACHE_BUSTER));
 
         config.setUsePredefinedUrlWordlists(this.getBoolValue(PREDEFINED + URL_WORDLIST));
@@ -102,7 +150,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
-        if (this.getStringValue(URL) == null || this.getStringValue(URL).isEmpty()) {
+        if (this.text.getText() == null || this.text.getText().isEmpty()) {
             return Constant.messages.getString("paramminer.dialog.error.url");
         }
         return null;

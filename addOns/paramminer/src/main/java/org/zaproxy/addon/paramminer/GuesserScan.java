@@ -133,7 +133,7 @@ public class GuesserScan implements GenericScanner2 {
 
     private void startScan() {
         ParamGuesser paramGuesser = new ParamGuesser(scanId, this.config, this, this.executor);
-        tasksTodoCount = config.getTotalParams();
+        // tasksTodoCount = config.getTotalParams();
         this.executor.submit(paramGuesser);
     }
 
@@ -141,10 +141,16 @@ public class GuesserScan implements GenericScanner2 {
         lock.lock();
         try {
             state = State.FINISHED;
+            new Thread(
+                            () -> {
+                                executor.shutdown();
+                                notifyListenersCompleted(true);
+                            },
+                            "ZAP-ParamGuesserShutdownThread-" + this.scanId)
+                    .start();
         } finally {
             lock.unlock();
         }
-        notifyListenersCompleted(true);
     }
 
     private void notifyListenersCompleted(boolean successfully) {
@@ -193,6 +199,10 @@ public class GuesserScan implements GenericScanner2 {
     @Override
     public int getMaximum() {
         return tasksTodoCount;
+    }
+
+    void setMaximum(int max) {
+        tasksTodoCount = tasksTodoCount + max;
     }
 
     @Override
@@ -264,5 +274,9 @@ public class GuesserScan implements GenericScanner2 {
             }
             return t;
         }
+    }
+
+    public void setProgress(int maximum) {
+        this.tasksDoneCount = maximum;
     }
 }

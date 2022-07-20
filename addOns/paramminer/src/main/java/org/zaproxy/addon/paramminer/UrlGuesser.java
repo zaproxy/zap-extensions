@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import org.apache.logging.log4j.LogManager;
@@ -72,7 +71,6 @@ public class UrlGuesser implements Runnable {
     private List<String> customWordList;
 
     private List<String> wordlist;
-    private List<ParamGuessResult> guessedParams;
     private final ExecutorService executor;
     private List<ParamGuessResult> paramGuessResults;
     private final String INIT_PARAM = "zap";
@@ -101,10 +99,11 @@ public class UrlGuesser implements Runnable {
         }
 
         if (defaultWordList != null && customWordList != null) {
-            Set<String> list = new HashSet<String>();
+            Set<String> list = new HashSet<>();
             list.addAll(defaultWordList);
             list.addAll(customWordList);
-            wordlist = new ArrayList<String>();
+            wordlist = new ArrayList<>();
+
             for (String param : list) {
                 wordlist.add(param);
             }
@@ -113,12 +112,14 @@ public class UrlGuesser implements Runnable {
         } else {
             wordlist = customWordList;
         }
+        this.scan.setMaximum(1);
     }
 
     @Override
     public void run() {
         try {
             if (config.getUrlGetRequest()) {
+                logger.info("[****] Starting GET request");
                 startGuess(Method.GET, wordlist);
             }
             if (config.getUrlPostRequest()) {
@@ -133,15 +134,23 @@ public class UrlGuesser implements Runnable {
             // TODO show paramGuessResults in GUI(OutputTab)
         } catch (Exception e) {
             // TODO Add exception message using Constants
-            logger.debug(e);
+            logger.error(e, e);
         }
+        completeGuess();
+    }
+
+    private void completeGuess() {
+        if (scan.getProgress() != scan.getMaximum()) {
+            scan.setProgress(scan.getMaximum());
+        }
+        scan.completed();
     }
 
     private void startGuess(Method method, List<String> wordlist) {
-        // TODO Add right options so that http message can be loaded using right click menu.
         HttpMessage msg = new HttpMessage();
         Map<String, String> initialParam = new HashMap<String, String>();
         initialParam.put(INIT_PARAM, INIT_VALUE);
+
         UrlBruteForce initialBruter =
                 new UrlBruteForce(
                         null,
@@ -156,20 +165,39 @@ public class UrlGuesser implements Runnable {
                         null);
 
         String valueSent = initialBruter.requester(msg, method, initialParam);
+        this.scan.notifyListenersProgress();
         // TODO Add heuristic method to mine parameters from base response.
 
         ComparableResponse base = new ComparableResponse(msg, valueSent);
+
+        // TODO add initial chunk size to config
         List<Map<String, String>> paramGroups = UrlUtils.slice(UrlUtils.populate(wordlist), 2);
-        List<Map<String, String>> usableParams = new ArrayList<Map<String, String>>();
-        while (true) {
+        this.scan.setMaximum(paramGroups.size());
+        List<Map<String, String>> usableParams = new ArrayList<>();
+
+        // BruteForcing step
+        while (!paramGroups.isEmpty()) {
+            if (this.scan.isStopped()) {
+                return;
+            }
             paramGroups = narrowDownParams(base, method, paramGroups);
             paramGroups = UrlUtils.confirmUsableParameters(paramGroups, usableParams);
-            if (paramGroups.isEmpty()) {
-                break;
-            }
+            this.scan.setMaximum(paramGroups.size());
+            this.scan.notifyListenersProgress();
+            logger.debug("param groups size: {}", paramGroups.size());
         }
-        paramGuessResults = new ArrayList<ParamGuessResult>();
+
+        logger.debug("Usable parameters: {}", usableParams.size());
+        this.scan.setMaximum(usableParams.size());
+        paramGuessResults = new ArrayList<>();
+
+        // Confirmation step
         for (Map<String, String> paramVerify : usableParams) {
+            if (this.scan.isStopped()) {
+                return;
+            }
+
+            this.scan.notifyListenersProgress();
             executor.submit(
                     new UrlBruteForce(
                             base,
@@ -181,15 +209,24 @@ public class UrlGuesser implements Runnable {
                             this,
                             this.httpSender,
                             wordlist,
-                            guessedParams));
+                            paramGuessResults));
+        }
+        logger.debug("verified params size: {}", paramGuessResults.size());
+        for (ParamGuessResult result : paramGuessResults) {
+            logger.debug("{} : {}", result.getParamName(), result.getReason());
         }
     }
 
     private List<Map<String, String>> narrowDownParams(
             ComparableResponse base, Method method, List<Map<String, String>> paramGroups) {
-        List<Map<String, String>> narrowedParamGroups = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> narrowedParamGroups = new ArrayList<>();
+        List<Future<ParamReasons>> futures = new ArrayList<>();
+
         for (Map<String, String> param : paramGroups) {
-            Future<ParamReasons> future =
+            if (this.scan.isStopped()) {
+                return narrowedParamGroups;
+            }
+            futures.add(
                     executor.submit(
                             new UrlBruteForce(
                                     base,
@@ -201,7 +238,10 @@ public class UrlGuesser implements Runnable {
                                     this,
                                     this.httpSender,
                                     wordlist,
-                                    guessedParams));
+                                    null)));
+        }
+
+        for (Future<ParamReasons> future : futures) {
             try {
                 ParamReasons narrowedParam = future.get();
                 if (narrowedParam != null) {
@@ -209,8 +249,9 @@ public class UrlGuesser implements Runnable {
                     for (Map<String, String> slice : slices) {
                         narrowedParamGroups.add(slice);
                     }
+                    this.scan.notifyListenersProgress();
                 }
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (Exception e) {
                 // TODO Display proper error message to user
                 logger.debug(e);
             }

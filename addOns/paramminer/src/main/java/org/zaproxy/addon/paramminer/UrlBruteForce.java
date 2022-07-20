@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,7 @@ import org.zaproxy.addon.paramminer.UrlGuesser.Method;
 import org.zaproxy.addon.paramminer.UrlGuesser.Mode;
 import org.zaproxy.addon.paramminer.UrlGuesser.Status;
 import org.zaproxy.addon.paramminer.gui.ParamMinerHistoryTableModel;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class UrlBruteForce implements Callable<ParamReasons> {
     private ComparableResponse base;
@@ -90,17 +93,17 @@ public class UrlBruteForce implements Callable<ParamReasons> {
         String valueSent = requester(msg, method, params);
         ComparableResponse response = new ComparableResponse(msg, valueSent);
         Status status = errorHandler(base, response);
+
         if (status.equals(Status.KILL)) {
             return null;
         }
+
         ParamReasons res = compare(base, response, params);
-        if (mode == Mode.VERIFY) {
-            if (res != null) {
-                for (String parameter : res.getParams().keySet()) {
-                    ParamGuessResult paramGuessResult =
-                            new ParamGuessResult(parameter, res.getReason(), msg);
-                    guessedParams.add(paramGuessResult);
-                }
+        if (mode == Mode.VERIFY && res != null) {
+            for (String parameter : res.getParams().keySet()) {
+                ParamGuessResult paramGuessResult =
+                        new ParamGuessResult(parameter, res.getReason(), msg);
+                guessedParams.add(paramGuessResult);
             }
         }
         return res;
@@ -119,125 +122,166 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             if (status == 503) {
                 // TODO Display on out panel "Taget unable to process requests"
                 return Status.KILL;
-            } else if (status == 429 || status == 418) {
+            }
+
+            if (status == 429 || status == 418) {
                 // TODO Display on out panel "Target is rate limited"
                 return Status.KILL;
-            } else {
-                if (base.getStatusCode() != response.getStatusCode()) {
-                    return Status.KILL;
-                } else {
-                    return Status.OK;
-                }
             }
-        } else if (response.getBody().isEmpty() || response.getHeaders().size() == 0) {
+            if (ERRORCODES.contains(base.getStatusCode())) {
+                return Status.KILL;
+            }
+
+            if (base.getStatusCode() != response.getStatusCode()) {
+                return Status.KILL;
+            }
+        }
+
+        if (response.getBody().isEmpty() || response.getHeaders().isEmpty()) {
             return Status.KILL;
         }
         return Status.OK;
     }
 
+    /**
+     * Makes Requests to target for a given msg, method and params.
+     *
+     * @param msg the HttpMessage to store the response in.
+     * @param method the method to use.
+     * @param params the params to use.
+     * @return the value sent. This is the payload created by using the params.
+     */
     public String requester(HttpMessage msg, Method method, Map<String, String> params) {
         ParamMinerHistoryTableModel table;
-        if (method.equals(Method.GET)) {
-            try {
-                table = scan.getTableModel();
-                // TODO Add right options so that http message can be loaded using right click menu.
-                String uri = config.getUrl();
-                String queryString = UrlUtils.createQueryString(params);
-                HttpRequestHeader headers = new HttpRequestHeader(uri);
-                headers.setMethod(HttpRequestHeader.GET);
-                headers.setURI(new URI(uri + queryString, true));
-                for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                    headers.setHeader(header.getName(), header.getValue());
+        switch (method) {
+            case GET:
+                try {
+                    table = scan.getTableModel();
+                    // TODO Add right options so that http message can be loaded using right click
+                    // menu.
+                    String uri = config.getUrl();
+                    String queryString = UrlUtils.createQueryString(params);
+                    HttpRequestHeader headers = new HttpRequestHeader();
+                    headers.setMethod(HttpRequestHeader.GET);
+                    headers.setURI(new URI(uri + queryString, true));
+                    headers.setVersion(HttpHeader.HTTP11);
+                    for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
+                        headers.setHeader(header.getName(), header.getValue());
+                    }
+                    msg.setRequestHeader(headers);
+                    httpSender.sendAndReceive(msg);
+                    ThreadUtils.invokeAndWaitHandled(
+                            () -> {
+                                try {
+                                    table.addHistoryReference(
+                                            new HistoryReference(
+                                                    Model.getSingleton().getSession(), 23, msg));
+                                } catch (Exception e) {
+                                    logger.error(e, e);
+                                }
+                            });
+                    return StringUtils.strip(queryString, "?");
+                } catch (Exception e) {
+                    // TODO show proper error message on Output Panel (can be timeout or connection
+                    // refused)
+                    logger.error(e, e);
                 }
-                msg.setRequestHeader(headers);
-                httpSender.sendAndReceive(msg);
-                table.addHistoryReference(
-                        new HistoryReference(Model.getSingleton().getSession(), 23, msg));
-                return StringUtils.strip(queryString, "?");
-            } catch (Exception e) {
-                // TODO show proper error message on Output Panel (can be timeout or connection
-                // refused)
-                logger.debug(e);
-            }
-        } else if (method.equals(Method.XML)) {
-            try {
-                table = scan.getTableModel();
-                // TODO Add right options so that http message can be loaded using right click menu.
-                String uri = config.getUrl();
-                HttpRequestHeader headers = new HttpRequestHeader(uri);
-                headers.setMethod(HttpRequestHeader.POST);
-                headers.setURI(new URI(uri, true));
-                headers.setHeader(HttpHeader.CONTENT_TYPE, "application/xml");
-                for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                    headers.setHeader(header.getName(), header.getValue());
+                break;
+
+            case XML:
+                try {
+                    table = scan.getTableModel();
+                    // TODO Add right options so that http message can be loaded using right click
+                    // menu.
+                    String uri = config.getUrl();
+                    HttpRequestHeader headers = new HttpRequestHeader();
+                    headers.setMethod(HttpRequestHeader.POST);
+                    headers.setURI(new URI(uri, true));
+                    headers.setVersion(HttpHeader.HTTP11);
+                    headers.setHeader(HttpHeader.CONTENT_TYPE, "application/xml");
+                    for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
+                        headers.setHeader(header.getName(), header.getValue());
+                    }
+                    String xmlPayload =
+                            config.getUrlXmlIncludeString()
+                                    .replace("$ZAP$", UrlUtils.createXmlString(params));
+                    msg.setRequestHeader(headers);
+                    msg.setRequestBody(xmlPayload);
+                    httpSender.sendAndReceive(msg);
+                    table.addHistoryReference(
+                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
+                    return xmlPayload;
+                } catch (Exception e) {
+                    // TODO show proper error message on Output Panel
+                    logger.error(e, e);
                 }
-                String xmlPayload =
-                        config.getUrlXmlIncludeString()
-                                .replace("$ZAP$", UrlUtils.createXmlString(params));
-                msg.setRequestHeader(headers);
-                msg.setRequestBody(xmlPayload);
-                httpSender.sendAndReceive(msg);
-                table.addHistoryReference(
-                        new HistoryReference(Model.getSingleton().getSession(), 23, msg));
-                return xmlPayload;
-            } catch (Exception e) {
-                // TODO show proper error message on Output Panel
-                logger.debug(e);
-            }
-        } else if (method.equals(Method.JSON)) {
-            try {
-                table = scan.getTableModel();
-                // TODO Add right options so that http message can be loaded using right click menu.
-                String uri = config.getUrl();
-                HttpRequestHeader headers = new HttpRequestHeader(uri);
-                headers.setMethod(HttpRequestHeader.POST);
-                headers.setURI(new URI(uri, true));
-                headers.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-                for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                    headers.setHeader(header.getName(), header.getValue());
+                break;
+
+            case JSON:
+                try {
+                    table = scan.getTableModel();
+                    // TODO Add right options so that http message can be loaded using right click
+                    // menu.
+                    String uri = config.getUrl();
+                    HttpRequestHeader headers = new HttpRequestHeader();
+                    headers.setMethod(HttpRequestHeader.POST);
+                    headers.setURI(new URI(uri, true));
+                    headers.setVersion(HttpHeader.HTTP11);
+                    headers.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+                    for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
+                        headers.setHeader(header.getName(), header.getValue());
+                    }
+                    String jsonPayload;
+                    if (!config.getUrlXmlIncludeString().isEmpty()) {
+                        jsonPayload =
+                                config.getUrlJsonIncludeString()
+                                        .replace(
+                                                "$ZAP$",
+                                                StringUtils.strip(
+                                                        StringUtils.strip(
+                                                                UrlUtils.createJsonString(params),
+                                                                "{"),
+                                                        "}"));
+                    } else {
+                        jsonPayload = UrlUtils.createJsonString(params);
+                    }
+                    msg.setRequestHeader(headers);
+                    msg.setRequestBody(jsonPayload);
+                    httpSender.sendAndReceive(msg);
+                    table.addHistoryReference(
+                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
+                    return jsonPayload;
+                } catch (Exception e) {
+                    // TODO show proper error message on Output Panel
+                    logger.error(e, e);
                 }
-                String jsonPayload;
-                if (!config.getUrlXmlIncludeString().isEmpty()) {
-                    jsonPayload =
-                            config.getUrlJsonIncludeString()
-                                    .replace(
-                                            "$ZAP$",
-                                            StringUtils.strip(
-                                                    StringUtils.strip(
-                                                            UrlUtils.createJsonString(params), "{"),
-                                                    "}"));
-                } else {
-                    jsonPayload = UrlUtils.createJsonString(params);
+                break;
+
+            case POST:
+                try {
+                    // TODO Add right options so that http message can be loaded using right click
+                    // menu.
+                    String uri = config.getUrl();
+                    HttpRequestHeader headers = new HttpRequestHeader();
+                    headers.setMethod(HttpRequestHeader.POST);
+                    headers.setURI(new URI(uri, true));
+                    headers.setVersion(HttpHeader.HTTP11);
+                    for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
+                        headers.setHeader(header.getName(), header.getValue());
+                    }
+                    String postPayload = StringUtils.strip(UrlUtils.createQueryString(params), "?");
+                    msg.setRequestHeader(headers);
+                    msg.setRequestBody(postPayload);
+                    httpSender.sendAndReceive(msg);
+                    return postPayload;
+                } catch (Exception e) {
+                    // TODO show proper error message on Output Panel
+                    logger.error(e);
                 }
-                msg.setRequestHeader(headers);
-                msg.setRequestBody(jsonPayload);
-                httpSender.sendAndReceive(msg);
-                table.addHistoryReference(
-                        new HistoryReference(Model.getSingleton().getSession(), 23, msg));
-                return jsonPayload;
-            } catch (Exception e) {
-                // TODO show proper error message on Output Panel
-                logger.debug(e);
-            }
-        } else if (method.equals(Method.POST)) {
-            try {
-                // TODO Add right options so that http message can be loaded using right click menu.
-                String uri = config.getUrl();
-                HttpRequestHeader headers = new HttpRequestHeader(uri);
-                headers.setMethod(HttpRequestHeader.POST);
-                headers.setURI(new URI(uri, true));
-                for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                    headers.setHeader(header.getName(), header.getValue());
-                }
-                String postPayload = StringUtils.strip(UrlUtils.createQueryString(params), "?");
-                msg.setRequestHeader(headers);
-                msg.setRequestBody(postPayload);
-                httpSender.sendAndReceive(msg);
-                return postPayload;
-            } catch (Exception e) {
-                // TODO show proper error message on Output Panel
-                logger.debug(e);
-            }
+                break;
+
+            default:
+                break;
         }
         return null;
     }
@@ -257,42 +301,47 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             return new ParamReasons("http code", params);
         }
 
-        if (ComparableResponse.headersCompareHeuristic(resp1, resp2) < 1) {
+        if (ComparableResponse.headersCompareHeuristic(resp1, resp2) < 0.6) {
             return new ParamReasons("http headers", params);
         }
 
-        if (resp1.getHeaders().get("Location") != resp2.getHeaders().get("Location")) {
+        if (!Objects.equals(
+                resp1.getHeaders().get("Location"), resp2.getHeaders().get("Location"))) {
             return new ParamReasons("redirect", params);
         }
 
-        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2) < 1) {
+        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2) < 0.6) {
             return new ParamReasons("body heuristic mismatch", params);
         }
 
-        if (ComparableResponse.lineCountHeuristic(resp1, resp2) < 1) {
+        if (ComparableResponse.lineCountHeuristic(resp1, resp2) < 0.6) {
             return new ParamReasons("line count mismatch", params);
         }
 
-        if (ComparableResponse.wordCountHeuristic(resp1, resp2) < 1) {
+        if (ComparableResponse.wordCountHeuristic(resp1, resp2) < 0.6) {
             return new ParamReasons("word count mismatch", params);
         }
 
-        // TODO Use Jericho source for plaintext comparison.
-        if (!resp1.getBody().equals(resp2.getBody())) {
+        if (resp1.compareWith(resp2) < 1) {
+            return new ParamReasons("body mismatch", params);
+        }
+
+        Source source1 = new Source(resp1.getBody());
+        Source source2 = new Source(resp2.getBody());
+        if (source1.toString().equals(source2.toString())) {
             return new ParamReasons("text mismatch", params);
         }
 
         if (!resp1.getBody().contains(resp1.getValueSent())) {
             if (this.firstComparison) {
                 this.firstComparison = false;
-                this.paramsPresent = new ArrayList<String>();
+                this.paramsPresent = new ArrayList<>();
                 for (String param : wordlist) {
                     if (resp1.getBody().contains(param)) {
                         this.paramsPresent.add(param);
                     }
                 }
-            }
-            if (paramsPresent.size() > 0) {
+            } else if (!paramsPresent.isEmpty()) {
                 for (String param : params.keySet()) {
                     if (param.length() < 5) {
                         continue;

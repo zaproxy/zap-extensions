@@ -80,6 +80,10 @@ public class ParamGuesser implements Runnable {
             stopWatchStarted = true;
         }
 
+        if (this.scan.isStopped()) {
+            return;
+        }
+
         if (config.doUrlGuess()) {
             this.executor.submit(urlGuesser);
         }
@@ -88,9 +92,6 @@ public class ParamGuesser implements Runnable {
         }
         if (config.doCookieGuess()) {
             this.executor.submit(cookieGuesser);
-        }
-        if (scan.getProgress() == scan.getMaximum()) {
-            scan.completed();
         }
     }
 

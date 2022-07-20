@@ -24,11 +24,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramminer.gui.ParamMinerDialog;
 import org.zaproxy.addon.paramminer.gui.ParamMinerPanel;
 import org.zaproxy.addon.paramminer.gui.PopupMenuParamMiner;
-import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -133,7 +132,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
         return menu;
     }
 
-    public void showParamMinerDialog(SiteNode node) {
+    public void showParamMinerDialog(HttpMessage node) {
         if (paramMinerDialog == null) {
             paramMinerDialog =
                     new ParamMinerDialog(
@@ -141,7 +140,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
                             getView().getMainFrame(),
                             DisplayUtils.getScaledDimension(700, 500));
         }
-        paramMinerDialog.init(new Target(node));
+        paramMinerDialog.init(node);
         paramMinerDialog.setVisible(true);
     }
 
