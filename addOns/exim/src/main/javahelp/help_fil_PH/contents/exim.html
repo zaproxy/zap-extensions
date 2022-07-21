@@ -7,11 +7,16 @@ Import/Export
 </TITLE>
 </HEAD>
 <BODY>
+
+<H1>>Copy URLs to Clipboard</H1>
+A context menu item to Copy URLs to the system clipboard.
+
 <H1>Save Selected Entries as HAR (HTTP Archive File)</H1>
 A context menu item to save the selected HTTP messages in HAR format.
 
 <H1>Save Raw Message</H1>
 Provides a context menu to save content of HTTP messages as binary.
+(While the files will probably open in a simple editor it may have null characters or malformed bytes.)
 
 <H1>Save XML Message</H1>
 Provides a context menu to save content of HTTP messages as XML.
@@ -28,6 +33,34 @@ Blank lines and lines starting with # will be ignored.
 
 <br><br>
 It also supports the <a href="automation.html">Automation Framework</a>.
+
+<H1>Export</H1>
+The add-on also adds a top level "Export" menu, providing the following functionality.
+
+<H2>Export Messages to File...</H2>
+This allows you to save requests and responses to a text file. <br/>
+Select the messages to save in the History tab (including multi-select).
+
+<H2>Export Response to File...</HH2>
+This allows you to save a specific responses to a file. <br/>
+Select the relevant message in the History tab - 
+note that binary responses (such as images) can be saved as well as text responses.
+
+<H2>Export All URLs to File...</H2>
+This allows you to save all of the URLs accessed to a text or HTML file. <br/>
+This can be used, amongst other things, to compare the URLs available to users with 
+different roles or permissions on the same system.
+(Also consider leveraging the Access Control Testing add-on.)
+This functionality is also available via the right-click context menu.
+
+<H2>Export Selected URLs to File...</H2>
+Based on the selection (including multi-select) in the Sites tree all URLs and child URLs of selected
+nodes are exported.
+This functionality is also available via the right-click context menu.
+
+<H2>Export URLs for Context</H2>
+All URLs in the Sites tree that fall within the selected context are exported. This functionality is 
+also available from the right-click menu when used on a Context node in the Sites tree panel.
 
 <H1>ZAP API</H1>
 This add-on also exposes various ZAP API endpoints to facilitate programmatic use of the functionality.
