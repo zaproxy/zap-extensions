@@ -20,17 +20,18 @@
 package org.zaproxy.addon.paramminer;
 
 import java.util.Map;
+import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
 
 public class ParamReasons {
-    private String reason;
+    private Reason reason;
     private Map<String, String> params;
 
-    public ParamReasons(String reason, Map<String, String> params) {
+    public ParamReasons(Reason reason, Map<String, String> params) {
         this.reason = reason;
         this.params = params;
     }
 
-    public String getReason() {
+    public Reason getReason() {
         return reason;
     }
 
@@ -38,7 +39,7 @@ public class ParamReasons {
         return params;
     }
 
-    public void setReason(String reason) {
+    public void setReason(Reason reason) {
         this.reason = reason;
     }
 

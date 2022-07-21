@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
+import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
 import org.zaproxy.addon.paramminer.UrlGuesser.Method;
 import org.zaproxy.addon.paramminer.UrlGuesser.Mode;
 import org.zaproxy.addon.paramminer.UrlGuesser.Status;
@@ -85,12 +86,16 @@ public class UrlBruteForce implements Callable<ParamReasons> {
         this.scan = scan;
         this.guessedParams = guessedParams;
         config = scan.getConfig();
+        this.firstComparison = true;
     }
 
     @Override
     public ParamReasons call() throws Exception {
         HttpMessage msg = new HttpMessage();
         String valueSent = requester(msg, method, params);
+        if (valueSent == null) {
+            return null;
+        }
         ComparableResponse response = new ComparableResponse(msg, valueSent);
         Status status = errorHandler(base, response);
 
@@ -297,39 +302,39 @@ public class UrlBruteForce implements Callable<ParamReasons> {
     public ParamReasons compare(
             ComparableResponse resp1, ComparableResponse resp2, Map<String, String> params) {
         if (resp1.getStatusCode() != resp2.getStatusCode()
-                || ComparableResponse.statusCodeHeuristic(resp1, resp2) < 1) {
-            return new ParamReasons("http code", params);
+                || ComparableResponse.statusCodeHeuristic(resp1, resp2) < 0.6) {
+            return new ParamReasons(Reason.HTTP_CODE, params);
         }
 
         if (ComparableResponse.headersCompareHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("http headers", params);
+            return new ParamReasons(Reason.HTTP_HEADERS, params);
         }
 
         if (!Objects.equals(
                 resp1.getHeaders().get("Location"), resp2.getHeaders().get("Location"))) {
-            return new ParamReasons("redirect", params);
+            return new ParamReasons(Reason.REDIRECT, params);
         }
 
         if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("body heuristic mismatch", params);
+            return new ParamReasons(Reason.BODY_HEURISTIC_MISMATCH, params);
         }
 
         if (ComparableResponse.lineCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("line count mismatch", params);
+            return new ParamReasons(Reason.LINE_COUNT, params);
         }
 
         if (ComparableResponse.wordCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("word count mismatch", params);
+            return new ParamReasons(Reason.WORD_COUNT, params);
         }
 
-        if (resp1.compareWith(resp2) < 1) {
-            return new ParamReasons("body mismatch", params);
-        }
+        // if (resp1.compareWith(resp2) < 1) {
+        //     return new ParamReasons("body mismatch", params);
+        // }
 
         Source source1 = new Source(resp1.getBody());
         Source source2 = new Source(resp2.getBody());
-        if (source1.toString().equals(source2.toString())) {
-            return new ParamReasons("text mismatch", params);
+        if (!source1.toString().equals(source2.toString())) {
+            return new ParamReasons(Reason.TEXT, params);
         }
 
         if (!resp1.getBody().contains(resp1.getValueSent())) {
@@ -350,7 +355,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                         Pattern searchParamPattern =
                                 Pattern.compile("['\"\\s]" + param + "['\"\\s]");
                         if (searchParamPattern.matcher(resp2.getBody()).find()) {
-                            return new ParamReasons("parameter name reflection", params);
+                            return new ParamReasons(Reason.PARAM_NAME_REFLECTION, params);
                         }
                     }
                 }
@@ -362,7 +367,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 if (resp2.getBody().contains(values)) {
                     Pattern searchValuePattern = Pattern.compile("['\"\\s]" + values + "['\"\\s]");
                     if (searchValuePattern.matcher(resp2.getBody()).find()) {
-                        return new ParamReasons("parameter value reflection", params);
+                        return new ParamReasons(Reason.PARAM_VALUE_REFLECTION, params);
                     }
                 }
             }
