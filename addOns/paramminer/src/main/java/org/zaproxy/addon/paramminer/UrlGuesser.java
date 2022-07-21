@@ -22,6 +22,7 @@ package org.zaproxy.addon.paramminer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,19 +39,19 @@ import org.zaproxy.addon.commonlib.http.ComparableResponse;
 
 public class UrlGuesser implements Runnable {
 
-    public static enum Mode {
+    public enum Mode {
         VERIFY,
         BRUTEFORCE,
     }
 
-    public static enum Method {
+    public enum Method {
         GET,
         POST,
         XML,
         JSON,
     }
 
-    public static enum Status {
+    public enum Status {
         OK,
         RETRY,
         KILL,
@@ -119,7 +120,6 @@ public class UrlGuesser implements Runnable {
     public void run() {
         try {
             if (config.getUrlGetRequest()) {
-                logger.info("[****] Starting GET request");
                 startGuess(Method.GET, wordlist);
             }
             if (config.getUrlPostRequest()) {
@@ -189,31 +189,37 @@ public class UrlGuesser implements Runnable {
 
         logger.debug("Usable parameters: {}", usableParams.size());
         this.scan.setMaximum(usableParams.size());
-        paramGuessResults = new ArrayList<>();
+        paramGuessResults = Collections.synchronizedList(new ArrayList<>());
 
         // Confirmation step
+        List<Future<ParamReasons>> reasons = new ArrayList<>();
         for (Map<String, String> paramVerify : usableParams) {
             if (this.scan.isStopped()) {
                 return;
             }
 
             this.scan.notifyListenersProgress();
-            executor.submit(
-                    new UrlBruteForce(
-                            base,
-                            INIT_VALUE,
-                            method,
-                            paramVerify,
-                            Mode.VERIFY,
-                            scan,
-                            this,
-                            this.httpSender,
-                            wordlist,
-                            paramGuessResults));
+            reasons.add(
+                    executor.submit(
+                            new UrlBruteForce(
+                                    base,
+                                    INIT_VALUE,
+                                    method,
+                                    paramVerify,
+                                    Mode.VERIFY,
+                                    scan,
+                                    this,
+                                    this.httpSender,
+                                    wordlist,
+                                    paramGuessResults)));
         }
-        logger.debug("verified params size: {}", paramGuessResults.size());
-        for (ParamGuessResult result : paramGuessResults) {
-            logger.debug("{} : {}", result.getParamName(), result.getReason());
+        for (Future<ParamReasons> future : reasons) {
+            try {
+                ParamReasons paramReasons = future.get();
+            } catch (Exception e) {
+                // TODO display exception message in GUI
+                logger.error(e, e);
+            }
         }
     }
 
@@ -253,7 +259,7 @@ public class UrlGuesser implements Runnable {
                 }
             } catch (Exception e) {
                 // TODO Display proper error message to user
-                logger.debug(e);
+                logger.error(e, e);
             }
         }
         return narrowedParamGroups;

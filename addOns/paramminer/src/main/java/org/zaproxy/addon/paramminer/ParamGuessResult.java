@@ -29,12 +29,24 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ParamGuessResult {
 
+    public enum Reason {
+        HTTP_CODE,
+        HTTP_HEADERS,
+        REDIRECT,
+        BODY_HEURISTIC_MISMATCH,
+        LINE_COUNT,
+        WORD_COUNT,
+        TEXT,
+        PARAM_NAME_REFLECTION,
+        PARAM_VALUE_REFLECTION,
+    }
+
     private String paramName;
-    private String reason;
+    private Reason reason;
     private HistoryReference historyReference;
     private static final Logger logger = LogManager.getLogger(ParamGuessResult.class);
 
-    public ParamGuessResult(String paramName, String reason, HttpMessage httpMessage) {
+    public ParamGuessResult(String paramName, Reason reason, HttpMessage httpMessage) {
         this.paramName = paramName;
         this.reason = reason;
         try {
@@ -50,7 +62,7 @@ public class ParamGuessResult {
         return paramName;
     }
 
-    public String getReason() {
+    public Reason getReason() {
         return reason;
     }
 
