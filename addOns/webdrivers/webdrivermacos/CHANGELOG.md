@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2022-07-21
 ### Changed
 - Update ChromeDriver to 103.0.5060.134.
 
@@ -199,6 +199,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v39
