@@ -208,6 +208,27 @@ class HttpSenderImplUnitTest {
 
         @ParameterizedTest
         @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeSentPreservingNonAsciiCharactersInHeader(SenderMethod method)
+                throws Exception {
+            // Given
+            HttpRequestHeader requestHeader = message.getRequestHeader();
+            requestHeader.setHeader("Host", "localhost:" + serverPort);
+            requestHeader.setHeader("J/ψ", " → VP");
+            requestHeader.setContentLength(0);
+            server.setFixedLengthMessage(79);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
+            assertThat(
+                    receivedMessage.getRequestHeader().toString(),
+                    is(equalTo(requestHeader.toString())));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
         void shouldBeSentWithBodyForAnyMethod(String requestMethod, SenderMethod method)
                 throws Exception {
@@ -411,6 +432,20 @@ class HttpSenderImplUnitTest {
             assertThat(server.getReceivedMessages(), hasSize(1));
             assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
             assertThat(message.getResponseBody().toString(), is(equalTo(responseBody)));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldPreserveNonAsciiCharactersInHeader(SenderMethod method) throws Exception {
+            // Given
+            String responseHeader = "HTTP/1.1 200 OK\r\nJ/ψ:  → VP\r\nContent-Length: 0\r\n\r\n";
+            server.setHttpMessageHandler((ctx, msg) -> msg.setResponseHeader(responseHeader));
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
         }
 
         @Test
