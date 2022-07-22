@@ -62,6 +62,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -410,6 +411,11 @@ class HttpSenderImplUnitTest {
         }
     }
 
+    static Stream<Arguments> chunkSizesAndSendAndReceiveMethods() {
+        return Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 33, 50, 66, 80, 99, 100)
+                .flatMap(method -> sendAndReceiveMethods().map(sm -> arguments(method, sm)));
+    }
+
     @Nested
     class Response {
 
@@ -574,6 +580,92 @@ class HttpSenderImplUnitTest {
                     message.getRequestHeader().getURI().toString(), is(equalTo(getServerUri("/"))));
             assertThat(message.getResponseHeader().getStatusCode(), is(equalTo(200)));
             assertThat(message.getResponseBody().toString(), is(equalTo("Final Response")));
+        }
+
+        @Nested
+        class Chunked {
+
+            private final String RESPONSE_HEADER =
+                    "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n";
+
+            private final String RESPONSE_BODY =
+                    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n"
+                            + "[...]\r"
+                            + "		<script type=\"text/javascript\">/* <![CDATA[ */\n\r\n"
+                            + "[...]\n"
+                            + "				// some comment FOLLOWED BY TRAILING TABS:		\r"
+                            + "				theLineAfterwards();\r\n";
+
+            private Supplier<String> chunkedBodySupplier;
+
+            @BeforeEach
+            void setUp() {
+                server.setHttpMessageHandler(
+                        (ctx, msg) -> {
+                            msg.setResponseHeader(RESPONSE_HEADER);
+                            msg.setResponseBody(chunkedBodySupplier.get());
+                        });
+            }
+
+            private void assertResponseNotChunked() {
+                assertThat(server.getReceivedMessages(), hasSize(1));
+                assertThat(
+                        message.getResponseHeader().getHeader("Transfer-Encoding"),
+                        is(nullValue()));
+                assertThat(message.getResponseBody().toString(), is(equalTo(RESPONSE_BODY)));
+            }
+
+            @ParameterizedTest
+            @MethodSource(
+                    "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+            void shouldHaveSingleChunkRemoved(SenderMethod method) throws Exception {
+                // Given
+                chunkedBodySupplier =
+                        () ->
+                                Integer.toHexString(RESPONSE_BODY.length())
+                                        + "\r\n"
+                                        + RESPONSE_BODY
+                                        + "\r\n0\r\n\r\n";
+                // When
+                method.sendWith(httpSender, message);
+                // Then
+                assertResponseNotChunked();
+            }
+
+            @ParameterizedTest
+            @MethodSource(
+                    "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#chunkSizesAndSendAndReceiveMethods")
+            void shouldHaveMultipleChunksRemoved(int chunkSize, SenderMethod method)
+                    throws Exception {
+                // Given
+                chunkedBodySupplier =
+                        () -> {
+                            StringBuilder strBuilder = new StringBuilder();
+                            String chunkSizeHex = Integer.toHexString(chunkSize);
+                            int bodyLength = RESPONSE_BODY.length();
+                            int i = 0;
+                            for (int max = bodyLength - chunkSize; i < max; i += chunkSize) {
+                                strBuilder
+                                        .append(chunkSizeHex)
+                                        .append("\r\n")
+                                        .append(RESPONSE_BODY, i, i + chunkSize)
+                                        .append("\r\n");
+                            }
+                            if (i < bodyLength) {
+                                strBuilder
+                                        .append(Integer.toHexString(bodyLength - i))
+                                        .append("\r\n")
+                                        .append(RESPONSE_BODY, i, bodyLength)
+                                        .append("\r\n");
+                            }
+                            strBuilder.append("0\r\n\r\n");
+                            return strBuilder.toString();
+                        };
+                // When
+                method.sendWith(httpSender, message);
+                // Then
+                assertResponseNotChunked();
+            }
         }
     }
 
