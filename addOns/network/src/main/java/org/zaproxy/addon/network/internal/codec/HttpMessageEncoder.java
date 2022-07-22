@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 import org.parosproxy.paros.network.HttpBody;
@@ -35,6 +36,8 @@ import org.parosproxy.paros.network.HttpMessage;
 abstract class HttpMessageEncoder extends MessageToByteEncoder<HttpMessage> {
 
     private static final int CRLF = '\r' << 8 | '\n';
+
+    private static final Charset HEADER_CHARSET = StandardCharsets.UTF_8;
 
     private final Function<HttpMessage, HttpHeader> headerProvider;
     private final Function<HttpMessage, HttpBody> bodyProvider;
@@ -56,10 +59,10 @@ abstract class HttpMessageEncoder extends MessageToByteEncoder<HttpMessage> {
     protected void encode(ChannelHandlerContext ctx, HttpMessage msg, ByteBuf out) {
         HttpHeader header = headerProvider.apply(msg);
 
-        out.writeCharSequence(header.getPrimeHeader(), StandardCharsets.US_ASCII);
+        out.writeCharSequence(header.getPrimeHeader(), HEADER_CHARSET);
         ByteBufUtil.writeShortBE(out, CRLF);
 
-        out.writeCharSequence(header.getHeadersAsString(), StandardCharsets.US_ASCII);
+        out.writeCharSequence(header.getHeadersAsString(), HEADER_CHARSET);
         ByteBufUtil.writeShortBE(out, CRLF);
 
         HttpBody body = bodyProvider.apply(msg);
