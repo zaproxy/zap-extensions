@@ -29,14 +29,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
 import org.zaproxy.addon.paramminer.GuesserProgressListener;
 import org.zaproxy.addon.paramminer.GuesserScan;
+import org.zaproxy.addon.paramminer.ParamGuessResultEvent;
 import org.zaproxy.addon.paramminer.ParamGuesserScanController;
 import org.zaproxy.addon.paramminer.ParamMinerOptions;
+import org.zaproxy.addon.paramminer.ParamMinerResultEventListener;
 import org.zaproxy.zap.view.ScanPanel2;
 
 public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
@@ -46,7 +48,7 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
     private final ParamMinerOptions options;
 
     private JTabbedPane tabbedPane;
-    private JTextPane outputArea;
+    private JTextArea outputArea;
     private ParamMinerHistoryTableModel emptyTableModel;
     private JTable historyTable;
 
@@ -55,6 +57,8 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
     private JPanel mainPanel;
 
     private ProgressListener progressListener;
+    private ResultListener resultListener;
+    private GuesserScan previousScan;
 
     public ParamMinerPanel(
             ParamGuesserScanController scanController,
@@ -76,7 +80,7 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
 
             emptyTableModel = new ParamMinerHistoryTableModel();
             historyTable = new ParamMinerResultsTable(emptyTableModel);
-            outputArea = new JTextPane();
+            outputArea = new JTextArea();
             outputArea.setEditable(false);
 
             tabbedPane = new JTabbedPane();
@@ -94,15 +98,19 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
     @Override
     public void scannerStarted(GuesserScan scan) {
         super.scannerStarted(scan);
-
         scan.addProgressListener(getProgressListener());
     }
 
     @Override
     protected void switchView(GuesserScan scan) {
+        if (previousScan != null) {
+            previousScan.getOutputModel().removeResultListener(getResultListener());
+        }
+        previousScan = scan;
         if (scan != null) {
             historyTable.setModel(scan.getTableModel());
-            outputArea.setText(scan.getOutput());
+            outputArea.setText(scan.getOutputModel().getOutput());
+            scan.getOutputModel().addResultListener(getResultListener());
         } else {
             historyTable.setModel(emptyTableModel);
             outputArea.setText("");
@@ -160,9 +168,24 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
         return progressListener;
     }
 
+    private ParamMinerResultEventListener getResultListener() {
+        if (resultListener == null) {
+            resultListener = new ResultListener();
+        }
+        return resultListener;
+    }
+
     @Override
     public void unload() {
         super.unload();
+    }
+
+    private class ResultListener implements ParamMinerResultEventListener {
+
+        @Override
+        public void notifyResult(ParamGuessResultEvent event) {
+            EventQueue.invokeLater(() -> outputArea.append(event.getResult().toString()));
+        }
     }
 
     private class ProgressListener implements GuesserProgressListener {

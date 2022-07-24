@@ -21,6 +21,7 @@ package org.zaproxy.addon.paramminer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -73,5 +74,14 @@ public class ParamGuessResult {
             logger.warn("Error getting HTTP message. Exception raised {}", e);
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return Constant.messages.getString(
+                "paramminer.results.maintext",
+                this.historyReference.getURI(),
+                getParamName(),
+                Constant.messages.getString("paramminer.results.reason." + reason.toString()));
     }
 }
