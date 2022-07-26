@@ -48,24 +48,23 @@ public class ParamGuesser implements Runnable {
     private GuesserScan scan;
     private ParamMinerConfig config;
 
-    public ParamGuesser(
-            int id, ParamMinerConfig config, GuesserScan scan, ExecutorService executor) {
+    public ParamGuesser(int id, GuesserScan scan, ExecutorService executor) {
         this.id = id;
         this.scan = scan;
         this.executor = executor;
-        this.config = config;
+        this.config = scan.getConfig();
         // TODO - use the actual core initiator once targeting >= 2.12.0
         httpSender =
                 new HttpSender(
                         Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
         if (config.doUrlGuess()) {
-            urlGuesser = new UrlGuesser(id, config, scan, httpSender, executor);
+            urlGuesser = new UrlGuesser(id, scan, httpSender, executor);
         }
         if (config.doHeaderGuess()) {
-            headerGuesser = new HeaderGuesser(id, config, scan, httpSender, executor);
+            headerGuesser = new HeaderGuesser(id, scan, httpSender, executor);
         }
         if (config.doCookieGuess()) {
-            cookieGuesser = new CookieGuesser(id, config, scan, httpSender, executor);
+            cookieGuesser = new CookieGuesser(id, scan, httpSender, executor);
         }
     }
 

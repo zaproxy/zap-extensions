@@ -136,7 +136,7 @@ public class GuesserScan implements GenericScanner2 {
     }
 
     private void startScan() {
-        ParamGuesser paramGuesser = new ParamGuesser(scanId, this.config, this, this.executor);
+        ParamGuesser paramGuesser = new ParamGuesser(scanId, this, this.executor);
         this.executor.submit(paramGuesser);
     }
 

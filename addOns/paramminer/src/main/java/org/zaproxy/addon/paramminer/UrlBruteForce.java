@@ -104,10 +104,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
         }
 
         ParamReasons res = compare(base, response, params);
-        if (mode == Mode.VERIFY && res != null) {
+        if (mode == Mode.VERIFY && !res.isEmpty()) {
             for (String parameter : res.getParams().keySet()) {
                 ParamGuessResult paramGuessResult =
-                        new ParamGuessResult(parameter, res.getReason(), msg);
+                        new ParamGuessResult(parameter, res.getReasons(), msg);
                 guessedParams.add(paramGuessResult);
             }
         }
@@ -240,7 +240,8 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                         headers.setHeader(header.getName(), header.getValue());
                     }
                     String jsonPayload;
-                    if (!config.getUrlXmlIncludeString().isEmpty()) {
+                    if (config.getUrlJsonIncludeString() != null
+                            && !config.getUrlJsonIncludeString().isEmpty()) {
                         jsonPayload =
                                 config.getUrlJsonIncludeString()
                                         .replace(
@@ -305,40 +306,44 @@ public class UrlBruteForce implements Callable<ParamReasons> {
      */
     public ParamReasons compare(
             ComparableResponse resp1, ComparableResponse resp2, Map<String, String> params) {
+
+        ParamReasons reasons = new ParamReasons();
         if (resp1.getStatusCode() != resp2.getStatusCode()
-                || ComparableResponse.statusCodeHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons(Reason.HTTP_CODE, params);
+                || ComparableResponse.statusCodeHeuristic(resp1, resp2)
+                        < this.guesser.getStatusCodeThreshold()) {
+            reasons.addReason(Reason.HTTP_CODE);
         }
 
-        if (ComparableResponse.headersCompareHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons(Reason.HTTP_HEADERS, params);
+        if (ComparableResponse.headersCompareHeuristic(resp1, resp2)
+                < this.guesser.getHttpHeadersThreshold()) {
+            // TODO Add "which" headers were a mismatch
+            reasons.addReason(Reason.HTTP_HEADERS);
         }
 
         if (!Objects.equals(
                 resp1.getHeaders().get("Location"), resp2.getHeaders().get("Location"))) {
-            return new ParamReasons(Reason.REDIRECT, params);
+            reasons.addReason(Reason.REDIRECT);
         }
 
-        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons(Reason.BODY_HEURISTIC_MISMATCH, params);
+        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2)
+                < this.guesser.getBodyTreesStructureHeuristicThreshold()) {
+            reasons.addReason(Reason.BODY_HEURISTIC_MISMATCH);
         }
 
-        if (ComparableResponse.lineCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons(Reason.LINE_COUNT, params);
+        if (ComparableResponse.lineCountHeuristic(resp1, resp2)
+                < this.guesser.getLineCountHeuristicThreshold()) {
+            reasons.addReason(Reason.LINE_COUNT);
         }
 
-        if (ComparableResponse.wordCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons(Reason.WORD_COUNT, params);
+        if (ComparableResponse.wordCountHeuristic(resp1, resp2)
+                < this.guesser.getWordCountHeuristic()) {
+            reasons.addReason(Reason.WORD_COUNT);
         }
-
-        // if (resp1.compareWith(resp2) < 1) {
-        //     return new ParamReasons("body mismatch", params);
-        // }
 
         Source source1 = new Source(resp1.getBody());
         Source source2 = new Source(resp2.getBody());
         if (!source1.toString().equals(source2.toString())) {
-            return new ParamReasons(Reason.TEXT, params);
+            reasons.addReason(Reason.TEXT);
         }
 
         if (!resp1.getBody().contains(resp1.getValueSent())) {
@@ -346,7 +351,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 this.firstComparison = false;
                 this.paramsPresent = new ArrayList<>();
                 for (String param : wordlist) {
-                    if (resp1.getBody().contains(param)) {
+                    if (resp2.getBody().contains(param)) {
                         this.paramsPresent.add(param);
                     }
                 }
@@ -359,7 +364,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                         Pattern searchParamPattern =
                                 Pattern.compile("['\"\\s]" + param + "['\"\\s]");
                         if (searchParamPattern.matcher(resp2.getBody()).find()) {
-                            return new ParamReasons(Reason.PARAM_NAME_REFLECTION, params);
+                            reasons.addReason(Reason.PARAM_NAME_REFLECTION);
                         }
                     }
                 }
@@ -371,11 +376,16 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 if (resp2.getBody().contains(values)) {
                     Pattern searchValuePattern = Pattern.compile("['\"\\s]" + values + "['\"\\s]");
                     if (searchValuePattern.matcher(resp2.getBody()).find()) {
-                        return new ParamReasons(Reason.PARAM_VALUE_REFLECTION, params);
+                        reasons.addReason(Reason.PARAM_VALUE_REFLECTION);
                     }
                 }
             }
         }
-        return null;
+
+        if (!reasons.isEmpty()) {
+            reasons.setParams(params);
+        }
+
+        return reasons;
     }
 }
