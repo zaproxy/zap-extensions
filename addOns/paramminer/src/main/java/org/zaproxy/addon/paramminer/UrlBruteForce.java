@@ -162,11 +162,12 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case GET:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
                     String queryString = UrlUtils.createQueryString(params);
                     HttpRequestHeader headers = new HttpRequestHeader();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     headers.setMethod(HttpRequestHeader.GET);
                     headers.setURI(new URI(uri + queryString, true));
                     headers.setVersion(HttpHeader.HTTP11);
@@ -196,9 +197,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case XML:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -225,9 +227,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case JSON:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -264,9 +267,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
 
             case POST:
                 try {
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -372,7 +376,6 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 }
             }
         }
-
         return null;
     }
 }

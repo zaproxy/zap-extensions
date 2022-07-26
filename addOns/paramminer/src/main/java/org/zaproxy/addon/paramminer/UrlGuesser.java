@@ -136,6 +136,9 @@ public class UrlGuesser implements Runnable {
             // TODO Add exception message using Constants
             logger.error(e, e);
         }
+        for (ParamGuessResult paramGuessResult : paramGuessResults) {
+            scan.addParamGuessResult(paramGuessResult);
+        }
         completeGuess();
     }
 
@@ -148,7 +151,7 @@ public class UrlGuesser implements Runnable {
 
     private void startGuess(Method method, List<String> wordlist) {
         HttpMessage msg = new HttpMessage();
-        Map<String, String> initialParam = new HashMap<String, String>();
+        Map<String, String> initialParam = new HashMap<>();
         initialParam.put(INIT_PARAM, INIT_VALUE);
 
         UrlBruteForce initialBruter =
