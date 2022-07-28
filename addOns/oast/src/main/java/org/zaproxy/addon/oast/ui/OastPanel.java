@@ -46,6 +46,7 @@ import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 
+@SuppressWarnings("serial")
 public class OastPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;

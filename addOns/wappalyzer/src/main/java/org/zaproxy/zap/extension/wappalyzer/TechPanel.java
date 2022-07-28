@@ -48,6 +48,7 @@ import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class TechPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;

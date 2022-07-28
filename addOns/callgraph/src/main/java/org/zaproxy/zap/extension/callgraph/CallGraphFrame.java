@@ -62,6 +62,7 @@ import org.parosproxy.paros.view.AbstractFrame;
  *
  * @author 70pointer@gmail.com
  */
+@SuppressWarnings("serial")
 public class CallGraphFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 6666666666666666666L;

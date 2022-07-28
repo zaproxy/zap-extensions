@@ -35,6 +35,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
  * Menu Item for Popup. Used in WebSockets tab, when you click on some message with right mouse
  * button.
  */
+@SuppressWarnings("serial")
 public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuItem {
     private static final long serialVersionUID = 2208451830578743381L;
 

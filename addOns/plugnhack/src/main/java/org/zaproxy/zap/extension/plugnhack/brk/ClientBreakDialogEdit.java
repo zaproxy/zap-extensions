@@ -26,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
+@SuppressWarnings("serial")
 public class ClientBreakDialogEdit extends ClientBreakDialog {
     private static final long serialVersionUID = 1L;
 

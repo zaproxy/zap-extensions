@@ -52,6 +52,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
+@SuppressWarnings("serial")
 class ConnectionOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;

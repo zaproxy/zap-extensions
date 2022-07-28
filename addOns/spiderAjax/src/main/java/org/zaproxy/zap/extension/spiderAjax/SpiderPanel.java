@@ -49,6 +49,7 @@ import org.zaproxy.zap.view.table.HistoryReferencesTable;
  * This class creates the Spider AJAX Panel where the found URLs are displayed It has a button to
  * stop the crawler and another one to open the options.
  */
+@SuppressWarnings("serial")
 public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(SpiderPanel.class);

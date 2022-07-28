@@ -44,6 +44,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 
+@SuppressWarnings("serial")
 public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 

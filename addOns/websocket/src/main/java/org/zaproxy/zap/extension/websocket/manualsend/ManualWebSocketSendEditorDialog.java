@@ -51,6 +51,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketUiHelper;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** Send custom crafted WebSocket messages. */
+@SuppressWarnings("serial")
 public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 
     private static final long serialVersionUID = -5830450800029295419L;

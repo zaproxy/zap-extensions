@@ -40,6 +40,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderResultsTableModel.Processe
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class AjaxSpiderResultsTable extends HistoryReferencesTable {
 
     private static final long serialVersionUID = 1L;

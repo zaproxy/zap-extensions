@@ -23,6 +23,7 @@ import java.util.List;
 import org.zaproxy.zap.utils.EnableableInterface;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class AbstractMultipleOptionsColumnTableModel<T extends EnableableInterface>
         extends AbstractMultipleOptionsTableModel<T> {
 

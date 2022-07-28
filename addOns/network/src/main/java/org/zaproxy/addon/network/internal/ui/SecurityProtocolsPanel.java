@@ -39,6 +39,7 @@ import org.zaproxy.zap.utils.FontUtils;
  *
  * @see TlsUtils
  */
+@SuppressWarnings("serial")
 public class SecurityProtocolsPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;

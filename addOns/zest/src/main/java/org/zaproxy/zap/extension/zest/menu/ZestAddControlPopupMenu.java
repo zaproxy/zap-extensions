@@ -36,6 +36,7 @@ import org.zaproxy.zest.core.v1.ZestLoop;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestScript;
 
+@SuppressWarnings("serial")
 public class ZestAddControlPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;

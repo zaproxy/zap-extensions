@@ -29,6 +29,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;

@@ -26,6 +26,7 @@ import org.zaproxy.addon.network.internal.client.Pkcs11Driver;
 import org.zaproxy.addon.network.internal.client.Pkcs11Drivers;
 
 /** A {@link ComboBoxModel} of {@link Pkcs11Driver}s. */
+@SuppressWarnings("serial")
 public class DriversComboBoxModel extends AbstractListModel<Pkcs11Driver>
         implements ComboBoxModel<Pkcs11Driver> {
 

@@ -35,6 +35,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class PopupMenuExportMessages extends JMenuItem {
 
     private static final long serialVersionUID = 1L;

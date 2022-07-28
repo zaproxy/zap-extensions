@@ -41,6 +41,7 @@ import org.zaproxy.addon.paramminer.ParamMinerOptions;
 import org.zaproxy.addon.paramminer.ParamMinerResultEventListener;
 import org.zaproxy.zap.view.ScanPanel2;
 
+@SuppressWarnings("serial")
 public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
 
     private static final long serialVersionUID = 1L;

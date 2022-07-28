@@ -46,6 +46,7 @@ import org.zaproxy.zap.extension.saml.SAMLConfiguration;
 import org.zaproxy.zap.extension.saml.SAMLException;
 import org.zaproxy.zap.extension.saml.SamlI18n;
 
+@SuppressWarnings("serial")
 public class SamlExtentionSettingsUI extends JFrame
         implements PassiveAttributeChangeListener, AttributeListener {
 

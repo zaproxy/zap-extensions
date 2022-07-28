@@ -56,6 +56,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+@SuppressWarnings("serial")
 public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 
     private static final long serialVersionUID = -5830450800029295419L;

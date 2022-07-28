@@ -30,6 +30,7 @@ import org.zaproxy.zap.utils.NetworkUtils;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddLocalServerDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 1L;

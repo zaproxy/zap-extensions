@@ -44,6 +44,7 @@ import org.zaproxy.zap.view.widgets.UsersMultiSelectTable;
  * <p>If the un-authenticated user was selected, it is returned in the {@link ScanStartOptions} as
  * <code>null</code>.
  */
+@SuppressWarnings("serial")
 public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = -4540976404891062951L;

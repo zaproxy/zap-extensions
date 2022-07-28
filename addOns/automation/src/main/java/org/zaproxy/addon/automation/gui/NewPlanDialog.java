@@ -47,6 +47,7 @@ import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class NewPlanDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

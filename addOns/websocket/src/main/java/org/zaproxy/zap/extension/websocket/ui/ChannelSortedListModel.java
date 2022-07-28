@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.utils.SortedListModel;
 
+@SuppressWarnings("serial")
 public class ChannelSortedListModel extends SortedListModel<WebSocketChannelDTO> {
 
     private static final long serialVersionUID = 83057590716441165L;

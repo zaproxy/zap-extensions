@@ -25,6 +25,7 @@ import javax.swing.Icon;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuResendMessage extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;

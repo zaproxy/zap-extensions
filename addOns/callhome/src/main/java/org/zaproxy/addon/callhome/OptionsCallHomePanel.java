@@ -35,6 +35,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class OptionsCallHomePanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = -7541236934312940852L;

@@ -24,6 +24,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+@SuppressWarnings("serial")
 public class ToolsMenuItemRequester extends ZapMenuItem {
 
     private static final long serialVersionUID = 1L;

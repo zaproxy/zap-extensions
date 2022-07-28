@@ -70,6 +70,7 @@ import org.zaproxy.zap.view.widgets.WritableFileChooser;
  * The status panel used for the Access Control extension. It allows ZAP users to control and
  * configure the scans, generate a report and see the scan results.
  */
+@SuppressWarnings("serial")
 public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
         implements AccessControlScanListener {
 

@@ -27,6 +27,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 
+@SuppressWarnings("serial")
 public class WebSocketBreakDialogAdd extends WebSocketBreakDialog {
 
     private static final long serialVersionUID = 1L;

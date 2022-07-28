@@ -39,6 +39,7 @@ import org.zaproxy.zap.view.OverlayIcon;
  * tooltips you have to enable them via: <code>
  * ToolTipManager.sharedInstance().registerComponent(tree);</code>
  */
+@SuppressWarnings("serial")
 public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final String RESOURCE_ROOT =

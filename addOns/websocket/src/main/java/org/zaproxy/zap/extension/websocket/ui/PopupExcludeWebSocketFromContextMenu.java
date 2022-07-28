@@ -34,6 +34,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextExcludePanel;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
+@SuppressWarnings("serial")
 public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = -2345060529128495874L;

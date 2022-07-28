@@ -79,6 +79,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ScanPanel2;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class ScriptsListPanel extends AbstractPanel {
 
     public static final String TREE = "ScriptListTree";

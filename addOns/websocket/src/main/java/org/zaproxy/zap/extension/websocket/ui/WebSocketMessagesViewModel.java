@@ -39,6 +39,7 @@ import org.zaproxy.zap.utils.PagingTableModel;
  * Moreover it shows only those entries that are not deny listed by given {@link
  * WebSocketMessagesViewFilter}.
  */
+@SuppressWarnings("serial")
 public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessageDTO> {
 
     private static final long serialVersionUID = -5047686640383236512L;

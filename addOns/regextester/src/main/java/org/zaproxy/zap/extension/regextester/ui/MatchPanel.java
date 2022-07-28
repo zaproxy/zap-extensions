@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.regextester.RegexTestResult;
 import org.zaproxy.zap.extension.regextester.RegexTester;
 import org.zaproxy.zap.extension.regextester.ui.model.RegexModel;
 
+@SuppressWarnings("serial")
 public class MatchPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;

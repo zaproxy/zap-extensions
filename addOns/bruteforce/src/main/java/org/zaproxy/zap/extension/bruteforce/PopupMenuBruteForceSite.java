@@ -25,6 +25,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 1L;

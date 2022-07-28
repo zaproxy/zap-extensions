@@ -40,6 +40,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ParamMinerDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

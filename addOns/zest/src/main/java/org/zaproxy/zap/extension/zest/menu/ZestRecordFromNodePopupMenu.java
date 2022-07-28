@@ -24,6 +24,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
+@SuppressWarnings("serial")
 public class ZestRecordFromNodePopupMenu extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;

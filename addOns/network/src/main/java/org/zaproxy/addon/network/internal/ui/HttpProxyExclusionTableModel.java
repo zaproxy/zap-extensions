@@ -26,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class HttpProxyExclusionTableModel
         extends AbstractMultipleOptionsTableModel<HttpProxyExclusion> {
 

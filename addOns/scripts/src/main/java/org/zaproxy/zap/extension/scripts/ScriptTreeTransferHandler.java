@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
+@SuppressWarnings("serial")
 public class ScriptTreeTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = 1L;

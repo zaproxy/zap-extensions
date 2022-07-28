@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.zaproxy.addon.network.internal.client.Pkcs11Drivers;
 
+@SuppressWarnings("serial")
 public class Pkcs11DriversDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

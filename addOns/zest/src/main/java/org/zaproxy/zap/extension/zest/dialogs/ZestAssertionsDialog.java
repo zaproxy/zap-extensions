@@ -39,6 +39,7 @@ import org.zaproxy.zest.core.v1.ZestExpressionRegex;
 import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
 import org.zaproxy.zest.core.v1.ZestRequest;
 
+@SuppressWarnings("serial")
 public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VARIABLE = "zest.dialog.assert.label.variable";

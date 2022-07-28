@@ -29,6 +29,7 @@ import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuItemMessageContainer;
 
+@SuppressWarnings("serial")
 public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMessageContainer {
 
     private static final long serialVersionUID = 3515657836446348454L;

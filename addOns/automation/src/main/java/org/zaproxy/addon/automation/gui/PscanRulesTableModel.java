@@ -30,6 +30,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob.Rule;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+@SuppressWarnings("serial")
 public class PscanRulesTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

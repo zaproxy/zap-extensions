@@ -32,6 +32,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class LoadScriptDialog extends StandardFieldsDialog {
 
     private static final String FIELD_FILE = "scripts.dialog.script.label.file";

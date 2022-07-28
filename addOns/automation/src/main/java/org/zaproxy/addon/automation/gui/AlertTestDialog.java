@@ -29,6 +29,7 @@ import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AlertTestDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

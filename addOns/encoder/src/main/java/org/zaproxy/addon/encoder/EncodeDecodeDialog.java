@@ -62,6 +62,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
+@SuppressWarnings("serial")
 public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedListener {
 
     public static final String ENCODE_DECODE_FIELD = "EncodeDecodeInputField";

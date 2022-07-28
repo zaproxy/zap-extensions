@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
 
+@SuppressWarnings("serial")
 public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

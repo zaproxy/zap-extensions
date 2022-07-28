@@ -26,6 +26,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class RegExTesterPopupMenuItem extends PopupMenuHttpMessageContainer {
     private static final long serialVersionUID = 1L;
 

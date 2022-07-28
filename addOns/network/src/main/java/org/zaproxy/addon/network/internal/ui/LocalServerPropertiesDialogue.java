@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class LocalServerPropertiesDialogue extends AbstractFormDialog {
 
     private static final long serialVersionUID = 1L;
