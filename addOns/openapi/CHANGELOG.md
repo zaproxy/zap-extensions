@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Maintenance changes.
+- Use Spider add-on (Issue 3113).
+- Use Form Handler add-on directly.
 
 ## [27] - 2022-03-29
 ### Added

@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP Development Team
+ * Copyright 2022 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi;
+package org.zaproxy.zap.extension.openapi.spider;
 
 import java.util.function.Supplier;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.openapi.spider.OpenApiSpiderFunctionality;
+import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.model.ValueGenerator;
-import org.zaproxy.zap.spider.parser.SpiderParser;
 
 public class OpenApiSpider extends SpiderParser {
 
-    private OpenApiSpiderFunctionality func = null;
+    private OpenApiSpiderFunctionality func;
 
     public OpenApiSpider(Supplier<ValueGenerator> valueGeneratorSupplier) {
         func = new OpenApiSpiderFunctionality(valueGeneratorSupplier);

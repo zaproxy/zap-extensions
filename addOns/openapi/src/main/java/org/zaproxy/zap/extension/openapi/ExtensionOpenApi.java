@@ -52,6 +52,7 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -73,6 +74,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ImportFromUrlDialog currentUrlDialog = null;
     private int threadId = 1;
     private SpiderParser customSpider;
+    private ValueGenerator valueGenerator;
 
     private CommandLineArgument[] arguments = new CommandLineArgument[3];
     private static final int ARG_IMPORT_FILE_IDX = 0;
@@ -83,6 +85,15 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public ExtensionOpenApi() {
         super(NAME);
+        setValueGenerator(null);
+    }
+
+    public void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    }
+
+    public ValueGenerator getValueGenerator() {
+        return valueGenerator;
     }
 
     @Override
@@ -95,8 +106,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                         Control.getSingleton()
                                 .getExtensionLoader()
                                 .getExtension(ExtensionSpider.NAME);
-        customSpider = new OpenApiSpider();
         if (spider != null) {
+            customSpider = new OpenApiSpider(this::getValueGenerator);
             spider.addCustomParser(customSpider);
             LOG.debug("Added custom Open API spider.");
         } else {
@@ -445,16 +456,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 LOG.debug(e.getMessage(), e);
             }
             return errors;
-        }
-        return null;
-    }
-
-    private ValueGenerator getValueGenerator() {
-        // Always get the latest ValueGenerator as it could have changed
-        ExtensionSpider spider =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-        if (spider != null) {
-            return spider.getValueGenerator();
         }
         return null;
     }
