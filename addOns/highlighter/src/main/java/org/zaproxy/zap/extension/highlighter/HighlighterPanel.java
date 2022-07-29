@@ -37,6 +37,7 @@ import org.zaproxy.zap.view.HighlighterManager;
 /*
  * The main highlighter tab, used to configure highlights in the HighlightManager
  */
+@SuppressWarnings("serial")
 public class HighlighterPanel extends AbstractPanel implements ActionListener {
     private static final long serialVersionUID = -1085991554138327045L;
     private JPanel mainPanel;

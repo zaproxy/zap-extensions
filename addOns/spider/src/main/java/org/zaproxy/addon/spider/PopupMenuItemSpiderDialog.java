@@ -28,8 +28,9 @@ import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
  * A {@code PopupMenuItemSiteNodeContainer} that allows to show the Spider dialogue, for a selected
  * {@link SiteNode}.
  *
- * @see org.zaproxy.zap.extension.spider.ExtensionSpider2#showSpiderDialog(SiteNode)
+ * @see org.zaproxy.addon.spider.ExtensionSpider2#showSpiderDialog(SiteNode)
  */
+@SuppressWarnings("serial")
 public class PopupMenuItemSpiderDialog extends PopupMenuItemSiteNodeContainer {
 
     private static final long serialVersionUID = 1L;

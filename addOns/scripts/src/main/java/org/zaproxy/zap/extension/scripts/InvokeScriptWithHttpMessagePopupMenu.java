@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;

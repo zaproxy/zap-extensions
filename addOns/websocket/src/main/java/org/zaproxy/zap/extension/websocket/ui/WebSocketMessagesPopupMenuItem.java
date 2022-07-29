@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
 /** Menu Item for a right click menu on the {@link WebSocketMessagesView}. */
+@SuppressWarnings("serial")
 public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 4774753835401981588L;
 

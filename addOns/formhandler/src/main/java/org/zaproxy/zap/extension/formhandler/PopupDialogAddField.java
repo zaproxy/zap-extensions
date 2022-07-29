@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.swing.JComboBox;
 import org.parosproxy.paros.control.Control;
 
+@SuppressWarnings("serial")
 class PopupDialogAddField extends DialogAddField {
 
     private static final long serialVersionUID = 4460797449668634319L;

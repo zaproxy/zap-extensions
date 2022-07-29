@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.UriBuilder;
 
+@SuppressWarnings("serial")
 abstract class ImportFromAbstractDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

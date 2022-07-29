@@ -69,6 +69,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * Represents the WebSockets tab. It listens to all WebSocket channels and displays messages
  * accordingly.
  */
+@SuppressWarnings("serial")
 public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
     private static final long serialVersionUID = -2853099315338427006L;

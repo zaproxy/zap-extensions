@@ -35,6 +35,7 @@ import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class TipsAndTricksDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -1L;

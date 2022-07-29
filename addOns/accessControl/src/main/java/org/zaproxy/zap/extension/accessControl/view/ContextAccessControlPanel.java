@@ -66,6 +66,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
 
 /** The context configuration panel used for specifying the Access Control rules. */
+@SuppressWarnings("serial")
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private static final Logger log = LogManager.getLogger(ContextAccessControlPanel.class);

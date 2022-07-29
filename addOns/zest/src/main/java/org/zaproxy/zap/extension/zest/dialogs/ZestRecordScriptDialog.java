@@ -44,6 +44,7 @@ import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
+@SuppressWarnings("serial")
 public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title";

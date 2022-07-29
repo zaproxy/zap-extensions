@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;

@@ -54,6 +54,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ReportDialog extends StandardFieldsDialog {
 
     private static final Logger LOGGER = LogManager.getLogger(ReportDialog.class);

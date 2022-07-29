@@ -37,6 +37,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class ZestResultsPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;

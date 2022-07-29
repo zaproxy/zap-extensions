@@ -32,6 +32,7 @@ import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.view.MultipleRegexesOptionsPanel;
 
+@SuppressWarnings("serial")
 public class SessionExcludeFromWebSocket extends AbstractParamPanel {
     public static final String PANEL_NAME =
             Constant.messages.getString("websocket.session.exclude.title");

@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.alertFilters.automation.AlertFilterJob.AlertFilterData;
 
+@SuppressWarnings("serial")
 public class AlertFilterTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

@@ -42,6 +42,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.PositiveValuesSlider;
 
+@SuppressWarnings("serial")
 public class OptionsBruteForcePanel extends AbstractParamPanel {
 
     private static final String MESSAGE_PREFIX = "bruteforce.options.";

@@ -30,6 +30,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class OastOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;

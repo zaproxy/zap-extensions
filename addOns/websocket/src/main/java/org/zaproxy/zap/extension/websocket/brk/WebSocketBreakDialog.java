@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketUiHelper;
 
+@SuppressWarnings("serial")
 public abstract class WebSocketBreakDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

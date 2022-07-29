@@ -37,6 +37,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class OutputPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;

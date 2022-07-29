@@ -33,6 +33,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AddRequestDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

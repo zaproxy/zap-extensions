@@ -31,6 +31,7 @@ import org.apache.commons.lang.Validate;
  *
  * @see BrowserUI
  */
+@SuppressWarnings("serial")
 public class BrowsersComboBoxModel extends AbstractListModel<BrowserUI>
         implements ComboBoxModel<BrowserUI> {
 

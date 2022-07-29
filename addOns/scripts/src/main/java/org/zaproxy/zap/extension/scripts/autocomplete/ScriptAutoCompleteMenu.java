@@ -27,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 
+@SuppressWarnings("serial")
 public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
 
     private static final long serialVersionUID = 1L;

@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
 
+@SuppressWarnings("serial")
 public class SequencePanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;

@@ -23,6 +23,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 
+@SuppressWarnings("serial")
 public class RetestMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;

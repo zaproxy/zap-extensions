@@ -46,6 +46,7 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
  * The Popup that allows users to set, for a Context, the authentication method to Script-Based
  * Authentication and directly load the Authentication script.
  */
+@SuppressWarnings("serial")
 public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem {
 
     private static final Logger log =

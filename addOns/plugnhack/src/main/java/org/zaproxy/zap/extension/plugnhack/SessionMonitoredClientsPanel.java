@@ -38,6 +38,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.SingleColumnTableModel;
 
+@SuppressWarnings("serial")
 public class SessionMonitoredClientsPanel extends AbstractParamPanel {
 
     public static final String PANEL_NAME = Constant.messages.getString("plugnhack.session.title");

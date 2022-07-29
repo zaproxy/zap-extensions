@@ -32,6 +32,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 import org.zaproxy.zest.core.v1.ZestClientScreenshot;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestClientScreenshotDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";

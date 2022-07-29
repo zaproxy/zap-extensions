@@ -33,6 +33,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddPkcs11DriverDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 1L;

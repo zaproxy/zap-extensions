@@ -32,7 +32,7 @@ import org.zaproxy.zest.core.v1.ZestControl;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestPopupZestMove extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

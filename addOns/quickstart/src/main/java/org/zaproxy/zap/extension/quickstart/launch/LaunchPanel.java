@@ -55,6 +55,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 
+@SuppressWarnings("serial")
 public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private static final long serialVersionUID = 1L;

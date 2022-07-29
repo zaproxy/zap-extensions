@@ -65,6 +65,7 @@ import org.zaproxy.zap.extension.alert.AlertTreeCellRenderer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
+@SuppressWarnings("serial")
 public class RetestDialog extends AbstractDialog implements EventConsumer {
 
     private static final long serialVersionUID = 1L;

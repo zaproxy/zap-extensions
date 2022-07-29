@@ -23,6 +23,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuParamMiner extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;

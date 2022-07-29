@@ -44,6 +44,7 @@ import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
 import org.zaproxy.zest.core.v1.ZestExpressionURL;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_REGEX = "zest.dialog.condition.label.regex";

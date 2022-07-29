@@ -24,6 +24,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuOpenAndMonitorUrl extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;

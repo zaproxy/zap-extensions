@@ -46,6 +46,7 @@ import org.zaproxy.zap.utils.FontUtils;
  *       example, compression).
  * </ul>
  */
+@SuppressWarnings("serial")
 public class OptionsWebSocketPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = -7541236934312940852L;

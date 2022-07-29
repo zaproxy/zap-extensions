@@ -41,6 +41,7 @@ import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class DefaultExplorePanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
     private static final String OWASP_ZAP_ROOT_CA_NAME = "owasp_zap_root_ca";

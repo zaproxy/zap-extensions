@@ -47,6 +47,7 @@ import org.zaproxy.zest.core.v1.ZestActionSleep;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_MESSAGE = "zest.dialog.action.label.message";

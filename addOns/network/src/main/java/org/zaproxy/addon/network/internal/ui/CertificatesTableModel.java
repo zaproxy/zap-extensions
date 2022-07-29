@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.client.CertificateEntry;
 
+@SuppressWarnings("serial")
 public class CertificatesTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

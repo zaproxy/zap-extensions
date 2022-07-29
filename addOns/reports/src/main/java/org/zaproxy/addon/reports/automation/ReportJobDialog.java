@@ -50,6 +50,7 @@ import org.zaproxy.addon.reports.automation.ReportJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ReportJobDialog extends StandardFieldsDialog {
 
     private static final String FIELD_NAME = "reports.automation.dialog.field.name";

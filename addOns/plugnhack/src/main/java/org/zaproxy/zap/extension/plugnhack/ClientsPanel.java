@@ -54,6 +54,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapTable;
 import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class ClientsPanel extends AbstractPanel implements MonitoredPageListener {
 
     public static final String CLIENTS_PANEL_NAME = "pnhClientsAlert";

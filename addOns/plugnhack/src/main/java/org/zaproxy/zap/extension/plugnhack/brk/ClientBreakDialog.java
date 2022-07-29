@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 import org.zaproxy.zap.extension.plugnhack.MonitoredPagesManager;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public abstract class ClientBreakDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

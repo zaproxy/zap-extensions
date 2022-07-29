@@ -48,6 +48,7 @@ import org.zaproxy.zest.core.v1.ZestLoopTokenStringSet;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private static final long serialVersionUID = 3720969585202318312L;
 

@@ -28,7 +28,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class PopupRemoveScript extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

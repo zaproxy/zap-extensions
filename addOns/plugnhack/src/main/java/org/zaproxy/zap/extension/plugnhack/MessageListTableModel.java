@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class MessageListTableModel extends AbstractTableModel {
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat("HH:mm:ss.SSS");

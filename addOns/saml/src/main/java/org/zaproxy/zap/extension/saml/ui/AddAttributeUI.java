@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.saml.Attribute;
 import org.zaproxy.zap.extension.saml.AttributeListener;
 import org.zaproxy.zap.extension.saml.SamlI18n;
 
+@SuppressWarnings("serial")
 public class AddAttributeUI extends JFrame {
 
     private static final long serialVersionUID = 1L;

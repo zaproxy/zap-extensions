@@ -21,6 +21,7 @@ package org.zaproxy.addon.paramminer;
 
 import java.util.EventObject;
 
+@SuppressWarnings("serial")
 public class ParamGuessResultEvent extends EventObject {
     private static final long serialVersionUID = 1L;
     private final ParamGuessResult result;

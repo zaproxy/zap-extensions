@@ -64,6 +64,7 @@ import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private static final long serialVersionUID = 1L;

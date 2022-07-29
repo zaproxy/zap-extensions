@@ -35,6 +35,7 @@ import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
  * The table model for access control testing results. This table is used in the status panel of the
  * Access Control extension.
  */
+@SuppressWarnings("serial")
 public class AccessControlResultsTableModel
         extends AbstractCustomColumnHistoryReferencesTableModel<AccessControlResultsTableEntry> {
 

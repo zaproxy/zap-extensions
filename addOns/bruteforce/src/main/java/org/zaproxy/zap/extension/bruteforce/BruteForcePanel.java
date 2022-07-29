@@ -58,6 +58,7 @@ import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class BruteForcePanel extends AbstractPanel implements BruteForceListenner {
 
     private static final long serialVersionUID = 1L;

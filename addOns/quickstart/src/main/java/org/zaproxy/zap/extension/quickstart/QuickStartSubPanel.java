@@ -35,6 +35,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
 
     private static final long serialVersionUID = 1L;

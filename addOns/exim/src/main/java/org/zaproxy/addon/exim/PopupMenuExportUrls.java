@@ -39,6 +39,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

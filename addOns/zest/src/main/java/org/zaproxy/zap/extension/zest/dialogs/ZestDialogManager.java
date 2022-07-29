@@ -71,6 +71,7 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
+@SuppressWarnings("serial")
 public class ZestDialogManager extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;

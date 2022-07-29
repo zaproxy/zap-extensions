@@ -29,6 +29,7 @@ import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.plugnhack.ClientsPanel;
 import org.zaproxy.zap.extension.plugnhack.MessageListTableModel;
 
+@SuppressWarnings("serial")
 public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

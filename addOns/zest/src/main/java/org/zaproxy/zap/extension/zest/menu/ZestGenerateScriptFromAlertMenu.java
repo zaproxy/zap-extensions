@@ -44,6 +44,7 @@ import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;

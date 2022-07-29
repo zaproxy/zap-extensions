@@ -24,6 +24,7 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class ParamMinerResultsTable extends HistoryReferencesTable {
 
     private static final long serialVersionUID = 1L;

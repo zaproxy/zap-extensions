@@ -48,6 +48,7 @@ import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 
+@SuppressWarnings("serial")
 public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = -5847208243296422433L;
     private static final Logger LOGGER = LogManager.getLogger(ZestSurroundWithPopupMenu.class);

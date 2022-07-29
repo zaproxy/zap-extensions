@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 /** Popup for turning on and off recording for Zest standalone scripts */
+@SuppressWarnings("serial")
 public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

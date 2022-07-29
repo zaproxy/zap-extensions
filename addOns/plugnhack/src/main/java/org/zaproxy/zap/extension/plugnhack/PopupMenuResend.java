@@ -24,6 +24,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.plugnhack.manualsend.ManualClientMessageSendEditorDialog;
 
+@SuppressWarnings("serial")
 public class PopupMenuResend extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
