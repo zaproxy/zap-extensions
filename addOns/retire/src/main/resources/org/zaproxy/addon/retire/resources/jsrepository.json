@@ -198,8 +198,8 @@
 		"extractors" : {
 			"func"    		: [ "jQuery.validation.version" ],
 			"filename"		: [ "jquery.validat(?:ion|e)-(§§version§§)(.min)?\\.js" ],
-			"uri"			: [ "/(§§version§§)/jquery.validat(ion|e)(\\.min)?\\.js" ],
-			"filecontent"	: [ "/\\*!?(?:\n \\*)? jQuery Validation Plugin v(§§version§§)" ],
+			"uri"			: [ "/(§§version§§)/jquery.validat(ion|e)(\\.min)?\\.js", "/jquery-validation@(§§version§§)/dist/.*\\.js" ],
+			"filecontent"	: [ "/\\*!?(?:\n \\*)?[\\s]*jQuery Validation Plugin -? ?v(§§version§§)", "Original file: /npm/jquery-validation@(§§version§§)/dist/jquery.validate.js" ],
 			"hashes"		: {}
 		}
 	},
@@ -297,6 +297,7 @@
 		],
 		"extractors" : {
 			"func"    		: [ "jQuery.ui.version" ],
+			"uri" 			: [ "/(§§version§§)/jquery-ui(\\.min)?\\.js" ],
 			"filecontent"	: [
 				"/\\*!? jQuery UI - v(§§version§§)",
 				"/\\*!?[\n *]+jQuery UI (§§version§§)"
@@ -397,6 +398,10 @@
 		],
 		"extractors" : {
 			"func"    		: [ "jQuery.prettyPhoto.version" ],
+			"uri"			: [ 
+				"/prettyPhoto/(§§version§§)/js/jquery\\.prettyPhoto(\\.min?)\\.js",
+				"/prettyphoto@(§§version§§)/js/jquery\\.prettyPhoto\\.js"
+			],
 			"filecontent"	: [
 				"/\\*[\r\n -]+Class: prettyPhoto(?:.*\n){1,3}[ ]*Version: (§§version§§)",
 				"\\.prettyPhoto[ ]?=[ ]?\\{version:[ ]?(?:'|\")(§§version§§)(?:'|\")\\}"
@@ -458,8 +463,9 @@
 		"extractors" : {
 			"func"    		: [ "ko.version" ],
 			"filename"		: [ "knockout-(§§version§§)(.min)?\\.js"],
+			"uri"			: [ "/knockout/(§§version§§)/knockout(-[a-z.]+)?\\.js" ],
 			"filecontent"	: [
-				"\\* Knockout JavaScript library v(§§version§§)"
+				"(?:\\*|//) Knockout JavaScript library v(§§version§§)"
 			],
 			"hashes"		: {}
 		}
@@ -598,6 +604,7 @@
 
 		],
 		"extractors" : {
+			"uri" 				 : [ "/tinymce/(§§version§§)/tinymce(\\.min)?\\.js" ],
 			"filecontent"	     : [ "// (§§version§§) \\([0-9\\-]+\\)[\n\r]+.{0,1200}l=.tinymce/geom/Rect." ],
 			"filecontentreplace" : [
 										"/tinyMCEPreInit.*majorVersion:.([0-9]+).,minorVersion:.([0-9.]+)./$1.$2/",
@@ -879,12 +886,16 @@
 		],
 		"extractors" : {
 			"func"			: [ "Ember.VERSION" ],
-			"uri"			: [ "/(?:v)?(§§version§§)/ember(\\.min)?\\.js" ],
+			"uri"			: [ "/(?:v)?(§§version§§)/ember(\\.min)?\\.js", "/ember\\.?js/(§§version§§)/ember((\\.|-)[a-z\\-.]+)?\\.js" ],
 			"filename"		: [ "ember-(§§version§§)(\\.min)?\\.js" ],
 			"filecontent"	: [
 				"Project:   Ember -(?:.*\n){9,11}// Version: v(§§version§§)",
 				"// Version: v(§§version§§)(.*\n){10,15}(Ember Debug|@module ember|@class ember)",
-				"Ember.VERSION[ ]?=[ ]?(?:'|\")(§§version§§)(?:'|\")"
+				"Ember.VERSION[ ]?=[ ]?(?:'|\")(§§version§§)(?:'|\")",
+				"meta\\.revision=\"Ember@(§§version§§)\"",
+				"e\\(\"ember/version\",\\[\"exports\"\\],function\\(e\\)\\{\"use strict\";?[\\s]*e(?:\\.|\\[\")default(?:\"\\])?=\"(§§version§§)\"",
+				"\\(\"ember/version\",\\[\"exports\"\\],function\\(e\\)\\{\"use strict\";.{1,70}\\.default=\"(§§version§§)\"",
+				"/\\*![\\s]+\\* @overview  Ember - JavaScript Application Framework[\\s\\S]{0,400}\\* @version   (§§version§§)"
 			],
 			"hashes"		: {}
 		}
@@ -1157,7 +1168,7 @@
 			"func"			: [ "Backbone.VERSION" ],
 			"uri"			: [ "/(§§version§§)/backbone(\\.min)?\\.js" ],
 			"filename"		: [ "backbone(?:js)?-(§§version§§)(.min)?\\.js" ],
-			"filecontent"	: [ "//[ ]+Backbone.js (§§version§§)", "a=t.Backbone={}}a.VERSION=\"(§§version§§)\"" ],
+			"filecontent"	: [ "//[ ]+Backbone.js (§§version§§)", "a=t.Backbone=\\{\\}\\}a.VERSION=\"(§§version§§)\"" ],
 			"hashes"		: {}
 		}
 	},
@@ -1785,7 +1796,7 @@
 								"/\\*!? Bootstrap v(§§version§§)",
 								"\\* Bootstrap v(§§version§§)",
 								"/\\*! Bootstrap v(§§version§§)",
-								"this\\.close\\)};.\\.VERSION=\"(§§version§§)\"(?:,.\\.TRANSITION_DURATION=150)?,.\\.prototype\\.close"
+								"this\\.close\\)\\};.\\.VERSION=\"(§§version§§)\"(?:,.\\.TRANSITION_DURATION=150)?,.\\.prototype\\.close"
 			],
 			"hashes"		: {}
 		}
@@ -2010,13 +2021,18 @@
 		],
 		"extractors" : {
 			"uri"			: [
-				"/vue@(§§version§§)/dist/vue\\.js"
+				"/vue@(§§version§§)/dist/vue\\.js",
+				"/vue/(§§version§§)/vue\\..*\\.js",
+				"/npm/vue@(§§version§§)"
 			],
 			"filename"		: [ "vue-(§§version§§)(\\.min)?\\.js" ],
 			"filecontent"	: [
 				"/\\*!\\n \\* Vue.js v(§§version§§)",
 				"Vue.version = '(§§version§§)';",
-				"'(§§version§§)'[^\\n]{0,8000}Vue compiler"
+				"'(§§version§§)'[^\\n]{0,8000}Vue compiler",
+				"\\* Original file: /npm/vue@(§§version§§)/dist/vue.(global|common).js",
+				"const version[ ]*=[ ]*\"(§§version§§)\";[\\s]*/\\*\\*[\\s]*\\* SSR utils for \\\\@vue/server-renderer",
+				"\\.__vue_app__=.{0,8000}?const [a-z]+=\"(§§version§§)\","
 			],
 			"func"			: [ "Vue.version" ]
 		}
@@ -2255,7 +2271,6 @@
 				"below" : "0.7.0",
 				"severity" : "high",
 				"identifiers" : {
-					"CVE" : [ "CVE-XXXX-XXXX" ],
 					"bug" : "SNYK-JS-ALASQL-1082932",
 					"summary" : "An arbitrary code execution exists as AlaSQL doesn't sanitize input when characters are placed between square brackets [] or preceded with a backtik (accent grave) ` character. Versions older that 0.7.0 were deprecated in March of 2021 and should no longer be used."
 				},
@@ -2270,7 +2285,121 @@
 		}
 	},
 
+	"jquery.datatables" : {
+		"vulnerabilities" : [
+			{	
+				"below" : "1.10.10",
+				"identifiers" : {
+					"summary" : "possible XSS"
+				},
+				"info" : [ "https://github.com/DataTables/DataTables/commit/6f67df2d21f9858ec40a6e9565c3a653cdb691a6" ]
+			},
+			{	
+				"below" : "1.10.8",
+				"identifiers" : {
+					"CVE" : [ "CVE-2015-6584" ],
+					"summary" : "XSS"
+				},
+				"info" : [ "https://github.com/DataTables/DataTablesSrc/commit/ccf86dc5982bd8e16d", "https://www.invicti.com/web-applications-advisories/cve-2015-6384-xss-vulnerability-identified-in-datatables/" ]
+			}
 
+		],
+		"extractors" : {
+			"uri": [ "/(§§version§§)/(js/)?jquery.dataTables(.min)?.js" ],
+			"filename" : [ "jquery.dataTables-(§§version§§)(\\.min)?\\.js" ],
+			"filecontent"	: [ "http://www.datatables.net\n +DataTables (§§version§§)", "/\\*! DataTables (§§version§§)", "u.version=\"(§§version§§)\";u.settings=\\[\\];u.models=\\{\\};u.models.oSearch" ],
+			"func" : [ "DataTable && DataTable.version" ]
+		}
+	},
+
+	"nextjs" : {
+		"vulnerabilities" : [
+			{
+				"atOrAbove" : "10.0.0",
+				"below" 	: "12.1.0",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "Improper CSP in Image Optimization API",
+					"CVE" : [ "CVE-2022-23646" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-fmvm-x8mv-47mj" ]
+			},
+			{
+				"atOrAbove" : "12.0.0",
+				"below" 	: "12.0.9",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "DOS Vulnerability for self-hosted next.js apps",
+					"CVE" : [ "CVE-2022-21721" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-wr66-vrwm-5g5x" ]
+			},
+			{
+				"below" 	: "11.1.3",
+				"severity"  : "high",
+				"identifiers" : {
+					"summary" : "Unexpected server crash in Next.js versions",
+					"CVE" : [ "CVE-2021-43803" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-25mp-g6fv-mqxx" ]
+			},
+			{
+				"atOrAbove" : "12.0.0",
+				"below" 	: "12.0.5",
+				"severity"  : "high",
+				"identifiers" : {
+					"summary" : "Unexpected server crash in Next.js versions",
+					"CVE" : [ "CVE-2021-43803" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-25mp-g6fv-mqxx" ]
+			},
+			{
+				"atOrAbove" : "10.0.0",
+				"below" 	: "11.1.1",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "XSS in Image Optimization API",
+					"CVE" : [ "CVE-2021-39178" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-9gr3-7897-pp7m" ]
+			},
+			{
+				"below" 	: "11.1.0",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "Open Redirect in Next.js",
+					"CVE" : [ "CVE-2021-37699" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-vxf5-wxwp-m7g9" ]
+			},
+			{
+				"atOrAbove" : "9.5.0",
+				"below" 	: "9.5.4",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "Open Redirect in Next.js",
+					"CVE" : [ "CVE-2020-15242" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-x56p-c8cg-q435" ]
+			},
+			{
+				"below" 	: "9.3.2",
+				"severity"  : "medium",
+				"identifiers" : {
+					"summary" : "Directory Traversal in Next.js",
+					"CVE" : [ "CVE-2020-5284" ]
+				},
+				"info" : [ "https://github.com/vercel/next.js/security/advisories/GHSA-fq77-7p7r-83rj" ]
+			}
+		],
+		"extractors" : {
+			"filecontent" : [ 
+				"version=\"(§§version§§)\".{1,1500}document\\.getElementById\\(\"__NEXT_DATA__\"\\)\\.textContent",
+				"document\\.getElementById\\(\"__NEXT_DATA__\"\\)\\.textContent\\);window\\.__NEXT_DATA__=.;.\\.version=\"(§§version§§)\""
+			],
+			"func" : [ "next && next.version" ]
+		}
+	},
 	"dont check" : {
 		"extractors" : {
 			"uri" : [
