@@ -256,6 +256,26 @@
     },
     "website": "https://get.gaug.es"
   },
+  "GemPages": {
+    "cats": [
+      100,
+      51
+    ],
+    "description": "GemPages is a powerful Shopify landing page buidler that empowers SMEs, agency, and freelancers to build their brands and sell online.",
+    "icon": "GemPages.svg",
+    "implies": "Shopify",
+    "js": {
+      "GEMSTORE": "",
+      "GEMVENDOR": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/files/gempagev\\d+\\.js",
+    "website": "https://gempages.net"
+  },
   "Gemius": {
     "cats": [
       10
@@ -373,7 +393,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:gentoo:linux",
+    "cpe": "cpe:2.3:o:gentoo:linux:*:*:*:*:*:*:*:*",
     "description": "Gentoo is a free operating system based on Linux.",
     "headers": {
       "X-Powered-By": "gentoo"
@@ -497,7 +517,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:get-simple:getsimple_cms",
+    "cpe": "cpe:2.3:a:get-simple:getsimple_cms:*:*:*:*:*:*:*:*",
     "icon": "GetSimple CMS.png",
     "implies": "PHP",
     "meta": {
@@ -653,6 +673,7 @@
     "cookies": {
       "_gitlab_session": ""
     },
+    "cpe": "cpe:2.3:a:gitlab:gitlab:*:*:*:*:*:*:*:*",
     "description": "GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and continuous integration and deployment pipeline features, using an open-source license.",
     "html": [
       "<meta content=\"https?://[^/]+/assets/gitlab_logo-",
@@ -691,7 +712,7 @@
     "cookies": {
       "i_like_gitea": ""
     },
-    "cpe": "cpe:/a:gitea:gitea",
+    "cpe": "cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:*",
     "description": "Gitea is an open-source forge software package for hosting software development version control using Git as well as other collaborative features like bug tracking, wikis and code review. It supports self-hosting but also provides a free public first-party instance hosted on DiDi's cloud.",
     "html": [
       "<div class=\"ui left\">\\n\\s+© Gitea Version: ([\\d.]+)\\;version:\\1"
@@ -747,6 +768,18 @@
     "scriptSrc": "cdn\\.gladly\\.com",
     "website": "https://www.gladly.com"
   },
+  "GlassFish": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:oracle:glassfish_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "GlassFish(?: Server)?(?: Open Source Edition)?(?: ?/?([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "GlassFish.png",
+    "implies": "Java",
+    "website": "http://glassfish.java.net"
+  },
   "Glassbox": {
     "cats": [
       10
@@ -754,27 +787,25 @@
     "description": "Glassbox is an Israeli software company. It sells session-replay analytics software and services.",
     "icon": "Glassbox.svg",
     "js": {
-      "sessioncamConfiguration": "",
-      "SessionCamRecorder": ""
+      "SessionCamRecorder": "",
+      "sessioncamConfiguration": ""
     },
-    "saas": true,
-    "scriptSrc": "cdn\\.glassboxcdn\\.com/",
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "cdn\\.glassboxcdn\\.com/",
     "website": "https://www.glassbox.com"
   },
-  "GlassFish": {
+  "Glider.js": {
     "cats": [
-      22
+      59
     ],
-    "cpe": "cpe:/a:oracle:glassfish_server",
-    "headers": {
-      "Server": "GlassFish(?: Server)?(?: Open Source Edition)?(?: ?/?([\\d.]+))?\\;version:\\1"
-    },
-    "icon": "GlassFish.png",
-    "implies": "Java",
-    "website": "http://glassfish.java.net"
+    "description": "Glider.js is a fast, lightweight, responsive, dependency-free scrollable list with customisable paging controls.",
+    "icon": "Glider.js.svg",
+    "oss": true,
+    "scriptSrc": "(?:/|@)?([\\d\\.]{2,})?/glider\\.min\\.js\\;version:\\1",
+    "website": "https://nickpiscitelli.github.io/Glider.js"
   },
   "Glitch": {
     "cats": [
@@ -968,9 +999,29 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:golang:go",
+    "cpe": "cpe:2.3:a:golang:go:*:*:*:*:*:*:*:*",
     "icon": "Go.svg",
     "website": "https://golang.org"
+  },
+  "Go Instore": {
+    "cats": [
+      103
+    ],
+    "description": "Go Instore uses high-definition live video to connect online customers with in-store product experts.",
+    "headers": {
+      "content-security-policy": "\\.goinstore\\.com"
+    },
+    "icon": "Go Instore.svg",
+    "js": {
+      "GISAPP.videoJsCtrl": "",
+      "gisAppLib.postRobot": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//gis\\.goinstore\\.com/",
+    "website": "https://goinstore.com"
   },
   "GoAffPro": {
     "cats": [
@@ -993,7 +1044,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:embedthis:goahead",
+    "cpe": "cpe:2.3:a:embedthis:goahead:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "GoAhead"
     },
@@ -1160,26 +1211,6 @@
     "saas": true,
     "website": "https://www.godaddy.com/websites/website-builder"
   },
-  "Go Instore": {
-    "cats": [
-      103
-    ],
-    "description": "Go Instore uses high-definition live video to connect online customers with in-store product experts.",
-    "icon": "Go Instore.svg",
-    "headers": {
-      "content-security-policy": "\\.goinstore\\.com"
-    },
-    "js": {
-      "GISAPP.videoJsCtrl": "",
-      "gisAppLib.postRobot": ""
-    },
-    "scriptSrc": "//gis\\.goinstore\\.com/",
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://goinstore.com"
-  },
   "GoJS": {
     "cats": [
       25
@@ -1190,6 +1221,24 @@
       "go.version": "(.*)\\;version:\\1"
     },
     "website": "https://gojs.net/"
+  },
+  "GoKwik": {
+    "cats": [
+      19
+    ],
+    "description": "GoKwik is a platform for solving shopping experience problems on ecommerce websites on the internet.",
+    "icon": "GoKwik.svg",
+    "js": {
+      "gokwikBuyNow": "",
+      "gokwikCheckoutApp": "",
+      "gokwikSdk": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "website": "https://www.gokwik.co"
   },
   "GoStats": {
     "cats": [
@@ -1241,7 +1290,7 @@
     "cookies": {
       "i_like_gogits": ""
     },
-    "cpe": "cpe:/a:gogs:gogs",
+    "cpe": "cpe:2.3:a:gogs:gogs:*:*:*:*:*:*:*:*",
     "description": "Gogs is a self-hosted Git service written in Go.",
     "html": [
       "<div class=\"ui left\">\\n\\s+© \\d{4} Gogs Version: ([\\d.]+) Page:\\;version:\\1",
@@ -1351,11 +1400,8 @@
     "cats": [
       22
     ],
-    "headers": {
-      "Server": "Google Frontend"
-    },
     "icon": "Google App Engine.svg",
-    "website": "http://code.google.com/appengine"
+    "website": "https://cloud.google.com/appengine"
   },
   "Google Call Conversion Tracking": {
     "cats": [
@@ -1390,7 +1436,7 @@
     "cats": [
       63
     ],
-    "cpe": "cpe:/a:google:cloud_platform",
+    "cpe": "cpe:2.3:a:google:cloud_platform:*:*:*:*:*:*:*:*",
     "description": "Google Cloud is a suite of cloud computing services.",
     "icon": "google_cloud.svg",
     "website": "https://cloud.google.com"
@@ -1616,7 +1662,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:google:web_server",
+    "cpe": "cpe:2.3:a:google:web_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "gws"
     },
@@ -1627,7 +1673,7 @@
     "cats": [
       18
     ],
-    "cpe": "cpe:/a:google:web_toolkit",
+    "cpe": "cpe:2.3:a:google:web_toolkit:*:*:*:*:*:*:*:*",
     "description": "Google Web Toolkit (GWT) is an open-source Java software development framework that makes writing AJAX applications.",
     "icon": "Google Web Toolkit.png",
     "implies": "Java",
@@ -1691,6 +1737,26 @@
       "payg"
     ],
     "website": "https://gotipath.com"
+  },
+  "Govalo": {
+    "cats": [
+      100
+    ],
+    "description": "Govalo is a software startup company that builds a Shopify app.",
+    "icon": "Govalo.svg",
+    "implies": "Shopify",
+    "js": {
+      "Govalo.meta": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\d\\.]+)/assets/govalo\\.min\\.js\\;version:\\1",
+    "website": "https://govalo.com"
   },
   "Grab Pay Later": {
     "cats": [
@@ -2106,7 +2172,7 @@
     "cats": [
       47
     ],
-    "cpe": "cpe:/a:git-scm:git",
+    "cpe": "cpe:2.3:a:git-scm:git:*:*:*:*:*:*:*:*",
     "icon": "git.svg",
     "meta": {
       "generator": "\\bgit/([\\d.]+\\d)\\;version:\\1"
@@ -2117,7 +2183,7 @@
     "cats": [
       47
     ],
-    "cpe": "cpe:/a:gitlist:gitlist",
+    "cpe": "cpe:2.3:a:gitlist:gitlist:*:*:*:*:*:*:*:*",
     "html": "<p>Powered by <a[^>]+>GitList ([\\d.]+)\\;version:\\1",
     "implies": [
       "PHP",

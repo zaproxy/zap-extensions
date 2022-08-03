@@ -19,7 +19,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:ibm:websphere_portal",
+    "cpe": "cpe:2.3:a:ibm:websphere_portal:*:*:*:*:*:*:*:*",
     "headers": {
       "IBM-Web2-Location": "",
       "Itx-Generated-Timestamp": ""
@@ -33,7 +33,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:facebook:hhvm",
+    "cpe": "cpe:2.3:a:facebook:hhvm:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "HHVM/?([\\d.]+)?\\;version:\\1"
     },
@@ -56,6 +56,7 @@
       22,
       46
     ],
+    "cpe": "cpe:2.3:h:hp:integrated_lights-out:*:*:*:*:*:*:*:*",
     "description": "HP iLO is a tool that provides multiple ways to configure, update, monitor, and run servers remotely.",
     "headers": {
       "Server": "HP-iLO-Server(?:/([\\d.]+))?\\;version:\\1"
@@ -70,10 +71,23 @@
     "description": "HTTP/2 (originally named HTTP/2.0) is a major revision of the HTTP network protocol used by the World Wide Web.",
     "excludes": "SPDY",
     "headers": {
+      "Alt-Svc": "h2",
       "X-Firefox-Spdy": "h2"
     },
     "icon": "http2.png",
     "website": "https://http2.github.io"
+  },
+  "HTTP/3": {
+    "cats": [
+      19
+    ],
+    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
+    "excludes": "HTTP/2",
+    "headers": {
+      "Alt-Svc": "h3"
+    },
+    "icon": "HTTP3.svg",
+    "website": "https://httpwg.org/"
   },
   "Haddock": {
     "cats": [
@@ -126,7 +140,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:handlebars.js_project:handlebars.js",
+    "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
     "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
     "html": "<[^>]*type=[^>]text\\/x-handlebars-template",
     "icon": "Handlebars.png",
@@ -148,6 +162,24 @@
     },
     "scriptSrc": "api\\.handtalk\\.me",
     "website": "https://www.handtalk.me/"
+  },
+  "Hansel": {
+    "cats": [
+      58
+    ],
+    "description": "Hansel is a B2B enterprise software that deploys real-time Nudges to drive feature adoption and address user drop-offs, at scale.",
+    "icon": "Hansel.png",
+    "js": {
+      "Hansel": "",
+      "HanselPX": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hansel\\.io/web/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://hansel.io"
   },
   "Happy Returns": {
     "cats": [
@@ -1345,6 +1377,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.gethypervisual\\.com/",
     "website": "https://gethypervisual.com"
+  },
+  "Hypestyle CSS": {
+    "cats": [
+      66
+    ],
+    "description": "Hypestyle CSS is a small CSS library build on utility classes and components.",
+    "dom": {
+      "link[href*='hypestyle']": {
+        "attributes": {
+          "href": "/hypestyle@([\\d\\.]+)/dist/css/hypestyle\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Hypestyle CSS.png",
+    "implies": "Sass",
+    "oss": true,
+    "website": "https://www.hypestylecss.xyz"
   },
   "h5ai": {
     "cats": [

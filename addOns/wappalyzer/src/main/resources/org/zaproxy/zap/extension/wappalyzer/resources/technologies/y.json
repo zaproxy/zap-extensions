@@ -36,14 +36,16 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:yahoo:yui",
+    "cpe": "cpe:2.3:a:yahoo:yui:*:*:*:*:*:*:*:*",
+    "description": "YUI is a JavaScript and CSS library with more than 30 unique components including low-level DOM utilities and high-level user-interface widgets.",
     "icon": "YUI.png",
     "js": {
       "YAHOO.VERSION": "^(.+)$\\;version:\\1",
       "YUI.version": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "(?:/yui/|yui\\.yahooapis\\.com)",
-    "website": "http://yuilibrary.com"
+    "website": "https://clarle.github.io/yui3"
   },
   "YUI Doc": {
     "cats": [
@@ -579,6 +581,25 @@
     ],
     "saas": true,
     "website": "https://youcan.shop"
+  },
+  "YouPay": {
+    "cats": [
+      100
+    ],
+    "description": "YouPay is an alternative method of payment that allows you to give someone else the ability to pay for your shopping cart with no fees or interest.",
+    "icon": "YouPay.svg",
+    "implies": "Shopify",
+    "js": {
+      "YouPay.buttonWindow": "",
+      "youpayReady": "",
+      "youpayStatus": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.youpay\\.ai/",
+    "website": "https://youpay.co"
   },
   "YouTrack": {
     "cats": [

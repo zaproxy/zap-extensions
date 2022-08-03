@@ -105,7 +105,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:modx:modx_revolution",
+    "cpe": "cpe:2.3:a:modx:modx_revolution:*:*:*:*:*:*:*:*",
     "description": "MODX is an open source content management system and web application framework for publishing content on the world wide web and intranets.",
     "headers": {
       "X-Powered-By": "^MODX"
@@ -251,7 +251,7 @@
       "X-Magento-Vary": "",
       "frontend": "\\;confidence:50"
     },
-    "cpe": "cpe:/a:magento:magento",
+    "cpe": "cpe:2.3:a:magento:magento:*:*:*:*:*:*:*:*",
     "description": "Magento is an open-source ecommerce platform written in PHP.",
     "dom": {
       "script[data-requiremodule*='mage/'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
@@ -301,7 +301,7 @@
       32,
       75
     ],
-    "cpe": "cpe:/a:thinkshout:mailchimp",
+    "cpe": "cpe:2.3:a:thinkshout:mailchimp:*:*:*:*:*:*:*:*",
     "description": "Mailchimp is a marketing automation platform and email marketing service.",
     "dns": {
       "TXT": [
@@ -448,11 +448,11 @@
       "Python",
       "Django"
     ],
+    "oss": true,
     "scriptSrc": [
       "/mailman\\d+/static/.+\\.js",
       "/static/(?:hyperkitty|django-mailman3)/.+\\.js"
     ],
-    "oss": true,
     "website": "http://list.org"
   },
   "Mailmunch": {
@@ -493,16 +493,53 @@
     "scriptSrc": "mk-sense\\.com/aweb\\?license",
     "website": "https://mk-sense.com/"
   },
+  "MakeShop": {
+    "cats": [
+      6
+    ],
+    "description": "MakeShop is a Japanese ecommerce platform.",
+    "dom": "link[href*='gigaplus.makeshop.jp'], img[src*='gigaplus.makeshop.jp']",
+    "icon": "MakeShop.svg",
+    "js": {
+      "MakeShop_TopSearch": "",
+      "makeshop_ga_gtag": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.makeshop.jp"
+  },
   "MakeShopKorea": {
     "cats": [
       6
     ],
+    "description": "MakeShopKorea is a Korean hosting brand that focuses on building ecommerce stores.",
     "icon": "MakeShopKorea.png",
     "js": {
       "Makeshop": "",
       "MakeshopLogUniqueId": ""
     },
     "website": "https://www.makeshop.co.kr"
+  },
+  "Malomo": {
+    "cats": [
+      107
+    ],
+    "description": "Malomo is a cloud-based shipment tracking solution that helps small to midsize eCommerce businesses provide customers with shipping updates via white-label package tracking pages.",
+    "icon": "Malomo.svg",
+    "js": {
+      "Malomo": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.gomalomo\\.com/",
+    "website": "https://gomalomo.com"
   },
   "Mambo": {
     "cats": [
@@ -532,7 +569,7 @@
     "cats": [
       13
     ],
-    "cpe": "cpe:/a:mantisbt:mantisbt",
+    "cpe": "cpe:2.3:a:mantisbt:mantisbt:*:*:*:*:*:*:*:*",
     "html": "<img[^>]+ alt=\"Powered by Mantis Bugtracker",
     "icon": "MantisBT.png",
     "implies": "PHP",
@@ -676,7 +713,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:mariadb_project:mariadb",
+    "cpe": "cpe:2.3:a:mariadb_project:mariadb:*:*:*:*:*:*:*:*",
     "description": "MariaDB is an open-source relational database management system compatible with MySQL.",
     "icon": "mariadb.svg",
     "website": "https://mariadb.org"
@@ -702,7 +739,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:marked_project:marked",
+    "cpe": "cpe:2.3:a:marked_project:marked:*:*:*:*:*:*:*:*",
     "icon": "marked.svg",
     "js": {
       "marked": ""
@@ -860,7 +897,7 @@
     "cookies": {
       "PIWIK_SESSID": ""
     },
-    "cpe": "cpe:/a:matomo:matomo",
+    "cpe": "cpe:2.3:a:matomo:matomo:*:*:*:*:*:*:*:*",
     "description": "Matomo Analytics is a free and open-source web analytics applicatio, that runs on a PHP/MySQL web-server.",
     "icon": "Matomo.png",
     "js": {
@@ -891,7 +928,7 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:jenkins:mattermost",
+    "cpe": "cpe:2.3:a:jenkins:mattermost:*:*:*:*:*:*:*:*",
     "html": "<noscript> To use Mattermost, please enable JavaScript\\. </noscript>",
     "icon": "mattermost.png",
     "implies": [
@@ -910,7 +947,7 @@
     "cats": [
       32
     ],
-    "cpe": "cpe:/a:mautic:mautic",
+    "cpe": "cpe:2.3:a:mautic:mautic:*:*:*:*:*:*:*:*",
     "description": "Mautic is a free and open-source marketing automation tool for Content Management, Social Media, Email Marketing, and can be used for the integration of social networks, campaign management, forms, questionnaires, reports, etc.",
     "icon": "mautic.svg",
     "js": {
@@ -974,6 +1011,22 @@
     },
     "website": "https://maxemail.xtremepush.com"
   },
+  "MaxenceDEVCMS": {
+    "cats": [
+      1
+    ],
+    "description": "MaxenceDEVCMS is a simple CMS for ecommerce, esport, landing page.",
+    "icon": "default.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "author": "^MaxenceDEV$"
+    },
+    "oss": true,
+    "website": "https://cms.maxencedev.fr"
+  },
   "Measured": {
     "cats": [
       10
@@ -1033,7 +1086,7 @@
     "cats": [
       8
     ],
-    "cpe": "cpe:/a:mediawiki:mediawiki",
+    "cpe": "cpe:2.3:a:mediawiki:mediawiki:*:*:*:*:*:*:*:*",
     "description": "MediaWiki is a free and open-source wiki engine.",
     "html": [
       "<body[^>]+class=\"mediawiki\"",
@@ -1123,7 +1176,7 @@
       11,
       32
     ],
-    "cpe": "cpe:/a:melisplatform:melisplatform",
+    "cpe": "cpe:2.3:a:melisplatform:melisplatform:*:*:*:*:*:*:*:*",
     "html": [
       "<!-- Rendered with Melis CMS V2",
       "<!-- Rendered with Melis Platform"
@@ -1355,7 +1408,7 @@
       "ASP.NET_SessionId": "",
       "ASPSESSION": ""
     },
-    "cpe": "cpe:/a:microsoft:asp.net",
+    "cpe": "cpe:2.3:a:microsoft:asp.net:*:*:*:*:*:*:*:*",
     "description": "ASP.NET is an open-source, server-side web-application framework designed for web development to produce dynamic web pages.",
     "headers": {
       "X-AspNet-Version": "(.+)\\;version:\\1",
@@ -1450,7 +1503,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:excel",
+    "cpe": "cpe:2.3:a:microsoft:excel:*:*:*:*:*:*:*:*",
     "description": "Microsoft Excel is an electronic spreadsheet program used for storing, organizing, and manipulating data.",
     "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:excel\"|<!--\\s*(?:START|END) OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD\\s*-->|<div [^>]*x:publishsource=\"?Excel\"?)",
     "icon": "Microsoft Excel.svg",
@@ -1474,7 +1527,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:powerpoint",
+    "cpe": "cpe:2.3:a:microsoft:powerpoint:*:*:*:*:*:*:*:*",
     "description": "Microsoft PowerPoint is a tool to create presentations using simple drag and drop tools.",
     "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:powerpoint\"|<link rel=\"?Presentation-XML\"? href=\"?[^\"]+\\.xml\"?>|<o:PresentationFormat>[^<]+</o:PresentationFormat>[^!]+<o:Slides>\\d+</o:Slides>(?:[^!]+<o:Version>([\\d.]+)</o:Version>)?)\\;version:\\1",
     "icon": "Microsoft PowerPoint.svg",
@@ -1488,7 +1541,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:publisher",
+    "cpe": "cpe:2.3:a:microsoft:publisher:*:*:*:*:*:*:*:*",
     "description": "Microsoft Publisher is an application that allows you to create professional documents such as newsletters, postcards, flyers, invitations, brochures.",
     "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:publisher\"|<!--[if pub]><xml>)",
     "icon": "Microsoft Publisher.svg",
@@ -1502,7 +1555,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:microsoft:sharepoint_server",
+    "cpe": "cpe:2.3:a:microsoft:sharepoint_server:*:*:*:*:*:*:*:*",
     "description": "SharePoint is a cloud-based collaborative platform to manage and share content.",
     "headers": {
       "MicrosoftSharePointTeamServices": "^(.+)$\\;version:\\1",
@@ -1528,7 +1581,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:word",
+    "cpe": "cpe:2.3:a:microsoft:word:*:*:*:*:*:*:*:*",
     "description": "MS Word is a word-processing program used primarily for creating documents.",
     "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:word\"|<w:WordDocument>|<div [^>]*class=\"?WordSection1[\" >]|<style[^>]*>[^>]*@page WordSection1)",
     "icon": "Microsoft Word.svg",
@@ -1660,6 +1713,7 @@
     "cats": [
       10
     ],
+    "description": "Mint is an extensible, self-hosted web site analytics program.",
     "icon": "Mint.png",
     "js": {
       "Mint": ""
@@ -1870,7 +1924,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:mochiweb_project:mochiweb",
+    "cpe": "cpe:2.3:a:mochiweb_project:mochiweb:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "MochiWeb(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -1955,7 +2009,7 @@
     "cookies": {
       "MOIN_SESSION": ""
     },
-    "cpe": "cpe:/a:moinmo:moinmoin",
+    "cpe": "cpe:2.3:a:moinmo:moinmoin:*:*:*:*:*:*:*:*",
     "description": "MoinMoin is a wiki engine implemented in Python.",
     "icon": "MoinMoin.png",
     "implies": "Python",
@@ -1992,7 +2046,7 @@
     "cats": [
       16
     ],
-    "cpe": "cpe:/a:acquia:mollom",
+    "cpe": "cpe:2.3:a:acquia:mollom:*:*:*:*:*:*:*:*",
     "html": "<img[^>]+\\.mollom\\.com",
     "icon": "Mollom.png",
     "scriptSrc": "mollom(?:\\.min)?\\.js",
@@ -2011,7 +2065,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:momentjs:moment",
+    "cpe": "cpe:2.3:a:momentjs:moment:*:*:*:*:*:*:*:*",
     "description": "Moment.js is a free and open-source JavaScript library that removes the need to use the native JavaScript Date object directly.",
     "icon": "Moment.js.svg",
     "js": {
@@ -2096,7 +2150,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:mongodb:mongodb",
+    "cpe": "cpe:2.3:a:mongodb:mongodb:*:*:*:*:*:*:*:*",
     "description": "MongoDB is a document-oriented NoSQL database used for high volume data storage.",
     "icon": "MongoDB.png",
     "website": "http://www.mongodb.org"
@@ -2105,7 +2159,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:zed_shaw:mongrel",
+    "cpe": "cpe:2.3:a:zed_shaw:mongrel:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Mongrel"
     },
@@ -2127,7 +2181,7 @@
     "cats": [
       18
     ],
-    "cpe": "cpe:/a:mono:mono",
+    "cpe": "cpe:2.3:a:mono:mono:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "Mono"
     },
@@ -2186,7 +2240,7 @@
       "MOODLEID_": "",
       "MoodleSession": ""
     },
-    "cpe": "cpe:/a:moodle:moodle",
+    "cpe": "cpe:2.3:a:moodle:moodle:*:*:*:*:*:*:*:*",
     "description": "Moodle is a free and open-source Learning Management System (LMS) written in PHP and distributed under the GNU General Public License.",
     "html": "<img[^>]+moodlelogo",
     "icon": "Moodle.png",
@@ -2243,6 +2297,16 @@
     "scriptSrc": "deploy\\.mopinion\\.com/",
     "website": "https://mopinion.com"
   },
+  "Moshimo": {
+    "cats": [
+      71
+    ],
+    "description": "Moshimo is a free affiliate service for individuals.",
+    "dom": "link[href*='i.moshimo.com'], img[src*='i.moshimo.com']",
+    "icon": "Moshimo.png",
+    "scriptSrc": "\\.moshimo\\.com/af/",
+    "website": "https://af.moshimo.com"
+  },
   "MotoCMS": {
     "cats": [
       1
@@ -2289,7 +2353,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:sixapart:movable_type",
+    "cpe": "cpe:2.3:a:sixapart:movable_type:*:*:*:*:*:*:*:*",
     "icon": "Movable Type.svg",
     "meta": {
       "generator": "Movable Type"
@@ -2397,7 +2461,7 @@
       "mybb[lastactive]": "",
       "mybb[lastvisit]": ""
     },
-    "cpe": "cpe:/a:mybb:mybb",
+    "cpe": "cpe:2.3:a:mybb:mybb:*:*:*:*:*:*:*:*",
     "description": "MyBB is a free and open-source forum software written in PHP.",
     "icon": "MyBB.png",
     "implies": [
@@ -2428,6 +2492,23 @@
     },
     "icon": "mycashflow.png",
     "website": "https://www.mycashflow.fi/"
+  },
+  "MyFonts": {
+    "cats": [
+      17
+    ],
+    "description": "MyFonts is a digital fonts distributor, based in Woburn, Massachusetts.",
+    "dom": "link[href*='.myfonts.net']",
+    "headers": {
+      "content-security-policy": "\\.myfonts\\.net"
+    },
+    "icon": "MyFonts.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "website": "https://www.myfonts.com",
+    "xhr": "\\.myfonts\\.net/"
   },
   "MyLiveChat": {
     "cats": [
@@ -2461,7 +2542,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:mysql:mysql",
+    "cpe": "cpe:2.3:a:mysql:mysql:*:*:*:*:*:*:*:*",
     "description": "MySQL is an open-source relational database management system.",
     "icon": "MySQL.svg",
     "website": "http://mysql.com"
@@ -2675,6 +2756,22 @@
     "icon": "mini_httpd.png",
     "website": "http://acme.com/software/mini_httpd"
   },
+  "mirrAR": {
+    "cats": [
+      105
+    ],
+    "description": "mirrAR is a real-time augmented reality platform for retail brands that enables consumers to virtually try on products and experience how it feels to own them before the actual purchase, both in-store and online.",
+    "icon": "mirrAR.png",
+    "js": {
+      "initMirrarUI": "",
+      "loadmirrAR": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.mirrar.com"
+  },
   "mobicred": {
     "cats": [
       41,
@@ -2740,6 +2837,7 @@
     "cats": [
       33
     ],
+    "cpe": "cpe:2.3:a:apache:mod_perl:*:*:*:*:*:*:*:*",
     "description": "Mod_perl is an optional module for the Apache HTTP server. It embeds a Perl interpreter into the Apache server. In addition to allowing Apache modules to be written in the Perl programming language, it allows the Apache web server to be dynamically configured by Perl programs.",
     "headers": {
       "Server": "mod_perl(?:/([\\d\\.]+))?\\;version:\\1"
@@ -2755,6 +2853,7 @@
     "cats": [
       33
     ],
+    "cpe": "cpe:2.3:a:apache:mod_python:*:*:*:*:*:*:*:*",
     "description": "Mod_python is an Apache HTTP Server module that integrates the Python programming language with the server. It is intended to provide a Python language binding for the Apache HTTP Server. ",
     "headers": {
       "Server": "mod_python(?:/([\\d.]+))?\\;version:\\1"
@@ -2802,6 +2901,7 @@
     "cats": [
       33
     ],
+    "cpe": "cpe:2.3:a:modssl:mod_ssl:*:*:*:*:*:*:*:*",
     "description": "mod_ssl is an optional module for the Apache HTTP Server. It provides strong cryptography for the Apache web server via the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) cryptographic protocols by the help of the open-source SSL/TLS toolkit OpenSSL.",
     "headers": {
       "Server": "mod_ssl(?:/([\\d.]+))?\\;version:\\1"
@@ -2814,6 +2914,7 @@
     "cats": [
       33
     ],
+    "cpe": "cpe:2.3:a:modwsgi:mod_wsgi:*:*:*:*:*:*:*:*",
     "description": "mod_wsgi is an Apache HTTP Server module that provides a WSGI compliant interface for hosting Python based web applications under Apache.",
     "headers": {
       "Server": "mod_wsgi(?:/([\\d.]+))?\\;version:\\1",
