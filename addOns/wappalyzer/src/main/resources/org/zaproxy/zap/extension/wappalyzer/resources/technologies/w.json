@@ -204,6 +204,7 @@
       87
     ],
     "description": "WP Rocket is a caching and performance optimisation plugin to improve the loading speed of WordPress websites.",
+    "dom": "style#wpr-usedcss",
     "headers": {
       "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
       "X-Rocket-Nginx-Bypass": ""
@@ -211,6 +212,7 @@
     "html": "<!--[^>]+WP Rocket",
     "icon": "WP Rocket.png",
     "js": {
+      "RocketLazyLoadScripts": "",
       "RocketPreloadLinksConfig": "",
       "rocket_lazy": ""
     },
@@ -221,7 +223,7 @@
     "requires": "WordPress",
     "saas": true,
     "scriptSrc": "/wp-content/plugins/wp-rocket/",
-    "website": "http://wp-rocket.me"
+    "website": "https://wp-rocket.me"
   },
   "WP-Optimize": {
     "cats": [
@@ -757,6 +759,27 @@
     "scriptSrc": "\\bwebix\\.js",
     "website": "http://webix.com"
   },
+  "Weblication": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:weblication:cms_core_&_grid:*:*:*:*:*:*:*:*",
+    "description": "Weblication is an enterprise-class website content management system developed by Scholl Communications AG in Germany.",
+    "icon": "Weblication.svg",
+    "implies": [
+      "PHP",
+      "XSLT"
+    ],
+    "meta": {
+      "generator": "^Weblication® CMS$"
+    },
+    "pricing": [
+      "recurring",
+      "onetime",
+      "payg"
+    ],
+    "website": "https://weblication.de"
+  },
   "Weblium": {
     "cats": [
       1,
@@ -779,6 +802,18 @@
     "scriptSrc": "res2\\.weblium\\.site/common/core\\.min\\.js",
     "url": "\\.weblium\\.site",
     "website": "https://weblium.com"
+  },
+  "Weblogic Server": {
+    "cats": [
+      22
+    ],
+    "description": "WebLogic Server is an Application Server that runs on a middle tier, between back-end databases and related applications and browser-based thin clients.",
+    "headers": {
+      "Server": "^WebLogic\\sServer\\s([\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "implies": "JavaServer Pages",
+    "website": "https://www.oracle.com/java/weblogic"
   },
   "Webmin": {
     "cats": [
@@ -899,7 +934,7 @@
     "cats": [
       1
     ],
-    "description": "Weebly is a website and eCommerce service.",
+    "description": "Weebly is a website and ecommerce service.",
     "icon": "Weebly.svg",
     "implies": [
       "PHP",
@@ -939,7 +974,7 @@
     "cookies": {
       "usces_cookie": ""
     },
-    "cpe": "cpe:/a:welcart:welcart",
+    "cpe": "cpe:2.3:a:welcart:welcart:*:*:*:*:*:*:*:*",
     "description": "Welcart is a free ecommerce plugin for WordPress with top market share in Japan.",
     "html": [
       "<link[^>]+?href=\"[^\"]+usces_default(?:\\.min)?\\.css",
@@ -1018,12 +1053,12 @@
     "description": "WideBundle is a Shopify application that allows a merchant to set up bundles on his store.",
     "icon": "WideBundle.png",
     "implies": "Shopify",
-    "scriptSrc": "//widebundle\\.com/",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "//widebundle\\.com/",
     "website": "https://en.widebundle.com"
   },
   "Widen": {
@@ -1542,7 +1577,7 @@
       1,
       11
     ],
-    "cpe": "cpe:/a:wordpress:wordpress",
+    "cpe": "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*",
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
@@ -1762,6 +1797,31 @@
     "saas": true,
     "website": "https://www.wufoo.com"
   },
+  "Wuilt": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Wuilt is the first Arab platform of its kind to help individuals and businesses create ready-made websites and ecommerce stores.",
+    "dom": {
+      "img[src*='wuilt-assets-v']": {
+        "attributes": {
+          "src": "wuilt-assets-v\\d+-dev\\.s\\d+\\.amazonaws\\.com/"
+        }
+      }
+    },
+    "icon": "Wuilt.png",
+    "implies": [
+      "React",
+      "Node.js"
+    ],
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wuilt.com"
+  },
   "Wunderkind": {
     "cats": [
       32
@@ -1827,7 +1887,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:webedition:webedition_cms",
+    "cpe": "cpe:2.3:a:webedition:webedition_cms:*:*:*:*:*:*:*:*",
     "icon": "webEdition.png",
     "meta": {
       "DC.title": "webEdition",

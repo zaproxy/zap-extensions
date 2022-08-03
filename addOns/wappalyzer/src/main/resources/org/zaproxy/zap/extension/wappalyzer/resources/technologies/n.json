@@ -65,20 +65,20 @@
       6
     ],
     "description": "Nacelle is a headless ecommerce platform.",
-    "icon": "Nacelle.svg",
     "dom": {
       "[class*='nacelle']": {
         "text": "\\;confidence:51"
       }
     },
+    "icon": "Nacelle.svg",
     "js": {
       "nacelleEventData": ""
     },
-    "saas": true,
     "pricing": [
       "high",
       "recurring"
     ],
+    "saas": true,
     "website": "https://nacelle.com"
   },
   "NagaCommerce": {
@@ -509,7 +509,7 @@
       18,
       22
     ],
-    "cpe": "cpe:/a:zeit:next.js",
+    "cpe": "cpe:2.3:a:zeit:next.js:*:*:*:*:*:*:*:*",
     "description": "Next.js is a React framework for developing single page Javascript applications.",
     "headers": {
       "x-powered-by": "^Next\\.js ?([0-9.]+)?\\;version:\\1"
@@ -521,7 +521,8 @@
       "Node.js"
     ],
     "js": {
-      "__NEXT_DATA__": ""
+      "__NEXT_DATA__": "",
+      "next.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://nextjs.org"
   },
@@ -530,7 +531,7 @@
       7,
       87
     ],
-    "cpe": "cpe:/a:imagely:nextgen_gallery",
+    "cpe": "cpe:2.3:a:imagely:nextgen_gallery:*:*:*:*:*:*:*:*",
     "description": "NextGEN Gallery is a free open-source image management plugin for the WordPress content management system.",
     "html": [
       "<!-- <meta name=\"NextGEN\" version=\"([\\d.]+)\" /> -->\\;version:\\1"
@@ -564,7 +565,7 @@
       22,
       64
     ],
-    "cpe": "cpe:/a:nginx:nginx",
+    "cpe": "cpe:2.3:a:nginx:nginx:*:*:*:*:*:*:*:*",
     "description": "Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache.",
     "headers": {
       "Server": "nginx(?:/([\\d.]+))?\\;version:\\1",
@@ -609,6 +610,22 @@
     ],
     "saas": true,
     "website": "https://nicepage.com"
+  },
+  "Nift": {
+    "cats": [
+      84
+    ],
+    "description": "Nift is a marketing program for pools of local businesses. Businesses give Nift gift cards to thank and reward their customers for taking actions, like signing up for a newsletter, referring a friend, or making a purchase.",
+    "icon": "Nift.png",
+    "js": {
+      "NiftAnalytics": "",
+      "NiftJS": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.gonift.com"
   },
   "Ninja Forms": {
     "cats": [
@@ -673,7 +690,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:nodejs:node.js",
+    "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
     "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
     "icon": "node.js.png",
     "website": "http://nodejs.org"
@@ -682,7 +699,7 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:nodebb:nodebb",
+    "cpe": "cpe:2.3:a:nodebb:nodebb:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "^NodeBB$"
     },

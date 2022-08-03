@@ -180,7 +180,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:vardot:varbase",
+    "cpe": "cpe:2.3:a:vardot:varbase:*:*:*:*:*:*:*:*",
     "dom": "meta[content='Varbase'],div[class*='varbase_'],div[class*='_varbase'],div[class*='varbase-'],div[class*='block-varbase'],div[class*='blockvarbase']",
     "icon": "varbase.png",
     "implies": "Drupal",
@@ -194,6 +194,7 @@
     "cats": [
       23
     ],
+    "cpe": "cpe:2.3:a:varnish-software:varnich_cache:*:*:*:*:*:*:*:*",
     "description": "Varnish is a reverse caching proxy.",
     "headers": {
       "Via": "varnish(?: \\(Varnish/([\\d.]+)\\))?\\;version:\\1",
@@ -367,6 +368,21 @@
     "scriptSrc": "\\.vidazoo\\.com",
     "website": "https://www.vidazoo.com"
   },
+  "Video Greet": {
+    "cats": [
+      100
+    ],
+    "description": "Video Greet lets your customers add a video message to gifts with QR codes.",
+    "icon": "Video Greet.png",
+    "js": {
+      "__vg.video_greet_button_src": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "website": "https://apps.shopify.com/videogreet-gift-messages"
+  },
   "VideoJS": {
     "cats": [
       14
@@ -400,6 +416,24 @@
     "icon": "vigbo.png",
     "scriptSrc": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
     "website": "https://vigbo.com"
+  },
+  "Vigil": {
+    "cats": [
+      13
+    ],
+    "description": "Vigil is a microservices status page. Monitors a distributed infrastructure and sends alerts (Slack, SMS, etc.).",
+    "dom": {
+      "p > a[href*='github.com/valeriansaliou/vigil']": {
+        "text": "^Vigil$"
+      }
+    },
+    "icon": "default.svg",
+    "implies": [
+      "Rust",
+      "Docker"
+    ],
+    "oss": true,
+    "website": "https://github.com/valeriansaliou/vigil"
   },
   "Vignette": {
     "cats": [
@@ -642,15 +676,36 @@
     "cats": [
       19
     ],
-    "description": "Next Generation Frontend Tooling",
+    "description": "Vite is a rapid development tool for modern web projects.",
     "icon": "vite.svg",
-    "website": "https://vitejs.dev/"
+    "oss": true,
+    "website": "https://vitejs.dev"
+  },
+  "Vitrin.me": {
+    "cats": [
+      51
+    ],
+    "description": "Vitrin.me is a no-code platform that lets anyone build web apps without writing any code.",
+    "icon": "Vitrin.me.svg",
+    "implies": [
+      "Python",
+      "Django",
+      "React",
+      "Next.js"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.vitrin\\.me/",
+    "website": "https://vitrin.me"
   },
   "Vizury": {
     "cats": [
       32
     ],
-    "description": "Vizury is a commerce marketing platform.",
+    "description": "Vizury is a ecommerce marketing platform.",
     "icon": "Vizury.png",
     "js": {
       "safariVizury": "",
@@ -662,6 +717,20 @@
     "saas": true,
     "scriptSrc": "\\.vizury\\.com",
     "website": "https://www.vizury.com"
+  },
+  "Vntana": {
+    "cats": [
+      105
+    ],
+    "description": "Vntana (stylised as VNTANA) is an American social augmented reality company.",
+    "dom": "iframe[src*='embed.vntana.com/'], iframe[nitro-lazy-src*='embed.vntana.com/']",
+    "icon": "Vntana.png",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.vntana.com"
   },
   "Volusion": {
     "cats": [
@@ -826,7 +895,7 @@
       "bblastvisit": "",
       "bbsessionhash": ""
     },
-    "cpe": "cpe:/a:vbulletin:vbulletin",
+    "cpe": "cpe:2.3:a:vbulletin:vbulletin:*:*:*:*:*:*:*:*",
     "description": "vBulletin is tool that is used to create and manage online forums or discussion boards. It is written in PHP and uses a MySQL database server.",
     "html": "<div id=\"copyright\">Powered by vBulletin",
     "icon": "vBulletin.png",

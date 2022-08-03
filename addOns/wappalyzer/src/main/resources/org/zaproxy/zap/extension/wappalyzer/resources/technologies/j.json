@@ -36,6 +36,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:redhat:jboss_application_server:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "JBoss(?:-([\\d.]+))?\\;version:\\1"
     },
@@ -46,6 +47,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:redhat:jbossweb:*:*:*:*:*:*:*:*",
     "excludes": "Apache Tomcat",
     "headers": {
       "X-Powered-By": "JBossWeb(?:-([\\d.]+))?\\;version:\\1"
@@ -175,6 +177,7 @@
     "cookies": {
       "JSESSIONID": ""
     },
+    "cpe": "cpe:2.3:a:oracle:jre:*:*:*:*:*:*:*:*",
     "description": "Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.",
     "icon": "Java.png",
     "website": "http://java.com"
@@ -238,7 +241,7 @@
     "cats": [
       57
     ],
-    "cpe": "cpe:/a:jekyllrb:jekyll",
+    "cpe": "cpe:2.3:a:jekyllrb:jekyll:*:*:*:*:*:*:*:*",
     "description": "Jekyll is a blog-aware, static site generator for personal, project, or organisation sites.",
     "html": [
       "Powered by <a href=\"https?://jekyllrb\\.com\"[^>]*>Jekyll</",
@@ -255,6 +258,7 @@
     "cats": [
       44
     ],
+    "cpe": "cpe:2.3:a:jenkins:jenkins:*:*:*:*:*:*:*:*",
     "description": "Jenkins is an open-source automation tool written in Java with plugins built for Continuous Integration (CI) purposes.",
     "headers": {
       "X-Jenkins": "([\\d.]+)\\;version:\\1"
@@ -489,7 +493,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:joomla:joomla",
+    "cpe": "cpe:2.3:a:joomla:joomla:*:*:*:*:*:*:*:*",
     "description": "Joomla is a free and open-source content management system for publishing web content.",
     "headers": {
       "X-Content-Encoded-By": "Joomla! ([\\d.]+)\\;version:\\1"
@@ -668,11 +672,11 @@
     ],
     "description": "Juo is a centralised experimentation platform for innovative marketing and product teams.",
     "icon": "Juo.svg",
-    "scriptSrc": "cdn\\.juo\\.io/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "cdn\\.juo\\.io/",
     "website": "https://get.juo.io"
   },
   "Justo": {
@@ -737,7 +741,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:jquery:jquery",
+    "cpe": "cpe:2.3:a:jquery:jquery:*:*:*:*:*:*:*:*",
     "description": "jQuery is a JavaScript library which is a free, open-source software designed to simplify HTML DOM tree traversal and manipulation, as well as event handling, CSS animation, and Ajax.",
     "icon": "jQuery.svg",
     "js": {
@@ -831,7 +835,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:jquery:jquery_ui",
+    "cpe": "cpe:2.3:a:jquery:jquery_ui:*:*:*:*:*:*:*:*",
     "description": "jQuery UI is a collection of GUI widgets, animated visual effects, and themes implemented with jQuery, Cascading Style Sheets, and HTML.",
     "icon": "jQuery UI.svg",
     "implies": "jQuery",

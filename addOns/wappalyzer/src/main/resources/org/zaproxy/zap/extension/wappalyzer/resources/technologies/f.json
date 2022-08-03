@@ -13,6 +13,7 @@
       "MRHSession": "",
       "TIN": ""
     },
+    "cpe": "cpe:2.3:a:f5:big-ip:*:*:*:*:*:*:*:*",
     "description": "F5's BIG-IP is a family of products covering software and hardware designed around application availability, access control, and security solutions.",
     "headers": {
       "server": "^big-?ip$"
@@ -352,7 +353,6 @@
       "server": "Fastly",
       "x-fastly-origin": "",
       "x-fastly-request-id": "",
-      "x-served-by": "^cache-",
       "x-via-fastly:": ""
     },
     "icon": "Fastly.svg",
@@ -455,7 +455,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:fedoraproject:fedora",
+    "cpe": "cpe:2.3:o:fedoraproject:fedora:*:*:*:*:*:*:*:*",
     "description": "Fedora is a free open-source Linux-based operating system.",
     "headers": {
       "Server": "Fedora"
@@ -572,6 +572,22 @@
     "scriptSrc": "@findify/bundle@([\\d.]+)/dist/.+\\.js\\;version:\\1",
     "website": "https://www.findify.io"
   },
+  "Findmeashoe": {
+    "cats": [
+      76
+    ],
+    "description": "Findmeashoe is a footwear recommendation portal that aims to improve shopping efficiency and experience of footwear shoppers.",
+    "icon": "Findmeashoe.png",
+    "js": {
+      "FmasJavaScript": "",
+      "fmasGenderSizeTextVariantIdCollection": "",
+      "fmasUniversalWidgetJsFileName": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://findmeashoe.com"
+  },
   "Fing": {
     "cats": [
       62
@@ -632,6 +648,7 @@
     "cats": [
       34
     ],
+    "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
     "description": "Firebase is a Backend-as-a-Service (Baas) for creating mobile and web applications.",
     "icon": "Firebase.png",
     "js": {
@@ -742,7 +759,7 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:flarum:flarum",
+    "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
     "description": "Flarum is a discussion platform.",
     "html": "<div id=\"flarum-loading\"",
     "icon": "flarum.png",
@@ -761,6 +778,7 @@
       18,
       22
     ],
+    "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
@@ -777,6 +795,25 @@
     "icon": "Flat UI.png",
     "implies": "Bootstrap",
     "website": "https://designmodo.github.io/Flat-UI/"
+  },
+  "Fleksa": {
+    "cats": [
+      6,
+      93
+    ],
+    "description": "Fleksa is an online ordering system for restaurants and delivery.",
+    "dom": "link[href*='//fleksa-cdn']",
+    "icon": "Fleksa.svg",
+    "implies": [
+      "Node.js",
+      "Next.js"
+    ],
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://fleksa.com"
   },
   "FlexCMP": {
     "cats": [
@@ -906,6 +943,8 @@
     "icon": "Flutter.svg",
     "implies": "Dart",
     "js": {
+      "_flutter.loader": "",
+      "_flutter_web_set_location_strategy": "",
       "flutterCanvasKit": ""
     },
     "meta": {
@@ -918,7 +957,7 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:fluxbb:fluxbb",
+    "cpe": "cpe:2.3:a:fluxbb:fluxbb:*:*:*:*:*:*:*:*",
     "html": "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">",
     "icon": "FluxBB.png",
     "implies": "PHP",
@@ -928,17 +967,20 @@
     "cats": [
       22
     ],
-    "description": "Fly is a platform for running full stack apps and databases.",
     "cookies": {
       "_fly": ""
     },
+    "description": "Fly is a platform for running full stack apps and databases.",
     "headers": {
       "fly-request-id": "",
       "server": "^Fly/[\\w]+\\s\\(.*\\)$",
       "via": "^.*\\sfly\\.io$"
     },
-    "pricing": ["freemium", "payg"],
     "icon": "Fly.io.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
     "website": "https://fly.io"
   },
   "Flyspray": {
@@ -1120,7 +1162,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:fork-cms:fork_cms",
+    "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
     "icon": "ForkCMS.png",
     "implies": "Symfony",
     "meta": {
@@ -1224,7 +1266,7 @@
       "FOSWIKISTRIKEONE": "",
       "SFOSWIKISID": ""
     },
-    "cpe": "cpe:/a:foswiki:foswiki",
+    "cpe": "cpe:2.3:a:foswiki:foswiki:*:*:*:*:*:*:*:*",
     "description": "Foswiki is a free open-source collaboration platform.",
     "headers": {
       "X-Foswikiaction": "",
@@ -1317,8 +1359,10 @@
     "icon": "Framer Sites.svg",
     "implies": "React",
     "js": {
+      "Framer": "",
       "Framer.Animatable": "",
-      "Framer.version": "([\\d\\.]+)\\;version:\\1\\;confidence:0"
+      "Framer.version": "([\\d\\.]+)\\;version:\\1\\;confidence:0",
+      "__framer_importFromPackage": ""
     },
     "oss": false,
     "pricing": [
@@ -1365,7 +1409,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:freebsd:freebsd",
+    "cpe": "cpe:2.3:o:freebsd:freebsd:*:*:*:*:*:*:*:*",
     "description": "FreeBSD is a free and open-source Unix-like operating system.",
     "headers": {
       "Server": "FreeBSD(?: ([\\d.]+))?\\;version:\\1"
@@ -1551,6 +1595,26 @@
     ],
     "website": "https://www.friendbuy.com"
   },
+  "Frizbit": {
+    "cats": [
+      32
+    ],
+    "description": "Frizbit is a marketing tool that helps digital marketeers increase web traffic and revenue by combining web push notification.",
+    "dom": "link[href*='cdn.frizbit.com']",
+    "icon": "Frizbit.png",
+    "js": {
+      "frizbit.configurationManager": "",
+      "frizbit.remoteConfigs": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.frizbit\\.com/",
+    "website": "https://frizbit.com"
+  },
   "Froala Editor": {
     "cats": [
       24
@@ -1578,7 +1642,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:frontpage",
+    "cpe": "cpe:2.3:a:microsoft:frontpage:*:*:*:*:*:*:*:*",
     "description": "FrontPage is a program for developing and maintaining websites.",
     "icon": "FrontPage.png",
     "meta": {
@@ -1681,6 +1745,19 @@
     "saas": true,
     "scriptSrc": "\\.fullstory\\.com/",
     "website": "https://www.fullstory.com"
+  },
+  "Fundiin": {
+    "cats": [
+      91
+    ],
+    "description": "Fundiin is the BNPL leader in Vietnam in providing zero-cost buy-now-pay-later facilities",
+    "icon": "Fundiin.svg",
+    "js": {
+      "websiteEnableSuggestFundiin": "true",
+      "websiteMaximumSuggestFundiinWithPrediction": ""
+    },
+    "saas": true,
+    "website": "https://fundiin.vn"
   },
   "Fusion Ads": {
     "cats": [

@@ -127,6 +127,7 @@
     "cats": [
       28
     ],
+    "cpe": "cpe:2.3:o:canonical:ubuntu_linux:*:*:*:*:*:*:*:*",
     "description": "Ubuntu is a free and open-source operating system on Linux for the enterprise server, desktop, cloud, and IoT.",
     "headers": {
       "Server": "Ubuntu",
@@ -235,6 +236,19 @@
     "website": "http://umbraco.com",
     "xhr": "/umbraco/api/"
   },
+  "UmiJs": {
+    "cats": [
+      12
+    ],
+    "description": "UmiJs is a scalable, enterprise-class frontend application framework that supports both configuration and conventional routing while maintaining functional completeness, such as dynamic routing, nested routing, and permission routing.",
+    "icon": "UmiJs.png",
+    "implies": "Node.js",
+    "js": {
+      "g_umi.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://umijs.org"
+  },
   "Umso": {
     "cats": [
       51
@@ -323,6 +337,24 @@
     "scriptSrc": "cmp\\.uniconsent\\.mgr\\.consensu\\.org/dfp\\.js",
     "website": "https://www.uniconsent.com/"
   },
+  "Unicorn Platform": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Unicorn Platform is a drag and drop website and blog builder for startups, mobile apps, and SaaS.",
+    "icon": "Unicorn Platform.svg",
+    "js": {
+      "unicornplatform": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://unicornplatform.com"
+  },
   "Unpkg": {
     "cats": [
       31
@@ -385,6 +417,20 @@
       "payg"
     ],
     "website": "https://uploadcare.com"
+  },
+  "Upptime": {
+    "cats": [
+      13
+    ],
+    "description": "Upptime is the open-source uptime monitor and status page, powered entirely by GitHub Actions, Issues, and Pages.",
+    "dom": {
+      "p > a[href*='upptime.js.org']": {
+        "text": "^Upptime$"
+      }
+    },
+    "icon": "Upptime.svg",
+    "oss": true,
+    "website": "https://upptime.js.org"
   },
   "Upserve": {
     "cats": [
@@ -768,7 +814,7 @@
       15
     ],
     "description": "Utterances is a lightweight comments widget built on GitHub issues.",
-    "dom": "iframe[src*='utteranc.es/client.js']",
+    "dom": "iframe[src*='utteranc.es']",
     "icon": "utterances.png",
     "oss": true,
     "website": "https://github.com/utterance/utterances",

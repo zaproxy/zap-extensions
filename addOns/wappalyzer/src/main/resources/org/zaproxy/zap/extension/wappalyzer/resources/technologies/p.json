@@ -41,7 +41,7 @@
     "cookies": {
       "PHPSESSID": ""
     },
-    "cpe": "cpe:/a:php:php",
+    "cpe": "cpe:2.3:a:php:php:*:*:*:*:*:*:*:*",
     "description": "PHP is a general-purpose scripting language used for web development.",
     "headers": {
       "Server": "php/?([\\d.]+)?\\;version:\\1",
@@ -55,7 +55,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:phpnuke:php-nuke",
+    "cpe": "cpe:2.3:a:phpnuke:php-nuke:*:*:*:*:*:*:*:*",
     "html": "<[^>]+Powered by PHP-Nuke",
     "icon": "PHP-Nuke.png",
     "implies": "PHP",
@@ -82,7 +82,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:phpfusion:phpfusion",
+    "cpe": "cpe:2.3:a:phpfusion:phpfusion:*:*:*:*:*:*:*:*",
     "headers": {
       "X-PHPFusion": "(.+)$\\;version:\\1",
       "X-Powered-By": "PHPFusion (.+)$\\;version:\\1"
@@ -102,15 +102,31 @@
     "cats": [
       25
     ],
-    "description": "PixiJS - The HTML5 Creation Engine. 2D WebGL renderer.",
-    "icon": "pixijs.png",
+    "description": "PIXIjs is a free open-source 2D engine used to make animated websites and HTML5 games.",
+    "icon": "PIXIjs.svg",
     "js": {
       "PIXI": "",
       "PIXI.VERSION": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "pixi\\.(min\\.)?js$",
     "url": ".+\\.pixijs\\.com",
-    "website": "https://www.pixijs.com/"
+    "website": "https://www.pixijs.com"
+  },
+  "POLi Payment": {
+    "cats": [
+      41
+    ],
+    "description": "POLi Payment(formerly known as Centricom) is an online payment service in Australia and New Zealand.",
+    "icon": "POLi Payment.svg",
+    "js": {
+      "wc_ga_pro.available_gateways.poli": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.polipayments.com"
   },
   "POWR": {
     "cats": [
@@ -271,7 +287,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:pagekit:pagekit",
+    "cpe": "cpe:2.3:a:pagekit:pagekit:*:*:*:*:*:*:*:*",
     "icon": "Pagekit.png",
     "meta": {
       "generator": "Pagekit"
@@ -614,7 +630,7 @@
     "cats": [
       41
     ],
-    "cpe": "cpe:/a:paypal:paypal",
+    "cpe": "cpe:2.3:a:paypal:paypal:*:*:*:*:*:*:*:*",
     "description": "PayPal is an online payments system that supports online money transfers and serves as an electronic alternative to traditional paper methods like checks and money orders.",
     "dom": {
       "button": {
@@ -635,7 +651,8 @@
       "enablePaypal": "",
       "paypal": "",
       "paypalClientId": "",
-      "paypalJs": ""
+      "paypalJs": "",
+      "wc_ga_pro.available_gateways.paypal": ""
     },
     "meta": {
       "id": "in-context-paypal-metadata"
@@ -962,7 +979,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:perl:perl",
+    "cpe": "cpe:2.3:a:perl:perl:*:*:*:*:*:*:*:*",
     "description": "Perl is a family of two high-level, general-purpose, interpreted, dynamic programming languages.",
     "headers": {
       "Server": "\\bPerl\\b(?: ?/?v?([\\d.]+))?\\;version:\\1"
@@ -1201,11 +1218,30 @@
     "saas": true,
     "website": "https://brands.photoshelter.com"
   },
+  "Photoslurp": {
+    "cats": [
+      96
+    ],
+    "description": "Photoslurp is a visual commerce platform that collects photos and videos of customers using your products from across social networks.",
+    "icon": "Photoslurp.svg",
+    "js": {
+      "Photoslurp": "",
+      "photoSlurpWidgetSettings": "",
+      "photoslurp_script": "",
+      "photoslurp_wdgts": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hi.photoslurp.com"
+  },
   "Phusion Passenger": {
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:phusionpassenger:phusion_passenger",
+    "cpe": "cpe:2.3:a:phusionpassenger:phusion_passenger:*:*:*:*:*:*:*:*",
     "description": "Phusion Passenger is a free web server and application server with support for Ruby, Python and Node.js.",
     "headers": {
       "Server": "Phusion Passenger ([\\d.]+)\\;version:\\1",
@@ -1310,7 +1346,7 @@
       1,
       6
     ],
-    "cpe": "cpe:/a:pimcore:pimcore",
+    "cpe": "cpe:2.3:a:pimcore:pimcore:*:*:*:*:*:*:*:*",
     "description": "Pimcore is an open-source digital platform that aggregates, enriches, and manages enterprise data and provides up-to-date, consistent, and personalised experiences to customers.",
     "dom": ".pimcore_area_content",
     "headers": {
@@ -1506,19 +1542,20 @@
     "saas": true,
     "website": "https://pixieset.com"
   },
-  "Pixlee": {
+  "Pixlee TurnTo": {
     "cats": [
       96
     ],
-    "description": "Pixlee is a visual marketing platform that helps brands leverage user-generated content to improve their marketing performance.",
-    "icon": "Pixlee.png",
+    "description": "Pixlee TurnTo is a social UGC, ratings and reviews, and influencer marketing platform for community-driven brands.",
+    "icon": "Pixelee TurnTo.png",
     "js": {
       "Pixlee": "",
-      "Pixlee_Analytics": ""
+      "Pixlee_Analytics": "",
+      "TurnTo": "",
+      "turnToConfig": ""
     },
     "pricing": [
-      "mid",
-      "recurring"
+      "poa"
     ],
     "saas": true,
     "scriptSrc": "assets\\.pixlee\\.com",
@@ -1604,7 +1641,7 @@
     "cookies": {
       "PLAY_SESSION": ""
     },
-    "cpe": "cpe:/a:playframework:play_framework",
+    "cpe": "cpe:2.3:a:playframework:play_framework:*:*:*:*:*:*:*:*",
     "icon": "Play.svg",
     "implies": "Scala",
     "website": "https://www.playframework.com"
@@ -1644,6 +1681,7 @@
     "cats": [
       9
     ],
+    "cpe": "cpe:2.3:a:parallels:parallels_plesk_panel:*:*:*:*:*:*:*:*",
     "description": "Plesk is a web hosting and server data centre automation software with a control panel developed for Linux and Windows-based retail hosting service providers.",
     "headers": {
       "X-Powered-By": "^Plesk(?:L|W)in",
@@ -1657,7 +1695,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:pligg:pligg_cms",
+    "cpe": "cpe:2.3:a:pligg:pligg_cms:*:*:*:*:*:*:*:*",
     "html": "<span[^>]+id=\"xvotes-0",
     "icon": "Pligg.svg",
     "js": {
@@ -1672,7 +1710,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:plone:plone",
+    "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
     "icon": "Plone.svg",
     "implies": "Python",
     "meta": {
@@ -1982,7 +2020,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:postgresql:postgresql",
+    "cpe": "cpe:2.3:a:postgresql:postgresql:*:*:*:*:*:*:*:*",
     "description": "PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
     "icon": "PostgreSQL.png",
     "website": "http://www.postgresql.org/"
@@ -2209,7 +2247,7 @@
     "cookies": {
       "PrestaShop": ""
     },
-    "cpe": "cpe:/a:prestashop:prestashop",
+    "cpe": "cpe:2.3:a:prestashop:prestashop:*:*:*:*:*:*:*:*",
     "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
     "dom": "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
     "headers": {
@@ -2461,6 +2499,7 @@
       "promobuilding_session": ""
     },
     "description": "PromoBuilding is a subscription-based website builder for optimising budgets for creating promotional campaigns.",
+    "html": "<!-- made with https://promobuilding\\.ru",
     "icon": "PromoBuilding.svg",
     "js": {
       "promoApi": "\\;confidence:25",
@@ -2479,7 +2518,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:prototypejs:prototype",
+    "cpe": "cpe:2.3:a:prototypejs:prototype:*:*:*:*:*:*:*:*",
     "description": "Prototype is a JavaScript Framework that aims to ease development of web applications.",
     "icon": "Prototype.png",
     "js": {
@@ -2622,6 +2661,7 @@
     "cookies": {
       "DSSIGNIN": ""
     },
+    "cpe": "cpe:2.3:a:pulsesecure:pulse_connect_secure:*:*:*:*:*:*:*:*",
     "description": "Pulse Secure allows to deploy VPNs to securely to your internal resources.",
     "icon": "PulseSecure.png",
     "url": "/dana-na/auth/",
@@ -2767,7 +2807,7 @@
     "cats": [
       19
     ],
-    "cpe": "cpe:/a:pygments:pygments",
+    "cpe": "cpe:2.3:a:pygments:pygments:*:*:*:*:*:*:*:*",
     "html": "<link[^>]+pygments\\.css[\"']",
     "icon": "pygments.png",
     "website": "http://pygments.org"
@@ -2790,7 +2830,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:python:python",
+    "cpe": "cpe:2.3:a:python:python:*:*:*:*:*:*:*:*",
     "description": "Python is an interpreted and general-purpose programming language.",
     "headers": {
       "Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;version:\\1"
@@ -2846,6 +2886,7 @@
     "cookies": {
       "phpbb": ""
     },
+    "cpe": "cpe:2.3:a:phpbb:phpbb:*:*:*:*:*:*:*:*",
     "description": "phpBB is a free open-source Internet forum package in the PHP scripting language.",
     "html": [
       "Powered by <a[^>]+phpBB",
@@ -2869,6 +2910,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:phpcms:phpcms:*:*:*:*:*:*:*:*",
     "icon": "PHP.svg",
     "implies": "PHP",
     "js": {
@@ -2890,6 +2932,7 @@
     "cats": [
       3
     ],
+    "cpe": "cpe:2.3:a:phpmyadmin:phpmyadmin:*:*:*:*:*:*:*:*",
     "description": "PhpMyAdmin is a free and open-source administration tool for MySQL and MariaDB.",
     "html": [
       "!\\[CDATA\\[[^<]*PMA_VERSION:\\\"([\\d.]+)\\;version:\\1",
@@ -2909,6 +2952,7 @@
     "cats": [
       3
     ],
+    "cpe": "cpe:2.3:a:phppgadmin_project:phppgadmin:*:*:*:*:*:*:*:*",
     "html": "(?:<title>phpPgAdmin</title>|<span class=\"appname\">phpPgAdmin)",
     "icon": "phpPgAdmin.png",
     "implies": "PHP",
