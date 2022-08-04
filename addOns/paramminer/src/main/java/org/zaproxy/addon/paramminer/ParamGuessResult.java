@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -43,13 +44,13 @@ public class ParamGuessResult {
     }
 
     private String paramName;
-    private Reason reason;
     private HistoryReference historyReference;
+    private List<Reason> reasons;
     private static final Logger logger = LogManager.getLogger(ParamGuessResult.class);
 
-    public ParamGuessResult(String paramName, Reason reason, HttpMessage httpMessage) {
+    public ParamGuessResult(String paramName, List<Reason> reasons, HttpMessage httpMessage) {
         this.paramName = paramName;
-        this.reason = reason;
+        this.reasons = reasons;
         try {
             // TODO Use TYPE_PARAM_MINER for the history reference type once targeting >= 2.12.0
             this.historyReference =
@@ -63,8 +64,8 @@ public class ParamGuessResult {
         return paramName;
     }
 
-    public Reason getReason() {
-        return reason;
+    public List<Reason> getReasons() {
+        return reasons;
     }
 
     public HttpMessage getHttpMessage() {
@@ -78,10 +79,17 @@ public class ParamGuessResult {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (reasons != null) {
+            for (Reason reason : reasons) {
+                sb.append(
+                        Constant.messages.getString(
+                                "paramminer.results.reason." + reason.toString()));
+                sb.append(", ");
+            }
+        }
+        sb.setLength(sb.length() - 2);
         return Constant.messages.getString(
-                "paramminer.results.maintext",
-                this.historyReference.getURI(),
-                getParamName(),
-                Constant.messages.getString("paramminer.results.reason." + reason.toString()));
+                "paramminer.results.maintext", this.historyReference.getURI(), getParamName(), sb);
     }
 }

@@ -74,18 +74,22 @@ public class UrlGuesser implements Runnable {
     private List<String> wordlist;
     private final ExecutorService executor;
     private List<ParamGuessResult> paramGuessResults;
-    private final String INIT_PARAM = "zap";
-    private final String INIT_VALUE = "123";
+    private final String INIT_PARAM_1 = "zap";
+    private final String INIT_VALUE_1 = "123";
+    private final String INIT_PARAM_2 = "pow";
+    private final String INIT_VALUE_2 = "4321";
+
+    private float statusCodeThreshold;
+    private float httpHeadersThreshold;
+    private float bodyTreesStructureHeuristicThreshold;
+    private float lineCountHeuristicThreshold;
+    private float wordCountHeuristic;
+
     private static final Logger logger = LogManager.getLogger(UrlGuesser.class);
 
-    public UrlGuesser(
-            int id,
-            ParamMinerConfig config,
-            GuesserScan scan,
-            HttpSender httpSender,
-            ExecutorService executor) {
+    public UrlGuesser(int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {
         this.id = id;
-        this.config = config;
+        this.config = scan.getConfig();
         this.scan = scan;
         this.httpSender = httpSender;
         this.executor = executor;
@@ -150,28 +154,19 @@ public class UrlGuesser implements Runnable {
     }
 
     private void startGuess(Method method, List<String> wordlist) {
-        HttpMessage msg = new HttpMessage();
-        Map<String, String> initialParam = new HashMap<>();
-        initialParam.put(INIT_PARAM, INIT_VALUE);
+        ComparableResponse primary = firstRequest(method, INIT_PARAM_1, INIT_VALUE_1);
+        ComparableResponse base = firstRequest(method, INIT_PARAM_2, INIT_VALUE_2);
 
-        UrlBruteForce initialBruter =
-                new UrlBruteForce(
-                        null,
-                        INIT_VALUE,
-                        method,
-                        initialParam,
-                        Mode.BRUTEFORCE,
-                        scan,
-                        this,
-                        this.httpSender,
-                        wordlist,
-                        null);
+        // Set threshold values
+        this.statusCodeThreshold = ComparableResponse.statusCodeHeuristic(primary, base);
+        this.httpHeadersThreshold = ComparableResponse.headersCompareHeuristic(primary, base);
+        this.bodyTreesStructureHeuristicThreshold =
+                ComparableResponse.bodyTreesStructureHeuristic(primary, base);
+        this.lineCountHeuristicThreshold = ComparableResponse.lineCountHeuristic(primary, base);
+        this.wordCountHeuristic = ComparableResponse.wordCountHeuristic(primary, base);
 
-        String valueSent = initialBruter.requester(msg, method, initialParam);
         this.scan.notifyListenersProgress();
         // TODO Add heuristic method to mine parameters from base response.
-
-        ComparableResponse base = new ComparableResponse(msg, valueSent);
 
         // TODO add initial chunk size to config
         List<Map<String, String>> paramGroups = UrlUtils.slice(UrlUtils.populate(wordlist), 2);
@@ -206,7 +201,7 @@ public class UrlGuesser implements Runnable {
                     executor.submit(
                             new UrlBruteForce(
                                     base,
-                                    INIT_VALUE,
+                                    INIT_VALUE_2,
                                     method,
                                     paramVerify,
                                     Mode.VERIFY,
@@ -239,7 +234,7 @@ public class UrlGuesser implements Runnable {
                     executor.submit(
                             new UrlBruteForce(
                                     base,
-                                    INIT_VALUE,
+                                    INIT_VALUE_2,
                                     method,
                                     param,
                                     Mode.BRUTEFORCE,
@@ -253,7 +248,7 @@ public class UrlGuesser implements Runnable {
         for (Future<ParamReasons> future : futures) {
             try {
                 ParamReasons narrowedParam = future.get();
-                if (narrowedParam != null) {
+                if (narrowedParam != null && !narrowedParam.isEmpty()) {
                     List<Map<String, String>> slices = UrlUtils.slice(narrowedParam.getParams(), 2);
                     for (Map<String, String> slice : slices) {
                         narrowedParamGroups.add(slice);
@@ -266,5 +261,47 @@ public class UrlGuesser implements Runnable {
             }
         }
         return narrowedParamGroups;
+    }
+
+    public ComparableResponse firstRequest(Method method, String param, String value) {
+        HttpMessage msg = new HttpMessage();
+        Map<String, String> initialParam = new HashMap<>();
+        initialParam.put(param, value);
+
+        UrlBruteForce initialBruter =
+                new UrlBruteForce(
+                        null,
+                        value,
+                        method,
+                        initialParam,
+                        Mode.BRUTEFORCE,
+                        scan,
+                        this,
+                        this.httpSender,
+                        wordlist,
+                        null);
+
+        String valueSent = initialBruter.requester(msg, method, initialParam);
+        return new ComparableResponse(msg, valueSent);
+    }
+
+    public float getStatusCodeThreshold() {
+        return statusCodeThreshold;
+    }
+
+    public float getHttpHeadersThreshold() {
+        return httpHeadersThreshold;
+    }
+
+    public float getBodyTreesStructureHeuristicThreshold() {
+        return bodyTreesStructureHeuristicThreshold;
+    }
+
+    public float getLineCountHeuristicThreshold() {
+        return lineCountHeuristicThreshold;
+    }
+
+    public float getWordCountHeuristic() {
+        return wordCountHeuristic;
     }
 }
