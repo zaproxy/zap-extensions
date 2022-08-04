@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
 - Sub Resource Integrity Attribute Missing scan rule now supports Trusted Domains.
+- The Base64 Disclosure scan rule will now ignore headers which are known to contain irrelevant Base64 like strings or are covered by other rules (ETag, Authorization, X-ChromeLogger-Data, X-ChromePhp-Data) (Issue 6619).
 
 ### Fixed
 - False positive condition from Sub Resource Integrity Attribute Missing scan rule when rel=canonical is used (Issue 7040).
