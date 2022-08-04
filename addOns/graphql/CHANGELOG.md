@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 ### Changed
+- Update graphql-java dependency, with important bugfixes.
 - Maintenance changes.
 - Update dependency, which reduces add-on file size (Issue 7322).
 
