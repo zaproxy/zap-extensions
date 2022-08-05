@@ -62,7 +62,10 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
 
     public static ImageIcon getIcon() {
         if (icon == null) {
-            icon = new ImageIcon(ExtensionParamMiner.class.getResource(RESOURCES + "/pickaxe.png"));
+            icon =
+                    new ImageIcon(
+                            ExtensionParamMiner.class.getResource(
+                                    RESOURCES + "/hard-hat-mine.png"));
         }
         return icon;
     }
@@ -138,7 +141,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
                     new ParamMinerDialog(
                             this,
                             getView().getMainFrame(),
-                            DisplayUtils.getScaledDimension(700, 500));
+                            DisplayUtils.getScaledDimension(700, 300));
         }
         paramMinerDialog.init(node);
         paramMinerDialog.setVisible(true);

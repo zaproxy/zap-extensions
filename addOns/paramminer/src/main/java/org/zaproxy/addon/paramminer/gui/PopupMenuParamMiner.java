@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.paramminer.gui;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramminer.ExtensionParamMiner;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -32,16 +33,26 @@ public class PopupMenuParamMiner extends PopupMenuItemHttpMessageContainer {
     public PopupMenuParamMiner(ExtensionParamMiner ext, String label) {
         super(label);
         this.extension = ext;
+        this.setIcon(ExtensionParamMiner.getIcon());
     }
 
-    // @Override
-    // protected void performAction(SiteNode node) {
-    //     extension.showParamMinerDialog(node);
-    // }
+    @Override
+    public boolean isSubMenu() {
+        return true;
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return Constant.messages.getString("attack.site.popup");
+    }
+
+    @Override
+    public int getParentMenuIndex() {
+        return ATTACK_MENU_INDEX;
+    }
 
     @Override
     protected void performAction(HttpMessage httpMessage) {
-        // TODO Auto-generated method stub
         extension.showParamMinerDialog(httpMessage);
     }
 }

@@ -214,6 +214,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                                     .replace("$ZAP$", UrlUtils.createXmlString(params));
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(xmlPayload);
+                    msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
                     table.addHistoryReference(
                             new HistoryReference(Model.getSingleton().getSession(), 23, msg));
@@ -256,6 +257,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     }
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(jsonPayload);
+                    msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
                     table.addHistoryReference(
                             new HistoryReference(Model.getSingleton().getSession(), 23, msg));
@@ -268,6 +270,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
 
             case POST:
                 try {
+                    table = scan.getTableModel();
                     String uri = config.getUrl();
                     if (uri.contains("?")) {
                         uri = uri.substring(0, uri.indexOf("?"));
@@ -282,7 +285,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     String postPayload = StringUtils.strip(UrlUtils.createQueryString(params), "?");
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(postPayload);
+                    msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
+                    table.addHistoryReference(
+                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
                     return postPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel

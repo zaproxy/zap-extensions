@@ -29,16 +29,13 @@ public class ParamMinerHistoryTableModel extends DefaultHistoryReferencesTableMo
         super(
                 new Column[] {
                     Column.HREF_ID,
-                    Column.HREF_TYPE_INFO,
                     Column.REQUEST_TIMESTAMP,
                     Column.RESPONSE_TIMESTAMP,
                     Column.METHOD,
                     Column.URL,
-                    Column.HOSTNAME,
                     Column.STATUS_CODE,
                     Column.STATUS_REASON,
                     Column.RTT,
-                    Column.NOTE
                 });
     }
 }

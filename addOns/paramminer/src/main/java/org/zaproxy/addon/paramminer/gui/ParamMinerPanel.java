@@ -181,6 +181,11 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
         super.unload();
     }
 
+    @Override
+    public boolean hasOptionsButton() {
+        return false;
+    }
+
     private class ResultListener implements ParamMinerResultEventListener {
 
         @Override
