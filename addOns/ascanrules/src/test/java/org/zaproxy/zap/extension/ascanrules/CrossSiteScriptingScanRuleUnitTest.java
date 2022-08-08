@@ -36,6 +36,7 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeSet;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
@@ -1132,8 +1133,10 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
-    void shouldReportXssWeaknessInJsonResponse() throws NullPointerException, IOException {
-        String test = "/shouldReportXssInJsonReponse/";
+    void shouldReportXssWeaknessInJsonResponseAtLowThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssInJsonResponse/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -1153,9 +1156,12 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 });
 
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), containsString("JSON"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -1164,6 +1170,39 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+    }
+
+    @Test
+    void shouldNotReportXssWeaknessInJsonResponseAtMediumThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldNotReportXssWeaknessInJsonResponseAtMediumThreshold/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            response = getHtml("example.json", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.json");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("application/json");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
@@ -1725,6 +1764,8 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
         // When
+        this.rule.setConfig(new ZapXmlConfiguration());
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
         this.rule.scan();
         // Then
@@ -1882,6 +1923,220 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
 
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldReportXssWeaknessInDirectAttackInHtml() throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssWeaknessInDirectAttackInHtml/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Make the eye catchers fail
+                            name = name.endsWith("p") ? name.replace("p", "") : name;
+                            response =
+                                    getHtml("InputInsideDiv.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("'\"" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssWeaknessInDirectAttackInCsvLowThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssWeaknessInDirectAttackInCsvLowThreshold/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Make the eye catchers fail
+                            name = name.endsWith("p") ? name.replace("p", "") : name;
+                            response = getHtml("example.csv", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.csv");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("text/csv");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("'\"" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+    }
+
+    @Test
+    void shouldNotReportXssWeaknessInDirectAttackInCsvMediumThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldNotReportXssWeaknessInDirectAttackInCsvMediumThreshold/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Make the eye catchers fail
+                            name = name.endsWith("p") ? name.replace("p", "") : name;
+                            response = getHtml("example.csv", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.csv");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("text/csv");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReportXssWeaknessInCsvResponseAtLowThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssWeaknessInCsvResponseAtLowThreshold/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            response = getHtml("example.csv", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.csv");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("text/csv");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+    }
+
+    @Test
+    void shouldNotReportXssWeaknessInCsvResponseAtMediumThreshold()
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldNotReportXssWeaknessInCsvResponseAtMediumThreshold/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            response = getHtml("example.csv", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.csv");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("text/csv");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotReportXssOutsideTagsIfNoParentTag() throws Exception {
+        // Given
+        String test = "/test/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (!StringUtils.containsIgnoreCase(name, "0W45pz4p")
+                                && !name.equals("%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E")) {
+                            name = "something else";
+                        }
+                        String response = getHtml("example.json", new String[][] {{"name", name}});
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("application/json");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Override
