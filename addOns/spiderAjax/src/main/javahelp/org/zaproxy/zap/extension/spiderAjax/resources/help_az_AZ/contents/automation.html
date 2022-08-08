@@ -16,6 +16,7 @@ The spiderAjax job allows you to run the Ajax Spider - it is slower than the tra
   - type: spiderAjax                   # The ajax spider - slower than the spider but handles modern apps well
     parameters:
       context:                         # String: Name of the context to spider, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
       url:                             # String: Url to start spidering from, default: first context URL
       maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
       maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
