@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -31,7 +33,9 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -84,6 +88,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                     CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+    private static final List<String> IGNORED_HEADERS =
+            Arrays.asList("ETag", "Authorization", "X-ChromeLogger-Data", "X-ChromePhp-Data");
 
     @Override
     public String getName() {
@@ -102,8 +108,20 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
         log.debug("Checking message {} for Base64 encoded data", msg);
 
-        // get the body contents as a String, so we can match against it
-        String responseheader = msg.getResponseHeader().getHeadersAsString();
+        HttpResponseHeader responseHdr;
+        try {
+            responseHdr = new HttpResponseHeader(msg.getResponseHeader().toString());
+            for (String hdr : IGNORED_HEADERS) {
+                responseHdr.setHeader(hdr, null);
+            }
+        } catch (HttpMalformedHeaderException e1) {
+            log.debug("Failed to copy response header", e1);
+            // Set a placeholder so that the body is still analyzed
+            responseHdr = new HttpResponseHeader();
+        }
+
+        // get the contents as a String, so we can match against it
+        String responseheader = responseHdr.getHeadersAsString();
         String responsebody = msg.getResponseBody().toString();
         String[] responseparts = {responseheader, responsebody};
 
