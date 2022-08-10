@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -47,6 +52,17 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
     @Override
     protected ForbiddenBypassScanRule createScanner() {
         return new ForbiddenBypassScanRule();
+    }
+
+    private static Stream<Arguments> createTestPatterns() {
+        return Stream.of(
+                Arguments.of("dot", "/./", "/./"),
+                Arguments.of("dot2", "..;/", "..;/"),
+                Arguments.of("slash", "/", "/"),
+                Arguments.of("testus", "/.testus", "/.testus"),
+                Arguments.of("app.py", "../app.py", "../app.py"),
+                Arguments.of("blank", " /", "%20/"),
+                Arguments.of("tab", "\t/", "%09/"));
     }
 
     @Test
@@ -74,23 +90,29 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
-        assertEquals(23, httpMessagesSent.size());
+        assertThat(httpMessagesSent, hasSize(greaterThan(20)));
     }
 
-    @Test
-    void shouldAlertIfOkObtained() throws Exception {
+    @ParameterizedTest
+    @MethodSource("createTestPatterns")
+    void shouldAlertIfOkObtained(String patternName, String patternValue, String patternAttack)
+            throws Exception {
         // Given
-        nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
-        nano.addHandler(new OkResponse("/." + PROTECTED_PATH)); // Period is %2e
-        HttpMessage msg = this.getHttpMessage(PROTECTED_PATH);
+        String basePath = "/" + patternName + PROTECTED_PATH;
+        if ("slash".equals(patternName)) {
+            nano.addHandler(new ForbiddenResponse(basePath + "/./"));
+        }
+        nano.addHandler(new OkResponse(basePath + patternValue));
+        nano.addHandler(new ForbiddenResponse(basePath));
+        HttpMessage msg = this.getHttpMessage(basePath);
         rule.init(msg, this.parent);
         // When
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals("/%2e" + PROTECTED_PATH, alert.getAttack());
         assertAlert(alert);
+        assertEquals(basePath + patternAttack, alert.getAttack());
     }
 
     @Test

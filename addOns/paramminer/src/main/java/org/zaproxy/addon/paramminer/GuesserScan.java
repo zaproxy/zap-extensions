@@ -20,6 +20,7 @@
 package org.zaproxy.addon.paramminer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +53,8 @@ public class GuesserScan implements GenericScanner2 {
     private final ExecutorService executor;
     private final List<GuesserProgressListener> listeners;
     private final ParamMinerHistoryTableModel tableModel;
-    private String output;
+    private List<ParamGuessResult> results;
+    private OutputModel outputModel;
 
     public GuesserScan(int scanId, ParamMinerConfig config, String name) {
         this.scanId = scanId;
@@ -63,8 +65,7 @@ public class GuesserScan implements GenericScanner2 {
 
         listeners = new ArrayList<>(2);
         tableModel = new ParamMinerHistoryTableModel();
-        output = "scanId: " + scanId;
-
+        results = Collections.synchronizedList(new ArrayList<>());
         this.executor =
                 Executors.newFixedThreadPool(
                         config.getThreadCount(),
@@ -77,10 +78,6 @@ public class GuesserScan implements GenericScanner2 {
 
     public ParamMinerHistoryTableModel getTableModel() {
         return tableModel;
-    }
-
-    public String getOutput() {
-        return output;
     }
 
     public ParamMinerConfig getConfig() {
@@ -98,6 +95,13 @@ public class GuesserScan implements GenericScanner2 {
     @Override
     public int getScanId() {
         return scanId;
+    }
+
+    public OutputModel getOutputModel() {
+        if (outputModel == null) {
+            outputModel = new OutputModel();
+        }
+        return outputModel;
     }
 
     public String getState() {
@@ -132,8 +136,7 @@ public class GuesserScan implements GenericScanner2 {
     }
 
     private void startScan() {
-        ParamGuesser paramGuesser = new ParamGuesser(scanId, this.config, this, this.executor);
-        // tasksTodoCount = config.getTotalParams();
+        ParamGuesser paramGuesser = new ParamGuesser(scanId, this, this.executor);
         this.executor.submit(paramGuesser);
     }
 
@@ -278,5 +281,16 @@ public class GuesserScan implements GenericScanner2 {
 
     public void setProgress(int maximum) {
         this.tasksDoneCount = maximum;
+    }
+
+    public void addParamGuessResult(ParamGuessResult paramGuessResult) {
+        this.results.add(paramGuessResult);
+        if (outputModel != null) {
+            outputModel.notifyResult(paramGuessResult);
+        }
+    }
+
+    public List<ParamGuessResult> getResults() {
+        return results;
     }
 }

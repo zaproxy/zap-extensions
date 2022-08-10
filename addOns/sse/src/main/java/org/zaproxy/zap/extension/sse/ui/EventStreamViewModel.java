@@ -37,6 +37,7 @@ import org.zaproxy.zap.utils.PagingTableModel;
  * This model uses a database table to load only needed entries from database. Moreover it shows
  * only those entries that are not deny listed by the given filter.
  */
+@SuppressWarnings("serial")
 public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
     private static final long serialVersionUID = -5047686640383236512L;

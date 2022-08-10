@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
+import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
 import org.zaproxy.addon.paramminer.UrlGuesser.Method;
 import org.zaproxy.addon.paramminer.UrlGuesser.Mode;
 import org.zaproxy.addon.paramminer.UrlGuesser.Status;
@@ -85,12 +86,16 @@ public class UrlBruteForce implements Callable<ParamReasons> {
         this.scan = scan;
         this.guessedParams = guessedParams;
         config = scan.getConfig();
+        this.firstComparison = true;
     }
 
     @Override
     public ParamReasons call() throws Exception {
         HttpMessage msg = new HttpMessage();
         String valueSent = requester(msg, method, params);
+        if (valueSent == null) {
+            return null;
+        }
         ComparableResponse response = new ComparableResponse(msg, valueSent);
         Status status = errorHandler(base, response);
 
@@ -99,10 +104,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
         }
 
         ParamReasons res = compare(base, response, params);
-        if (mode == Mode.VERIFY && res != null) {
+        if (mode == Mode.VERIFY && !res.isEmpty()) {
             for (String parameter : res.getParams().keySet()) {
                 ParamGuessResult paramGuessResult =
-                        new ParamGuessResult(parameter, res.getReason(), msg);
+                        new ParamGuessResult(parameter, res.getReasons(), msg);
                 guessedParams.add(paramGuessResult);
             }
         }
@@ -157,11 +162,12 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case GET:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
                     String queryString = UrlUtils.createQueryString(params);
                     HttpRequestHeader headers = new HttpRequestHeader();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     headers.setMethod(HttpRequestHeader.GET);
                     headers.setURI(new URI(uri + queryString, true));
                     headers.setVersion(HttpHeader.HTTP11);
@@ -191,9 +197,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case XML:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -220,9 +227,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
             case JSON:
                 try {
                     table = scan.getTableModel();
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -232,7 +240,8 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                         headers.setHeader(header.getName(), header.getValue());
                     }
                     String jsonPayload;
-                    if (!config.getUrlXmlIncludeString().isEmpty()) {
+                    if (config.getUrlJsonIncludeString() != null
+                            && !config.getUrlJsonIncludeString().isEmpty()) {
                         jsonPayload =
                                 config.getUrlJsonIncludeString()
                                         .replace(
@@ -259,9 +268,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
 
             case POST:
                 try {
-                    // TODO Add right options so that http message can be loaded using right click
-                    // menu.
                     String uri = config.getUrl();
+                    if (uri.contains("?")) {
+                        uri = uri.substring(0, uri.indexOf("?"));
+                    }
                     HttpRequestHeader headers = new HttpRequestHeader();
                     headers.setMethod(HttpRequestHeader.POST);
                     headers.setURI(new URI(uri, true));
@@ -296,40 +306,44 @@ public class UrlBruteForce implements Callable<ParamReasons> {
      */
     public ParamReasons compare(
             ComparableResponse resp1, ComparableResponse resp2, Map<String, String> params) {
+
+        ParamReasons reasons = new ParamReasons();
         if (resp1.getStatusCode() != resp2.getStatusCode()
-                || ComparableResponse.statusCodeHeuristic(resp1, resp2) < 1) {
-            return new ParamReasons("http code", params);
+                || ComparableResponse.statusCodeHeuristic(resp1, resp2)
+                        < this.guesser.getStatusCodeThreshold()) {
+            reasons.addReason(Reason.HTTP_CODE);
         }
 
-        if (ComparableResponse.headersCompareHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("http headers", params);
+        if (ComparableResponse.headersCompareHeuristic(resp1, resp2)
+                < this.guesser.getHttpHeadersThreshold()) {
+            // TODO Add "which" headers were a mismatch
+            reasons.addReason(Reason.HTTP_HEADERS);
         }
 
         if (!Objects.equals(
                 resp1.getHeaders().get("Location"), resp2.getHeaders().get("Location"))) {
-            return new ParamReasons("redirect", params);
+            reasons.addReason(Reason.REDIRECT);
         }
 
-        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("body heuristic mismatch", params);
+        if (ComparableResponse.bodyTreesStructureHeuristic(resp1, resp2)
+                < this.guesser.getBodyTreesStructureHeuristicThreshold()) {
+            reasons.addReason(Reason.BODY_HEURISTIC_MISMATCH);
         }
 
-        if (ComparableResponse.lineCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("line count mismatch", params);
+        if (ComparableResponse.lineCountHeuristic(resp1, resp2)
+                < this.guesser.getLineCountHeuristicThreshold()) {
+            reasons.addReason(Reason.LINE_COUNT);
         }
 
-        if (ComparableResponse.wordCountHeuristic(resp1, resp2) < 0.6) {
-            return new ParamReasons("word count mismatch", params);
-        }
-
-        if (resp1.compareWith(resp2) < 1) {
-            return new ParamReasons("body mismatch", params);
+        if (ComparableResponse.wordCountHeuristic(resp1, resp2)
+                < this.guesser.getWordCountHeuristic()) {
+            reasons.addReason(Reason.WORD_COUNT);
         }
 
         Source source1 = new Source(resp1.getBody());
         Source source2 = new Source(resp2.getBody());
-        if (source1.toString().equals(source2.toString())) {
-            return new ParamReasons("text mismatch", params);
+        if (!source1.toString().equals(source2.toString())) {
+            reasons.addReason(Reason.TEXT);
         }
 
         if (!resp1.getBody().contains(resp1.getValueSent())) {
@@ -337,7 +351,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 this.firstComparison = false;
                 this.paramsPresent = new ArrayList<>();
                 for (String param : wordlist) {
-                    if (resp1.getBody().contains(param)) {
+                    if (resp2.getBody().contains(param)) {
                         this.paramsPresent.add(param);
                     }
                 }
@@ -350,7 +364,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                         Pattern searchParamPattern =
                                 Pattern.compile("['\"\\s]" + param + "['\"\\s]");
                         if (searchParamPattern.matcher(resp2.getBody()).find()) {
-                            return new ParamReasons("parameter name reflection", params);
+                            reasons.addReason(Reason.PARAM_NAME_REFLECTION);
                         }
                     }
                 }
@@ -362,12 +376,16 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 if (resp2.getBody().contains(values)) {
                     Pattern searchValuePattern = Pattern.compile("['\"\\s]" + values + "['\"\\s]");
                     if (searchValuePattern.matcher(resp2.getBody()).find()) {
-                        return new ParamReasons("parameter value reflection", params);
+                        reasons.addReason(Reason.PARAM_VALUE_REFLECTION);
                     }
                 }
             }
         }
 
-        return null;
+        if (!reasons.isEmpty()) {
+            reasons.setParams(params);
+        }
+
+        return reasons;
     }
 }

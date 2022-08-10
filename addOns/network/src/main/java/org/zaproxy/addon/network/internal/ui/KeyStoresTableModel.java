@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.client.KeyStores;
 
 /** A table model for KeyStores. */
+@SuppressWarnings("serial")
 public class KeyStoresTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

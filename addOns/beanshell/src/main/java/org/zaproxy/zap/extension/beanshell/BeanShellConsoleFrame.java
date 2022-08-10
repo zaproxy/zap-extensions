@@ -45,6 +45,7 @@ import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class BeanShellConsoleFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 1L;

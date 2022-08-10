@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 
+@SuppressWarnings("serial")
 public class ImportFromUrlDialog extends AbstractDialog implements ActionListener {
 
     private static final long serialVersionUID = -7074394202143400215L;

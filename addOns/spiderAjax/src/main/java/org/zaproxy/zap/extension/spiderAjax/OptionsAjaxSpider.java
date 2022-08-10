@@ -38,6 +38,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
+@SuppressWarnings("serial")
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
     private static final long serialVersionUID = -1350537974139536669L;

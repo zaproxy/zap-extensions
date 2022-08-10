@@ -29,6 +29,7 @@ import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 
+@SuppressWarnings("serial")
 public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

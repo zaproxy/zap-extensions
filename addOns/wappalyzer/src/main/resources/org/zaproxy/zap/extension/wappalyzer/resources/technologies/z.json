@@ -28,6 +28,7 @@
     "cats": [
       19
     ],
+    "cpe": "cpe:2.3:a:zabbix:zabbix:*:*:*:*:*:*:*:*",
     "html": "<body[^>]+zbxCallPostScripts",
     "icon": "Zabbix.png",
     "implies": "PHP",
@@ -170,6 +171,7 @@
     "cookies": {
       "ZENDSERVERSESSID": ""
     },
+    "cpe": "cpe:2.3:a:zend:zend_server:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
     },
@@ -317,6 +319,7 @@
     "cookies": {
       "ZM_TEST": "true"
     },
+    "cpe": "cpe:2.3:a:zimbra:zimbra:*:*:*:*:*:*:*:*",
     "icon": "Zimbra.png",
     "implies": "Java",
     "website": "https://www.zimbra.com/"

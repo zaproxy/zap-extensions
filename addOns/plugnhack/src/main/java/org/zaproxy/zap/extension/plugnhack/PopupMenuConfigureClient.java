@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
+@SuppressWarnings("serial")
 public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

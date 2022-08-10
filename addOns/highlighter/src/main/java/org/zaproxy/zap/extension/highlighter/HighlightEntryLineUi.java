@@ -37,6 +37,7 @@ import org.zaproxy.zap.view.HighlightSearchEntry;
  * A panel which specifies all values of an HighlightEntry in a JPanel,
  * with UI elements to input and output of its content.
  */
+@SuppressWarnings("serial")
 public class HighlightEntryLineUi extends AbstractPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
 

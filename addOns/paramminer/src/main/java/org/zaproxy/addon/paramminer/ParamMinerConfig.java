@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.nio.file.Path;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.users.User;
 
@@ -263,6 +264,14 @@ public class ParamMinerConfig {
 
     public String getCustomUrlWordlistPath() {
         return this.customUrlWordListPath;
+    }
+
+    public void setCustomUrlWordlistPath(Path path) {
+        this.customUrlWordListPath = path.toString();
+    }
+
+    public void setCustomUrlWordlistPath(String string) {
+        this.customUrlWordListPath = string;
     }
 
     public void setUrlJsonRequest(boolean urlJsonRequest) {

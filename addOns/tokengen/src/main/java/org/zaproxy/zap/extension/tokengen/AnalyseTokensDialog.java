@@ -44,6 +44,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyserListenner {
 
     private static final long serialVersionUID = 1L;

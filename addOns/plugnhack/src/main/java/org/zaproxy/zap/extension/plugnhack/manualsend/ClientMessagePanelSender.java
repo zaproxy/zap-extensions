@@ -26,6 +26,7 @@ import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
 /** Knows how to send {@link HttpMessage} objects. Contains a list of valid WebSocket channels. */
+@SuppressWarnings("serial")
 public class ClientMessagePanelSender implements MessageSender {
 
     private ExtensionPlugNHack extension = null;

@@ -65,6 +65,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * Represents the Server-Sent Events tab. It listens to all Event Streams and displays events
  * accordingly.
  */
+@SuppressWarnings("serial")
 public class EventStreamPanel extends AbstractPanel implements EventStreamObserver {
 
     private static final long serialVersionUID = -4518225363808518571L;

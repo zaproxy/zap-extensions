@@ -25,6 +25,7 @@ import java.util.Map;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableModel;
 
+@SuppressWarnings("serial")
 public class DefaultCustomColumnHistoryReferencesTableModel<
                 T extends DefaultHistoryReferencesTableEntry>
         extends DefaultHistoryReferencesTableModel {

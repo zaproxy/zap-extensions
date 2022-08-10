@@ -24,10 +24,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
+
+    private static final String HEADER_CONTENT = "W/\"45cd-7MlSATHznbvb7qdGT+/VL6oqXM\"";
 
     @Override
     protected Base64Disclosure createScanner() {
@@ -52,5 +58,42 @@ class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            value = {
+                "ETag",
+                "etag",
+                "ETAG",
+                "Authorization",
+                "X-ChromeLogger-Data",
+                "X-ChromePhp-Data"
+            })
+    void shouldNotAlertOnIgnoredHeader(String headerName) throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(headerName, HEADER_CONTENT);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertOnBase64ContentInHeader() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader("example", HEADER_CONTENT);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    private static HttpMessage createMessage() throws Exception {
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/", false));
+        msg.setResponseHeader("HTTP/1.1 200 Ok\r\n");
+        return msg;
     }
 }

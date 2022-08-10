@@ -39,6 +39,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 /** Filter WebSocket messages in {@link WebSocketPanel}. Show only specific ones. */
+@SuppressWarnings("serial")
 public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
     private static final long serialVersionUID = 4750602961870366348L;
 

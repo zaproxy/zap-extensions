@@ -28,6 +28,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
+@SuppressWarnings("serial")
 public class AlertFiltersMultipleOptionsPanel
         extends AbstractMultipleOptionsTablePanel<AlertFilter> {
 

@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -79,17 +80,17 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     /** The various (prioritized) payload to try */
     private static final String[] REDIRECT_TARGETS = {
         REDIRECT_SITE,
-        "http://" + REDIRECT_SITE,
-        "https://" + REDIRECT_SITE,
-        "https://" + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
-        "http:\\\\" + REDIRECT_SITE,
-        "https:\\\\" + REDIRECT_SITE,
+        HttpHeader.HTTP + "://" + REDIRECT_SITE,
+        HttpHeader.HTTPS + "://" + REDIRECT_SITE,
+        HttpHeader.HTTPS + "://" + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
+        "5;URL='https://" + REDIRECT_SITE + "'",
+        HttpHeader.HTTP + ":\\\\" + REDIRECT_SITE,
+        HttpHeader.HTTPS + ":\\\\" + REDIRECT_SITE,
         "//" + REDIRECT_SITE,
         "\\\\" + REDIRECT_SITE,
         "HtTp://" + REDIRECT_SITE,
         "HtTpS://" + REDIRECT_SITE,
         "URL='http://" + REDIRECT_SITE + "'",
-        "5;URL='http://" + REDIRECT_SITE + "'",
 
         // http://kotowicz.net/absolute/
         // I never met real cases for these
@@ -175,7 +176,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         int targetCount = 0;
 
         // Debug only
-        logger.debug("Attacking at Attack Strength: ", this.getAttackStrength());
+        logger.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
 
         // Figure out how aggressively we should test
         switch (this.getAttackStrength()) {
@@ -233,10 +234,14 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 // Be careful: we haven't to follow redirect
                 sendAndReceive(testMsg, false, false);
 
+                String payloadScheme =
+                        StringUtils.containsIgnoreCase(payload, HttpHeader.HTTPS)
+                                ? HttpHeader.HTTPS
+                                : HttpHeader.HTTP;
                 // If it's a meta based injection the use the base url
                 redirectUrl =
                         (payload.startsWith("5;") || payload.startsWith("URL="))
-                                ? "http://" + REDIRECT_SITE
+                                ? payloadScheme + "://" + REDIRECT_SITE
                                 : payload;
 
                 // Get back if a redirection occurs
@@ -250,14 +255,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                             param,
                             payload);
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(param)
-                            .setAttack(payload)
-                            .setOtherInfo(getRedirectionReason(redirectType))
-                            .setEvidence(redirectUrl)
-                            .setMessage(testMsg)
-                            .raise();
+                    buildAlert(param, payload, redirectType, redirectUrl, testMsg).raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // parameters on the same request (to reduce performance impact)
@@ -275,13 +273,50 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    // Inner pattern used to extract the url value from a refresh content element
-    private static final Pattern REFRESH_PATTERN =
-            Pattern.compile("(?i)\\s*\\d+;\\s*url\\s*=\\s*(.*)");
+    private String getAlertReference(int redirectType) {
+        switch (redirectType) {
+            case REDIRECT_LOCATION_HEADER:
+                return getId() + "-1";
+            case REDIRECT_REFRESH_HEADER:
+                return getId() + "-2";
+            case REDIRECT_LOCATION_META:
+            case REDIRECT_REFRESH_META:
+                return getId() + "-3";
+            case REDIRECT_JAVASCRIPT:
+                return getId() + "-4";
+            default:
+                return "";
+        }
+    }
 
-    private String getRefreshUrl(String value) {
+    private AlertBuilder buildAlert(
+            String param, String payload, int redirectType, String evidence, HttpMessage testMsg) {
+        String alertRef = getAlertReference(redirectType);
+
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(payload)
+                .setOtherInfo(getRedirectionReason(redirectType))
+                .setEvidence(evidence)
+                .setAlertRef(alertRef)
+                .setMessage(testMsg);
+    }
+
+    private static final Pattern REFRESH_PATTERN =
+            Pattern.compile("(?i)\\s*\\d+\\s*;\\s*url\\s*=\\s*[\"']?([^'\"]*)[\"']?");
+
+    static String getRefreshUrl(String value) {
         Matcher matcher = REFRESH_PATTERN.matcher(value);
-        return (matcher.matches()) ? matcher.group(1) : null;
+        return matcher.matches() ? matcher.group(1) : null;
+    }
+
+    private static final Pattern LOCATION_PATTERN =
+            Pattern.compile("(?i)\\s*url\\s*=\\s*[\"']?([^'\"]*)[\"']?");
+
+    static String getLocationUrl(String value) {
+        Matcher matcher = LOCATION_PATTERN.matcher(value);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     /**
@@ -293,9 +328,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
      */
     private boolean checkPayload(String value, String payload) {
         // Check both the payload and the standard url format
-        return (value != null)
-                && (StringUtils.startsWithIgnoreCase(value, payload)
-                        || StringUtils.startsWithIgnoreCase(value, "http://" + REDIRECT_SITE));
+        return (value != null
+                && StringUtils.containsIgnoreCase(value, payload)
+                && StringUtils.startsWithIgnoreCase(value, HttpHeader.HTTP));
     }
 
     /**
@@ -313,7 +348,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // http://en.wikipedia.org/wiki/HTTP_location
         // HTTP/1.1 302 Found
         // Location: http://www.example.org/index.php
-        //
         String value = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
         if (checkPayload(value, payload)) {
             return REDIRECT_LOCATION_HEADER;
@@ -323,7 +357,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // http://en.wikipedia.org/wiki/URL_redirection
         // HTTP/1.1 200 ok
         // Refresh: 0; url=http://www.example.com/
-        //
         value = msg.getResponseHeader().getHeader("Refresh");
         if (value != null) {
             // Usually redirect content is configured with a delay
@@ -339,7 +372,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // http://code.google.com/p/html5security/wiki/RedirectionMethods
         // <meta http-equiv="location" content="URL=http://evil.com" />
         // <meta http-equiv="refresh" content="0;url=http://evil.com/" />
-        //
         String content = msg.getResponseBody().toString();
         Source htmlSrc = new Source(content);
         List<Element> metaElements = htmlSrc.getAllElements(HTMLElementName.META);
@@ -348,9 +380,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             value = el.getAttributeValue("http-equiv");
 
             if (value != null) {
-                if (value.equalsIgnoreCase("location")) {
+                if (value.equalsIgnoreCase(HttpHeader.LOCATION)) {
                     // Get the content attribute value
-                    value = el.getAttributeValue("content");
+                    value = getLocationUrl(el.getAttributeValue("content"));
 
                     // Check if the payload is inside the location attribute
                     if (checkPayload(value, payload)) {
@@ -379,21 +411,12 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // (4) Check if redirection occurs by Base Tag
         // http://code.google.com/p/html5security/wiki/RedirectionMethods
         // <base href="http://evil.com/" />
-        //
 
         // (5) Check if redirection occurs by Javascript
         // http://code.google.com/p/html5security/wiki/RedirectionMethods
-        // location='http://evil.com/';
-        // location.href='http://evil.com/';
-        // location.reload('http://evil.com/');
-        // location.replace('http://evil.com/');
-        // location.assign('http://evil.com/');
-        // window.open('http://evil.com/');
-        // window.navigate('http://evil.com/');
-        //
         if (StringUtils.indexOfIgnoreCase(content, payload) != -1) {
             List<Element> jsElements = htmlSrc.getAllElements(HTMLElementName.SCRIPT);
-            String matchingUrl = "(\\Q" + payload + "\\E|\\Qhttp://" + REDIRECT_SITE + "\\E)";
+            String matchingUrl = "https?://" + REDIRECT_SITE;
             Pattern pattern;
 
             for (Element el : jsElements) {
@@ -402,8 +425,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 // location='http://evil.com/';
                 // location.href='http://evil.com/';
                 pattern =
-                        Pattern.compile("(?i)location(\\.href)?\\s*=\\s*('|\")\\s*" + matchingUrl);
-                if (pattern.matcher(value).find()) {
+                        Pattern.compile(
+                                "(?i)location(?:\\.href)?\\s*=\\s*['\"](" + matchingUrl + ")['\"]");
+                if (isRedirectPresent(pattern, value)) {
                     return REDIRECT_JAVASCRIPT;
                 }
 
@@ -412,9 +436,10 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 // location.assign('http://evil.com/');
                 pattern =
                         Pattern.compile(
-                                "(?i)location\\.(replace|reload|assign)\\s*\\(\\s*('|\")\\s*"
-                                        + matchingUrl);
-                if (pattern.matcher(value).find()) {
+                                "(?i)location\\.(?:replace|reload|assign)\\s*\\(\\s*['\"]("
+                                        + matchingUrl
+                                        + ")['\"]");
+                if (isRedirectPresent(pattern, value)) {
                     return REDIRECT_JAVASCRIPT;
                 }
 
@@ -422,14 +447,22 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 // window.navigate('http://evil.com/');
                 pattern =
                         Pattern.compile(
-                                "(?i)window\\.(open|navigate)\\s*\\(\\s*('|\")\\s*" + matchingUrl);
-                if (pattern.matcher(value).find()) {
+                                "(?i)window\\.(?:open|navigate)\\s*\\(\\s*['\"]("
+                                        + matchingUrl
+                                        + ")['\"]");
+                if (isRedirectPresent(pattern, value)) {
                     return REDIRECT_JAVASCRIPT;
                 }
             }
         }
 
         return NO_REDIRECT;
+    }
+
+    private static boolean isRedirectPresent(Pattern pattern, String value) {
+        Matcher matcher = pattern.matcher(value);
+        return matcher.find()
+                && StringUtils.startsWithIgnoreCase(matcher.group(1), HttpHeader.HTTP);
     }
 
     /**
@@ -454,9 +487,10 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
 
             case REDIRECT_JAVASCRIPT:
                 return Constant.messages.getString(MESSAGE_PREFIX + "reason.javascript");
-        }
 
-        return Constant.messages.getString(MESSAGE_PREFIX + "reason.notfound");
+            default:
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.notfound");
+        }
     }
 
     /**
@@ -492,5 +526,44 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 38;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        String param = "destination";
+        alerts.add(
+                buildAlert(
+                                param,
+                                "http://3412390346190766618.owasp.org",
+                                REDIRECT_LOCATION_HEADER,
+                                getAlertReference(REDIRECT_LOCATION_HEADER),
+                                null)
+                        .build());
+        alerts.add(
+                buildAlert(
+                                param,
+                                "5;URL='https://3412390346190766618.owasp.org'",
+                                REDIRECT_REFRESH_HEADER,
+                                getAlertReference(REDIRECT_REFRESH_HEADER),
+                                null)
+                        .build());
+        alerts.add(
+                buildAlert(
+                                param,
+                                "5;URL='https://3412390346190766618.owasp.org'",
+                                REDIRECT_REFRESH_META,
+                                getAlertReference(REDIRECT_REFRESH_META),
+                                null)
+                        .build());
+        alerts.add(
+                buildAlert(
+                                param,
+                                "http://373082522675462941.owasp.org",
+                                REDIRECT_JAVASCRIPT,
+                                getAlertReference(REDIRECT_JAVASCRIPT),
+                                null)
+                        .build());
+        return alerts;
     }
 }

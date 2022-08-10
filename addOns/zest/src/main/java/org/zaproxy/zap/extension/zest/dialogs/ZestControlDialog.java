@@ -31,6 +31,7 @@ import org.zaproxy.zest.core.v1.ZestControlReturn;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestControlDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VALUE = "zest.dialog.return.label.value";

@@ -28,6 +28,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 abstract class AbstractPopupMenuSaveMessage extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = 8080417865825721164L;

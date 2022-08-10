@@ -35,7 +35,7 @@ public class PopupMenuItemInvoke extends PopupMenuItemHttpMessageContainer {
     private boolean captureOutput = true;
     private boolean outputNote = false;
 
-    private Logger logger = LogManager.getLogger(PopupMenuItemInvoke.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemInvoke.class);
 
     /** @param label */
     public PopupMenuItemInvoke(String label) {
@@ -93,7 +93,7 @@ public class PopupMenuItemInvoke extends PopupMenuItemHttpMessageContainer {
             }
         } catch (Exception e1) {
             View.getSingleton().showWarningDialog(e1.getMessage());
-            logger.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
         }
     }
 }

@@ -80,7 +80,7 @@ public class TestHttpServer extends HttpServer {
                                         return null;
                                     }
 
-                                    String data = decoded.toString(StandardCharsets.US_ASCII);
+                                    String data = decoded.toString(StandardCharsets.UTF_8);
                                     int idx = data.indexOf("\r\n\r\n");
                                     HttpMessage message =
                                             new HttpMessage(

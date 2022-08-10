@@ -34,6 +34,7 @@ import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 
+@SuppressWarnings("serial")
 public class LocalServerPropertiesPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;

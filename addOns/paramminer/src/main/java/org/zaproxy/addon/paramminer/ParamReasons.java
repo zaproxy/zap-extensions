@@ -19,27 +19,43 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
 
 public class ParamReasons {
-    private String reason;
+    private List<Reason> reasons;
     private Map<String, String> params;
 
-    public ParamReasons(String reason, Map<String, String> params) {
-        this.reason = reason;
+    public ParamReasons(List<Reason> reasons, Map<String, String> params) {
+        this.reasons = Objects.requireNonNull(reasons);
         this.params = params;
     }
 
-    public String getReason() {
-        return reason;
+    public boolean isEmpty() {
+        return this.reasons.isEmpty();
+    }
+
+    public ParamReasons() {
+        this.reasons = new ArrayList<>();
+    }
+
+    public List<Reason> getReasons() {
+        return this.reasons;
     }
 
     public Map<String, String> getParams() {
         return params;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void addReason(Reason reason) {
+        this.reasons.add(reason);
+    }
+
+    public void setReasons(List<Reason> reasons) {
+        this.reasons = Objects.requireNonNull(reasons);
     }
 
     public void setParams(Map<String, String> params) {

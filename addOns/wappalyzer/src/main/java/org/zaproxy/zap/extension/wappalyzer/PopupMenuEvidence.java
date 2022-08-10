@@ -29,6 +29,7 @@ import org.zaproxy.zap.extension.ExtensionPopupMenu;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
+@SuppressWarnings("serial")
 public class PopupMenuEvidence extends ExtensionPopupMenu {
 
     private static final long serialVersionUID = 1L;

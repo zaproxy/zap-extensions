@@ -35,6 +35,7 @@ import org.zaproxy.zest.core.v1.ZestContainer;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestTreeTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = 1L;

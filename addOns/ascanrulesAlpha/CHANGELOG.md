@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Forbidden Bypass scan rule will now also try a bypass based on the use of a tab character.
 
 ### Fixed
 - Fix an exception in Spring Actuator Information Leak scan rule when scanning responses without Content-Type header.
@@ -18,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [37] - 2022-04-04
 ### Added
 - Spring4Shell (CVE-2022-22965) Scan Rule.
+
 ### Changed
 - The Web Cache Deception scan rule now uses a comparison mechanism which should be more performant, and will no longer scan messages which had an error response to start with (Issue 6655).
 

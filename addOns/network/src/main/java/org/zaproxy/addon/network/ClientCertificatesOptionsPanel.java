@@ -65,6 +65,7 @@ import org.zaproxy.addon.network.internal.ui.Pkcs11DriversDialog;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.ZapTable;
 
+@SuppressWarnings("serial")
 class ClientCertificatesOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientCertificatesOptionsPanel.class);

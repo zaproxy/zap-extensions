@@ -11,7 +11,7 @@
     "cats": [
       64
     ],
-    "cpe": "cpe:/a:ibm:datapower_gateway",
+    "cpe": "cpe:2.3:a:ibm:datapower_gateway:*:*:*:*:*:*:*:*",
     "description": "IBM DataPower Gateway is a single multi-channel gateway designed to help provide security, control, integration and optimized access to a full range of mobile, web, application programming interface (API), service-oriented architecture (SOA), B2B and cloud workloads.",
     "headers": {
       "X-Backside-Transport": "",
@@ -24,7 +24,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:ibm:http_server",
+    "cpe": "cpe:2.3:a:ibm:http_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "IBM_HTTP_Server(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -35,7 +35,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:microsoft:internet_information_server",
+    "cpe": "cpe:2.3:a:microsoft:internet_information_server:*:*:*:*:*:*:*:*",
     "description": "Internet Information Services (IIS) is an extensible web server software created by Microsoft for use with the Windows NT family.",
     "headers": {
       "Server": "^(?:Microsoft-)?IIS(?:/([\\d.]+))?\\;version:\\1"
@@ -322,7 +322,7 @@
       "ICMSSession": "",
       "ImpressCMS": ""
     },
-    "cpe": "cpe:/a:impresscms:impresscms",
+    "cpe": "cpe:2.3:a:impresscms:impresscms:*:*:*:*:*:*:*:*",
     "icon": "ImpressCMS.png",
     "implies": "PHP",
     "meta": {
@@ -335,7 +335,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:impresspages:impresspages_cms",
+    "cpe": "cpe:2.3:a:impresspages:impresspages_cms:*:*:*:*:*:*:*:*",
     "icon": "ImpressPages.png",
     "implies": "PHP",
     "meta": {
@@ -441,7 +441,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:indexhibit:indexhibit",
+    "cpe": "cpe:2.3:a:indexhibit:indexhibit:*:*:*:*:*:*:*:*",
     "html": "<(?:link|a href) [^>]+ndxz-studio",
     "implies": [
       "PHP",
@@ -651,7 +651,7 @@
     "cookies": {
       "InstantCMS[logdate]": ""
     },
-    "cpe": "cpe:/a:instantcms:instantcms",
+    "cpe": "cpe:2.3:a:instantcms:instantcms:*:*:*:*:*:*:*:*",
     "icon": "InstantCMS.png",
     "implies": "PHP",
     "meta": {
@@ -672,6 +672,25 @@
     "oss": true,
     "scriptSrc": "instantclick\\.min\\.js",
     "website": "http://instantclick.io/"
+  },
+  "InstantGeo": {
+    "cats": [
+      59
+    ],
+    "description": "InstantGeo is a service that provides IP geolocation to web pages",
+    "icon": "InstantGeo.svg",
+    "js": {
+      "geojs": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "js\\.instantgeo\\.info",
+      "script\\.instantgeo\\.info"
+    ],
+    "website": "https://instantgeo.info"
   },
   "Instapage": {
     "cats": [
@@ -734,7 +753,7 @@
       22,
       46
     ],
-    "cpe": "cpe:/a:intel:active_management_technology",
+    "cpe": "cpe:2.3:a:intel:active_management_technology:*:*:*:*:*:*:*:*",
     "description": "Intel Active Management Technology (AMT) is a proprietary remote management and control system for personal computers with Intel CPUs.",
     "headers": {
       "Server": "Intel\\(R\\) Active Management Technology(?: ([\\d.]+))?\\;version:\\1"
@@ -1081,6 +1100,19 @@
       "designer": "iPresta"
     },
     "website": "http://ipresta.ir"
+  },
+  "iSina Chat": {
+    "cats": [
+      52
+    ],
+    "description": "iSina Chat is a live chat service that provides online support and FAQ for customers.",
+    "icon": "iSina Chat.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "chat\\.isina\\.agency/",
+    "website": "https://isina.agency"
   },
   "iThemes Security": {
     "cats": [

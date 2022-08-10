@@ -49,6 +49,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class ConsolePanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
@@ -601,7 +602,7 @@ public class ConsolePanel extends AbstractPanel {
             }
         }
 
-        @SuppressWarnings("deprecation")
+        @SuppressWarnings({"deprecation", "removal"})
         public void terminate() {
             if (isAlive()) {
                 interrupt();

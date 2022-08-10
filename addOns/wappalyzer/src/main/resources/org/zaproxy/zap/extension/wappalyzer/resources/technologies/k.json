@@ -336,7 +336,7 @@
     "cookies": {
       "CMSPreferredCulture": ""
     },
-    "cpe": "cpe:/a:kentico:kentico_cms",
+    "cpe": "cpe:2.3:a:kentico:kentico_cms:*:*:*:*:*:*:*:*",
     "description": "Kentico CMS is a web content management system for building websites, online stores, intranets, and Web 2.0 community sites.",
     "icon": "Kentico CMS.png",
     "js": {
@@ -352,6 +352,23 @@
     "scriptSrc": "/CMSPages/GetResource\\.ashx",
     "website": "http://www.kentico.com"
   },
+  "Keptify": {
+    "cats": [
+      98
+    ],
+    "description": "Keptify helps ecommerce sites of any size to increase sales and conversion rates by providing visitors with a personalised shopping experience.",
+    "icon": "Keptify.png",
+    "js": {
+      "KEPTIFY_BASE_URL": "",
+      "_keptify.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.keptify\\.com/",
+    "website": "https://keptify.com"
+  },
   "Kerberos": {
     "cats": [
       16
@@ -361,23 +378,6 @@
       "WWW-Authenticate": "^Kerberos"
     },
     "website": "https://tools.ietf.org/html/rfc4559"
-  },
-  "Keptify": {
-    "cats": [
-      98
-    ],
-    "description": "Keptify helps ecommerce sites of any size to increase sales and conversion rates by providing visitors with a personalised shopping experience.",
-    "icon": "Keptify.png",
-    "js": {
-      "_keptify.version": "^([\\d\\.]+)$\\;version:\\1",
-      "KEPTIFY_BASE_URL": ""
-    },
-    "scriptSrc": "app\\.keptify\\.com/",
-    "saas": true,
-    "pricing": [
-      "payg"
-    ],
-    "website": "https://keptify.com"
   },
   "Kestrel": {
     "cats": [
@@ -424,7 +424,7 @@
       29,
       25
     ],
-    "cpe": "cpe:/a:elasticsearch:kibana",
+    "cpe": "cpe:2.3:a:elasticsearch:kibana:*:*:*:*:*:*:*:*",
     "description": "Kibana is an open-source data visualisation dashboard for Elasticsearch. It provides visualisation capabilities on top of the content indexed on an Elasticsearch cluster. Users can create bar, line and scatter plots, or pie charts and maps on top of large volumes of data.",
     "headers": {
       "kbn-name": "kibana",
@@ -728,7 +728,7 @@
     "cats": [
       50
     ],
-    "cpe": "cpe:/a:koha:koha",
+    "cpe": "cpe:2.3:a:koha:koha:*:*:*:*:*:*:*:*",
     "description": "Koha is an open-source Integrated Library System (ILS).",
     "html": [
       "<input name=\"koha_login_context\" value=\"intranet\" type=\"hidden\">",
@@ -751,7 +751,7 @@
     "cookies": {
       "kohanasession": ""
     },
-    "cpe": "cpe:/a:kohanaframework:kohana",
+    "cpe": "cpe:2.3:a:kohanaframework:kohana:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "Kohana Framework ([\\d.]+)\\;version:\\1"
     },
@@ -887,8 +887,8 @@
     "cats": [
       47
     ],
-    "cpe": "cpe:/a:kubernetes:kubernetes",
-    "html": "<html ng-app=\"kubernetesDashboard\">",
+    "cpe": "cpe:2.3:a:kubernetes:kubernetes:*:*:*:*:*:*:*:*",
+    "dom": "[ng-app='kubernetesDashboard']",
     "icon": "Kubernetes.svg",
     "website": "https://kubernetes.io/"
   },

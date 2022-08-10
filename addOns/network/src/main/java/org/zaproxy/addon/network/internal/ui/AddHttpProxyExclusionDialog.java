@@ -32,6 +32,7 @@ import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddHttpProxyExclusionDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 1L;

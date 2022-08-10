@@ -231,7 +231,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:opensolution:quick.cms",
+    "cpe": "cpe:2.3:a:opensolution:quick.cms:*:*:*:*:*:*:*:*",
     "html": "<a href=\"[^>]+opensolution\\.org/\">CMS by",
     "icon": "Quick.CMS.png",
     "meta": {
@@ -315,5 +315,22 @@
     "icon": "Qwik.svg",
     "oss": true,
     "website": "https://qwik.builder.io"
+  },
+  "qiankun": {
+    "cats": [
+      59
+    ],
+    "description": "qiankun is a JS library who helps developers to build a micro frontends system.",
+    "dom": {
+      "div[id^='__qiankun_']": {
+        "attributes": {
+          "data-version": "([\\d\\.]+)\\;version:\\1"
+        }
+      }
+    },
+    "icon": "qiankun.svg",
+    "oss": true,
+    "scripts": "__POWERED_BY_QIANKUN__",
+    "website": "https://qiankun.umijs.org"
   }
 }

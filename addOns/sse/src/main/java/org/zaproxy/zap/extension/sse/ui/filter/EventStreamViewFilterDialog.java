@@ -37,6 +37,7 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.zaproxy.zap.extension.sse.ui.EventStreamUiHelper;
 
 /** Filter Server-Sent Events in EventStream-Panel. Show only specific ones. */
+@SuppressWarnings("serial")
 public class EventStreamViewFilterDialog extends AbstractDialog {
     private static final long serialVersionUID = 4750602961870366348L;
 

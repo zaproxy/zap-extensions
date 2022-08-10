@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
 
+@SuppressWarnings("serial")
 public class CommandPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;

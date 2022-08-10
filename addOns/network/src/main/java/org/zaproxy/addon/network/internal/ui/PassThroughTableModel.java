@@ -26,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class PassThroughTableModel extends AbstractMultipleOptionsTableModel<PassThrough> {
 
     private static final long serialVersionUID = 1L;

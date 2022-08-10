@@ -32,6 +32,7 @@ import org.zaproxy.zap.extension.alertFilters.automation.AlertFilterJob.Risk;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AddAlertFilterDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

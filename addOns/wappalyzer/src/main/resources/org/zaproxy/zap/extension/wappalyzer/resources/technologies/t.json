@@ -179,6 +179,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
     "html": [
       "<link[^>]+ href=\"/?typo3(?:conf|temp)/",
@@ -302,22 +303,6 @@
     "website": "https://www.taboola.com",
     "xhr": "\\.taboola\\.com"
   },
-  "Tada": {
-    "cats": [
-      100
-    ],
-    "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
-    "icon": "Tada.png",
-    "implies": "Shopify",
-    "scriptSrc": "cdn\\.trytada\\.com/",
-    "saas": true,
-    "pricing": [
-      "freemium",
-      "payg",
-      "recurring"
-    ],
-    "website": "https://trytada.com"
-  },
   "Tachyons": {
     "cats": [
       66
@@ -336,6 +321,22 @@
     },
     "oss": true,
     "website": "https://tachyons.io"
+  },
+  "Tada": {
+    "cats": [
+      100
+    ],
+    "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
+    "icon": "Tada.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.trytada\\.com/",
+    "website": "https://trytada.com"
   },
   "TagPro": {
     "cats": [
@@ -713,18 +714,23 @@
       6
     ],
     "description": "Tebex specialises in providing gcommerce solutions for online games.",
-    "headers": {
-      "tb-cache-country": "\\;confidence:33",
-      "tb-cache-group": "\\;confidence:34",
-      "tb-node": "\\;confidence:33"
+    "dom": {
+      "a[href*='.tebex.io']": {
+        "attributes": {
+          "target": "_blank",
+          "text": "Tebex"
+        }
+      }
     },
     "icon": "Tebex.svg",
     "implies": [
       "MySQL",
-      "Sass"
+      "Sass",
+      "PHP"
     ],
     "requires": "Cart Functionality",
     "saas": true,
+    "scripts": "\\.tebexLogin",
     "website": "https://www.tebex.io"
   },
   "Telescope": {
@@ -1758,7 +1764,7 @@
     "cats": [
       24
     ],
-    "cpe": "cpe:/a:tiny:tinymce",
+    "cpe": "cpe:2.3:a:tiny:tinymce:*:*:*:*:*:*:*:*",
     "description": "TinyMCE is an online rich-text editor released as open-source software. TinyMCE is designed to integrate with JavaScript libraries, Vue.js, and AngularJS as well as content management systems such as Joomla!, and WordPress.",
     "icon": "TinyMCE.png",
     "js": {
@@ -2440,22 +2446,6 @@
     "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
     "website": "https://turfjs.org/"
   },
-  "TurnTo": {
-    "cats": [
-      90
-    ],
-    "description": "TurnTo Networks Inc provides customer-generated content solutions platform for large retailers and the global brands that sell through them.",
-    "icon": "TurnTo.svg",
-    "js": {
-      "TurnTo": "",
-      "turnToConfig": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://www.turntonetworks.com"
-  },
   "Twenty Eleven": {
     "cats": [
       80
@@ -2936,7 +2926,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:acme:thttpd",
+    "cpe": "cpe:2.3:a:acme:thttpd:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "\\bthttpd(?:/([\\d.]+))?\\;version:\\1"
     },

@@ -43,6 +43,7 @@ import org.zaproxy.zap.extension.saml.SAMLMessage;
 import org.zaproxy.zap.extension.saml.SAMLResender;
 import org.zaproxy.zap.extension.saml.SamlI18n;
 
+@SuppressWarnings("serial")
 public class SamlManualEditor extends JFrame {
 
     private static final long serialVersionUID = 1L;

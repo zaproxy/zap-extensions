@@ -31,6 +31,7 @@ import org.zaproxy.addon.automation.jobs.ActiveScanJob.Rule;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 
+@SuppressWarnings("serial")
 public class AscanRulesTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

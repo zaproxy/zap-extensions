@@ -22,6 +22,8 @@ package org.zaproxy.addon.network.internal.client.apachev5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +60,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.MessageHeaders;
 import org.apache.hc.core5.http.ProtocolVersion;
+import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
@@ -144,6 +147,12 @@ public class HttpSenderApache
 
         managedHttpClientConnectionFactory =
                 ManagedHttpClientConnectionFactory.builder()
+                        .charCodingConfig(
+                                CharCodingConfig.custom()
+                                        .setCharset(StandardCharsets.UTF_8)
+                                        .setMalformedInputAction(CodingErrorAction.REPLACE)
+                                        .setUnmappableInputAction(CodingErrorAction.REPLACE)
+                                        .build())
                         .outgoingContentLengthStrategy(outgoingContentStrategy)
                         .responseParserFactory(new LenientMessageParserFactory())
                         .build();

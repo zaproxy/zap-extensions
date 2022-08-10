@@ -96,6 +96,8 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             "/." + path + "/./",
             path + "%20/",
             "/%20" + path + "%20/",
+            path + "%09/",
+            "/%09" + path + "%09/",
             path + "..;/",
             path + "?",
             path + "??",

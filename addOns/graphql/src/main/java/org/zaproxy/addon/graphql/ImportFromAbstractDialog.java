@@ -34,6 +34,7 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 
+@SuppressWarnings("serial")
 abstract class ImportFromAbstractDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

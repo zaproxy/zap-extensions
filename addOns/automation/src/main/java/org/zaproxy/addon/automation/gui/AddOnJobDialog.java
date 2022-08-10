@@ -30,6 +30,7 @@ import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AddOnJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

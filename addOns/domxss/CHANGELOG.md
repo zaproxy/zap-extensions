@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [13] - 2022-08-02
 ### Added
 - OWASP Web Security Testing Guide v4.2 mappings.
 
@@ -84,6 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/domxss-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/domxss-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/domxss-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/domxss-v10

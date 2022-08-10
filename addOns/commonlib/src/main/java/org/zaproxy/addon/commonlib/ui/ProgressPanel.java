@@ -51,6 +51,7 @@ import org.zaproxy.zap.utils.FontUtils;
  *
  * @since 1.8.0
  */
+@SuppressWarnings("serial")
 public class ProgressPanel extends AbstractPanel {
 
     private enum DisplayStatus {

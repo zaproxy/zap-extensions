@@ -258,7 +258,7 @@
       1,
       6
     ],
-    "cpe": "cpe:/a:odoo:odoo",
+    "cpe": "cpe:2.3:a:odoo:odoo:*:*:*:*:*:*:*:*",
     "description": "Odoo is business management software which includes CRM, ecommerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.",
     "html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
     "icon": "Odoo.png",
@@ -323,6 +323,7 @@
     "cats": [
       69
     ],
+    "cpe": "cpe:2.3:a:okta:*:*:*:*:*:*:*:*:*",
     "description": "Okta is a platform in the Identity-as-a-Service (IDaaS) category. Okta features include Provisioning, Single Sign-On (SSO), Active Directory (AD) and LDAP integration, the centralized de-provisioning of users, multi-factor authentication (MFA), mobile identity management.",
     "icon": "Okta.svg",
     "js": {
@@ -410,6 +411,19 @@
     ],
     "scriptSrc": "cdn\\.omise\\.co",
     "website": "https://www.omise.co"
+  },
+  "Omni CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Omni CMS (formerly OU Campus) is a web content management system developed by Modern Campus. Modern Campus is a SaaS-based student lifecycle management software designed to manage continuing education and non-degree programs.",
+    "dom": "a[href*='a.cms.omniupdate.com/11/']",
+    "icon": "Modern Campus.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://moderncampus.com/products/web-content-management.html"
   },
   "Omniconvert": {
     "cats": [
@@ -703,7 +717,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:open-classifieds:open_classifieds",
+    "cpe": "cpe:2.3:a:open-classifieds:open_classifieds:*:*:*:*:*:*:*:*",
     "icon": "Open Classifieds.png",
     "meta": {
       "author": "open-classifieds\\.com",
@@ -718,7 +732,7 @@
     "cookies": {
       "OJSSID": ""
     },
-    "cpe": "cpe:/a:public_knowledge_project:open_journal_systems",
+    "cpe": "cpe:2.3:a:public_knowledge_project:open_journal_systems:*:*:*:*:*:*:*:*",
     "description": "Open Journal Systems (OJS) is an open-source software application for managing and publishing scholarly journals.",
     "icon": "Open Journal Systems.png",
     "implies": "PHP",
@@ -731,7 +745,7 @@
     "cats": [
       10
     ],
-    "cpe": "cpe:/a:openwebanalytics:open_web_analytics",
+    "cpe": "cpe:2.3:a:openwebanalytics:open_web_analytics:*:*:*:*:*:*:*:*",
     "html": "<!-- (?:Start|End) Open Web Analytics Tracker -->",
     "icon": "Open Web Analytics.png",
     "js": {
@@ -757,6 +771,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:openbsd:openbsd:*:*:*:*:*:*:*:*",
     "excludes": "Apache",
     "headers": {
       "Server": "^OpenBSD httpd"
@@ -772,7 +787,7 @@
     "cookies": {
       "OCSESSID": ""
     },
-    "cpe": "cpe:/a:opencart:opencart",
+    "cpe": "cpe:2.3:a:opencart:opencart:*:*:*:*:*:*:*:*",
     "icon": "OpenCart.png",
     "implies": "PHP",
     "website": "http://www.opencart.com"
@@ -781,7 +796,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:alkacon:opencms",
+    "cpe": "cpe:2.3:a:alkacon:opencms:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "OpenCms"
     },
@@ -888,7 +903,7 @@
     "cats": [
       33
     ],
-    "cpe": "cpe:/a:openssl:openssl",
+    "cpe": "cpe:2.3:a:openssl:openssl:*:*:*:*:*:*:*:*",
     "description": "OpenSSL is a software library for applications that secure communications over computer networks against eavesdropping or need to identify the party at the other end.",
     "headers": {
       "Server": "OpenSSL(?:/([\\d.]+[a-z]?))?\\;version:\\1"
@@ -963,7 +978,7 @@
     "cats": [
       36
     ],
-    "cpe": "cpe:/a:openx:openx",
+    "cpe": "cpe:2.3:a:openx:openx:*:*:*:*:*:*:*:*",
     "description": "OpenX is a programmatic advertising technology company.",
     "dom": "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']",
     "icon": "OpenX.png",
@@ -1098,7 +1113,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:oracle:application_server",
+    "cpe": "cpe:2.3:a:oracle:application_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Oracle[- ]Application[- ]Server(?: Containers for J2EE)?(?:[- ](\\d[\\da-z./]+))?\\;version:\\1"
     },
@@ -1126,7 +1141,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:oracle:commerce_platform",
+    "cpe": "cpe:2.3:a:oracle:commerce_platform:*:*:*:*:*:*:*:*",
     "description": "Oracle Commerce is a unified B2B and B2C ecommerce platform.",
     "dom": "input[name*='/atg/commerce/'], .atgShoppingBagContent",
     "headers": {
@@ -1162,7 +1177,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:oracle:http_server",
+    "cpe": "cpe:2.3:a:oracle:http_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Oracle-HTTP-Server(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -1212,7 +1227,7 @@
     "cats": [
       23
     ],
-    "cpe": "cpe:/a:oracle:web_cache",
+    "cpe": "cpe:2.3:a:oracle:web_cache:*:*:*:*:*:*:*:*",
     "description": "Oracle Web Cache is a browser and content management server, which improves the performance of web sites.",
     "headers": {
       "Server": "Oracle(?:AS)?[- ]Web[- ]Cache(?:[- /]([\\da-z./]+))?\\;version:\\1"
@@ -1470,6 +1485,7 @@
     "cats": [
       30
     ],
+    "cpe": "cpe:2.3:a:microsoft:outlook_web_access:*:*:*:*:*:*:*:*",
     "description": "Outlook on the web is an information manager web app. It includes a web-based email client, a calendar tool, a contact manager, and a task manager.",
     "headers": {
       "X-OWA-Version": "([\\d\\.]+)?\\;version:\\1"

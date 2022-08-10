@@ -86,6 +86,25 @@ class HttpMessageEncoderUnitTest {
     }
 
     @Test
+    void shouldEncodeNonAsciiHeaderInHttpMessage() throws Exception {
+        // Given
+        HttpMessage httpMessage = new HttpMessage();
+        given(header.getPrimeHeader()).willReturn("Prime J/ψ:  → VP Header");
+        given(header.getHeadersAsString()).willReturn("Headers J/ψ:  → VP");
+        // When
+        boolean written = channel.writeOutbound(httpMessage);
+        // Then
+        assertThat(written, is(equalTo(true)));
+        ByteBuf encoded = channel.readOutbound();
+        assertNotNull(encoded);
+        assertThat(
+                encoded.toString(StandardCharsets.UTF_8),
+                is(equalTo("Prime J/ψ:  → VP Header\r\nHeaders J/ψ:  → VP\r\n")));
+        encoded.release();
+        assertChannelStateEnd();
+    }
+
+    @Test
     void shouldNotGetBodyBytesIfBodyEmpty() throws Exception {
         // Given
         HttpMessage httpMessage = new HttpMessage();

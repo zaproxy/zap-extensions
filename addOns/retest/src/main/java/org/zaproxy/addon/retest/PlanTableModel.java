@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 
+@SuppressWarnings("serial")
 public class PlanTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

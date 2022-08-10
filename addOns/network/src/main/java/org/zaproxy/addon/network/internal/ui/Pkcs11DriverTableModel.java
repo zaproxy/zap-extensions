@@ -25,6 +25,7 @@ import org.zaproxy.addon.network.internal.client.Pkcs11Driver;
 import org.zaproxy.addon.network.internal.client.Pkcs11Drivers;
 import org.zaproxy.zap.view.AbstractMultipleOptionsBaseTableModel;
 
+@SuppressWarnings("serial")
 public class Pkcs11DriverTableModel extends AbstractMultipleOptionsBaseTableModel<Pkcs11Driver> {
 
     private static final long serialVersionUID = 1L;

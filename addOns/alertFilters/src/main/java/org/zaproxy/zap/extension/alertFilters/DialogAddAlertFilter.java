@@ -42,6 +42,7 @@ import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.LayoutHelper;
 
 /** The Dialog for adding and configuring a new {@link AlertFilter}. */
+@SuppressWarnings("serial")
 public class DialogAddAlertFilter extends AbstractFormDialog {
 
     /** The Constant serialVersionUID. */

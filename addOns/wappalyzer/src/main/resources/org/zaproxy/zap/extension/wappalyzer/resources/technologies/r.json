@@ -38,7 +38,7 @@
     "cats": [
       4
     ],
-    "cpe": "cpe:/a:dave_thomas:rdoc",
+    "cpe": "cpe:2.3:a:dave_thomas:rdoc:*:*:*:*:*:*:*:*",
     "description": "RDoc produces HTML and command-line documentation for Ruby projects.",
     "html": [
       "<link[^>]+href=\"[^\"]*rdoc-style\\.css",
@@ -413,7 +413,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:facebook:react",
+    "cpe": "cpe:2.3:a:facebook:react:*:*:*:*:*:*:*:*",
     "description": "React is an open-source JavaScript library for building user interfaces or UI components.",
     "dom": {
       "body > div": {
@@ -700,7 +700,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:redhat:linux",
+    "cpe": "cpe:2.3:o:redhat:linux:*:*:*:*:*:*:*:*",
     "description": "Red Hat is an open-source Linux operating system.",
     "headers": {
       "Server": "Red Hat",
@@ -708,6 +708,15 @@
     },
     "icon": "Red Hat.svg",
     "website": "https://www.redhat.com"
+  },
+  "Red Hat Gluster": {
+    "cats": [
+      48
+    ],
+    "description": "Gluster is a free and open source scalable network filesystem.",
+    "icon": "gluster.png",
+    "saas": true,
+    "website": "https://www.gluster.org"
   },
   "Red je Pakketje": {
     "cats": [
@@ -766,7 +775,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:redislabs:redis",
+    "cpe": "cpe:2.3:a:redislabs:redis:*:*:*:*:*:*:*:*",
     "description": "Redis is an in-memory data structure project implementing a distributed, in-memory key–value database with optional durability. Redis supports different kinds of abstract data structures, such as strings, lists, maps, sets, sorted sets, HyperLogLogs, bitmaps, streams, and spatial indexes.",
     "icon": "Redis.svg",
     "website": "https://redis.io"
@@ -790,7 +799,7 @@
     "cookies": {
       "_redmine_session": ""
     },
-    "cpe": "cpe:/a:redmine:redmine",
+    "cpe": "cpe:2.3:a:redmine:redmine:*:*:*:*:*:*:*:*",
     "description": "Redmine is a free and open-source, web-based project management and issue tracking tool.",
     "html": "Powered by <a href=\"[^>]+Redmine",
     "icon": "Redmine.png",
@@ -932,6 +941,23 @@
     "saas": true,
     "scriptSrc": "\\.cloudfront\\.net/js/reflektion\\.js",
     "website": "https://reflektion.com"
+  },
+  "Refundid": {
+    "cats": [
+      102
+    ],
+    "description": "Refundid provides ecommerce customers instant refunds for their online returns.",
+    "dom": "a[href*='.refundid.com/']",
+    "icon": "Refundid.png",
+    "js": {
+      "launchRefundidPopup": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "website": "https://refundid.com"
   },
   "Regiondo": {
     "cats": [
@@ -1095,7 +1121,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:caucho:resin",
+    "cpe": "cpe:2.3:a:caucho:resin:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "^Resin(?:/(\\S*))?\\;version:\\1"
     },
@@ -1218,6 +1244,24 @@
     "scriptSrc": "\\.returngo\\.ai/",
     "website": "https://returngo.ai"
   },
+  "Returnly": {
+    "cats": [
+      102
+    ],
+    "description": "Returnly is the provider of digital return experiences for direct-to-consumer brands.",
+    "dom": "a[href*='.returnly.com/']",
+    "icon": "Returnly.svg",
+    "js": {
+      "Returnly.ContainerSwitcher": "",
+      "Returnly.InternalEventTracker": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://returnly.com"
+  },
   "RevJet": {
     "cats": [
       36
@@ -1316,6 +1360,24 @@
     "scriptSrc": "\\.reviewsolicitors\\.co\\.uk/",
     "website": "https://www.reviewsolicitors.co.uk"
   },
+  "Reviews.io": {
+    "cats": [
+      90
+    ],
+    "description": "Reviews.io is a review collection tool for companies to collect merchant (company) & product reviews from genuine customers, then share these on Google.",
+    "dom": "a[href*='.reviews.io/company-reviews/']",
+    "icon": "Reviews.io.svg",
+    "js": {
+      "reviewsio_hasVoted": "",
+      "reviewsio_shareLink": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.reviews.io"
+  },
   "RevolverMaps": {
     "cats": [
       35
@@ -1324,20 +1386,6 @@
     "icon": "RevolverMaps.svg",
     "scriptSrc": "\\.revolvermaps\\.com",
     "website": "https://www.revolvermaps.com"
-  },
-  "Revslider": {
-    "cats": [
-      19,
-      87
-    ],
-    "description": "Slider Revolution is a WordPress plugin that allows you to create responsive sliders with many animation effects, text, image and video layers, and many other features.",
-    "html": [
-      "<link[^>]* href=[\\'\"][^']+revslider[/\\w-]+\\.css\\?ver=([0-9.]+)[\\'\"]\\;version:\\1"
-    ],
-    "icon": "revslider.png",
-    "requires": "WordPress",
-    "scriptSrc": "/revslider/[/\\w-]+/js",
-    "website": "https://revolution.themepunch.com/"
   },
   "Revy": {
     "cats": [
@@ -1412,26 +1460,6 @@
     "saas": true,
     "website": "https://www.rezgo.com"
   },
-  "Richpanel": {
-    "cats": [
-      53
-    ],
-    "description": "Richpanel is a purpose-built CRM and customer support platform for ecommerce and DTC brands.",
-    "icon": "Richpanel.svg",
-    "js": {
-      "Richpanel.PLUGIN_API_URL": "",
-      "richpanel_messenger_url": "",
-      "RichpanelAppProxy": ""
-    },
-    "scriptSrc": "\\.richpanel\\.com/",
-    "saas": true,
-    "pricing": [
-      "freemium",
-      "mid",
-      "recurring"
-    ],
-    "website": "https://www.richpanel.com"
-  },
   "RichRelevance": {
     "cats": [
       76
@@ -1448,6 +1476,26 @@
     "saas": true,
     "scriptSrc": "\\.richrelevance\\.com/",
     "website": "https://richrelevance.com"
+  },
+  "Richpanel": {
+    "cats": [
+      53
+    ],
+    "description": "Richpanel is a purpose-built CRM and customer support platform for ecommerce and DTC brands.",
+    "icon": "Richpanel.svg",
+    "js": {
+      "Richpanel.PLUGIN_API_URL": "",
+      "RichpanelAppProxy": "",
+      "richpanel_messenger_url": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.richpanel\\.com/",
+    "website": "https://www.richpanel.com"
   },
   "Rickshaw": {
     "cats": [
@@ -1684,6 +1732,7 @@
     "cats": [
       30
     ],
+    "cpe": "cpe:2.3:a:roundcube:webmail:*:*:*:*:*:*:*:*",
     "description": "RoundCube is free and open-source web-based IMAP email client.",
     "html": "<title>RoundCube",
     "icon": "RoundCube.png",
@@ -1696,7 +1745,7 @@
   },
   "Route": {
     "cats": [
-      19
+      107
     ],
     "description": "Route is a delivery and shipping tracking app",
     "icon": "route.png",
@@ -1745,7 +1794,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:ruby-lang:ruby",
+    "cpe": "cpe:2.3:a:ruby-lang:ruby:*:*:*:*:*:*:*:*",
     "description": "Ruby is an open-source object-oriented programming language.",
     "headers": {
       "Server": "(?:Mongrel|WEBrick|Ruby)"
@@ -1777,7 +1826,7 @@
     "cookies": {
       "_session_id": "\\;confidence:75"
     },
-    "cpe": "cpe:/a:rubyonrails:rails",
+    "cpe": "cpe:2.3:a:rubyonrails:rails:*:*:*:*:*:*:*:*",
     "description": "Ruby on Rails is a server-side web application framework written in Ruby under the MIT License.",
     "headers": {
       "Server": "mod_(?:rails|rack)",

@@ -19,8 +19,10 @@
  */
 package org.zaproxy.addon.paramminer;
 
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -29,14 +31,26 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ParamGuessResult {
 
+    public enum Reason {
+        HTTP_CODE,
+        HTTP_HEADERS,
+        REDIRECT,
+        BODY_HEURISTIC_MISMATCH,
+        LINE_COUNT,
+        WORD_COUNT,
+        TEXT,
+        PARAM_NAME_REFLECTION,
+        PARAM_VALUE_REFLECTION,
+    }
+
     private String paramName;
-    private String reason;
     private HistoryReference historyReference;
+    private List<Reason> reasons;
     private static final Logger logger = LogManager.getLogger(ParamGuessResult.class);
 
-    public ParamGuessResult(String paramName, String reason, HttpMessage httpMessage) {
+    public ParamGuessResult(String paramName, List<Reason> reasons, HttpMessage httpMessage) {
         this.paramName = paramName;
-        this.reason = reason;
+        this.reasons = reasons;
         try {
             // TODO Use TYPE_PARAM_MINER for the history reference type once targeting >= 2.12.0
             this.historyReference =
@@ -50,8 +64,8 @@ public class ParamGuessResult {
         return paramName;
     }
 
-    public String getReason() {
-        return reason;
+    public List<Reason> getReasons() {
+        return reasons;
     }
 
     public HttpMessage getHttpMessage() {
@@ -61,5 +75,21 @@ public class ParamGuessResult {
             logger.warn("Error getting HTTP message. Exception raised {}", e);
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (reasons != null) {
+            for (Reason reason : reasons) {
+                sb.append(
+                        Constant.messages.getString(
+                                "paramminer.results.reason." + reason.toString()));
+                sb.append(", ");
+            }
+        }
+        sb.setLength(sb.length() - 2);
+        return Constant.messages.getString(
+                "paramminer.results.maintext", this.historyReference.getURI(), getParamName(), sb);
     }
 }

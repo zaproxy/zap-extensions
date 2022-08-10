@@ -32,6 +32,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
+@SuppressWarnings("serial")
 public class OptionsReplacerPanel extends AbstractParamPanel {
 
     public static final String PANEL_NAME = Constant.messages.getString("replacer.options.title");

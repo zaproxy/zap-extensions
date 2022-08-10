@@ -160,7 +160,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:aol:aolserver",
+    "cpe": "cpe:2.3:a:aol:aolserver:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "AOLserver/?([\\d.]+)?\\;version:\\1"
     },
@@ -281,24 +281,24 @@
       16
     ],
     "description": "AWS WAF Captcha helps block unwanted bot traffic by requiring users to successfully complete challenges before their web request are allowed to reach AWS WAF protected resources.",
-    "icon": "aws.svg",
-    "implies": "Amazon Web Services",
     "headers": {
       "x-amzn-waf-action": "^captcha$"
     },
-    "scriptSrc": "captcha\\.awswaf\\.com/",
-    "saas": true,
+    "icon": "aws.svg",
+    "implies": "Amazon Web Services",
     "pricing": [
       "recurring",
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "captcha\\.awswaf\\.com/",
     "website": "https://docs.aws.amazon.com/waf/latest/developerguide/waf-captcha.html"
   },
   "AWStats": {
     "cats": [
       10
     ],
-    "cpe": "cpe:/a:laurent_destailleur:awstats",
+    "cpe": "cpe:2.3:a:laurent_destailleur:awstats:*:*:*:*:*:*:*:*",
     "icon": "AWStats.png",
     "implies": "Perl",
     "meta": {
@@ -523,6 +523,24 @@
     ],
     "website": "https://www.acquia.com/products/marketing-cloud/campaign-factory"
   },
+  "Acquia Cloud Classic": {
+    "cats": [
+      88
+    ],
+    "description": "Acquia Cloud Classic is a Amazon EC2 based Drupal hosting platform.",
+    "headers": {
+      "X-AH-Environment": "prod"
+    },
+    "icon": "acquia-cloud-platform.svg",
+    "implies": [
+      "Acquia Cloud Platform",
+      "Amazon EC2",
+      "Percona",
+      "Red Hat Gluster"
+    ],
+    "saas": true,
+    "website": "https://docs.acquia.com/cloud-platform/"
+  },
   "Acquia Cloud IDE": {
     "cats": [
       47
@@ -539,6 +557,24 @@
     "url": "https:?\\/\\/.+\\.web\\.ahdev\\.cloud",
     "website": "https://www.acquia.com/products/drupal-cloud/cloud-ide"
   },
+  "Acquia Cloud Next": {
+    "cats": [
+      88
+    ],
+    "description": "Acquia Cloud Next is a Kubernetes-native Drupal hosting platform.",
+    "headers": {
+      "X-AH-Environment": "next"
+    },
+    "icon": "acquia-cloud-platform.svg",
+    "implies": [
+      "Acquia Cloud Platform",
+      "Kubernetes Dashboard",
+      "Amazon EFS",
+      "Amazon Aurora"
+    ],
+    "saas": true,
+    "website": "https://docs.acquia.com/cloud-platform/cloud-next/"
+  },
   "Acquia Cloud Platform": {
     "cats": [
       62
@@ -549,9 +585,7 @@
     },
     "icon": "acquia-cloud.png",
     "implies": [
-      "Drupal",
-      "Apache",
-      "Percona"
+      "Amazon Web Services"
     ],
     "saas": true,
     "website": "https://www.acquia.com/"
@@ -613,17 +647,16 @@
   },
   "Acquia Customer Data Platform": {
     "cats": [
-      10
+      97
     ],
     "description": "Acquia Customer Data Platform (formerly AgilOne) is a customer data platform for Drupal.",
     "dom": [
       "[data-function*='Agilone']"
     ],
     "icon": "acquia-cdp.png",
-    "implies": [
-      "Acquia Cloud Platform"
-    ],
     "js": {
+      "$A1": "",
+      "$A1Config": "",
       "agiloneObject": ""
     },
     "saas": true,
@@ -675,23 +708,6 @@
     ],
     "website": "https://www.acquia.com/products/drupal-cloud/site-studio"
   },
-  "Acquire Live Chat": {
-    "cats": [
-      52
-    ],
-    "description": "Acquire is a multi-channel customer support platform designed to provide real-time customer support to customers.",
-    "icon": "Acquire.svg",
-    "js": {
-      "acquire": "",
-      "_acquire_init_config": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.acquire\\.io/(?!cobrowse)",
-    "website": "https://acquire.io"
-  },
   "Acquire Cobrowse": {
     "cats": [
       19,
@@ -700,8 +716,8 @@
     "description": "Acquire Cobrowse is a safe and secure method of interacting with a customer's browser without downloading any additional software.",
     "icon": "Acquire.svg",
     "js": {
-      "acquireCobrowseSettings": "",
       "acquireCobrowseRTC": "",
+      "acquireCobrowseSettings": "",
       "acquireConfigNodeServer": ""
     },
     "pricing": [
@@ -710,6 +726,23 @@
     "saas": true,
     "scriptSrc": "\\.acquire\\.io/cobrowse/",
     "website": "https://acquire.io/co-browsing"
+  },
+  "Acquire Live Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Acquire is a multi-channel customer support platform designed to provide real-time customer support to customers.",
+    "icon": "Acquire.svg",
+    "js": {
+      "_acquire_init_config": "",
+      "acquire": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.acquire\\.io/(?!cobrowse)",
+    "website": "https://acquire.io"
   },
   "Act-On": {
     "cats": [
@@ -1137,13 +1170,17 @@
       29
     ],
     "description": "Addsearch is a site search solution for small and large websites.",
-    "icon": "AddSearch.png",
+    "icon": "Addsearch.svg",
+    "js": {
+      "AddSearchClient": "",
+      "AddSearchUI": ""
+    },
     "pricing": [
       "mid",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "https://addsearch\\.com/js/",
+    "scriptSrc": "//addsearch\\.com/js/",
     "website": "https://www.addsearch.com/"
   },
   "Adform": {
@@ -1177,6 +1214,7 @@
     "cats": [
       3
     ],
+    "cpe": "cpe:2.3:a:adminer:adminer:*:*:*:*:*:*:*:*",
     "html": [
       "Adminer</a> <span class=\"version\">([\\d.]+)</span>\\;version:\\1",
       "onclick=\"bodyClick\\(event\\);\" onload=\"verifyVersion\\('([\\d.]+)'\\);\">\\;version:\\1"
@@ -1328,7 +1366,7 @@
     "cats": [
       18
     ],
-    "cpe": "cpe:/a:adobe:coldfusion",
+    "cpe": "cpe:2.3:a:adobe:coldfusion:*:*:*:*:*:*:*:*",
     "headers": {
       "Cookie": "CFTOKEN="
     },
@@ -1371,7 +1409,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:adobe:experience_manager",
+    "cpe": "cpe:2.3:a:adobe:experience_manager:*:*:*:*:*:*:*:*",
     "description": "Adobe Experience Manager (AEM) is a content management solution for building websites, mobile apps and forms.",
     "html": [
       "<div class=\"[^\"]*parbase",
@@ -1389,6 +1427,7 @@
       "/etc/clientlibs/",
       "/etc\\.clientlibs/"
     ],
+    "scripts": "aem-(?:GridColumn|apps/)",
     "website": "https://www.adobe.com/marketing/experience-manager.html"
   },
   "Adobe Experience Platform Identity Service": {
@@ -1422,7 +1461,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:adobe:flash",
+    "cpe": "cpe:2.3:a:adobe:flash:*:*:*:*:*:*:*:*",
     "description": "Adobe Flash is a multimedia software platform used for production of animations, rich web applications and embedded web browser video players.",
     "dom": [
       "object[type='application/x-shockwave-flash']",
@@ -1435,7 +1474,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:adobe:golive",
+    "cpe": "cpe:2.3:a:adobe:golive:*:*:*:*:*:*:*:*",
     "description": "Adobe GoLive is a WYSIWYG HTML editor and web site management application.",
     "icon": "Adobe GoLive.png",
     "meta": {
@@ -1447,7 +1486,7 @@
     "cats": [
       4
     ],
-    "cpe": "cpe:/a:adobe:robohelp",
+    "cpe": "cpe:2.3:a:adobe:robohelp:*:*:*:*:*:*:*:*",
     "description": "Adobe RoboHelp is a Help Authoring Tool (HAT) that allows you to create help systems, e-learning content and knowledge bases.",
     "icon": "Adobe RoboHelp.svg",
     "js": {
@@ -1705,7 +1744,7 @@
   },
   "AfterShip": {
     "cats": [
-      19
+      107
     ],
     "description": "AfterShip provides automated shipment tracking as a service.",
     "icon": "AfterShip.svg",
@@ -1739,7 +1778,7 @@
       41,
       91
     ],
-    "cpe": "cpe:/a:afterpay:afterpay",
+    "cpe": "cpe:2.3:a:afterpay:afterpay:*:*:*:*:*:*:*:*",
     "description": "Afterpay is a 'buy now, pay later' platform that makes it possible to pay off purchased goods in fortnightly instalments.",
     "dom": "#afterpay, .afterpay, .AfterpayMessage, [aria-label='Afterpay'], link[href*='/wp-content/plugins/afterpay-gateway-for-woocommerce/']",
     "icon": "afterpay.png",
@@ -1825,6 +1864,21 @@
     ],
     "saas": true,
     "website": "https://www.air360.io"
+  },
+  "AirRobe": {
+    "cats": [
+      5
+    ],
+    "description": "AirRobe partners with brands and retailers to power the circular fashion economy.",
+    "icon": "AirRobe.png",
+    "js": {
+      "airrobe.app_id": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://airrobe.com"
   },
   "Aircall": {
     "cats": [
@@ -2002,7 +2056,7 @@
       18,
       22
     ],
-    "cpe": "cpe:/a:lightbend:akka_http",
+    "cpe": "cpe:2.3:a:lightbend:akka_http:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "akka-http(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -2090,6 +2144,7 @@
     },
     "icon": "Algolia.svg",
     "js": {
+      "ALGOLIA_INSIGHTS_SRC": "",
       "AlgoliaSearch": "",
       "__GLOBAL__.algolia": "",
       "__NEXT_DATA__.props.pageProps.appSettings.ALGOLIA_APP_ID": "",
@@ -2121,7 +2176,7 @@
       54,
       87
     ],
-    "cpe": "cpe:/a:semperfiwebdesign:all_in_one_seo_pack",
+    "cpe": "cpe:2.3:a:aioseo:all_in_one_seo:*:*:*:*:*:wordpress:*:*",
     "description": "All in One SEO plugin optimizes WordPress website and its content for search engines.",
     "html": "<!-- All in One SEO Pack ([\\d.]+) \\;version:\\1",
     "icon": "AIOSEO.svg",
@@ -2193,6 +2248,7 @@
     "cats": [
       28
     ],
+    "cpe": "cpe:2.3:o:alpinelinux:alpine_linux:*:*:*:*:*:*:*:*",
     "description": "Alpine Linux is a security-oriented, lightweight Linux distribution based on musl libc and busybox.",
     "headers": {
       "X-Powered-By": "Alpine"
@@ -2288,6 +2344,15 @@
     "scriptSrc": "\\.associates-amazon\\.com",
     "website": "https://affiliate-program.amazon.com"
   },
+  "Amazon Aurora": {
+    "cats": [
+      34
+    ],
+    "description": "Amazon Aurora is a relational database service developed and offered by Amazon Web Services.",
+    "icon": "aws_aurora.png",
+    "implies": "Amazon Web Services",
+    "website": "https://aws.amazon.com/rds/aurora"
+  },
   "Amazon CloudWatch RUM": {
     "cats": [
       78
@@ -2362,7 +2427,19 @@
       "Docker"
     ],
     "saas": true,
-    "website": "https://aws.amazon.com/elasticloadbalancing/"
+    "website": "https://aws.amazon.com/ecs/"
+  },
+  "Amazon EFS": {
+    "cats": [
+      48
+    ],
+    "description": "Amazon Elastic File System is a cloud storage service provided by Amazon Web Services.",
+    "icon": "amazon-efs.png",
+    "implies": [
+      "Amazon Web Services"
+    ],
+    "saas": true,
+    "website": "https://aws.amazon.com/efs/"
   },
   "Amazon ELB": {
     "cats": [
@@ -2405,17 +2482,18 @@
   },
   "Amazon S3": {
     "cats": [
-      19
+      31
     ],
     "description": "Amazon S3 or Amazon Simple Storage Service is a service offered by Amazon Web Services (AWS) that provides object storage through a web service interface.",
     "headers": {
-      "Content-Security-Policy": "s3\\.[^ ]*amazonaws\\.com",
+      "Content-Security-Policy": "s3[^ ]*amazonaws\\.com\\s",
+      "Content-Security-Policy-Report-Only": "s3[^ ]*\\.amazonaws\\.com\\s",
       "server": "^AmazonS3$"
     },
     "icon": "aws-s3.svg",
     "implies": "Amazon Web Services",
     "saas": true,
-    "scriptSrc": "s3\\.[^ ]*amazonaws\\.com",
+    "scriptSrc": "s3[^ ]*\\.amazonaws\\.com/",
     "website": "http://aws.amazon.com/s3/"
   },
   "Amazon SES": {
@@ -2689,7 +2767,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:angularjs:angular.js",
+    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*:*",
     "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google.",
     "dom": {
       "[ng-version]": {
@@ -2743,6 +2821,7 @@
     "cats": [
       12
     ],
+    "cpe": "cpe:2.3:a:angularjs:angular.js:*:*:*:*:*:*:*:*",
     "description": "AngularJS is a JavaScript-based open-source web application framework led by the Angular Team at Google.",
     "excludes": [
       "Angular",
@@ -2871,7 +2950,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:apache:http_server",
+    "cpe": "cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*",
     "description": "Apache is a free and open-source cross-platform web server software.",
     "headers": {
       "Server": "(?:Apache(?:$|/([\\d.]+)|[^/-])|(?:^|\\b)HTTPD)\\;version:\\1"
@@ -2883,7 +2962,7 @@
     "cats": [
       8
     ],
-    "cpe": "cpe:/a:apache:jspwiki",
+    "cpe": "cpe:2.3:a:apache:jspwiki:*:*:*:*:*:*:*:*",
     "description": "Apache JSPWiki is an open-source Wiki engine, built around standard JEE components (Java, servlets, JSP).",
     "html": "<html[^>]* xmlns:jspwiki=",
     "icon": "Apache JSPWiki.png",
@@ -2896,7 +2975,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:apache:tomcat",
+    "cpe": "cpe:2.3:a:apache:tomcat:*:*:*:*:*:*:*:*",
     "description": "Apache Tomcat is an open-source implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies.",
     "headers": {
       "Server": "^Apache-Coyote",
@@ -2910,7 +2989,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:apache:traffic_server",
+    "cpe": "cpe:2.3:a:apache:traffic_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "ATS/?([\\d.]+)?\\;version:\\1"
     },
@@ -2921,7 +3000,7 @@
     "cats": [
       18
     ],
-    "cpe": "cpe:/a:apache:wicket",
+    "cpe": "cpe:2.3:a:apache:wicket:*:*:*:*:*:*:*:*",
     "icon": "Apache Wicket.svg",
     "implies": "Java",
     "js": {
@@ -3175,6 +3254,18 @@
     "scriptSrc": "\\.applicantstack\\.com/",
     "website": "https://www.applicantstack.com"
   },
+  "Application Request Routing": {
+    "cats": [
+      65
+    ],
+    "description": "Application Request Routing (ARR) is an extension to Internet Information Server (IIS), which enables an IIS server to function as a load balancer.",
+    "headers": {
+      "X-Powered-By": "^ARR/([\\d\\.]+)$\\;version:\\1"
+    },
+    "icon": "Microsoft.svg",
+    "implies": "IIS",
+    "website": "https://www.iis.net/downloads/microsoft/application-request-routing"
+  },
   "Appointy": {
     "cats": [
       72
@@ -3260,7 +3351,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:arastta:ecommerce",
+    "cpe": "cpe:2.3:a:arastta:ecommerce:*:*:*:*:*:*:*:*",
     "description": "Arastta is a free and open-source project with contributors from all over the world.",
     "excludes": "OpenCart",
     "headers": {
@@ -3329,7 +3420,7 @@
     "cats": [
       47
     ],
-    "cpe": "cpe:/a:jfrog:artifactory",
+    "cpe": "cpe:2.3:a:jfrog:artifactory:*:*:*:*:*:*:*:*",
     "html": [
       "<span class=\"version\">Artifactory(?: Pro)?(?: Power Pack)?(?: ([\\d.]+))?\\;version:\\1"
     ],
@@ -3346,7 +3437,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:jfrog:artifactory",
+    "cpe": "cpe:2.3:a:jfrog:artifactory:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Artifactory(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -3572,7 +3663,7 @@
     "cats": [
       47
     ],
-    "cpe": "cpe:/a:atlassian:bitbucket",
+    "cpe": "cpe:2.3:a:atlassian:bitbucket:*:*:*:*:*:*:*:*",
     "description": "Bitbucket is a web-based version control repository hosting service for source code and development projects that use either Mercurial or Git revision control systems.",
     "html": "<li>Atlassian Bitbucket <span title=\"[a-z0-9]+\" id=\"product-version\" data-commitid=\"[a-z0-9]+\" data-system-build-number=\"[a-z0-9]+\"> v([\\d.]+)<\\;version:\\1",
     "icon": "Atlassian Bitbucket.svg",
@@ -3589,7 +3680,7 @@
     "cats": [
       8
     ],
-    "cpe": "cpe:/a:atlassian:confluence",
+    "cpe": "cpe:2.3:a:atlassian:confluence:*:*:*:*:*:*:*:*",
     "description": "Atlassian Confluence is a web-based collaboration wiki tool.",
     "dom": {
       "li.print-only": {
@@ -3613,7 +3704,7 @@
     "cookies": {
       "FESESSIONID": ""
     },
-    "cpe": "cpe:/a:atlassian:fisheye",
+    "cpe": "cpe:2.3:a:atlassian:fisheye:*:*:*:*:*:*:*:*",
     "html": "<title>(?:Log in to )?FishEye (?:and Crucible )?([\\d.]+)?</title>\\;version:\\1",
     "icon": "Atlassian FishEye.svg",
     "website": "http://www.atlassian.com/software/fisheye/overview/"
@@ -3622,7 +3713,7 @@
     "cats": [
       13
     ],
-    "cpe": "cpe:/a:atlassian:jira",
+    "cpe": "cpe:2.3:a:atlassian:jira:*:*:*:*:*:*:*:*",
     "dom": "#jira",
     "icon": "Atlassian Jira.svg",
     "implies": "Java",
@@ -3781,8 +3872,19 @@
     "cats": [
       69
     ],
+    "cpe": "cpe:2.3:a:auth0:auth0.js:*:*:*:*:*:node.js:*:*",
     "description": "Auth0 provides authentication and authorisation as a service.",
-    "icon": "Auth0.png",
+    "dom": "link[href*='cdn.auth0.com']",
+    "headers": {
+      "x-auth0-requestid": ""
+    },
+    "icon": "Auth0.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
     "scriptSrc": [
       "/auth0(?:-js)?/([\\d.]+)/auth0(?:.min)?\\.js\\;version:\\1",
       "/auth0-js@([\\d.]+)/([a-z]+)/auth0\\.min\\.js\\;version:\\1"
@@ -3793,10 +3895,46 @@
     "cats": [
       69
     ],
-    "description": "Auth0's signin solution",
-    "icon": "Auth0.png",
+    "description": "Auth0 Lock enables you to easily add social identity providers, so that your users can log in seamlessly using any desired provider.",
+    "icon": "Auth0.svg",
+    "implies": "Auth0",
     "scriptSrc": "/lock/([\\d.]+)/lock(?:.min)?\\.js\\;version:\\1",
     "website": "https://auth0.com/docs/libraries/lock"
+  },
+  "Autoketing": {
+    "cats": [
+      32
+    ],
+    "description": "Autoketing is a marketing automation platform.",
+    "icon": "Autoketing.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://autoketing.com"
+  },
+  "Autoketing Product Reviews": {
+    "cats": [
+      100,
+      90
+    ],
+    "description": "Autoketing Product Reviews is an application that allows shop owners to manage the product review section on their website.",
+    "icon": "Autoketing.png",
+    "implies": [
+      "Shopify",
+      "Autoketing"
+    ],
+    "js": {
+      "autoketingproduct_reivew": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://apps.shopify.com/product-reviews-autoketing"
   },
   "Automizely": {
     "cats": [

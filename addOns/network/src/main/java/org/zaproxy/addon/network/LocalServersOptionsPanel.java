@@ -48,6 +48,7 @@ import org.zaproxy.addon.network.internal.ui.PassThroughTablePanel;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapLabel;
 
+@SuppressWarnings("serial")
 class LocalServersOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;

@@ -3,7 +3,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:lockon:ec-cube",
+    "cpe": "cpe:2.3:a:lockon:ec-cube:*:*:*:*:*:*:*:*",
     "description": "EC-CUBE is an open source package used to build ecommerce sites.",
     "icon": "EC-CUBE.svg",
     "implies": "PHP",
@@ -75,7 +75,7 @@
       "EPiServer": "",
       "EPiTrace": ""
     },
-    "cpe": "cpe:/a:episerver:episerver",
+    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
     "icon": "EPiServer.png",
     "implies": "Microsoft ASP.NET",
     "meta": {
@@ -433,6 +433,7 @@
     "cats": [
       29
     ],
+    "cpe": "cpe:2.3:a:elastic:elasticsearch:*:*:*:*:*:*:*:*",
     "description": "Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.",
     "icon": "Elasticsearch.svg",
     "website": "https://www.elastic.co"
@@ -455,7 +456,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:eleanor-cms:eleanor_cms",
+    "cpe": "cpe:2.3:a:eleanor-cms:eleanor_cms:*:*:*:*:*:*:*:*",
     "icon": "Eleanor CMS.png",
     "implies": "PHP",
     "meta": {
@@ -649,7 +650,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:embedthis:appweb",
+    "cpe": "cpe:2.3:a:embedthis:appweb:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Mbedthis-Appweb(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -677,7 +678,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:emberjs:ember.js",
+    "cpe": "cpe:2.3:a:emberjs:ember.js:*:*:*:*:*:*:*:*",
     "icon": "Ember.js.png",
     "js": {
       "Ember": "",
@@ -800,6 +801,21 @@
     "scriptSrc": "\\.enjin\\.com/",
     "website": "https://www.enjin.com"
   },
+  "Enlistly": {
+    "cats": [
+      100
+    ],
+    "description": "Enlistly tracks referral orders in realtime. Orders that are partially refunded, refunded, or cancelled update on the fly.",
+    "icon": "Enlistly.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "cdn\\.enlistly\\.com/",
+    "website": "https://enlistly.com"
+  },
   "Ensi": {
     "cats": [
       6
@@ -888,7 +904,7 @@
     "cats": [
       64
     ],
-    "cpe": "cpe:/a:envoyproxy:envoy",
+    "cpe": "cpe:2.3:a:envoyproxy:envoy:*:*:*:*:*:*:*:*",
     "description": "Envoy is an open-source edge and service proxy, designed for cloud-native applications.",
     "headers": {
       "Server": "^envoy$",
@@ -1009,7 +1025,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:erlang:erlang%2fotp",
+    "cpe": "cpe:2.3:a:erlang:erlang%2fotp:*:*:*:*:*:*:*:*",
     "description": "Erlang is a general-purpose, concurrent, functional programming language, and a garbage-collected runtime system.",
     "headers": {
       "Server": "Erlang( OTP/(?:[\\d.ABR-]+))?\\;version:\\1"
@@ -1103,7 +1119,7 @@
     "cats": [
       24
     ],
-    "cpe": "cpe:/a:etherpad:etherpad",
+    "cpe": "cpe:2.3:a:etherpad:etherpad:*:*:*:*:*:*:*:*",
     "description": "Etherpad is an open-source, web-based collaborative real-time editor, allowing authors to simultaneously edit a text document, and see all of the participants' edits in real-time, with the ability to display each author's text in their own colour.",
     "headers": {
       "Server": "^Etherpad"
@@ -1118,6 +1134,18 @@
       "/ep_etherpad-lite/"
     ],
     "website": "https://etherpad.org"
+  },
+  "Ethers": {
+    "cats": [
+      59
+    ],
+    "description": "Ethers is a complete, tiny and simple Ethereum library.",
+    "icon": "Ethers.svg",
+    "js": {
+      "_ethers": ""
+    },
+    "oss": true,
+    "website": "https://ethers.org/"
   },
   "EthicalAds": {
     "cats": [
@@ -1339,7 +1367,7 @@
       18,
       22
     ],
-    "cpe": "cpe:/a:expressjs:express",
+    "cpe": "cpe:2.3:a:expressjs:express:*:*:*:*:*:*:*:*",
     "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
     "headers": {
       "X-Powered-By": "^Express(?:$|,)"
@@ -1357,7 +1385,7 @@
       "exp_last_activity": "",
       "exp_tracker": ""
     },
-    "cpe": "cpe:/a:ellislab:expressionengine",
+    "cpe": "cpe:2.3:a:ellislab:expressionengine:*:*:*:*:*:*:*:*",
     "description": "ExpressionEngine is a free and open-source CMS.",
     "icon": "ExpressionEngine.svg",
     "implies": "PHP",
@@ -1368,7 +1396,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:sencha:ext_js",
+    "cpe": "cpe:2.3:a:sencha:ext_js:*:*:*:*:*:*:*:*",
     "icon": "ExtJS.png",
     "js": {
       "Ext": "",
@@ -1740,6 +1768,7 @@
     "cookies": {
       "eZSESSID": ""
     },
+    "cpe": "cpe:2.3:a:ez:ez_publish:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "^eZ Publish"
     },
@@ -1821,7 +1850,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:experiencedcms:experiencedcms",
+    "cpe": "cpe:2.3:a:experiencedcms:experiencedcms:*:*:*:*:*:*:*:*",
     "icon": "experiencedCMS_Logo.png",
     "implies": "PHP",
     "meta": {

@@ -25,11 +25,7 @@ import org.parosproxy.paros.network.HttpSender;
 public class CookieGuesser implements Runnable {
 
     public CookieGuesser(
-            int id,
-            ParamMinerConfig config,
-            GuesserScan scan,
-            HttpSender httpSender,
-            ExecutorService executor) {}
+            int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {}
 
     @Override
     public void run() {}

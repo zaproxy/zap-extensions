@@ -38,6 +38,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class BoastOptionsPanelTab extends OastOptionsPanelTab {
 
     private static final long serialVersionUID = 1L;

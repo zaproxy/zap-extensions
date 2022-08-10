@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

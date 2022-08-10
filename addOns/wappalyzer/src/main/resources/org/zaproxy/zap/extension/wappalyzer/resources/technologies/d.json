@@ -3,7 +3,7 @@
     "cats": [
       25
     ],
-    "cpe": "cpe:/a:d3.js_project:d3.js",
+    "cpe": "cpe:2.3:a:d3.js_project:d3.js:*:*:*:*:*:*:*:*",
     "description": "D3.js is a JavaScript library for producing dynamic, interactive data visualisations in web browsers.",
     "icon": "D3.png",
     "js": {
@@ -72,7 +72,7 @@
     "cookies": {
       "DotNetNukeAnonymous": ""
     },
-    "cpe": "cpe:/a:dnnsoftware:dotnetnuke",
+    "cpe": "cpe:2.3:a:dnnsoftware:dotnetnuke:*:*:*:*:*:*:*:*",
     "headers": {
       "Cookie": "dnn_IsMobile=",
       "DNNOutputCache": "",
@@ -262,23 +262,16 @@
     "cats": [
       27
     ],
-    "description": "Dart is an open-source, general-purpose, object-oriented programming language with C-style syntax developed by Google in 2011.",
-    "dom": "script[type='application/dart']",
-    "excludes": [
-      "Angular",
-      "AngularJS"
-    ],
+    "description": "Dart is an open-source, general-purpose, object-oriented programming language developed by Google.",
     "icon": "Dart.svg",
     "js": {
+      "$__dart_deferred_initializers__": "",
       "___dart__$dart_dartObject_ZxYxX_0_": "",
       "___dart_dispatch_record_ZxYxX_0_": ""
     },
     "oss": true,
-    "scriptSrc": [
-      "/(?:\\.)?(?:dart)(?:\\.js)?/",
-      "packages/browser/dart\\.js"
-    ],
-    "website": "https://www.dartlang.org"
+    "scriptSrc": "/(?:\\.)?(?:dart)(?:\\.js)?/",
+    "website": "https://dart.dev"
   },
   "Darwin": {
     "cats": [
@@ -296,7 +289,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:dleviet:datalife_engine",
+    "cpe": "cpe:2.3:a:dleviet:datalife_engine:*:*:*:*:*:*:*:*",
     "icon": "DataLife Engine.svg",
     "implies": [
       "PHP",
@@ -310,11 +303,27 @@
     },
     "website": "https://dle-news.ru"
   },
+  "DataMilk": {
+    "cats": [
+      10,
+      19
+    ],
+    "description": "DataMilk is an AI tool which autonomously optimises customer UI for ecommerce customers in order to increase conversions.",
+    "icon": "DataMilk.svg",
+    "js": {
+      "datamilkMagicAiExecuted": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.datamilk.ai"
+  },
   "DataTables": {
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:datatables:datatables.net",
+    "cpe": "cpe:2.3:a:datatables:datatables.net:*:*:*:*:*:*:*:*",
     "description": "DataTables is a plug-in for the jQuery Javascript library adding advanced features like pagination, instant search, themes, and more to any HTML table.",
     "icon": "DataTables.png",
     "implies": "jQuery",
@@ -412,7 +421,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:debian:debian_linux",
+    "cpe": "cpe:2.3:o:debian:debian_linux:*:*:*:*:*:*:*:*",
     "description": "Debian is a Linux software which is a free open-source software.",
     "headers": {
       "Server": "Debian",
@@ -443,7 +452,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:dedecms:dedecms",
+    "cpe": "cpe:2.3:a:dedecms:dedecms:*:*:*:*:*:*:*:*",
     "icon": "DedeCMS.png",
     "implies": "PHP",
     "js": {
@@ -466,7 +475,7 @@
   },
   "Deliverr": {
     "cats": [
-      19
+      107
     ],
     "description": "Deliverr is a fulfilment service that facilitates shipping services for ecommerce businesses.",
     "icon": "Deliverr.svg",
@@ -671,7 +680,7 @@
     "cats": [
       9
     ],
-    "cpe": "cpe:/a:directadmin:directadmin",
+    "cpe": "cpe:2.3:a:directadmin:directadmin:*:*:*:*:*:*:*:*",
     "description": "DirectAdmin is a graphical web-based web hosting control panel designed to make administration of websites easier.",
     "headers": {
       "Server": "DirectAdmin Daemon v([\\d.]+)\\;version:\\1"
@@ -743,7 +752,7 @@
     "cats": [
       15
     ],
-    "cpe": "cpe:/a:disqus:disqus_comment_system",
+    "cpe": "cpe:2.3:a:disqus:disqus_comment_system:*:*:*:*:*:*:*:*",
     "description": "Disqus is a worldwide blog comment hosting service for web sites and online communities that use a networked platform.",
     "dom": "div#disqus_thread",
     "icon": "Disqus.svg",
@@ -857,7 +866,7 @@
     "cookies": {
       "django_language": ""
     },
-    "cpe": "cpe:/a:djangoproject:django",
+    "cpe": "cpe:2.3:a:djangoproject:django:*:*:*:*:*:*:*:*",
     "description": "Django is a Python-based free and open-source web application framework.",
     "html": "(?:powered by <a[^>]+>Django ?([\\d.]+)?<\\/a>|<input[^>]*name=[\"']csrfmiddlewaretoken[\"'][^>]*>)\\;version:\\1",
     "icon": "Django.png",
@@ -902,7 +911,7 @@
     "cats": [
       60
     ],
-    "cpe": "cpe:/a:docker:engine",
+    "cpe": "cpe:2.3:a:docker:engine:*:*:*:*:*:*:*:*",
     "description": "Docker is a tool designed to make it easier to create, deploy, and run applications by using containers.",
     "html": "<!-- This comment is expected by the docker HEALTHCHECK  -->",
     "icon": "Docker.svg",
@@ -950,7 +959,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:dojotoolkit:dojo",
+    "cpe": "cpe:2.3:a:dojotoolkit:dojo:*:*:*:*:*:*:*:*",
     "icon": "Dojo.png",
     "js": {
       "dojo": "",
@@ -999,7 +1008,7 @@
     "cookies": {
       "DokuWiki": ""
     },
-    "cpe": "cpe:/a:dokuwiki:dokuwiki",
+    "cpe": "cpe:2.3:a:dokuwiki:dokuwiki:*:*:*:*:*:*:*:*",
     "description": "DokuWiki is a free open-source wiki software.",
     "icon": "DokuWiki.png",
     "implies": "PHP",
@@ -1067,7 +1076,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:dotclear:dotclear",
+    "cpe": "cpe:2.3:a:dotclear:dotclear:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Dotclear-Static-Cache": ""
     },
@@ -1183,7 +1192,7 @@
     "cats": [
       4
     ],
-    "cpe": "cpe:/a:doxygen:doxygen",
+    "cpe": "cpe:2.3:a:doxygen:doxygen:*:*:*:*:*:*:*:*",
     "description": "Doxygen is a documentation generator, a tool for writing software reference documentation.",
     "html": "(?:<!-- Generated by Doxygen ([\\d.]+)|<link[^>]+doxygen\\.css)\\;version:\\1",
     "icon": "Doxygen.png",
@@ -1216,6 +1225,20 @@
     "requires": "WordPress",
     "website": "https://draftpress.com/products/header-footer-code-manager-pro/"
   },
+  "Drapr": {
+    "cats": [
+      76
+    ],
+    "description": "Drapr is an ecommerce startup and online application based on technology that enables customers to quickly create 3D avatars and virtually try on clothing.",
+    "icon": "Drapr.png",
+    "js": {
+      "drapr_data": "",
+      "drapr_deferLoading": ""
+    },
+    "requiresCategory": 6,
+    "scriptSrc": "draprpubsubtest\\.firebaseapp\\.com/",
+    "website": "https://www.drapr.com"
+  },
   "DreamHost": {
     "cats": [
       88
@@ -1236,7 +1259,7 @@
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:adobe:dreamweaver",
+    "cpe": "cpe:2.3:a:adobe:dreamweaver:*:*:*:*:*:*:*:*",
     "description": "Dreamweaver is a development tool for creating, publishing, and managing websites and mobile content.",
     "html": "<!--[^>]*(?:InstanceBeginEditable|Dreamweaver([^>]+)target|DWLayoutDefaultTable)\\;version:\\1",
     "icon": "DreamWeaver.png",
@@ -1304,6 +1327,21 @@
     "saas": true,
     "website": "https://apps.shopify.com/drop-a-hint-v2"
   },
+  "DropInBlog": {
+    "cats": [
+      11
+    ],
+    "description": "DropInBlog is a remotely hosted, cloud based platform that is designed to embed a blog into your html site.",
+    "dom": "link[href*='.dropinblog.com/']",
+    "icon": "DropInBlog.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.dropinblog\\.com/",
+    "website": "https://dropinblog.com"
+  },
   "Dropbox": {
     "cats": [
       95
@@ -1313,21 +1351,6 @@
     },
     "icon": "Dropbox.svg",
     "website": "https://www.dropbox.com"
-  },
-  "DropInBlog": {
-    "cats": [
-      11
-    ],
-    "description": "DropInBlog is a remotely hosted, cloud based platform that is designed to embed a blog into your html site.",
-    "icon": "DropInBlog.png",
-    "dom": "link[href*='.dropinblog.com/']",
-    "scriptSrc": "\\.dropinblog\\.com/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://dropinblog.com"
   },
   "Dropzone": {
     "cats": [
@@ -1377,7 +1400,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:drupal:drupal",
+    "cpe": "cpe:2.3:a:drupal:drupal:*:*:*:*:*:*:*:*",
     "description": "Drupal is a free and open-source web content management framework.",
     "headers": {
       "Expires": "19 Nov 1978",
@@ -1401,7 +1424,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:commerceguys:commerce",
+    "cpe": "cpe:2.3:a:commerceguys:commerce:*:*:*:*:*:*:*:*",
     "description": "Drupal Commerce is open-source ecommerce software that augments the content management system Drupal.",
     "dom": "aside#cart-offcanvas, form.commerce-order-item-add-to-cart-form,form.commerce-add-to-cart",
     "html": "<[^>]+(?:id=\"block[_-]commerce[_-]cart[_-]cart|class=\"commerce[_-]product[_-]field)",
