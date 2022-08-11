@@ -60,26 +60,14 @@ public class ParamMinerConfig {
     private String urlJsonIncludeString;
     private boolean urlPostRequest;
     private boolean urlGetRequest;
+    private String customHeaderWordlistPath;
+    private String customCookieWordlistPath;
+    private int urlGuessChunkSize;
 
     public ParamMinerConfig() {
         this.url = "";
-        this.addFcbzCacheBuster = false;
-        /** This would allow user to use separate wordlists. */
-        this.usePredefinedUrlWordlists = true;
-        this.usePredefinedHeaderWordlists = true;
-        this.usePredefinedCookieWordlists = true;
-
-        this.useCustomUrlWordlists = false;
-        this.useCustomHeaderWordlists = false;
-        this.useCustomCookieWordlists = false;
-
-        this.skipBoringHeaders = false;
         this.threadCount = 4;
-
-        this.doUrlGuess = true;
-        this.urlGetRequest = true;
-        this.doCookieGuess = false;
-        this.doHeaderGuess = false;
+        this.urlGuessChunkSize = 2;
     }
 
     public String getUrl() {
@@ -182,8 +170,8 @@ public class ParamMinerConfig {
         return threadCount;
     }
 
-    public void setThreadCount(String string) {
-        threadCount = Integer.parseInt(string);
+    public void setThreadCount(int value) {
+        threadCount = value;
     }
 
     public String getContext() {
@@ -320,5 +308,37 @@ public class ParamMinerConfig {
 
     public boolean getUrlGetRequest() {
         return urlGetRequest;
+    }
+
+    public void setCustomHeaderWordlistPath(String text) {
+        this.customHeaderWordlistPath = text;
+    }
+
+    public void setCustomHeaderWordlistPath(Path path) {
+        this.customHeaderWordlistPath = path.toString();
+    }
+
+    public String getCustomHeaderWordlistPath() {
+        return customHeaderWordlistPath;
+    }
+
+    public void setCustomCookieWordlistPath(String text) {
+        this.customCookieWordlistPath = text;
+    }
+
+    public void setCustomCookieWordlistPath(Path path) {
+        this.customCookieWordlistPath = path.toString();
+    }
+
+    public String getCustomCookieWordlistPath() {
+        return customCookieWordlistPath;
+    }
+
+    public void setUrlGuessChunkSize(int value) {
+        this.urlGuessChunkSize = value;
+    }
+
+    public int getUrlGuessChunkSize() {
+        return urlGuessChunkSize;
     }
 }

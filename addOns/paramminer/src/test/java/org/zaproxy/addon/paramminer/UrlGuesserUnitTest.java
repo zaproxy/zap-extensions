@@ -138,6 +138,8 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
+        config.setDoUrlGuess(true);
+        config.setUrlGetRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
 
@@ -176,6 +178,8 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
+        config.setDoUrlGuess(true);
+        config.setUrlGetRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
 
@@ -213,7 +217,7 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
-        config.setUrlGetRequest(false);
+        config.setDoUrlGuess(true);
         config.setUrlJsonRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
@@ -259,7 +263,7 @@ public class UrlGuesserUnitTest extends TestUtils {
                 });
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
-        config.setUrlGetRequest(false);
+        config.setDoUrlGuess(true);
         config.setUrlPostRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
@@ -295,7 +299,7 @@ public class UrlGuesserUnitTest extends TestUtils {
                 });
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
-        config.setUrlGetRequest(false);
+        config.setDoUrlGuess(true);
         config.setUrlXmlRequest(true);
         String xmlIncludeString =
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?> <resources> $ZAP$</resources>";
@@ -339,6 +343,8 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = this.getHttpMessage(test);
         config.setUrl(msg.getRequestHeader().getURI().toString());
+        config.setDoUrlGuess(true);
+        config.setUrlGetRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
 
@@ -395,6 +401,8 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = this.getHttpMessage(test);
         config.setUrl(msg.getRequestHeader().getURI().toString());
+        config.setDoUrlGuess(true);
+        config.setUrlGetRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
 
@@ -443,7 +451,7 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         HttpMessage msg = getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
-        config.setUrlGetRequest(false);
+        config.setDoUrlGuess(true);
         config.setUrlJsonRequest(true);
         String jsonIncludeString = "{\"z\":true, $ZAP$}";
         config.setUrlJsonIncludeString(jsonIncludeString);
@@ -485,6 +493,8 @@ public class UrlGuesserUnitTest extends TestUtils {
                 });
         HttpMessage msg = this.getHttpMessage(path);
         config.setUrl(msg.getRequestHeader().getURI().toString());
+        config.setDoUrlGuess(true);
+        config.setUrlGetRequest(true);
         given(scan.getConfig()).willReturn(config);
         urlGuesser = new UrlGuesser(0, scan, httpSender, executor);
 

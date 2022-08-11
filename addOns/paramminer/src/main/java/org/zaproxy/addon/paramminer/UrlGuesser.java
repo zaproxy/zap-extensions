@@ -104,12 +104,12 @@ public class UrlGuesser implements Runnable {
         }
 
         if (defaultWordList != null && customWordList != null) {
-            Set<String> list = new HashSet<>();
-            list.addAll(defaultWordList);
-            list.addAll(customWordList);
+            Set<String> set = new HashSet<>();
+            set.addAll(defaultWordList);
+            set.addAll(customWordList);
             wordlist = new ArrayList<>();
 
-            for (String param : list) {
+            for (String param : set) {
                 wordlist.add(param);
             }
         } else if (customWordList == null && defaultWordList != null) {
@@ -168,8 +168,8 @@ public class UrlGuesser implements Runnable {
         this.scan.notifyListenersProgress();
         // TODO Add heuristic method to mine parameters from base response.
 
-        // TODO add initial chunk size to config
-        List<Map<String, String>> paramGroups = UrlUtils.slice(UrlUtils.populate(wordlist), 2);
+        List<Map<String, String>> paramGroups =
+                UrlUtils.slice(UrlUtils.populate(wordlist), config.getUrlGuessChunkSize());
         this.scan.setMaximum(paramGroups.size());
         List<Map<String, String>> usableParams = new ArrayList<>();
 

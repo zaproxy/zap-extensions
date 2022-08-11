@@ -24,9 +24,23 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -42,31 +56,125 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
 public class ParamMinerDialog extends StandardFieldsDialog {
+    private enum Methods {
+        GET(Constant.messages.getString("paramminer.dialog.urlguess.methods.get")),
+        POST(Constant.messages.getString("paramminer.dialog.urlguess.methods.post")),
+        XML(Constant.messages.getString("paramminer.dialog.urlguess.methods.xml")),
+        JSON(Constant.messages.getString("paramminer.dialog.urlguess.methods.json"));
+
+        private final String label;
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        private Methods(String label) {
+            this.label = label;
+        }
+    }
 
     private static final long serialVersionUID = 1L;
-
+    // Base Tab Options
     private static final String URL = "paramminer.dialog.url";
     private static final String CONTEXT = "paramminer.dialog.context";
-    private static final String FCBZ_CACHE_BUSTER = "paramminer.dialog.fcbz_cache_buster";
 
-    private static final String PREDEFINED = "paramminer.dialog.predefined.";
-    private static final String CUSTOM = "paramminer.dialog.custom.";
-    private static final String URL_WORDLIST = "url_wordlists";
-    private static final String HEADER_WORDLIST = "header_wordlists";
-    private static final String COOKIE_WORDLIST = "cookie_wordlists";
+    private static final String URL_GUESS = "paramminer.dialog.urlguess";
+    private static final String HEADER_GUESS = "paramminer.dialog.headerguess";
+    private static final String COOKIE_GUESS = "paramminer.dialog.cookieguess";
 
-    private static final String SKIP_BORING_HEADERS = "paramminer.dialog.skip_boring_headers";
-    private static final String THREADPOOL_SIZE = "paramminer.dialog.threadpool_size";
+    private static final String THREADPOOL_SIZE = "paramminer.dialog.threadpool.size";
+
+    private static final String CONTROL_TAB_KEY = "paramminer.dialog.tab.control";
+    private static final String URLGUESS_TAB_KEY = "paramminer.dialog.tab.urlguess";
+    private static final String HEADERGUESS_TAB_KEY = "paramminer.dialog.tab.headerguess";
+    private static final String COOKIEGUESS_TAB_KEY = "paramminer.dialog.tab.cookieguess";
+
+    private static final String[] tabLabels = {
+        CONTROL_TAB_KEY, URLGUESS_TAB_KEY, HEADERGUESS_TAB_KEY, COOKIEGUESS_TAB_KEY,
+    };
+    private static final String PREDEF = "paramminer.dialog.wordlist.predefined";
+    private static final String CUSTOM = "paramminer.dialog.wordlist.custom";
+    private static final String BOTH = "paramminer.dialog.wordlist.both";
+
+    private static final String PREDEFI18N_STRING = Constant.messages.getString(PREDEF);
+    private static final String CUSTOMI18N_STRING = Constant.messages.getString(CUSTOM);
+    private static final String BOTHI18N_STRING = Constant.messages.getString(BOTH);
+
+    private static final String[] wordlistLabels = {
+        PREDEFI18N_STRING, CUSTOMI18N_STRING, BOTHI18N_STRING,
+    };
+    // Tab indices
+    private static final int CONTROL_TAB = 0;
+    private static final int URL_GUESS_TAB = 1;
+    private static final int HEADER_GUESS_TAB = 2;
+    private static final int COOKIE_GUESS_TAB = 3;
+
+    private static final String URL_CHUNK_SIZE = "paramminer.dialog.urlguess.chunksize";
+    private static final String FCBZ_CACHE_BUSTER = "paramminer.dialog.fcbz.cache.buster";
+
+    private static final String URLGUESS_WORDLIST = "paramminer.dialog.urlguess.wordlist";
+    private static final String URL_FILE_LOCATON =
+            "paramminer.dialog.urlguess.wordlist.custom.file.location";
+    private static final String URL_METHODS = "paramminer.dialog.urlguess.methods";
+
+    private static final String HEADERGUESS_WORDLIST = "paramminer.dialog.headerguess.wordlist";
+    private static final String HEADER_FILE_LOCATON =
+            "paramminer.dialog.headerguess.wordlist.custom.file.location";
+
+    private static final String COOKIEGUESS_WORDLIST = "paramminer.dialog.cookieguess.wordlist";
+    private static final String COOKIE_FILE_LOCATON =
+            "paramminer.dialog.cookieguess.wordlist.custom.file.location";
+
+    private static final String SKIP_BORING_HEADERS = "paramminer.dialog.skip.boring.headers";
+
+    private static final String WORDLIST_EMPTY = "paramminer.dialog.error.wordlist.empty";
+    private static final String WORDLIST_NOTFOUND = "paramminer.dialog.error.wordlist.notfound";
 
     private static final Logger logger = LogManager.getLogger(ParamMinerDialog.class);
 
     private ExtensionParamMiner extension;
     private HttpMessage target;
     private ParamMinerConfig config;
-    private ZapTextField text;
+    private Map<String, JPanel> panelMap;
+    private Map<String, ZapTextField> textFieldMap;
+    private Map<String, JList<Methods>> listMap;
+
+    private JPanel getPanel(String fieldName) {
+        return this.panelMap.get(fieldName);
+    }
+
+    private ZapTextField getTextField(String fieldName) {
+        return this.textFieldMap.get(fieldName);
+    }
+
+    private JPanel createCustomPanel(JComponent label, JComponent field) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(
+                label,
+                LayoutHelper.getGBC(
+                        0,
+                        this.panelMap.size(),
+                        1,
+                        0.0D,
+                        0.0D,
+                        GridBagConstraints.BOTH,
+                        new Insets(4, 4, 4, 4)));
+        panel.add(
+                field,
+                LayoutHelper.getGBC(
+                        1,
+                        this.panelMap.size(),
+                        1,
+                        1.0D,
+                        0.0D,
+                        GridBagConstraints.BOTH,
+                        new Insets(4, 4, 4, 4)));
+        return panel;
+    }
 
     public ParamMinerDialog(ExtensionParamMiner extension, Frame owner, Dimension dim) {
-        super(owner, "paramminer.panel.title", dim);
+        super(owner, "paramminer.panel.title", dim, tabLabels);
         this.extension = extension;
     }
 
@@ -75,29 +183,183 @@ public class ParamMinerDialog extends StandardFieldsDialog {
             this.target = target;
         }
         logger.debug("init {}", this.target);
-        if (config == null) {
-            config = new ParamMinerConfig();
-        }
+        config = new ParamMinerConfig();
+        // TODO Add a reset button
+        this.panelMap = new HashMap<>();
+        this.textFieldMap = new HashMap<>();
+        this.listMap = new HashMap<>();
+
         this.removeAllFields();
-        this.addUriSelectField(URL, this.target, true);
-        this.addComboField(CONTEXT, new String[] {}, "");
-        this.addCheckBoxField(FCBZ_CACHE_BUSTER, false);
-        this.addCheckBoxField(PREDEFINED + URL_WORDLIST, true);
-        this.addCheckBoxField(PREDEFINED + HEADER_WORDLIST, false);
-        this.addCheckBoxField(PREDEFINED + COOKIE_WORDLIST, false);
+        this.setTabsVisible(
+                new String[] {URLGUESS_TAB_KEY, HEADERGUESS_TAB_KEY, COOKIEGUESS_TAB_KEY}, false);
 
-        this.addCheckBoxField(CUSTOM + URL_WORDLIST, false);
-        this.addCheckBoxField(CUSTOM + HEADER_WORDLIST, false);
-        this.addCheckBoxField(CUSTOM + COOKIE_WORDLIST, false);
+        this.addUriSelectField(CONTROL_TAB, URL, this.target);
+        // TODO add context selection
+        this.addComboField(CONTROL_TAB, CONTEXT, new String[] {}, "");
 
-        this.addCheckBoxField(SKIP_BORING_HEADERS, false);
-        this.addTextField(THREADPOOL_SIZE, "8");
-        this.addPadding();
+        this.addCheckBoxField(CONTROL_TAB, URL_GUESS, true);
+        this.addCheckBoxField(URL_GUESS_TAB, FCBZ_CACHE_BUSTER, false);
+
+        this.addComboField(
+                URL_GUESS_TAB,
+                URLGUESS_WORDLIST,
+                wordlistLabels,
+                Constant.messages.getString(PREDEF));
+        // TODO maybe remove when miner arrives ?
+        this.setTabsVisible(new String[] {URLGUESS_TAB_KEY}, true);
+
+        this.addWordlistSelectField(URL_GUESS_TAB, URL_FILE_LOCATON, "", false);
+
+        this.addNumberField(URL_GUESS_TAB, URL_CHUNK_SIZE, 2, 40, 2);
+
+        List<Methods> urlGuessMethods = new ArrayList<>();
+        urlGuessMethods.add(Methods.GET);
+        urlGuessMethods.add(Methods.POST);
+        // urlGuessMethods.add(Methods.XML);
+        // TODO add XML text Field and json text Field (Along with vanishing effect)
+        urlGuessMethods.add(Methods.JSON);
+        this.addMethodPanel(URL_GUESS_TAB, URL_METHODS, urlGuessMethods, true);
+        this.listMap.get(URL_METHODS).setSelectedIndex(0);
+
+        this.addFieldListener(
+                URL_GUESS,
+                e -> {
+                    this.setTabsVisible(
+                            new String[] {URLGUESS_TAB_KEY},
+                            ((JCheckBox) e.getSource()).isSelected());
+                });
+        this.addFieldListener(
+                URLGUESS_WORDLIST,
+                e -> {
+                    String selected = (String) ((JComboBox) e.getSource()).getSelectedItem();
+                    if (selected.equals(Constant.messages.getString(CUSTOM))
+                            || selected.equals(Constant.messages.getString(BOTH))) {
+                        this.getPanel(URL_FILE_LOCATON).setVisible(true);
+
+                    } else {
+                        this.getPanel(URL_FILE_LOCATON).setVisible(false);
+                        this.getTextField(URL_FILE_LOCATON).setText("");
+                    }
+                });
+
+        this.addCheckBoxField(CONTROL_TAB, HEADER_GUESS, false);
+        this.addCheckBoxField(HEADER_GUESS_TAB, SKIP_BORING_HEADERS, false);
+        this.addComboField(
+                HEADER_GUESS_TAB,
+                HEADERGUESS_WORDLIST,
+                wordlistLabels,
+                Constant.messages.getString(PREDEF));
+
+        this.addWordlistSelectField(HEADER_GUESS_TAB, HEADER_FILE_LOCATON, "", false);
+
+        this.addFieldListener(
+                HEADER_GUESS,
+                e -> {
+                    this.setTabsVisible(
+                            new String[] {HEADERGUESS_TAB_KEY},
+                            (((JCheckBox) e.getSource()).isSelected()));
+                });
+        this.addFieldListener(
+                HEADERGUESS_WORDLIST,
+                e -> {
+                    String selected = (String) ((JComboBox) e.getSource()).getSelectedItem();
+                    if (selected.equals(Constant.messages.getString(CUSTOM))
+                            || selected.equals(Constant.messages.getString(BOTH))) {
+                        this.getPanel(HEADER_FILE_LOCATON).setVisible(true);
+                    } else {
+                        this.getPanel(HEADER_FILE_LOCATON).setVisible(false);
+                        this.getTextField(HEADER_FILE_LOCATON).setText("");
+                    }
+                });
+
+        this.addCheckBoxField(CONTROL_TAB, COOKIE_GUESS, false);
+        this.addComboField(
+                COOKIE_GUESS_TAB,
+                COOKIEGUESS_WORDLIST,
+                wordlistLabels,
+                Constant.messages.getString(PREDEF));
+
+        this.addWordlistSelectField(COOKIE_GUESS_TAB, COOKIE_FILE_LOCATON, "", false);
+        this.addFieldListener(
+                COOKIE_GUESS,
+                e -> {
+                    this.setTabsVisible(
+                            new String[] {COOKIEGUESS_TAB_KEY},
+                            (((JCheckBox) e.getSource()).isSelected()));
+                });
+        this.addFieldListener(
+                COOKIEGUESS_WORDLIST,
+                e -> {
+                    String selected = (String) ((JComboBox) e.getSource()).getSelectedItem();
+                    if (selected.equals(Constant.messages.getString(CUSTOM))
+                            || selected.equals(Constant.messages.getString(BOTH))) {
+                        this.getPanel(COOKIE_FILE_LOCATON).setVisible(true);
+                    } else {
+                        this.getPanel(COOKIE_FILE_LOCATON).setVisible(false);
+                        this.getTextField(COOKIE_FILE_LOCATON).setText("");
+                    }
+                });
+        this.addNumberField(CONTROL_TAB, THREADPOOL_SIZE, 6, 12, 8);
+        this.addPadding(CONTROL_TAB);
+        this.addPadding(URL_GUESS_TAB);
+        this.addPadding(HEADER_GUESS_TAB);
+        this.addPadding(COOKIE_GUESS_TAB);
         this.pack();
     }
 
-    private void addUriSelectField(String fieldLabel, HttpMessage value, boolean editable) {
-        text = new ZapTextField();
+    @Override
+    public String getSaveButtonText() {
+        return Constant.messages.getString("paramminer.dialog.button.scan");
+    }
+
+    private void addMethodPanel(
+            int tabIndex, String fieldLabel, List<Methods> methods, boolean isVisible) {
+        JLabel label = new JLabel(Constant.messages.getString(fieldLabel));
+        label.setVerticalAlignment(JLabel.TOP);
+        JList<Methods> list = new JList<>(methods.toArray(new Methods[0]));
+        list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        list.setVisibleRowCount(1);
+        JPanel panel = createCustomPanel(label, list);
+        panel.setVisible(isVisible);
+        this.addCustomComponent(tabIndex, panel);
+        this.panelMap.put(fieldLabel, panel);
+        this.listMap.put(fieldLabel, list);
+    }
+
+    private void addWordlistSelectField(
+            int tabIndex, String fieldLabel, String filePath, boolean isVisible) {
+        ZapTextField text = new ZapTextField();
+        text.setText(filePath);
+        JButton browseButton = new JButton("browse");
+        JFileChooser fileChooser = new JFileChooser();
+        browseButton.addActionListener(
+                e -> {
+                    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        text.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                    }
+                });
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(
+                new JLabel(Constant.messages.getString(fieldLabel)),
+                LayoutHelper.getGBC(
+                        0, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
+        panel.add(
+                text,
+                LayoutHelper.getGBC(
+                        1, 0, 1, 1.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
+        panel.add(
+                browseButton,
+                LayoutHelper.getGBC(
+                        2, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
+        panel.setVisible(isVisible);
+        this.addCustomComponent(tabIndex, panel);
+        this.panelMap.put(fieldLabel, panel);
+        this.textFieldMap.put(fieldLabel, text);
+    }
+
+    private void addUriSelectField(int tabIndex, String fieldLabel, HttpMessage value) {
+        ZapTextField text = new ZapTextField();
         if (value != null) {
             text.setText(value.getRequestHeader().getURI().toString());
         }
@@ -108,8 +370,12 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         selectButton.addActionListener(
                 e -> {
                     NodeSelectDialog nsd = new NodeSelectDialog(ParamMinerDialog.this);
-                    SiteNode node =
-                            nsd.showDialog(value != null ? value.getHistoryRef().getURI() : null);
+                    SiteNode node;
+                    if (value != null) {
+                        node = nsd.showDialog(value.getHistoryRef().getURI());
+                    } else {
+                        node = nsd.showDialog((SiteNode) null);
+                    }
                     if (node != null) {
                         text.setText(node.getHistoryReference().getURI().toString());
                     }
@@ -125,35 +391,180 @@ public class ParamMinerDialog extends StandardFieldsDialog {
                 LayoutHelper.getGBC(
                         1, 0, 1, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4)));
 
-        this.addCustomComponent(fieldLabel, panel);
+        this.addCustomComponent(tabIndex, fieldLabel, panel);
+        this.panelMap.put(fieldLabel, panel);
+        this.textFieldMap.put(fieldLabel, text);
+    }
+
+    private void setUrlGuessMethods(ParamMinerConfig conf) {
+        for (Methods e : this.listMap.get(URL_METHODS).getSelectedValuesList()) {
+            switch (e) {
+                case GET:
+                    conf.setUrlGetRequest(true);
+                    break;
+                case POST:
+                    conf.setUrlPostRequest(true);
+                    break;
+                case JSON:
+                    conf.setUrlJsonRequest(true);
+                    break;
+                case XML:
+                    conf.setUrlXmlRequest(true);
+                    break;
+            }
+        }
+    }
+
+    private void setWordlistsSettings(ParamMinerConfig config, String fieldLabel, int tabIndex) {
+        String choice = this.getStringValue(fieldLabel);
+        switch (tabIndex) {
+            case URL_GUESS_TAB:
+                if (choice.equalsIgnoreCase(PREDEFI18N_STRING)) {
+                    config.setUsePredefinedUrlWordlists(true);
+                    config.setUseCustomUrlWordlists(false);
+                } else if (choice.equalsIgnoreCase(CUSTOMI18N_STRING)) {
+                    config.setUsePredefinedUrlWordlists(false);
+                    config.setUseCustomUrlWordlists(true);
+                    config.setCustomUrlWordlistPath(this.getTextField(URL_FILE_LOCATON).getText());
+                } else {
+                    config.setUsePredefinedUrlWordlists(true);
+                    config.setUseCustomUrlWordlists(true);
+                    config.setCustomUrlWordlistPath(this.getTextField(URL_FILE_LOCATON).getText());
+                }
+                break;
+            case HEADER_GUESS_TAB:
+                if (choice.equalsIgnoreCase(PREDEFI18N_STRING)) {
+                    config.setUsePredefinedHeaderWordlists(true);
+                    config.setUseCustomHeaderWordlists(false);
+                } else if (choice.equalsIgnoreCase(CUSTOMI18N_STRING)) {
+                    config.setUsePredefinedHeaderWordlists(false);
+                    config.setUseCustomHeaderWordlists(true);
+                    config.setCustomHeaderWordlistPath(
+                            this.getTextField(HEADER_FILE_LOCATON).getText());
+                } else {
+                    config.setUsePredefinedHeaderWordlists(true);
+                    config.setUseCustomHeaderWordlists(true);
+                    config.setCustomHeaderWordlistPath(
+                            this.getTextField(HEADER_FILE_LOCATON).getText());
+                }
+                break;
+            case COOKIE_GUESS_TAB:
+                if (choice.equalsIgnoreCase(PREDEFI18N_STRING)) {
+                    config.setUsePredefinedCookieWordlists(true);
+                    config.setUseCustomCookieWordlists(false);
+                } else if (choice.equalsIgnoreCase(CUSTOMI18N_STRING)) {
+                    config.setUsePredefinedCookieWordlists(false);
+                    config.setUseCustomCookieWordlists(true);
+                    config.setCustomCookieWordlistPath(
+                            this.getTextField(COOKIE_FILE_LOCATON).getText());
+                } else {
+                    config.setUsePredefinedCookieWordlists(true);
+                    config.setUseCustomCookieWordlists(true);
+                    config.setCustomCookieWordlistPath(
+                            this.getTextField(COOKIE_FILE_LOCATON).getText());
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
     public void save() {
-        config.setUrl(this.text.getText());
+        config.setUrl(this.getTextField(URL).getText());
+        config.setDoUrlGuess(this.getBoolValue(URL_GUESS));
+        config.setDoHeaderGuess(this.getBoolValue(HEADER_GUESS));
+        config.setDoCookieGuess(this.getBoolValue(COOKIE_GUESS));
+
         config.setAddFcbzCacheBuster(this.getBoolValue(FCBZ_CACHE_BUSTER));
+        config.setUrlGuessChunkSize(this.getIntValue(URL_CHUNK_SIZE));
 
-        config.setUsePredefinedUrlWordlists(this.getBoolValue(PREDEFINED + URL_WORDLIST));
-        config.setUsePredefinedHeaderWordlists(this.getBoolValue(PREDEFINED + HEADER_WORDLIST));
-        config.setUsePredefinedCookieWordlists(this.getBoolValue(PREDEFINED + COOKIE_WORDLIST));
-
-        config.setUseCustomUrlWordlists(this.getBoolValue(CUSTOM + URL_WORDLIST));
-        config.setUseCustomHeaderWordlists(this.getBoolValue(CUSTOM + HEADER_WORDLIST));
-        config.setUseCustomCookieWordlists(this.getBoolValue(CUSTOM + COOKIE_WORDLIST));
-
+        this.setWordlistsSettings(config, URLGUESS_WORDLIST, URL_GUESS_TAB);
+        this.setWordlistsSettings(config, HEADERGUESS_WORDLIST, HEADER_GUESS_TAB);
+        this.setWordlistsSettings(config, COOKIEGUESS_WORDLIST, COOKIE_GUESS_TAB);
+        setUrlGuessMethods(config);
         config.setSkipBoringHeaders(this.getBoolValue(SKIP_BORING_HEADERS));
-        config.setThreadCount(this.getStringValue(THREADPOOL_SIZE));
+        config.setThreadCount(this.getIntValue(THREADPOOL_SIZE));
         config.setContext(this.getStringValue(CONTEXT));
-        logger.debug("config {}", this.config.getUrl());
 
-        extension.startScan(config);
+        if (config.doUrlGuess() || config.doHeaderGuess() || config.doCookieGuess()) {
+            extension.startScan(config);
+        }
     }
 
     @Override
     public String validateFields() {
-        if (this.text.getText() == null || this.text.getText().isEmpty()) {
-            return Constant.messages.getString("paramminer.dialog.error.url");
+        String url = this.getTextField(URL).getText();
+        if (url == null || url.isEmpty()) {
+            return Constant.messages.getString("paramminer.dialog.error.url.empty");
         }
+        try {
+            new URI(url, true);
+            new URL(url);
+        } catch (Exception e) {
+            return Constant.messages.getString("paramminer.dialog.error.url.invalid");
+        }
+        String urlChoice = this.getStringValue(URLGUESS_WORDLIST);
+        if (urlChoice.equals(CUSTOMI18N_STRING) || urlChoice.equals(BOTHI18N_STRING)) {
+            String urlWordlist = this.getTextField(URL_FILE_LOCATON).getText();
+            if (urlWordlist == null || urlWordlist.isEmpty()) {
+                this.requestTabFocus(URL_GUESS_TAB);
+                this.getTextField(URL_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(URLGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_EMPTY);
+            }
+            if (!Files.isRegularFile(Paths.get(urlWordlist))) {
+                this.requestTabFocus(URL_GUESS_TAB);
+                this.getTextField(URL_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(URLGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_NOTFOUND);
+            }
+        }
+        String headerChoice = this.getStringValue(HEADERGUESS_WORDLIST);
+        if (headerChoice.equals(CUSTOMI18N_STRING) || headerChoice.equals(BOTHI18N_STRING)) {
+            String headerWordlist = this.getTextField(HEADER_FILE_LOCATON).getText();
+            if (headerWordlist == null || headerWordlist.isEmpty()) {
+                this.requestTabFocus(HEADER_GUESS_TAB);
+                this.getTextField(HEADER_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(HEADERGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_EMPTY);
+            }
+            if (!Files.isRegularFile(Paths.get(headerWordlist))) {
+                this.requestTabFocus(HEADER_GUESS_TAB);
+                this.getTextField(HEADER_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(HEADERGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_NOTFOUND);
+            }
+        }
+        String cookieChoice = this.getStringValue(COOKIEGUESS_WORDLIST);
+        if (cookieChoice.equals(CUSTOMI18N_STRING) || cookieChoice.equals(BOTHI18N_STRING)) {
+            String cookieWordlist = this.getTextField(COOKIE_FILE_LOCATON).getText();
+            if (cookieWordlist == null || cookieWordlist.isEmpty()) {
+                this.requestTabFocus(COOKIE_GUESS_TAB);
+                this.getTextField(COOKIE_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(COOKIEGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_EMPTY);
+            }
+            if (!Files.isRegularFile(Paths.get(cookieWordlist))) {
+                this.requestTabFocus(COOKIE_GUESS_TAB);
+                this.getTextField(COOKIE_FILE_LOCATON).requestFocusInWindow();
+                return Constant.messages.getString(COOKIEGUESS_TAB_KEY)
+                        + ": "
+                        + Constant.messages.getString(WORDLIST_NOTFOUND);
+            }
+        }
+
+        if (!(this.getBoolValue(URL_GUESS)
+                || this.getBoolValue(HEADER_GUESS)
+                || this.getBoolValue(COOKIE_GUESS))) {
+            return Constant.messages.getString("paramminer.dialog.error.no.guess");
+        }
+
         return null;
     }
 }
