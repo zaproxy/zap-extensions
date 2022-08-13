@@ -8,6 +8,8 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Parameter Miner" image = "param-miner-icon" target="paramminer">
 				<tocitem text="About" target="paramminer.about"/>
+				<tocitem text="Dialog" target="paramminer.dialog"/>
+				<tocitem text="Tab" target="paramminer.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
