@@ -613,6 +613,7 @@ class HttpSenderImplUnitTest {
                         message.getResponseHeader().getHeader("Transfer-Encoding"),
                         is(nullValue()));
                 assertThat(message.getResponseBody().toString(), is(equalTo(RESPONSE_BODY)));
+                assertThat(message.getResponseHeader().getContentLength(), is(equalTo(249)));
             }
 
             @ParameterizedTest

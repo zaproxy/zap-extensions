@@ -392,6 +392,10 @@ public class HttpSenderApache
 
         updateRequestHeaders(message.getRequestHeader(), requestCtx.getRequest());
 
+        if (isSet(requestCtx, RemoveTransferEncoding.ATTR_NAME)) {
+            message.getResponseHeader().setContentLength(message.getResponseBody().length());
+        }
+
         if (user != null) {
             LegacyUtils.updateHttpState(
                     user.getCorrespondingHttpState(), requestCtx.getCookieStore());
