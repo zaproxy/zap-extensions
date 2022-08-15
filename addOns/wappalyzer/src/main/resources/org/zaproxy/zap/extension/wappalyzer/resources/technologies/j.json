@@ -3,13 +3,19 @@
     "cats": [
       6
     ],
+    "cpe": "cpe:2.3:a:j2store:j2store:*:*:*:*:*:joomla\\!:*:*",
     "description": "J2Store is a Joomla shopping cart and ecommerce extension.",
     "icon": "j2store.png",
     "js": {
       "j2storeURL": ""
     },
-    "requires": "Joomla",
-    "website": "https://www.j2store.org/"
+    "implies": "Joomla",
+    "pricing": [
+      "onetime",
+      "freemium",
+      "low"
+    ],
+    "website": "https://www.j2store.org"
   },
   "JANet": {
     "cats": [

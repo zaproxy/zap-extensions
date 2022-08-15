@@ -886,6 +886,21 @@
     "oss": true,
     "website": "https://vuetifyjs.com"
   },
+  "Vue2-animate": {
+    "cats": [
+      19
+    ],  
+    "description": "Vue2-animate is a Vue.js port of Animate.css.",
+    "icon": "vue.svg",
+    "dom": "link[href*='/vue2-animate.min.css']",
+    "implies": [
+      "Vue.js",
+      "Sass",
+      "Animate.css"
+    ],
+    "oss": true,
+    "website": "https://github.com/asika32764/vue2-animate"
+  },
   "vBulletin": {
     "cats": [
       2

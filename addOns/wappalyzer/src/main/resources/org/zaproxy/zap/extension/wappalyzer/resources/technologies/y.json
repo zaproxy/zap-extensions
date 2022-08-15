@@ -116,6 +116,18 @@
     "scriptSrc": "d\\.yimg\\.com/mi/ywa\\.js",
     "website": "http://web.analytics.yahoo.com"
   },
+  "YalinHost": {
+    "cats": [
+      88
+    ],
+    "description": "YalinHost is a web hosting service provider.",
+    "icon": "YalinHost.png",
+    "dns": {
+      "NS": "\\.yalinhost\\.com",
+      "SOA": "\\.yalinhost\\.com"
+    },
+    "website": "https://yalinhost.com"
+  },
   "Yampi Checkout": {
     "cats": [
       41

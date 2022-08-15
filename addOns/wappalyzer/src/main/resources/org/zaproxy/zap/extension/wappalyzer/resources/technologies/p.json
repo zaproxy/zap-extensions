@@ -1237,6 +1237,22 @@
     "saas": true,
     "website": "https://hi.photoslurp.com"
   },
+  "PhotoSwipe": {
+    "cats": [
+      7,
+      59
+    ],
+    "description": "PhotoSwipe is an open-source gallery to support JavaScript-based image zooming.",
+    "icon": "PhotoSwipe.png",
+    "js": {
+      "PhotoSwipe": "",
+      "PhotoSwipeUI_Default": "",
+      "photoswipeParseHash": ""
+    },
+    "scriptSrc": "photoswipe/([\\d\\.]+)/photoswipe\\.min\\.js\\;version:\\1",
+    "oss": true,
+    "website": "https://photoswipe.com"
+  },
   "Phusion Passenger": {
     "cats": [
       22
@@ -2595,6 +2611,24 @@
       "generator": "Proximis Unified Commerce"
     },
     "website": "https://www.proximis.com"
+  },
+  "Pterodactyl Panel": {
+    "cats": [
+      9
+    ],
+    "description": "Pterodactyl Panel is a free, open-source game server management panel built with PHP, React, and Go.",
+    "icon": "Pterodactyl Panel.svg",
+    "implies": [
+      "Go",
+      "PHP",
+      "React",
+      "Laravel"
+    ],
+    "cookies": {
+      "pterodactyl_session": ""
+    },
+    "oss": true,
+    "website": "https://pterodactyl.io"
   },
   "PubGuru": {
     "cats": [

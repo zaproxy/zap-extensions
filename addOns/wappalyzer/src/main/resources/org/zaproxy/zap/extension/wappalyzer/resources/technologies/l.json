@@ -1060,12 +1060,14 @@
       19
     ],
     "html": "<[^>]{1,512}\\bwire:",
-    "icon": "Livewire.png",
+    "description": "Livewire is a full-stack Laravel framework for building dynamic interfaces.",
+    "icon": "Livewire.svg",
     "implies": "Laravel",
     "js": {
       "livewire": ""
     },
     "scriptSrc": "livewire(?:\\.min)?\\.js",
+    "oss": true,
     "website": "https://laravel-livewire.com"
   },
   "Loadable-Components": {

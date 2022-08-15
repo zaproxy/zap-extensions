@@ -1404,6 +1404,20 @@
     ],
     "website": "https://www.cleverbridge.com"
   },
+  "ClickCease": {
+    "cats": [
+      16
+    ],
+    "description": "ClickCease is an ad fraud and click-fraud detection and protection service software.",
+    "icon": "ClickCease.svg",
+    "scriptSrc": "\\.clickcease\\.com/monitor/",
+    "saas": true,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.clickcease.com"
+  },
   "ClickDimensions": {
     "cats": [
       32
@@ -1537,6 +1551,19 @@
     "icon": "Clipboard.js.svg",
     "scriptSrc": "clipboard(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://clipboardjs.com/"
+  },
+  "Clockwork": {
+    "cats": [
+      47
+    ],
+    "description": "Clockwork is a development tool for PHP available right in your browser.",
+    "icon": "default.svg",
+    "implies": "PHP",
+    "headers": {
+      "x-clockwork-version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://github.com/underground-works/clockwork-app"
   },
   "CloudCart": {
     "cats": [
@@ -3520,5 +3547,23 @@
     "oss": true,
     "scriptSrc": "(?:/([\\d\\.-]+))?/crypto-js(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://github.com/brix/crypto-js"
+  },
+  "Cart.com": {
+    "cats": [
+      6
+    ],
+    "description": "Cart.com is an ecommerce platform built for high volume online stores and complex products with features such as multi-store management.",
+    "dom": "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']",
+    "icon": "Cart.com.svg",
+    "js": {
+      "AC.storeDomain": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.americommerce\\.com/",
+    "website": "https://www.americommerce.com"
   }
 }

@@ -517,6 +517,24 @@
     },
     "website": "https://infernojs.org"
   },
+  "Infogram": {
+    "cats": [
+      5
+    ],
+    "description": "Infogram is a web-based data visualisation and infographics platform.",
+    "icon": "Infogram.svg",
+    "dom": "iframe[src*='.infogram.com/']",
+    "js": {
+      "InfogramEmbeds": ""
+    },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://infogram.com"
+  },
   "Infolinks": {
     "cats": [
       36
@@ -1086,6 +1104,23 @@
       "generator": "iEXExchanger"
     },
     "website": "https://exchanger.iexbase.com"
+  },
+  "iHomefinder IDX": {
+    "cats": [
+      19
+    ],
+    "description": "iHomefinder provides IDX property search, built-in CRM, and marketing tools.",
+    "icon": "iHomefinder IDX.png",
+    "js": {
+      "ihfJquery": ""
+    },
+    "scriptSrc": "\\.idxhome\\.com/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.ihomefinder.com"
   },
   "iPresta": {
     "cats": [

@@ -1308,6 +1308,20 @@
     "saas": true,
     "website": "https://www.drift.com/"
   },
+  "Drip": {
+    "cats": [
+      32
+    ],
+    "description": "Drip is a marketing automation platform built for ecommerce.",
+    "icon": "Drip.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "scriptSrc": "\\.getdrip\\.com/",
+    "saas": true,
+    "website": "https://www.drip.com"
+  },
   "Drop A Hint": {
     "cats": [
       100
@@ -1634,6 +1648,22 @@
     "scriptSrc": "cdn\\.db-ip\\.com",
     "website": "https://db-ip.com/",
     "xhr": "api\\.db-ip\\.com"
+  },
+  "DDoS-Guard": {
+    "cats": [
+      16
+    ],
+    "description": "DDoS-Guard is a Russian Internet infrastructure company which provides DDoS protection, content delivery network services, and web hosting services.",
+    "icon": "DDoS-Guard.svg",
+    "headers": {
+      "server": "^ddos-guard$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://ddos-guard.net"
   },
   "decimal.js": {
     "cats": [
