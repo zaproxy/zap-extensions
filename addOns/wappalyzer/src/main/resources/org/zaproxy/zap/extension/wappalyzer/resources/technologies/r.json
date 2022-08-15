@@ -1859,6 +1859,19 @@
     ],
     "website": "https://rudderstack.com/"
   },
+  "Rumble": {
+    "cats": [
+      14
+    ],
+    "description": "Rumble is a Canadian video-streaming platform that presents itself as an alternative to YouTube.",
+    "icon": "Rumble.svg",
+    "dom": "iframe[src*='//rumble.com/']",
+    "js": {
+      "Rumble.resize": "",
+      "Rumble.gdpr": ""
+    },
+    "website": "https://rumble.com"
+  },
   "Rust": {
     "cats": [
       27

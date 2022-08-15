@@ -2573,24 +2573,6 @@
     "icon": "amber.png",
     "website": "https://amberframework.org"
   },
-  "AmeriCommerce": {
-    "cats": [
-      6
-    ],
-    "description": "AmeriCommerce is an ecommerce platform built for high volume online stores and complex products with features such as multi-store management.",
-    "dom": "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']",
-    "icon": "AmeriCommerce.png",
-    "js": {
-      "AC.storeDomain": ""
-    },
-    "pricing": [
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.americommerce\\.com/",
-    "website": "https://www.americommerce.com"
-  },
   "American Express": {
     "cats": [
       41
@@ -3540,6 +3522,20 @@
     "text": "\\Asendia\\b",
     "website": "https://www.asendia.com"
   },
+  "ASP.NET Boilerplate": {
+    "cats": [
+      18
+    ],
+    "description": "ASP.NET Boilerplate is a general purpose application framework especially designed for new modern web applications. It uses already familiar tools and implements best practices around them to provide you a SOLID development experience.",
+    "icon": "aspnetboilerplate.png",
+    "website": "https://www.aspnetboilerplate.com",
+    "js": {
+      "abp.toAbsAppPath": "",
+      "abp.localization": ""
+    },
+    "oss": true,
+    "implies":"Microsoft ASP.NET"
+  },
   "Astra": {
     "cats": [
       80
@@ -4427,15 +4423,20 @@
     "scriptSrc": "\\.amocrm\\.(?:ru|com)",
     "website": "https://www.amocrm.com"
   },
-  "animate.css": {
+  "Animate.css": {
     "cats": [
       66
     ],
     "description": "Animate.css is a ready-to-use library collection of CSS3 animation effects.",
-    "html": [
-      "<link [^>]+(?:/([\\d.]+)/)?animate\\.(?:min\\.)?css\\;version:\\1"
-    ],
-    "website": "https://daneden.github.io/animate.css/"
+    "dom": {
+      "link[href*='animate']": {
+        "attributes": {
+          "href": "([\\d\\.]+)?/animate\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "oss": true,
+    "website": "https://animate.style"
   },
   "anime.js": {
     "cats": [

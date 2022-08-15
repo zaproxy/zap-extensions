@@ -74,17 +74,18 @@
       "Alt-Svc": "h2",
       "X-Firefox-Spdy": "h2"
     },
-    "icon": "http2.png",
+    "icon": "HTTP2.svg",
     "website": "https://http2.github.io"
   },
   "HTTP/3": {
+    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
     "cats": [
       19
     ],
-    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
     "excludes": "HTTP/2",
     "headers": {
-      "Alt-Svc": "h3"
+      "Alt-Svc": "h3",
+      "X-Firefox-Http3": "h3"
     },
     "icon": "HTTP3.svg",
     "website": "https://httpwg.org/"
@@ -370,11 +371,6 @@
       "x-powered-by": "Helhost"
     },
     "icon": "Helhost.svg",
-    "implies": [
-      "Nginx",
-      "AlmaLinux",
-      "Apache"
-    ],
     "pricing": [
       "low",
       "recurring",
@@ -1419,7 +1415,8 @@
     "icon": "hCaptcha.svg",
     "js": {
       "hcaptcha.getRespKey": "",
-      "hcaptchaOnLoad": ""
+      "hcaptchaOnLoad": "",
+      "hcaptcha_sitekey": ""
     },
     "pricing": [
       "freemium",
@@ -1470,5 +1467,15 @@
       "onetime"
     ],
     "website": "https://hyva.io/"
+  },
+  "HSTS": {
+    "description": "HTTP Strict Transport Security (HSTS) informs browsers that the site should only be accessed using HTTPS.",
+    "cats": [
+      16
+    ],
+    "headers": {
+      "Strict-Transport-Security": ""
+    },
+    "website": "https://www.rfc-editor.org/rfc/rfc6797#section-6.1"
   }
 }

@@ -614,6 +614,24 @@
     "scriptSrc": "(?:static|cdn)\\.scarabresearch\\.com",
     "website": "https://emarsys.com/"
   },
+  "Ematic Solutions": {
+    "cats": [
+      32
+    ],
+    "description": "Ematic Solutions is part of Ematic Group and started to revolve around transforming email marketing into an ROI machine.",
+    "icon": "Ematic Solutions.svg",
+    "js": {
+      "ematics": "",
+      "EmaticsObject": "",
+      "ematicApikey": "",
+      "ematicsSubscribe": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.ematicsolutions.com"
+  },
   "EmbedPlus": {
     "cats": [
       87

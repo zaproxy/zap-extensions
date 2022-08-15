@@ -1018,6 +1018,24 @@
     "scriptSrc": "searchanise(?:-.+\\.kxcdn)?\\.com/",
     "website": "https://start.searchanise.com"
   },
+  "SearchFit": {
+    "cats": [
+      6
+    ],
+    "description": "Searchfit provides top ecommerce software, solutions and ecommerce website design for enterprise and mid-level retailers.",
+    "icon": "SearchFit.svg",
+    "meta": {
+      "generation-copyright": "by\\sSearchFit\\sShopping\\sCart\\sv([\\d\\.]+)\\;version:\\1"
+    },
+    "js": {
+      "SFUI.Checkout": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.searchfit.com"
+  },
   "Searchspring": {
     "cats": [
       29
@@ -3093,6 +3111,21 @@
     "website": "https://skimlinks.com",
     "xhr": "\\.skimresources\\.com"
   },
+  "Skio": {
+    "cats": [
+      100
+    ],
+    "description": "Skio helps brands on Shopify sell subscriptions without ripping their hair out.",
+    "icon": "Skio.png",
+    "implies": "Shopify",
+    "scriptSrc": "cdn\\.skio\\.com/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://skio.com"
+  },
   "Sky-Shop": {
     "cats": [
       6
@@ -4868,6 +4901,23 @@
     },
     "icon": "storeden.svg",
     "website": "https://www.storeden.com"
+  },
+  "Storefront UI": {
+    "cats": [
+      66
+    ],
+    "description": "Storefront UI is an independent, Vue. js-based, library of UI components.",
+    "icon": "Storefront UI.svg",
+    "dom": {
+      "link[href*='/dist/sfui']": {
+        "attributes": {
+          "href": "/dist/sfui.+\\.js"
+        }
+      }
+    },
+    "implies": "Vue.js",
+    "oss": true,
+    "website": "https://vuestorefront.io/storefront-ui"
   },
   "StorifyMe": {
     "cats": [

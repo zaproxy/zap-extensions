@@ -646,11 +646,15 @@
   },
   "Firebase": {
     "cats": [
-      34
+      34,
+      47
     ],
     "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
-    "description": "Firebase is a Backend-as-a-Service (Baas) for creating mobile and web applications.",
-    "icon": "Firebase.png",
+    "description": "Firebase is a Google-backed application development software that enables developers to develop iOS, Android and Web apps.",
+    "icon": "Firebase.svg",
+    "headers": {
+      "vary": "x-fh-requested-host"
+    },
     "js": {
       "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
     },
@@ -658,7 +662,11 @@
       "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
       "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
     ],
-    "website": "https://firebase.com"
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://firebase.google.com"
   },
   "Fireblade": {
     "cats": [
@@ -846,11 +854,14 @@
     "cats": [
       59
     ],
+    "description": "Flickity is a JavaScript slider library, built by David DeSandro of Metafizzy fame.",
+    "dom": "style[data-context='foundation-flickity-css'], div.flickity-enabled",
     "js": {
       "Flickity": ""
     },
-    "scriptSrc": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
-    "website": "https://flickity.metafizzy.co/"
+    "scriptSrc": "flickity(?:/|@)([\\d\\.]+).+flickity(?:\\.pkgd)?(?:\\.min)?\\.js\\;version:\\1",
+    "oss": true,
+    "website": "https://flickity.metafizzy.co"
   },
   "Flits": {
     "cats": [
@@ -1826,5 +1837,23 @@
     "oss": true,
     "scriptSrc": "/fullPage\\.js(?:/([\\d\\.]+)/)?\\;version:\\1",
     "website": "https://github.com/alvarotrigo/fullpage.js"
+  },
+  "Friendly Captcha": {
+    "description": "Friendly Captcha is a proof-of-work based solution in which the user’s device does all the work.",
+    "cats": [
+      16
+    ],
+    "dom": "div.frc-captcha",
+    "scripts": "x-frc-client\",\"js-(\\d+(\\.\\d+)+)\\;version:\\1",
+    "xhr": "api.friendlycaptcha.com",
+    "saas": true,
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring",
+      "poa"
+    ],
+    "icon": "FriendlyCaptcha.svg",
+    "website": "https://friendlycaptcha.com"
   }
 }

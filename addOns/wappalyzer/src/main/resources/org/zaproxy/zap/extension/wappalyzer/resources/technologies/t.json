@@ -1,4 +1,18 @@
 {
+  "Triple Whale": {
+    "cats": [
+      10
+    ],
+    "xhr": "triplewhale-pixel\\.web\\.app",
+    "saas": true,
+    "icon": "triplewhale.svg",
+    "website": "https://triplewhale.com/",
+    "description": "The Triple Whale platform combines centralization, visualization, and attribution into a dashboard that presents and illustrates KPIs in an actionable way.",
+    "pricing": [
+      "mid",
+      "recurring"
+    ]
+  },
   "T-Soft": {
     "cats": [
       6
@@ -585,12 +599,12 @@
     "cats": [
       36
     ],
-    "description": "Tatari is a data and analytics company focused on buying and measuring ads across TV and streaming platforms",
-    "icon": "Tatari.png",
+    "description": "Tatari is a data and analytics company focused on buying and measuring ads across TV and streaming platforms.",
+    "icon": "Tatari.svg",
     "js": {
       "tatari": ""
     },
-    "website": "https://www.tatari.tv/"
+    "website": "https://www.tatari.tv"
   },
   "Tawk.to": {
     "cats": [
@@ -608,6 +622,16 @@
     "saas": true,
     "scriptSrc": "//embed\\.tawk\\.to",
     "website": "http://tawk.to"
+  },
+  "TDesign": {
+    "cats": [
+      66
+    ],
+    "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
+    "icon": "TDesign.svg",
+    "dom": ".t-button__text, .t-layout",
+    "scriptSrc": "tdesign\\.gtimg\\.com/",
+    "website": "https://tdesign.tencent.com"
   },
   "Teachable": {
     "cats": [
@@ -1732,6 +1756,28 @@
     "scriptSrc": "tilda(?:cdn|\\.ws|-blocks)",
     "website": "https://tilda.cc"
   },
+  "Tiledesk": {
+    "cats": [
+      52
+    ],
+    "description": "Tiledesk is the full-stack open-source Live Chat with built-in Chatbots, written in Node.js and Angular.",
+    "icon": "Tiledesk.png",
+    "js": {
+      "tiledesk": "",
+      "tileDeskAsyncInit": "",
+      "tiledeskSettings": "",
+      "Tiledesk": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "oss": true,
+    "website": "https://tiledesk.com"
+  },
   "Timeplot": {
     "cats": [
       25
@@ -2788,6 +2834,24 @@
     "implies": "TypeScript",
     "oss": true,
     "website": "https://typedoc.org"
+  },
+  "Typeform": {
+    "cats": [
+      73
+    ],
+    "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
+    "icon": "Typeform.png",
+    "js": {
+      "tf.createPopover": "",
+      "tf.createWidget": ""
+    },
+    "scriptSrc": "embed\\.typeform\\.com/",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.typeform.com"
   },
   "TypePad": {
     "cats": [
