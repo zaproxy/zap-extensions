@@ -226,7 +226,10 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server.<br>
-At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.
+At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.<br>
+At MEDIUM threshold this rule does not alert on potential timestamps beyond 10 years.<br>
+At all thresholds, this rule will not alert on timestamps beyond the Y2038 epoch edge.<br>
+
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/TimestampDisclosureScanRule.java">TimestampDisclosureScanRule.java</a>
 

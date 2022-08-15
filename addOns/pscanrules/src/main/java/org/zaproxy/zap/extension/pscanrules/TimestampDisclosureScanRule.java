@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -50,17 +51,38 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
-    private static final Date EPOCH_START = new Date(0L);
+    // We are only interested in events within a 10 year span
+    private static final long EPOCH_Y2038 = 2147483647L;
+    private static final ZonedDateTime ZONED_NOW = ZonedDateTime.now();
+
+    private static final Date RANGE_START = Date.from(ZONED_NOW.minusYears(10).toInstant());
+    private static final Date RANGE_STOP =
+            new Date(
+                    TimeUnit.SECONDS.toMillis(
+                            Math.min(
+                                    EPOCH_Y2038,
+                                    ZONED_NOW.plusYears(10).toInstant().getEpochSecond())));
+    private static final Instant ONE_YEAR_AGO = ZONED_NOW.minusYears(1).toInstant();
+    private static final Instant ONE_YEAR_FROM_NOW = ZONED_NOW.plusYears(1).toInstant();
     /** a map of a regular expression pattern to details of the timestamp type found */
     static Map<Pattern, String> timestampPatterns = new HashMap<>();
 
     static {
-        // 8 - 10 digits is unlikely to cause many false positives, but covers most of the range of
-        // possible Unix time values
-        // as well as all of the current Unix time value (beyond the range for a valid Unix time, in
-        // fact)
-        timestampPatterns.put(
-                Pattern.compile("\\b[0-9]{8,10}\\b(?!%)", Pattern.CASE_INSENSITIVE), "Unix");
+        // 8 digits match CSS RGBA colors and with a very high false positive rate.
+        // They also only match up to March 3, 1973 which is not worth considering.
+        //
+        // 9 digits match up to September 9, 2001 which is also really below any
+        // interesting scope (it's more than 20 years ago).
+        // As such, it's only worth looking at 10 digits.
+        //
+        // 2,000,000,000 is May 18, 2033 which is really beyond any interesting scope
+        // at this time. At the time of this comment, it was more than 10 years in the
+        // future. But it isn't a lot past 10 years, so we'll select 10 years as the
+        // range.
+        //
+        // As such, we'll consider 2 billion series, but stop at:
+        // 2147483647 which is posix time clock rollover.
+        timestampPatterns.put(Pattern.compile("\\b(?:1\\d|2[0-2])\\d{8}\\b(?!%)"), "Unix");
     }
 
     private static Logger log = LogManager.getLogger(TimestampDisclosureScanRule.class);
@@ -136,6 +158,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         // try each of the patterns in turn against the response.
         String timestampType = null;
         Iterator<Pattern> patternIterator = timestampPatterns.keySet().iterator();
+        AlertThreshold threshold = this.getAlertThreshold();
 
         while (patternIterator.hasNext()) {
             Pattern timestampPattern = patternIterator.next();
@@ -151,23 +174,24 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                     Date timestamp = null;
                     try {
                         // parse the number as a Unix timestamp
-                        timestamp = new Date((long) Integer.parseInt(evidence) * 1000);
+                        timestamp = new Date(TimeUnit.SECONDS.toMillis(Integer.parseInt(evidence)));
                     } catch (NumberFormatException nfe) {
                         // the number is not formatted correctly to be a timestamp. Skip it.
                         continue;
                     }
-                    if (EPOCH_START.equals(timestamp)) {
-                        continue;
+                    if (!AlertThreshold.LOW.equals(threshold)) {
+                        if (RANGE_START.after(timestamp) || RANGE_STOP.before(timestamp)) {
+                            continue;
+                        }
                     }
                     log.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
 
                     if (evidence != null && evidence.length() > 0) {
                         // we found something.. potentially
-                        if (AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+                        if (AlertThreshold.HIGH.equals(threshold)) {
                             Instant foundInstant = Instant.ofEpochSecond(Long.parseLong(evidence));
-                            ZonedDateTime now = ZonedDateTime.now();
-                            if (!(foundInstant.isAfter(now.minusYears(1).toInstant())
-                                    && foundInstant.isBefore(now.plusYears(1).toInstant()))) {
+                            if (!(foundInstant.isAfter(ONE_YEAR_AGO)
+                                    && foundInstant.isBefore(ONE_YEAR_FROM_NOW))) {
                                 continue;
                             }
                         }
