@@ -34,11 +34,14 @@ import org.apache.logging.log4j.Logger;
  */
 public class RemoveTransferEncoding implements HttpResponseInterceptor {
 
+    static final String ATTR_NAME = "zap.transfer-encoding.removed";
+
     private static final Logger LOGGER = LogManager.getLogger(RemoveTransferEncoding.class);
 
     @Override
     public void process(HttpResponse response, EntityDetails entity, HttpContext context) {
-        if (response.containsHeader(HttpHeaders.TRANSFER_ENCODING)) {
+        if (response.removeHeaders(HttpHeaders.TRANSFER_ENCODING)) {
+            context.setAttribute(ATTR_NAME, Boolean.TRUE);
             if (LOGGER.isDebugEnabled()) {
                 HttpClientContext clientContext = HttpClientContext.adapt(context);
                 LOGGER.debug(
@@ -46,7 +49,6 @@ public class RemoveTransferEncoding implements HttpResponseInterceptor {
                         clientContext.getExchangeId(),
                         HttpHeaders.TRANSFER_ENCODING);
             }
-            response.removeHeaders(HttpHeaders.TRANSFER_ENCODING);
         }
     }
 }
