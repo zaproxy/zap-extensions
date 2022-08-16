@@ -57,7 +57,7 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
             case HIGH:
                 return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 10;
             case INSANE:
-                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 20;
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 22;
         }
     }
 
