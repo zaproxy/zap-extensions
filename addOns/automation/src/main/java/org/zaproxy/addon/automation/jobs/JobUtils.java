@@ -46,6 +46,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -571,7 +572,8 @@ public class JobUtils {
                                                 scriptType,
                                                 true,
                                                 file));
-                        extScript.addScript(wrapper, false);
+                        ScriptNode scriptNode = extScript.addScript(wrapper, false);
+                        wrapper = (ScriptWrapper) scriptNode.getUserObject();
                     } catch (IOException e) {
                         progress.error(
                                 Constant.messages.getString(
