@@ -23,18 +23,32 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.withSettings;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link JobUtils}. */
@@ -47,7 +61,7 @@ class JobUtilsUnitTest {
 
     @BeforeAll
     static void setUp() {
-        Constant.messages = mock(I18N.class);
+        Constant.messages = new I18N(Locale.getDefault());
     }
 
     @Test
@@ -193,6 +207,98 @@ class JobUtilsUnitTest {
         assertThat(enumBBB, is(equalTo(enumeration.bbb)));
         assertThat(map.getClass(), is(equalTo(HashMap.class)));
         assertThat(((Map<?, ?>) map).size(), is(equalTo(2)));
+    }
+
+    @Test
+    void shouldNotGetScriptWrapperIfExtensionScriptDisabled() {
+        // Given
+        mockExtensionLoader(null);
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        AutomationProgress progress = mock(AutomationProgress.class);
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        assertThat(obtainedScriptWrapper, is(nullValue()));
+        verifyNoInteractions(progress);
+    }
+
+    @Test
+    void shouldGetExistingScriptWrapper() {
+        // Given
+        ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        AutomationProgress progress = mock(AutomationProgress.class);
+        ScriptWrapper otherScriptWrapper = mock(ScriptWrapper.class);
+        given(otherScriptWrapper.getFile()).willReturn(new File("/other-script.ext"));
+        given(otherScriptWrapper.getEngineName()).willReturn(engineName);
+        ScriptWrapper otherScriptWrapper2 = mock(ScriptWrapper.class);
+        given(otherScriptWrapper2.getFile()).willReturn(file);
+        given(otherScriptWrapper2.getEngineName()).willReturn("other engine");
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getFile()).willReturn(file);
+        given(scriptWrapper.getEngineName()).willReturn(engineName);
+        given(extensionScript.getScripts(type))
+                .willReturn(Arrays.asList(otherScriptWrapper, otherScriptWrapper2, scriptWrapper));
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        assertThat(obtainedScriptWrapper, is(sameInstance(scriptWrapper)));
+        verifyNoInteractions(progress);
+    }
+
+    @Test
+    void shouldAddScriptWrapperIfNotPresent() throws Exception {
+        // Given
+        ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        AutomationProgress progress = mock(AutomationProgress.class);
+        ScriptEngineWrapper scriptEngineWrapper = mock(ScriptEngineWrapper.class);
+        given(extensionScript.getEngineWrapper(engineName)).willReturn(scriptEngineWrapper);
+        ScriptWrapper scriptWrapperLoaded = mock(ScriptWrapper.class);
+        given(extensionScript.loadScript(any())).willReturn(scriptWrapperLoaded);
+        ScriptWrapper scriptWrapperAdded = mock(ScriptWrapper.class);
+        ScriptNode node = mock(ScriptNode.class);
+        given(node.getUserObject()).willReturn(scriptWrapperAdded);
+        given(extensionScript.addScript(scriptWrapperLoaded, false)).willReturn(node);
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        assertThat(obtainedScriptWrapper, is(sameInstance(scriptWrapperAdded)));
+        verifyNoInteractions(progress);
+    }
+
+    @Test
+    void shouldNotAddScriptWrapperIfEngineNotPresent() {
+        // Given
+        ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        given(extensionScript.getEngineWrapper(engineName)).willReturn(null);
+        AutomationProgress progress = mock(AutomationProgress.class);
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        verify(progress).error("!automation.error.env.sessionmgmt.engine.bad!");
+        assertThat(obtainedScriptWrapper, is(nullValue()));
+    }
+
+    private static ExtensionScript mockExtensionLoader(ExtensionScript extensionScript) {
+        Model model = mock(Model.class, withSettings().lenient());
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Control.initSingletonForTesting(model, extensionLoader);
+        given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        return extensionScript;
     }
 
     private static class Data {

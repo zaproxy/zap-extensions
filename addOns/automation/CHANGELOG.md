@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correct loading of custom scripts (e.g. Zest).
+
 ## [0.16.0] - 2022-06-22
 ### Changed
 - Maintenance changes.
