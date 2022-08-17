@@ -20,6 +20,19 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.addon.graphql.spider.ExtensionGraphQlSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.1.0")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -40,9 +53,11 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("spider")!!)
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.graphql-java:graphql-java:18.2")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }
