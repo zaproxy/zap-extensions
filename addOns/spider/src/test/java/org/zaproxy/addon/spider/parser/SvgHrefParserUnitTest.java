@@ -226,6 +226,75 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils {
                 is(equalTo("http://example.org/use_element/upload.php")));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"href", "HREF", "xlink:href", "XLINK:HREF"})
+    void shouldParseValidResourceWithSvgTagWithImageTag(String attributeName) {
+        // Given
+        HttpMessage msg = createMessage("test.html");
+        msg.setResponseBody(
+                "<!DOCTYPE html>\n"
+                        + "<h1>SVG Tag Test</h1>\n"
+                        + "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+                        + "  <image "
+                        + attributeName
+                        + "=\"/test/html/file.svg\"/>\n"
+                        + "</svg>\n"
+                        + "<p>\n"
+                        + "  The attribute points at a URL for the image file.\n"
+                        + "</p>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        // Then
+        assertTrue(parse);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"href", "HREF", "xlink:href", "XLINK:HREF"})
+    void shouldParseValidResourceWithSvgTagWithScriptTag(String attributeName) {
+        // Given
+        HttpMessage msg = createMessage("test.html");
+        msg.setResponseBody(
+                "<!DOCTYPE html>\n"
+                        + "<h1>SVG Tag Test</h1>\n"
+                        + "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+                        + "  <script "
+                        + attributeName
+                        + "=\"/test/html/getImage\"/>\n"
+                        + "</svg>\n"
+                        + "<p>\n"
+                        + "  The attribute points at a URL for the script file.\n"
+                        + "</p>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        // Then
+        assertTrue(parse);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"href", "HREF", "xlink:href", "XLINK:HREF"})
+    void shouldNotParseResourceWithSvgTagWithOtherTag(String attributeName) {
+        // Given
+        HttpMessage msg = createMessage("test.html");
+        msg.setResponseBody(
+                "<!DOCTYPE html>\n"
+                        + "<h1>SVG Tag Test</h1>\n"
+                        + "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+                        + "  <other "
+                        + attributeName
+                        + "=\"/test/html/getImage\"/>\n"
+                        + "</svg>\n"
+                        + "<p>\n"
+                        + "  The attribute in \"other\" tag.\n"
+                        + "</p>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        boolean parse = parser.parseResource(msg, new Source(msg.getResponseBody().toString()), 0);
+        // Then
+        assertFalse(parse);
+    }
+
     private HttpMessage createMessage(String path) {
         HttpMessage msg = new HttpMessage();
         try {

@@ -22,6 +22,8 @@ package org.zaproxy.addon.spider.parser;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,6 +32,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.network.HttpMessage;
@@ -38,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
+import org.zaproxy.addon.spider.UrlCanonicalizer;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class SvgHrefParser extends SpiderParser {
@@ -45,6 +50,8 @@ public class SvgHrefParser extends SpiderParser {
             Pattern.compile("\\.svg\\z", Pattern.CASE_INSENSITIVE);
     private static final String HREF_EXPRESSION = "//*[@href or @HREF]";
     private static final String[] ATTRIBUTE_NAMES = {"href", "HREF", "xlink:href", "XLINK:HREF"};
+    private static final String SVG_TAG = "SVG";
+    private static final String IMAGE_TAG = "IMAGE";
 
     private static XPathExpression xpathHrefExpression;
 
@@ -73,36 +80,86 @@ public class SvgHrefParser extends SpiderParser {
         String baseUrl = message.getRequestHeader().getURI().toString();
         getLogger().debug("SVG Spider attempting to parse {}", baseUrl);
 
-        try {
-            synchronized (documentBuilder) {
-                Document xmldoc =
-                        documentBuilder.parse(
-                                new InputSource(
-                                        new ByteArrayInputStream(
-                                                message.getResponseBody().getBytes())));
-                NodeList hrefNodes =
-                        (NodeList) xpathHrefExpression.evaluate(xmldoc, XPathConstants.NODESET);
-                if (hrefNodes.getLength() > 0) {
-                    processNodeList(hrefNodes, message, depth, baseUrl);
-                    return true;
-                } else {
-                    return false;
+        if (isSvg(message)) {
+            try {
+                synchronized (documentBuilder) {
+                    Document xmldoc =
+                            documentBuilder.parse(
+                                    new InputSource(
+                                            new ByteArrayInputStream(
+                                                    message.getResponseBody().getBytes())));
+                    NodeList hrefNodes =
+                            (NodeList) xpathHrefExpression.evaluate(xmldoc, XPathConstants.NODESET);
+                    if (hrefNodes.getLength() > 0) {
+                        processNodeList(hrefNodes, message, depth, baseUrl);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
+            } catch (SAXParseException spe) {
+                if (spe.getMessage().contains("DOCTYPE is disallowed")) {
+                    getLogger()
+                            .debug(
+                                    "Skipping {} due to XXE safety and DOCTYPE declaration present.",
+                                    baseUrl);
+                } else {
+                    getLogger().warn("An error occurred trying to parse {}", baseUrl, spe);
+                }
+                return false;
+            } catch (Exception e) {
+                getLogger().warn("An error occurred trying to parse {}", baseUrl, e);
+                return false;
             }
-        } catch (SAXParseException spe) {
-            if (spe.getMessage().contains("DOCTYPE is disallowed")) {
-                getLogger()
-                        .debug(
-                                "Skipping {} due to XXE safety and DOCTYPE declaration present.",
-                                baseUrl);
-            } else {
-                getLogger().warn("An error occurred trying to parse {}", baseUrl, spe);
-            }
-            return false;
-        } catch (Exception e) {
-            getLogger().warn("An error occurred trying to parse {}", baseUrl, e);
+        } else if (containsSvg(message, () -> source)) {
+            List<Element> svgElements = source.getAllElements(SVG_TAG);
+            return processSvgElements(message, source, depth, baseUrl, svgElements);
+        }
+        return false;
+    }
+
+    private boolean processSvgElements(
+            HttpMessage message,
+            Source source,
+            int depth,
+            String baseUrl,
+            List<Element> svgElements) {
+        if (svgElements.isEmpty()) {
             return false;
         }
+        // Try to see if there's any BASE tag that could change the base URL
+        Element base = source.getFirstElement(HTMLElementName.BASE);
+        if (base != null) {
+            getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
+            String href = base.getAttributeValue("href");
+            if (href != null && !href.isEmpty()) {
+                baseUrl = UrlCanonicalizer.getCanonicalURL(href, baseUrl);
+            }
+        }
+        return processSvgTags(message, depth, baseUrl, svgElements, IMAGE_TAG)
+                || processSvgTags(message, depth, baseUrl, svgElements, HTMLElementName.SCRIPT);
+    }
+
+    private boolean processSvgTags(
+            HttpMessage message,
+            int depth,
+            String baseUrl,
+            List<Element> svgElements,
+            String subTag) {
+        boolean found = false;
+        for (Element el : svgElements) {
+            for (Element imageTag : el.getAllElements(subTag)) {
+                for (String attribute : ATTRIBUTE_NAMES) {
+                    String hrefCandidate = imageTag.getAttributeValue(attribute);
+                    if (hrefCandidate != null && !hrefCandidate.isEmpty()) {
+                        processURL(message, depth, hrefCandidate, baseUrl);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return found;
     }
 
     private void processNodeList(NodeList nodes, HttpMessage message, int depth, String baseUrl) {
@@ -132,7 +189,7 @@ public class SvgHrefParser extends SpiderParser {
         }
     }
 
-    private String extractUrl(Node node) {
+    private static String extractUrl(Node node) {
         String extractedUrl = "";
         for (String attributeName : ATTRIBUTE_NAMES) {
             try {
@@ -149,10 +206,16 @@ public class SvgHrefParser extends SpiderParser {
 
     @Override
     public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return isSvg(message);
+        return isSvg(message)
+                || containsSvg(message, () -> new Source(message.getResponseBody().toString()));
     }
 
-    private boolean isSvg(HttpMessage msg) {
+    private static boolean containsSvg(HttpMessage message, Supplier<Source> source) {
+        return message.getResponseHeader().isHtml()
+                && source.get().getFirstElement(SVG_TAG) != null;
+    }
+
+    private static boolean isSvg(HttpMessage msg) {
         if (msg.getResponseHeader().hasContentType("svg")) {
             return true;
         }
