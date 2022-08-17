@@ -47,6 +47,8 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.spider.filters.ParseFilter;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -69,8 +71,20 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_END_URL_IDX = 2;
 
+    private ValueGenerator valueGenerator;
+
     public ExtensionGraphQl() {
         super(NAME);
+
+        setValueGenerator(null);
+    }
+
+    public void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    }
+
+    ValueGenerator getValueGenerator() {
+        return valueGenerator;
     }
 
     @Override
