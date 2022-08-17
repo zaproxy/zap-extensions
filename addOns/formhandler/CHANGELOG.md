@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Expose value generator for other add-ons (Related to Issue 3113).
 
 ## [5] - 2022-07-20
 ### Changed

@@ -28,6 +28,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.zap.extension.params.ExtensionParams;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 
 public class ExtensionFormHandler extends ExtensionAdaptor {
 
@@ -36,6 +37,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     protected static final String PREFIX = "formhandler";
 
     private FormHandlerParam param;
+    private ValueGenerator valueGenerator;
 
     private OptionsFormHandlerPanel optionsFormHandlerPanel;
     private PopupMenuAddFormhandlerParam popupMenuAddFormhandlerParam;
@@ -44,15 +46,31 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
         super(NAME);
     }
 
+    /**
+     * Gets the value generator, with user provided values.
+     *
+     * @return the value generator.
+     * @since 6.0.0
+     */
+    public ValueGenerator getValueGenerator() {
+        return valueGenerator;
+    }
+
+    @Override
+    public void init() {
+        valueGenerator = new FormHandlerValueGenerator(getParam());
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
         ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
+        // TODO Remove once other add-ons no longer use the core spider to get the generator.
         ExtensionSpider extension = extLoader.getExtension(ExtensionSpider.class);
         if (extension != null) {
-            extension.setValueGenerator(new FormHandlerValueGenerator(getParam()));
+            extension.setValueGenerator(valueGenerator);
         }
 
         if (getView() != null) {
