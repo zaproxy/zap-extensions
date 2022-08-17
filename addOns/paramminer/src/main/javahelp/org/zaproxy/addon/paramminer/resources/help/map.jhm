@@ -4,7 +4,9 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="param-miner-icon" url="contents/images/pickaxe.png" />
+	<mapID target="param-miner-icon" url="contents/images/hard-hat-mine.png" />
     <mapID target="paramminer" url="contents/paramminer.html" />
     <mapID target="paramminer.about" url="contents/about.html" />
+    <mapID target="paramminer.dialog" url="contents/dialog.html" />
+    <mapID target="paramminer.tab" url="contents/tab.html" />
 </map>

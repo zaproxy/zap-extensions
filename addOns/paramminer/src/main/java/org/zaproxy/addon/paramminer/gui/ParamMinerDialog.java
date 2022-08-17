@@ -308,6 +308,11 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     }
 
     @Override
+    public String getHelpIndex() {
+        return "paramminer.dialog";
+    }
+
+    @Override
     public String getSaveButtonText() {
         return Constant.messages.getString("paramminer.dialog.button.scan");
     }
