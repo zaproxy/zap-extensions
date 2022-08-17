@@ -41,6 +41,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 
 class WSDLCustomParserTestCase extends TestUtils {
 
+    private ValueGenerator valueGenerator;
     private String wsdlContent;
     private WSDLCustomParser parser;
 
@@ -50,7 +51,8 @@ class WSDLCustomParserTestCase extends TestUtils {
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
-        parser = new WSDLCustomParser(null);
+        valueGenerator = mock(ValueGenerator.class);
+        parser = new WSDLCustomParser(() -> valueGenerator, null);
     }
 
     @Test
@@ -100,7 +102,6 @@ class WSDLCustomParserTestCase extends TestUtils {
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", name);
 
-        ValueGenerator valueGenerator = mock(ValueGenerator.class);
         when(valueGenerator.getValue(
                         null,
                         null,
@@ -110,7 +111,6 @@ class WSDLCustomParserTestCase extends TestUtils {
                         Collections.emptyMap(),
                         fieldAttributes))
                 .thenReturn("TEST_VALUE");
-        parser.setValueGenerator(valueGenerator);
 
         // Then
         Map<String, String> expectedParams = new HashMap<>();
@@ -128,7 +128,6 @@ class WSDLCustomParserTestCase extends TestUtils {
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", name);
 
-        ValueGenerator valueGenerator = mock(ValueGenerator.class);
         when(valueGenerator.getValue(
                         null,
                         null,
@@ -138,7 +137,6 @@ class WSDLCustomParserTestCase extends TestUtils {
                         Collections.emptyMap(),
                         fieldAttributes))
                 .thenReturn("");
-        parser.setValueGenerator(valueGenerator);
 
         // Then
         Map<String, String> expectedParams = new HashMap<>();
