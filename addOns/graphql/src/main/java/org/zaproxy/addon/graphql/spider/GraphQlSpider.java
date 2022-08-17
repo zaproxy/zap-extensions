@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2020 The ZAP Development Team
+ * Copyright 2022 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.graphql;
+package org.zaproxy.addon.graphql.spider;
 
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.spider.parser.SpiderParser;
+import org.zaproxy.addon.graphql.GraphQlSpiderHelper;
+import org.zaproxy.addon.spider.parser.SpiderParser;
 
 public class GraphQlSpider extends SpiderParser {
 

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Maintenance changes.
 - Update dependency, which reduces add-on file size (Issue 7322).
+- Use Spider add-on (Issue 3113).
 
 ## [0.9.0] - 2022-04-05
 ### Changed
