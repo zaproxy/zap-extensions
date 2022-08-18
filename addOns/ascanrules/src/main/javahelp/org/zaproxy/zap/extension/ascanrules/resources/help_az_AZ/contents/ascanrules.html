@@ -8,7 +8,7 @@ Aktiv scan qaydaları
 </head>
 <body>
 <h1>Active Scan Rules</h1>
-The following release quality active scan rules are included in this add-on:
+The following release status active scan rules are included in this add-on:
 
 <h2>.htaccess Information Leak</h2>
 Checks for web accessible .htaccess files which may leak sensitive information 
@@ -54,7 +54,9 @@ It then performs a series of attacks specifically targeted at the location in wh
 including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. <br>
 Note: <br>
 This rule only scans HTTP PUT requests at LOW threshold.<br>
-If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.
+If the alert threshold is set to LOW, XSS injection located in a JSON response results in a LOW risk and LOW confidence alert is raised.
+For other response content-types a LOW confidence alert is raised.<br>
+If the alert threshold is set to either MEDIUM or HIGH, XSS injection located in non-HTML responses do not generate alerts.<br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java">CrossSiteScriptingScanRule.java</a>
 
