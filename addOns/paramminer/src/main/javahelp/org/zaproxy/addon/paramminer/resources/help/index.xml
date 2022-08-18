@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Param Miner" target="paramminer" />
-  <indexitem text="Param Miner dialog" target="paramminer.dialog" />
-  <indexitem text="Param Miner tab" target="paramminer.tab" />
+	<indexitem text="Param Digger" target="paramdigger" />
+  <indexitem text="Param Digger dialog" target="paramdigger.dialog" />
+  <indexitem text="Param Digger tab" target="paramdigger.tab" />
 </index>

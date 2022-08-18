@@ -33,8 +33,8 @@ import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionParamMiner extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionParamMiner";
-    protected static final String PREFIX = "paramminer";
+    public static final String NAME = "ExtensionParamDigger";
+    protected static final String PREFIX = "paramdigger";
     private static final String RESOURCES = "resources";
     private static ImageIcon icon;
 
@@ -131,6 +131,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
                     e -> {
                         showParamMinerDialog(null);
                     });
+            menu.setIcon(getIcon());
         }
         return menu;
     }
