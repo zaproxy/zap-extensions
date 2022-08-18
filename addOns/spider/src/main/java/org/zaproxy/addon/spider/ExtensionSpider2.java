@@ -133,13 +133,10 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     }
 
     public void setValueGenerator(ValueGenerator generator) {
-        if (generator == null) {
-            throw new IllegalArgumentException("Parameter generator must not be null.");
-        }
-        this.generator = generator;
+        this.generator = generator == null ? new DefaultValueGenerator() : generator;
     }
 
-    public ValueGenerator getValueGenerator() {
+    ValueGenerator getValueGenerator() {
         return generator;
     }
 
