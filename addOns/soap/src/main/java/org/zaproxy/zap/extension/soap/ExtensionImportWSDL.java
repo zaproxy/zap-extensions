@@ -44,6 +44,8 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
@@ -59,12 +61,27 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private int threadId = 1;
 
     private final TableWsdl table = new TableWsdl();
-    private final WSDLCustomParser parser = new WSDLCustomParser(table);
+    private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
     private WSDLSpider spiderParser;
+    private ValueGenerator valueGenerator;
 
     public ExtensionImportWSDL() {
         super(NAME);
         this.setOrder(158);
+
+        setValueGenerator(null);
+    }
+
+    public void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    }
+
+    private ValueGenerator getValueGenerator() {
+        return valueGenerator;
+    }
+
+    public WSDLCustomParser getParser() {
+        return parser;
     }
 
     @Override

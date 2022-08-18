@@ -29,6 +29,32 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.zap.extension.soap.spider.ExtensionSoapSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.soap.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.1.0")
+                        }
+                    }
+                }
+            }
+
+            register("org.zaproxy.zap.extension.soap.formhandler.ExtensionSoapFormHandler") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.soap.formhandler"))
+                }
+                dependencies {
+                    addOns {
+                        register("formhandler") {
+                            version.set(">=6.0.0 & < 7.0.0")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -41,6 +67,8 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+    compileOnly(parent!!.childProjects.get("formhandler")!!)
+    compileOnly(parent!!.childProjects.get("spider")!!)
     implementation("com.predic8:soa-model-core:1.6.3")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:2.0.1")
     implementation("jakarta.xml.soap:jakarta.xml.soap-api:2.0.1")
@@ -53,5 +81,7 @@ dependencies {
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("formhandler")!!)
+    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }

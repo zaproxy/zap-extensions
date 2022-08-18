@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency updates.
 - Maintenance changes.
+- Use Spider add-on (Issue 3113).
+- Use Form Handler add-on directly.
 
 ## [13] - 2022-02-01
 ### Changed
