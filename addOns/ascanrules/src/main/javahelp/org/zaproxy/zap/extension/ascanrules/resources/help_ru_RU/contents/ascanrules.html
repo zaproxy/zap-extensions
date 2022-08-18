@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>Правила активного сканирования</h1>
-В это дополнение включены следующие правила активного сканирования релизного качества: 
+The following release status active scan rules are included in this add-on:
 
 <h2>Утечка информации .htaccess </h2>
 Проверяет файлы .htaccess, доступные в Интернете, которые могут привести к утечке конфиденциальной информации.
@@ -52,9 +52,11 @@
 Это правило начинается с отправки «безопасного» значения и анализа всех мест, в которых это значение встречается в ответе (если есть).  <br>
 Затем он выполняет серию атак, специально нацеленных на то место, где происходит каждый из экземпляров,
 включая атрибуты тегов, атрибуты URL, атрибуты в тегах, которые поддерживают атрибуты src, html-комментарии и т. д.  <br>
-Примечание: <br>
-Это правило сканирует запросы HTTP PUT только при НИЗКОМ пороге. <br>
-Если XSS-инъекция находится в ответе JSON, возникает предупреждение НИЗКИЙ риск и НИЗКАЯ достоверность. 
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If the alert threshold is set to LOW, XSS injection located in a JSON response results in a LOW risk and LOW confidence alert is raised.
+For other response content-types a LOW confidence alert is raised.<br>
+If the alert threshold is set to either MEDIUM or HIGH, XSS injection located in non-HTML responses do not generate alerts.<br>
 <p>
 Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java"> CrossSiteScriptingScanRule.java </a>
 
