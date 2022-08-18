@@ -44,9 +44,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 
 public class GraphQlGenerator {
@@ -63,7 +61,11 @@ public class GraphQlGenerator {
         SUBSCRIPTION
     };
 
-    public GraphQlGenerator(String sdl, Requestor requestor, GraphQlParam param) {
+    private final ValueGenerator valueGenerator;
+
+    public GraphQlGenerator(
+            ValueGenerator valueGenerator, String sdl, Requestor requestor, GraphQlParam param) {
+        this.valueGenerator = valueGenerator;
         schema = UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
         this.requestor = requestor;
         this.param = param;
@@ -633,25 +635,14 @@ public class GraphQlGenerator {
             defaultValue.append("null");
         }
 
-        ValueGenerator coreValGen = null;
-        try {
-            coreValGen =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionSpider.class)
-                            .getValueGenerator();
-        } catch (NullPointerException e) {
-            LOG.debug(e.getMessage());
-        }
-
-        if (coreValGen != null && type instanceof GraphQLNamedType) {
+        if (type instanceof GraphQLNamedType) {
             GraphQLNamedType namedType = (GraphQLNamedType) type;
             String typeName = namedType.getName();
             HashMap<String, String> fieldAttributes = new HashMap<>();
             fieldAttributes.put("Control Type", "TEXT");
             fieldAttributes.put("type", typeName);
             String value =
-                    coreValGen.getValue(
+                    valueGenerator.getValue(
                             null,
                             null,
                             typeName,

@@ -21,6 +21,19 @@ zapAddOn {
                 }
             }
 
+            register("org.zaproxy.addon.graphql.formhandler.ExtensionGraphQlFormHandler") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.formhandler"))
+                }
+                dependencies {
+                    addOns {
+                        register("formhandler") {
+                            version.set(">=6.0.0 & < 7.0.0")
+                        }
+                    }
+                }
+            }
+
             register("org.zaproxy.addon.graphql.spider.ExtensionGraphQlSpider") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.addon.graphql.spider"))
@@ -53,11 +66,13 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("spider")!!)
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.graphql-java:graphql-java:18.2")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }

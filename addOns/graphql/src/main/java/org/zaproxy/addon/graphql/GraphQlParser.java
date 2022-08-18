@@ -151,7 +151,9 @@ public class GraphQlParser {
 
     private void generate(String schema) {
         try {
-            GraphQlGenerator generator = new GraphQlGenerator(schema, requestor, param);
+            GraphQlGenerator generator =
+                    new GraphQlGenerator(
+                            extensionGraphQl.getValueGenerator(), schema, requestor, param);
             generator.checkServiceMethods();
             generator.generateAndSend();
         } catch (Exception e) {

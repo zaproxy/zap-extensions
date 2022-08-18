@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.graphql.spider;
+package org.zaproxy.addon.graphql.formhandler;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,27 +28,23 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.graphql.ExtensionGraphQl;
-import org.zaproxy.addon.spider.ExtensionSpider2;
-import org.zaproxy.addon.spider.filters.ParseFilter;
-import org.zaproxy.addon.spider.parser.SpiderParser;
+import org.zaproxy.zap.extension.formhandler.ExtensionFormHandler;
+import org.zaproxy.zap.model.ValueGenerator;
 
-public class ExtensionGraphQlSpider extends ExtensionAdaptor {
+public class ExtensionGraphQlFormHandler extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(
-                    Arrays.asList(ExtensionSpider2.class, ExtensionGraphQl.class));
-
-    private SpiderParser spiderParser;
-    private ParseFilter parseFilter;
+                    Arrays.asList(ExtensionFormHandler.class, ExtensionGraphQl.class));
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("graphql.spider.name");
+        return Constant.messages.getString("graphql.formhandler.name");
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("graphql.spider.desc");
+        return Constant.messages.getString("graphql.formhandler.desc");
     }
 
     @Override
@@ -58,11 +54,9 @@ public class ExtensionGraphQlSpider extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        spiderParser = new GraphQlSpider();
-        ExtensionSpider2 spider = getExtension(ExtensionSpider2.class);
-        spider.addCustomParser(spiderParser);
-        parseFilter = new GraphQlParseFilter();
-        spider.addCustomParseFilter(parseFilter);
+        ValueGenerator valueGenerator =
+                getExtension(ExtensionFormHandler.class).getValueGenerator();
+        getExtension(ExtensionGraphQl.class).setValueGenerator(valueGenerator);
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -76,8 +70,6 @@ public class ExtensionGraphQlSpider extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionSpider2 spider = getExtension(ExtensionSpider2.class);
-        spider.removeCustomParser(spiderParser);
-        spider.removeCustomParseFilter(parseFilter);
+        getExtension(ExtensionGraphQl.class).setValueGenerator(null);
     }
 }
