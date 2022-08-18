@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Add supplemental parsing functionality to the spider."
+description = "Spider used for automatically finding URIs on a site."
 
 zapAddOn {
     addOnName.set("Spider")
