@@ -12,6 +12,19 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/spider/")
 
         extensions {
+            register("org.zaproxy.addon.spider.automation.ExtensionSpiderAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.spider.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.17.0")
+                        }
+                    }
+                }
+            }
+
             register("org.zaproxy.addon.spider.formhandler.ExtensionSpiderFormHandler") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.addon.spider.formhandler"))
@@ -29,8 +42,10 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("formhandler")!!)
 
+    testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(project(":testutils"))
 }
