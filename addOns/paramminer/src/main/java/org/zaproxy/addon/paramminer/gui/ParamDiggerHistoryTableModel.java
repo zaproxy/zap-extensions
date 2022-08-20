@@ -17,10 +17,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.paramminer;
+package org.zaproxy.addon.paramminer.gui;
 
-import java.util.EventListener;
+import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableModel;
 
-public interface ParamMinerResultEventListener extends EventListener {
-    void notifyResult(ParamGuessResultEvent event);
+public class ParamDiggerHistoryTableModel extends DefaultHistoryReferencesTableModel {
+
+    private static final long serialVersionUID = 1L;
+
+    public ParamDiggerHistoryTableModel() {
+        super(
+                new Column[] {
+                    Column.HREF_ID,
+                    Column.REQUEST_TIMESTAMP,
+                    Column.RESPONSE_TIMESTAMP,
+                    Column.METHOD,
+                    Column.URL,
+                    Column.STATUS_CODE,
+                    Column.STATUS_REASON,
+                    Column.RTT,
+                });
+    }
 }

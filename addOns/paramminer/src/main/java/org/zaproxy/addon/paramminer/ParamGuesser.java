@@ -46,7 +46,7 @@ public class ParamGuesser implements Runnable {
     private StopWatch stopWatch;
     private boolean stopWatchStarted;
     private GuesserScan scan;
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
 
     public ParamGuesser(int id, GuesserScan scan, ExecutorService executor) {
         this.id = id;

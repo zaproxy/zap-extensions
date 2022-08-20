@@ -43,7 +43,7 @@ import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
 import org.zaproxy.addon.paramminer.UrlGuesser.Method;
 import org.zaproxy.addon.paramminer.UrlGuesser.Mode;
 import org.zaproxy.addon.paramminer.UrlGuesser.Status;
-import org.zaproxy.addon.paramminer.gui.ParamMinerHistoryTableModel;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerHistoryTableModel;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class UrlBruteForce implements Callable<ParamReasons> {
@@ -53,7 +53,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
     private Mode mode;
     private UrlGuesser guesser;
     private GuesserScan scan;
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
     private HttpSender httpSender;
     private boolean firstComparison;
     private ArrayList<String> paramsPresent;
@@ -157,7 +157,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
      * @return the value sent. This is the payload created by using the params.
      */
     public String requester(HttpMessage msg, Method method, Map<String, String> params) {
-        ParamMinerHistoryTableModel table;
+        ParamDiggerHistoryTableModel table;
         switch (method) {
             case GET:
                 try {

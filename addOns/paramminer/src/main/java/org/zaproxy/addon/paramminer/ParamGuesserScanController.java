@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.zaproxy.addon.paramminer.gui.ParamMinerPanel;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerPanel;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -37,7 +37,7 @@ public class ParamGuesserScanController implements ScanController<GuesserScan> {
     private int scanIdCounter;
     private Map<Integer, GuesserScan> paramGuesserScanMap;
 
-    private ParamMinerPanel panel;
+    private ParamDiggerPanel panel;
 
     public ParamGuesserScanController() {
         this.paramGuesserScanLock = new ReentrantLock();
@@ -45,7 +45,7 @@ public class ParamGuesserScanController implements ScanController<GuesserScan> {
         this.paramGuesserScanMap = new HashMap<>();
     }
 
-    public int startScan(String displayName, ParamMinerConfig config) {
+    public int startScan(String displayName, ParamDiggerConfig config) {
         paramGuesserScanLock.lock();
         try {
             int id = this.scanIdCounter++;
@@ -67,7 +67,7 @@ public class ParamGuesserScanController implements ScanController<GuesserScan> {
     public int startScan(
             String displayName, Target target, User user, Object[] contextSpecificObjects) {
         throw new UnsupportedOperationException(
-                "Scans are started with a param miner configuration.");
+                "Scans are started with a param digger configuration.");
     }
 
     @Override
@@ -240,7 +240,7 @@ public class ParamGuesserScanController implements ScanController<GuesserScan> {
         }
     }
 
-    void setScansPanel(ParamMinerPanel panel) {
+    void setScansPanel(ParamDiggerPanel panel) {
         this.panel = panel;
     }
 

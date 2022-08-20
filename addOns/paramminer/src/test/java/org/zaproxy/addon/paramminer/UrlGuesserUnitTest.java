@@ -54,7 +54,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.paramminer.ParamGuessResult.Reason;
-import org.zaproxy.addon.paramminer.gui.ParamMinerHistoryTableModel;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerHistoryTableModel;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -63,10 +63,10 @@ public class UrlGuesserUnitTest extends TestUtils {
     private GuesserScan scan;
     private ExecutorService executor;
     private TableHistory tableHistory;
-    private ParamMinerHistoryTableModel tableModel;
+    private ParamDiggerHistoryTableModel tableModel;
     private HttpSender httpSender =
             new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
     private static String TEST_WORDLIST_FILE = "wordlists/UrlGuesserTestList.txt";
     private Path file;
 
@@ -94,7 +94,7 @@ public class UrlGuesserUnitTest extends TestUtils {
 
         tableModel =
                 mock(
-                        ParamMinerHistoryTableModel.class,
+                        ParamDiggerHistoryTableModel.class,
                         withSettings().defaultAnswer(RETURNS_MOCKS));
         tableHistory =
                 mock(TableHistory.class, withSettings().defaultAnswer(RETURNS_MOCKS).lenient());
@@ -107,7 +107,7 @@ public class UrlGuesserUnitTest extends TestUtils {
         given(scan.getTableModel()).willReturn(tableModel);
         executor = Executors.newFixedThreadPool(1);
 
-        config = new ParamMinerConfig();
+        config = new ParamDiggerConfig();
         config.setUsePredefinedUrlWordlists(false);
         config.setUseCustomUrlWordlists(true);
         config.setCustomUrlWordlistPath(file);

@@ -60,7 +60,7 @@ public class UrlGuesser implements Runnable {
     private HttpSender httpSender;
     private int id;
     // TODO should pass id to bruteforce task
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
     private GuesserScan scan;
 
     private static final String DEFAULTWORDLISTPATH =
