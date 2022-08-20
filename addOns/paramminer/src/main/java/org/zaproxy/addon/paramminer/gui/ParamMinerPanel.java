@@ -65,9 +65,9 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
             ParamGuesserScanController scanController,
             ParamMinerOptions options,
             Runnable scanStartRunnable) {
-        super("paramminer", ExtensionParamMiner.getIcon(), scanController);
+        super("paramdigger", ExtensionParamMiner.getIcon(), scanController);
 
-        getNewScanButton().setText(Constant.messages.getString("paramminer.toolbar.button.new"));
+        getNewScanButton().setText(Constant.messages.getString("paramdigger.toolbar.button.new"));
         getNewScanButton().setIcon(getIcon());
         getNewScanButton().addActionListener(e -> scanStartRunnable.run());
 
@@ -86,10 +86,10 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
 
             tabbedPane = new JTabbedPane();
             tabbedPane.addTab(
-                    Constant.messages.getString("paramminer.panel.tab.history"),
+                    Constant.messages.getString("paramdigger.panel.tab.history"),
                     new JScrollPane(historyTable));
             tabbedPane.addTab(
-                    Constant.messages.getString("paramminer.panel.tab.output"),
+                    Constant.messages.getString("paramdigger.panel.tab.output"),
                     new JScrollPane(outputArea));
             mainPanel.add(tabbedPane);
         }
@@ -139,9 +139,9 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
             JCheckBox dontPromptCheckBox =
                     new JCheckBox(
                             Constant.messages.getString(
-                                    "paramminer.toolbar.confirm.clear.dontPrompt"));
+                                    "paramdigger.toolbar.confirm.clear.dontPrompt"));
             Object[] messages = {
-                Constant.messages.getString("paramminer.toolbar.confirm.clear"),
+                Constant.messages.getString("paramdigger.toolbar.confirm.clear"),
                 "\n",
                 dontPromptCheckBox
             };
@@ -149,7 +149,7 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
                     JOptionPane.showConfirmDialog(
                             View.getSingleton().getMainFrame(),
                             messages,
-                            Constant.messages.getString("paramminer.panel.title"),
+                            Constant.messages.getString("paramdigger.panel.title"),
                             JOptionPane.YES_NO_OPTION);
             if (dontPromptCheckBox.isSelected()) {
                 options.setPromptToClearFinishedScans(false);

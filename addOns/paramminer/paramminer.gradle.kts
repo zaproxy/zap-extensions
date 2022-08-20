@@ -1,7 +1,7 @@
 description = "Identify hidden, unlinked parameters. Useful for finding web cache poisoning vulnerabilities."
 
 zapAddOn {
-    addOnName.set("Parameter Miner")
+    addOnName.set("Parameter Digger")
     zapVersion.set("2.11.1")
 
     manifest {

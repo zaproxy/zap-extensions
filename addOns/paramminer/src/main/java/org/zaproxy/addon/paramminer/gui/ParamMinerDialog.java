@@ -57,10 +57,10 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 @SuppressWarnings("serial")
 public class ParamMinerDialog extends StandardFieldsDialog {
     private enum Methods {
-        GET(Constant.messages.getString("paramminer.dialog.urlguess.methods.get")),
-        POST(Constant.messages.getString("paramminer.dialog.urlguess.methods.post")),
-        XML(Constant.messages.getString("paramminer.dialog.urlguess.methods.xml")),
-        JSON(Constant.messages.getString("paramminer.dialog.urlguess.methods.json"));
+        GET(Constant.messages.getString("paramdigger.dialog.urlguess.methods.get")),
+        POST(Constant.messages.getString("paramdigger.dialog.urlguess.methods.post")),
+        XML(Constant.messages.getString("paramdigger.dialog.urlguess.methods.xml")),
+        JSON(Constant.messages.getString("paramdigger.dialog.urlguess.methods.json"));
 
         private final String label;
 
@@ -76,26 +76,26 @@ public class ParamMinerDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
     // Base Tab Options
-    private static final String URL = "paramminer.dialog.url";
-    private static final String CONTEXT = "paramminer.dialog.context";
+    private static final String URL = "paramdigger.dialog.url";
+    private static final String CONTEXT = "paramdigger.dialog.context";
 
-    private static final String URL_GUESS = "paramminer.dialog.urlguess";
-    private static final String HEADER_GUESS = "paramminer.dialog.headerguess";
-    private static final String COOKIE_GUESS = "paramminer.dialog.cookieguess";
+    private static final String URL_GUESS = "paramdigger.dialog.urlguess";
+    private static final String HEADER_GUESS = "paramdigger.dialog.headerguess";
+    private static final String COOKIE_GUESS = "paramdigger.dialog.cookieguess";
 
-    private static final String THREADPOOL_SIZE = "paramminer.dialog.threadpool.size";
+    private static final String THREADPOOL_SIZE = "paramdigger.dialog.threadpool.size";
 
-    private static final String CONTROL_TAB_KEY = "paramminer.dialog.tab.control";
-    private static final String URLGUESS_TAB_KEY = "paramminer.dialog.tab.urlguess";
-    private static final String HEADERGUESS_TAB_KEY = "paramminer.dialog.tab.headerguess";
-    private static final String COOKIEGUESS_TAB_KEY = "paramminer.dialog.tab.cookieguess";
+    private static final String CONTROL_TAB_KEY = "paramdigger.dialog.tab.control";
+    private static final String URLGUESS_TAB_KEY = "paramdigger.dialog.tab.urlguess";
+    private static final String HEADERGUESS_TAB_KEY = "paramdigger.dialog.tab.headerguess";
+    private static final String COOKIEGUESS_TAB_KEY = "paramdigger.dialog.tab.cookieguess";
 
     private static final String[] tabLabels = {
         CONTROL_TAB_KEY, URLGUESS_TAB_KEY, HEADERGUESS_TAB_KEY, COOKIEGUESS_TAB_KEY,
     };
-    private static final String PREDEF = "paramminer.dialog.wordlist.predefined";
-    private static final String CUSTOM = "paramminer.dialog.wordlist.custom";
-    private static final String BOTH = "paramminer.dialog.wordlist.both";
+    private static final String PREDEF = "paramdigger.dialog.wordlist.predefined";
+    private static final String CUSTOM = "paramdigger.dialog.wordlist.custom";
+    private static final String BOTH = "paramdigger.dialog.wordlist.both";
 
     private static final String PREDEFI18N_STRING = Constant.messages.getString(PREDEF);
     private static final String CUSTOMI18N_STRING = Constant.messages.getString(CUSTOM);
@@ -110,26 +110,26 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     private static final int HEADER_GUESS_TAB = 2;
     private static final int COOKIE_GUESS_TAB = 3;
 
-    private static final String URL_CHUNK_SIZE = "paramminer.dialog.urlguess.chunksize";
-    private static final String FCBZ_CACHE_BUSTER = "paramminer.dialog.fcbz.cache.buster";
+    private static final String URL_CHUNK_SIZE = "paramdigger.dialog.urlguess.chunksize";
+    private static final String FCBZ_CACHE_BUSTER = "paramdigger.dialog.fcbz.cache.buster";
 
-    private static final String URLGUESS_WORDLIST = "paramminer.dialog.urlguess.wordlist";
+    private static final String URLGUESS_WORDLIST = "paramdigger.dialog.urlguess.wordlist";
     private static final String URL_FILE_LOCATON =
-            "paramminer.dialog.urlguess.wordlist.custom.file.location";
-    private static final String URL_METHODS = "paramminer.dialog.urlguess.methods";
+            "paramdigger.dialog.urlguess.wordlist.custom.file.location";
+    private static final String URL_METHODS = "paramdigger.dialog.urlguess.methods";
 
-    private static final String HEADERGUESS_WORDLIST = "paramminer.dialog.headerguess.wordlist";
+    private static final String HEADERGUESS_WORDLIST = "paramdigger.dialog.headerguess.wordlist";
     private static final String HEADER_FILE_LOCATON =
-            "paramminer.dialog.headerguess.wordlist.custom.file.location";
+            "paramdigger.dialog.headerguess.wordlist.custom.file.location";
 
-    private static final String COOKIEGUESS_WORDLIST = "paramminer.dialog.cookieguess.wordlist";
+    private static final String COOKIEGUESS_WORDLIST = "paramdigger.dialog.cookieguess.wordlist";
     private static final String COOKIE_FILE_LOCATON =
-            "paramminer.dialog.cookieguess.wordlist.custom.file.location";
+            "paramdigger.dialog.cookieguess.wordlist.custom.file.location";
 
-    private static final String SKIP_BORING_HEADERS = "paramminer.dialog.skip.boring.headers";
+    private static final String SKIP_BORING_HEADERS = "paramdigger.dialog.skip.boring.headers";
 
-    private static final String WORDLIST_EMPTY = "paramminer.dialog.error.wordlist.empty";
-    private static final String WORDLIST_NOTFOUND = "paramminer.dialog.error.wordlist.notfound";
+    private static final String WORDLIST_EMPTY = "paramdigger.dialog.error.wordlist.empty";
+    private static final String WORDLIST_NOTFOUND = "paramdigger.dialog.error.wordlist.notfound";
 
     private static final Logger logger = LogManager.getLogger(ParamMinerDialog.class);
 
@@ -174,7 +174,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     }
 
     public ParamMinerDialog(ExtensionParamMiner extension, Frame owner, Dimension dim) {
-        super(owner, "paramminer.panel.title", dim, tabLabels);
+        super(owner, "paramdigger.panel.title", dim, tabLabels);
         this.extension = extension;
     }
 
@@ -309,12 +309,12 @@ public class ParamMinerDialog extends StandardFieldsDialog {
 
     @Override
     public String getHelpIndex() {
-        return "paramminer.dialog";
+        return "paramdigger.dialog";
     }
 
     @Override
     public String getSaveButtonText() {
-        return Constant.messages.getString("paramminer.dialog.button.scan");
+        return Constant.messages.getString("paramdigger.dialog.button.scan");
     }
 
     private void addMethodPanel(
@@ -324,6 +324,8 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         JList<Methods> list = new JList<>(methods.toArray(new Methods[0]));
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         list.setVisibleRowCount(1);
+        list.setToolTipText(
+                Constant.messages.getString("paramdigger.dialog.urlguess.methods.tooltip"));
         JPanel panel = createCustomPanel(label, list);
         panel.setVisible(isVisible);
         this.addCustomComponent(tabIndex, panel);
@@ -501,13 +503,13 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     public String validateFields() {
         String url = this.getTextField(URL).getText();
         if (url == null || url.isEmpty()) {
-            return Constant.messages.getString("paramminer.dialog.error.url.empty");
+            return Constant.messages.getString("paramdigger.dialog.error.url.empty");
         }
         try {
             new URI(url, true);
             new URL(url);
         } catch (Exception e) {
-            return Constant.messages.getString("paramminer.dialog.error.url.invalid");
+            return Constant.messages.getString("paramdigger.dialog.error.url.invalid");
         }
         String urlChoice = this.getStringValue(URLGUESS_WORDLIST);
         if (urlChoice.equals(CUSTOMI18N_STRING) || urlChoice.equals(BOTHI18N_STRING)) {
@@ -567,7 +569,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         if (!(this.getBoolValue(URL_GUESS)
                 || this.getBoolValue(HEADER_GUESS)
                 || this.getBoolValue(COOKIE_GUESS))) {
-            return Constant.messages.getString("paramminer.dialog.error.no.guess");
+            return Constant.messages.getString("paramdigger.dialog.error.no.guess");
         }
 
         return null;

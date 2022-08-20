@@ -84,12 +84,12 @@ public class ParamGuessResult {
             for (Reason reason : reasons) {
                 sb.append(
                         Constant.messages.getString(
-                                "paramminer.results.reason." + reason.toString()));
+                                "paramdigger.results.reason." + reason.toString()));
                 sb.append(", ");
             }
         }
         sb.setLength(sb.length() - 2);
         return Constant.messages.getString(
-                "paramminer.results.maintext", this.historyReference.getURI(), getParamName(), sb);
+                "paramdigger.results.maintext", this.historyReference.getURI(), getParamName(), sb);
     }
 }
