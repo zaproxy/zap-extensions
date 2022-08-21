@@ -21,19 +21,19 @@ package org.zaproxy.addon.paramminer.gui;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.paramminer.ExtensionParamMiner;
+import org.zaproxy.addon.paramminer.ExtensionParamDigger;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 @SuppressWarnings("serial")
-public class PopupMenuParamMiner extends PopupMenuItemHttpMessageContainer {
+public class PopupMenuParamDigger extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
-    private ExtensionParamMiner extension;
+    private ExtensionParamDigger extension;
 
-    public PopupMenuParamMiner(ExtensionParamMiner ext, String label) {
+    public PopupMenuParamDigger(ExtensionParamDigger ext, String label) {
         super(label);
         this.extension = ext;
-        this.setIcon(ExtensionParamMiner.getIcon());
+        this.setIcon(ExtensionParamDigger.getIcon());
     }
 
     @Override
@@ -53,6 +53,6 @@ public class PopupMenuParamMiner extends PopupMenuItemHttpMessageContainer {
 
     @Override
     protected void performAction(HttpMessage httpMessage) {
-        extension.showParamMinerDialog(httpMessage);
+        extension.showParamDiggerDialog(httpMessage);
     }
 }

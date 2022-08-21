@@ -29,14 +29,14 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 
-public class ParamMinerAPI extends ApiImplementor {
-    private static final String PREFIX = "paramMiner";
+public class ParamDiggerAPI extends ApiImplementor {
+    private static final String PREFIX = "paramDigger";
 
     private static final String ACTION_HELLO_WORLD = "helloWorld";
 
-    private static final Logger LOGGER = LogManager.getLogger(ParamMinerAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParamDiggerAPI.class);
 
-    public ParamMinerAPI() {
+    public ParamDiggerAPI() {
         this.addApiAction(new ApiAction(ACTION_HELLO_WORLD));
     }
 
@@ -49,7 +49,7 @@ public class ParamMinerAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         switch (name) {
             case ACTION_HELLO_WORLD:
-                LOGGER.debug(Constant.messages.getString("paramminer.api.action.helloWorld"));
+                LOGGER.debug(Constant.messages.getString("paramdigger.api.action.helloWorld"));
                 break;
 
             default:

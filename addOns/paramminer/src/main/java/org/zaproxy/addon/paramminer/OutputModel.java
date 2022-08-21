@@ -31,12 +31,12 @@ public class OutputModel {
         this.resultListeners = new EventListenerList();
     }
 
-    public void addResultListener(ParamMinerResultEventListener listener) {
-        resultListeners.add(ParamMinerResultEventListener.class, listener);
+    public void addResultListener(ParamDiggerResultEventListener listener) {
+        resultListeners.add(ParamDiggerResultEventListener.class, listener);
     }
 
-    public void removeResultListener(ParamMinerResultEventListener listener) {
-        resultListeners.remove(ParamMinerResultEventListener.class, listener);
+    public void removeResultListener(ParamDiggerResultEventListener listener) {
+        resultListeners.remove(ParamDiggerResultEventListener.class, listener);
     }
 
     public void notifyResult(ParamGuessResult paramGuessResult) {
@@ -44,11 +44,11 @@ public class OutputModel {
         ParamGuessResultEvent event = null;
         Object[] listeners = resultListeners.getListenerList();
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == ParamMinerResultEventListener.class) {
+            if (listeners[i] == ParamDiggerResultEventListener.class) {
                 if (event == null) {
                     event = new ParamGuessResultEvent(this, paramGuessResult);
                 }
-                ((ParamMinerResultEventListener) listeners[i + 1]).notifyResult(event);
+                ((ParamDiggerResultEventListener) listeners[i + 1]).notifyResult(event);
             }
         }
     }

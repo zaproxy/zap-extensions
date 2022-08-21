@@ -47,15 +47,15 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.paramminer.ExtensionParamMiner;
-import org.zaproxy.addon.paramminer.ParamMinerConfig;
+import org.zaproxy.addon.paramminer.ExtensionParamDigger;
+import org.zaproxy.addon.paramminer.ParamDiggerConfig;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
-public class ParamMinerDialog extends StandardFieldsDialog {
+public class ParamDiggerDialog extends StandardFieldsDialog {
     private enum Methods {
         GET(Constant.messages.getString("paramdigger.dialog.urlguess.methods.get")),
         POST(Constant.messages.getString("paramdigger.dialog.urlguess.methods.post")),
@@ -131,11 +131,11 @@ public class ParamMinerDialog extends StandardFieldsDialog {
     private static final String WORDLIST_EMPTY = "paramdigger.dialog.error.wordlist.empty";
     private static final String WORDLIST_NOTFOUND = "paramdigger.dialog.error.wordlist.notfound";
 
-    private static final Logger logger = LogManager.getLogger(ParamMinerDialog.class);
+    private static final Logger logger = LogManager.getLogger(ParamDiggerDialog.class);
 
-    private ExtensionParamMiner extension;
+    private ExtensionParamDigger extension;
     private HttpMessage target;
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
     private Map<String, JPanel> panelMap;
     private Map<String, ZapTextField> textFieldMap;
     private Map<String, JList<Methods>> listMap;
@@ -173,7 +173,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         return panel;
     }
 
-    public ParamMinerDialog(ExtensionParamMiner extension, Frame owner, Dimension dim) {
+    public ParamDiggerDialog(ExtensionParamDigger extension, Frame owner, Dimension dim) {
         super(owner, "paramdigger.panel.title", dim, tabLabels);
         this.extension = extension;
     }
@@ -183,7 +183,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
             this.target = target;
         }
         logger.debug("init {}", this.target);
-        config = new ParamMinerConfig();
+        config = new ParamDiggerConfig();
         // TODO Add a reset button
         this.panelMap = new HashMap<>();
         this.textFieldMap = new HashMap<>();
@@ -376,7 +376,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
                 new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
         selectButton.addActionListener(
                 e -> {
-                    NodeSelectDialog nsd = new NodeSelectDialog(ParamMinerDialog.this);
+                    NodeSelectDialog nsd = new NodeSelectDialog(ParamDiggerDialog.this);
                     SiteNode node;
                     if (value != null) {
                         node = nsd.showDialog(value.getHistoryRef().getURI());
@@ -403,7 +403,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         this.textFieldMap.put(fieldLabel, text);
     }
 
-    private void setUrlGuessMethods(ParamMinerConfig conf) {
+    private void setUrlGuessMethods(ParamDiggerConfig conf) {
         for (Methods e : this.listMap.get(URL_METHODS).getSelectedValuesList()) {
             switch (e) {
                 case GET:
@@ -422,7 +422,7 @@ public class ParamMinerDialog extends StandardFieldsDialog {
         }
     }
 
-    private void setWordlistsSettings(ParamMinerConfig config, String fieldLabel, int tabIndex) {
+    private void setWordlistsSettings(ParamDiggerConfig config, String fieldLabel, int tabIndex) {
         String choice = this.getStringValue(fieldLabel);
         switch (tabIndex) {
             case URL_GUESS_TAB:

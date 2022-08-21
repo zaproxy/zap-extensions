@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.users.User;
 
-public class ParamMinerConfig {
+public class ParamDiggerConfig {
     private String url;
     private boolean addFcbzCacheBuster;
 
@@ -64,7 +64,7 @@ public class ParamMinerConfig {
     private String customCookieWordlistPath;
     private int urlGuessChunkSize;
 
-    public ParamMinerConfig() {
+    public ParamDiggerConfig() {
         this.url = "";
         this.threadCount = 4;
         this.urlGuessChunkSize = 2;

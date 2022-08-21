@@ -32,25 +32,25 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.paramminer.ExtensionParamMiner;
+import org.zaproxy.addon.paramminer.ExtensionParamDigger;
 import org.zaproxy.addon.paramminer.GuesserProgressListener;
 import org.zaproxy.addon.paramminer.GuesserScan;
+import org.zaproxy.addon.paramminer.ParamDiggerOptions;
+import org.zaproxy.addon.paramminer.ParamDiggerResultEventListener;
 import org.zaproxy.addon.paramminer.ParamGuessResultEvent;
 import org.zaproxy.addon.paramminer.ParamGuesserScanController;
-import org.zaproxy.addon.paramminer.ParamMinerOptions;
-import org.zaproxy.addon.paramminer.ParamMinerResultEventListener;
 import org.zaproxy.zap.view.ScanPanel2;
 
 @SuppressWarnings("serial")
-public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
+public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
 
     private static final long serialVersionUID = 1L;
 
-    private final ParamMinerOptions options;
+    private final ParamDiggerOptions options;
 
     private JTabbedPane tabbedPane;
     private JTextArea outputArea;
-    private ParamMinerHistoryTableModel emptyTableModel;
+    private ParamDiggerHistoryTableModel emptyTableModel;
     private JTable historyTable;
 
     private JButton startScanButton;
@@ -61,11 +61,11 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
     private ResultListener resultListener;
     private GuesserScan previousScan;
 
-    public ParamMinerPanel(
+    public ParamDiggerPanel(
             ParamGuesserScanController scanController,
-            ParamMinerOptions options,
+            ParamDiggerOptions options,
             Runnable scanStartRunnable) {
-        super("paramdigger", ExtensionParamMiner.getIcon(), scanController);
+        super("paramdigger", ExtensionParamDigger.getIcon(), scanController);
 
         getNewScanButton().setText(Constant.messages.getString("paramdigger.toolbar.button.new"));
         getNewScanButton().setIcon(getIcon());
@@ -79,8 +79,8 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
         if (mainPanel == null) {
             mainPanel = new JPanel(new BorderLayout());
 
-            emptyTableModel = new ParamMinerHistoryTableModel();
-            historyTable = new ParamMinerResultsTable(emptyTableModel);
+            emptyTableModel = new ParamDiggerHistoryTableModel();
+            historyTable = new ParamDiggerResultsTable(emptyTableModel);
             outputArea = new JTextArea();
             outputArea.setEditable(false);
 
@@ -169,7 +169,7 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
         return progressListener;
     }
 
-    private ParamMinerResultEventListener getResultListener() {
+    private ParamDiggerResultEventListener getResultListener() {
         if (resultListener == null) {
             resultListener = new ResultListener();
         }
@@ -186,7 +186,7 @@ public class ParamMinerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCon
         return false;
     }
 
-    private class ResultListener implements ParamMinerResultEventListener {
+    private class ResultListener implements ParamDiggerResultEventListener {
 
         @Override
         public void notifyResult(ParamGuessResultEvent event) {

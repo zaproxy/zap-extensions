@@ -21,7 +21,7 @@ package org.zaproxy.addon.paramminer;
 
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class ParamMinerOptions extends VersionedAbstractParam {
+public class ParamDiggerOptions extends VersionedAbstractParam {
 
     public static final boolean DEFAULT_PROMPT_TO_CLEAR_FINISHED_SCANS = true;
 
@@ -35,7 +35,7 @@ public class ParamMinerOptions extends VersionedAbstractParam {
      */
     private static final int CURRENT_VERSION = 1;
 
-    private static final String BASE_KEY = "paramminer";
+    private static final String BASE_KEY = "paramdigger";
 
     private static final String MAX_FINISHED_SCANS_IN_UI_KEY = BASE_KEY + ".maxCompletedScansInUi";
     private static final String PROMPT_TO_CLEAR_FINISHED_SCANS_KEY =

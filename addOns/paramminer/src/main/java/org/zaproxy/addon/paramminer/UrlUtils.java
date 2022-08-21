@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/** A utility class for URL bruteforce related operations for the paramminer add-on. */
+/** A utility class for URL bruteforce related operations for the param digger add-on. */
 public class UrlUtils {
     private static Logger logger = LogManager.getLogger(UrlUtils.class);
     /**

@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.zaproxy.addon.paramminer.gui.ParamMinerHistoryTableModel;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerHistoryTableModel;
 import org.zaproxy.zap.model.GenericScanner2;
 
 public class GuesserScan implements GenericScanner2 {
@@ -45,18 +45,18 @@ public class GuesserScan implements GenericScanner2 {
     private State state;
 
     private String displayName;
-    private ParamMinerConfig config;
+    private ParamDiggerConfig config;
 
     private int tasksDoneCount;
     private int tasksTodoCount;
 
     private final ExecutorService executor;
     private final List<GuesserProgressListener> listeners;
-    private final ParamMinerHistoryTableModel tableModel;
+    private final ParamDiggerHistoryTableModel tableModel;
     private List<ParamGuessResult> results;
     private OutputModel outputModel;
 
-    public GuesserScan(int scanId, ParamMinerConfig config, String name) {
+    public GuesserScan(int scanId, ParamDiggerConfig config, String name) {
         this.scanId = scanId;
         this.displayName = name;
         this.lock = new ReentrantLock();
@@ -64,7 +64,7 @@ public class GuesserScan implements GenericScanner2 {
         this.config = config;
 
         listeners = new ArrayList<>(2);
-        tableModel = new ParamMinerHistoryTableModel();
+        tableModel = new ParamDiggerHistoryTableModel();
         results = Collections.synchronizedList(new ArrayList<>());
         this.executor =
                 Executors.newFixedThreadPool(
@@ -76,11 +76,11 @@ public class GuesserScan implements GenericScanner2 {
         listeners.add(listener);
     }
 
-    public ParamMinerHistoryTableModel getTableModel() {
+    public ParamDiggerHistoryTableModel getTableModel() {
         return tableModel;
     }
 
-    public ParamMinerConfig getConfig() {
+    public ParamDiggerConfig getConfig() {
         return config;
     }
 

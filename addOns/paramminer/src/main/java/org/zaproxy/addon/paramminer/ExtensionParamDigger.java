@@ -25,29 +25,29 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.paramminer.gui.ParamMinerDialog;
-import org.zaproxy.addon.paramminer.gui.ParamMinerPanel;
-import org.zaproxy.addon.paramminer.gui.PopupMenuParamMiner;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerDialog;
+import org.zaproxy.addon.paramminer.gui.ParamDiggerPanel;
+import org.zaproxy.addon.paramminer.gui.PopupMenuParamDigger;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionParamMiner extends ExtensionAdaptor {
+public class ExtensionParamDigger extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionParamDigger";
     protected static final String PREFIX = "paramdigger";
     private static final String RESOURCES = "resources";
     private static ImageIcon icon;
 
-    private ParamMinerOptions options;
-    private ParamMinerPanel paramMinerPanel;
-    private ExtensionPopupMenuItem paramMinerDialogPopMenu;
+    private ParamDiggerOptions options;
+    private ParamDiggerPanel paramDiggerPanel;
+    private ExtensionPopupMenuItem paramDiggerDialogPopMenu;
     private ZapMenuItem menu;
-    private ParamMinerAPI api;
-    private ParamMinerDialog paramMinerDialog;
+    private ParamDiggerAPI api;
+    private ParamDiggerDialog paramDiggerDialog;
 
     private ParamGuesserScanController scanController;
 
-    public ExtensionParamMiner() {
+    public ExtensionParamDigger() {
         super(NAME);
         setI18nPrefix(PREFIX);
     }
@@ -56,7 +56,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     public void init() {
         super.init();
 
-        options = new ParamMinerOptions();
+        options = new ParamDiggerOptions();
         scanController = new ParamGuesserScanController();
     }
 
@@ -64,7 +64,7 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
         if (icon == null) {
             icon =
                     new ImageIcon(
-                            ExtensionParamMiner.class.getResource(
+                            ExtensionParamDigger.class.getResource(
                                     RESOURCES + "/hard-hat-mine.png"));
         }
         return icon;
@@ -76,23 +76,23 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(options);
 
-        this.api = new ParamMinerAPI();
+        this.api = new ParamDiggerAPI();
         extensionHook.addApiImplementor(this.api);
 
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
-            extensionHook.getHookView().addStatusPanel(getParamMinerPanel());
+            extensionHook.getHookView().addStatusPanel(getParamDiggerPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsg());
         }
     }
 
     private ExtensionPopupMenuItem getPopupMsg() {
-        if (paramMinerDialogPopMenu == null) {
-            paramMinerDialogPopMenu =
-                    new PopupMenuParamMiner(
+        if (paramDiggerDialogPopMenu == null) {
+            paramDiggerDialogPopMenu =
+                    new PopupMenuParamDigger(
                             this, Constant.messages.getString(PREFIX + ".popup.title"));
         }
-        return paramMinerDialogPopMenu;
+        return paramDiggerDialogPopMenu;
     }
 
     @Override
@@ -104,23 +104,24 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
-        if (paramMinerPanel != null) {
-            paramMinerPanel.unload();
+        if (paramDiggerPanel != null) {
+            paramDiggerPanel.unload();
         }
     }
 
-    public void startScan(ParamMinerConfig config) {
+    public void startScan(ParamDiggerConfig config) {
         // TODO change the display name based on the config.
         scanController.startScan("Scan", config);
     }
 
-    private ParamMinerPanel getParamMinerPanel() {
-        if (paramMinerPanel == null) {
-            paramMinerPanel =
-                    new ParamMinerPanel(scanController, options, () -> showParamMinerDialog(null));
-            scanController.setScansPanel(paramMinerPanel);
+    private ParamDiggerPanel getParamDiggerPanel() {
+        if (paramDiggerPanel == null) {
+            paramDiggerPanel =
+                    new ParamDiggerPanel(
+                            scanController, options, () -> showParamDiggerDialog(null));
+            scanController.setScansPanel(paramDiggerPanel);
         }
-        return paramMinerPanel;
+        return paramDiggerPanel;
     }
 
     private ZapMenuItem getMenu() {
@@ -129,23 +130,23 @@ public class ExtensionParamMiner extends ExtensionAdaptor {
 
             menu.addActionListener(
                     e -> {
-                        showParamMinerDialog(null);
+                        showParamDiggerDialog(null);
                     });
             menu.setIcon(getIcon());
         }
         return menu;
     }
 
-    public void showParamMinerDialog(HttpMessage node) {
-        if (paramMinerDialog == null) {
-            paramMinerDialog =
-                    new ParamMinerDialog(
+    public void showParamDiggerDialog(HttpMessage node) {
+        if (paramDiggerDialog == null) {
+            paramDiggerDialog =
+                    new ParamDiggerDialog(
                             this,
                             getView().getMainFrame(),
                             DisplayUtils.getScaledDimension(700, 300));
         }
-        paramMinerDialog.init(node);
-        paramMinerDialog.setVisible(true);
+        paramDiggerDialog.init(node);
+        paramDiggerDialog.setVisible(true);
     }
 
     @Override
