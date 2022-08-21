@@ -54,7 +54,7 @@ var addOns = listOf(
     "openapi",
     "packpentester",
     "packscanrules",
-    "paramminer",
+    "paramdigger",
     "plugnhack",
     "portscan",
     "pscanrules",
