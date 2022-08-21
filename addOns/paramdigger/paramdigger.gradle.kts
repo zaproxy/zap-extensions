@@ -6,6 +6,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team and Arkaprabha Chakraborty")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/parameter-digger/")
 
         dependencies {
             addOns {
