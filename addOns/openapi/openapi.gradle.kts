@@ -23,6 +23,30 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.openapi.spider.ExtensionOpenApiSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.1.0")
+                        }
+                    }
+                }
+            }
+            register("org.zaproxy.zap.extension.openapi.formhandler.ExtensionOpenApiFormHandler") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.formhandler"))
+                }
+                dependencies {
+                    addOns {
+                        register("formhandler") {
+                            version.set(">=6.0.0 & < 7.0.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -50,6 +74,8 @@ configurations {
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+    compileOnly(parent!!.childProjects.get("formhandler")!!)
+    compileOnly(parent!!.childProjects.get("spider")!!)
 
     implementation("io.swagger.parser.v3:swagger-parser:2.0.28")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.56") {
@@ -66,5 +92,7 @@ dependencies {
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("formhandler")!!)
+    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }
