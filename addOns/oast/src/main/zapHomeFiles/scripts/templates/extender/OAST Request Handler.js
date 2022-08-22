@@ -1,4 +1,4 @@
-// This script registers an OAST message handler.
+// This script handles out-of-band interactions.
 // Change it to do whatever you want to do :)
 
 var Control = Java.type("org.parosproxy.paros.control.Control")
@@ -17,6 +17,14 @@ function requestHandler(request) {
     print()
 }
 
-boast.addOastRequestHandler(requestHandler)
-interactsh.addOastRequestHandler(requestHandler)
-print("OAST Request handler registered.")
+function install(helper) {
+    boast.addOastRequestHandler(requestHandler)
+    interactsh.addOastRequestHandler(requestHandler)
+    print("OAST Request handler registered.")
+}
+
+function uninstall(helper) {
+    boast.removeOastRequestHandler(requestHandler)
+    interactsh.removeOastRequestHandler(requestHandler)
+    print("OAST Request handler unregistered.")
+}
