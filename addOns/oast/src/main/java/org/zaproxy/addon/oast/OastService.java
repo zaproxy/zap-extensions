@@ -54,6 +54,10 @@ public abstract class OastService {
         oastRequestHandlerList.add(oastRequestHandler);
     }
 
+    public void removeOastRequestHandler(OastRequestHandler oastRequestHandler) {
+        oastRequestHandlerList.remove(oastRequestHandler);
+    }
+
     public void handleOastRequest(OastRequest oastRequest) {
         for (OastRequestHandler handler : oastRequestHandlerList) {
             handler.handle(oastRequest);

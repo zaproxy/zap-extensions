@@ -41,8 +41,7 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOastScripts.class);
-    private static final String TEMPLATE_REGISTER_REQUEST_HANDLER =
-            "OAST Register Request Handler.js";
+    private static final String TEMPLATE_REGISTER_REQUEST_HANDLER = "OAST Request Handler.js";
     private static final String SCRIPT_GET_BOAST_SERVERS = "OAST Get BOAST Servers.js";
     private static final String SCRIPT_GET_INTERACTSH_PAYLOADS = "OAST Get Interactsh Payloads.js";
 
@@ -101,7 +100,7 @@ public class ExtensionOastScripts extends ExtensionAdaptor {
         addScript(
                 TEMPLATE_REGISTER_REQUEST_HANDLER,
                 Constant.messages.getString("oast.scripts.requestHandler.desc"),
-                extScript.getScriptType(ExtensionScript.TYPE_STANDALONE),
+                extScript.getScriptType("extender"),
                 true);
     }
 
