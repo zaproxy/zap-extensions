@@ -24,7 +24,6 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -66,19 +64,14 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     public static final String NAME = "ExtensionSpider2";
     public static final int EXTENSION_ORDER = ExtensionSpider.EXTENSION_ORDER - 1;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSpider2.class);
-    private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionSpider.class));
 
     private static boolean coreSpiderDisabled;
+    private ExtensionSpider extensionSpider;
 
     private SvgHrefParser svgHrefParser;
 
     static {
         coreSpiderDisabled = ExtensionSpider.class.getAnnotation(Deprecated.class) != null;
-
-        if (coreSpiderDisabled) {
-            SpiderEventPublisher.getPublisher();
-        }
     }
 
     private ValueGenerator generator = new DefaultValueGenerator();
@@ -132,6 +125,15 @@ public class ExtensionSpider2 extends ExtensionAdaptor
         this.scanController = new SpiderScanController(this);
     }
 
+    @Override
+    public void init() {
+        extensionSpider =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
+        if (coreSpiderDisabled) {
+            SpiderEventPublisher.getPublisher();
+        }
+    }
+
     public void setValueGenerator(ValueGenerator generator) {
         this.generator = generator == null ? new DefaultValueGenerator() : generator;
     }
@@ -143,9 +145,11 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     @Override
     public void hook(ExtensionHook extensionHook) {
         if (!coreSpiderDisabled) {
-            ExtensionSpider spider = getExtensionSpider();
+            if (extensionSpider == null) {
+                return;
+            }
             svgHrefParser = new SvgHrefParser();
-            spider.addCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
+            extensionSpider.addCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
             LOGGER.debug("Added custom SVG HREF spider to core spider.");
             return;
         }
@@ -179,16 +183,11 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     }
 
     @Override
-    public List<Class<? extends Extension>> getDependencies() {
-        return DEPENDENCIES;
-    }
-
-    @Override
     public void unload() {
         if (coreSpiderDisabled) {
             SpiderEventPublisher.unload();
-        } else {
-            getExtensionSpider().removeCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
+        } else if (extensionSpider != null) {
+            extensionSpider.removeCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
         }
     }
 
@@ -200,10 +199,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     @Override
     public String getUIName() {
         return Constant.messages.getString("spider.addon.name");
-    }
-
-    private static ExtensionSpider getExtensionSpider() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
     }
 
     private PopupMenuItemSpiderDialog getPopupMenuItemSpiderDialog() {
