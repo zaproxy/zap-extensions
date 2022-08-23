@@ -62,7 +62,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionSpider2 extends ExtensionAdaptor
         implements SessionChangedListener, ScanController<SpiderScan> {
     public static final String NAME = "ExtensionSpider2";
-    public static final int EXTENSION_ORDER = ExtensionSpider.EXTENSION_ORDER - 1;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSpider2.class);
 
     private static boolean coreSpiderDisabled;
@@ -118,7 +117,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor
 
     /** This method initializes this extension. */
     private void initialize() {
-        this.setOrder(EXTENSION_ORDER);
         this.customParsers = new LinkedList<>();
         this.customFetchFilters = new LinkedList<>();
         this.customParseFilters = new LinkedList<>();
