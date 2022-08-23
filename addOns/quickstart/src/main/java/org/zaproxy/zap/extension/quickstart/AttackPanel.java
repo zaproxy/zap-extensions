@@ -26,7 +26,6 @@ import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,7 +49,6 @@ public class AttackPanel extends QuickStartSubPanel {
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
-    private JCheckBox spiderCheckBox;
     private JButton attackButton;
     private JButton stopButton;
     private JComboBox<String> urlField;
@@ -60,6 +58,10 @@ public class AttackPanel extends QuickStartSubPanel {
     private JPanel contentPanel;
     private JLabel lowerPadding;
     private int paddingY;
+
+    private TraditionalSpider traditionalSpider;
+    private JLabel traditionalSpiderLabel;
+    private int traditionalSpiderY;
 
     /** Optional class that adds the ajax spider - may be added after init or not at all */
     private PlugableSpider plugableSpider;
@@ -147,15 +149,7 @@ public class AttackPanel extends QuickStartSubPanel {
             urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
             contentPanel.add(urlSelectPanel, LayoutHelper.getGBC(2, formPanelY, 3, 0.25D));
 
-            contentPanel.add(
-                    new JLabel(Constant.messages.getString("quickstart.label.tradspider")),
-                    LayoutHelper.getGBC(
-                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(
-                    getSpiderCheckBox(),
-                    LayoutHelper.getGBC(
-                            2, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-
+            traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
 
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
@@ -189,18 +183,35 @@ public class AttackPanel extends QuickStartSubPanel {
         return progressLabel;
     }
 
-    private JCheckBox getSpiderCheckBox() {
-        if (spiderCheckBox == null) {
-            spiderCheckBox = new JCheckBox();
-            spiderCheckBox.setSelected(
-                    getExtensionQuickStart().getQuickStartParam().isTradSpiderEnabled());
-            spiderCheckBox.addActionListener(
-                    e ->
-                            getExtensionQuickStart()
-                                    .getQuickStartParam()
-                                    .setTradSpiderEnabled(spiderCheckBox.isSelected()));
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        if (traditionalSpider == null) {
+            contentPanel.remove(traditionalSpiderLabel);
+            traditionalSpiderLabel = null;
+            contentPanel.remove(this.traditionalSpider.getComponent());
+        } else {
+            traditionalSpiderLabel = new JLabel(traditionalSpider.getLabel());
+            contentPanel.add(
+                    traditionalSpiderLabel,
+                    LayoutHelper.getGBC(
+                            1,
+                            traditionalSpiderY,
+                            1,
+                            0.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    traditionalSpider.getComponent(),
+                    LayoutHelper.getGBC(
+                            2,
+                            traditionalSpiderY,
+                            1,
+                            0.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5)));
         }
-        return spiderCheckBox;
+
+        this.traditionalSpider = traditionalSpider;
+
+        validate();
+        repaint();
     }
 
     public void addPlugableSpider(PlugableSpider plugableSpider) {
@@ -319,7 +330,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
             attackButton.addActionListener(
                     e -> {
-                        if (!spiderCheckBox.isSelected()
+                        if ((traditionalSpider == null || !traditionalSpider.isSelected())
                                 && (plugableSpider == null || !plugableSpider.isSelected())) {
                             getExtensionQuickStart()
                                     .getView()
@@ -381,7 +392,8 @@ public class AttackPanel extends QuickStartSubPanel {
         getAttackButton().setEnabled(false);
         getStopButton().setEnabled(true);
 
-        getExtensionQuickStart().attack(url, spiderCheckBox.isSelected());
+        getExtensionQuickStart()
+                .attack(url, traditionalSpider != null && traditionalSpider.isSelected());
         setSpiderButtonsEnabled(false);
         return true;
     }
@@ -397,7 +409,9 @@ public class AttackPanel extends QuickStartSubPanel {
     }
 
     private void setSpiderButtonsEnabled(boolean enabled) {
-        getSpiderCheckBox().setEnabled(enabled);
+        if (traditionalSpider != null) {
+            traditionalSpider.setEnabled(enabled);
+        }
         if (plugableSpider != null) {
             plugableSpider.setEnabled(enabled);
         }
@@ -437,7 +451,6 @@ public class AttackPanel extends QuickStartSubPanel {
     }
 
     public void optionsLoaded(QuickStartParam quickStartParam) {
-        this.getSpiderCheckBox().setSelected(quickStartParam.isTradSpiderEnabled());
         setRecentUrls();
     }
 
