@@ -414,6 +414,10 @@ public class ExtensionSpider2 extends ExtensionAdaptor
 
     @Override
     public void destroy() {
+        if (!coreSpiderDisabled) {
+            return;
+        }
+
         // Shut all of the scans down
         this.stopAllScans();
         if (hasView()) {
