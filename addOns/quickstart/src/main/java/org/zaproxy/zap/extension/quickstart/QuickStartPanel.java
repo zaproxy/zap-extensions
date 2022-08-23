@@ -259,6 +259,12 @@ public class QuickStartPanel extends AbstractPanel {
         this.explorePanel = panel;
     }
 
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        if (this.attackPanel != null) {
+            this.attackPanel.setTraditionalSpider(traditionalSpider);
+        }
+    }
+
     public void addPlugableSpider(PlugableSpider pe) {
         if (this.attackPanel != null) {
             this.attackPanel.addPlugableSpider(pe);

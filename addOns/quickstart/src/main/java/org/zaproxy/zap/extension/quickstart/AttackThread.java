@@ -38,8 +38,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
 
 public class AttackThread extends Thread {
@@ -58,6 +56,7 @@ public class AttackThread extends Thread {
     private ExtensionQuickStart extension;
     private URL url;
     private HttpSender httpSender = null;
+    private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
@@ -72,6 +71,10 @@ public class AttackThread extends Thread {
 
     public void setURL(URL url) {
         this.url = url;
+    }
+
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        this.traditionalSpider = traditionalSpider;
     }
 
     public void setPlugableSpider(PlugableSpider plugableSpider) {
@@ -101,31 +104,25 @@ public class AttackThread extends Thread {
             target.setRecurse(true);
             if (this.useStdSpider) {
 
-                ExtensionSpider extSpider =
-                        (ExtensionSpider)
-                                Control.getSingleton()
-                                        .getExtensionLoader()
-                                        .getExtension(ExtensionSpider.NAME);
-                int spiderId;
-                if (extSpider == null) {
+                if (traditionalSpider == null) {
                     logger.error("No spider");
                     extension.notifyProgress(Progress.failed);
                     return;
-                } else {
-                    extension.notifyProgress(Progress.spider);
-                    spiderId = extSpider.startScan(target.getDisplayName(), target, null, null);
                 }
+
+                extension.notifyProgress(Progress.spider);
+                TraditionalSpider.Scan spiderScan =
+                        traditionalSpider.startScan(target.getDisplayName(), target);
 
                 // Give some time to the spider to finish to setup and start itself.
                 sleep(1500);
 
                 try {
-                    SpiderScan spiderScan = extSpider.getScan(spiderId);
                     // Wait for the spider to complete
                     while (!spiderScan.isStopped()) {
                         sleep(500);
                         if (this.stopAttack) {
-                            extSpider.stopScan(spiderId);
+                            spiderScan.stopScan();
                             break;
                         }
                         extension.notifyProgress(Progress.spider, spiderScan.getProgress());

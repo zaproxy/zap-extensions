@@ -51,6 +51,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.quickstart.spider.ExtensionQuickStartSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.quickstart.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.1.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -73,5 +85,6 @@ dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
+    compileOnly(parent!!.childProjects.get("spider")!!)
     compileOnly(parent!!.childProjects.get("spiderAjax")!!)
 }
