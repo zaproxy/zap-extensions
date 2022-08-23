@@ -186,6 +186,10 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     public void unload() {
         if (coreSpiderDisabled) {
             SpiderEventPublisher.unload();
+
+            if (hasView()) {
+                getSpiderPanel().unload();
+            }
         } else if (extensionSpider != null) {
             extensionSpider.removeCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
         }

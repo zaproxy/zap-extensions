@@ -524,6 +524,12 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
         return extension.getSpiderParam().getMaxScansInUI();
     }
 
+    // Overridden to expose the method to the extension
+    @Override
+    protected void unload() {
+        super.unload();
+    }
+
     /**
      * A {@link org.jdesktop.swingx.decorator.Highlighter Highlighter} for a column that indicates,
      * using icons, whether or not an entry was processed, that is, is or not in scope.
