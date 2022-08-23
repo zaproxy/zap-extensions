@@ -21,7 +21,6 @@ package org.zaproxy.addon.spider.parser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -100,7 +99,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -110,7 +109,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/a/relative",
                         "http://example.com/sample/",
                         "http://example.com/a/absolute",
-                        "ftp://a.example.com/"));
+                        "ftp://a.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -121,7 +121,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(23)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(24)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -152,7 +152,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         // Multiple ping URLs with tab in the middle
                         "http://a.example.com/",
                         "http://ping.example.com/",
-                        "http://pong.example.com/")); // Trailing slash is added on host
+                        "http://pong.example.com/",
+                        "http://example.com/sample/")); // Trailing slash is added on host
     }
 
     @Test
@@ -163,7 +164,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(9)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -174,7 +175,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/absolute/applet/codebase/",
                         "http://example.com/test/html/body/applet/archive",
                         "https://example.com/absolute/archive",
-                        "http://example.com/archive.zip"));
+                        "http://example.com/archive.zip",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -185,7 +187,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(6)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -193,7 +195,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "https://import.example.com:9000/namespace/implementation",
                         "http://import.example.com/namespace/implementation",
                         "http://example.com/sample/import/namespace/implementation",
-                        "ftp://import.example.com/namespace/implementation"));
+                        "ftp://import.example.com/namespace/implementation",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -204,7 +207,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(23)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(24)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -235,7 +238,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         // Multiple ping URLs with tab in the middle
                         "http://a.example.com/",
                         "http://ping.example.com/",
-                        "http://pong.example.com/")); // Trailing slash is added on host
+                        "http://pong.example.com/",
+                        "http://example.com/sample/")); // Trailing slash is added on host
     }
 
     @Test
@@ -258,12 +262,13 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/base/absolute/path/relative/a/element",
-                        "http://example.com/absolute/a/element"));
+                        "http://example.com/absolute/a/element",
+                        "http://example.com/base/absolute/path/"));
     }
 
     @Test
@@ -274,12 +279,13 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/a/base/relative/path/relative/a/element",
-                        "http://example.com/absolute/a/element"));
+                        "http://example.com/absolute/a/element",
+                        "http://example.com/a/base/relative/path/"));
     }
 
     @Test
@@ -302,8 +308,10 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
-        assertThat(listener.getUrlsFound(), contains("http://example.com/relative/no/base"));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains("http://example.com/relative/no/base", "http://example.com/"));
     }
 
     @Test
@@ -314,7 +322,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -324,7 +332,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/area/relative",
                         "http://example.com/sample/",
                         "http://example.com/area/absolute",
-                        "ftp://area.example.com/"));
+                        "ftp://area.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -335,13 +344,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(4)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/sample/relative/src",
                         "http://example.com/absolute/src",
-                        "https://audio.example.com/external/audio/src"));
+                        "https://audio.example.com/external/audio/src",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -352,7 +362,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -362,7 +372,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/embed/relative",
                         "http://example.com/sample/",
                         "http://example.com/embed/absolute",
-                        "ftp://embed.example.com/"));
+                        "ftp://embed.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -373,7 +384,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -383,7 +394,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/frame/relative",
                         "http://example.com/sample/",
                         "http://example.com/frame/absolute",
-                        "ftp://frame.example.com/"));
+                        "ftp://frame.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -394,7 +406,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -404,7 +416,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/iframe/relative",
                         "http://example.com/sample/",
                         "http://example.com/iframe/absolute",
-                        "ftp://iframe.example.com/"));
+                        "ftp://iframe.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -415,13 +428,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(4)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/sample/relative/action",
                         "http://example.com/absolute/action",
-                        "https://isindex.example.com/action/target.html"));
+                        "https://isindex.example.com/action/target.html",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -432,7 +446,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -442,7 +456,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/link/relative",
                         "http://example.com/sample/",
                         "http://example.com/link/absolute",
-                        "ftp://link.example.com/"));
+                        "ftp://link.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -453,13 +468,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(4)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/sample/relative/src",
                         "http://example.com/absolute/src",
-                        "https://input.example.com/external/inputsrc"));
+                        "https://input.example.com/external/inputsrc",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -470,7 +486,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(11)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(12)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -484,7 +500,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://object.example.com/codebase/scheme",
                         "https://object.example.com/codebase?a=b",
                         "http://example.com/sample/codebase/relative",
-                        "http://example.com/codebase/absolute"));
+                        "http://example.com/codebase/absolute",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -495,7 +512,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -505,7 +522,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/sample/script/relative",
                         "http://example.com/sample/",
                         "http://example.com/script/absolute",
-                        "ftp://script.example.com/"));
+                        "ftp://script.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -516,7 +534,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(11)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(12)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -530,7 +548,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/background/td_absolute1",
                         "http://example.com/background/td_absolute2",
                         "http://example.com/sample/background/td_relative1",
-                        "http://td.background.example.com/"));
+                        "http://td.background.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -541,7 +560,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(14)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(15)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -558,7 +577,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/media/cc0-videos/flower.mp4",
                         "ftp://src.precedence.example.com/",
                         "http://example.com/media/cc0-videos/stillFound.webm",
-                        "http://example.com/media/cc0-videos/stillFound.mp4"));
+                        "http://example.com/media/cc0-videos/stillFound.mp4",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -569,7 +589,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(24)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(25)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -596,7 +616,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/test/html/body/img/mixed_compact_srcset1.found",
                         "http://example.com/test/html/body/img/mixed_compact_srcset2.found",
                         "http://example.com/sample/pixel_width1.png",
-                        "http://example.com/sample/pixel_width2.png"));
+                        "http://example.com/sample/pixel_width2.png",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -607,7 +628,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(22)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(23)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
@@ -632,7 +653,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://meta.example.com:1337/meta/msapplication",
                         "https://meta.example.com/meta/msapplication",
                         "http://example.com/sample/meta/msapplication/refresh/relative",
-                        "ftp://meta.example.com/meta/msapplication/refresh"));
+                        "ftp://meta.example.com/meta/msapplication/refresh",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -643,13 +665,82 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(6)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example2.com/test/p/string/fullUrl",
                         "http://example.com/sample/with/base/tag",
-                        "http://meta.example.com:8443/inline/string/scheme"));
+                        "http://string.example.com:8443/inline/string",
+                        "http://example.com/dot-prefix/inline/string",
+                        "http://example.com/dot-dot-prefix/inline/string",
+                        "http://example.com/sample"));
+    }
+
+    @Test
+    void shouldFindUrlsInBlockquote() {
+        // Given
+        messageWith("BlockquoteElementsSpiderHtmlParser.html");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(false)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains(
+                        "http://blockquote.example.com/base/scheme",
+                        "http://blockquote.example.com:8000/b",
+                        "https://blockquote.example.com/c?a=b",
+                        "http://example.com/sample/blockquote/relative",
+                        "http://example.com/sample/",
+                        "http://example.com/blockquote/absolute",
+                        "ftp://blockquote.example.com/",
+                        "http://example.com/sample/"));
+    }
+
+    @Test
+    void shouldFindUrlsInParam() {
+        // Given
+        messageWith("ParamElementsSpiderHtmlParser.html");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(false)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains(
+                        "http://param.example.com/base/scheme",
+                        "http://param.example.com:8000/b",
+                        "https://param.example.com/c?a=b",
+                        "http://example.com/sample/param/relative",
+                        "http://example.com/sample/",
+                        "http://example.com/param/absolute",
+                        "ftp://param.example.com/",
+                        "http://example.com/sample/"));
+    }
+
+    @Test
+    void shouldFindUrlsInBase() {
+        // Given
+        messageWith("BaseElementsSpiderHtmlParser.html");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(false)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains(
+                        "http://base.example.com/base/scheme",
+                        "http://base.example.com:8000/b",
+                        "https://base.example.com/c?a=b",
+                        "http://example.com/base/relative",
+                        "http://example.com/",
+                        "http://example.com/base/absolute",
+                        "ftp://base.example.com/",
+                        "http://example.com/sample/"));
     }
 
     @Test
@@ -661,10 +752,11 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(9)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(10)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://a.example.com/",
                         "http://area.example.com/",
                         "http://frame.example.com/",
@@ -685,8 +777,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
-        assertThat(listener.getUrlsFound(), is(empty()));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
+        assertThat(listener.getUrlsFound(), contains("http://example.com/sample/"));
     }
 
     @Test
@@ -697,10 +789,11 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(10)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(11)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://plaincomment.example.com/",
                         "http://plaincomment.example.com/z.php?x=y",
                         "http://plaincomment.example.com/c.pl?x=y",
@@ -722,8 +815,8 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
-        assertThat(listener.getUrlsFound(), is(empty()));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
+        assertThat(listener.getUrlsFound(), contains("http://example.com/sample/"));
     }
 
     @ParameterizedTest
