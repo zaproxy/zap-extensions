@@ -29,11 +29,11 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 /** The SpiderParam wraps all the parameters that are given to the spider. */
-public class SpiderParam extends AbstractParam {
+public class SpiderParam extends VersionedAbstractParam {
 
     /**
      * The value that indicates that the crawl depth is unlimited.
@@ -41,6 +41,24 @@ public class SpiderParam extends AbstractParam {
      * @see #setMaxDepth(int)
      */
     public static final int UNLIMITED_DEPTH = 0;
+
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = "spider" + VERSION_ATTRIBUTE;
 
     /** The Constant SPIDER_MAX_DEPTH. */
     private static final String SPIDER_MAX_DEPTH = "spider.maxDepth";
@@ -234,7 +252,17 @@ public class SpiderParam extends AbstractParam {
     public SpiderParam() {}
 
     @Override
-    protected void parse() {
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected void parseImpl() {
         updateOptions();
 
         this.threadCount = getInt(SPIDER_THREAD, 2);
@@ -294,6 +322,16 @@ public class SpiderParam extends AbstractParam {
         this.acceptCookies = getBoolean(SPIDER_ACCEPT_COOKIES, true);
 
         this.maxParseSizeBytes = getInt(SPIDER_MAX_PARSE_SIZE_BYTES, DEFAULT_MAX_PARSE_SIZE_BYTES);
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                // No updates/changes needed.
+                break;
+            default:
+        }
     }
 
     private void updateOptions() {
