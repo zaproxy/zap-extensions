@@ -62,6 +62,8 @@ public class SpiderJob extends AutomationJob {
     public static final String JOB_NAME = "spider";
     private static final String OPTIONS_METHOD_NAME = "getSpiderParam";
 
+    private static final String URLS_ADDED_STATS_KEY = "automation.spider.urls.added";
+
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
@@ -132,7 +134,7 @@ public class SpiderJob extends AutomationJob {
                     Constant.messages.getString(
                             "spider.automation.error.failIfUrlsLessThan.deprecated",
                             getName(),
-                            "spider.automation.urls.added"));
+                            URLS_ADDED_STATS_KEY));
         }
     }
 
@@ -240,7 +242,7 @@ public class SpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getName(), numUrlsFound));
-        Stats.incCounter("spider.automation.urls.added", numUrlsFound);
+        Stats.incCounter(URLS_ADDED_STATS_KEY, numUrlsFound);
     }
 
     /**
@@ -311,7 +313,7 @@ public class SpiderJob extends AutomationJob {
     public int addDefaultTests(AutomationProgress progress) {
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
-                        "spider.automation.urls.added",
+                        URLS_ADDED_STATS_KEY,
                         Constant.messages.getString(
                                 "spider.automation.dialog.tests.stats.defaultname", 100),
                         AutomationStatisticTest.Operator.GREATER_OR_EQUAL.getSymbol(),
