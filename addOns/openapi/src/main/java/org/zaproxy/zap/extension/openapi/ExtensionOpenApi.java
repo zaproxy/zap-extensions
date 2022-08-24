@@ -111,7 +111,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             spider.addCustomParser(customSpider);
             LOG.debug("Added custom Open API spider.");
         } else {
-            LOG.warn("Custom Open API spider could not be added.");
+            LOG.debug("Custom Open API spider could not be added.");
         }
 
         if (getView() != null) {
