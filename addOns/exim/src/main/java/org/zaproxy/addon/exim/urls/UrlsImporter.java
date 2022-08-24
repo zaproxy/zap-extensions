@@ -46,6 +46,12 @@ public class UrlsImporter {
     private static final String STATS_URL_FILE_ERROR = "import.url.file.errors";
     private static final String STATS_URL_FILE_URL = "import.url.file.url";
     private static final String STATS_URL_FILE_URL_ERROR = "import.url.file.url.errors";
+
+    private final HttpSender sender =
+            new HttpSender(
+                    Model.getSingleton().getOptionsParam().getConnectionParam(),
+                    true,
+                    HttpSender.MANUAL_REQUEST_INITIATOR);
     private ProgressPaneListener progressListener;
     private boolean success;
 
@@ -91,25 +97,9 @@ public class UrlsImporter {
     }
 
     private void processLine(String line) {
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
         StringBuilder outputLine = new StringBuilder();
-        try {
-            outputLine.append(HttpRequestHeader.GET).append('\t').append(line).append('\t');
-            HttpMessage msg = new HttpMessage(new URI(line, false));
-            sender.sendAndReceive(msg, true);
-            persistMessage(msg);
-
-            outputLine.append(msg.getResponseHeader().getStatusCode());
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL);
-
-        } catch (Exception e) {
-            outputLine.append(e.getMessage());
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL_ERROR);
-        }
+        outputLine.append(HttpRequestHeader.GET).append('\t').append(line).append('\t');
+        outputLine.append(processRequest(line));
         outputLine.append('\n');
         if (View.isInitialised()) {
             EventQueue.invokeLater(
@@ -118,6 +108,33 @@ public class UrlsImporter {
                         outputLine.delete(0, outputLine.length());
                     });
         }
+    }
+
+    private String processRequest(String line) {
+        try {
+            URI url = new URI(line, false);
+            if (hasSheme(url)) {
+                HttpMessage msg = new HttpMessage(url);
+                sender.sendAndReceive(msg, true);
+                persistMessage(msg);
+
+                Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL);
+                return String.valueOf(msg.getResponseHeader().getStatusCode());
+            }
+            return handleWarning(Constant.messages.getString("exim.importurls.warn.scheme", line));
+        } catch (Exception e) {
+            return handleWarning(e.getMessage());
+        }
+    }
+
+    private static String handleWarning(String message) {
+        LOG.warn(message);
+        Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL_ERROR);
+        return message;
+    }
+
+    private static boolean hasSheme(URI url) {
+        return url.getScheme() != null;
     }
 
     private static void persistMessage(HttpMessage message) {
