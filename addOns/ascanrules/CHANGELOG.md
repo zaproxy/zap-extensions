@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Command Injection Scan Rule: Decode HTML entities in HTML responses before attempting to search for attack validation patterns.
 
 ## [47] - 2022-08-16
 ### Added

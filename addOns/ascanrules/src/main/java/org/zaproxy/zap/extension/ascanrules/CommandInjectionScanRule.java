@@ -33,6 +33,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -540,6 +541,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
+
+                if (msg.getResponseHeader().hasContentType("html")) {
+                    content = StringEscapeUtils.unescapeHtml4(content);
+                }
+
                 Matcher matcher = osPayloads.get(payload).matcher(content);
                 if (matcher.find()) {
                     // We Found IT!
