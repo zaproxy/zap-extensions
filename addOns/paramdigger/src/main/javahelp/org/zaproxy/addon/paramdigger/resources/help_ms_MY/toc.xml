@@ -3,10 +3,10 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Parameter Miner" image="param-miner-icon" target="paramminer">
-				<tocitem text="About" target="paramminer.about"/>
-				<tocitem text="Dialog" target="paramminer.dialog"/>
-				<tocitem text="Tab" target="paramminer.tab"/>
+			<tocitem text="Parameter Digger" image="param-digger-icon" target="paramdigger">
+				<tocitem text="About" target="paramdigger.about"/>
+				<tocitem text="Dialog" target="paramdigger.dialog"/>
+				<tocitem text="Tab" target="paramdigger.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
