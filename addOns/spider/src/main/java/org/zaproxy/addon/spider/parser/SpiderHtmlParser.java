@@ -90,7 +90,9 @@ public class SpiderHtmlParser extends SpiderParser {
         String baseURL = ctx.getBaseUrl();
 
         // Try to see if there's any BASE tag that could change the base URL
-        Element base = source.getFirstElement(HTMLElementName.BASE);
+        List<Element> elements = source.getAllElements(HTMLElementName.BASE);
+        Element base = elements.isEmpty() ? null : elements.get(0);
+
         if (base != null) {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
@@ -98,6 +100,10 @@ public class SpiderHtmlParser extends SpiderParser {
                 baseURL = getCanonicalUrl(ctx, href, baseURL);
                 baseTagSet = true;
             }
+        }
+
+        for (Element el : elements) {
+            processAttributeElement(ctx, ctx.getBaseUrl(), el, "href");
         }
 
         // Parse the source
@@ -184,6 +190,12 @@ public class SpiderHtmlParser extends SpiderParser {
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
+        // Process Blockquote elements
+        elements = source.getAllElements(HTMLElementName.BLOCKQUOTE);
+        for (Element el : elements) {
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "cite");
+        }
+
         // Process Embed Elements
         elements = source.getAllElements(HTMLElementName.EMBED);
         for (Element el : elements) {
@@ -225,6 +237,12 @@ public class SpiderHtmlParser extends SpiderParser {
         for (Element el : elements) {
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "data");
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "codebase");
+        }
+
+        // Process Param elements
+        elements = source.getAllElements(HTMLElementName.PARAM);
+        for (Element el : elements) {
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "value");
         }
 
         // Process Script elements with src
@@ -283,7 +301,6 @@ public class SpiderHtmlParser extends SpiderParser {
                                 el.getContent().getRenderer().setMaxLineLength(0).toString());
                 while (matcher.find()) {
                     String foundMatch = matcher.group().trim();
-
                     if (baseTagSet) {
                         if (!baseUrlForText.endsWith("/")) {
                             baseUrlForText += "/";
@@ -344,24 +361,6 @@ public class SpiderHtmlParser extends SpiderParser {
         elements = source.getAllElements(HTMLElementName.BODY);
         for (Element el : elements) {
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "background");
-        }
-
-        // Process Blockquote elements
-        elements = source.getAllElements(HTMLElementName.BLOCKQUOTE);
-        for (Element el : elements) {
-            resourcesfound |= processAttributeElement(ctx, baseURL, el, "cite");
-        }
-
-        // Process Param elements
-        elements = source.getAllElements(HTMLElementName.PARAM);
-        for (Element el : elements) {
-            resourcesfound |= processAttributeElement(ctx, baseURL, el, "value");
-        }
-
-        // Process Base element
-        elements = source.getAllElements(HTMLElementName.BASE);
-        for (Element el : elements) {
-            resourcesfound |= processAttributeElement(ctx, ctx.getBaseUrl(), el, "href");
         }
 
         return resourcesfound;

@@ -103,14 +103,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://a.example.com/base/scheme",
                         "http://a.example.com:8000/b",
                         "https://a.example.com/c?a=b",
                         "http://example.com/sample/a/relative",
                         "http://example.com/sample/",
                         "http://example.com/a/absolute",
-                        "ftp://a.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://a.example.com/"));
     }
 
     @Test
@@ -125,6 +125,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         // a URLs followed by ping URLs
                         "http://a.example.com/base/scheme",
                         "http://ping.example.com/base/scheme",
@@ -152,8 +153,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         // Multiple ping URLs with tab in the middle
                         "http://a.example.com/",
                         "http://ping.example.com/",
-                        "http://pong.example.com/",
-                        "http://example.com/sample/")); // Trailing slash is added on host
+                        "http://pong.example.com/")); // Trailing slash is added on host
     }
 
     @Test
@@ -168,6 +168,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://example.com/applet/src/file.class",
                         "https://example.com/applet/src/file.class",
                         "https://example.com/absolute/codebase/",
@@ -175,8 +176,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/absolute/applet/codebase/",
                         "http://example.com/test/html/body/applet/archive",
                         "https://example.com/absolute/archive",
-                        "http://example.com/archive.zip",
-                        "http://example.com/sample/"));
+                        "http://example.com/archive.zip"));
     }
 
     @Test
@@ -191,12 +191,12 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://example.com/import/namespace/implementation",
                         "https://import.example.com:9000/namespace/implementation",
                         "http://import.example.com/namespace/implementation",
                         "http://example.com/sample/import/namespace/implementation",
-                        "ftp://import.example.com/namespace/implementation",
-                        "http://example.com/sample/"));
+                        "ftp://import.example.com/namespace/implementation"));
     }
 
     @Test
@@ -211,6 +211,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         // area URLs followed by ping URLs
                         "http://a.example.com/base/scheme",
                         "http://ping.example.com/base/scheme",
@@ -238,8 +239,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         // Multiple ping URLs with tab in the middle
                         "http://a.example.com/",
                         "http://ping.example.com/",
-                        "http://pong.example.com/",
-                        "http://example.com/sample/")); // Trailing slash is added on host
+                        "http://pong.example.com/")); // Trailing slash is added on host
     }
 
     @Test
@@ -266,9 +266,9 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/base/absolute/path/",
                         "http://example.com/base/absolute/path/relative/a/element",
-                        "http://example.com/absolute/a/element",
-                        "http://example.com/base/absolute/path/"));
+                        "http://example.com/absolute/a/element"));
     }
 
     @Test
@@ -283,9 +283,9 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/a/base/relative/path/",
                         "http://example.com/a/base/relative/path/relative/a/element",
-                        "http://example.com/absolute/a/element",
-                        "http://example.com/a/base/relative/path/"));
+                        "http://example.com/absolute/a/element"));
     }
 
     @Test
@@ -311,7 +311,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
         assertThat(
                 listener.getUrlsFound(),
-                contains("http://example.com/relative/no/base", "http://example.com/"));
+                contains("http://example.com/", "http://example.com/relative/no/base"));
     }
 
     @Test
@@ -326,14 +326,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://area.example.com/base/scheme",
                         "http://area.example.com:8000/b",
                         "https://area.example.com/c?a=b",
                         "http://example.com/sample/area/relative",
                         "http://example.com/sample/",
                         "http://example.com/area/absolute",
-                        "ftp://area.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://area.example.com/"));
     }
 
     @Test
@@ -348,10 +348,10 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://example.com/sample/relative/src",
                         "http://example.com/absolute/src",
-                        "https://audio.example.com/external/audio/src",
-                        "http://example.com/sample/"));
+                        "https://audio.example.com/external/audio/src"));
     }
 
     @Test
@@ -366,14 +366,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://embed.example.com/base/scheme",
                         "http://embed.example.com:8000/b",
                         "https://embed.example.com/c?a=b",
                         "http://example.com/sample/embed/relative",
                         "http://example.com/sample/",
                         "http://example.com/embed/absolute",
-                        "ftp://embed.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://embed.example.com/"));
     }
 
     @Test
@@ -388,14 +388,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://frame.example.com/base/scheme",
                         "http://frame.example.com:8000/b",
                         "https://frame.example.com/c?a=b",
                         "http://example.com/sample/frame/relative",
                         "http://example.com/sample/",
                         "http://example.com/frame/absolute",
-                        "ftp://frame.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://frame.example.com/"));
     }
 
     @Test
@@ -410,14 +410,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://iframe.example.com/base/scheme",
                         "http://iframe.example.com:8000/b",
                         "https://iframe.example.com/c?a=b",
                         "http://example.com/sample/iframe/relative",
                         "http://example.com/sample/",
                         "http://example.com/iframe/absolute",
-                        "ftp://iframe.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://iframe.example.com/"));
     }
 
     @Test
@@ -432,10 +432,10 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://example.com/sample/relative/action",
                         "http://example.com/absolute/action",
-                        "https://isindex.example.com/action/target.html",
-                        "http://example.com/sample/"));
+                        "https://isindex.example.com/action/target.html"));
     }
 
     @Test
@@ -450,14 +450,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://link.example.com/base/scheme",
                         "http://link.example.com:8000/b",
                         "https://link.example.com/c?a=b",
                         "http://example.com/sample/link/relative",
                         "http://example.com/sample/",
                         "http://example.com/link/absolute",
-                        "ftp://link.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://link.example.com/"));
     }
 
     @Test
@@ -472,10 +472,10 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://example.com/sample/relative/src",
                         "http://example.com/absolute/src",
-                        "https://input.example.com/external/inputsrc",
-                        "http://example.com/sample/"));
+                        "https://input.example.com/external/inputsrc"));
     }
 
     @Test
@@ -490,6 +490,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://object.example.com/base/data",
                         "http://object.example.com:8000/data",
                         "https://object.example.com/data?a=b",
@@ -500,8 +501,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://object.example.com/codebase/scheme",
                         "https://object.example.com/codebase?a=b",
                         "http://example.com/sample/codebase/relative",
-                        "http://example.com/codebase/absolute",
-                        "http://example.com/sample/"));
+                        "http://example.com/codebase/absolute"));
     }
 
     @Test
@@ -516,14 +516,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://script.example.com/base/scheme",
                         "http://script.example.com:8000/b",
                         "https://script.example.com/c?a=b",
                         "http://example.com/sample/script/relative",
                         "http://example.com/sample/",
                         "http://example.com/script/absolute",
-                        "ftp://script.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://script.example.com/"));
     }
 
     @Test
@@ -538,6 +538,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://table.background.example.com/base/scheme",
                         "http://table.background.example.com:8000/b",
                         "https://table.background.example.com/c?a=b",
@@ -548,8 +549,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/background/td_absolute1",
                         "http://example.com/background/td_absolute2",
                         "http://example.com/sample/background/td_relative1",
-                        "http://td.background.example.com/",
-                        "http://example.com/sample/"));
+                        "http://td.background.example.com/"));
     }
 
     @Test
@@ -564,6 +564,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://video.example.com/base/scheme",
                         "http://video.example.com:8000/b",
                         "https://video.example.com/c?a=b",
@@ -577,8 +578,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/media/cc0-videos/flower.mp4",
                         "ftp://src.precedence.example.com/",
                         "http://example.com/media/cc0-videos/stillFound.webm",
-                        "http://example.com/media/cc0-videos/stillFound.mp4",
-                        "http://example.com/sample/"));
+                        "http://example.com/media/cc0-videos/stillFound.mp4"));
     }
 
     @Test
@@ -593,6 +593,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://img.example.com/base/scheme",
                         "http://img.example.com:8000/b",
                         "https://img.example.com/c?a=b",
@@ -616,8 +617,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://example.com/test/html/body/img/mixed_compact_srcset1.found",
                         "http://example.com/test/html/body/img/mixed_compact_srcset2.found",
                         "http://example.com/sample/pixel_width1.png",
-                        "http://example.com/sample/pixel_width2.png",
-                        "http://example.com/sample/"));
+                        "http://example.com/sample/pixel_width2.png"));
     }
 
     @Test
@@ -632,6 +632,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://meta.example.com:8443/refresh/base/scheme",
                         "https://meta.example.com/refresh",
                         "http://example.com/sample/meta/refresh/relative",
@@ -653,8 +654,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
                         "http://meta.example.com:1337/meta/msapplication",
                         "https://meta.example.com/meta/msapplication",
                         "http://example.com/sample/meta/msapplication/refresh/relative",
-                        "ftp://meta.example.com/meta/msapplication/refresh",
-                        "http://example.com/sample/"));
+                        "ftp://meta.example.com/meta/msapplication/refresh"));
     }
 
     @Test
@@ -669,12 +669,12 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample",
                         "http://example2.com/test/p/string/fullUrl",
                         "http://example.com/sample/with/base/tag",
                         "http://string.example.com:8443/inline/string",
                         "http://example.com/dot-prefix/inline/string",
-                        "http://example.com/dot-dot-prefix/inline/string",
-                        "http://example.com/sample"));
+                        "http://example.com/dot-dot-prefix/inline/string"));
     }
 
     @Test
@@ -689,14 +689,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://blockquote.example.com/base/scheme",
                         "http://blockquote.example.com:8000/b",
                         "https://blockquote.example.com/c?a=b",
                         "http://example.com/sample/blockquote/relative",
                         "http://example.com/sample/",
                         "http://example.com/blockquote/absolute",
-                        "ftp://blockquote.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://blockquote.example.com/"));
     }
 
     @Test
@@ -711,14 +711,14 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
+                        "http://example.com/sample/",
                         "http://param.example.com/base/scheme",
                         "http://param.example.com:8000/b",
                         "https://param.example.com/c?a=b",
                         "http://example.com/sample/param/relative",
                         "http://example.com/sample/",
                         "http://example.com/param/absolute",
-                        "ftp://param.example.com/",
-                        "http://example.com/sample/"));
+                        "ftp://param.example.com/"));
     }
 
     @Test
