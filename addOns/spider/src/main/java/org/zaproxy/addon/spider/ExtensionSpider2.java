@@ -57,14 +57,14 @@ import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionSpider2 extends ExtensionAdaptor
-        implements SessionChangedListener, ScanController<SpiderScan> {
+public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController<SpiderScan> {
     public static final String NAME = "ExtensionSpider2";
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSpider2.class);
 
-    private static boolean coreSpiderDisabled;
+    static boolean coreSpiderDisabled;
     private ExtensionSpider extensionSpider;
 
     private SvgHrefParser svgHrefParser;
@@ -151,8 +151,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor
             LOGGER.debug("Added custom SVG HREF spider to core spider.");
             return;
         }
-        // Register for listeners
-        extensionHook.addSessionListener(this);
+        extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
         // Initialize views
         if (getView() != null) {
@@ -257,53 +256,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor
         return spiderPanel;
     }
 
-    @Override
-    public void sessionAboutToChange(Session session) {
-        // Shut all of the scans down and remove them
-        this.scanController.reset();
-        if (hasView()) {
-            this.getSpiderPanel().reset();
-            if (spiderDialog != null) {
-                spiderDialog.reset();
-            }
-        }
-    }
-
-    @Override
-    public void sessionChanged(final Session session) {
-        if (EventQueue.isDispatchThread()) {
-            sessionChangedEventHandler(session);
-        } else {
-            try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    /**
-     * Session changed event handler.
-     *
-     * @param session the session
-     */
-    private void sessionChangedEventHandler(Session session) {
-        // Clear all scans
-        if (hasView()) {
-            this.getSpiderPanel().reset();
-        }
-        if (session == null) {
-            // Closedown
-            return;
-        }
-    }
-
     /**
      * Gets the options spider panel.
      *
@@ -342,25 +294,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor
     @Override
     public String getAuthor() {
         return Constant.ZAP_TEAM;
-    }
-
-    @Override
-    public void sessionScopeChanged(Session session) {
-        if (hasView()) {
-            this.getSpiderPanel().sessionScopeChanged(session);
-        }
-    }
-
-    @Override
-    public void sessionModeChanged(Mode mode) {
-        if (Mode.safe.equals(mode)) {
-            this.scanController.stopAllScans();
-        }
-
-        if (hasView()) {
-            this.getSpiderPanel().sessionModeChanged(mode);
-            getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
-        }
     }
 
     /**
@@ -916,5 +849,46 @@ public class ExtensionSpider2 extends ExtensionAdaptor
             icon = new ImageIcon(ExtensionSpider2.class.getResource("icon/spider.png"));
         }
         return icon;
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            scanController.reset();
+
+            if (hasView()) {
+                getSpiderPanel().reset();
+                if (spiderDialog != null) {
+                    spiderDialog.reset();
+                }
+            }
+        }
+
+        @Override
+        public void sessionChanged(final Session session) {
+            if (hasView()) {
+                ThreadUtils.invokeAndWaitHandled(getSpiderPanel()::reset);
+            }
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            if (hasView()) {
+                getSpiderPanel().sessionScopeChanged(session);
+            }
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            if (Mode.safe.equals(mode)) {
+                scanController.stopAllScans();
+            }
+
+            if (hasView()) {
+                getSpiderPanel().sessionModeChanged(mode);
+                getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
+            }
+        }
     }
 }
