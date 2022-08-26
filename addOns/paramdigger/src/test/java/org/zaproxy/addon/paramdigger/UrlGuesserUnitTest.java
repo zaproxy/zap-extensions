@@ -86,7 +86,7 @@ public class UrlGuesserUnitTest extends TestUtils {
     void init() throws Exception {
         setUpZap();
         try (InputStream is =
-                UrlUtilsUnitTest.class.getResourceAsStream("/" + TEST_WORDLIST_FILE)) {
+                UrlGuesserUnitTest.class.getResourceAsStream("/" + TEST_WORDLIST_FILE)) {
             this.file = Paths.get(Constant.getZapHome(), TEST_WORDLIST_FILE);
             Files.createDirectories(file.getParent());
             Files.copy(is, file);

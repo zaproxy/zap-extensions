@@ -44,13 +44,6 @@ public class UrlGuesser implements Runnable {
         BRUTEFORCE,
     }
 
-    public enum Method {
-        GET,
-        POST,
-        XML,
-        JSON,
-    }
-
     public enum Status {
         OK,
         RETRY,
@@ -96,11 +89,11 @@ public class UrlGuesser implements Runnable {
 
         if (config.getUsePredefinedUrlWordlists()) {
             defaultWordListFile = Paths.get(DEFAULTWORDLISTPATH);
-            defaultWordList = UrlUtils.read(defaultWordListFile);
+            defaultWordList = Utils.read(defaultWordListFile);
         }
         if (config.getUseCustomUrlWordlists()) {
             customWordListFile = Paths.get(config.getCustomUrlWordlistPath());
-            customWordList = UrlUtils.read(customWordListFile);
+            customWordList = Utils.read(customWordListFile);
         }
 
         if (defaultWordList != null && customWordList != null) {
@@ -169,7 +162,7 @@ public class UrlGuesser implements Runnable {
         // TODO Add heuristic method to mine parameters from base response.
 
         List<Map<String, String>> paramGroups =
-                UrlUtils.slice(UrlUtils.populate(wordlist), config.getUrlGuessChunkSize());
+                Utils.slice(Utils.populate(wordlist), config.getUrlGuessChunkSize());
         this.scan.setMaximum(paramGroups.size());
         List<Map<String, String>> usableParams = new ArrayList<>();
 
@@ -179,7 +172,7 @@ public class UrlGuesser implements Runnable {
                 return;
             }
             paramGroups = narrowDownParams(base, method, paramGroups);
-            paramGroups = UrlUtils.confirmUsableParameters(paramGroups, usableParams);
+            paramGroups = Utils.confirmUsableParameters(paramGroups, usableParams);
             this.scan.setMaximum(paramGroups.size());
             this.scan.notifyListenersProgress();
             logger.debug("param groups size: {}", paramGroups.size());
@@ -249,7 +242,7 @@ public class UrlGuesser implements Runnable {
             try {
                 ParamReasons narrowedParam = future.get();
                 if (narrowedParam != null && !narrowedParam.isEmpty()) {
-                    List<Map<String, String>> slices = UrlUtils.slice(narrowedParam.getParams(), 2);
+                    List<Map<String, String>> slices = Utils.slice(narrowedParam.getParams(), 2);
                     for (Map<String, String> slice : slices) {
                         narrowedParamGroups.add(slice);
                     }

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.testutils.TestUtils;
 
-class UrlUtilsUnitTest extends TestUtils {
+class UtilsUnitTest extends TestUtils {
 
     private static String TEST_WORDLIST_FILE = "wordlists/test_list.txt";
     private Path file;
@@ -46,8 +46,7 @@ class UrlUtilsUnitTest extends TestUtils {
     @BeforeEach
     void init() throws Exception {
         setUpZap();
-        try (InputStream is =
-                UrlUtilsUnitTest.class.getResourceAsStream("/" + TEST_WORDLIST_FILE)) {
+        try (InputStream is = UtilsUnitTest.class.getResourceAsStream("/" + TEST_WORDLIST_FILE)) {
             this.file = Paths.get(Constant.getZapHome(), TEST_WORDLIST_FILE);
             Files.createDirectories(file.getParent());
             Files.copy(is, file);
@@ -57,7 +56,7 @@ class UrlUtilsUnitTest extends TestUtils {
     @Test
     void shouldLoadFileWithoutErrors() throws IOException {
         // Given / When
-        List<String> params = UrlUtils.read(this.file);
+        List<String> params = Utils.read(this.file);
 
         // Then
         assertThat(params, hasSize(60));
@@ -67,8 +66,8 @@ class UrlUtilsUnitTest extends TestUtils {
     @Test
     void shouldPopulateMapWithoutErrors() {
         // Given / When
-        List<String> params = UrlUtils.read(this.file);
-        Map<String, String> map = UrlUtils.populate(params);
+        List<String> params = Utils.read(this.file);
+        Map<String, String> map = Utils.populate(params);
 
         // Then
         assertEquals(map.size(), 60);
@@ -79,9 +78,9 @@ class UrlUtilsUnitTest extends TestUtils {
     @Test
     void shouldSliceWithoutErrors() {
         // Given / When
-        List<String> params = UrlUtils.read(this.file);
-        Map<String, String> map = UrlUtils.populate(params);
-        List<Map<String, String>> sliced = UrlUtils.slice(map, 2);
+        List<String> params = Utils.read(this.file);
+        Map<String, String> map = Utils.populate(params);
+        List<Map<String, String>> sliced = Utils.slice(map, 2);
 
         // Then
         assertThat(sliced, hasSize(2));
@@ -96,7 +95,7 @@ class UrlUtilsUnitTest extends TestUtils {
         map.put("admin", "true");
 
         // When
-        String queryString = UrlUtils.createQueryString(map);
+        String queryString = Utils.createQueryString(map);
 
         // Then
         assertEquals(queryString, "?q=test&admin=true");
@@ -116,7 +115,7 @@ class UrlUtilsUnitTest extends TestUtils {
 
         // When
         List<Map<String, String>> usableParams = new ArrayList<>();
-        params = UrlUtils.confirmUsableParameters(params, usableParams);
+        params = Utils.confirmUsableParameters(params, usableParams);
 
         // Then
         assertEquals(params.size(), 1);
@@ -134,7 +133,7 @@ class UrlUtilsUnitTest extends TestUtils {
         map.put("admin", "true");
 
         // When
-        String xmlString = UrlUtils.createXmlString(map);
+        String xmlString = Utils.createXmlString(map);
 
         // Then
         assertEquals(xmlString, "<q>test</q><admin>true</admin>");

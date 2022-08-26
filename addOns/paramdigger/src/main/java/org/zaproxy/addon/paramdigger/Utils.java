@@ -34,8 +34,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** A utility class for URL bruteforce related operations for the param digger add-on. */
-public class UrlUtils {
-    private static Logger logger = LogManager.getLogger(UrlUtils.class);
+public class Utils {
+
+    private static Logger logger = LogManager.getLogger(Utils.class);
     /**
      * Returns a List of all parameters to be used from a given wordlist file.
      *
