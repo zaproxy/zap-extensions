@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** @author kniepdennis@gmail.com */
 public class UserAgentScanRule extends AbstractAppPlugin {
@@ -196,11 +198,24 @@ public class UserAgentScanRule extends AbstractAppPlugin {
     }
 
     private void createAlert(HttpMessage newMsg, String userAgent) {
-        newAlert()
+        buildAlert(newMsg, userAgent).raise();
+    }
+
+    private AlertBuilder buildAlert(HttpMessage msg, String userAgent) {
+        return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(USER_AGENT_PARAM_NAME)
                 .setAttack(userAgent)
-                .setMessage(newMsg)
-                .raise();
+                .setMessage(msg);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert example = buildAlert(null, "ExampleBot 1.1").build();
+        example.setTags(
+                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
+        alerts.add(example);
+        return alerts;
     }
 }

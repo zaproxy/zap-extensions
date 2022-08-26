@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.11.1.
+- Add help content linking to the Scan Rules which support Custom Payloads.
 
 ## [0.11.0] - 2021-10-07
 ### Changed

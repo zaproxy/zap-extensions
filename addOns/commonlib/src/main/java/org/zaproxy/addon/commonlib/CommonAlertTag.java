@@ -373,7 +373,14 @@ public enum CommonAlertTag {
             "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/11-Client-side_Testing/13-Testing_for_Cross_Site_Script_Inclusion"),
     WSTG_V42_APIT_01_GRAPHQL(
             "WSTG-v42-APIT-01",
-            "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/12-API_Testing/01-Testing_GraphQL");
+            "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/12-API_Testing/01-Testing_GraphQL"),
+    /**
+     * This Alert Tag is used to indicate (Ex: via Example Alerts) alerts (rules) which support user
+     * defined payloads via Custom Payloads.
+     *
+     * @since 1.10.0
+     */
+    CUSTOM_PAYLOADS("CUSTOM_PAYLOADS", "");
 
     private String tag;
     private String value;
@@ -397,5 +404,23 @@ public enum CommonAlertTag {
             map.put(tag.getTag(), tag.getValue());
         }
         return Collections.unmodifiableMap(map);
+    }
+
+    /**
+     * Merges a {@code Map<String, String>} of {@code CommonAlertTag} with any number of other {@code CommonAlertTag}s.
+     *
+     * @param tagMap the {@code Map<String, String>} of {@code CommonAlertTag}s to be merged with.
+     * @param alertTags the {@code CommonAlertTag}s to be added.
+     * @return a {@code Map<String, String> of the unified collection of CommonAlertTags
+     * @since 1.10.0
+     */
+    public static Map<String, String> mergeTags(
+            Map<String, String> tagMap, CommonAlertTag... alertTags) {
+        Map<String, String> map = new HashMap<>();
+        map.putAll(tagMap);
+        for (CommonAlertTag tag : alertTags) {
+            map.put(tag.getTag(), tag.getValue());
+        }
+        return map;
     }
 }

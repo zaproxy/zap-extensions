@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Improved description, solution, and references for the Integer Overflow scan rule.
+- Added new Custom Payloads alert tag to the example alerts of the Hidden File Finder and User Agent scan rules.
 
 ### Added
 - New User Agent strings to the User Agent fuzz scan rule.

@@ -142,15 +142,28 @@ public class JsFunctionScanRule extends PluginPassiveScanner {
     }
 
     private void raiseAlert(String evidence) {
-        newAlert()
+        buildAlert(evidence).raise();
+    }
+
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                .setCweId(749) // CWE-749: Exposed Dangerous Method or Function
-                .raise();
+                .setCweId(749); // CWE-749: Exposed Dangerous Method or Function
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert example = buildAlert("eval").build();
+        example.setTags(
+                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
+        alerts.add(example);
+        return alerts;
     }
 
     private void loadPayload() {
