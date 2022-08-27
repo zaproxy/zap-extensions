@@ -40,7 +40,6 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.addon.paramdigger.ParamGuessResult.Reason;
-import org.zaproxy.addon.paramdigger.UrlGuesser.Method;
 import org.zaproxy.addon.paramdigger.UrlGuesser.Mode;
 import org.zaproxy.addon.paramdigger.UrlGuesser.Status;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
@@ -163,7 +162,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                 try {
                     table = scan.getTableModel();
                     String uri = config.getUrl();
-                    String queryString = UrlUtils.createQueryString(params);
+                    String queryString = Utils.createQueryString(params);
                     HttpRequestHeader headers = new HttpRequestHeader();
                     if (uri.contains("?")) {
                         uri = uri.substring(0, uri.indexOf("?"));
@@ -211,7 +210,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     }
                     String xmlPayload =
                             config.getUrlXmlIncludeString()
-                                    .replace("$ZAP$", UrlUtils.createXmlString(params));
+                                    .replace("$ZAP$", Utils.createXmlString(params));
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(xmlPayload);
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
@@ -249,11 +248,11 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                                                 "$ZAP$",
                                                 StringUtils.strip(
                                                         StringUtils.strip(
-                                                                UrlUtils.createJsonString(params),
+                                                                Utils.createJsonString(params),
                                                                 "{"),
                                                         "}"));
                     } else {
-                        jsonPayload = UrlUtils.createJsonString(params);
+                        jsonPayload = Utils.createJsonString(params);
                     }
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(jsonPayload);
@@ -282,7 +281,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
                         headers.setHeader(header.getName(), header.getValue());
                     }
-                    String postPayload = StringUtils.strip(UrlUtils.createQueryString(params), "?");
+                    String postPayload = StringUtils.strip(Utils.createQueryString(params), "?");
                     msg.setRequestHeader(headers);
                     msg.setRequestBody(postPayload);
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());

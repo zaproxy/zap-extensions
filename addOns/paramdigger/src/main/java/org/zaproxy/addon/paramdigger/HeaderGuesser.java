@@ -19,14 +19,71 @@
  */
 package org.zaproxy.addon.paramdigger;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpSender;
 
 public class HeaderGuesser implements Runnable {
 
+    private int id;
+    private GuesserScan scan;
+    private HttpSender httpSender;
+    private ExecutorService executor;
+    private ParamDiggerConfig config;
+
+    private static final String DEFAULTWORDLISTPATH =
+            Constant.getZapHome() + "/wordlists/header_list.txt";
+    private Path defaultWordListFile;
+    private List<String> defaultWordList;
+
+    private Path customWordListFile;
+    private List<String> customWordList;
+    private List<String> wordlist;
+
     public HeaderGuesser(
-            int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {}
+            int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {
+        this.id = id;
+        this.scan = scan;
+        this.httpSender = httpSender;
+        this.executor = executor;
+        this.config = scan.getConfig();
+
+        if (config.getUsePredefinedHeaderWordlists()) {
+            defaultWordListFile = Paths.get(DEFAULTWORDLISTPATH);
+            defaultWordList = Utils.read(defaultWordListFile);
+        }
+        if (config.getUseCustomHeaderWordlists()) {
+            customWordListFile = Paths.get(config.getCustomUrlWordlistPath());
+            customWordList = Utils.read(customWordListFile);
+        }
+
+        if (defaultWordList != null && customWordList != null) {
+            Set<String> set = new HashSet<>();
+            set.addAll(defaultWordList);
+            set.addAll(customWordList);
+            wordlist = new ArrayList<>();
+
+            for (String param : set) {
+                wordlist.add(param);
+            }
+        } else if (customWordList == null && defaultWordList != null) {
+            wordlist = defaultWordList;
+        } else {
+            wordlist = customWordList;
+        }
+        this.scan.setMaximum(1);
+    }
 
     @Override
-    public void run() {}
+    public void run() {
+        // TODO add forwarding header and bruteforce header guess tasks
+    }
+
+    public void startGuess(Method method, List<String> wordlist) {}
 }
