@@ -224,10 +224,6 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
         String gitindexpath = null;
         try {
             URI originalURI = originalMessage.getRequestHeader().getURI();
-            // String originalURIWithoutQuery = originalURI.getScheme() + "://" +
-            // originalURI.getAuthority() + originalURI.getPath();
-            // String canonicalisedOriginalURIStringWithoutQuery =
-            // URLCanonicalizer.getCanonicalURL(originalURIWithoutQuery);
             String path = originalURI.getPath();
             if (path == null) path = "";
             String filename = originalURI.getName();
