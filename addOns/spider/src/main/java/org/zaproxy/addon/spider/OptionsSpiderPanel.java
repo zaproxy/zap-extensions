@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SortOrder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -47,6 +48,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.PositiveValuesSlider;
@@ -81,6 +83,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private JCheckBox chkAcceptCookies;
     private DomainsAlwaysInScopeMultipleOptionsPanel domainsAlwaysInScopePanel;
     private DomainsAlwaysInScopeTableModel domainsAlwaysInScopeTableModel;
+    private ZapTextArea irrelevantUrlParameters;
 
     private JComboBox<HandleParametersOption> handleParameters;
 
@@ -182,6 +185,20 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             innerPanel.add(getChkParseGit(), gbc);
             innerPanel.add(getHandleODataSpecificParameters(), gbc);
 
+            ZapTextArea irrelevantUrlParameters = getIrrelevantUrlParameters();
+            JLabel label =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "spider.options.label.irrelevantUrlParameters"));
+            label.setLabelFor(irrelevantUrlParameters);
+            JScrollPane irrelevantUrlParametersScrollPane = new JScrollPane();
+            irrelevantUrlParametersScrollPane.setVerticalScrollBarPolicy(
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            irrelevantUrlParametersScrollPane.setViewportView(irrelevantUrlParameters);
+
+            innerPanel.add(label, gbc);
+            innerPanel.add(irrelevantUrlParametersScrollPane, gbc);
+
             JScrollPane scrollPane = new JScrollPane(innerPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -215,6 +232,8 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getChkParseGit().setSelected(param.isParseGit());
         getComboHandleParameters().setSelectedItem(param.getHandleParameters());
         getHandleODataSpecificParameters().setSelected(param.isHandleODataParametersVisited());
+        getIrrelevantUrlParameters().setText(param.getIrrelevantUrlParametersAsString());
+        getIrrelevantUrlParameters().discardAllEdits();
     }
 
     @Override
@@ -242,6 +261,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setHandleParameters(
                 (HandleParametersOption) getComboHandleParameters().getSelectedItem());
         param.setHandleODataParametersVisited(getHandleODataSpecificParameters().isSelected());
+        param.setIrrelevantUrlParameters(getIrrelevantUrlParameters().getText());
     }
 
     /**
@@ -473,6 +493,14 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             domainsAlwaysInScopeTableModel = new DomainsAlwaysInScopeTableModel();
         }
         return domainsAlwaysInScopeTableModel;
+    }
+
+    private ZapTextArea getIrrelevantUrlParameters() {
+        if (irrelevantUrlParameters == null) {
+            irrelevantUrlParameters = new ZapTextArea();
+            irrelevantUrlParameters.setLineWrap(true);
+        }
+        return irrelevantUrlParameters;
     }
 
     /** A renderer for properly displaying the name of the HandleParametersOptions in a ComboBox. */

@@ -267,7 +267,8 @@ public class SpiderController implements SpiderParserListener {
                 UrlCanonicalizer.buildCleanedParametersUriRepresentation(
                         uri,
                         spider.getSpiderParam().getHandleParameters(),
-                        spider.getSpiderParam().isHandleODataParametersVisited());
+                        spider.getSpiderParam().isHandleODataParametersVisited(),
+                        spider.getSpiderParam()::isIrrelevantUrlParameter);
         identifierBuilder.append(resourceFound.getMethod());
         identifierBuilder.append(" ");
         identifierBuilder.append(visitedURI);
