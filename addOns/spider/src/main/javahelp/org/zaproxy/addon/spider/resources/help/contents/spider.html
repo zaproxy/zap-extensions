@@ -6,7 +6,7 @@
 </head>
 <body>
 	<h1>Spider</h1>
-	<p>The spider is a tool that is used to automatically discover new
+	<p>The Spider is a tool that is used to automatically discover new
 		resources (URLs) on a particular Site. It begins with a list of URLs
 		to visit, called the seeds, which depends on how the Spider is
 		started. The Spider then visits these URLs, it identifies all the
@@ -57,20 +57,35 @@
 	the Spider does not follow the rules specified in the 'Robots.txt'
 	file.
 
-	<h4>SVG Files</H4>
-	SVG image files are parsed to identify HREF attributes and extract/resolve any contained links.
+	<h4>sitemap.xml file</h4>
+	If set in the <a href="options.html">Options Spider screen</a>, 
+	the Spider also analyzes the 'sitemap.xml' file and tries to identify
+	new resources.
 
-	<h4>OData Atom format</h4>
+	<h4>SVN metadata files</h4>
+	If set in the <a href="options.html">Options Spider screen</a>,
+	the Spider should also parse SVN metadata files and tries to 
+	identify new resources.
+	
+	<h4>Git metadata files</h4>
+	If set in the <a href="options.html">Options Spider screen</a>,
+	the Spider should also parse Git metadata files and tries to 
+	identify new resources.
+
+	<h4>OData Atom Format</h4>
 	OData content using the Atom format is currently supported. All included links 
 	(relative or absolute) are processed.
+
+	<h4>SVG Files</H4>
+	SVG image files are parsed to identify HREF attributes and extract/resolve any contained links.
 
 	<h4>Non-HTML Text Response</h4>
 	Text responses are parsed scanning for the URL pattern
 
-	<h4>Non-Text response</h4>
+	<h4>Non-Text Response</h4>
 	Currently, the Spider does not process this type of resources.
 
-	<h2>Other aspects</h2>
+	<h2>Other Aspects</h2>
 	<ul>
 	<li> When checking if an URL was already visited, the behaviour regarding how
 	parameters are handled can be configured on the Spider Options screen.
@@ -78,7 +93,7 @@
 	<li> When checking if an URL was already visited, there are a few common parameters
 	which are ignored: jsessionid, phpsessid, aspsessionid, utm_*
 	</li>
-	<li> The Spider's behaviour regarding cookies depends on how the spider is started and which options are enabled. For more
+	<li> The Spider's behaviour regarding cookies depends on how the Spider is started and which options are enabled. For more
 	details refer to the Spider Options screen.
 	</li>
 	</ul>

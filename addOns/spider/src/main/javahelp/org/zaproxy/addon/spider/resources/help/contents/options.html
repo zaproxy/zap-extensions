@@ -8,7 +8,7 @@
 	<h1>Options Spider screen</h1>
 	<p>
 		This screen allows you to configure the <a
-			href="spider.html">spider</a> options.</p> 
+			href="spider.html">Spider</a> options.</p> 
 	<p>It should be noted that modifying most of these options also affects
 	the running Spider.
 	</p>
@@ -27,13 +27,13 @@
 	</p>
 
 	<h3>Number of threads used</h3>
-	The spider is multi-threaded and this is the number that defines the
+	The Spider is multi-threaded and this is the number that defines the
 	maximum number of worker threads used in the crawling process. Changing this
-	parameter does not have any effect on any crawling is in progress. 
+	parameter does not have any effect on any crawling that is in progress. 
 
 	<h3>Maximum duration</h3>
-	The maximum length of time that the spider should run for, measured in minutes.
-	Zero (the default) means that the spider will run until it has found all of the links that it is able to. 
+	The maximum length of time that the Spider should run for, measured in minutes.
+	Zero (the default) means that the Spider will run until it has found all of the links that it is able to. 
 
 	<h3>Maximum children to crawl</h3>
 	This parameter limits the number of children that will be crawled at every node in the tree.<br>
@@ -43,11 +43,11 @@
 
 	<h3>Maximum parse size</h3>
 	Defines the maximum size, in bytes, that a response might have to be parsed. This allows
-	the spider to skip big responses/files.
+	the Spider to skip big responses/files.
 
 	<h3>Domains Always in Scope</h3>
 	Allows to manage the domains, string literals or regular expressions, that are in the
-	spider's scope. The normal behavior of the spider is to only follow links to resources
+	Spider's scope. The normal behavior of the Spider is to only follow links to resources
 	found on the same domain as the page where the scan started. However,
 	this option allows you to define additional domains that are considered
 	"in scope" during the crawling process. Pages on these domains are
@@ -70,15 +70,15 @@
 	</ul>
 
 	<h3>Send "Referer" header</h3>
-	If the spider requests should be sent with the "Referer" header.
+	If the Spider requests should be sent with the "Referer" header.
 
 	<h3>Accept Cookies</h3>
-	If the spider scans should accept cookies while spidering. If enabled the Spider will
+	If the Spider scans should accept cookies while Spidering. If enabled the Spider will
 	properly handle any cookies received from the server and will send them back accordingly.
 	If the option is disabled, the Spider will not send any cookies in its requests. For
 	example, this might control whether or not the Spider uses the same session throughout a
 	spidering scan.
-	<br>When accepting cookies the cookies are not shared between spider scans, each scan has
+	<br>When accepting cookies the cookies are not shared between Spider scans, each scan has
 	its own cookie jar.
 	<br>This option has low priority, the Spider will respect other (global) options related
 	to the HTTP state. This option is ignored if, for example, the option Use Global HTTP
@@ -86,7 +86,7 @@
 	or when a HTTP Session is active.
 
 	<h3>Process forms</h3>
-	During the crawling process, the behaviour of the spider when it
+	During the crawling process, the behaviour of the Spider when it
 	encounters HTML forms is defined by this option. If disabled, the HTML
 	forms will not be processed at all. If enabled, the HTML forms with the
 	method defined as HTTP GET will be submitted with some generated
@@ -95,23 +95,35 @@
 
 	<h3>POST forms</h3>
 	As briefly described in the previous paragraph (Process Forms), this
-	option configures the behaviour of the spider when
+	option configures the behaviour of the Spider when
 	<i>Process Forms</i> is enabled and when encountering HTML forms that
 	have to be POSTed.
 
 	<h3>Parse HTML Comments</h3>
-	This option defines whether the spider should also spider the HTML
-	comments searching for links to resources. Only the resources found in
+	This option defines whether the Spider should also consider HTML
+	comments when searching for links to resources. Only the resources found in
 	commented valid HTML tags will be processed.
 
 	<h3>Parse 'robots.txt' files</h3>
-	This option defines whether the spider should also spider the
+	This option defines whether the Spider should also spider the
 	robots.txt files found on websites, searching for links to resources.
-	This option does not define whether the spider should follow the rules
+	This option does not define whether the Spider should follow the rules
 	imposed by the robots.txt file.
 
+	<h3>Parse 'sitemap.xml' files</h3>
+	This option controls whether the Spider should also consider 
+	'sitemap.xml' file and try to identify new resources.
+	
+	<h3>Parse SVN metadata files</h3>
+	This option controls whether the Spider should also parse 
+	SVN metadata files and try to identify new resources.
+	
+	<h3>Parse Git metadata files</h3>
+	This option controls whether the Spider should also parse 
+	Git metadata files and try to identify new resources.
+	
 	<h3>Handle OData-specific parameters</h3>
-	This options defines whether the spider should try to detect OData-specific
+	This options defines whether the Spider should try to detect OData-specific
 	parameters (i.e. resources identifiers) in order to properly process them 
 	according to the rule defined by the "Query parameters handling" option.
 
