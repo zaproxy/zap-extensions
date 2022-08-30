@@ -21,10 +21,14 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** Unit test for {@link UserAgentScanRule}. */
 class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
@@ -45,5 +49,20 @@ class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
         int risk = rule.getRisk();
         // Then
         assertThat(risk, is(equalTo(Alert.RISK_INFO)));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert alert = alerts.get(0);
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alert.getTags().size(), is(equalTo(1)));
+        assertThat(alert.getTags(), hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getParam(), is(equalTo("Header " + HttpHeader.USER_AGENT)));
+        assertThat(alert.getAttack(), is(equalTo("ExampleBot 1.1")));
     }
 }

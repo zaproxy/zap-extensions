@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -233,6 +235,22 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert alert = alerts.get(0);
+        Map<String, String> tags = alert.getTags();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
     private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
