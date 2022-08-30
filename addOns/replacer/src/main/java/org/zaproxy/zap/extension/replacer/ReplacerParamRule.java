@@ -44,6 +44,7 @@ public class ReplacerParamRule extends Enableable {
     private MatchType matchType;
     private boolean matchRegex;
     private List<Integer> initiators;
+    private boolean tokenProcessingEnabled;
 
     public ReplacerParamRule() {
         this("", MatchType.RESP_BODY_STR, "");
@@ -77,7 +78,16 @@ public class ReplacerParamRule extends Enableable {
             String replacement,
             List<Integer> initiators,
             boolean enabled) {
-        this(description, "", matchType, matchString, matchRegex, replacement, initiators, enabled);
+        this(
+                description,
+                "",
+                matchType,
+                matchString,
+                matchRegex,
+                replacement,
+                initiators,
+                enabled,
+                false);
     }
 
     /**
@@ -92,6 +102,7 @@ public class ReplacerParamRule extends Enableable {
      * @param initiators a list of initiators as defined in {@link
      *     org.parosproxy.paros.network.HttpSender}
      * @param enabled true if the rule is enabled
+     * @param tokenProcessingEnabled true if token processing is enabled
      */
     public ReplacerParamRule(
             String description,
@@ -101,7 +112,8 @@ public class ReplacerParamRule extends Enableable {
             boolean matchRegex,
             String replacement,
             List<Integer> initiators,
-            boolean enabled) {
+            boolean enabled,
+            boolean tokenProcessingEnabled) {
         super(enabled);
 
         setUrl(url);
@@ -112,6 +124,7 @@ public class ReplacerParamRule extends Enableable {
         this.escapedReplacement = HexString.compile(replacement);
         this.replacement = replacement;
         this.initiators = initiators;
+        this.tokenProcessingEnabled = tokenProcessingEnabled;
     }
 
     public ReplacerParamRule(ReplacerParamRule token) {
@@ -123,7 +136,8 @@ public class ReplacerParamRule extends Enableable {
                 token.matchRegex,
                 token.replacement,
                 token.initiators,
-                token.isEnabled());
+                token.isEnabled(),
+                token.isTokenProcessingEnabled());
     }
 
     public String getDescription() {
@@ -211,6 +225,10 @@ public class ReplacerParamRule extends Enableable {
         return initiators == null || initiators.isEmpty();
     }
 
+    public boolean isTokenProcessingEnabled() {
+        return tokenProcessingEnabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -254,6 +272,8 @@ public class ReplacerParamRule extends Enableable {
         if (replacement == null) {
             if (other.replacement != null) return false;
         } else if (!replacement.equals(other.replacement)) return false;
+        if (tokenProcessingEnabled != other.tokenProcessingEnabled) return false;
+
         return true;
     }
 }

@@ -175,7 +175,8 @@ public class ReplacerAPI extends ApiImplementor {
                                     matchRegex,
                                     getParam(params, REPLACEMENT, ""),
                                     initiators,
-                                    enabled));
+                                    enabled,
+                                    false));
 
             try {
                 this.extension.getParams().getConfig().save();

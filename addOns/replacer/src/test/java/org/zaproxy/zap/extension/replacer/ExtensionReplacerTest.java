@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.replacer;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.matchesRegex;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER;
@@ -221,6 +222,386 @@ class ExtensionReplacerTest {
                         null,
                         true);
         extensionReplacer.getParams().getRules().add(hexByteRegexRule);
+        return extensionReplacer;
+    }
+
+    @Test
+    void shouldNotReplacePartialTokenValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_TEST_", "}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("}}"));
+    }
+
+    @Test
+    void shouldNotReplacePartialTokenValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_TEST_", "}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("}}"));
+    }
+
+    @Test
+    void shouldNotReplaceOpenTokenValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_TEST_", "{{");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("{{"));
+    }
+
+    @Test
+    void shouldNotReplaceOpenTokenValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_TEST_", "{{");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("{{"));
+    }
+
+    @Test
+    void shouldNotReplaceMalformedTokenValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_TEST_", "{{MALFORMED}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("{{MALFORMED}}"));
+    }
+
+    @Test
+    void shouldNotReplaceMalformedTokenValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_TEST_", "{{MALFORMED}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("{{MALFORMED}}"));
+    }
+
+    @Test
+    void shouldNotReplaceMalformedRINTTokenValueInRequestHeader()
+            throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(
+                        REQ_HEADER_STR, "_TEST_", "{{RINT|ABC|DEF}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("{{RINT|ABC|DEF}}"));
+    }
+
+    @Test
+    void shouldNotReplaceMalformedRINTTokenValueInRequestBody()
+            throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_TEST_", "{{RINT|ABC|DEF}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("{{RINT|ABC|DEF}}"));
+    }
+
+    @Test
+    void shouldReplaceMultipleTokenValuesInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(
+                        REQ_HEADER_STR, "_TEST_", "First: {{RINT|ABC|DEF}}, Second: {{RINT|9}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestHeader().getHeader("X-CUSTOM"),
+                matchesRegex("First: \\{\\{RINT\\|ABC\\|DEF\\}\\}, Second: [0-9]"));
+    }
+
+    @Test
+    void shouldReplaceMultipleTokenValuesInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(
+                        REQ_BODY_STR, "_TEST_", "First: {{RINT|ABC|DEF}}, Second: {{RINT|9}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TEST_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestBody().toString(),
+                matchesRegex("First: \\{\\{RINT\\|ABC\\|DEF\\}\\}, Second: [0-9]"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_INT_", "{{RINT}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _INT_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), matchesRegex("^[0-9]+$"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueWithMaxInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_INT_MAX_", "{{RINT|9}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _INT_MAX_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), matchesRegex("^[0-9]$"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueWithMinMaxInRequestHeader()
+            throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(
+                        REQ_HEADER_STR, "_INT_MINMAX_", "{{RINT|5|9}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _INT_MINMAX_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), matchesRegex("^[5-9]$"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_INT_", "{{RINT}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1\r\n");
+        msg.setRequestBody("_INT_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), matchesRegex("^[0-9]+$"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueWithMaxInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_INT_MAX_", "{{RINT|9}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1\r\n");
+        msg.setRequestBody("_INT_MAX_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), matchesRegex("^[0-9]$"));
+    }
+
+    @Test
+    void shouldReplaceTokenRINTValueWithMinMaxInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(
+                        REQ_BODY_STR, "_INT_MINMAX_", "{{RINT|5|9}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1\r\n");
+        msg.setRequestBody("_INT_MINMAX_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), matchesRegex("^[5-9]$"));
+    }
+
+    @Test
+    void shouldReplaceTokenUUIDValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_UUID_", "{{UUID}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _UUID_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), matchesRegex("^[a-z0-9-]+$"));
+    }
+
+    @Test
+    void shouldReplaceTokenUUIDValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_UUID_", "{{UUID}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_UUID_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), matchesRegex("^[a-z0-9-]+$"));
+    }
+
+    @Test
+    void shouldReplaceTokenTicksValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_HEADER_STR, "_TICKS_", "{{TICKS}}");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TICKS_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), matchesRegex("^[0-9]+$"));
+    }
+
+    @Test
+    void shouldNotReplaceTokenTicksValueInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenANormalProcessingReplacementRuleFor(REQ_HEADER_STR, "_TICKS_", "--TICKS--");
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\nX-CUSTOM: _TICKS_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader("X-CUSTOM"), equalTo("--TICKS--"));
+    }
+
+    @Test
+    void shouldReplaceTokenTicksValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenATokenProcessingReplacementRuleFor(REQ_BODY_STR, "_TICKS_", "{{TICKS}}");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TICKS_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), matchesRegex("^[0-9]+$"));
+    }
+
+    @Test
+    void shouldNotReplaceTokenTicksValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer =
+                givenANormalProcessingReplacementRuleFor(REQ_BODY_STR, "_TICKS_", "--TICKS--");
+
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody("_TICKS_");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestBody().toString(), equalTo("--TICKS--"));
+    }
+
+    private static ExtensionReplacer givenATokenProcessingReplacementRuleFor(
+            ReplacerParamRule.MatchType matchType, String match, String replacement)
+            throws HttpMalformedHeaderException {
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+
+        ReplacerParamRule TokenProcessingReplacementRule =
+                new ReplacerParamRule(
+                        "", "", matchType, match, false, replacement, null, true, true);
+
+        extensionReplacer.getParams().getRules().add(TokenProcessingReplacementRule);
+
+        return extensionReplacer;
+    }
+
+    private static ExtensionReplacer givenANormalProcessingReplacementRuleFor(
+            ReplacerParamRule.MatchType matchType, String match, String replacement) {
+
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+
+        ReplacerParamRule TokenProcessingReplacementRule =
+                new ReplacerParamRule("", matchType, match, false, replacement, null, true);
+
+        extensionReplacer.getParams().getRules().add(TokenProcessingReplacementRule);
+
         return extensionReplacer;
     }
 }

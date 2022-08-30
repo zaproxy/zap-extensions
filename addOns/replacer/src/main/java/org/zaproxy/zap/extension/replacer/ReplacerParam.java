@@ -46,6 +46,7 @@ public class ReplacerParam extends AbstractParam {
     private static final String RULE_REGEX_KEY = "regex";
     private static final String RULE_REPLACEMENT_KEY = "replacement";
     private static final String RULE_INITIATORS_KEY = "initiators";
+    private static final String RULE_EXTRA_PROCESSING_KEY = "extraprocessing";
 
     private static final String CONFIRM_REMOVE_RULE_KEY = REPLACER_BASE_KEY + ".confirmRemoveToken";
     private static final String FALSE_STRING = "false";
@@ -120,6 +121,7 @@ public class ReplacerParam extends AbstractParam {
                 if (!"".equals(desc) && !tempTokensNames.contains(desc)) {
                     boolean enabled = sub.getBoolean(RULE_ENABLED_KEY, true);
                     boolean regex = sub.getBoolean(RULE_REGEX_KEY, true);
+                    boolean extraProcessing = sub.getBoolean(RULE_EXTRA_PROCESSING_KEY, false);
                     String matchStr = sub.getString(RULE_MATCH_STRING_KEY, "");
                     MatchType matchType =
                             MatchType.valueOf(
@@ -154,7 +156,8 @@ public class ReplacerParam extends AbstractParam {
                                     regex,
                                     replace,
                                     initList,
-                                    enabled));
+                                    enabled,
+                                    extraProcessing));
                     tempTokensNames.add(desc);
                 }
             }
@@ -202,6 +205,11 @@ public class ReplacerParam extends AbstractParam {
                     .setProperty(
                             elementBaseKey + RULE_REGEX_KEY, Boolean.valueOf(rule.isMatchRegex()));
             getConfig().setProperty(elementBaseKey + RULE_REPLACEMENT_KEY, rule.getReplacement());
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + RULE_EXTRA_PROCESSING_KEY,
+                            Boolean.valueOf(rule.isTokenProcessingEnabled()));
+
             List<Integer> initiators = rule.getInitiators();
             if (initiators == null || initiators.isEmpty()) {
                 getConfig().setProperty(elementBaseKey + RULE_INITIATORS_KEY, "");
