@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Reduce Cache Control scan rule confidence to Low, and add new reference (Issue 6446).
 
 ## [42] - 2022-07-15
 ### Changed
