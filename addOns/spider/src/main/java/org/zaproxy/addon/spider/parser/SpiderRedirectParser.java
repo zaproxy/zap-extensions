@@ -36,7 +36,7 @@ public class SpiderRedirectParser extends SpiderParser {
             // Include the base url as well as some applications send relative URLs instead of
             // absolute ones
             String baseURL = message.getRequestHeader().getURI().toString();
-            processURL(message, depth, location, baseURL);
+            processUrl(message, depth, location, baseURL);
         }
         // We consider the message fully parsed
         return true;

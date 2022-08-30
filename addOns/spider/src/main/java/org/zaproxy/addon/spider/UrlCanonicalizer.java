@@ -70,15 +70,15 @@ public final class UrlCanonicalizer {
      * OData support Extract the ID of a resource including the surrounding quote First group is the
      * resource_name Second group is the ID (quote will be taken as part of the value)
      */
-    private static final Pattern patternResourceIdentifierUnquoted =
+    private static final Pattern PATTERN_RESOURCE_IDENTIFIER_UNQUOTED =
             Pattern.compile("/([\\w%]*)\\(([\\w']*)\\)");
 
     /** OData support Detect a section containing a composite IDs */
-    private static final Pattern patternResourceMultipleIdentifier =
+    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER =
             Pattern.compile("/[\\w%]*\\((.*)\\)");
 
     /** OData support Extract the detail of the multiples IDs */
-    private static final Pattern patternResourceMultipleIdentifierDetail =
+    private static final Pattern PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL =
             Pattern.compile("([\\w%]*)=([\\w']*)");
 
     /** Private constructor to avoid initialization of object. */
@@ -90,8 +90,8 @@ public final class UrlCanonicalizer {
      * @param url the url
      * @return the canonical url
      */
-    public static String getCanonicalURL(String url) {
-        return getCanonicalURL(url, null);
+    public static String getCanonicalUrl(String url) {
+        return getCanonicalUrl(url, null);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class UrlCanonicalizer {
      * @param baseURL the context in which this url was found
      * @return the canonical url
      */
-    public static String getCanonicalURL(String url, String baseURL) {
+    public static String getCanonicalUrl(String url, String baseURL) {
         if ("javascript:".equals(url)) {
             return null;
         }
@@ -219,7 +219,7 @@ public final class UrlCanonicalizer {
      * Builds a String representation of the URI with cleaned parameters, that can be used when
      * checking if an URI was already visited. The URI provided as a parameter should be already
      * cleaned and canonicalized, so it should be build with a result from {@link
-     * #getCanonicalURL(String)}.
+     * #getCanonicalUrl(String)}.
      *
      * <p>When building the URI representation, the same format should be used for all the cases, as
      * it may affect the number of times the pages are visited and reported if the option
@@ -231,7 +231,7 @@ public final class UrlCanonicalizer {
      * @return the string representation of the URI
      * @throws URIException the URI exception
      */
-    public static String buildCleanedParametersURIRepresentation(
+    public static String buildCleanedParametersUriRepresentation(
             org.apache.commons.httpclient.URI uri,
             SpiderParam.HandleParametersOption handleParameters,
             boolean handleODataParametersVisited)
@@ -354,7 +354,7 @@ public final class UrlCanonicalizer {
         } else {
 
             // check for single ID (unnamed)
-            Matcher matcher = patternResourceIdentifierUnquoted.matcher(path);
+            Matcher matcher = PATTERN_RESOURCE_IDENTIFIER_UNQUOTED.matcher(path);
             if (matcher.find()) {
                 String resourceName = matcher.group(1);
                 String resourceID = matcher.group(2);
@@ -376,7 +376,7 @@ public final class UrlCanonicalizer {
 
             } else {
 
-                matcher = patternResourceMultipleIdentifier.matcher(path);
+                matcher = PATTERN_RESOURCE_MULTIPLE_IDENTIFIER.matcher(path);
                 if (matcher.find()) {
                     // We've found a composite identifier. i.e: /Resource(field1=a,field2=3)
 
@@ -394,7 +394,7 @@ public final class UrlCanonicalizer {
                         StringBuilder sb = new StringBuilder(beforeSubstring);
 
                         matcher =
-                                patternResourceMultipleIdentifierDetail.matcher(
+                                PATTERN_RESOURCE_MULTIPLE_IDENTIFIER_DETAIL.matcher(
                                         multipleIdentifierSection);
                         int i = 1;
                         while (matcher.find()) {

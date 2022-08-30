@@ -58,25 +58,25 @@ import org.zaproxy.zap.users.User;
 public class SpiderThread extends ScanThread implements SpiderListener {
 
     /** Whether the scanning process has stopped (either completed, either by user request). */
-    private boolean stopScan = false;
+    private boolean stopScan;
 
     /** Whether the scanning process is paused. */
-    private boolean isPaused = false;
+    private boolean isPaused;
 
     /** Whether the scanning process is running. */
-    private boolean isAlive = false;
+    private boolean isAlive;
 
     /** The related extension. */
     private ExtensionSpider2 extension;
 
     /** The spider. */
-    private Spider spider = null;
+    private Spider spider;
 
     /** The pending spider listeners which will be added to the Spider as soon at is initialized. */
     private List<SpiderListener> pendingSpiderListeners;
 
     /** The spider done. */
-    private int spiderDone = 0;
+    private int spiderDone;
 
     /** The spider todo. It will be updated by the "spiderProgress()" method. */
     private int spiderTodo = 1;
@@ -85,16 +85,16 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     private static final Logger log = LogManager.getLogger(SpiderThread.class);
 
     /** The just scan in scope. */
-    private boolean justScanInScope = false;
+    private boolean justScanInScope;
 
     /** The scan children. */
-    private boolean scanChildren = false;
+    private boolean scanChildren;
 
     /** The scan context. */
-    private Context scanContext = null;
+    private Context scanContext;
 
     /** The scan user. */
-    private User scanUser = null;
+    private User scanUser;
 
     /** The results model. */
     private SpiderPanelTableModel resultsModel;
@@ -103,15 +103,15 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     private SpiderPanelTableModel addedNodesModel;
 
     /** The start uri. */
-    private URI startURI = null;
+    private URI startURI;
 
     private SpiderParam spiderParams;
 
-    private List<SpiderParser> customSpiderParsers = null;
+    private List<SpiderParser> customSpiderParsers;
 
-    private List<FetchFilter> customFetchFilters = null;
+    private List<FetchFilter> customFetchFilters;
 
-    private List<ParseFilter> customParseFilters = null;
+    private List<ParseFilter> customParseFilters;
 
     private final String id;
 

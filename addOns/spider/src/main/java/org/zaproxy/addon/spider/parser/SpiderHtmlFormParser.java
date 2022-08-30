@@ -119,7 +119,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseURL = UrlCanonicalizer.getCanonicalURL(href, baseURL);
+                baseURL = UrlCanonicalizer.getCanonicalUrl(href, baseURL);
             }
         }
 
@@ -158,13 +158,13 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     action = action.substring(0, fs);
                 }
 
-                url = UrlCanonicalizer.getCanonicalURL(action, baseURL);
+                url = UrlCanonicalizer.getCanonicalUrl(action, baseURL);
                 FormData formData = prepareFormDataSet(source, form);
 
                 // Process the case of a POST method
                 if (method != null && method.trim().equalsIgnoreCase(METHOD_POST)) {
                     // Build the absolute canonical URL
-                    String fullURL = UrlCanonicalizer.getCanonicalURL(action, baseURL);
+                    String fullURL = UrlCanonicalizer.getCanonicalUrl(action, baseURL);
                     if (fullURL == null) {
                         return false;
                     }
@@ -331,7 +331,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     .debug(
                             "Submitting form with GET method and query with form parameters: {}",
                             submitData);
-            processURL(message, depth, action + submitData, baseURL);
+            processUrl(message, depth, action + submitData, baseURL);
         }
     }
 

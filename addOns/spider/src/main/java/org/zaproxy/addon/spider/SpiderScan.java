@@ -96,13 +96,13 @@ public class SpiderScan implements ScanListenner, SpiderListener, GenericScanner
 
     private Set<String> foundURIsOutOfScope;
 
-    private SpiderThread spiderThread = null;
+    private SpiderThread spiderThread;
 
     private State state;
 
     private int progress;
 
-    private ScanListenner2 listener = null;
+    private ScanListenner2 listener;
 
     private volatile boolean cleared;
 

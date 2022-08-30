@@ -24,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SortOrder;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
@@ -57,7 +58,7 @@ class SpiderMessagesTable extends HistoryReferencesTable {
                 .setCellRenderer(
                         new DefaultTableRenderer(
                                 new MappedValue(StringValues.EMPTY, IconValues.NONE),
-                                JLabel.CENTER));
+                                SwingConstants.CENTER));
         getColumnExt(0).setHighlighters(new ProcessedCellItemIconHighlighter(0));
 
         getColumnExt(Constant.messages.getString("view.href.table.header.hrefid"))

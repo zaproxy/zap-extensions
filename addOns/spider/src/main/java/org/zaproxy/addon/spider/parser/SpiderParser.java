@@ -85,9 +85,9 @@ public abstract class SpiderParser {
      * @param localURL the local url
      * @param baseURL the base url
      */
-    protected void processURL(HttpMessage message, int depth, String localURL, String baseURL) {
+    protected void processUrl(HttpMessage message, int depth, String localURL, String baseURL) {
         // Build the absolute canonical URL
-        String fullURL = UrlCanonicalizer.getCanonicalURL(localURL, baseURL);
+        String fullURL = UrlCanonicalizer.getCanonicalUrl(localURL, baseURL);
         if (fullURL == null) {
             return;
         }
@@ -105,7 +105,7 @@ public abstract class SpiderParser {
      * Parses the resource. The HTTP message containing the request and the response is given. Also,
      * if possible, a Jericho source with the Response Body is provided.
      *
-     * <p>When a link is encountered, implementations can use {@link #processURL(HttpMessage, int,
+     * <p>When a link is encountered, implementations can use {@link #processUrl(HttpMessage, int,
      * String, String)} and {@link #notifyListenersResourceFound(SpiderResourceFound)} to announce
      * the found URIs.
      *

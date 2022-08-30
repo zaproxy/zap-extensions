@@ -215,12 +215,9 @@ public class SpiderResourceFound {
         private List<HttpHeaderField> headers;
 
         private Builder() {
-            this.message = null;
-            this.depth = 0;
             this.method = HttpRequestHeader.GET;
             this.uri = "";
             this.body = "";
-            this.shouldIgnore = false;
             this.headers = Collections.emptyList();
         }
 

@@ -127,13 +127,13 @@ public class Spider {
      * we do not want to recurse into an SVN folder, or a subfolder of an SVN folder, if one was
      * created from a previous Spider run
      */
-    private static final Pattern svnUrlPattern = Pattern.compile("\\.svn/"); // case sensitive
+    private static final Pattern SVN_URL_PATTERN = Pattern.compile("\\.svn/"); // case sensitive
 
     /**
      * we do not want to recurse into a Git folder, or a subfolder of a Git folder, if one was
      * created from a previous Spider run
      */
-    private static final Pattern gitUrlPattern = Pattern.compile("\\.git/"); // case sensitive
+    private static final Pattern GIT_URL_PATTERN = Pattern.compile("\\.git/"); // case sensitive
 
     private final String id;
 
@@ -236,13 +236,13 @@ public class Spider {
         }
         // And add '.svn/entries' as a seed, for SVN based spidering
         if (getSpiderParam().isParseSVNEntries()) {
-            addFileSeed(uri, ".svn/entries", svnUrlPattern);
-            addFileSeed(uri, ".svn/wc.db", svnUrlPattern);
+            addFileSeed(uri, ".svn/entries", SVN_URL_PATTERN);
+            addFileSeed(uri, ".svn/wc.db", SVN_URL_PATTERN);
         }
 
         // And add '.git/index' as a seed, for Git based spidering
         if (getSpiderParam().isParseGit()) {
-            addFileSeed(uri, ".git/index", gitUrlPattern);
+            addFileSeed(uri, ".git/index", GIT_URL_PATTERN);
         }
     }
 

@@ -133,7 +133,7 @@ public class SvgHrefParser extends SpiderParser {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseUrl = UrlCanonicalizer.getCanonicalURL(href, baseUrl);
+                baseUrl = UrlCanonicalizer.getCanonicalUrl(href, baseUrl);
             }
         }
         return processSvgTags(message, depth, baseUrl, svgElements, IMAGE_TAG)
@@ -152,7 +152,7 @@ public class SvgHrefParser extends SpiderParser {
                 for (String attribute : ATTRIBUTE_NAMES) {
                     String hrefCandidate = imageTag.getAttributeValue(attribute);
                     if (hrefCandidate != null && !hrefCandidate.isEmpty()) {
-                        processURL(message, depth, hrefCandidate, baseUrl);
+                        processUrl(message, depth, hrefCandidate, baseUrl);
                         found = true;
                         break;
                     }
@@ -183,7 +183,7 @@ public class SvgHrefParser extends SpiderParser {
                 }
                 getLogger().debug("Resolved URL: {} from: {}", newUri, baseUrl);
                 if (newUri != null && newUri.isAbsolute()) {
-                    processURL(message, depth, extractedUrl, baseUrl);
+                    processUrl(message, depth, extractedUrl, baseUrl);
                 }
             }
         }

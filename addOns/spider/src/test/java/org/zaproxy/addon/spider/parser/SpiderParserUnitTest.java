@@ -91,7 +91,7 @@ class SpiderParserUnitTest extends SpiderParserTestUtils {
         String localUrl = "/path/";
         String expectedUri = "https://example.com/path/";
         // When
-        testSpiderParser.processURL(message, depth, localUrl, baseUrl);
+        testSpiderParser.processUrl(message, depth, localUrl, baseUrl);
         // Then
         assertThat(
                 listener.getResourcesFound(),
@@ -109,7 +109,7 @@ class SpiderParserUnitTest extends SpiderParserTestUtils {
         String baseUrl = "/";
         String localUrl = "/";
         // When
-        testSpiderParser.processURL(message, depth, localUrl, baseUrl);
+        testSpiderParser.processUrl(message, depth, localUrl, baseUrl);
         // Then
         assertThat(listener.getResourcesFound(), is(empty()));
     }
